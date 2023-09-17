@@ -97,13 +97,14 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     sfxSlider.setDisable(true);
     sfxSlider.setDisable(true);
 
-    sampleCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
+    sampleCombo.setItems(FXCollections.observableList(AltSound2SampleType.toProfilesStringValues()));
     sampleCombo.valueProperty().addListener((observableValue, s, t1) -> {
       AltSound2SampleType sampleType = AltSound2SampleType.valueOf(t1.toLowerCase());
 
       //apply sample type
       editorProfile.setType(sampleType);
 
+      //apply profile id
       int profileId = 1;
       AltSound2DuckingProfile existingProfile = altSound.getProfile(sampleType, profileId);
       while (existingProfile != null) {
@@ -114,6 +115,9 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       this.saveBtn.setDisable(false);
       this.editorProfile.setId(profileId);
       this.profileIdLabel.setText(String.valueOf(profileId));
+
+      //disable the channel itself for selection
+      refreshChannelDisable(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
     });
 
     musicCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -227,6 +231,8 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       this.sampleCombo.setValue(profile.getType().name().toUpperCase());
       this.profileIdLabel.setText(String.valueOf(profile.getId()));
       this.sampleCombo.setDisable(true);
+
+      refreshChannelDisable(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
     }
     else {
       this.profileIdLabel.setText("-");
@@ -267,6 +273,60 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       overlaySlider.setDisable(false);
       overlaySlider.setValue(profileValue.getVolume());
       overlayCheckbox.setSelected(true);
+    }
+  }
+
+  private void refreshChannelDisable(AltSound2SampleType sampleType) {
+    sfxCheckbox.setDisable(false);
+    musicCheckbox.setDisable(false);
+    calloutCheckbox.setDisable(false);
+    soloCheckbox.setDisable(false);
+    overlayCheckbox.setDisable(false);
+
+    switch (sampleType) {
+      case sfx: {
+        sfxSlider.setDisable(true);
+        sfxCheckbox.setSelected(false);
+        sfxCheckbox.setDisable(true);
+        sfxLabel.setText("-");
+        sfxLabel.setDisable(true);
+        break;
+      }
+      case music: {
+        musicSlider.setDisable(true);
+        musicCheckbox.setSelected(false);
+        musicCheckbox.setDisable(true);
+        musicLabel.setText("-");
+        musicLabel.setDisable(true);
+        break;
+      }
+      case callout: {
+        calloutSlider.setDisable(true);
+        calloutCheckbox.setSelected(false);
+        calloutCheckbox.setDisable(true);
+        calloutLabel.setText("-");
+        calloutLabel.setDisable(true);
+        break;
+      }
+      case solo: {
+        soloSlider.setDisable(true);
+        soloCheckbox.setSelected(false);
+        soloCheckbox.setDisable(true);
+        soloLabel.setText("-");
+        soloLabel.setDisable(true);
+        break;
+      }
+      case overlay: {
+        overlaySlider.setDisable(true);
+        overlayCheckbox.setSelected(false);
+        overlayCheckbox.setDisable(true);
+        overlayLabel.setText("-");
+        overlayLabel.setDisable(true);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid sample type");
+      }
     }
   }
 

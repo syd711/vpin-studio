@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -48,6 +49,24 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
+                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="Record Sound Commands" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="36.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Spinner fx:id="skipCountSpinner" prefWidth="60.0">
+                     <HBox.margin>
+                        <Insets left="36.0" />
+                     </HBox.margin>
+                  </Spinner>
+                  <Label styleClass="default-text" text="Command Skip Count">
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                  </Label>
                </children>
             </HBox>
          </left>
@@ -106,7 +125,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Type:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="49.0" text="Sample Type:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -122,12 +141,12 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Determines the ducking proifle type." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Determines the ducking proifle for the selected sample type." wrapText="true" />
                            </tooltip>
                         </Label>
                         <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -209,15 +228,6 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Separator layoutX="228.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onSampleTypes" text="Sample Types" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-speedometer" />
-               </graphic>
-            </Button>
             <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="244.0" layoutY="16.0" text="Filename:" textFill="WHITE">
                <font>
@@ -238,6 +248,14 @@
                </padding>
             </Label>
             <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="130.0" />
+            <Button layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" text="Edit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+               </graphic>
+            </Button>
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="466.0" layoutY="16.0" text="Ducking Profile:" textFill="WHITE">
                <font>

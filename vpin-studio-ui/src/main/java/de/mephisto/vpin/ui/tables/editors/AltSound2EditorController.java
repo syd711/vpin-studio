@@ -11,18 +11,14 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
@@ -61,7 +57,7 @@ public class AltSound2EditorController implements Initializable {
   private TableColumn<AltSoundEntryModel, String> columnId;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, StringProperty> columnType;
+  private TableColumn<AltSoundEntryModel, String> columnType;
 
   @FXML
   private TableColumn<AltSoundEntryModel, Number> columnDuck;
@@ -110,6 +106,12 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private CheckBox romVolCtrlCheckbox;
+
+  @FXML
+  private CheckBox recordSoundCmdsCheckbox;
+
+  @FXML
+  private Spinner<Integer> skipCountSpinner;
 
   private ChangeListener<String> channelComboChangeListener;
   private ChangeListener<AltSound2DuckingProfile> duckingProfileComboChangeListener;
@@ -185,36 +187,7 @@ public class AltSound2EditorController implements Initializable {
     deleteBtn.setDisable(true);
 
     columnId.setCellValueFactory(cellData -> cellData.getValue().id);
-    columnType.setCellValueFactory(cellData -> {
-      AltSoundEntryModel entry = cellData.getValue();
-      final StringProperty value = entry.channel;
-      return Bindings.createObjectBinding(() -> value);
-    });
-    columnType.setCellFactory(col -> {
-      TableCell<AltSoundEntryModel, StringProperty> c = new TableCell<>();
-      final ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableList(AltSound2SampleType.toStringValues()));
-      comboBox.valueProperty().addListener(new ChangeListener<String>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-          if (s != null && t1 != null && !s.equals(t1)) {
-            Platform.runLater(() -> {
-              refresh();
-            });
-          }
-        }
-      });
-
-      c.itemProperty().addListener((observable, oldValue, newValue) -> {
-        if (oldValue != null) {
-          comboBox.valueProperty().unbindBidirectional(oldValue);
-        }
-        if (newValue != null) {
-          comboBox.valueProperty().bindBidirectional(newValue);
-        }
-      });
-      c.graphicProperty().bind(Bindings.when(c.emptyProperty()).then((Node) null).otherwise(comboBox));
-      return c;
-    });
+    columnType.setCellValueFactory(cellData -> cellData.getValue().channel);
 
 
     Callback<TableColumn<AltSoundEntryModel, AltSoundEntryModel>, TableCell<AltSoundEntryModel, AltSoundEntryModel>> cellFactory = new Callback<>() {
@@ -348,6 +321,13 @@ public class AltSound2EditorController implements Initializable {
 
     romVolCtrlCheckbox.setSelected(altSound.isRomVolumeControl());
     romVolCtrlCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> altSound.setRomVolumeControl(t1));
+
+    recordSoundCmdsCheckbox.setSelected(altSound.isRecordSoundCmds());
+    recordSoundCmdsCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> altSound.setRecordSoundCmds(t1));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, altSound.getCommandSkipCount());
+    skipCountSpinner.setValueFactory(factory);
+    skipCountSpinner.valueProperty().addListener((observable, oldValue, newValue) -> altSound.setCommandSkipCount(Integer.parseInt(String.valueOf(newValue))));
 
     refreshProfiles();
     refresh();

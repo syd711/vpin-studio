@@ -36,7 +36,16 @@ public class AltSound2Writer {
         iniConfiguration.setSeparatorUsedInInput("=");
 
         FileReader fileReader = new FileReader(ini);
-        iniConfiguration.read(fileReader);
+        try {
+          iniConfiguration.read(fileReader);
+        } finally {
+          fileReader.close();
+        }
+
+        SubnodeConfiguration systemNode = iniConfiguration.getSection("system");
+        systemNode.setProperty("record_sound_cmds", altSound.isRecordSoundCmds() ? "1" : "0");
+        systemNode.setProperty("rom_volume_ctrl", altSound.isRomVolumeControl() ? "1" : "0");
+        systemNode.setProperty("cmd_skip_count", altSound.getCommandSkipCount());
 
         SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
         if (formatNode != null) {
@@ -48,11 +57,12 @@ public class AltSound2Writer {
             saveSampleTypeNode(iniConfiguration, AltSound2SampleType.solo, altSound.getSolo());
             saveSampleTypeNode(iniConfiguration, AltSound2SampleType.overlay, altSound.getOverlay());
 
-            saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.music, altSound.getMusicDuckingProfiles());
             saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.callout, altSound.getCalloutDuckingProfiles());
             saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.sfx, altSound.getSfxDuckingProfiles());
-            saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.solo, altSound.getSoloDuckingProfiles());
             saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.overlay, altSound.getOverlayDuckingProfiles());
+            //music and solos cannot duck other samples
+//            saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.solo, altSound.getSoloDuckingProfiles());
+//            saveDuckingProfileNode(iniConfiguration, AltSound2SampleType.music, altSound.getMusicDuckingProfiles());
 
             //write CSV file
             org.apache.commons.io.FileUtils.writeStringToFile(gSoundCsv, altSound.toGSoundCSV(), StandardCharsets.UTF_8);
@@ -65,7 +75,7 @@ public class AltSound2Writer {
             }
           }
           else if (altSoundCsv.exists()) {
-           new AltSoundWriter(altSoundFolder).write(altSound);
+            new AltSoundWriter(altSoundFolder).write(altSound);
           }
         }
       }
@@ -86,9 +96,12 @@ public class AltSound2Writer {
 
   private void saveSampleTypeNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, AltSound2Group group) {
     SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sampleType.name());
-    sampleTypeNode.setProperty("ducks", group.getDucks().stream().map(Enum::name).collect(Collectors.joining(", ")));
+    sampleTypeNode.setProperty("group_vol", group.getGroupVol());
     sampleTypeNode.setProperty("pauses", group.getPauses().stream().map(Enum::name).collect(Collectors.joining(", ")));
     sampleTypeNode.setProperty("stops", group.getStops().stream().map(Enum::name).collect(Collectors.joining(", ")));
-    sampleTypeNode.setProperty("group_vol", group.getGroupVol());
+
+    if (!(sampleType.equals(AltSound2SampleType.solo) || sampleType.equals(AltSound2SampleType.music))) {
+      sampleTypeNode.setProperty("ducks", group.getDucks().stream().map(Enum::name).collect(Collectors.joining(", ")));
+    }
   }
 }

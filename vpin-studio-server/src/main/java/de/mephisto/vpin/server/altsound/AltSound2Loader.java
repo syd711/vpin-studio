@@ -39,6 +39,10 @@ public class AltSound2Loader {
     altSound.setRecordSoundCmds(systemSection.getBoolean("record_sound_cmds"));
     altSound.setRomVolumeControl(systemSection.getBoolean("rom_volume_ctrl"));
 
+    if (systemSection.containsKey("cmd_skip_count")) {
+      altSound.setCommandSkipCount(systemSection.getInt("cmd_skip_count"));
+    }
+
     altSound.setMusic(loadGroup(iniConfiguration, "music"));
     altSound.setCallout(loadGroup(iniConfiguration, "callout"));
     altSound.setSfx(loadGroup(iniConfiguration, "sfx"));
@@ -173,10 +177,10 @@ public class AltSound2Loader {
       group.setDucks(toSampleTypes(section.getString("ducks")));
     }
     if (section.containsKey("stops")) {
-      group.setDucks(toSampleTypes(section.getString("stops")));
+      group.setStops(toSampleTypes(section.getString("stops")));
     }
     if (section.containsKey("pauses")) {
-      group.setDucks(toSampleTypes(section.getString("pauses")));
+      group.setPauses(toSampleTypes(section.getString("pauses")));
     }
     return group;
   }

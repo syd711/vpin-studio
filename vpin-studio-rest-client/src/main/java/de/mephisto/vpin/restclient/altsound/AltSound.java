@@ -22,6 +22,7 @@ public class AltSound {
   private List<ValidationState> validationStates;
 
   //altsound2
+  private int commandSkipCount;
   private boolean recordSoundCmds;
   private boolean romVolumeControl;
 
@@ -41,6 +42,14 @@ public class AltSound {
 
   private AltSound2Group overlay;
   private List<AltSound2DuckingProfile> overlayDuckingProfiles = new ArrayList<>();
+
+  public int getCommandSkipCount() {
+    return commandSkipCount;
+  }
+
+  public void setCommandSkipCount(int commandSkipCount) {
+    this.commandSkipCount = commandSkipCount;
+  }
 
   public String getName() {
     return name;
