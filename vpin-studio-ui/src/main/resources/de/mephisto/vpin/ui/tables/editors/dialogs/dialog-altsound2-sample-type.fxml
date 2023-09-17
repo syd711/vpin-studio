@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tooltip?>
@@ -23,7 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+               <HBox.margin>
+                  <Insets left="12.0" right="12.0" />
+               </HBox.margin>
+            </Button>
+            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save Sample Type">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -98,7 +102,7 @@
                   </GridPane>
                </children>
                <BorderPane.margin>
-                  <Insets top="48.0" />
+                  <Insets top="72.0" />
                </BorderPane.margin>
             </HBox>
          </center>
@@ -111,7 +115,7 @@
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.60001678466796" minWidth="0.0" prefWidth="237.60001678466796" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="124.7999755859375" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="124.7999755859375" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="124.7999755859375" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -194,7 +198,7 @@
                         <Label styleClass="default-text" text="Sample Type:" textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
-                              <ComboBox fx:id="sampleCombo" prefWidth="150.0" />
+                              <Label fx:id="sampleTypeLabel" prefHeight="0.0" prefWidth="100.0" styleClass="default-text" text="-" />
                               <Label textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

@@ -248,7 +248,7 @@
                </padding>
             </Label>
             <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="130.0" />
-            <Button layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" text="Edit" textFill="WHITE">
+            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" text="Edit" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

@@ -58,4 +58,16 @@ public class AltSound2Group {
   public void setProfiles(List<AltSound2DuckingProfile> profiles) {
     this.profiles = profiles;
   }
+
+  public void removeDuck(AltSound2SampleType sampleType) {
+    if(this.getDucks().contains(sampleType)) {
+      this.getDucks().remove(sampleType);
+    }
+  }
+
+  public void addDuck(AltSound2SampleType sampleType) {
+    if(!this.getDucks().contains(sampleType)) {
+      this.ducks.add(sampleType);
+    }
+  }
 }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.altsound;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.representations.ValidationState;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.lang.Nullable;
 
 import java.io.File;
@@ -349,6 +350,39 @@ public class AltSound {
       }
       default: {
         throw new UnsupportedOperationException("Invalid sample type");
+      }
+    }
+  }
+
+  public void removeDuckingProfileValue(AltSound2SampleType profileListType, AltSound2SampleType typeToRemove) {
+    switch (profileListType) {
+      case sfx: {
+        getSfxDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
+        break;
+      }
+      case callout: {
+        getCalloutDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
+        break;
+      }
+      case overlay: {
+        getOverlayDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
+        break;
+      }
+    }
+  }
+  public void addDuckingProfileValue(AltSound2SampleType profileListType, AltSound2SampleType typeToAdd) {
+    switch (profileListType) {
+      case sfx: {
+        getSfxDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
+        break;
+      }
+      case callout: {
+        getCalloutDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
+        break;
+      }
+      case overlay: {
+        getOverlayDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
+        break;
       }
     }
   }

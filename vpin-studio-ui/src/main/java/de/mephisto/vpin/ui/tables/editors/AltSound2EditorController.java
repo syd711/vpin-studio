@@ -102,6 +102,9 @@ public class AltSound2EditorController implements Initializable {
   private Button editBtn;
 
   @FXML
+  private Button editGroupBtn;
+
+  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -125,12 +128,10 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private void onSampleTypes() {
     String value = this.typeFilterCombo.getValue();
-    AltSound2SampleType sampleType = null;
     if(value != null) {
-      sampleType = AltSound2SampleType.valueOf(value.toLowerCase());
+      Dialogs.openAltSound2SampleTypeDialog(altSound, AltSound2SampleType.valueOf(value.toLowerCase()));
+      this.refresh();
     }
-    Dialogs.openAltSound2SampleTypeDialog(altSound, sampleType);
-    this.refresh();
   }
 
   @FXML
@@ -269,8 +270,12 @@ public class AltSound2EditorController implements Initializable {
       deleteBtn.setDisable(newValue == null);
       refresh();
     });
-    typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
-    typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
+
+    editGroupBtn.setDisable(true);
+    typeFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      editGroupBtn.setDisable(newValue == null);
+      refresh();
+    });
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     searchText.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 

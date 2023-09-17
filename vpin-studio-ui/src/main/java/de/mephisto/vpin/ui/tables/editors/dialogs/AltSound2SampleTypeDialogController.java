@@ -4,11 +4,13 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2Group;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,7 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2SampleTypeDialogController.class);
 
   @FXML
-  private ComboBox<String> sampleCombo;
+  private Label sampleTypeLabel;
 
   @FXML
   private Label volumeLabel;
@@ -63,7 +65,67 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
   private CheckBox stopsSolo;
 
   private AltSound2Group group;
+  private AltSound2Group editingGroup;
   private AltSound altSound;
+
+  @FXML
+  private void onSaveClick(ActionEvent e) {
+    this.group.setProfiles(editingGroup.getProfiles());
+    this.group.setGroupVol(editingGroup.getGroupVol());
+    this.group.setName(editingGroup.getName());
+    this.group.setStops(editingGroup.getStops());
+    this.group.setPauses(editingGroup.getPauses());
+    this.group.setDucks(editingGroup.getDucks());
+
+    if (ducksMusic.isSelected()) {
+      this.group.addDuck(AltSound2SampleType.music);
+      altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.music);
+    }
+    else {
+      this.group.removeDuck(AltSound2SampleType.music);
+      altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.music);
+    }
+
+    if (ducksOverlay.isSelected()) {
+      this.group.addDuck(AltSound2SampleType.overlay);
+      altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.overlay);
+    }
+    else {
+      this.group.removeDuck(AltSound2SampleType.overlay);
+      altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.overlay);
+    }
+
+    if (ducksSolo.isSelected()) {
+      this.group.addDuck(AltSound2SampleType.solo);
+      altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.solo);
+    }
+    else {
+      this.group.removeDuck(AltSound2SampleType.solo);
+      altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.solo);
+    }
+
+    if (ducksSfx.isSelected()) {
+      this.group.addDuck(AltSound2SampleType.sfx);
+      altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.sfx);
+    }
+    else {
+      this.group.removeDuck(AltSound2SampleType.sfx);
+      altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.sfx);
+    }
+
+    if (ducksCallout.isSelected()) {
+      this.group.addDuck(AltSound2SampleType.callout);
+      altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.callout);
+    }
+    else {
+      this.group.removeDuck(AltSound2SampleType.callout);
+      altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.callout);
+    }
+
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
+  }
+
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -73,12 +135,6 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    sampleCombo.setItems(FXCollections.observableList(AltSound2SampleType.toStringValues()));
-    sampleCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      AltSound2Group group = altSound.getGroup(AltSound2SampleType.valueOf(t1.toLowerCase()));
-      setGroup(group);
-    });
-
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       group.setGroupVol(t1.intValue());
       volumeLabel.setText(String.valueOf(t1.intValue()));
@@ -88,7 +144,7 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
   private void refresh() {
     volumeLabel.setText(String.valueOf(group.getGroupVol()));
     volumeSlider.setValue(group.getGroupVol());
-    sampleCombo.setValue(group.getName().name().toUpperCase());
+    sampleTypeLabel.setText(group.getName().name().toUpperCase());
 
     ducksCallout.setSelected(false);
     ducksMusic.setSelected(false);
@@ -118,10 +174,10 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     pausesOverlay.setSelected(pauses.contains(AltSound2SampleType.overlay));
     pausesSfx.setSelected(pauses.contains(AltSound2SampleType.sfx));
     pausesSolo.setSelected(pauses.contains(AltSound2SampleType.solo));
-    pausesCallout.setDisable(group.getName().equals(AltSound2SampleType.music) );
-    pausesMusic.setDisable(group.getName().equals(AltSound2SampleType.music) );
+    pausesCallout.setDisable(group.getName().equals(AltSound2SampleType.music));
+    pausesMusic.setDisable(group.getName().equals(AltSound2SampleType.music));
     pausesOverlay.setDisable(group.getName().equals(AltSound2SampleType.music));
-    pausesSfx.setDisable(group.getName().equals(AltSound2SampleType.music) );
+    pausesSfx.setDisable(group.getName().equals(AltSound2SampleType.music));
     pausesSolo.setDisable(group.getName().equals(AltSound2SampleType.music));
 
     stopsCallout.setSelected(false);
@@ -167,16 +223,14 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
 
   public void setProfile(AltSound altSound, AltSound2SampleType profile) {
     this.altSound = altSound;
-    if (profile == null) {
-      profile = AltSound2SampleType.music;
-    }
-
-    AltSound2Group selectedGroup = altSound.getGroup(profile);
-    this.setGroup(selectedGroup);
-  }
-
-  private void setGroup(AltSound2Group group) {
-    this.group = group;
+    this.group = altSound.getGroup(profile);
+    this.editingGroup = new AltSound2Group();
+    this.editingGroup.setProfiles(group.getProfiles());
+    this.editingGroup.setGroupVol(group.getGroupVol());
+    this.editingGroup.setName(group.getName());
+    this.editingGroup.setStops(group.getStops());
+    this.editingGroup.setPauses(group.getPauses());
+    this.editingGroup.setDucks(group.getDucks());
     refresh();
   }
 }
