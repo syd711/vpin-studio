@@ -49,6 +49,17 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="The AltSound processor attempts to recreate original &#10;playback behavior using commands sent from the ROM.&#10;This does not work in all cases, &#10;resulting in undesirable muting of the playback volume. &#10;Setting this variable to 0 turns this feature off." wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Label>
                   <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="Record Sound Commands" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -57,6 +68,17 @@
                         <Insets left="36.0" />
                      </HBox.margin>
                   </CheckBox>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="Records all received sound commands and relative playback times.&#10;" wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Label>
                   <Spinner fx:id="skipCountSpinner" prefWidth="60.0">
                      <HBox.margin>
                         <Insets left="36.0" />
@@ -65,6 +87,17 @@
                   <Label styleClass="default-text" text="Command Skip Count">
                      <HBox.margin>
                         <Insets left="6.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="Allows authors to specify ‘n’ initial sound commands to skip processing.  &#10;This is necessary because some ROMs send commands during initialization that shouldn’t be played, &#10;but are still valid for runtime." wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
                      </HBox.margin>
                   </Label>
                </children>
