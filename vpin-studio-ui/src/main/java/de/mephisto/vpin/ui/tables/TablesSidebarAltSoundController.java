@@ -156,7 +156,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Restore Backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tablesSidebarController.getTablesController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
