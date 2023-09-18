@@ -92,7 +92,7 @@ public class AltSound2Writer {
   private void saveDuckingProfileNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, List<AltSound2DuckingProfile> profiles) {
     String sectionName = sampleType.name() + "_ducking_profiles";
     SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sectionName);
-    sampleTypeNode.clear();
+//    sampleTypeNode.clear();
 
     if (!profiles.isEmpty()) {
       for (AltSound2DuckingProfile profile : profiles) {

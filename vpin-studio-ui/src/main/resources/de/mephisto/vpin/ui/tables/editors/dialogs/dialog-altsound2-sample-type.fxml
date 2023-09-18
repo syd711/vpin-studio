@@ -27,7 +27,7 @@
                   <Insets left="12.0" right="12.0" />
                </HBox.margin>
             </Button>
-            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save Sample Type">
+            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Apply Changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
