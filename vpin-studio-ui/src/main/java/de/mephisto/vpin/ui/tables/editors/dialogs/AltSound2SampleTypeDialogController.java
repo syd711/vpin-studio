@@ -1,9 +1,7 @@
 package de.mephisto.vpin.ui.tables.editors.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.altsound.AltSound2Group;
-import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
+import de.mephisto.vpin.restclient.altsound.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class AltSound2SampleTypeDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSound2SampleTypeDialogController.class);
@@ -87,6 +86,18 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     }
 
     if (ducksOverlay.isSelected()) {
+      if (altSound.getOverlayDuckingProfiles().isEmpty()) {
+        AltSound2DuckingProfile profile = new AltSound2DuckingProfile();
+        profile.setId(1);
+        profile.setType(AltSound2SampleType.overlay);
+        profile.setValues(altSound.getOverlay().getDucks().stream().map(duck -> {
+          AltSoundDuckingProfileValue value = new AltSoundDuckingProfileValue();
+          value.setVolume(60);
+          value.setSampleType(duck);
+          return value;
+        }).collect(Collectors.toList()));
+        altSound.getOverlayDuckingProfiles().add(profile);
+      }
       this.group.addDuck(AltSound2SampleType.overlay);
       altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.overlay);
     }
@@ -105,6 +116,18 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     }
 
     if (ducksSfx.isSelected()) {
+      if (altSound.getSfxDuckingProfiles().isEmpty()) {
+        AltSound2DuckingProfile profile = new AltSound2DuckingProfile();
+        profile.setId(1);
+        profile.setType(AltSound2SampleType.sfx);
+        profile.setValues(altSound.getSfx().getDucks().stream().map(duck -> {
+          AltSoundDuckingProfileValue value = new AltSoundDuckingProfileValue();
+          value.setVolume(60);
+          value.setSampleType(duck);
+          return value;
+        }).collect(Collectors.toList()));
+        altSound.getSfxDuckingProfiles().add(profile);
+      }
       this.group.addDuck(AltSound2SampleType.sfx);
       altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.sfx);
     }
@@ -114,6 +137,18 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     }
 
     if (ducksCallout.isSelected()) {
+      if (altSound.getCalloutDuckingProfiles().isEmpty()) {
+        AltSound2DuckingProfile profile = new AltSound2DuckingProfile();
+        profile.setId(1);
+        profile.setType(AltSound2SampleType.callout);
+        profile.setValues(altSound.getCallout().getDucks().stream().map(duck -> {
+          AltSoundDuckingProfileValue value = new AltSoundDuckingProfileValue();
+          value.setVolume(60);
+          value.setSampleType(duck);
+          return value;
+        }).collect(Collectors.toList()));
+        altSound.getCalloutDuckingProfiles().add(profile);
+      }
       this.group.addDuck(AltSound2SampleType.callout);
       altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.callout);
     }

@@ -346,7 +346,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Sample Type:" textFill="WHITE" />
+                        <Label styleClass="default-text" text="Profile's Sample Type:" textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="sampleCombo" prefWidth="150.0" />

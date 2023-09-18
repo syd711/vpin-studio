@@ -128,8 +128,9 @@ public class AltSound2EditorController implements Initializable {
   @FXML
   private void onSampleTypes() {
     String value = this.typeFilterCombo.getValue();
-    if(value != null) {
+    if (value != null) {
       Dialogs.openAltSound2SampleTypeDialog(altSound, AltSound2SampleType.valueOf(value.toLowerCase()));
+      this.refreshProfiles();
       this.refresh();
     }
   }
@@ -140,13 +141,34 @@ public class AltSound2EditorController implements Initializable {
     if (value != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Profile \"" + value.getType().name().toUpperCase() + "\" " + value.getId() + "?",
           "All related audio files will be resetted to the default profile.",
-          "Delete Profile");
+          "If no other profile exists for this sample type, it will be removed from all ducking lists.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        boolean removed = altSound.getMusicDuckingProfiles().remove(value);
-        removed = altSound.getCalloutDuckingProfiles().remove(value);
-        removed = altSound.getSoloDuckingProfiles().remove(value);
-        removed = altSound.getSfxDuckingProfiles().remove(value);
-        removed = altSound.getOverlayDuckingProfiles().remove(value);
+//        altSound.getMusicDuckingProfiles().remove(value);
+//        altSound.getSoloDuckingProfiles().remove(value);
+        altSound.getSfxDuckingProfiles().remove(value);
+        altSound.getOverlayDuckingProfiles().remove(value);
+        altSound.getCalloutDuckingProfiles().remove(value);
+
+        if (altSound.getCalloutDuckingProfiles().isEmpty()) {
+          altSound.getSfx().removeDuck(value.getType());
+          altSound.getSfxDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+          altSound.getOverlay().removeDuck(value.getType());
+          altSound.getOverlayDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+        }
+
+        if (altSound.getSfxDuckingProfiles().isEmpty()) {
+          altSound.getCallout().removeDuck(value.getType());
+          altSound.getCalloutDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+          altSound.getOverlay().removeDuck(value.getType());
+          altSound.getOverlayDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+        }
+
+        if (altSound.getOverlayDuckingProfiles().isEmpty()) {
+          altSound.getCallout().removeDuck(value.getType());
+          altSound.getCalloutDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+          altSound.getSfx().removeDuck(value.getType());
+          altSound.getSfxDuckingProfiles().forEach(p -> p.removeProfileValue(value.getType()));
+        }
 
         List<AltSoundEntry> entries = altSound.getEntries();
         for (AltSoundEntry entry : entries) {
@@ -448,6 +470,10 @@ public class AltSound2EditorController implements Initializable {
 
     }
     else {
+      duckingProfileCombo.setValue(null);
+      duckingProfileCombo.setDisable(true);
+      channelCombo.setValue(null);
+      channelCombo.setDisable(true);
       gainVolume.valueProperty().set(0);
       gainLabel.setText("-");
     }

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -121,7 +122,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       }
 
       //disable the channel itself for selection
-      refreshChannelDisable(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
+      refreshChannelDisable(Arrays.asList(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase())));
     });
 
 
@@ -164,7 +165,9 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
       this.profileIdLabel.setText(String.valueOf(profile.getId()));
       this.sampleCombo.setDisable(true);
 
-      refreshChannelDisable(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
+      AltSound2Group group = altSound.getGroup(AltSound2SampleType.valueOf(this.sampleCombo.getValue().toLowerCase()));
+      List<AltSound2SampleType> ducks = group.getDucks();
+      refreshChannelDisable(ducks);
     }
     else {
       this.profileIdLabel.setText("-");
@@ -208,7 +211,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     }
   }
 
-  private void refreshChannelDisable(AltSound2SampleType sampleType) {
+  private void refreshChannelDisable(List<AltSound2SampleType> sampleTypes) {
     sfxCheckbox.setSelected(false);
     sfxSlider.setDisable(true);
     sfxLabel.setText("-");
@@ -234,9 +237,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
     overlayLabel.setText("-");
     overlayLabel.setDisable(true);
 
-    AltSound2Group group = altSound.getGroup(sampleType);
-    List<AltSound2SampleType> ducks = group.getDucks();
-    for (AltSound2SampleType duck : ducks) {
+    for (AltSound2SampleType duck : sampleTypes) {
       switch (duck) {
         case sfx: {
           sfxCheckbox.setSelected(true);
@@ -282,9 +283,7 @@ public class AltSound2ProfileDialogController implements Initializable, DialogCo
           throw new UnsupportedOperationException("Invalid sample type");
         }
       }
-
     }
-
   }
 
   public AltSound2DuckingProfile editingFinished() {
