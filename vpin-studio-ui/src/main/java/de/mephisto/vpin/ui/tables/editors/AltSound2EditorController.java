@@ -138,14 +138,15 @@ public class AltSound2EditorController implements Initializable {
   private void onProfileDelete() {
     AltSound2DuckingProfile value = this.profilesCombo.getValue();
     if (value != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Profile \"" + value.getType().name().toUpperCase() + "\" " + value.getId() + "?", "All related audio files will be resetted to the default profile.", null,
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Profile \"" + value.getType().name().toUpperCase() + "\" " + value.getId() + "?",
+          "All related audio files will be resetted to the default profile.",
           "Delete Profile");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        altSound.getMusicDuckingProfiles().remove(value);
-        altSound.getCalloutDuckingProfiles().remove(value);
-        altSound.getSoloDuckingProfiles().remove(value);
-        altSound.getSfxDuckingProfiles().remove(value);
-        altSound.getOverlayDuckingProfiles().remove(value);
+        boolean removed = altSound.getMusicDuckingProfiles().remove(value);
+        removed = altSound.getCalloutDuckingProfiles().remove(value);
+        removed = altSound.getSoloDuckingProfiles().remove(value);
+        removed = altSound.getSfxDuckingProfiles().remove(value);
+        removed = altSound.getOverlayDuckingProfiles().remove(value);
 
         List<AltSoundEntry> entries = altSound.getEntries();
         for (AltSoundEntry entry : entries) {

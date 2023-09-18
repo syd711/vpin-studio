@@ -1,18 +1,15 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.altsound.*;
+import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
 
 public class AltSoundLoaderFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundLoaderFactory.class);
@@ -36,7 +33,11 @@ public class AltSoundLoaderFactory {
         iniConfiguration.setSeparatorUsedInInput("=");
 
         FileReader fileReader = new FileReader(ini);
-        iniConfiguration.read(fileReader);
+        try {
+          iniConfiguration.read(fileReader);
+        } finally {
+          fileReader.close();
+        }
 
         SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
         if (formatNode != null) {

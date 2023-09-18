@@ -70,6 +70,8 @@ public class AltSound2Writer {
             FileWriter fileWriter = new FileWriter(ini);
             try {
               iniConfiguration.write(fileWriter);
+            } catch (Exception e) {
+              LOG.error("Failed to write altsound.ini: " + e.getMessage(), e);
             } finally {
               fileWriter.close();
             }
@@ -88,20 +90,42 @@ public class AltSound2Writer {
   }
 
   private void saveDuckingProfileNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, List<AltSound2DuckingProfile> profiles) {
-    SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sampleType.name() + "_ducking_profiles");
-    for (AltSound2DuckingProfile profile : profiles) {
-      sampleTypeNode.setProperty("ducking_profile" + profile.getId(), profile.getValues().stream().map(AltSoundDuckingProfileValue::toString).collect(Collectors.joining(", ")));
+    String sectionName = sampleType.name() + "_ducking_profiles";
+    SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sectionName);
+    sampleTypeNode.clear();
+
+    if (!profiles.isEmpty()) {
+      for (AltSound2DuckingProfile profile : profiles) {
+        sampleTypeNode.setProperty("ducking_profile" + profile.getId(), profile.getValues().stream().map(AltSoundDuckingProfileValue::toString).collect(Collectors.joining(", ")));
+      }
     }
   }
 
   private void saveSampleTypeNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, AltSound2Group group) {
     SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sampleType.name());
     sampleTypeNode.setProperty("group_vol", group.getGroupVol());
-    sampleTypeNode.setProperty("pauses", group.getPauses().stream().map(Enum::name).collect(Collectors.joining(", ")));
-    sampleTypeNode.setProperty("stops", group.getStops().stream().map(Enum::name).collect(Collectors.joining(", ")));
+    if (!group.getPauses().isEmpty()) {
+      sampleTypeNode.setProperty("pauses", group.getPauses().stream().map(Enum::name).collect(Collectors.joining(", ")));
+    }
+    else {
+      sampleTypeNode.clearProperty("pauses");
+    }
+
+    if (!group.getStops().isEmpty()) {
+      sampleTypeNode.setProperty("stops", group.getStops().stream().map(Enum::name).collect(Collectors.joining(", ")));
+    }
+    else {
+      sampleTypeNode.clearProperty("stops");
+    }
+
 
     if (!(sampleType.equals(AltSound2SampleType.solo) || sampleType.equals(AltSound2SampleType.music))) {
-      sampleTypeNode.setProperty("ducks", group.getDucks().stream().map(Enum::name).collect(Collectors.joining(", ")));
+      if (!group.getDucks().isEmpty()) {
+        sampleTypeNode.setProperty("ducks", group.getDucks().stream().map(Enum::name).collect(Collectors.joining(", ")));
+      }
+      else {
+        sampleTypeNode.clearProperty("ducks");
+      }
     }
   }
 }
