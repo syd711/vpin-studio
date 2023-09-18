@@ -23,5 +23,9 @@ public class AltSound2Test {
 
     AltSound2Writer writer = new AltSound2Writer(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"));
     writer.write(altSound);
+
+    AltSound altSound2 = loaderFactory.load();
+    assertNotNull(altSound2);
+    assertEquals(altSound2.getOverlayDuckingProfiles().size(), altSound.getOverlayDuckingProfiles().size());
   }
 }

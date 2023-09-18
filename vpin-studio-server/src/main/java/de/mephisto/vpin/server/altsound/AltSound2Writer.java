@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,14 +91,25 @@ public class AltSound2Writer {
     }
   }
 
-  private void saveDuckingProfileNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, List<AltSound2DuckingProfile> profiles) {
+  private void saveDuckingProfileNode(INIConfiguration iniConfiguration, AltSound2SampleType sampleType, List<AltSound2DuckingProfile> profiles) throws IOException {
     String sectionName = sampleType.name() + "_ducking_profiles";
-    SubnodeConfiguration sampleTypeNode = iniConfiguration.getSection(sectionName);
-//    sampleTypeNode.clear();
+    SubnodeConfiguration sectionNode = iniConfiguration.getSection(sectionName);
 
-    if (!profiles.isEmpty()) {
+    if (profiles.isEmpty()) {
+      sectionNode.clear();
+    }
+    else {
       for (AltSound2DuckingProfile profile : profiles) {
-        sampleTypeNode.setProperty("ducking_profile" + profile.getId(), profile.getValues().stream().map(AltSoundDuckingProfileValue::toString).collect(Collectors.joining(", ")));
+        sectionNode.setProperty("ducking_profile" + profile.getId(), profile.getValues().stream().map(AltSoundDuckingProfileValue::toString).collect(Collectors.joining(", ")));
+      }
+
+      Iterator<String> keys = sectionNode.getKeys();
+      while (keys.hasNext()) {
+        String key = keys.next();
+        int id = Integer.parseInt(key.substring(key.length() - 1));
+        if (profiles.stream().noneMatch(p -> p.getId() == id)) {
+          sectionNode.clearProperty(key);
+        }
       }
     }
   }
