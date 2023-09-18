@@ -76,6 +76,109 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     this.group.setPauses(editingGroup.getPauses());
     this.group.setDucks(editingGroup.getDucks());
 
+    savePauses();
+    saveStops();
+    saveDuckingProfiles();
+
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
+  }
+
+  private void saveStops() {
+    if (stopsMusic.isSelected()) {
+      if (!this.group.getStops().contains(AltSound2SampleType.music)) {
+        this.group.getStops().add(AltSound2SampleType.music);
+      }
+    }
+    else {
+      this.group.getStops().remove(AltSound2SampleType.music);
+    }
+
+    if (stopsCallout.isSelected()) {
+      if (!this.group.getStops().contains(AltSound2SampleType.callout)) {
+        this.group.getStops().add(AltSound2SampleType.callout);
+      }
+    }
+    else {
+      this.group.getStops().remove(AltSound2SampleType.callout);
+    }
+
+    if (stopsOverlay.isSelected()) {
+      if (!this.group.getStops().contains(AltSound2SampleType.overlay)) {
+        this.group.getStops().add(AltSound2SampleType.overlay);
+      }
+    }
+    else {
+      this.group.getStops().remove(AltSound2SampleType.overlay);
+    }
+
+    if (stopsSfx.isSelected()) {
+      if (!this.group.getStops().contains(AltSound2SampleType.sfx)) {
+        this.group.getStops().add(AltSound2SampleType.sfx);
+      }
+    }
+    else {
+      this.group.getStops().remove(AltSound2SampleType.sfx);
+    }
+
+    if (stopsSolo.isSelected()) {
+      if (!this.group.getStops().contains(AltSound2SampleType.solo)) {
+        this.group.getStops().add(AltSound2SampleType.solo);
+      }
+    }
+    else {
+      this.group.getStops().remove(AltSound2SampleType.solo);
+    }
+  }
+
+  private void savePauses() {
+    if (pausesMusic.isSelected()) {
+      if (!this.group.getPauses().contains(AltSound2SampleType.music)) {
+        this.group.getPauses().add(AltSound2SampleType.music);
+      }
+    }
+    else {
+      this.group.getPauses().remove(AltSound2SampleType.music);
+    }
+
+    if (pausesCallout.isSelected()) {
+      if (!this.group.getPauses().contains(AltSound2SampleType.callout)) {
+        this.group.getPauses().add(AltSound2SampleType.callout);
+      }
+    }
+    else {
+      this.group.getPauses().remove(AltSound2SampleType.callout);
+    }
+
+    if (pausesOverlay.isSelected()) {
+      if (!this.group.getPauses().contains(AltSound2SampleType.overlay)) {
+        this.group.getPauses().add(AltSound2SampleType.overlay);
+      }
+    }
+    else {
+      this.group.getPauses().remove(AltSound2SampleType.overlay);
+    }
+
+    if (pausesSfx.isSelected()) {
+      if (!this.group.getPauses().contains(AltSound2SampleType.sfx)) {
+        this.group.getPauses().add(AltSound2SampleType.sfx);
+      }
+    }
+    else {
+      this.group.getPauses().remove(AltSound2SampleType.sfx);
+    }
+
+    if (pausesSolo.isSelected()) {
+      if (!this.group.getPauses().contains(AltSound2SampleType.solo)) {
+        this.group.getPauses().add(AltSound2SampleType.solo);
+      }
+    }
+    else {
+      this.group.getPauses().remove(AltSound2SampleType.solo);
+    }
+  }
+
+  private void saveDuckingProfiles() {
     if (ducksMusic.isSelected()) {
       this.group.addDuck(AltSound2SampleType.music);
       altSound.addDuckingProfileValue(this.group.getName(), AltSound2SampleType.music);
@@ -156,9 +259,6 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
       this.group.removeDuck(AltSound2SampleType.callout);
       altSound.removeDuckingProfileValue(this.group.getName(), AltSound2SampleType.callout);
     }
-
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
   }
 
 
@@ -173,6 +273,7 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> {
       group.setGroupVol(t1.intValue());
       volumeLabel.setText(String.valueOf(t1.intValue()));
+      editingGroup.setGroupVol(t1.intValue());
     });
   }
 
@@ -209,11 +310,11 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     pausesOverlay.setSelected(pauses.contains(AltSound2SampleType.overlay));
     pausesSfx.setSelected(pauses.contains(AltSound2SampleType.sfx));
     pausesSolo.setSelected(pauses.contains(AltSound2SampleType.solo));
-    pausesCallout.setDisable(group.getName().equals(AltSound2SampleType.music));
+    pausesCallout.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout));
     pausesMusic.setDisable(group.getName().equals(AltSound2SampleType.music));
-    pausesOverlay.setDisable(group.getName().equals(AltSound2SampleType.music));
-    pausesSfx.setDisable(group.getName().equals(AltSound2SampleType.music));
-    pausesSolo.setDisable(group.getName().equals(AltSound2SampleType.music));
+    pausesOverlay.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.overlay));
+    pausesSfx.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.sfx));
+    pausesSolo.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
 
     stopsCallout.setSelected(false);
     stopsMusic.setSelected(false);
@@ -226,11 +327,11 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     stopsOverlay.setSelected(stops.contains(AltSound2SampleType.overlay));
     stopsSfx.setSelected(stops.contains(AltSound2SampleType.sfx));
     stopsSolo.setSelected(stops.contains(AltSound2SampleType.solo));
-    stopsCallout.setDisable(group.getName().equals(AltSound2SampleType.music));
+    stopsCallout.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout));
     stopsMusic.setDisable(group.getName().equals(AltSound2SampleType.music));
-    stopsOverlay.setDisable(group.getName().equals(AltSound2SampleType.music));
-    stopsSfx.setDisable(group.getName().equals(AltSound2SampleType.music));
-    stopsSolo.setDisable(group.getName().equals(AltSound2SampleType.music));
+    stopsOverlay.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.overlay));
+    stopsSfx.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.sfx));
+    stopsSolo.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
 
     AltSound2SampleType groupSampleType = group.getName();
     switch (groupSampleType) {
