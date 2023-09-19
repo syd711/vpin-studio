@@ -43,7 +43,6 @@ Name: "desktopiconVPBM"; Description: "Create Desktop Icon for the Visual Pinbal
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Table-Manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion
