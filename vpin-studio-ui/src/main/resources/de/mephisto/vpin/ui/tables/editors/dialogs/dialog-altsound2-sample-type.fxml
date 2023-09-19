@@ -207,7 +207,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="SOLO and MUSIC types cannot duck other types. Sample types cannot duck themselves." />
+                                    <Tooltip text="SOLO and MUSIC types cannot duck other types. &#10;Sample types cannot duck themselves.&#10;SFX can not be stopped.&#10;Solo can not be ducked.&#10;Only a Solo can stop Solos.&#10;" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets left="6.0" />

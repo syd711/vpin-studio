@@ -291,13 +291,13 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     ducksMusic.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
     ducksOverlay.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
     ducksSfx.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
-    ducksSolo.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
+    ducksSolo.setDisable(true);
     List<AltSound2SampleType> ducks = group.getDucks();
     ducksCallout.setSelected(ducks.contains(AltSound2SampleType.callout));
     ducksMusic.setSelected(ducks.contains(AltSound2SampleType.music));
     ducksOverlay.setSelected(ducks.contains(AltSound2SampleType.overlay));
     ducksSfx.setSelected(ducks.contains(AltSound2SampleType.sfx));
-    ducksSolo.setSelected(ducks.contains(AltSound2SampleType.solo));
+    ducksSolo.setSelected(false);
 
     pausesCallout.setSelected(false);
     pausesMusic.setSelected(false);
@@ -330,8 +330,8 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     stopsCallout.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout));
     stopsMusic.setDisable(group.getName().equals(AltSound2SampleType.music));
     stopsOverlay.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.overlay));
-    stopsSfx.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.sfx));
-    stopsSolo.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.solo));
+    stopsSfx.setDisable(true);
+    stopsSolo.setDisable(!group.getName().equals(AltSound2SampleType.solo));
 
     AltSound2SampleType groupSampleType = group.getName();
     switch (groupSampleType) {
