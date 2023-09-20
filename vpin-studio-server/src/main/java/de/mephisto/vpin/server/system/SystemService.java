@@ -277,6 +277,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return new File(PINemHiService.PINEMHI_FOLDER, PINemHiService.PINEMHI_COMMAND);
   }
 
+  public File getResettedNVRamsFolder() {
+    return new File(RESOURCES, "nvrams");
+  }
+
   @SuppressWarnings("unused")
   public Dimension getScreenSize() {
     return Toolkit.getDefaultToolkit().getScreenSize();

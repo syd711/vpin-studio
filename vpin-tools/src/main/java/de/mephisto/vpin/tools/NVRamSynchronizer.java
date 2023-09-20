@@ -1,8 +1,10 @@
 package de.mephisto.vpin.tools;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
@@ -19,7 +21,7 @@ public class NVRamSynchronizer {
       "\n" +
       "List of available and missing nvrams:\n" +
       "\n" +
-      "| Table | ROM | Available | Submitted By |\n" +
+      "| Table | ROM | Download | Submitted By |\n" +
       "| ----- | --- | --------- |--------------|\n";
 
   public static void main(String[] args) throws Exception {
@@ -36,6 +38,7 @@ public class NVRamSynchronizer {
     List<String> allLines = IOUtils.readLines(new FileInputStream(init), Charset.defaultCharset());
     Map<String, String> nvrams = new LinkedHashMap<>();
 
+    //collect all nvram names from the pinemhi.ini file
     for (String line : allLines) {
       if (line.endsWith(".nv")) {
         String nvram = line.substring(line.lastIndexOf("=") + 1).trim();
@@ -46,7 +49,9 @@ public class NVRamSynchronizer {
       }
     }
 
+    StringBuilder indexTxt = new StringBuilder();
     for (Map.Entry<String, String> nvram : nvrams.entrySet()) {
+      //create string entry and folder for the nvrams
       String readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " |  |  |";
       File targetFolder = new File(NVRAM_REPO, nvram.getKey() + "/");
       if (!targetFolder.exists()) {
@@ -62,12 +67,18 @@ public class NVRamSynchronizer {
           target.delete();
         }
         IOUtils.copy(new FileInputStream(clearedNV), new FileOutputStream(target));
+        indexTxt.append(FilenameUtils.getBaseName(clearedNV.getName()));
+        indexTxt.append("\n");
       }
 
 
       builder.append(readmeLine);
       builder.append("\n");
     }
+
+    File indexTxtFile = new File( NVRAM_REPO, "index.txt");
+    IOUtils.write(indexTxt, new FileOutputStream(indexTxtFile), Charset.defaultCharset());
+    System.out.println("Written " + indexTxtFile.getAbsolutePath());
 
     System.out.println(builder.toString());
   }

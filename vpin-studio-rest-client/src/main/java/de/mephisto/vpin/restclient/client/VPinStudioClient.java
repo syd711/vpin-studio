@@ -44,6 +44,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final MameServiceClient mameServiceClient;
+  private final NVRamsServiceClient nvRamsServiceClient;
   private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
@@ -69,6 +70,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
+    this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
@@ -82,6 +84,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+  }
+
+  public NVRamsServiceClient getNvRamsService() {
+    return nvRamsServiceClient;
   }
 
   public HigscoreBackupServiceClient getHigscoreBackupService() {
