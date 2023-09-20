@@ -327,10 +327,10 @@ public class AltSound2SampleTypeDialogController implements Initializable, Dialo
     stopsOverlay.setSelected(stops.contains(AltSound2SampleType.overlay));
     stopsSfx.setSelected(stops.contains(AltSound2SampleType.sfx));
     stopsSolo.setSelected(stops.contains(AltSound2SampleType.solo));
-    stopsCallout.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout) || group.getName().equals(AltSound2SampleType.sfx)|| group.getName().equals(AltSound2SampleType.overlay));
-    stopsMusic.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.sfx)|| group.getName().equals(AltSound2SampleType.overlay));
+    stopsCallout.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout) || group.getName().equals(AltSound2SampleType.sfx) || group.getName().equals(AltSound2SampleType.overlay));
+    stopsMusic.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.sfx) || group.getName().equals(AltSound2SampleType.overlay));
     stopsOverlay.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.overlay) || group.getName().equals(AltSound2SampleType.sfx));
-    stopsSfx.setDisable(true);
+    stopsSfx.setDisable(group.getName().equals(AltSound2SampleType.music) || group.getName().equals(AltSound2SampleType.callout) || group.getName().equals(AltSound2SampleType.overlay));
     stopsSolo.setDisable(!group.getName().equals(AltSound2SampleType.solo));
 
     AltSound2SampleType groupSampleType = group.getName();
