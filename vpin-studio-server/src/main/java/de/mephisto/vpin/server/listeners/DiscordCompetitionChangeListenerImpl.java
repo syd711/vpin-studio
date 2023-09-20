@@ -68,49 +68,51 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       try {
         Game game = gameService.getGame(competition.getGameId());
-        if (game != null) {
+        if (game == null) {
+          LOG.info("No game found for id " + competition.getGameId() + ", seems it has been removed before the competition was started.");
+          return;
+        }
 
-          boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-          long serverId = competition.getDiscordServerId();
-          long channelId = competition.getDiscordChannelId();
-          long botId = discordService.getBotId();
+        boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+        long serverId = competition.getDiscordServerId();
+        long channelId = competition.getDiscordChannelId();
+        long botId = discordService.getBotId();
 
-          //check if the database has been resetted and we only join a competition that we created earlier
-          boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
-          if (active) {
-            LOG.info("The " + competition + " is still available and active, skipping init process.");
-          }
-          else if (isOwner) {
-            String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
-                "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.";
-            String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
-            byte[] image = assetService.getCompetitionStartedCard(competition, game);
-            String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+        //check if the database has been resetted and we only join a competition that we created earlier
+        boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
+        if (active) {
+          LOG.info("The " + competition + " is still available and active, skipping init process.");
+        }
+        else if (isOwner) {
+          String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
+              "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.";
+          String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
+          byte[] image = assetService.getCompetitionStartedCard(competition, game);
+          String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-            String imageMessage = description;
-            if (!StringUtils.isEmpty(game.getExtTableId())) {
-              VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
-              imageMessage += "\n\nVirtual Pinball Spreadsheet:\nhttps://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/";
+          String imageMessage = description;
+          if (!StringUtils.isEmpty(game.getExtTableId())) {
+            VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+            imageMessage += "\n\nVirtual Pinball Spreadsheet:\nhttps://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/";
 
-              if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-                List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
-                Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
-                if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
-                  imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().get(0).getUrl();
-                }
+            if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+              List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
+              Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+              if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
+                imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().get(0).getUrl();
               }
             }
-
-            long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage + "\n\n" + base64Data);
-            discordService.initCompetition(serverId, channelId, messageId);
-            LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
           }
 
-          if (highscoreBackupService.backup(game)) {
-            highscoreService.resetHighscore(game);
-          }
-          LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
+          long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage + "\n\n" + base64Data);
+          discordService.initCompetition(serverId, channelId, messageId, "Competition Channel for Table \"" + game.getGameDisplayName() + "\"");
+          LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
+
+        if (highscoreBackupService.backup(game)) {
+          highscoreService.resetHighscore(game);
+        }
+        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
         if (competition.getBadge() != null && competition.isActive()) {
           popperService.augmentWheel(game, competition.getBadge());
@@ -171,7 +173,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
             else {
               Platform.runLater(() -> {
                 String description = "";
-                if(!scoreSummary.getScores().isEmpty()) {
+                if (!scoreSummary.getScores().isEmpty()) {
                   description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores());
                 }
                 description = description + "\nYou can duplicate the competition to continue it with another table or duration.";

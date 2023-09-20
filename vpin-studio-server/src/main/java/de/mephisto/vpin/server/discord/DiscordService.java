@@ -496,13 +496,17 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return summary;
   }
 
-  public void initCompetition(long serverId, long channelId, long messageId) {
+  public void initCompetition(long serverId, long channelId, long messageId, String topic) {
     if (this.discordClient != null) {
       //delete existing pins for new competition starts
       clearPinnedMessages(serverId, channelId);
       //use the slow mode to avoid concurrent pinning of new highscores
       discordClient.setSlowMode(serverId, channelId, 5);
       discordClient.pinMessage(serverId, channelId, messageId);
+
+      if (topic != null) {
+        discordClient.setTopic(serverId, channelId, topic);
+      }
     }
   }
 
@@ -527,6 +531,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
         }
       }
+
+      this.discordClient.setTopic(serverId, channelId, "No active competition on this channel.");
     }
   }
 
