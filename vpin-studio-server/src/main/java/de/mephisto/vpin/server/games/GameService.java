@@ -231,7 +231,7 @@ public class GameService {
 
   @SuppressWarnings("unused")
   @Nullable
-  public Game getGame(int id) {
+  public synchronized Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
       applyGameDetails(game, false);

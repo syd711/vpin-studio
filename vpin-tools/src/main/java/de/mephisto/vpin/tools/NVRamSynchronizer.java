@@ -1,16 +1,17 @@
 package de.mephisto.vpin.tools;
 
+import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 public class NVRamSynchronizer {
 
@@ -31,6 +32,14 @@ public class NVRamSynchronizer {
   private static void synchonizeNVRamRepo() throws Exception {
     File init = new File("./resources/pinemhi/pinemhi.ini");
     File readme = new File(NVRAM_REPO, "README.md");
+    File allZip = new File(NVRAM_REPO, "all.zip");
+
+    if(allZip.exists()) {
+      allZip.delete();
+    }
+
+    FileOutputStream zipOutStream = new FileOutputStream(allZip);
+    ZipOutputStream zipOut = new ZipOutputStream(zipOutStream);
 
     List<String> readMeLines = IOUtils.readLines(new FileInputStream(readme), Charset.defaultCharset());
 
@@ -67,6 +76,8 @@ public class NVRamSynchronizer {
           target.delete();
         }
         IOUtils.copy(new FileInputStream(clearedNV), new FileOutputStream(target));
+        ZipUtil.zipFile(target, target.getName(), zipOut);
+
         indexTxt.append(FilenameUtils.getBaseName(clearedNV.getName()));
         indexTxt.append("\n");
       }
@@ -76,7 +87,9 @@ public class NVRamSynchronizer {
       builder.append("\n");
     }
 
-    File indexTxtFile = new File( NVRAM_REPO, "index.txt");
+    zipOut.close();
+
+    File indexTxtFile = new File(NVRAM_REPO, "index.txt");
     IOUtils.write(indexTxt, new FileOutputStream(indexTxtFile), Charset.defaultCharset());
     System.out.println("Written " + indexTxtFile.getAbsolutePath());
 

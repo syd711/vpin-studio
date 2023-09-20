@@ -86,6 +86,9 @@ public class TablesSidebarController implements Initializable {
   private Button directb2sBtn;
 
   @FXML
+  private Button nvramExplorerBtn;
+
+  @FXML
   private Button altColorExplorerBtn;
 
   @FXML
@@ -150,6 +153,16 @@ public class TablesSidebarController implements Initializable {
       } catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
+    }
+  }
+
+  @FXML
+  private void onNvRam() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "nvram").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
 
@@ -235,7 +248,6 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onPrefsBackglass() {
     PreferencesController.open("backglass");
-
   }
 
   @FXML
@@ -252,6 +264,7 @@ public class TablesSidebarController implements Initializable {
     altColorExplorerBtn.setVisible(client.getSystemService().isLocal());
     directb2sBtn.setVisible(client.getSystemService().isLocal());
     scriptBtn.setVisible(client.getSystemService().isLocal());
+    nvramExplorerBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));

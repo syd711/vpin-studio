@@ -196,8 +196,8 @@ class HighscoreResolver {
         return null;
       }
 
-      String nvRamFileName = nvRam.getCanonicalFile().getName();
-      String nvRamName = FilenameUtils.getBaseName(nvRamFileName);
+      String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
+      String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
@@ -233,7 +233,11 @@ class HighscoreResolver {
         metadata.setStatus(error);
         throw new Exception(error);
       }
-      return standardOutputFromCommand.toString();
+      String stdOut = standardOutputFromCommand.toString();
+      if(!stdOut.contains("1")) {
+        metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
+      }
+      return stdOut;
     } catch (Exception e) {
       String msg = commandFile.getCanonicalPath() + " command failed for directory " + commandFile.getCanonicalPath() + ": " + e.getMessage();
       metadata.setStatus(msg);

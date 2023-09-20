@@ -3,12 +3,11 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.JoinMode;
-import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
@@ -22,8 +21,6 @@ import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -131,11 +128,15 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   @FXML
   private CheckBox resetCheckbox;
 
+  @FXML
+  private Label nvramLabel;
+
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
 
   private List<CompetitionRepresentation> allCompetitions;
+  private NVRamList nvRamList;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -222,7 +223,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     //check Discord permissions
     DiscordChannel value = channelsCombo.getValue();
-    if(value != null) {
+    if (value != null) {
       if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
         validationTitle.setText("Insufficient Permissions");
         validationDescription.setText("Your Discord bot has insufficient permissions for this channel. Please check the documentation for details.");
@@ -284,6 +285,24 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
           return;
         }
       }
+    }
+
+    GameRepresentation game = this.tableCombo.getValue();
+    if (nvRamList.contains(game.getRom()) || nvRamList.contains(game.getTableName())) {
+      nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
+      nvramLabel.setTooltip(new Tooltip("The highscore can be resetted, resetted NVRam has been found."));
+    }
+    else if (game.getHighscoreType() == null) {
+      nvramLabel.setGraphic(WidgetFactory.createExclamationIcon());
+      nvramLabel.setTooltip(new Tooltip("Unknown Highscore Format"));
+    }
+    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.EM.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.VPReg.name())) {
+      nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
+      nvramLabel.setTooltip(new Tooltip("The highscore can be resetted."));
+    }
+    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.NVRam.name())) {
+      nvramLabel.setGraphic(WidgetFactory.createIcon("bi-check-circle"));
+      nvramLabel.setTooltip(new Tooltip("No resetted NVRam found, the highscores will be resetted to the ROMs default values."));
     }
 
     //check highscore settings //TODO
@@ -426,6 +445,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   public void initialize(URL url, ResourceBundle resourceBundle) {
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
+    this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
     competition = new CompetitionRepresentation();
     competition.setScoreLimit(5);

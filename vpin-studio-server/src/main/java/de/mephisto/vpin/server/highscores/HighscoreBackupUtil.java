@@ -173,19 +173,19 @@ public class HighscoreBackupUtil {
         return false;
       }
 
-      if(written) {
+      if (written) {
         LOG.info("Written highscore backup " + target.getAbsolutePath());
       }
       else {
         LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
+        return true;
       }
 
       return written;
     }
-    else {
-      LOG.info("Skipped creating highscore backup of \"" + game.getGameDisplayName() + "\", no existing highscore data found.");
-    }
-    return false;
+
+    LOG.info("Skipped creating highscore backup of \"" + game.getGameDisplayName() + "\", no existing highscore data found.");
+    return true;
   }
 
   public static boolean restoreBackupFile(@NonNull SystemService systemService, @NonNull File

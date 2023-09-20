@@ -158,8 +158,19 @@
                                 <Label text="Highscores" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
-                        <HBox BorderPane.alignment="CENTER_RIGHT">
+                        <HBox spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
                            <children>
+                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onNvRam" styleClass="external-component">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="ALT Color Folder" />
+                                 </tooltip>
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Button>
                               <Button mnemonicParsing="false" onAction="#onPrefsHighscore">
                                  <font>
                                     <Font size="10.0" />
