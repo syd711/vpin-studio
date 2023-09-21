@@ -1,19 +1,23 @@
 package de.mephisto.vpin.tools;
 
-import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class NVRamSynchronizer {
+  private final static Logger LOG = LoggerFactory.getLogger(NVRamSynchronizer.class);
 
   public final static File NVRAM_REPO = new File("../nvrams/");
 
@@ -76,7 +80,7 @@ public class NVRamSynchronizer {
           target.delete();
         }
         IOUtils.copy(new FileInputStream(clearedNV), new FileOutputStream(target));
-        ZipUtil.zipFile(target, target.getName(), zipOut);
+        zipFile(target, target.getName(), zipOut);
 
         indexTxt.append(FilenameUtils.getBaseName(clearedNV.getName()));
         indexTxt.append("\n");
@@ -94,5 +98,43 @@ public class NVRamSynchronizer {
     System.out.println("Written " + indexTxtFile.getAbsolutePath());
 
     System.out.println(builder.toString());
+  }
+
+  private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
+    if (fileToZip.isHidden()) {
+      return;
+    }
+
+    if (fileToZip.isDirectory()) {
+      LOG.info("Zipping " + fileToZip.getCanonicalPath());
+
+      if (fileName.endsWith("/")) {
+        zipOut.putNextEntry(new ZipEntry(fileName));
+        zipOut.closeEntry();
+      }
+      else {
+        zipOut.putNextEntry(new ZipEntry(fileName + "/"));
+        zipOut.closeEntry();
+      }
+
+      File[] children = fileToZip.listFiles();
+      if (children != null) {
+        for (File childFile : children) {
+          zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+        }
+      }
+      return;
+    }
+
+    FileInputStream fis = new FileInputStream(fileToZip);
+    ZipEntry zipEntry = new ZipEntry(fileName);
+    zipOut.putNextEntry(zipEntry);
+    byte[] bytes = new byte[1024];
+    int length;
+    while ((length = fis.read(bytes)) >= 0) {
+      zipOut.write(bytes, 0, length);
+    }
+    zipOut.closeEntry();
+    fis.close();
   }
 }
