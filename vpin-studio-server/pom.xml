@@ -351,6 +351,7 @@
                                         <include>backgrounds/*</include>
                                         <include>pinemhi/**</include>
                                         <include>vpbm/**</include>
+                                        <include>nvrams/**</include>
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
