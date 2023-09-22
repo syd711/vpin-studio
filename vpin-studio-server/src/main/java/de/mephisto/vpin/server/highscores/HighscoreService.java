@@ -2,11 +2,13 @@ package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.restclient.HighscoreType;
+import de.mephisto.vpin.restclient.NVRamList;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -45,6 +47,9 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private NVRamService nvRamService;
+
   private boolean pauseChangeEvents;
 
   private HighscoreResolver highscoreResolver;
@@ -62,7 +67,7 @@ public class HighscoreService implements InitializingBean {
             break;
           }
           case NVRam: {
-            result = game.getNvRamFile().exists() && game.getNvRamFile().delete();
+            result = !game.getNvRamFile().exists() || game.getNvRamFile().delete();
             break;
           }
           case VPReg: {
@@ -78,6 +83,15 @@ public class HighscoreService implements InitializingBean {
       else {
         result = true;
       }
+
+      //always check nvram in case the highscore type was not determined
+      NVRamList nvRamList = nvRamService.getResettedNVRams();
+      if (nvRamList.contains(game.getRom()) || nvRamList.contains(game.getTableName())) {
+        if (!nvRamService.copyResettedNvRam(game.getNvRamFile())) {
+          result = false;
+        }
+      }
+
       deleteScores(game.getId(), true);
       return result;
     } catch (Exception e) {
@@ -165,7 +179,12 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
       ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getNewRaw(), gameId, serverId);
-      scoreList.getScores().add(scoreSummary);
+      if(scoreSummary != null) {
+        scoreList.getScores().add(scoreSummary);
+      }
+      else {
+        LOG.error("Failed to create score summary for " + gameId);
+      }
     }
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
 
@@ -317,8 +336,8 @@ public class HighscoreService implements InitializingBean {
    * - a Highscore record is only created, when an RAW data is present
    * - for the first record Highscore, a version is created too with an empty OLD value
    * - for every newly recorded Highscore, an additional version is stored
-   *
-   *
+   * <p>
+   * <p>
    * The method must be synchronized because multiple UI threads access it after a competition creation.
    *
    * @param game     the game to update the highscore for
@@ -451,7 +470,7 @@ public class HighscoreService implements InitializingBean {
     byGameId.ifPresent(highscore -> highscoreRepository.deleteById(highscore.getId()));
     LOG.info("Deleted latest highscore for " + gameId);
 
-    if(deleteVersions) {
+    if (deleteVersions) {
       List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
       highscoreVersionRepository.deleteAll(versions);
       LOG.info("Deleted all highscore versions for " + gameId);

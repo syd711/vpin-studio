@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
+import de.mephisto.vpin.restclient.NVRamList;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -64,6 +66,11 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
   @FXML
   private CheckBox resetCheckbox;
 
+  @FXML
+  private Label nvramLabel;
+
+  private NVRamList nvRamList;
+
   private CompetitionRepresentation competition;
   private List<CompetitionRepresentation> allCompetitions;
 
@@ -84,6 +91,8 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.nvRamList = client.getNvRamsService().getResettedNVRams();
+
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
@@ -192,6 +201,9 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
       validationDescription.setText("Select a table for the subscription.");
       return;
     }
+
+    GameRepresentation game = this.tableCombo.getValue();
+    CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     if (this.botStatus == null || this.botStatus.getServerId() != competition.getDiscordServerId()) {
       this.botStatus = client.getDiscordService().getDiscordStatus(competition.getDiscordServerId());

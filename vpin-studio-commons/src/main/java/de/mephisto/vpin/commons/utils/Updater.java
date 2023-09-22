@@ -31,7 +31,7 @@ public class Updater {
 
   public static boolean downloadUpdate(String versionSegment, String targetZip) {
     File out = new File(getBasePath(), targetZip);
-    if(out.exists()) {
+    if (out.exists()) {
       out.delete();
     }
     String url = String.format(BASE_URL, versionSegment) + targetZip;
@@ -47,7 +47,7 @@ public class Updater {
     }
 
     int percentage = (int) (tmp.length() * 100 / estimatedSize);
-    if(percentage > 99) {
+    if (percentage > 99) {
       percentage = 99;
     }
 
@@ -56,31 +56,42 @@ public class Updater {
   }
 
   public static void download(String downloadUrl, File target) {
-    new Thread(() -> {
-      try {
-        LOG.info("Downloading " + downloadUrl);
-        URL url = new URL(downloadUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        BufferedInputStream in = new BufferedInputStream(url.openStream());
-        File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
-        if (tmp.exists()) {
-          tmp.delete();
-        }
-        FileOutputStream fileOutputStream = new FileOutputStream(tmp);
-        byte dataBuffer[] = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-          fileOutputStream.write(dataBuffer, 0, bytesRead);
-        }
-        in.close();
-        fileOutputStream.close();
-        tmp.renameTo(target);
-        LOG.info("Downloaded file " + target.getAbsolutePath());
-      } catch (Exception e) {
-        LOG.error("Failed to execute download: " + e.getMessage(), e);
+    try {
+      LOG.info("Downloading " + downloadUrl);
+      URL url = new URL(downloadUrl);
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      BufferedInputStream in = new BufferedInputStream(url.openStream());
+      File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
+      if (tmp.exists()) {
+        tmp.delete();
       }
-    }).start();
+      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+      byte dataBuffer[] = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+        fileOutputStream.write(dataBuffer, 0, bytesRead);
+      }
+      in.close();
+      fileOutputStream.close();
+      if(!tmp.renameTo(target)) {
+        LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
+      }
+      LOG.info("Downloaded file " + target.getAbsolutePath());
+    } catch (Exception e) {
+      LOG.error("Failed to execute download: " + e.getMessage(), e);
+    }
+  }
+
+  public static void download(String downloadUrl, File target, boolean synchronous) {
+    if (synchronous) {
+      download(downloadUrl, target);
+    }
+    else {
+      new Thread(() -> {
+        download(downloadUrl, target);
+      }).start();
+    }
   }
 
   public static boolean installServerUpdate() throws IOException {

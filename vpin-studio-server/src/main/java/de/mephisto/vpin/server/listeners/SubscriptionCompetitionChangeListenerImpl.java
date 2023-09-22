@@ -86,7 +86,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
               long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
                   "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
-              discordService.initCompetition(serverId, channelId, messageId);
+              discordService.initCompetition(serverId, channelId, messageId, null);
 
               if (!competition.isHighscoreReset()) {
                 Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);

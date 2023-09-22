@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
+import de.mephisto.vpin.restclient.NVRamList;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.CompetitionType;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -86,6 +88,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   @FXML
   private Label validationDescription;
 
+  @FXML
+  private Label nvramLabel;
+
+  private NVRamList nvRamList;
+
   private CompetitionRepresentation competition;
 
   private List<DiscordChannel> discordChannels;
@@ -107,6 +114,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.nvRamList = client.getNvRamsService().getResettedNVRams();
+
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.OFFLINE.name());
     competition.setName("My next competition");
@@ -269,6 +278,10 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 //        return;
 //      }
 //    }
+
+    GameRepresentation game = this.tableCombo.getValue();
+    CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
+
     validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
   }
