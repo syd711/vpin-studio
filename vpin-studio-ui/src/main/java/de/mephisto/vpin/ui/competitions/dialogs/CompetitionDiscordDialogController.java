@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.representations.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -288,22 +289,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     }
 
     GameRepresentation game = this.tableCombo.getValue();
-    if (nvRamList.contains(game.getRom()) || nvRamList.contains(game.getTableName())) {
-      nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
-      nvramLabel.setTooltip(new Tooltip("The highscore can be resetted, resetted NVRam has been found."));
-    }
-    else if (game.getHighscoreType() == null) {
-      nvramLabel.setGraphic(WidgetFactory.createExclamationIcon());
-      nvramLabel.setTooltip(new Tooltip("Unknown Highscore Format"));
-    }
-    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.EM.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.VPReg.name())) {
-      nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
-      nvramLabel.setTooltip(new Tooltip("The highscore can be resetted."));
-    }
-    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.NVRam.name())) {
-      nvramLabel.setGraphic(WidgetFactory.createIcon("bi-check-circle"));
-      nvramLabel.setTooltip(new Tooltip("No resetted NVRam found, the highscores will be resetted to the ROMs default values."));
-    }
+    CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     //check highscore settings //TODO
 //    ScoreSummaryRepresentation summary = client.getGameScores(competition.getGameId());

@@ -1,15 +1,13 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.*;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.JoinMode;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -62,6 +60,11 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   @FXML
   private CheckBox resetCheckbox;
 
+  @FXML
+  private Label nvramLabel;
+
+  private NVRamList nvRamList;
+
   private CompetitionRepresentation competition;
 
   private DiscordBotStatus botStatus = null;
@@ -81,6 +84,8 @@ public class SubscriptionDialogController implements Initializable, DialogContro
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.nvRamList = client.getNvRamsService().getResettedNVRams();
+
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
@@ -140,6 +145,9 @@ public class SubscriptionDialogController implements Initializable, DialogContro
       validationDescription.setText("Select a table for the subscription.");
       return;
     }
+
+    GameRepresentation game = this.tableCombo.getValue();
+    CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     if (StringUtils.isEmpty(competition.getName())) {
       validationTitle.setText("No channel name set.");

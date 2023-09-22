@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.CompetitionType;
 import de.mephisto.vpin.restclient.JoinMode;
+import de.mephisto.vpin.restclient.NVRamList;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -98,6 +100,11 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   @FXML
   private CheckBox resetCheckbox;
 
+  @FXML
+  private Label nvramLabel;
+
+  private NVRamList nvRamList;
+
   private CompetitionRepresentation competition;
 
   private DiscordCompetitionData discordCompetitionData;
@@ -136,6 +143,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     saveBtn.setDisable(true);
+    this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
     List<DiscordServer> servers = client.getDiscordService().getDiscordServers();
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
@@ -354,6 +362,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       }
     }
 
+    CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     if (!resetCheckbox.isSelected()) {
       validationTitle.setText("Highscore reset required");
