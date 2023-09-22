@@ -335,7 +335,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="49.0" text="Resetted NV Ram Available:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" text="Highscore Reset Available:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

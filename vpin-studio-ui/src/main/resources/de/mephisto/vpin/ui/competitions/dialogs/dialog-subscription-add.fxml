@@ -162,7 +162,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label prefWidth="183.0" text="Resetted NV Ram Available:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefWidth="183.0" text="Highscore Reset Available:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -401,6 +401,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.competitionIconCombo.setValue(selectedCompetition.getBadge());
       String badge = selectedCompetition.getBadge();
 
+
+      CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
+
       this.competition = selectedCompetition;
       refreshPreview(game, badge);
 

@@ -23,7 +23,7 @@ public class CompetitionsDialogHelper {
       nvramLabel.setTooltip(new Tooltip("The highscore can be resetted."));
     }
     else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.NVRam.name())) {
-      nvramLabel.setGraphic(WidgetFactory.createIcon("bi-check-circle"));
+      nvramLabel.setGraphic(WidgetFactory.createIcon("mdi2a-alert-circle-check-outline"));
       nvramLabel.setTooltip(new Tooltip("No resetted NVRam found, the highscores will be resetted to the ROMs default values."));
     }
   }
