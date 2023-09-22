@@ -153,7 +153,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-source" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                </graphic>
             </Button>
             <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">

@@ -64,7 +64,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Data" />
+                <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Settings" />
             <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists" />
                 <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
                     <graphic>

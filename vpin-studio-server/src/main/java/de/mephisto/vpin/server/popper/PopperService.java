@@ -171,8 +171,8 @@ public class PopperService implements InitializingBean {
           tableDetails.setUrl(tableData.getIpdbUrl());
 
           String url = tableData.getIpdbUrl();
-          if (url.contains("=")) {
-            tableDetails.setIPDBNum(url.substring(url.indexOf("=") + 1));
+          if (url.contains("id=")) {
+            tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
           }
         }
 

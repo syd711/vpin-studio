@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -52,6 +53,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -60,22 +62,22 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                              <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="24">
+                              <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="25">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="23">
+                              <Label layoutX="10.0" layoutY="15.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="24">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label fx:id="labelLastPlayed" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="24">
+                              <Label fx:id="labelLastPlayed" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="25">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label fx:id="labelTimesPlayed" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="23">
+                              <Label fx:id="labelTimesPlayed" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="24">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -161,17 +163,17 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="URL:" textFill="WHITE" GridPane.rowIndex="20">
+                              <Label layoutX="10.0" layoutY="15.0" text="URL:" textFill="WHITE" GridPane.rowIndex="21">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="501.0" text="Designed By:" textFill="WHITE" GridPane.rowIndex="21">
+                              <Label layoutX="10.0" layoutY="501.0" text="Designed By:" textFill="WHITE" GridPane.rowIndex="22">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="532.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="22">
+                              <Label layoutX="10.0" layoutY="532.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="23">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -256,17 +258,17 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label fx:id="url" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                              <Label fx:id="url" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label fx:id="designedBy" layoutX="173.0" layoutY="496.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
+                              <Label fx:id="designedBy" layoutX="173.0" layoutY="496.0" GridPane.columnIndex="1" GridPane.rowIndex="22">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label fx:id="notes" layoutX="173.0" layoutY="527.0" GridPane.columnIndex="1" GridPane.rowIndex="22">
+                              <Label fx:id="notes" layoutX="173.0" layoutY="527.0" GridPane.columnIndex="1" GridPane.rowIndex="23">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -311,6 +313,35 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label layoutX="10.0" layoutY="592.0" text="Alternative Launcher:" textFill="WHITE" GridPane.rowIndex="20">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                           <children>
+                              <ComboBox fx:id="launcherCombo" prefHeight="30.0" prefWidth="306.0" />
+                              <Button mnemonicParsing="false" text="Edit" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                 </graphic>
+                              </Button>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="If no value is set, the PinUP Popper default will be used." />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                           </children>
                      <VBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -360,7 +391,7 @@
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                     </graphic>
                 </Button>
             <Button fx:id="autoFillBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
