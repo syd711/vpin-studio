@@ -2,10 +2,8 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
-import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.GameType;
 import de.mephisto.vpin.restclient.PopperCustomOptions;
 import de.mephisto.vpin.restclient.SystemData;
@@ -351,6 +349,10 @@ public class PopperService implements InitializingBean {
     return options;
   }
 
+
+  public boolean saveCustomLauncher(int gameId, String option) {
+    return pinUPConnector.updateCustomLauncher(gameId, option);
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {

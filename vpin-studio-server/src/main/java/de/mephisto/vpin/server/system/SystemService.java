@@ -34,10 +34,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -404,6 +401,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getPinUPDatabaseFile() {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
+  }
+
+  public List<String> getAltExeNames() {
+    String[] exeFiles = getVisualPinballInstallationFolder().list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+    if(exeFiles == null) {
+      exeFiles = new String[]{};
+    }
+    return Arrays.asList(exeFiles);
   }
 
 

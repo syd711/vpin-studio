@@ -2,7 +2,9 @@ package de.mephisto.vpin.restclient.popper;
 
 import de.mephisto.vpin.restclient.GameType;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
@@ -32,6 +34,24 @@ public class TableDetails {
   private String altRunMode;
   private String url;
   private String designedBy;
+  private String altLaunchExe;
+  private List<String> launcherList = new ArrayList<>();
+
+  public String getAltLaunchExe() {
+    return altLaunchExe;
+  }
+
+  public void setAltLaunchExe(String altLaunchExe) {
+    this.altLaunchExe = altLaunchExe;
+  }
+
+  public List<String> getLauncherList() {
+    return launcherList;
+  }
+
+  public void setLauncherList(List<String> launcherList) {
+    this.launcherList = launcherList;
+  }
 
   public GameType getGameType() {
     return gameType;

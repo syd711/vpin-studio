@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -122,10 +123,35 @@ public class PinUPConnector implements InitializingBean {
     return info;
   }
 
+  @NonNull
+  public List<String> getAltExeList() {
+    Connection connect = connect();
+    try {
+      PreparedStatement statement = connect.prepareStatement("SELECT Altexe FROM PupLookups");
+      ResultSet rs = statement.executeQuery();
+      if (rs.next()) {
+        String altExe = rs.getString("Altexe");
+        if (!StringUtils.isEmpty(altExe)) {
+          String[] split = altExe.split("\\r\\n");
+          return Arrays.asList(split);
+        }
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to load altexe list: " + e.getMessage(), e);
+    } finally {
+      disconnect(connect);
+    }
+
+    return Collections.emptyList();
+  }
+
   @Nullable
   public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;
+    List<String> altExeList = getAltExeList();
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
@@ -144,7 +170,7 @@ public class PinUPConnector implements InitializingBean {
           manifest.setGameYear(null);
         }
         String gameType = rs.getString("GameType");
-        if(gameType != null && (gameType.equals(GameType.SS.name()) || gameType.equals(GameType.EM.name()) || gameType.equals(GameType.Original.name()))) {
+        if (gameType != null && (gameType.equals(GameType.SS.name()) || gameType.equals(GameType.EM.name()) || gameType.equals(GameType.Original.name()))) {
           manifest.setGameType(GameType.valueOf(gameType));
         }
 
@@ -171,6 +197,9 @@ public class PinUPConnector implements InitializingBean {
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
 
+        manifest.setAltLaunchExe(rs.getString("ALTEXE"));
+        manifest.setLauncherList(new ArrayList<>(systemService.getAltExeNames()));
+        manifest.getLauncherList().addAll(altExeList);
       }
       rs.close();
       statement.close();
@@ -299,6 +328,24 @@ public class PinUPConnector implements InitializingBean {
     } finally {
       this.disconnect(connect);
     }
+  }
+
+  public boolean updateCustomLauncher(int gameId, String launcherExe) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'ALTEXE'=? WHERE GameID=?");
+      preparedStatement.setString(1, launcherExe);
+      preparedStatement.setInt(2, gameId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Updated of custom launcher");
+    } catch (Exception e) {
+      LOG.error("Failed to update custom launcher:" + e.getMessage(), e);
+      return false;
+    } finally {
+      this.disconnect(connect);
+    }
+    return true;
   }
 
   public void updateRom(@NonNull Game game, String rom) {
@@ -811,7 +858,7 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
       while (rs.next()) {
         Game info = createGame(connect, rs);
-        if(info == null) {
+        if (info == null) {
           continue;
         }
 

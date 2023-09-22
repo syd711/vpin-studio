@@ -15,12 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.SQLException;
-import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  *
@@ -42,13 +40,16 @@ public class PopperServiceResource {
   }
 
 
-  @PostMapping("/custompoptions")
-  public PopperCustomOptions saveCustomOptions(@RequestBody PopperCustomOptions option) {
+  @PostMapping("/launcher/{gameId}")
+  public TableDetails saveCustomLauncher(@PathVariable("gameId") int gameId, @RequestBody Map<String, String> data) {
     try {
-      return popperService.saveCustomOptions(option);
+      if(popperService.saveCustomLauncher(gameId, data.get("altExe"))) {
+        return getTableDetails(gameId);
+      }
     } catch (Exception e) {
-      throw new ResponseStatusException(CONFLICT, "Saving custom options failed: " + e.getMessage());
+      throw new ResponseStatusException(CONFLICT, "Saving custom launcher failed: " + e.getMessage());
     }
+    return null;
   }
 
   @GetMapping("/imports")
@@ -97,7 +98,7 @@ public class PopperServiceResource {
   }
 
   @GetMapping("/tabledetails/{gameId}")
-  public TableDetails get(@PathVariable("gameId") int gameId) {
+  public TableDetails getTableDetails(@PathVariable("gameId") int gameId) {
     return popperService.getTableDetails(gameId);
   }
 

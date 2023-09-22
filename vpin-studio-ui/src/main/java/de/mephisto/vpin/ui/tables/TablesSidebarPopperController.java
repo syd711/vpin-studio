@@ -8,18 +8,18 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -28,6 +28,9 @@ import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class TablesSidebarPopperController implements Initializable, ChangeListener<Number> {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPopperController.class);
+
+  @FXML
+  private ComboBox<String> launcherCombo;
 
   @FXML
   private Button tableEditBtn;
@@ -125,6 +128,28 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   public TablesSidebarPopperController() {
   }
 
+//  @FXML
+//  private void onLaunchEdit() {
+//    if (this.game.isPresent()) {
+//      String altExe = this.manifest.getAltLaunchExe();
+//      String altValue = WidgetFactory.showInputDialog(Studio.stage, "Alternate Launcher", "Enter another .exe file that is executed instead of one of the available defaults.",
+//          null, null, altExe);
+//
+//      if (altValue != null) {
+//        if (StringUtils.isEmpty(altValue)) {
+//          altValue = null;
+//        }
+//
+//        try {
+//          this.manifest = client.getPinUPPopperService().saveCustomLauncher(this.game.get().getId(), altValue);
+//        } catch (Exception e) {
+//          LOG.error("Failed to save alt launcher: " + e.getMessage(), e);
+//          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save alt launcher: " + e.getMessage());
+//        }
+//      }
+//    }
+//  }
+
   @FXML
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
@@ -171,12 +196,27 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    launcherCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      try {
+        if (game.isPresent() && manifest != null) {
+          String altLauncher = manifest.getAltLaunchExe();
+          if (StringUtils.equals(altLauncher, t1)) {
+            return;
+          }
+          this.manifest = client.getPinUPPopperService().saveCustomLauncher(this.game.get().getId(), t1);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to save alt launcher: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save alt launcher: " + e.getMessage());
+      }
+    });
   }
 
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
+    this.manifest = null;
+    this.launcherCombo.setValue(null);
     this.refreshView(game);
   }
 
@@ -185,6 +225,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
     this.editScreensBtn.setDisable(g.isEmpty());
     volumeSlider.setDisable(g.isEmpty());
     autoFillBtn.setDisable(g.isEmpty());
+    launcherCombo.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -192,6 +233,10 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
 
       manifest = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+      List<String> launcherList = new ArrayList<>(manifest.getLauncherList());
+      launcherList.add(0, null);
+      launcherCombo.setItems(FXCollections.observableList(launcherList));
+      launcherCombo.setValue(manifest.getAltLaunchExe());
 
       volumeSlider.valueProperty().removeListener(this);
       if (manifest.getVolume() != null) {
@@ -227,6 +272,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       notes.setText(StringUtils.isEmpty(manifest.getNotes()) ? "-" : manifest.getNotes());
     }
     else {
+      launcherCombo.setValue(null);
       volumeSlider.setValue(100);
 
       labelLastPlayed.setText("-");
