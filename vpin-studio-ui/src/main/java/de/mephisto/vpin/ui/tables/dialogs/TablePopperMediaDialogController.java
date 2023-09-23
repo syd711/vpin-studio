@@ -152,6 +152,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
   private Node lastHover;
+  private Node lastSelected;
+  private GameMediaRepresentation gameMedia;
 
   @FXML
   private void onVPSAssets() {
@@ -227,10 +229,10 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getPinUPPopperService().deleteMedia(game.getId(), screen, selectedItem.getName());
-        refreshTableMediaView();
 
         Platform.runLater(() -> {
           EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, this.game.getId());
+          refreshTableMediaView();
         });
       }
     }
@@ -391,6 +393,12 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           mediaView.setPreserveRatio(true);
           mediaView.setFitWidth(MEDIA_SIZE);
           mediaView.setFitHeight(MEDIA_SIZE);
+          if(screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
+            mediaView.setRotate(90);
+          }
+          else {
+            mediaView.setRotate(0);
+          }
 
           serverAssetMediaPane.setCenter(mediaView);
         }
@@ -489,7 +497,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tablesCombo.getItems().addAll(gameRepresentations);
     tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      this.setGame(t1, PopperScreen.Audio);
+      searchField.setText("");
+      this.setGame(t1, this.screen);
     });
 
     searchField.setOnKeyPressed(ke -> {
@@ -650,30 +659,54 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           mediaView.setPreserveRatio(true);
           mediaView.setFitWidth(MEDIA_SIZE);
           mediaView.setFitHeight(MEDIA_SIZE);
-
+          if(screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
+            mediaView.setRotate(90);
+          }
+          else {
+            mediaView.setRotate(0);
+          }
           mediaPane.setCenter(mediaView);
         }
       }
     });
   }
 
-  private void updateState(PopperScreen s, BorderPane screen, Boolean hovered, Boolean clicked) {
-    if(this.lastHover != null && !this.lastHover.equals(this.screen)) {
-      lastHover.setStyle(null);
-    }
-
-    if (hovered || this.screen.equals(s) || clicked) {
-      screen.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+  private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
+    List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
+    if(mediaItems.isEmpty()) {
+      borderPane.getStyleClass().removeAll("green");
     }
     else {
-      screen.setStyle(null);
+      borderPane.getStyleClass().add("green");
     }
 
-    if(clicked) {
-      setGame(this.game, s);
+    if (clicked) {
+      if(this.screen.equals(s)) {
+        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+        return;
+      }
+
+      if (this.lastSelected != null) {
+        this.lastSelected.setStyle(null);
+      }
+      borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+      this.lastSelected = borderPane;
+
+      this.screen = s;
+      refreshTableMediaView();
+      onSearch();
+      return;
     }
 
-    this.lastHover = screen;
+    if (!borderPane.equals(lastSelected)) {
+      if (hovered) {
+        borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+      }
+      else {
+        borderPane.setStyle(null);
+      }
+    }
+    this.lastHover = borderPane;
   }
 
   private void disposeServerAssetPreview() {
@@ -771,6 +804,22 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     onSearch();
   }
 
+  private void refreshTableView() {
+    updateState(PopperScreen.Audio, screenAudio, false, this.screen.equals(PopperScreen.Audio));
+    updateState(PopperScreen.AudioLaunch, screenAudioLaunch, false, this.screen.equals(PopperScreen.AudioLaunch));
+    updateState(PopperScreen.DMD, screenDMD, false, this.screen.equals(PopperScreen.DMD));
+    updateState(PopperScreen.BackGlass, screenBackGlass, false, this.screen.equals(PopperScreen.BackGlass));
+    updateState(PopperScreen.Menu, screenMenu, false, this.screen.equals(PopperScreen.Menu));
+    updateState(PopperScreen.GameInfo, screenGameInfo, false, this.screen.equals(PopperScreen.GameInfo));
+    updateState(PopperScreen.GameHelp, screenGameHelp, false, this.screen.equals(PopperScreen.GameHelp));
+    updateState(PopperScreen.Loading, screenLoading, false, this.screen.equals(PopperScreen.Loading));
+    updateState(PopperScreen.BackGlass, screenBackGlass, false, this.screen.equals(PopperScreen.BackGlass));
+    updateState(PopperScreen.PlayField, screenPlayField, false, this.screen.equals(PopperScreen.PlayField));
+    updateState(PopperScreen.Topper, screenTopper, false, this.screen.equals(PopperScreen.Topper));
+    updateState(PopperScreen.Other2, screenOther2, false, this.screen.equals(PopperScreen.Other2));
+    updateState(PopperScreen.Wheel, screenWheel, false, this.screen.equals(PopperScreen.Wheel));
+  }
+
 
   private void refreshTableMediaView() {
     if (screen.equals(PopperScreen.Wheel)) {
@@ -780,7 +829,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
     this.addToPlaylistBtn.setDisable(true);
 
-    GameMediaRepresentation gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
+    gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
     List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
     ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
     assetList.getItems().removeAll(assetList.getItems());
@@ -793,6 +842,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
     this.addToPlaylistBtn.setDisable(!convertable);
+
+    refreshTableView();
   }
 
   @Override

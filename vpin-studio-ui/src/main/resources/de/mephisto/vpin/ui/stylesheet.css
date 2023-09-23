@@ -794,3 +794,7 @@
   -fx-text-box-border: #605E5E;
   -fx-control-inner-background: #FFFFFF;
 }
+
+.green {
+    -fx-background-color: #338800;
+}

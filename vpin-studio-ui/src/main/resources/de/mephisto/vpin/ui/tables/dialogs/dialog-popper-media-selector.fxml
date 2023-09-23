@@ -34,7 +34,7 @@
                            <content>
                               <Pane fx:id="mediaRootPane">
                                  <children>
-                                    <BorderPane fx:id="screenPlayField" layoutX="158.0" layoutY="471.0" prefHeight="370.0" prefWidth="200.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenPlayField" layoutX="161.0" layoutY="471.0" prefHeight="370.0" prefWidth="200.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -70,7 +70,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="361.0" prefHeight="96.0" prefWidth="200.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenDMD" layoutX="160.0" layoutY="366.0" prefHeight="96.0" prefWidth="200.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -82,7 +82,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="176.0" prefWidth="200.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenTopper" layoutX="160.0" layoutY="4.0" maxHeight="208.0" prefHeight="176.0" prefWidth="200.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -94,7 +94,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenBackGlass" layoutX="157.0" layoutY="187.0" prefHeight="167.0" prefWidth="200.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenBackGlass" layoutX="160.0" layoutY="190.0" prefHeight="167.0" prefWidth="200.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -106,7 +106,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenLoading" layoutX="362.0" layoutY="214.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenLoading" layoutX="368.0" layoutY="214.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -130,7 +130,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenOther2" layoutX="362.0" layoutY="424.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenOther2" layoutX="368.0" layoutY="424.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -142,7 +142,7 @@
                                           </BorderPane>
                                        </top>
                                     </BorderPane>
-                                    <BorderPane fx:id="screenWheel" layoutX="362.0" layoutY="630.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                    <BorderPane fx:id="screenWheel" layoutX="368.0" layoutY="630.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                                        <bottom>
                                           <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
@@ -155,20 +155,6 @@
                                        </top>
                                     </BorderPane>
                                     <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
-                                       <bottom>
-                                          <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets top="6.0" />
-                                             </BorderPane.margin>
-                                             <children>
-                                                <Label text="Audio Launch" textFill="WHITE">
-                                                   <VBox.margin>
-                                                      <Insets top="6.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                             </children>
-                                          </VBox>
-                                       </bottom>
                                        <top>
                                           <BorderPane fx:id="top_AudioLaunch" BorderPane.alignment="TOP_RIGHT">
                                              <BorderPane.margin>
@@ -186,22 +172,11 @@
                                              </BorderPane.margin>
                                           </Label>
                                        </center>
-                                    </BorderPane>
-                                    <BorderPane fx:id="screenAudio" layoutX="362.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                                        <bottom>
-                                          <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets top="6.0" />
-                                             </BorderPane.margin>
-                                             <children>
-                                                <Label text="Audio" textFill="WHITE">
-                                                   <VBox.margin>
-                                                      <Insets top="6.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                             </children>
-                                          </VBox>
+                                          <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenAudio" layoutX="368.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                                        <top>
                                           <BorderPane fx:id="top_Audio" BorderPane.alignment="TOP_RIGHT">
                                              <BorderPane.margin>
@@ -219,6 +194,9 @@
                                              </BorderPane.margin>
                                           </Label>
                                        </center>
+                                       <bottom>
+                                          <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
                                     </BorderPane>
                                  </children>
                               </Pane>
