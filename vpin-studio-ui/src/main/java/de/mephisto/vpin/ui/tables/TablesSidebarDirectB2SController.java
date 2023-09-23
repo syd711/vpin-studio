@@ -11,7 +11,6 @@ import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -310,84 +309,75 @@ public class TablesSidebarDirectB2SController implements Initializable {
     filesizeLabel.setText("-");
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
-    if (g.isPresent()) {
-      if (g.get().isDirectB2SAvailable()) {
-        new Thread(() -> {
-          this.tableSettings = Studio.client.getBackglassServiceClient().getTableSettings(g.get().getId());
-          this.tableData = Studio.client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
+    if (g.isPresent() && g.get().isDirectB2SAvailable()) {
+      this.tableSettings = Studio.client.getBackglassServiceClient().getTableSettings(g.get().getId());
+      this.tableData = Studio.client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
 
-          Platform.runLater(() -> {
-            nameLabel.setText(tableData.getName());
-            typeLabel.setText(this.getTableType(tableData.getTableType()));
-            authorLabel.setText(tableData.getAuthor());
-            artworkLabel.setText(tableData.getArtwork());
-            grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
-            b2sElementsLabel.setText(String.valueOf(tableData.getB2sElements()));
-            playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
-            filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
-            bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-            modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
+      nameLabel.setText(tableData.getName());
+      typeLabel.setText(this.getTableType(tableData.getTableType()));
+      authorLabel.setText(tableData.getAuthor());
+      artworkLabel.setText(tableData.getArtwork());
+      grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
+      b2sElementsLabel.setText(String.valueOf(tableData.getB2sElements()));
+      playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
+      filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
+      bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
+      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
-            byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
-            if (bytesEncoded != null) {
-              Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-              if (tableData.getGrillHeight() > 0 && tableSettings.getHideGrill() == 1) {
-                PixelReader reader = image.getPixelReader();
-                image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
-              }
-              thumbnailImage.setImage(image);
-              resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-            }
-            else {
-              thumbnailImage.setImage(null);
-              resolutionLabel.setText("Failed to read image data.");
-            }
+      hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
-            byte[] dmdBytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
-            if (dmdBytesEncoded != null) {
-              Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
-              dmdThumbnailImage.setImage(image);
-              dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-            }
-            else {
-              dmdThumbnailImage.setImage(null);
-              dmdResolutionLabel.setText("No DMD background available.");
-            }
-
-            hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
-            hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
-            hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
-            skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
-            skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
-            skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
-            skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
-            lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-            glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
-            usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
-            startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
-            bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
-
-            skipGIFrames.setDisable(tableData.getIlluminations() == 0);
-            skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
-            skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
-            skipLampFrames.setDisable(tableData.getIlluminations() == 0);
-
-            glowing.setDisable(usedLEDType.getValue().getId() == 2);
-            lightBulbOn.setDisable(usedLEDType.getValue().getId() == 2);
-
-            try {
-              Thread.sleep(150);
-            } catch (InterruptedException e) {
-              throw new RuntimeException(e);
-            }
-            this.saveEnabled = true;
-          });
-        }).start();
+      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
+      if (bytesEncoded != null) {
+        Image image = new Image(new ByteArrayInputStream(bytesEncoded));
+        if (tableData.getGrillHeight() > 0 && tableSettings.getHideGrill() == 1) {
+          PixelReader reader = image.getPixelReader();
+          image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+        }
+        thumbnailImage.setImage(image);
+        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      }
+      else {
+        thumbnailImage.setImage(null);
+        resolutionLabel.setText("Failed to read image data.");
       }
 
+      byte[] dmdBytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
+      if (dmdBytesEncoded != null) {
+        Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
+        dmdThumbnailImage.setImage(image);
+        dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      }
+      else {
+        dmdThumbnailImage.setImage(null);
+        dmdResolutionLabel.setText("No DMD background available.");
+      }
+
+      hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
+      hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+      hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
+      skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
+      skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
+      skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
+      skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
+      lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
+      glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+      usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
+      startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+      bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+
+      skipGIFrames.setDisable(tableData.getIlluminations() == 0);
+      skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
+      skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
+      skipLampFrames.setDisable(tableData.getIlluminations() == 0);
+
+      glowing.setDisable(usedLEDType.getValue().getId() == 2);
+      lightBulbOn.setDisable(usedLEDType.getValue().getId() == 2);
+
+      this.saveEnabled = true;
     }
   }
 
