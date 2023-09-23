@@ -99,7 +99,11 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         break;
       }
       case "BackglassImage": {
-        data.setThumbnailBase64(attr.getValue("Value"));
+        data.setBackgroundBase64(attr.getValue("Value"));
+        break;
+      }
+      case "DMDImage": {
+        data.setDmdBase64(attr.getValue("Value"));
         break;
       }
     }

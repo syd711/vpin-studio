@@ -461,6 +461,16 @@ public class Game {
     return null;
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getDMDPicture() {
+    if (this.getRom() != null) {
+      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      return new File(subFolder, SystemService.DMD);
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getNvRamFile() {

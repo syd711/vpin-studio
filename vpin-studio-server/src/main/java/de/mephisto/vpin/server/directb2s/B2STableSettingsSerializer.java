@@ -45,23 +45,25 @@ public class B2STableSettingsSerializer {
 
       doc.getDocumentElement().normalize();
 
-      NodeList list = doc.getElementsByTagName(settings.getRom());
-      Node romNode = null;
-      if (list.getLength() == 0) {
-        romNode = doc.createElement(settings.getRom());
-        doc.getDocumentElement().appendChild(romNode);
-        for (String tableEntry : tableEntries) {
-          Element child = doc.createElement(tableEntry);
-          romNode.appendChild(child);
+      NodeList list = doc.getElementsByTagName("Name");
+      Node nameNode = null;
+      if(list != null) {
+        if (list.getLength() == 0) {
+          nameNode = doc.createElement("Name");
+          nameNode.setTextContent(settings.getRom());
+          doc.getDocumentElement().appendChild(nameNode);
+          for (String tableEntry : tableEntries) {
+            Element child = doc.createElement(tableEntry);
+            nameNode.appendChild(child);
+          }
+        }
+        else {
+          nameNode = list.item(0);
         }
       }
-      else {
-        romNode = list.item(0);
-      }
 
-
-      if (romNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) romNode;
+      if (nameNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) nameNode;
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
           Node settingsNode = childNodes.item(i);

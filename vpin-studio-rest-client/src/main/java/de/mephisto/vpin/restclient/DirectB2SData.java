@@ -16,7 +16,8 @@ public class DirectB2SData {
   private long filesize;
   private Date modificationDate;
 
-  private String thumbnailBase64;
+  private String backgroundBase64;
+  private String dmdBase64;
   private int illuminations;
 
   public int getIlluminations() {
@@ -27,8 +28,16 @@ public class DirectB2SData {
     this.illuminations = illuminations;
   }
 
-  public String getThumbnailBase64() {
-    return thumbnailBase64;
+  public String getDmdBase64() {
+    return dmdBase64;
+  }
+
+  public void setDmdBase64(String dmdBase64) {
+    this.dmdBase64 = dmdBase64;
+  }
+
+  public String getBackgroundBase64() {
+    return backgroundBase64;
   }
 
   public int getB2sElements() {
@@ -39,8 +48,8 @@ public class DirectB2SData {
     this.b2sElements = b2sElements;
   }
 
-  public void setThumbnailBase64(String thumbnailBase64) {
-    this.thumbnailBase64 = thumbnailBase64;
+  public void setBackgroundBase64(String backgroundBase64) {
+    this.backgroundBase64 = backgroundBase64;
   }
 
   public String getName() {

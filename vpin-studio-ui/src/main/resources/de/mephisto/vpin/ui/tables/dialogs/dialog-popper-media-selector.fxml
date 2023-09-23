@@ -306,7 +306,7 @@
                               </VBox>
                            </bottom>
                         </BorderPane>
-                        <Label text="Installed Table Assets" textFill="WHITE">
+                        <Label text="Installed Assets" textFill="WHITE">
                            <VBox.margin>
                               <Insets bottom="6.0" top="6.0" />
                            </VBox.margin>

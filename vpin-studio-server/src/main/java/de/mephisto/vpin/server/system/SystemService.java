@@ -56,6 +56,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private final static String VPM_ALIAS = "VPMAlias.txt";
 
   public static final String DEFAULT_BACKGROUND = "background.png";
+  public static final String DMD = "dmd.png";
 
   private File pinUPSystemInstallationFolder;
   private File visualPinballInstallationFolder;

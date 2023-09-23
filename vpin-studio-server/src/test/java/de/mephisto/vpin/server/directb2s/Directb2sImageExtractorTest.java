@@ -10,9 +10,9 @@ public class Directb2sImageExtractorTest {
 
 //  @Test
 //  public void readDirectb2s() throws VPinStudioException {
-//    File file = new File("C:\\Users\\matth\\Downloads", "Tales of the Arabian Nights (Williams 1996) alt full dmd.directb2s");
-//    File target = new File("C:\\Users\\matth\\Downloads\\output\\test.png");
+//    File b2sFile = new File("../testsystem/vPinball/VisualPinball/Tables/Apollo 13.directb2s");
+//    File target = new File("E:\\temp\\test.png");
 //    DirectB2SImageExtractor extractor = new DirectB2SImageExtractor();
-//    extractor.extractImage(file, target);
+//    extractor.extractImage(b2sFile, target, true);
 //  }
 }

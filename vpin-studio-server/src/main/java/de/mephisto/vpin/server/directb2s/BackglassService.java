@@ -58,6 +58,11 @@ public class BackglassService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getRomAlias())) {
       rom = game.getRomAlias();
     }
+
+    if (StringUtils.isEmpty(rom)) {
+      rom = game.getTableName();
+    }
+
     DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
 
     if (entry == null) {
@@ -74,6 +79,11 @@ public class BackglassService implements InitializingBean {
   public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) {
     serverSettingsSerializer.serialize(settings);
     return getServerSettings();
+  }
+
+  public boolean deleteImages(Game game) {
+
+    return false;
   }
 
   @Override

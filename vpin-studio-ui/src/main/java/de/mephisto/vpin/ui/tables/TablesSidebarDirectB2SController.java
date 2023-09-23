@@ -18,6 +18,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -82,10 +84,16 @@ public class TablesSidebarDirectB2SController implements Initializable {
   private Label resolutionLabel;
 
   @FXML
+  private Label dmdResolutionLabel;
+
+  @FXML
   private Label modificationDateLabel;
 
   @FXML
   private ImageView thumbnailImage;
+
+  @FXML
+  private ImageView dmdThumbnailImage;
 
   @FXML
   private Button openDefaultPictureBtn;
@@ -166,7 +174,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private void onOpenDirectB2SBackground() {
     if (game.isPresent() && game.get().isDirectB2SAvailable()) {
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getThumbnailBase64());
+      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
       MediaUtil.openMedia(new ByteArrayInputStream(bytesEncoded));
     }
   }
@@ -183,6 +191,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       tableSettings.setHideGrill(t1.getId());
       save();
+      refreshView(this.game);
     });
 
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -302,6 +311,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     resolutionLabel.setText("");
+    dmdResolutionLabel.setText("");
 
     if (g.isPresent()) {
       if (g.get().isDirectB2SAvailable()) {
@@ -321,15 +331,30 @@ public class TablesSidebarDirectB2SController implements Initializable {
             bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
             modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
-            byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getThumbnailBase64());
+            byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
             if (bytesEncoded != null) {
               Image image = new Image(new ByteArrayInputStream(bytesEncoded));
+              if (tableData.getGrillHeight() > 0 && tableSettings.getHideGrill() == 1) {
+                PixelReader reader = image.getPixelReader();
+                image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+              }
               thumbnailImage.setImage(image);
               resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
             }
             else {
               thumbnailImage.setImage(null);
               resolutionLabel.setText("Failed to read image data.");
+            }
+
+            byte[] dmdBytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
+            if (dmdBytesEncoded != null) {
+              Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
+              dmdThumbnailImage.setImage(image);
+              dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+            }
+            else {
+              dmdThumbnailImage.setImage(null);
+              dmdResolutionLabel.setText("No DMD background available.");
             }
 
             hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());

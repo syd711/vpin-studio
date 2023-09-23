@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.restclient.DirectB2SData;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.directb2s.DirectB2SImageExtractor;
+import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
+import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -39,8 +41,6 @@ public class DefaultPictureService {
   }
 
   public void extractDefaultPicture(@NonNull Game game) {
-    DirectB2SImageExtractor extractor = new DirectB2SImageExtractor();
-
     if (StringUtils.isEmpty(game.getRom())) {
       return;
     }
@@ -53,15 +53,21 @@ public class DefaultPictureService {
     File target = game.getRawDefaultPicture();
     if (game.getDirectB2SFile().exists()) {
       try {
-        extractor.extractImage(game.getDirectB2SFile(), target);
+        DirectB2SDataExtractor data = new DirectB2SDataExtractor();
+        DirectB2SData directB2SData = data.extractData(game.getDirectB2SFile());
+        DirectB2SImageExporter extractor = new DirectB2SImageExporter(directB2SData);
+        extractor.extractBackground(target);
+        extractor.extractDMD(game.getDMDPicture());
         return;
       } catch (VPinStudioException e) {
-        //ignore
+        LOG.error("Failed to extract background image: " + e.getMessage(), e);
       }
     }
 
     GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.BackGlass);
-    if (backGlassItem != null && backGlassItem.getFile().exists()) {
+    if (backGlassItem != null && backGlassItem.getFile().
+
+        exists()) {
       String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {
         try {
@@ -79,9 +85,10 @@ public class DefaultPictureService {
     }
 
     PupPack pupPack = game.getPupPack();
-    if(pupPack != null) {
+    if (pupPack != null) {
       pupPackService.exportDefaultPicture(pupPack, target);
     }
+
   }
 
   public void deleteDefaultPictures(@NonNull Game game) {
@@ -163,7 +170,7 @@ public class DefaultPictureService {
 
       BufferedImage image = ImageIO.read(backgroundImageFile);
 
-      if(image.getWidth() < image.getHeight()) {
+      if (image.getWidth() < image.getHeight()) {
         image = ImageUtil.crop(image, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
 

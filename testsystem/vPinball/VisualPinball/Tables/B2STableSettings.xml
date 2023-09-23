@@ -80,4 +80,4 @@
     <FormToFront>0</FormToFront>
     <Animations/>
   </gldneye>
-</B2STableSettings>
+<Name>avr_200<HideGrill>2</HideGrill><HideB2SDMD>0</HideB2SDMD><HideDMD>2</HideDMD><HideDMD>2</HideDMD><SolenoidsSkipFrames>3</SolenoidsSkipFrames><GIStringsSkipFrames>3</GIStringsSkipFrames><LEDsSkipFrames>0</LEDsSkipFrames><UsedLEDType>0</UsedLEDType><IsGlowBulbOn>0</IsGlowBulbOn><GlowIndex>-1</GlowIndex><StartAsEXE/><StartBackground>0</StartBackground><FormToFront>0</FormToFront><Animations/></Name></B2STableSettings>
