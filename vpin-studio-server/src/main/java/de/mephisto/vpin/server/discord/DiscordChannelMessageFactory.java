@@ -56,7 +56,7 @@ public class DiscordChannelMessageFactory {
     //do not use the original Score#toString() method as the online position does not match with the persisted score
     String score = "#1 " + newScore.getPlayerInitials() + "   " + newScore.getScore();
     String msg = String.format(template, playerName, competition.getName(), competition.getUuid(), score);
-    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createInitialHighscoreList(newScore, scoreCount - 1);
+    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + createInitialHighscoreList(newScore, scoreCount);
 
   }
 
@@ -163,7 +163,7 @@ public class DiscordChannelMessageFactory {
     builder.append(String.format("%17.17s", score.getScore()));
     builder.append("\n");
 
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length - 1; i++) {
       int pos = i + 2;
       builder.append("#");
       builder.append(pos);

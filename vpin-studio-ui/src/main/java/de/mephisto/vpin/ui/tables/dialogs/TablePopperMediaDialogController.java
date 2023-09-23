@@ -680,11 +680,13 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       }
     }
 
-    if (sanitizedTerms.isEmpty()) {
-      this.searchField.setText(game.getGameDisplayName());
-    }
-    else {
-      this.searchField.setText(String.join(" ", sanitizedTerms));
+    if(StringUtils.isEmpty(this.searchField.getText())) {
+      if (sanitizedTerms.isEmpty()) {
+        this.searchField.setText(game.getGameDisplayName());
+      }
+      else {
+        this.searchField.setText(String.join(" ", sanitizedTerms));
+      }
     }
 
     refreshTableMediaView();
