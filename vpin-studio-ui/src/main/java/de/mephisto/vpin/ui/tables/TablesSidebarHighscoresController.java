@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.HighscoreBackup;
-import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -170,15 +170,11 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onScoreReset() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      ResetHighscoreDescriptor reset = Dialogs.openHighscoreResetDialog(g);
-      if (reset != null) {
-        try {
-          Studio.client.getGameService().resetHighscore(reset);
-        } catch (Exception e) {
-          LOG.error("Failed to reset highscore: " + e.getMessage(), e);
-        } finally {
-          this.refreshView(this.game, true);
-        }
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
+          "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
+      if (confirmationResult.isChecked() && !confirmationResult.isApplied()) {
+        Studio.client.getGameService().resetHighscore(g.getId());
+        this.refreshView(this.game, true);
       }
     }
   }

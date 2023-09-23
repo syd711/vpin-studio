@@ -2,11 +2,9 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.AltSound;
 import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
 import de.mephisto.vpin.ui.ProgressDialogController;
@@ -304,15 +302,6 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.getArchiveSource();
-  }
-
-  public static ResetHighscoreDescriptor openHighscoreResetDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(ResetHighscoreDialogController.class, "dialog-reset-highscore.fxml", "Highscore Reset");
-    ResetHighscoreDialogController controller = (ResetHighscoreDialogController) stage.getUserData();
-    controller.setGame(game);
-    stage.showAndWait();
-
-    return controller.getDescriptor();
   }
 
   public static void openVPSAssetsDialog(GameRepresentation game) {

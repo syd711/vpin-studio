@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ResetHighscoreDescriptor;
 import de.mephisto.vpin.restclient.representations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -170,8 +169,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
   }
 
-  public boolean resetHighscore(ResetHighscoreDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "games/reset", descriptor, Boolean.class);
+  public boolean resetHighscore(int gameId) {
+    return getRestClient().delete(API + "games/reset/" + gameId);
   }
 
 }

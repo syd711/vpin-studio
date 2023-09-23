@@ -40,6 +40,8 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
 
   private boolean checked = false;
 
+  private boolean checkMandatory = false;
+
   @Override
   public void onDialogCancel() {
     stage.close();
@@ -63,14 +65,12 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
   public void initDialog(Stage stage, String altText, String okText, String text, String helpText1, String helpText2, String checkboxText) {
     this.stage = stage;
     this.textLabel.setText(text);
-    this.checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        checked = newValue;
-      }
+    this.checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      checked = newValue;
+      okButton.setDisable(checkMandatory && !newValue);
     });
 
-    if(altText != null) {
+    if (altText != null) {
       this.altButton.setText(altText);
     }
 
@@ -88,7 +88,7 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
       this.helpLabel2.setText("");
     }
 
-    if(okText != null) {
+    if (okText != null) {
       okButton.setText(okText);
     }
 
@@ -112,5 +112,11 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
 
   public void setChecked(boolean b) {
     this.checkBox.setSelected(true);
+  }
+
+  public void setCheckboxMandatory() {
+    this.checkMandatory = true;
+    this.okButton.setDisable(true);
+    this.checkBox.setSelected(false);
   }
 }

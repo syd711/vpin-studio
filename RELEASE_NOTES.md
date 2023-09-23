@@ -20,6 +20,10 @@ The media can be configured as part of the new asset manager, available in the "
 - Added "Game Type", "Game Version (File Version)" and "Game Theme" fields.
 - Added "Auto-Fill" button which fills missing data by looking them up from the table metadata and VPS.
 - Added "Launcher" combobox which allows to select from the list of available VPX exe files.
+  
+**Table Management: Highscores**
+
+- Aligned layout of the "Reset Highscore" dialog. 
 
 
 **Preferences: Bot Preferences**
