@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,9 +26,20 @@ public class VPXCommandLineService {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   public boolean execute(@NonNull Game game, @NonNull String commandParam) {
     File gameFile = game.getGameFile();
     File vpxExe = systemService.getVPXExe();
+
+    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+    if(tableDetails != null) {
+      String altLaunchExe = tableDetails.getAltLaunchExe();
+      if(!StringUtils.isEmpty(altLaunchExe)) {
+        vpxExe = new File(systemService.getVisualPinballInstallationFolder(), altLaunchExe);
+      }
+    }
 
     try {
       List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");

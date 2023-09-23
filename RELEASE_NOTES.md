@@ -22,6 +22,10 @@ The media can be configured as part of the new asset manager, available in the "
 - Added "Launcher" combobox which allows to select from the list of available VPX exe files.
 
 
+**Preferences: Bot Preferences**
+
+- Added "Bot Name" field which should help to identify the bot that is configured in case you are using different ones.
+
 ### Bugfixes
 
 - Removed table data field "ROM Url" (I have no idea why I added this, it was stored nowhere).

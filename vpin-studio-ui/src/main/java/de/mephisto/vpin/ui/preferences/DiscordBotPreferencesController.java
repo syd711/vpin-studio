@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.discord.DiscordClient;
+import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
@@ -36,6 +37,9 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class DiscordBotPreferencesController implements Initializable {
   @FXML
   private Label botTokenLabel;
+
+  @FXML
+  private Label botNameLabel;
 
   @FXML
   private Button resetBtn;
@@ -252,9 +256,25 @@ public class DiscordBotPreferencesController implements Initializable {
     ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
     serverCombo.setItems(FXCollections.observableList(discordServers));
 
+
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
     PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
+    PreferenceEntryRepresentation tokenPreference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
+
+    botNameLabel.setText("-");
+    if(!StringUtils.isEmpty(tokenPreference.getValue())) {
+      try {
+        DiscordClient discordClient = new DiscordClient(tokenPreference.getValue(), null);
+        DiscordMember bot = discordClient.getBot();
+        if(bot != null) {
+          botNameLabel.setText(bot.getName());
+        }
+        discordClient.shutdown();
+      } catch (Exception e) {
+        //ignore
+      }
+    }
 
     long serverId = preference.getLongValue();
     if (serverId > 0) {
