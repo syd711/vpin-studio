@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
@@ -12,6 +13,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -24,215 +26,429 @@
    <center>
       <VBox>
          <children>
-            <GridPane vgap="3.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="10.0" prefWidth="67.9999755859375" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="814.400065612793" minWidth="10.0" prefWidth="412.999951171875" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="814.400065612793" minWidth="10.0" prefWidth="425.80004882812494" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="tableLabel21" layoutX="10.0" layoutY="15.0" text="Screen:" textFill="WHITE" GridPane.rowIndex="1">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="screensCombo" prefHeight="30.0" prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" />
-                     </graphic>
-                  </Button>
-               </children>
-            </GridPane>
-            <Label fx:id="tableLabel1" layoutX="10.0" layoutY="16.0" text="PinUP Popper Assets Search" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-               <top>
-                  <BorderPane BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <left>
-                        <ListView fx:id="serverAssetsList" prefHeight="300.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
-                     </left>
+            <BorderPane>
+               <left>
+                  <BorderPane fx:id="defaultBackgroundBorderPane" BorderPane.alignment="CENTER">
                      <center>
-                        <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
-                           <center>
-                              <BorderPane fx:id="serverAssetMediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-                           </center>
-                           <bottom>
-                              <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                        <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+                           <content>
+                              <Pane fx:id="mediaRootPane">
                                  <children>
-                                    <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
-                                       </graphic>
-                                       <HBox.margin>
-                                          <Insets bottom="3.0" />
-                                       </HBox.margin>
-                                    </Button>
+                                    <BorderPane fx:id="screenPlayField" layoutX="158.0" layoutY="471.0" prefHeight="370.0" prefWidth="200.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_PlayField" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenGameHelp" layoutX="3.0" layoutY="630.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_GameHelp" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenGameInfo" layoutX="3.0" layoutY="424.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_GameInfo" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="361.0" prefHeight="96.0" prefWidth="200.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_DMD" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="176.0" prefWidth="200.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Topper" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenBackGlass" layoutX="157.0" layoutY="187.0" prefHeight="167.0" prefWidth="200.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_BackGlass" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenLoading" layoutX="362.0" layoutY="214.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Loading" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="214.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Apron/Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Menu" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenOther2" layoutX="362.0" layoutY="424.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Other2" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenWheel" layoutX="362.0" layoutY="630.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Wheel" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets top="6.0" />
+                                             </BorderPane.margin>
+                                             <children>
+                                                <Label text="Audio Launch" textFill="WHITE">
+                                                   <VBox.margin>
+                                                      <Insets top="6.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_AudioLaunch" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                       <center>
+                                          <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" prefHeight="30.0" BorderPane.alignment="BOTTOM_CENTER">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <BorderPane.margin>
+                                                <Insets top="12.0" />
+                                             </BorderPane.margin>
+                                          </Label>
+                                       </center>
+                                    </BorderPane>
+                                    <BorderPane fx:id="screenAudio" layoutX="362.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
+                                       <bottom>
+                                          <VBox alignment="CENTER" prefHeight="60.0" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets top="6.0" />
+                                             </BorderPane.margin>
+                                             <children>
+                                                <Label text="Audio" textFill="WHITE">
+                                                   <VBox.margin>
+                                                      <Insets top="6.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                       </bottom>
+                                       <top>
+                                          <BorderPane fx:id="top_Audio" BorderPane.alignment="TOP_RIGHT">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </BorderPane>
+                                       </top>
+                                       <center>
+                                          <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" prefHeight="30.0" BorderPane.alignment="CENTER">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <BorderPane.margin>
+                                                <Insets top="12.0" />
+                                             </BorderPane.margin>
+                                          </Label>
+                                       </center>
+                                    </BorderPane>
                                  </children>
-                              </HBox>
+                              </Pane>
+                           </content>
+                           <BorderPane.margin>
+                              <Insets top="24.0" />
+                           </BorderPane.margin>
+                        </ScrollPane>
+                     </center>
+                     <padding>
+                        <Insets left="1.0" right="24.0" />
+                     </padding>
+                  </BorderPane>
+
+               </left>
+               <center>
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="tableLabel1" text="PinUP Popper Assets Search" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+                           <top>
+                              <BorderPane BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                                 <left>
+                                    <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <center>
+                                    <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+                                       <center>
+                                          <BorderPane fx:id="serverAssetMediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                       </center>
+                                       <bottom>
+                                          <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                                                   </graphic>
+                                                   <HBox.margin>
+                                                      <Insets bottom="3.0" />
+                                                   </HBox.margin>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </bottom>
+                                    </BorderPane>
+                                 </center>
+                                 <top>
+                                    <ToolBar BorderPane.alignment="CENTER">
+                                      <items>
+                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                        <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
+                                             </graphic>
+                                          </Button>
+                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                                          <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                                             </graphic>
+                                          </Button>
+                                      </items>
+                                    </ToolBar>
+                                 </top>
+                              </BorderPane>
+                           </top>
+                           <bottom>
+                              <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <BorderPane.margin>
+                                    <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
+                                 </BorderPane.margin>
+                                 <HBox>
+                                    <children>
+                                       <Label text="Double-click to preview">
+                                          <HBox.margin>
+                                             <Insets bottom="12.0" left="210.0" />
+                                          </HBox.margin>
+                                       </Label>
+                                    </children>
+                                 </HBox>
+                              </VBox>
                            </bottom>
                         </BorderPane>
-                     </center>
-                     <top>
-                        <ToolBar BorderPane.alignment="CENTER">
-                          <items>
-                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                            <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
-                                 </graphic>
-                              </Button>
-                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                              <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
-                                 </graphic>
-                              </Button>
-                          </items>
-                        </ToolBar>
-                     </top>
-                  </BorderPane>
-               </top>
-               <bottom>
-                  <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <BorderPane.margin>
-                        <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
-                     </BorderPane.margin>
-                     <HBox>
-                        <children>
-                           <Label text="Double-click to preview">
-                              <HBox.margin>
-                                 <Insets bottom="12.0" left="210.0" />
-                              </HBox.margin>
-                           </Label>
-                        </children>
-                     </HBox>
-                  </VBox>
-               </bottom>
-            </BorderPane>
-            <Label layoutX="10.0" layoutY="10.0" text="Installed Table Assets" textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" top="6.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
-               <top>
-                  <BorderPane BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <left>
-                        <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
-                     </left>
-                     <center>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <center>
-                              <BorderPane fx:id="mediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-                           </center>
+                        <Label text="Installed Table Assets" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets bottom="6.0" top="6.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+                           <top>
+                              <BorderPane BorderPane.alignment="CENTER">
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                                 <left>
+                                    <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <center>
+                                    <BorderPane BorderPane.alignment="CENTER">
+                                       <center>
+                                          <BorderPane fx:id="mediaPane" maxHeight="300.0" maxWidth="300.0" prefHeight="300.0" prefWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                       </center>
+                                    </BorderPane>
+                                 </center>
+                                 <top>
+                                    <ToolBar BorderPane.alignment="CENTER">
+                                       <items>
+                                          <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                             </graphic>
+                                          </Button>
+                                          <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                          <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="renameBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-edit-outline" />
+                                             </graphic>
+                                          </Button>
+                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" />
+                                             </graphic>
+                                          </Button>
+                                       </items>
+                                    </ToolBar>
+                                 </top>
+                              </BorderPane>
+                           </top>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </BorderPane>
-                     </center>
-                     <top>
-                        <ToolBar BorderPane.alignment="CENTER">
-                           <items>
-                              <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                     </children>
+                  </VBox>
+               </center>
+               <top>
+                  <HBox BorderPane.alignment="CENTER_LEFT">
+                     <children>
+                        <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
+                              <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" />
                                  </graphic>
                               </Button>
-                              <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="renameBtn" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-edit-outline" />
-                                 </graphic>
-                              </Button>
-                              <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" />
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" />
-                                 </graphic>
-                              </Button>
-                           </items>
-                        </ToolBar>
-                     </top>
-                  </BorderPane>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
                </top>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
             </BorderPane>
          </children>
          <BorderPane.margin>

@@ -60,8 +60,10 @@ import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -73,9 +75,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private ComboBox<GameRepresentation> tablesCombo;
-
-  @FXML
-  private ComboBox<PopperScreen> screensCombo;
 
   @FXML
   private BorderPane serverAssetMediaPane;
@@ -110,10 +109,49 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private ListView<TableAsset> serverAssetsList;
 
+
+  @FXML
+  private BorderPane screenTopper;
+
+  @FXML
+  private BorderPane screenBackGlass;
+
+  @FXML
+  private BorderPane screenDMD;
+
+  @FXML
+  private BorderPane screenPlayField;
+
+  @FXML
+  private BorderPane screenMenu;
+
+  @FXML
+  private BorderPane screenOther2;
+
+  @FXML
+  private BorderPane screenWheel;
+
+  @FXML
+  private BorderPane screenGameInfo;
+
+  @FXML
+  private BorderPane screenGameHelp;
+
+  @FXML
+  private BorderPane screenLoading;
+
+  @FXML
+  private BorderPane screenAudio;
+
+  @FXML
+  private BorderPane screenAudioLaunch;
+
+
   private GameRepresentation game;
   private PopperScreen screen;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
+  private Node lastHover;
 
   @FXML
   private void onVPSAssets() {
@@ -243,7 +281,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     Platform.runLater(() -> {
       String mimeType = tableAsset.getMimeType();
-      if(mimeType == null) {
+      if (mimeType == null) {
         LOG.info("No mimetype found for asset " + tableAsset);
         return;
       }
@@ -412,6 +450,33 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       throw new RuntimeException(e);
     }
 
+    screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Audio, screenAudio, t1, false));
+    screenAudio.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Audio, screenAudio, true, true));
+    screenAudioLaunch.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.AudioLaunch, screenAudioLaunch, t1, false));
+    screenAudioLaunch.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.AudioLaunch, screenAudioLaunch, true, true));
+    screenDMD.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.DMD, screenDMD, t1, false));
+    screenDMD.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.DMD, screenDMD, true, true));
+    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.BackGlass, screenBackGlass, t1, false));
+    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.BackGlass, screenBackGlass, true, true));
+    screenMenu.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Menu, screenMenu, t1, false));
+    screenMenu.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Menu, screenMenu, true, true));
+    screenGameInfo.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.GameInfo, screenGameInfo, t1, false));
+    screenGameInfo.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.GameInfo, screenGameInfo, true, true));
+    screenGameHelp.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.GameHelp, screenGameHelp, t1, false));
+    screenGameHelp.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.GameHelp, screenGameHelp, true, true));
+    screenLoading.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Loading, screenLoading, t1, false));
+    screenLoading.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Loading, screenLoading, true, true));
+    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.BackGlass, screenBackGlass, t1, false));
+    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.BackGlass, screenBackGlass, true, true));
+    screenPlayField.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.PlayField, screenPlayField, t1, false));
+    screenPlayField.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.PlayField, screenPlayField, true, true));
+    screenTopper.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Topper, screenTopper, t1, false));
+    screenTopper.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Topper, screenTopper, true, true));
+    screenOther2.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Other2, screenOther2, t1, false));
+    screenOther2.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Other2, screenOther2, true, true));
+    screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Wheel, screenWheel, t1, false));
+    screenWheel.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Wheel, screenWheel, true, true));
+
     previewBtn.setDisable(true);
     downloadBtn.setVisible(false);
 
@@ -425,11 +490,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     tablesCombo.getItems().addAll(gameRepresentations);
     tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       this.setGame(t1, PopperScreen.Audio);
-    });
-
-    screensCombo.setItems(FXCollections.observableList(Arrays.asList(PopperScreen.values())));
-    screensCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      this.setGame(this.game, newValue);
     });
 
     searchField.setOnKeyPressed(ke -> {
@@ -480,7 +540,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
-        if(screen.equals(PopperScreen.Wheel)) {
+        if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
 
@@ -597,6 +657,25 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     });
   }
 
+  private void updateState(PopperScreen s, BorderPane screen, Boolean hovered, Boolean clicked) {
+    if(this.lastHover != null && !this.lastHover.equals(this.screen)) {
+      lastHover.setStyle(null);
+    }
+
+    if (hovered || this.screen.equals(s) || clicked) {
+      screen.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+    }
+    else {
+      screen.setStyle(null);
+    }
+
+    if(clicked) {
+      setGame(this.game, s);
+    }
+
+    this.lastHover = screen;
+  }
+
   private void disposeServerAssetPreview() {
     Node center = serverAssetMediaPane.getCenter();
     if (center instanceof MediaView) {
@@ -640,7 +719,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.game = game;
     this.screen = screen;
     this.tablesCombo.setValue(game);
-    this.screensCombo.setValue(screen);
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
 
     String term = game.getGameDisplayName();
@@ -680,7 +758,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       }
     }
 
-    if(StringUtils.isEmpty(this.searchField.getText())) {
+    if (StringUtils.isEmpty(this.searchField.getText())) {
       if (sanitizedTerms.isEmpty()) {
         this.searchField.setText(game.getGameDisplayName());
       }
@@ -695,7 +773,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
 
   private void refreshTableMediaView() {
-    if(screen.equals(PopperScreen.Wheel)) {
+    if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
     }
 
