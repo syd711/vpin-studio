@@ -19,16 +19,15 @@ jobs:
       # otherwise, read permission is required at least
       pull-requests: write
     steps:
-      - name: Checkout
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v3
+
+      - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
           repository: syd711/vpin-studio-popper-client
-          path: ./vpin-studio-popper-client
+          path: ../vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: run maven compile test command
-        working-directory: ./vpin-studio-popper-client
-        run: mvn clean install
 
       - name: Setup Corretto JDK
         uses: actions/setup-java@v3
@@ -36,6 +35,14 @@ jobs:
           distribution: 'corretto'
           java-version: '11'
           cache: 'maven'
+
+      - name: Run maven build for assets api
+        working-directory: ./vpin-studio/vpin-connector-assets
+        run: mvn clean install
+
+      - name: Run maven build for popper client
+        working-directory: ../vpin-studio-popper-client
+        run: mvn clean install
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
