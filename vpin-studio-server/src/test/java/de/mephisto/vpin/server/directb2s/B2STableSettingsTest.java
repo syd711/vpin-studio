@@ -24,7 +24,7 @@ public class B2STableSettingsTest {
   }
 
   @Test
-  public void testTableSerializer() throws IOException {
+  public void testTableSerializer() throws Exception {
     File b2sFile = new File("../testsystem/vPinball/VisualPinball/Tables/B2STableSettings.xml");
     String before = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
 
