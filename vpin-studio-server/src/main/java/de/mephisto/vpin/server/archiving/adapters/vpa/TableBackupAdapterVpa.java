@@ -119,7 +119,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       fos = new FileOutputStream(tempFile);
       zipOut = new ZipOutputStream(fos);
       
-      String gameFolderName = systemService.getPupUpMediaFolderName(game);
+      String gameFolderName = systemService.getVisualPinballInstallationFolder().getName();
 
       //store highscore
       //zip EM file
