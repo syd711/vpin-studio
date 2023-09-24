@@ -29,18 +29,6 @@
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-         <center>
-            <HBox alignment="BASELINE_RIGHT" spacing="12.0">
-               <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
-               </children>
-            </HBox>
-         </center>
          <left>
             <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
@@ -103,6 +91,18 @@
                </children>
             </HBox>
          </left>
+         <right>
+            <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
+               <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
+               </children>
+            </HBox>
+         </right>
       </BorderPane>
    </bottom>
    <center>
@@ -113,13 +113,13 @@
          <center>
             <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
                <children>
-                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" prefWidth="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
                       <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Type" />
                         <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="Ducking Profile" />
                         <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="Gain" />
-                        <TableColumn fx:id="columnFilename" prefWidth="331.2000427246094" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                        <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
                         <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Play" visible="false" />
                         <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Filesize" />
                     </columns>
@@ -140,8 +140,8 @@
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.199951171875" minWidth="10.0" prefWidth="117.6" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="140.8000244140625" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="27.199975585937523" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="123.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="46.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -182,7 +182,7 @@
                               <Tooltip prefWidth="300.0" text="Determines the ducking proifle for the selected sample type." wrapText="true" />
                            </tooltip>
                         </Label>
-                        <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="channelCombo" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="49.0" text="Ducking Profile:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -191,7 +191,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                   <GridPane>
@@ -256,7 +256,7 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <TextField fx:id="searchText" prefWidth="250.0" promptText="Entry Search...">
+            <TextField fx:id="searchText" prefWidth="180.0" promptText="Entry Search...">
                <font>
                   <Font size="14.0" />
                </font>
@@ -270,7 +270,7 @@
                   <Insets right="6.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
+            <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="200.0" />
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="10.0" layoutY="16.0" text="Sample Type:" textFill="WHITE">
                <font>
@@ -280,14 +280,17 @@
                   <Insets right="6.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="130.0" />
-            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" text="Edit" textFill="WHITE">
+            <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="120.0" />
+            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Edit sample type" />
+               </tooltip>
             </Button>
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="466.0" layoutY="16.0" text="Ducking Profile:" textFill="WHITE">
@@ -298,30 +301,39 @@
                   <Insets right="6.0" />
                </padding>
             </Label>
-            <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="200.0" />
-            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" text="Add" textFill="WHITE">
+            <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="140.0" />
+            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Add new ducking profile" />
+               </tooltip>
             </Button>
-            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" text="Edit" textFill="WHITE">
+            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Edit ducking profile" />
+               </tooltip>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" text="Delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Delete ducking profile" />
+               </tooltip>
             </Button>
          </items>
       </ToolBar>

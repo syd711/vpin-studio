@@ -46,10 +46,10 @@
          <center>
             <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
                <children>
-                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" prefWidth="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
-                        <TableColumn fx:id="columnName" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                        <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                       <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Channel" />
                         <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Duck" />
                         <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Gain" />

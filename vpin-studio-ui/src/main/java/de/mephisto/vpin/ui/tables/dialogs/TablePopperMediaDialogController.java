@@ -683,6 +683,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (clicked) {
       if(this.screen.equals(s)) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
+        this.lastSelected = borderPane;
         return;
       }
 
