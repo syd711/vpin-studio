@@ -36,7 +36,7 @@ jobs:
           java-version: '11'
           cache: 'maven'
 
-      - name: Run maven build for assets api
+      - name: Run maven build for Assets API
         working-directory: ./vpin-connector-assets
         run: mvn clean install
 
