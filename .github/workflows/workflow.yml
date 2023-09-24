@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-studio-popper-client
+          path: vpin-studio-popper-client
 
       - name: Setup Corretto JDK
         uses: actions/setup-java@v3
