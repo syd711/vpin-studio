@@ -26,6 +26,10 @@ jobs:
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
+      - name: run maven compile test command
+        working-directory: ./vpin-studio-popper-client
+        run: mvn clean install
+
       - name: Setup Corretto JDK
         uses: actions/setup-java@v3
         with:
