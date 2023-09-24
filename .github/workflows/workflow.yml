@@ -37,7 +37,7 @@ jobs:
           cache: 'maven'
 
       - name: Run maven build for assets api
-        working-directory: ./vpin-studio/vpin-connector-assets
+        working-directory: ./vpin-connector-assets
         run: mvn clean install
 
       - name: Run maven build for popper client
