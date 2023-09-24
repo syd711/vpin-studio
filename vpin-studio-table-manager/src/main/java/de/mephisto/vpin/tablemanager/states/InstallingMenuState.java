@@ -1,9 +1,9 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 import javafx.application.Platform;

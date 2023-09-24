@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.GameType;
-import de.mephisto.vpin.restclient.PopperCustomOptions;
+import de.mephisto.vpin.restclient.popper.GameType;
+import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;

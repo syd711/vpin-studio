@@ -1,8 +1,8 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -11,8 +11,6 @@ import javafx.scene.paint.Color;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ScoreGraphUtil {

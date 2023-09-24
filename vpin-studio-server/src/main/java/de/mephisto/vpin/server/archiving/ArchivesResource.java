@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.archiving;
 
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import de.mephisto.vpin.server.util.ZipUtil;

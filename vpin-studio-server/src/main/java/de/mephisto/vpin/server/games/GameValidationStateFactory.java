@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.Arrays;
 import java.util.List;

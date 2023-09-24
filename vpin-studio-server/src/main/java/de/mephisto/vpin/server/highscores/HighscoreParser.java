@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.restclient.DefaultHighscoresTitles;
+import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;

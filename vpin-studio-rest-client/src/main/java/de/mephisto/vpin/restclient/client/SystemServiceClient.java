@@ -1,8 +1,8 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.ScreenInfo;
-import de.mephisto.vpin.restclient.SystemData;
-import de.mephisto.vpin.restclient.SystemSummary;
+import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;

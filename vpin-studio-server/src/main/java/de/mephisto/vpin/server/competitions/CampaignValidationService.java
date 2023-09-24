@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.CompetitionValidationCode;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.CompetitionValidationCode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;

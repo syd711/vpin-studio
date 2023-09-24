@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.HighscoreType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.SystemSummary;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;

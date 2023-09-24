@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.IniSettings;
-import de.mephisto.vpin.restclient.IniSettingsChangeListener;
+import de.mephisto.vpin.restclient.util.ini.IniSettings;
+import de.mephisto.vpin.restclient.util.ini.IniSettingsChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.Keys;
@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;

@@ -1,8 +1,15 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.representations.*;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

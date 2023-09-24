@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;

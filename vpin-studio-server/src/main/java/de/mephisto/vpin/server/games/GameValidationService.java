@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
-import de.mephisto.vpin.restclient.representations.altcolor.AltColor;
-import de.mephisto.vpin.restclient.representations.altcolor.AltColorTypes;
-import de.mephisto.vpin.restclient.GameValidationCode;
+import de.mephisto.vpin.restclient.altcolor.AltColor;
+import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.*;
 
-import static de.mephisto.vpin.restclient.GameValidationCode.*;
+import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 
 /**
  * See ValidationTexts

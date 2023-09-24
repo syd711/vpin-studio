@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.PopperCustomOptions;
-import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
+import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PinUPControl;

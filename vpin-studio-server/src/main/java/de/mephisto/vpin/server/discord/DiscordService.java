@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
-import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.*;
 import de.mephisto.vpin.server.competitions.Competition;

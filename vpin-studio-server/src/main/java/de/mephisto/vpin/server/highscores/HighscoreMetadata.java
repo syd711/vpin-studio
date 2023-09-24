@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.restclient.HighscoreType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 
 import java.util.Date;
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.SystemCommandOutput;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.VpbmHosts;
+import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.PinUPConnector;

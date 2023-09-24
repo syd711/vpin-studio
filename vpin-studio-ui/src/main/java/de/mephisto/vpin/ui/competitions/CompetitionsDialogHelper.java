@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.HighscoreType;
-import de.mephisto.vpin.restclient.NVRamList;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 

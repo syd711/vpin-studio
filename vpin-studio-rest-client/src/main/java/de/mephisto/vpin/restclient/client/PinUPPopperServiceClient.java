@@ -1,14 +1,14 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.DatabaseLockException;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.representations.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;

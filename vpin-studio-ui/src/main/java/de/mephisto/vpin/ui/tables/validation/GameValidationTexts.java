@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.tables.validation;
 
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.List;
 
-import static de.mephisto.vpin.restclient.GameValidationCode.*;
+import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 
 /**
  * See GameValidator

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.SubscriptionInfo;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;

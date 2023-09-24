@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.JoinMode;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.games.Game;

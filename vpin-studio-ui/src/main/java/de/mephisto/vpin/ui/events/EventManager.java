@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.events;
 
-import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

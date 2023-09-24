@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.representations.GameRepresentation;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

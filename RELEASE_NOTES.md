@@ -8,7 +8,7 @@ The media can be configured as part of the new asset manager, available in the "
 
 **Tables Management**
 
-- Added new toolbar button: Asset Manager
+- Added new toolbar button: Asset Manager. The Asset Manager lets you select assets for the different screens available in PinUP Popper and shows the already installed assets for the selected screen. 
 
 **Tables Management: PinUP Popper Media**
 
@@ -19,12 +19,19 @@ The media can be configured as part of the new asset manager, available in the "
 - Changed this section name to "PinUP Popper Table Settings"
 - Added "Game Type", "Game Version (File Version)" and "Game Theme" fields.
 - Added "Auto-Fill" button which fills missing data by looking them up from the table metadata and VPS.
-- Added "Launcher" combobox which allows to select from the list of available VPX exe files.
-  
+- Added "Launcher" combo-box which allows to select from the list of available VPX exe files combined with the alt-launcher entries from PinUP Popper. The green launcher icon on the table overview toolbar will use this selection!
+
+**Table Management: Backglass**
+
+- Added "real" backglass preview: The previous image was just a plain image export while the new preview will hide the grill if the corresponding configuration is found in the backglass. Also, the DMD image is shown if part of the directb2s file. I'm still not 100% sure if I got everything right there, so additional changes are likely there. Note that not all EM tables are supported.
+
 **Table Management: Highscores**
 
 - Aligned layout of the "Reset Highscore" dialog. 
 
+**Table Management: ALT Sound**
+
+- Added AltSound 2.0 support: The "ALT Sound" section supports now both formats to be edited: "g-sound" and "altsound". If you have an altsound package installed that is set to format "g-sound", the new editor for this format will be used. 
 
 **Preferences: Bot Preferences**
 
@@ -34,3 +41,4 @@ The media can be configured as part of the new asset manager, available in the "
 
 - Removed table data field "ROM Url" (I have no idea why I added this, it was stored nowhere).
 - Unified some "Edit" icons.
+- Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.

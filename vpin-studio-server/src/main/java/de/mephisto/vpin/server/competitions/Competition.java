@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.representations.ValidationState;
-import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.competitions.validation;
 
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-import static de.mephisto.vpin.restclient.CompetitionValidationCode.*;
+import static de.mephisto.vpin.restclient.competitions.CompetitionValidationCode.*;
 
 public class CompetitionValidationTexts {
 

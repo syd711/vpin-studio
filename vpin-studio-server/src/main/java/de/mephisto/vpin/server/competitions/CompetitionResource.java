@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;

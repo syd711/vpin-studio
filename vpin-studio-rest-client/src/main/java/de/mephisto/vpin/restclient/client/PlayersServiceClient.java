@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.PlayerDomain;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.players.PlayerDomain;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

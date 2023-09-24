@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.mame;
 
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.List;
 

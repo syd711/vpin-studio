@@ -1,10 +1,10 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.representations.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreListRepresentation;
-import de.mephisto.vpin.restclient.representations.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

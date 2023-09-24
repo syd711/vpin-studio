@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.restclient.AssetType;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;

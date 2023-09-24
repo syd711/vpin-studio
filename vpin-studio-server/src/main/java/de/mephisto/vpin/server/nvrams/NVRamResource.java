@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.nvrams;
 
-import de.mephisto.vpin.restclient.NVRamList;
-import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

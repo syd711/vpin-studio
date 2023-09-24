@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.restclient.ArchiveType;
-import de.mephisto.vpin.restclient.CompetitionType;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;

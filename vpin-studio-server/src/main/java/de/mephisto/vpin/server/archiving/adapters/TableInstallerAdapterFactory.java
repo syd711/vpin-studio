@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters;
 
-import de.mephisto.vpin.restclient.ArchiveType;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableInstallerAdapterVpa;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.TableInstallerAdapterVpbm;

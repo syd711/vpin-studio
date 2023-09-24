@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.TableManagerSettings;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;

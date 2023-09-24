@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
-import de.mephisto.vpin.restclient.VpbmHosts;
+import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

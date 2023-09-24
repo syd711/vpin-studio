@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;

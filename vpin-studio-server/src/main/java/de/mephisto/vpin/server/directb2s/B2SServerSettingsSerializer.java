@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.restclient.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

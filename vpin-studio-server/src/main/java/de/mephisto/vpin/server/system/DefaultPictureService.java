@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.restclient.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;

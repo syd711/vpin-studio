@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.nvrams;
 
-import de.mephisto.vpin.restclient.NVRamList;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

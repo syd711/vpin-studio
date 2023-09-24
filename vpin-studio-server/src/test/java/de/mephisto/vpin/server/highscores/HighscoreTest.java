@@ -1,8 +1,5 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.restclient.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
-import de.mephisto.vpin.server.discord.DiscordCompetitionService;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

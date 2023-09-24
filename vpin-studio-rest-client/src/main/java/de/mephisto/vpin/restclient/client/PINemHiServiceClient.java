@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.IniSettings;
+import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

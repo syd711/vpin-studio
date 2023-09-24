@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
-import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;

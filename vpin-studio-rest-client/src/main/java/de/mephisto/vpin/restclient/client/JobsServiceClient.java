@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Arrays;

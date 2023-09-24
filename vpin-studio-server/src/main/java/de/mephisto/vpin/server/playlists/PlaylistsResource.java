@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
-import de.mephisto.vpin.restclient.representations.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.server.popper.Playlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

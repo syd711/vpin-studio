@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;

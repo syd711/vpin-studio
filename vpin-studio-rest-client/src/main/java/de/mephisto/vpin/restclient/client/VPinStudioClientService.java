@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.FileUploadProgressListener;
-import de.mephisto.vpin.restclient.ProgressableFileSystemResource;
 import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.util.ProgressableFileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

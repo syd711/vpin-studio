@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DatabaseLockException;
-import de.mephisto.vpin.restclient.PopperCustomOptions;
+import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;

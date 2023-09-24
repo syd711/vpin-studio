@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.representations.vpx.TableInfo;
+import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.UploadUtil;

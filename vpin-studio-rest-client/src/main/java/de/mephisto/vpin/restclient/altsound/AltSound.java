@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.altsound;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.representations.ValidationState;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.springframework.lang.Nullable;
 
 import java.io.File;

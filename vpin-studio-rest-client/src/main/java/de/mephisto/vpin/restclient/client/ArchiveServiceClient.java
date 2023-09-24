@@ -1,14 +1,14 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.AssetType;
-import de.mephisto.vpin.restclient.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveCopyToRepositoryDescriptor;
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.descriptors.BackupDescriptor;
-import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.representations.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveCopyToRepositoryDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;

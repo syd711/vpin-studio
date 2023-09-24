@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.archiving.dialogs;
 
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.representations.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;

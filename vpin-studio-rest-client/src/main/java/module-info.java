@@ -12,12 +12,25 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.representations;
   exports de.mephisto.vpin.restclient.discord;
   exports de.mephisto.vpin.restclient.util;
-  exports de.mephisto.vpin.restclient.descriptors;
+  exports de.mephisto.vpin.restclient.tables.descriptors;
   exports de.mephisto.vpin.restclient.client;
   exports de.mephisto.vpin.restclient.jobs;
   exports de.mephisto.vpin.restclient.popper;
   exports de.mephisto.vpin.restclient.mame;
   exports de.mephisto.vpin.restclient.altsound;
-  exports de.mephisto.vpin.restclient.representations.vpx;
-  exports de.mephisto.vpin.restclient.representations.altcolor;
+  exports de.mephisto.vpin.restclient.vpx;
+  exports de.mephisto.vpin.restclient.altcolor;
+  exports de.mephisto.vpin.restclient.archiving;
+  exports de.mephisto.vpin.restclient.assets;
+  exports de.mephisto.vpin.restclient.competitions;
+  exports de.mephisto.vpin.restclient.directb2s;
+  exports de.mephisto.vpin.restclient.highscores;
+  exports de.mephisto.vpin.restclient.tables;
+  exports de.mephisto.vpin.restclient.puppacks;
+  exports de.mephisto.vpin.restclient.players;
+  exports de.mephisto.vpin.restclient.validation;
+  exports de.mephisto.vpin.restclient.vpbm;
+  exports de.mephisto.vpin.restclient.system;
+  exports de.mephisto.vpin.restclient.util.ini;
+  exports de.mephisto.vpin.restclient.util.properties;
 }

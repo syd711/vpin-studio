@@ -1,7 +1,5 @@
 package de.mephisto.vpin.restclient.popper;
 
-import de.mephisto.vpin.restclient.GameType;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

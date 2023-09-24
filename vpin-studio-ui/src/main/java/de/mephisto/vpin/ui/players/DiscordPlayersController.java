@@ -2,8 +2,8 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PlayerDomain;
-import de.mephisto.vpin.restclient.representations.PlayerRepresentation;
+import de.mephisto.vpin.restclient.players.PlayerDomain;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;

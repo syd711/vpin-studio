@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.players;
 
-import de.mephisto.vpin.restclient.PlayerDomain;
+import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;

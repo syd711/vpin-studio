@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
