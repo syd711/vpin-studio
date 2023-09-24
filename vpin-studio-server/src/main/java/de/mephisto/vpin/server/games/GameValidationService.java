@@ -259,8 +259,6 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-
-    List<String> files = altColor.getFiles();
     switch (altColorType) {
       case pal: {
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING)) {

@@ -73,6 +73,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
+//    initProgramVersions();
 
   private ApplicationContext context;
 
@@ -221,6 +222,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
     LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
+//    LOG.info(formatPathLog("VPin MAME Version", this.mameVersion));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }

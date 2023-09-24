@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.GameValidationCode;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -13,6 +14,9 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
+import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
+import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -477,24 +481,77 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
   }
 
-  public void showEditor(GameRepresentation game) {
+  public void showScriptEditor(GameRepresentation game) {
     String tableSource = client.getVpxService().getTableSource(game);
     if (!StringUtils.isEmpty(tableSource)) {
       try {
-        FXMLLoader loader = new FXMLLoader(VpxEditorController.class.getResource("vpx-editor.fxml"));
+        FXMLLoader loader = new FXMLLoader(TableScriptEditorController.class.getResource("editor-tablescript.fxml"));
         BorderPane root = loader.load();
         root.setMaxWidth(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
+
         editorRootStack.getChildren().add(root);
 
-        VpxEditorController editorController = loader.getController();
+        TableScriptEditorController editorController = loader.getController();
 
         String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
         editorController.setGame(game, source);
         editorController.setTablesController(tablesController);
       } catch (IOException e) {
         LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  public void showAltSoundEditor(GameRepresentation game, AltSound altSound) {
+    String tableSource = client.getVpxService().getTableSource(game);
+    if (!StringUtils.isEmpty(tableSource)) {
+      try {
+        FXMLLoader loader = new FXMLLoader(AltSoundEditorController.class.getResource("editor-altsound.fxml"));
+        BorderPane root = loader.load();
+        root.setMaxWidth(Double.MAX_VALUE);
+        root.setMaxHeight(Double.MAX_VALUE);
+
+        StackPane editorRootStack = tablesController.getEditorRootStack();
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
+
+        editorRootStack.getChildren().add(root);
+
+        AltSoundEditorController editorController = loader.getController();
+        editorController.setAltSound(game, altSound);
+        editorController.setTablesController(tablesController);
+      } catch (IOException e) {
+        LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  public void showAltSound2Editor(GameRepresentation game, AltSound altSound) {
+    String tableSource = client.getVpxService().getTableSource(game);
+    if (!StringUtils.isEmpty(tableSource)) {
+      try {
+        FXMLLoader loader = new FXMLLoader(AltSound2EditorController.class.getResource("editor-altsound2.fxml"));
+        BorderPane root = loader.load();
+        root.setMaxWidth(Double.MAX_VALUE);
+        root.setMaxHeight(Double.MAX_VALUE);
+
+        StackPane editorRootStack = tablesController.getEditorRootStack();
+        if(editorRootStack.getChildren().size() > 1) {
+          return;
+        }
+
+        editorRootStack.getChildren().add(root);
+        AltSound2EditorController editorController = loader.getController();
+        editorController.setAltSound(game, altSound);
+        editorController.setTablesController(tablesController);
+      } catch (IOException e) {
+        LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
   }
@@ -928,6 +985,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
       playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
       refreshView(Optional.ofNullable(gameRepresentation));
+    }
+  }
+
+  public void closeEditors() {
+    StackPane editorRootStack = tablesController.getEditorRootStack();
+    List<Node> nodes = new ArrayList<>(editorRootStack.getChildren());
+    for (Node node : nodes) {
+      if(node instanceof TabPane) {
+        continue;
+      }
+      editorRootStack.getChildren().remove(node);
     }
   }
 }

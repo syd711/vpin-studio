@@ -4,6 +4,9 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.IniSettings;
 import de.mephisto.vpin.restclient.SystemData;
+import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
+import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.*;
@@ -21,6 +24,8 @@ import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
+import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
+import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -176,6 +181,22 @@ public class Dialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound altSound, AltSound2DuckingProfile profile) {
+    Stage stage = createStudioDialogStage(AltSound2ProfileDialogController.class, "dialog-altsound2-profile.fxml", "Edit Ducking Profile");
+    AltSound2ProfileDialogController controller = (AltSound2ProfileDialogController) stage.getUserData();
+    controller.setProfile(altSound, profile);
+    stage.showAndWait();
+
+    return controller.editingFinished();
+  }
+
+  public static void openAltSound2SampleTypeDialog(AltSound altSound, AltSound2SampleType sampleType) {
+    Stage stage = createStudioDialogStage(AltSound2SampleTypeDialogController.class, "dialog-altsound2-sample-type.fxml", "Sample Type Settings");
+    AltSound2SampleTypeDialogController controller = (AltSound2SampleTypeDialogController) stage.getUserData();
+    controller.setProfile(altSound, sampleType);
+    stage.showAndWait();
   }
 
   public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
@@ -369,15 +390,6 @@ public class Dialogs {
     controller.setStage(stage);
     stage.showAndWait();
     return controller.install();
-  }
-
-  public static boolean openAltSoundEditor(GameRepresentation game, AltSound altSound) {
-    Stage stage = createStudioDialogStage(ROMUploadController.class, "dialog-alt-sound-editor.fxml", "ALT Sound Editor");
-    AltSoundEditorController controller = (AltSoundEditorController) stage.getUserData();
-    controller.setAltSound(game, altSound);
-    stage.showAndWait();
-
-    return true;
   }
 
   public static void openBotServerIdTutorial() {

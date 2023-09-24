@@ -426,7 +426,7 @@
     -fx-underline: true;
 }
 
-.check-box:disabled, .check-box:disabled > * {
+.check-box:disabled .box {
   -fx-opacity: 0.8 ;
   -fx-background-color: #B0ABAB;
   -fx-background-insets: 2, 2, 2;

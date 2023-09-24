@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.AltSound2EditorController">
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <center>
+            <HBox alignment="BASELINE_RIGHT" spacing="12.0">
+               <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
+               </children>
+            </HBox>
+         </center>
+         <left>
+            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+               <children>
+                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="ROM Volume Control" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="The AltSound processor attempts to recreate original &#10;playback behavior using commands sent from the ROM.&#10;This does not work in all cases, &#10;resulting in undesirable muting of the playback volume. &#10;Setting this variable to 0 turns this feature off." wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Label>
+                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="Record Sound Commands" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="36.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="Records all received sound commands and relative playback times.&#10;" wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Spinner fx:id="skipCountSpinner" prefWidth="60.0">
+                     <HBox.margin>
+                        <Insets left="36.0" />
+                     </HBox.margin>
+                  </Spinner>
+                  <Label styleClass="default-text" text="Command Skip Count">
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="400.0" text="Allows authors to specify ‘n’ initial sound commands to skip processing.  &#10;This is necessary because some ROMs send commands during initialization that shouldn’t be played, &#10;but are still valid for runtime." wrapText="true" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets left="12.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </left>
+      </BorderPane>
+   </bottom>
+   <center>
+      <BorderPane minHeight="500.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <center>
+            <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
+               <children>
+                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                    <columns>
+                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="ID" />
+                      <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Type" />
+                        <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="Ducking Profile" />
+                        <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="Gain" />
+                        <TableColumn fx:id="columnFilename" prefWidth="331.2000427246094" style="-fx-alignment: BASELINE_LEFT;" text="Filename" />
+                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Play" visible="false" />
+                        <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="Filesize" />
+                    </columns>
+                  </TableView>
+               </children>
+            </StackPane>
+         </center>
+      </BorderPane>
+   </center>
+   <right>
+      <BorderPane styleClass="accordion-container" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.199951171875" minWidth="10.0" prefWidth="117.6" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="140.8000244140625" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="27.199975585937523" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="Selected Entries:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="49.0" text="Sample Type:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="entriesLabel" layoutX="10.0" layoutY="15.0" prefHeight="20.0" prefWidth="132.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Determines the ducking proifle for the selected sample type." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                        <ComboBox fx:id="channelCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="49.0" text="Ducking Profile:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                        </Label>
+                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="500.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Slider fx:id="gainVolume" layoutX="10.0" layoutY="35.0" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets right="16.0" top="12.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label text="Gain" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="6.0" />
+                                 </padding>
+                              </Label>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The &quot;gain&quot; value determines the absolute volume of the selected audio file." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="gainLabel" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="36.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets bottom="24.0" right="22.0" />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </GridPane>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+      </BorderPane>
+   </right>
+   <top>
+      <ToolBar BorderPane.alignment="CENTER">
+         <items>
+            <TextField fx:id="searchText" prefWidth="250.0" promptText="Entry Search...">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="244.0" layoutY="16.0" text="Filename:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
+            <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="10.0" layoutY="16.0" text="Sample Type:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="130.0" />
+            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" text="Edit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+               </graphic>
+            </Button>
+            <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Label layoutX="466.0" layoutY="16.0" text="Ducking Profile:" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets right="6.0" />
+               </padding>
+            </Label>
+            <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="200.0" />
+            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" text="Add" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+               </graphic>
+            </Button>
+            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" text="Edit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+               </graphic>
+            </Button>
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" text="Delete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+               </graphic>
+            </Button>
+         </items>
+      </ToolBar>
+   </top>
+</BorderPane>

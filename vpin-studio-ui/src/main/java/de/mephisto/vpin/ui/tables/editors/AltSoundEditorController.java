@@ -1,12 +1,13 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.tables.editors;
 
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.AltSound;
-import de.mephisto.vpin.restclient.representations.AltSoundEntry;
+import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -16,20 +17,25 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class AltSoundEditorController implements Initializable, DialogController {
+public class AltSoundEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
 
   private GameRepresentation game;
   private AltSound altSound;
-  private boolean result = false;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private TableView<AltSoundEntryModel> tableView;
@@ -103,38 +109,22 @@ public class AltSoundEditorController implements Initializable, DialogController
   private ChangeListener<String> channelFieldChangeListener;
   private ChangeListener<Boolean> loopCheckboxChangeListener;
   private ChangeListener<Boolean> stopCheckboxChangeListener;
-
-  @Override
-  public void onDialogCancel() {
-    result = false;
-  }
+  private TablesController tablesController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
-  }
-
-  @FXML
-  private void onRestoreClick() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Revert Changes?", "Revert all changes and restore initial ALT sound data?", null, "Yes, revert changes");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      AltSound orig = Studio.client.getAltSoundService().getAltSound(this.game.getId());
-      this.altSound.setEntries(orig.getEntries());
-      this.refresh();
-    }
+    this.tablesController.getEditorRootStack().getChildren().remove(root);
   }
 
   @FXML
   private void onSaveClick(ActionEvent e) {
     try {
       Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
+      EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
     }
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
   }
 
   @Override
@@ -403,5 +393,9 @@ public class AltSoundEditorController implements Initializable, DialogController
       this.gain = new SimpleIntegerProperty(entry.getGain());
       this.gain.addListener((observable, oldValue, newValue) -> entry.setGain((Integer) newValue));
     }
+  }
+
+  public void setTablesController(TablesController tablesController) {
+    this.tablesController = tablesController;
   }
 }

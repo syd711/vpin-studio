@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.representations.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
@@ -9,16 +9,25 @@ import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
@@ -36,7 +45,7 @@ public class AltSoundResource {
   private GameValidationService validationService;
 
   @GetMapping("{id}")
-  public AltSound csv(@PathVariable("id") int id) {
+  public AltSound getAltSound(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
       return getAltSound(game);
@@ -57,11 +66,7 @@ public class AltSoundResource {
   @GetMapping("/restore/{id}")
   public AltSound restore(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    if (game != null) {
-      altSoundService.restore(game);
-      return getAltSound(game);
-    }
-    return new AltSound();
+    return altSoundService.restore(game);
   }
 
   @GetMapping("/enabled/{id}")
@@ -85,7 +90,7 @@ public class AltSoundResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
-    return altSoundService.clearCache();
+    return true;
   }
 
   @PostMapping("/upload")
@@ -111,6 +116,28 @@ public class AltSoundResource {
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
     }
+  }
+
+  @GetMapping("/stream/{name}/{filename}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("name") String name, @PathVariable("filename") String filename) throws IOException {
+    AltSound altSound = altSoundService.getAltSound(name);
+    File file = new File(altSound.getCsvFile().getParentFile(), filename);
+    if (file.exists()) {
+      FileInputStream in = new FileInputStream(file);
+      byte[] bytes = IOUtils.toByteArray(in);
+      ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+      in.close();
+
+      HttpHeaders responseHeaders = new HttpHeaders();
+      responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+      responseHeaders.set(CONTENT_TYPE, "audio/ogg");
+      responseHeaders.set("Access-Control-Allow-Origin", "*");
+      responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+      responseHeaders.set("Cache-Control", "public, max-age=3600");
+      return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+    }
+
+    return ResponseEntity.notFound().build();
   }
 
   private AltSound getAltSound(@NonNull Game game) {

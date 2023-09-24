@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient.representations;
+package de.mephisto.vpin.restclient.altsound;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -187,6 +187,20 @@ public class AltSoundEntry {
       builder.append(",");
       builder.append(this.stopCmd != null ? this.stopCmd : "");
     }
+    return builder.toString();
+  }
+
+  public String toGSoundCSV(AltSound altSound) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(this.id);
+    builder.append(",");
+    builder.append(StringUtils.isEmpty(this.channel) ? "" : this.channel);
+    builder.append(",");
+    builder.append(this.gain);
+    builder.append(",");
+    builder.append(this.duck);
+    builder.append(",");
+    builder.append(this.filename);
     return builder.toString();
   }
 }

@@ -48,7 +48,7 @@ public class MameService implements InitializingBean {
 
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
-    if(mameCache.containsKey(rom.toLowerCase())) {
+    if (mameCache.containsKey(rom.toLowerCase())) {
       return mameCache.get(rom.toLowerCase());
     }
 
@@ -56,8 +56,8 @@ public class MameService implements InitializingBean {
     MameOptions options = new MameOptions();
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
-    
-    if(options.isExistInRegistry()) {
+
+    if (options.isExistInRegistry()) {
       Map<String, Object> values = WinRegistry.getValues(MAME_REG_FOLDER_KEY + rom);
 
       options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
@@ -82,7 +82,7 @@ public class MameService implements InitializingBean {
     String rom = options.getRom();
     options.setExistInRegistry(true);
 
-    if(!options.isExistInRegistry()) {
+    if (!options.isExistInRegistry()) {
       WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
     }
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
@@ -101,8 +101,8 @@ public class MameService implements InitializingBean {
     return getOptions(rom);
   }
 
-  private boolean getBoolean(Map<String,Object> values, String key) {
-    return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer)values.get(key)) == 1);
+  private boolean getBoolean(Map<String, Object> values, String key) {
+    return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
   }
 
   @Override

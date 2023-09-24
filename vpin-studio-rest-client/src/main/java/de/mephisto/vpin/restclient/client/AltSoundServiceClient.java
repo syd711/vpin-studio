@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.representations.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.AssetType;
 import de.mephisto.vpin.restclient.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -56,5 +56,9 @@ public class AltSoundServiceClient extends VPinStudioClientService {
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "altsound/clearcache", Boolean.class);
+  }
+
+  public String getAudioUrl(AltSound altSound, String item) {
+    return "altsound/stream/" + altSound.getName() + "/" + item;
   }
 }

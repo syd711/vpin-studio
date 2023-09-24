@@ -268,7 +268,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onEdit() {
     if (this.game.isPresent()) {
-      tablesSidebarController.getTablesController().showEditor(this.game.get());
+      tablesSidebarController.getTablesController().showScriptEditor(this.game.get());
     }
   }
 

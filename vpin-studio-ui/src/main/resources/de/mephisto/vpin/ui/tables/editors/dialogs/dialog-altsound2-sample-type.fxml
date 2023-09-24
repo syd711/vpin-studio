@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+               <HBox.margin>
+                  <Insets left="12.0" right="12.0" />
+               </HBox.margin>
+            </Button>
+            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Apply Changes">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <bottom>
+            <VBox BorderPane.alignment="CENTER" />
+         </bottom>
+         <center>
+            <HBox alignment="CENTER" prefWidth="200.0" BorderPane.alignment="CENTER_LEFT">
+               <children>
+                  <GridPane prefWidth="120.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="500.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Slider fx:id="volumeSlider" layoutX="10.0" layoutY="35.0" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER" spacing="3.0" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets top="12.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label text="Group Volume" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets right="6.0" />
+                                 </padding>
+                              </Label>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="The relative group volume for sample type." />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="volumeLabel" layoutX="85.0" layoutY="15.0" text="-" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="36.0" />
+                           </font>
+                           <padding>
+                              <Insets right="6.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets bottom="24.0" right="22.0" />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </children>
+               <BorderPane.margin>
+                  <Insets top="72.0" />
+               </BorderPane.margin>
+            </HBox>
+         </center>
+         <left>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <GridPane prefWidth="350.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="112.79998321533203" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.60001678466796" minWidth="0.0" prefWidth="237.60001678466796" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="124.7999755859375" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="124.7999755859375" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="Ducks:" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="Pauses:" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="208.0" styleClass="default-text" text="Stops:" GridPane.rowIndex="4" />
+                        <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <CheckBox fx:id="ducksCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="ducksMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="ducksOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="ducksSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="ducksSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="24.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets bottom="24.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="stopsCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="stopsMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="stopsOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="stopsSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="stopsSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <Label styleClass="default-text" text="Sample Type:" textFill="WHITE" />
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="sampleTypeLabel" prefHeight="0.0" prefWidth="100.0" styleClass="default-text" text="-" />
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="SOLO and MUSIC types cannot duck other types. &#10;Sample types cannot duck themselves.&#10;SFX can not be stopped.&#10;Solo can not be ducked.&#10;Only a Solo can stop Solos.&#10;" />
+                                 </tooltip>
+                                 <HBox.margin>
+                                    <Insets left="6.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <VBox layoutX="123.0" layoutY="71.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <CheckBox fx:id="pausesCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="pausesMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="pausesOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="pausesSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="pausesSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="24.0" />
+                           </GridPane.margin>
+                        </VBox>
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
+   </center>
+</BorderPane>

@@ -2,7 +2,8 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.representations.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.representations.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -59,6 +60,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   private Label bundleSizeLabel;
 
   @FXML
+  private Label formatLabel;
+
+  @FXML
   private CheckBox enabledCheckbox;
 
   @FXML
@@ -102,7 +106,15 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Dialogs.openAltSoundEditor(game.get(), altSound);
+      if (altSound.getFormat() == null || altSound.getFormat().equals(AltSoundFormats.altsound)) {
+        tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
+      }
+      else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
+        tablesSidebarController.getTablesController().showAltSound2Editor(this.game.get(), altSound);
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Unknown alt sound format \"" + altSound.getFormat() + "\".");
+      }
     }
   }
 
@@ -125,6 +137,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
+    tablesSidebarController.getTablesController().closeEditors();
 
     Platform.runLater(() -> {
       new Thread(() -> {
@@ -143,9 +156,11 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Yes, restore backup");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Restore Backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        tablesSidebarController.getTablesController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
+        EventManager.getInstance().notifyTableChange(game.get().getId(), game.get().getRom());
       }
     }
   }
@@ -179,6 +194,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     bundleSizeLabel.setText("-");
     filesLabel.setText("-");
     lastModifiedLabel.setText("-");
+    formatLabel.setText("-");
 
     errorBox.setVisible(false);
 
@@ -203,6 +219,7 @@ public class TablesSidebarAltSoundController implements Initializable {
         filesLabel.setText(String.valueOf(altSound.getFiles()));
         bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
+        formatLabel.setText(altSound.getFormat());
 
         List<ValidationState> validationStates = altSound.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
