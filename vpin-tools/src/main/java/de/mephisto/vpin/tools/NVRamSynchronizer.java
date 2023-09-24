@@ -26,7 +26,7 @@ public class NVRamSynchronizer {
       "\n" +
       "List of available and missing nvrams:\n" +
       "\n" +
-      "| Table | ROM | Download | Submitted By |\n" +
+      "| Table | ROM | Available | Submitted By |\n" +
       "| ----- | --- | --------- |--------------|\n";
 
   public static void main(String[] args) throws Exception {
@@ -38,7 +38,7 @@ public class NVRamSynchronizer {
     File readme = new File(NVRAM_REPO, "README.md");
     File allZip = new File(NVRAM_REPO, "all.zip");
 
-    if(allZip.exists()) {
+    if (allZip.exists()) {
       allZip.delete();
     }
 
@@ -75,6 +75,9 @@ public class NVRamSynchronizer {
       if (clearedNV.exists()) {
         //copy file anyway
         readmeLine = readMeLines.stream().filter(l -> l.contains(nvram.getKey())).findFirst().get();
+        if (!readmeLine.contains("YES")) {
+          readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " | YES |  |";
+        }
         File target = new File(targetFolder, nvram.getKey());
         if (target.exists()) {
           target.delete();
@@ -97,7 +100,9 @@ public class NVRamSynchronizer {
     IOUtils.write(indexTxt, new FileOutputStream(indexTxtFile), Charset.defaultCharset());
     System.out.println("Written " + indexTxtFile.getAbsolutePath());
 
-    System.out.println(builder.toString());
+    IOUtils.write(builder.toString(), new FileOutputStream(readme), Charset.defaultCharset());
+    System.out.println("Written " + readme.getAbsolutePath());
+
   }
 
   private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
