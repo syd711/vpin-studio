@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -39,7 +40,7 @@ public class BackglassService implements InitializingBean {
     return new DirectB2SData();
   }
 
-  public DirectB2STableSettings saveTableSettings(DirectB2STableSettings settings) {
+  public DirectB2STableSettings saveTableSettings(DirectB2STableSettings settings) throws VPinStudioException {
     if (tableSettingsSerializer == null) {
       throw new UnsupportedOperationException("No B2STableSettings.xml found");
     }

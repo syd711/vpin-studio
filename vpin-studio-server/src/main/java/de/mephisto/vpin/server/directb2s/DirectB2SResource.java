@@ -82,7 +82,7 @@ public class DirectB2SResource {
     try {
       return backglassService.saveTableSettings(settings);
     } catch (Exception e) {
-      throw new ResponseStatusException(CONFLICT, "Saving custom options failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
     }
   }
 
@@ -96,7 +96,7 @@ public class DirectB2SResource {
     try {
       return backglassService.saveServerSettings(settings);
     } catch (Exception e) {
-      throw new ResponseStatusException(CONFLICT, "Saving custom options failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving custom options failed: " + e.getMessage());
     }
   }
 }

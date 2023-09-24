@@ -60,7 +60,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "directb2s/tablesettings", settings, DirectB2STableSettings.class);
     } catch (Exception e) {
       LOG.error("Failed to save b2s table settings: " + e.getMessage(), e);
-      throw e;
+      throw new Exception("Table not supported.");
     }
   }
 

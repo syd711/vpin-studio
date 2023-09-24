@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class B2STableSettingsSerializer {
     this.xmlFile = xmlFile;
   }
 
-  public void serialize(@NonNull DirectB2STableSettings settings) {
+  public void serialize(@NonNull DirectB2STableSettings settings) throws VPinStudioException {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -75,21 +76,27 @@ public class B2STableSettingsSerializer {
       write(xmlFile, doc);
     } catch (Exception e) {
       String msg = "Failed to write '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
-      LOG.error(msg, e);
+      throw new VPinStudioException(msg, e);
     }
   }
 
   private static void write(File povFile, Document doc) throws IOException, TransformerException {
-    TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    Transformer transformer = transformerFactory.newTransformer();
-    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-    transformerFactory.setAttribute("indent-number", 2);
-    DOMSource source = new DOMSource(doc);
-    FileWriter writer = new FileWriter(povFile);
-    StreamResult result = new StreamResult(writer);
-    transformer.transform(source, result);
-    writer.close();
-    LOG.info("Written " + povFile.getAbsolutePath());
+    FileWriter writer = null;
+    try {
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      transformerFactory.setAttribute("indent-number", 2);
+      DOMSource source = new DOMSource(doc);
+      writer = new FileWriter(povFile);
+      StreamResult result = new StreamResult(writer);
+      transformer.transform(source, result);
+      LOG.info("Written " + povFile.getAbsolutePath());
+    } finally {
+      if (writer != null) {
+        writer.close();
+      }
+    }
   }
 
 
