@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
@@ -23,6 +24,7 @@ public class VpaArchiveUtil {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
       ZipFile zipFile = new ZipFile(file);
       Enumeration<? extends ZipEntry> entries = zipFile.entries();
