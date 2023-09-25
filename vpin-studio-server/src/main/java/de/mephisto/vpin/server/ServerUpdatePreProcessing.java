@@ -43,8 +43,14 @@ public class ServerUpdatePreProcessing {
       in.close();
       nvRamIndex.delete();
 
+      File nvramFolder = new File(SystemService.RESOURCES, "nvrams/");
+      if (!nvramFolder.exists()) {
+        nvramFolder.mkdirs();
+      }
+
       for (String nvRam : nvRams) {
-        File nvramFile = new File(SystemService.RESOURCES, "nvrams/" + nvRam + ".nv");
+
+        File nvramFile = new File(nvramFolder, nvRam + ".nv");
         if (!nvramFile.exists()) {
           Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/" + nvramFile.getName() + "/" + nvramFile.getName(), nvramFile, true);
           LOG.info("Downloaded missing nvram file " + nvramFile.getAbsolutePath());

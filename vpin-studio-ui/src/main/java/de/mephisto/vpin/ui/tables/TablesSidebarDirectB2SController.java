@@ -352,7 +352,6 @@ public class TablesSidebarDirectB2SController implements Initializable {
         dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {
-        dmdThumbnailImage.setImage(null);
         dmdResolutionLabel.setText("No DMD background available.");
       }
 

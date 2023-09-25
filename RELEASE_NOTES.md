@@ -42,3 +42,4 @@ The media can be configured as part of the new asset manager, available in the "
 - Removed table data field "ROM Url".
 - Unified some "Edit" icons.
 - Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.
+- Fixed automatic resetted nvram downloading.
