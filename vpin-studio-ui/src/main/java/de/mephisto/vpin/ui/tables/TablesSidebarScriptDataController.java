@@ -217,11 +217,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
-  private void onRename() {
-    tablesSidebarController.getTablesController().onAssetsRename();
-  }
-
-  @FXML
   private void onHsFileNameEdit() {
     GameRepresentation gameRepresentation = game.get();
     String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename", "Enter EM Highscore Filename",

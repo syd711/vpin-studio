@@ -417,7 +417,7 @@ public class GameService {
       if (!original.getGameDisplayName().equals(game.getGameDisplayName())) {
         original.setGameDisplayName(game.getGameDisplayName());
         pinUPConnector.saveTableDetails(game.getId(), original);
-        LOG.info("Finished game display name renmaing to " + game.getGameDisplayName());
+        LOG.info("Finished game display name renaming to " + game.getGameDisplayName());
         return true;
       }
       else if (!original.getGameFileName().equals(gameFilename)) {
@@ -426,9 +426,9 @@ public class GameService {
         pinUPConnector.saveTableDetails(game.getId(), original);
 
         //rename popper media
-        String originalName = FilenameUtils.getBaseName(originalFileName);
-        String newName = FilenameUtils.getBaseName(gameFilename);
-        popperService.renameGameMedia(originalGame, originalName, newName);
+//        String originalName = FilenameUtils.getBaseName(originalFileName);
+//        String newName = FilenameUtils.getBaseName(gameFilename);
+//        popperService.renameGameMedia(originalGame, originalName, newName);
 
         //rename additional files
         String name = FilenameUtils.getBaseName(gameFilename);

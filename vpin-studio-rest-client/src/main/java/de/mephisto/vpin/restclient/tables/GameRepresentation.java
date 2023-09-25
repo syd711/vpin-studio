@@ -23,6 +23,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private String gameName;
   private long gameFileSize;
   private String tableName;
   private int id;
@@ -48,6 +49,14 @@ public class GameRepresentation {
   private boolean altColorAvailable;
   private String extTableId;
   private String extTableVersionId;
+
+  public String getGameName() {
+    return gameName;
+  }
+
+  public void setGameName(String gameName) {
+    this.gameName = gameName;
+  }
 
   public boolean isAltColorAvailable() {
     return altColorAvailable;

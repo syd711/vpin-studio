@@ -124,11 +124,6 @@ public class GamesResource {
     }
   }
 
-  @PostMapping("/rename")
-  public boolean rename(@RequestBody Game game) throws Exception {
-    return gameService.rename(popperService, game);
-  }
-
 
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
@@ -152,7 +147,6 @@ public class GamesResource {
             LOG.error("Table upload failed: existing table could not be deleted.");
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
           }
-          uploadFile = gameFile;
         }
         else if (mode.equals(TableUploadDescriptor.uploadAndClone)) {
         }
@@ -187,10 +181,11 @@ public class GamesResource {
               Game importedGame = gameService.scanGame(importedGameId);
 
               //update table details after new entry creation
+              String baseName = FilenameUtils.getBaseName(uploadFile.getName());
               TableDetails tableDetails = popperService.getTableDetails(gameId);
               tableDetails.setGameFileName(uploadFile.getName());
-              tableDetails.setGameDisplayName(FilenameUtils.getBaseName(uploadFile.getName()));
-              tableDetails.setGameName(FilenameUtils.getBaseName(uploadFile.getName()));
+              tableDetails.setGameDisplayName(baseName);
+              tableDetails.setGameName(baseName);
               popperService.saveTableDetails(tableDetails, importedGameId);
 
               //clone popper media
@@ -198,9 +193,9 @@ public class GamesResource {
               popperService.cloneGameMedia(original, importedGame);
 
               //clone additional files
-              FileUtils.cloneFile(original.getDirectB2SFile(), importedGame.getGameFileName());
-              FileUtils.cloneFile(original.getPOVFile(), importedGame.getGameFileName());
-              FileUtils.cloneFile(original.getResFile(), importedGame.getGameFileName());
+              FileUtils.cloneFile(original.getDirectB2SFile(), uploadFile.getName());
+              FileUtils.cloneFile(original.getPOVFile(), uploadFile.getName());
+              FileUtils.cloneFile(original.getResFile(), uploadFile.getName());
             }
             return true;
           }

@@ -23,6 +23,7 @@ public class Game {
   private String romAlias;
   private String gameDisplayName;
   private String gameFileName;
+  private String gameName;
   private String tableName;
   private String custom2;
   private String custom3;
@@ -55,6 +56,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public String getGameName() {
+    return gameName;
+  }
+
+  public void setGameName(String gameName) {
+    this.gameName = gameName;
   }
 
   public List<Integer> getPlaylists() {
@@ -210,7 +219,7 @@ public class Game {
 
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
-    String baseFilename = FilenameUtils.getBaseName(getGameFileName());
+    String baseFilename = FilenameUtils.getBaseName(getGameName());
     String displayName = getGameDisplayName();
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> {
       return name.startsWith(baseFilename) || name.startsWith(displayName);
