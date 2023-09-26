@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.popper.GameType;
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;
@@ -197,19 +195,16 @@ public class PinUPConnector implements InitializingBean {
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
 
-        manifest.setNumberPlays(rs.getInt("NumberPlays"));
-        if (rs.wasNull()) {
-          manifest.setNumberPlays(null);
-        }
-
-        manifest.setLastPlayed(rs.getDate("LastPlayed"));
-
         manifest.setAltLaunchExe(rs.getString("ALTEXE"));
         manifest.setLauncherList(new ArrayList<>(systemService.getAltExeNames()));
         manifest.getLauncherList().addAll(altExeList);
       }
       rs.close();
       statement.close();
+
+      if (manifest != null) {
+        loadStats(connect, manifest, id);
+      }
     } catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
     } finally {
@@ -1065,23 +1060,23 @@ public class PinUPConnector implements InitializingBean {
     return game;
   }
 
-//  private void loadStats(@NonNull Connection connection, @NonNull Game game) {
-//    try {
-//      Statement statement = connection.createStatement();
-//      ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + game.getId() + ";");
-//      while (rs.next()) {
-//        int numberPlays = rs.getInt("NumberPlays");
-//        Date lastPlayed = rs.getDate("LastPlayed");
-//
-//        game.setLastPlayed(lastPlayed);
-//        game.setNumberPlays(numberPlays);
-//      }
-//      rs.close();
-//      statement.close();
-//    } catch (SQLException e) {
-//      LOG.error("Failed to read game info: " + e.getMessage(), e);
-//    }
-//  }
+  private void loadStats(@NonNull Connection connection, @NonNull TableDetails manifest, int gameId) {
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + gameId + ";");
+      while (rs.next()) {
+        int numberPlays = rs.getInt("NumberPlays");
+        Date lastPlayed = rs.getDate("LastPlayed");
+
+        manifest.setLastPlayed(lastPlayed);
+        manifest.setNumberPlays(numberPlays);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read table stats info: " + e.getMessage(), e);
+    }
+  }
 
   private int getEmulatorId(@NonNull String name) {
     Set<Map.Entry<Integer, Emulator>> entries = this.emulators.entrySet();

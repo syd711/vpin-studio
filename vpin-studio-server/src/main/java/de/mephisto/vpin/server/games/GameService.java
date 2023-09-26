@@ -403,22 +403,6 @@ public class GameService {
     return gameValidator.validateRom(game);
   }
 
-  public void rename(Game game, TableDetails updatedTableDetails) {
-    String gameFilename = game.getGameFileName();
-    if (!gameFilename.endsWith(".vpx")) {
-      gameFilename = gameFilename + ".vpx";
-    }
-
-    if (!updatedTableDetails.getGameFileName().equals(gameFilename)) {
-      String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-      FileUtils.rename(game.getGameFile(), name);
-      FileUtils.rename(game.getDirectB2SFile(), name);
-      FileUtils.rename(game.getPOVFile(), name);
-      FileUtils.rename(game.getResFile(), name);
-      LOG.info("Finished game file renaming to " + game.getGameFileName());
-    }
-  }
-
   public Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     String existingRom = String.valueOf(gameDetails.getRomName());

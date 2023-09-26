@@ -86,9 +86,9 @@ public class VPXResource {
 
 
   @PostMapping("/pov/upload")
-  public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam(value = "uploadType", required = false) String uploadType,
-                                   @RequestParam("objectId") Integer gameId) {
+  public JobExecutionResult povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                      @RequestParam(value = "uploadType", required = false) String uploadType,
+                                      @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");

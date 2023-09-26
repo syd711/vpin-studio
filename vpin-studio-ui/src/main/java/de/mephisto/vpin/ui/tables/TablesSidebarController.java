@@ -95,6 +95,9 @@ public class TablesSidebarController implements Initializable {
   private Button scriptBtn;
 
   @FXML
+  private Button tablesBtn;
+
+  @FXML
   private HBox popperTitleButtonArea;
 
   @FXML
@@ -161,6 +164,16 @@ public class TablesSidebarController implements Initializable {
     try {
       SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
       new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "nvram").getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onTables() {
+    try {
+      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "Tables").getAbsolutePath()).start();
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -265,6 +278,7 @@ public class TablesSidebarController implements Initializable {
     directb2sBtn.setVisible(client.getSystemService().isLocal());
     scriptBtn.setVisible(client.getSystemService().isLocal());
     nvramExplorerBtn.setVisible(client.getSystemService().isLocal());
+    tablesBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));

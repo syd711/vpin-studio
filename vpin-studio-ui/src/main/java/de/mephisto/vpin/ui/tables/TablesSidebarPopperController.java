@@ -128,28 +128,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   public TablesSidebarPopperController() {
   }
 
-//  @FXML
-//  private void onLaunchEdit() {
-//    if (this.game.isPresent()) {
-//      String altExe = this.manifest.getAltLaunchExe();
-//      String altValue = WidgetFactory.showInputDialog(Studio.stage, "Alternate Launcher", "Enter another .exe file that is executed instead of one of the available defaults.",
-//          null, null, altExe);
-//
-//      if (altValue != null) {
-//        if (StringUtils.isEmpty(altValue)) {
-//          altValue = null;
-//        }
-//
-//        try {
-//          this.manifest = client.getPinUPPopperService().saveCustomLauncher(this.game.get().getId(), altValue);
-//        } catch (Exception e) {
-//          LOG.error("Failed to save alt launcher: " + e.getMessage(), e);
-//          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save alt launcher: " + e.getMessage());
-//        }
-//      }
-//    }
-//  }
-
   @FXML
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {

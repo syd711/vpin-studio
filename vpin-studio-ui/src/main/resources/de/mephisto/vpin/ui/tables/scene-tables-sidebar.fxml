@@ -64,7 +64,32 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePopper" expanded="false" text="PinUP Popper Table Settings" />
+                <TitledPane fx:id="titledPanePopper" expanded="false">
+                    <graphic>
+                        <BorderPane prefWidth="560.0">
+                            <right>
+                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="external-component">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                            <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="Tables Folder" />
+                                            </tooltip>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </right>
+                            <left>
+                                <Label text="PinUP Popper Table Settings" BorderPane.alignment="CENTER" />
+                            </left>
+                        </BorderPane>
+                    </graphic>
+                </TitledPane>
             <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists" />
                 <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
                     <graphic>

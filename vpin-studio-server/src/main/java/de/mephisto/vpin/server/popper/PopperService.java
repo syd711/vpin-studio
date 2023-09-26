@@ -229,11 +229,25 @@ public class PopperService implements InitializingBean {
     return pinUPConnector.getTableDetails(gameId);
   }
 
-  public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) {
+  public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId) {
     Game game = pinUPConnector.getGame(gameId);
-    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
-    gameService.rename(game, tableDetails);
-    return tableDetails;
+    pinUPConnector.saveTableDetails(game.getId(), updatedTableDetails);
+
+    String gameFilename = game.getGameFileName();
+    if (!gameFilename.endsWith(".vpx")) {
+      gameFilename = gameFilename + ".vpx";
+    }
+
+    if (!updatedTableDetails.getGameFileName().equals(gameFilename)) {
+      String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
+      de.mephisto.vpin.commons.utils.FileUtils.rename(game.getGameFile(), name);
+      de.mephisto.vpin.commons.utils.FileUtils.rename(game.getDirectB2SFile(), name);
+      de.mephisto.vpin.commons.utils.FileUtils.rename(game.getPOVFile(), name);
+      de.mephisto.vpin.commons.utils.FileUtils.rename(game.getResFile(), name);
+      LOG.info("Finished game file renaming to " + game.getGameFileName());
+    }
+
+    return updatedTableDetails;
   }
 
   public boolean restart() {
@@ -298,15 +312,16 @@ public class PopperService implements InitializingBean {
           if (gameMediaItem.getFile().exists()) {
             File mediaFile = gameMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            String originalName = FilenameUtils.getBaseName(mediaFile.getName());
-            String targetName = FilenameUtils.getBaseName(clone.getGameFileName());
-            String name = originalName.replace(FilenameUtils.getBaseName(original.getGameFileName()), targetName);
-
-            File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), name + "." + suffix);
-            if (cloneTarget.exists()) {
-              cloneTarget.delete();
+            File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), clone.getGameName() + "." + suffix);
+            if(mediaFile.getName().equals(cloneTarget.getName())) {
+              LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
+              return;
             }
 
+            if (cloneTarget.exists() && !cloneTarget.delete()) {
+              LOG.error("Failed to clone media asset " + cloneTarget.getAbsolutePath() + ": deletion of existing asset failed.");
+              return;
+            }
             FileUtils.copyFile(mediaFile, cloneTarget);
             LOG.info("Cloned PinUP Popper media: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
           }

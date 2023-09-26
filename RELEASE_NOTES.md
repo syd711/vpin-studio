@@ -48,4 +48,4 @@ The media can be configured as part of the new asset manager, available in the "
 - Unified some "Edit" icons.
 - Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.
 - Fixed automatic resetted nvram downloading (if you have nvram files in the installation folder of the VPin Studio, just delete them).
-- Fixed asset lookup: Instead of the game filename, the game name is used.
+- Fixed asset lookup: Instead of the game filename, the game name is used which caused various error in looking up media, deleting and renaming tables. This also affected the upload and clone/replace table actions.

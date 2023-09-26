@@ -167,9 +167,10 @@ public class GamesResource {
             return true;
           }
           case uploadAndReplace: {
-            //we only have to rename the filename for the selected entry with the new filename
+            String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
             TableDetails tableDetails = popperService.getTableDetails(gameId);
             tableDetails.setGameFileName(uploadFile.getName());
+            tableDetails.setGameDisplayName(originalFilename);
             popperService.saveTableDetails(tableDetails, gameId);
 
             gameService.scanGame(gameId);
@@ -178,14 +179,14 @@ public class GamesResource {
           case uploadAndClone: {
             int importedGameId = popperService.importVPXGame(uploadFile, true, -1);
             if (importedGameId >= 0) {
+              String originalName = FilenameUtils.getBaseName(file.getOriginalFilename());
               Game importedGame = gameService.scanGame(importedGameId);
 
               //update table details after new entry creation
-              String baseName = FilenameUtils.getBaseName(uploadFile.getName());
               TableDetails tableDetails = popperService.getTableDetails(gameId);
               tableDetails.setGameFileName(uploadFile.getName());
-              tableDetails.setGameDisplayName(baseName);
-              tableDetails.setGameName(baseName);
+              tableDetails.setGameDisplayName(originalName);
+              tableDetails.setGameName(originalName);
               popperService.saveTableDetails(tableDetails, importedGameId);
 
               //clone popper media
