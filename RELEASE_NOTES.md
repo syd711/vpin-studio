@@ -6,9 +6,10 @@ The media can be configured as part of the new asset manager, available in the "
 
 ### Changes
 
-**Tables Management**
+**Tables Management: Overview**
 
-- Added new toolbar button: Asset Manager. The Asset Manager lets you select assets for the different screens available in PinUP Popper and shows the already installed assets for the selected screen. 
+- Added new toolbar button: Asset Manager. The Asset Manager lets you select assets for the different screens available in PinUP Popper and shows the already installed assets for the selected screen.
+- Removed renaming buttons: these actions are now part of the "Table Settings" dialog. The table name and display name can be changed there.
 
 **Tables Management: PinUP Popper Media**
 
@@ -27,7 +28,11 @@ The media can be configured as part of the new asset manager, available in the "
 
 **Table Management: Highscores**
 
-- Aligned layout of the "Reset Highscore" dialog. 
+- Aligned layout of the "Reset Highscore" dialog.
+
+**Table Management: Script Details**
+
+- Removed table file rename button: this action is now part of the "Table Settings" dialog. The table name and display name can be changed there.
 
 **Table Management: ALT Sound**
 
@@ -42,4 +47,5 @@ The media can be configured as part of the new asset manager, available in the "
 - Removed table data field "ROM Url".
 - Unified some "Edit" icons.
 - Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.
-- Fixed automatic resetted nvram downloading.
+- Fixed automatic resetted nvram downloading (if you have nvram files in the installation folder of the VPin Studio, just delete them).
+- Fixed asset lookup: Instead of the game filename, the game name is used.

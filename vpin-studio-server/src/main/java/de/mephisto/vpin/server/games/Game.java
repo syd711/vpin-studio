@@ -34,8 +34,6 @@ public class Game {
 
   private File gameFile;
 
-  private Date lastPlayed;
-  private int numberPlays;
   private ValidationState validationState;
   private List<Integer> ignoredValidations;
   private HighscoreType highscoreType;
@@ -158,25 +156,6 @@ public class Game {
 
   public void setEmulator(@NonNull Emulator emulator) {
     this.emulator = emulator;
-  }
-
-  @SuppressWarnings("unused")
-  public int getNumberPlays() {
-    return numberPlays;
-  }
-
-  public void setNumberPlays(int numberPlays) {
-    this.numberPlays = numberPlays;
-  }
-
-  @SuppressWarnings("unused")
-  @Nullable
-  public Date getLastPlayed() {
-    return lastPlayed;
-  }
-
-  public void setLastPlayed(Date lastPlayed) {
-    this.lastPlayed = lastPlayed;
   }
 
   public List<Integer> getIgnoredValidations() {

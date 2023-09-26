@@ -28,8 +28,6 @@ public class GameRepresentation {
   private String tableName;
   private int id;
   private Date modified;
-  private Date lastPlayed;
-  private int numberPlays;
   private GameMediaRepresentation gameMedia;
   private EmulatorRepresentation emulator;
   private boolean directB2SAvailable;
@@ -256,22 +254,6 @@ public class GameRepresentation {
 
   public void setId(int id) {
     this.id = id;
-  }
-
-  public Date getLastPlayed() {
-    return lastPlayed;
-  }
-
-  public void setLastPlayed(Date lastPlayed) {
-    this.lastPlayed = lastPlayed;
-  }
-
-  public int getNumberPlays() {
-    return numberPlays;
-  }
-
-  public void setNumberPlays(int numberPlays) {
-    this.numberPlays = numberPlays;
   }
 
   public int getNvOffset() {

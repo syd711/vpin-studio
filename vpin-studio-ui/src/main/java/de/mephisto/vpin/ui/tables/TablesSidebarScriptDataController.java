@@ -101,9 +101,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button openTablesFolderBtn;
 
   @FXML
-  private Button renameBtn;
-
-  @FXML
   private Button openTableDescriptionBtn;
 
   @FXML
@@ -382,7 +379,6 @@ public class TablesSidebarScriptDataController implements Initializable {
     editRomNameBtn.setDisable(g.isEmpty());
     editTableNameBtn.setDisable(g.isEmpty());
     romUploadBtn.setDisable(g.isEmpty());
-    renameBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
     openEMHighscoreBtn.setVisible(Studio.client.getSystemService().isLocal());
     openEMHighscoreBtn.setDisable(true);

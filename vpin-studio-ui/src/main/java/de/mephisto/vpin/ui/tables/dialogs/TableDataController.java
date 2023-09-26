@@ -132,8 +132,8 @@ public class TableDataController implements Initializable, DialogController {
     manifest = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
     gameName.setText(manifest.getGameName());
-    gameName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameName(newValue));
     gameFileName.setText(manifest.getGameFileName());
+    gameFileName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameFileName(newValue));
     gameDisplayName.setText(manifest.getGameDisplayName());
     gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue));
     gameTheme.setText(manifest.getGameTheme());

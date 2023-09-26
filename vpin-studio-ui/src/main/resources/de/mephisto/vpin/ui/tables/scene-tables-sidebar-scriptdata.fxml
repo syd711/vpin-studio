@@ -291,14 +291,6 @@
                                           <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Rename VPX file and related assets" />
-                                       </tooltip>
-                                    </Button>
                                     <Label visible="false">
                                        <font>
                                           <Font size="14.0" />

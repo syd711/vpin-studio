@@ -164,7 +164,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="gameName" GridPane.columnIndex="1">
+                        <TextField fx:id="gameName" disable="true" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -174,7 +174,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField fx:id="gameFileName" disable="true" editable="false" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <TextField fx:id="gameFileName" editable="false" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

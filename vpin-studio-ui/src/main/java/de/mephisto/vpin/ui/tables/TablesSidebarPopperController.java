@@ -229,10 +229,17 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      labelLastPlayed.setText(game.getLastPlayed() != null ? DateFormat.getDateInstance().format(game.getLastPlayed()) : "-");
-      labelTimesPlayed.setText(String.valueOf(game.getNumberPlays()));
-
       manifest = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+
+      labelLastPlayed.setText(manifest.getLastPlayed() != null ? DateFormat.getDateInstance().format(manifest.getLastPlayed()) : "-");
+      if(manifest.getNumberPlays() != null) {
+        labelTimesPlayed.setText(String.valueOf(manifest.getNumberPlays()));
+      }
+      else {
+        labelTimesPlayed.setText("0");
+      }
+
+
       List<String> launcherList = new ArrayList<>(manifest.getLauncherList());
       launcherList.add(0, null);
       launcherCombo.setItems(FXCollections.observableList(launcherList));

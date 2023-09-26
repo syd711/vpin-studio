@@ -197,6 +197,13 @@ public class PinUPConnector implements InitializingBean {
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
 
+        manifest.setNumberPlays(rs.getInt("NumberPlays"));
+        if (rs.wasNull()) {
+          manifest.setNumberPlays(null);
+        }
+
+        manifest.setLastPlayed(rs.getDate("LastPlayed"));
+
         manifest.setAltLaunchExe(rs.getString("ALTEXE"));
         manifest.setLauncherList(new ArrayList<>(systemService.getAltExeNames()));
         manifest.getLauncherList().addAll(altExeList);
@@ -1055,27 +1062,26 @@ public class PinUPConnector implements InitializingBean {
       game.setGameFile(fpFile);
     }
 
-    loadStats(connection, game);
     return game;
   }
 
-  private void loadStats(@NonNull Connection connection, @NonNull Game game) {
-    try {
-      Statement statement = connection.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + game.getId() + ";");
-      while (rs.next()) {
-        int numberPlays = rs.getInt("NumberPlays");
-        Date lastPlayed = rs.getDate("LastPlayed");
-
-        game.setLastPlayed(lastPlayed);
-        game.setNumberPlays(numberPlays);
-      }
-      rs.close();
-      statement.close();
-    } catch (SQLException e) {
-      LOG.error("Failed to read game info: " + e.getMessage(), e);
-    }
-  }
+//  private void loadStats(@NonNull Connection connection, @NonNull Game game) {
+//    try {
+//      Statement statement = connection.createStatement();
+//      ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + game.getId() + ";");
+//      while (rs.next()) {
+//        int numberPlays = rs.getInt("NumberPlays");
+//        Date lastPlayed = rs.getDate("LastPlayed");
+//
+//        game.setLastPlayed(lastPlayed);
+//        game.setNumberPlays(numberPlays);
+//      }
+//      rs.close();
+//      statement.close();
+//    } catch (SQLException e) {
+//      LOG.error("Failed to read game info: " + e.getMessage(), e);
+//    }
+//  }
 
   private int getEmulatorId(@NonNull String name) {
     Set<Map.Entry<Integer, Emulator>> entries = this.emulators.entrySet();

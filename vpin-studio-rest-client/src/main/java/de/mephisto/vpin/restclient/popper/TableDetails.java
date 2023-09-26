@@ -20,6 +20,8 @@ public class TableDetails {
   private String romName;
   private String manufacturer;
   private Integer numberOfPlayers;
+  private Date lastPlayed;
+  private Integer numberPlays;
   private String tags;
   private String category;
   private String author;
@@ -34,6 +36,22 @@ public class TableDetails {
   private String designedBy;
   private String altLaunchExe;
   private List<String> launcherList = new ArrayList<>();
+
+  public Date getLastPlayed() {
+    return lastPlayed;
+  }
+
+  public void setLastPlayed(Date lastPlayed) {
+    this.lastPlayed = lastPlayed;
+  }
+
+  public Integer getNumberPlays() {
+    return numberPlays;
+  }
+
+  public void setNumberPlays(Integer numberPlays) {
+    this.numberPlays = numberPlays;
+  }
 
   public String getAltLaunchExe() {
     return altLaunchExe;
