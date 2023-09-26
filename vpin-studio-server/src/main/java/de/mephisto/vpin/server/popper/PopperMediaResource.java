@@ -190,8 +190,7 @@ public class PopperMediaResource implements InitializingBean {
     if (data.containsKey("fullscreen")) {
       return toFullscreenMedia(gameId, screen);
     }
-
-    return renameMedia(gameId, screen, data);
+    return true;
   }
 
   private boolean toFullscreenMedia(int gameId, PopperScreen screen) throws IOException {
@@ -221,31 +220,6 @@ public class PopperMediaResource implements InitializingBean {
       out.close();
 
       return true;
-    }
-    return false;
-  }
-
-  private boolean renameMedia(int gameId, PopperScreen screen, Map<String, String> data) {
-    Game game = gameService.getGame(gameId);
-    File pinUPMediaFolder = game.getPinUPMediaFolder(screen);
-
-    String oldName = data.get("oldName");
-    String newName = data.get("newName");
-
-    File media = new File(pinUPMediaFolder, oldName);
-    String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
-    if (media.exists() && newName.startsWith(gameBaseName)) {
-      String suffix = FilenameUtils.getExtension(media.getName());
-      if (!newName.endsWith("." + suffix)) {
-        newName = newName + "." + suffix;
-      }
-
-      File target = new File(pinUPMediaFolder, newName);
-      LOG.info("Renaming " + media.getAbsolutePath() + " to " + target.getAbsolutePath());
-      return media.renameTo(target);
-    }
-    else {
-      LOG.warn("Invalid target name '" + newName + "' should start with '" + gameBaseName + "'");
     }
     return false;
   }

@@ -101,9 +101,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private Button deleteBtn;
 
   @FXML
-  private Button renameBtn;
-
-  @FXML
   private ListView<GameMediaItemRepresentation> assetList;
 
   @FXML
@@ -182,29 +179,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         desktop.browse(new URI(loadingHelp));
       } catch (Exception e) {
         LOG.error("Failed to open help link: " + e.getMessage(), e);
-      }
-    }
-  }
-
-  @FXML
-  private void onRename() {
-    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      String name = FilenameUtils.getBaseName(selectedItem.getName());
-      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename", "New Media Name",
-          "Enter the new name of the media item \"" + selectedItem.getName() + "\".", null, name);
-      if (!StringUtils.isEmpty(newName) && !newName.equalsIgnoreCase(selectedItem.getName())) {
-        try {
-          if (!newName.trim().equalsIgnoreCase(name)) {
-            boolean rename = client.getPinUPPopperService().rename(game.getId(), screen, selectedItem.getName(), newName);
-            if (!rename) {
-              WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed, invalid name used?");
-            }
-          }
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
-        }
-        refreshTableMediaView();
       }
     }
   }
@@ -491,7 +465,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.deleteBtn.setDisable(true);
     this.addToPlaylistBtn.setDisable(true);
     this.addToPlaylistBtn.setVisible(false);
-    this.renameBtn.setDisable(true);
 
     List<GameRepresentation> games = client.getGameService().getGamesCached();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
@@ -556,7 +529,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         disposeTableMediaPreview();
 
         deleteBtn.setDisable(mediaItem == null);
-        renameBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
           Label label = new Label("No media selected");

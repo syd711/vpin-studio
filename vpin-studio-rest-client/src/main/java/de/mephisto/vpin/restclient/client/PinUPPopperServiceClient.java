@@ -140,18 +140,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean rename(int gameId, PopperScreen screen, String name, String newName) throws Exception {
-    try {
-      Map<String, Object> values = new HashMap<>();
-      values.put("oldName", name);
-      values.put("newName", newName);
-      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
-    } catch (Exception e) {
-      LOG.error("Renaming failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public boolean toFullScreen(int gameId, PopperScreen screen) throws Exception {
     try {
       Map<String, Object> values = new HashMap<>();
