@@ -795,6 +795,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
 
   private void refreshTableMediaView() {
+    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
     if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
     }

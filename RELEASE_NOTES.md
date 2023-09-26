@@ -18,6 +18,7 @@ The media can be configured as part of the new asset manager, available in the "
 **Table Management: PinUP Popper Table Data**
 
 - Changed this section name to "PinUP Popper Table Settings"
+- Added green "open" button which opens VPX's tables folder.
 - Added "Game Type", "Game Version (File Version)" and "Game Theme" fields.
 - Added "Auto-Fill" button which fills missing data by looking them up from the table metadata and VPS.
 - Added "Launcher" combo-box which allows to select from the list of available VPX exe files combined with the alt-launcher entries from PinUP Popper. The green launcher icon on the table overview toolbar will use this selection!
@@ -29,6 +30,10 @@ The media can be configured as part of the new asset manager, available in the "
 **Table Management: Highscores**
 
 - Aligned layout of the "Reset Highscore" dialog.
+
+**Table Management: POV**
+
+- Added green "open" button which opens VPX's tables folder.
 
 **Table Management: Script Details**
 

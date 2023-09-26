@@ -78,7 +78,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Tables Folder" />
+                                                <Tooltip text="Open VPX tables folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
@@ -128,7 +128,32 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePUPPack" expanded="false" text="PUP Pack" />
+                <TitledPane fx:id="titledPanePUPPack" expanded="false">
+                    <graphic>
+                        <BorderPane prefWidth="560.0">
+                            <right>
+                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="external-component">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                            <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="Open PUP pack folder" />
+                                            </tooltip>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </right>
+                            <left>
+                                <Label text="PUP Pack" BorderPane.alignment="CENTER" />
+                            </left>
+                        </BorderPane>
+                    </graphic>
+                </TitledPane>
                 <TitledPane fx:id="titledPaneAudio" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
@@ -175,7 +200,32 @@
                      </left>
                   </BorderPane>
                </graphic></TitledPane>
-                <TitledPane fx:id="titledPanePov" expanded="false" text="Point Of View (POV)" />
+                <TitledPane fx:id="titledPanePov" expanded="false">
+                    <graphic>
+                        <BorderPane prefWidth="560.0">
+                            <right>
+                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                                    <children>
+                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onTables" styleClass="external-component">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                            <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                            </graphic>
+                                            <tooltip>
+                                                <Tooltip text="Point Of View (POV)" />
+                                            </tooltip>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </right>
+                            <left>
+                                <Label text="PinUP Popper Table Settings" BorderPane.alignment="CENTER" />
+                            </left>
+                        </BorderPane>
+                    </graphic>
+                </TitledPane>
                 <TitledPane fx:id="titledPaneHighscores" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
