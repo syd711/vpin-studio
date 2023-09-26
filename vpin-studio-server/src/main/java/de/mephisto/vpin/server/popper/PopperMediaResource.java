@@ -150,7 +150,7 @@ public class PopperMediaResource implements InitializingBean {
       }
 
       File pinUPMediaFolder = game.getPinUPMediaFolder(popperScreen);
-      String filename = game.getGameDisplayName();
+      String filename = game.getGameName();
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
 
       File out = new File(pinUPMediaFolder, filename + "." + suffix);

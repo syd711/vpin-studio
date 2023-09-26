@@ -2,9 +2,9 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -199,10 +199,7 @@ public class Game {
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseFilename = FilenameUtils.getBaseName(getGameName());
-    String displayName = getGameDisplayName();
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> {
-      return name.startsWith(baseFilename) || name.startsWith(displayName);
-    });
+    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
 
     if (mediaFiles != null && mediaFiles.length > 0) {
       return Arrays.asList(mediaFiles);

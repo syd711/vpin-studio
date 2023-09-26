@@ -384,7 +384,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     }
 
     if (StringUtils.isEmpty(tableDetails.getGameName())) {
-      tableDetails.setGameName(game.getGameDisplayName());
+      tableDetails.setGameName(game.getGameName());
       tableDetails.setGameDisplayName(game.getGameDisplayName());
     }
 

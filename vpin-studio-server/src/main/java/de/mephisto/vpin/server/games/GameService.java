@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -17,7 +17,6 @@ import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -404,43 +403,20 @@ public class GameService {
     return gameValidator.validateRom(game);
   }
 
-  //TODO mpf
-  public boolean rename(PopperService popperService, Game game) {
+  public void rename(Game game, TableDetails updatedTableDetails) {
     String gameFilename = game.getGameFileName();
     if (!gameFilename.endsWith(".vpx")) {
       gameFilename = gameFilename + ".vpx";
     }
 
-    TableDetails original = pinUPConnector.getTableDetails(game.getId());
-    Game originalGame = getGame(game.getId());
-    if (original != null && originalGame != null) {
-      if (!original.getGameDisplayName().equals(game.getGameDisplayName())) {
-        original.setGameDisplayName(game.getGameDisplayName());
-        pinUPConnector.saveTableDetails(game.getId(), original);
-        LOG.info("Finished game display name renaming to " + game.getGameDisplayName());
-        return true;
-      }
-      else if (!original.getGameFileName().equals(gameFilename)) {
-        String originalFileName = original.getGameFileName();
-        original.setGameFileName(game.getGameFileName());
-        pinUPConnector.saveTableDetails(game.getId(), original);
-
-        //rename popper media
-//        String originalName = FilenameUtils.getBaseName(originalFileName);
-//        String newName = FilenameUtils.getBaseName(gameFilename);
-//        popperService.renameGameMedia(originalGame, originalName, newName);
-
-        //rename additional files
-        String name = FilenameUtils.getBaseName(gameFilename);
-        FileUtils.rename(originalGame.getGameFile(), name);
-        FileUtils.rename(originalGame.getDirectB2SFile(), name);
-        FileUtils.rename(originalGame.getPOVFile(), name);
-        FileUtils.rename(originalGame.getResFile(), name);
-        LOG.info("Finished game file renaming to " + game.getGameFileName());
-        return true;
-      }
+    if (!updatedTableDetails.getGameFileName().equals(gameFilename)) {
+      String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
+      FileUtils.rename(game.getGameFile(), name);
+      FileUtils.rename(game.getDirectB2SFile(), name);
+      FileUtils.rename(game.getPOVFile(), name);
+      FileUtils.rename(game.getResFile(), name);
+      LOG.info("Finished game file renaming to " + game.getGameFileName());
     }
-    return false;
   }
 
   public Game save(Game game) throws Exception {

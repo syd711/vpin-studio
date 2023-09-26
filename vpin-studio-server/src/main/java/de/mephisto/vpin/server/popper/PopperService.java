@@ -4,13 +4,11 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
-import de.mephisto.vpin.restclient.popper.GameType;
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
-import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -207,7 +205,7 @@ public class PopperService implements InitializingBean {
         }
 
         TableInfo tableInfo = vpxService.getTableInfo(game.getId());
-        if(tableInfo != null) {
+        if (tableInfo != null) {
           if (StringUtils.isEmpty(tableDetails.getFileVersion()) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
             tableDetails.setFileVersion(tableInfo.getTableVersion());
           }
@@ -234,6 +232,7 @@ public class PopperService implements InitializingBean {
   public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) {
     Game game = pinUPConnector.getGame(gameId);
     pinUPConnector.saveTableDetails(game.getId(), tableDetails);
+    gameService.rename(game, tableDetails);
     return tableDetails;
   }
 
@@ -318,6 +317,7 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  //TODO use or delete?
   public void renameGameMedia(Game game, String oldName, String newBaseName) {
     PopperScreen[] values = PopperScreen.values();
     for (PopperScreen originalScreenValue : values) {
