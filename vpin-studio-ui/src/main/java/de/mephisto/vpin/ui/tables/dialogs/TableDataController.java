@@ -135,7 +135,7 @@ public class TableDataController implements Initializable, DialogController {
     gameFileName.setText(manifest.getGameFileName());
     gameFileName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameFileName(newValue));
     gameDisplayName.setText(manifest.getGameDisplayName());
-    gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue));
+    gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue.trim()));
     gameTheme.setText(manifest.getGameTheme());
     gameTheme.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameTheme(newValue));
     gameVersion.setText(manifest.getFileVersion());
