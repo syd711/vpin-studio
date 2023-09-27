@@ -55,11 +55,9 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     List<Competition> competitionForRom = competitionService.getSubscriptions(game.getRom());
     Optional<Competition> newCompetition = runSubscriptionChannelsCheck(game, competitionForRom);
 
-    boolean messageSent = false;
     for (Competition competition : competitionForRom) {
       //subscriptions don't need competition data, because we stick with a simple ROM name check.
       discordCompetitionService.runDiscordServerUpdate(event.getGame(), event.getNewScore(), competition, null);
-      messageSent = true;
     }
 
     String raw = null;
@@ -78,7 +76,6 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
         if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
           discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event, raw));
-          messageSent = true;
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
           if (discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
@@ -89,14 +86,13 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
             LOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
             competitionService.finishCompetition(competition);
           }
-          messageSent = true;
         }
       }
     }
 
     //send the default message if no competition updates was sent
-    if (!messageSent && !event.isInitialScore()) {
-      LOG.info("No competition found for " + game + ", sending default notification.");
+    if (!event.isInitialScore()) {
+      LOG.info("Sending default notification for: " + game.getGameDisplayName());
       if (!StringUtils.isEmpty(raw)) {
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
       }

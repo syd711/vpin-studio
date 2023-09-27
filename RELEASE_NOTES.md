@@ -51,6 +51,7 @@ The media can be configured as part of the new asset manager, available in the "
 
 - Removed table data field "ROM Url".
 - Unified some "Edit" icons.
+- Fixed missing **default message emitting** for new highscores: these have been canceled if there was at least one subscription.
 - Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.
 - Fixed automatic resetted nvram downloading (if you have nvram files in the installation folder of the VPin Studio, just delete them).
 - Fixed asset lookup: Instead of the game filename, the game name is used which caused various error in looking up media, deleting and renaming tables. This also affected the upload and clone/replace table actions.

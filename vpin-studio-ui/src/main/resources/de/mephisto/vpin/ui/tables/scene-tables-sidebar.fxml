@@ -221,7 +221,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PinUP Popper Table Settings" BorderPane.alignment="CENTER" />
+                                <Label text="Point Of View (POV)" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
