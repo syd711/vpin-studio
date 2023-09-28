@@ -24,7 +24,6 @@ import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -358,7 +357,15 @@ public class GameService {
         gameDetails = new GameDetails();
       }
 
-      gameDetails.setRomName(scanResult.getRom());
+      String rom = scanResult.getRom();
+      if (!StringUtils.isEmpty(rom)) {
+        TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+        if (tableDetails != null && !StringUtils.isEmpty(tableDetails.getRomName())) {
+          rom = tableDetails.getRomName();
+        }
+      }
+
+      gameDetails.setRomName(rom);
       gameDetails.setTableName(scanResult.getTableName());
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
