@@ -1,6 +1,8 @@
 package de.mephisto.vpin.commons;
 
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,7 @@ public class ServerInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ServerInstallationUtil.class);
 
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
+  public static File BAT = new File("vpin-studio-server.bat");
 
   public static boolean install() {
     try {
@@ -41,7 +44,22 @@ public class ServerInstallationUtil {
   }
 
   public static File getAutostartFile() {
-    String path = "C:/Users/%s/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/vpin-studio-server.bat";
+    try {
+      PropertiesStore store = PropertiesStore.create(SystemInfo.RESOURCES, "system");
+      String autostartValue = store.get(SystemInfo.AUTOSTART_DIR);
+      if (!StringUtils.isEmpty(autostartValue)) {
+        File autostartFile = new File(new File(autostartValue), BAT.getName());
+        if (autostartFile.exists()) {
+          return autostartFile;
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to resolve new autostart folder: " + e.getMessage(), e);
+    }
+
+
+    //use legacy lookup
+    String path = "C:/Users/%s/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/" + BAT;
     String userName = System.getProperty("user.name");
 
     String formattedPath = String.format(path, userName);

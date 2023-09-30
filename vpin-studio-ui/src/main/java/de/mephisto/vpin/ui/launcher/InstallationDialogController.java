@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
@@ -24,8 +25,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class InstallationController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(InstallationController.class);
+public class InstallationDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(InstallationDialogController.class);
 
   @FXML
   private Label studioLabel;
@@ -52,6 +53,9 @@ public class InstallationController implements Initializable, DialogController {
   private Button vpxTablesFolderBtn;
 
   @FXML
+  private Button autostartFolderBtn;
+
+  @FXML
   private TextField pinUPSystemFolderField;
 
   @FXML
@@ -62,6 +66,9 @@ public class InstallationController implements Initializable, DialogController {
 
   @FXML
   private TextField vpxTablesFolderField;
+
+  @FXML
+  private TextField autostartFolderField;
 
   @FXML
   private BorderPane main;
@@ -77,6 +84,7 @@ public class InstallationController implements Initializable, DialogController {
   private Stage stage;
   private PropertiesStore store;
   private File pinUPSystemInstallationFolder;
+  private File autostartFolder;
   private File visualPinballInstallationFolder;
   private File vpxTablesFolder;
   private File mameFolder;
@@ -103,7 +111,7 @@ public class InstallationController implements Initializable, DialogController {
     store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath());
     store.set(SystemInfo.VPX_TABLES_DIR, vpxTablesFolder.getAbsolutePath());
     store.set(SystemInfo.MAME_DIR, mameFolder.getAbsolutePath());
-    store.set(SystemInfo.USER_DIR, systemInfo.resolveUserFolder(visualPinballInstallationFolder).getAbsolutePath());
+    store.set(SystemInfo.AUTOSTART_DIR, autostartFolder.getAbsolutePath());
 
     result = true;
 
@@ -114,7 +122,7 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onPopperFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if(pinUPSystemInstallationFolder != null && pinUPSystemInstallationFolder.exists()) {
+    if (pinUPSystemInstallationFolder != null && pinUPSystemInstallationFolder.exists()) {
       directoryChooser.setInitialDirectory(this.pinUPSystemInstallationFolder);
     }
     directoryChooser.setTitle("Select PinUP System Folder");
@@ -130,7 +138,7 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onVisualPinballFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if(visualPinballInstallationFolder != null && visualPinballInstallationFolder.exists()) {
+    if (visualPinballInstallationFolder != null && visualPinballInstallationFolder.exists()) {
       directoryChooser.setInitialDirectory(this.visualPinballInstallationFolder);
     }
     directoryChooser.setTitle("Select Visual Pinball Installation Folder");
@@ -146,7 +154,7 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onVpxTablesFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if(vpxTablesFolder != null && vpxTablesFolder.exists()) {
+    if (vpxTablesFolder != null && vpxTablesFolder.exists()) {
       directoryChooser.setInitialDirectory(this.vpxTablesFolder);
     }
     directoryChooser.setTitle("Select VPX Tables Folder");
@@ -162,7 +170,7 @@ public class InstallationController implements Initializable, DialogController {
   @FXML
   private void onMameFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if(mameFolder != null && mameFolder.exists()) {
+    if (mameFolder != null && mameFolder.exists()) {
       directoryChooser.setInitialDirectory(this.mameFolder);
     }
 
@@ -172,6 +180,23 @@ public class InstallationController implements Initializable, DialogController {
     if (selectedDirectory != null) {
       this.mameFolder = selectedDirectory;
       this.mameFolderField.setText(this.mameFolder.getAbsolutePath());
+      validateFolders();
+    }
+  }
+
+  @FXML
+  private void onAutostartFolderBtn() {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    if (autostartFolder != null && autostartFolder.exists()) {
+      directoryChooser.setInitialDirectory(this.autostartFolder);
+    }
+
+    directoryChooser.setTitle("Select Autostart Folder");
+    File selectedDirectory = directoryChooser.showDialog(stage);
+
+    if (selectedDirectory != null) {
+      this.autostartFolder = selectedDirectory;
+      this.autostartFolderField.setText(this.autostartFolder.getAbsolutePath());
       validateFolders();
     }
   }
@@ -198,6 +223,9 @@ public class InstallationController implements Initializable, DialogController {
 
     mameFolder = systemInfo.resolveMameInstallationFolder(visualPinballInstallationFolder);
     mameFolderField.setText(mameFolder.getAbsolutePath());
+
+    autostartFolder = ServerInstallationUtil.getAutostartFile().getParentFile();
+    autostartFolderField.setText(autostartFolder.getAbsolutePath());
 
     validateFolders();
   }
@@ -283,6 +311,13 @@ public class InstallationController implements Initializable, DialogController {
       validationError.setVisible(true);
       validationErrorLabel.setText("The VPX tables folder \"" + vpxTablesFolder.getAbsolutePath() + "\" contains no VPX files.\nAre you sure it's the right folder?");
     }
+
+    if (autostartFolder == null || !autostartFolder.exists()) {
+      validationError.setVisible(true);
+      validationErrorLabel.setText("The autostart folder is invalid.\nSelect the Windows autostart folder.");
+      return;
+    }
+
     installBtn.setDisable(false);
   }
 

@@ -21,7 +21,7 @@ import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.launcher.InstallationController;
+import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
@@ -390,8 +390,8 @@ public class Dialogs {
   }
 
   public static boolean openInstallerDialog() {
-    Stage stage = createStudioDialogStage(InstallationController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
-    InstallationController controller = (InstallationController) stage.getUserData();
+    Stage stage = createStudioDialogStage(InstallationDialogController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    InstallationDialogController controller = (InstallationDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();
     return controller.install();

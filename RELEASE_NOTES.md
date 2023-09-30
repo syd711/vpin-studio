@@ -47,6 +47,11 @@ The media can be configured as part of the new asset manager, available in the "
 
 - Added "Bot Name" field which should help to identify the bot that is configured in case you are using different ones.
 
+**Competitions**
+
+- Added rules section for every competition dialog.
+- Switch Discord competition dialogs to a two column layout, so that they still fit on HD screen.
+
 ### Bugfixes
 
 - Removed table data field "ROM Url".
