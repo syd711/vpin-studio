@@ -31,7 +31,7 @@
                <content>
                   <VBox fx:id="navigationBox" alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0">
                      <children>
-                        <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN PREFRENCES">
+                        <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN PREFERENCES">
                            <font>
                               <Font size="13.0" />
                            </font>
@@ -109,7 +109,6 @@
                            </VBox.margin>
                         </Label>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="319.0" mnemonicParsing="false" onAction="#onArchiveManager" styleClass="preference-button" text="Table Manager" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="470.0" styleClass="preference-section" text="SERVICE PREFERENCES">
                            <font>
