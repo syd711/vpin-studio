@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -108,6 +109,9 @@ public class AltSound2EditorController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private Button editFileBtn;
+
+  @FXML
   private CheckBox romVolCtrlCheckbox;
 
   @FXML
@@ -132,6 +136,18 @@ public class AltSound2EditorController implements Initializable {
       Dialogs.openAltSound2SampleTypeDialog(altSound, AltSound2SampleType.valueOf(value.toLowerCase()));
       this.refreshProfiles();
       this.refresh();
+    }
+  }
+
+  @FXML
+  private void onFileEdit() {
+    AltSoundEntryModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      String updatedName = WidgetFactory.showInputDialog(Studio.stage, "Rename Entry", "Enter the updated filename.", "The itself won't re renamed, only the entry in the CSV file.", null, selectedItem.filename.get());
+      if (!StringUtils.isEmpty(updatedName) && FileUtils.isValidFilename(updatedName)) {
+        selectedItem.filename.setValue(updatedName);
+        this.refresh();
+      }
     }
   }
 
@@ -205,6 +221,8 @@ public class AltSound2EditorController implements Initializable {
     try {
       client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
+      this.altSound = client.getAltSoundService().getAltSound(game.getId());
+      this.refresh();
     } catch (Exception ex) {
       LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
@@ -431,6 +449,7 @@ public class AltSound2EditorController implements Initializable {
 
     ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     entriesLabel.setText(String.valueOf(selectedItems.size()));
+    editFileBtn.setDisable(selectedItems.size() != 1);
 
     gainVolume.setDisable(selectedItems.isEmpty());
     gainLabel.setDisable(selectedItems.isEmpty());
@@ -507,7 +526,10 @@ public class AltSound2EditorController implements Initializable {
 
       this.gain = new SimpleIntegerProperty(entry.getGain());
       this.gain.addListener((observable, oldValue, newValue) -> entry.setGain((Integer) newValue));
+
+      this.filename.addListener((observableValue, s, newValue) -> entry.setFilename(newValue));
     }
+
   }
 
   public void setTablesController(TablesController tablesController) {

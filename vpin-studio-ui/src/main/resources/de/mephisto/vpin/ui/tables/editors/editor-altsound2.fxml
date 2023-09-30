@@ -271,6 +271,17 @@
                </padding>
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="200.0" />
+            <Button fx:id="editFileBtn" layoutX="1059.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFileEdit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Change filename" />
+               </tooltip>
+            </Button>
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Label layoutX="10.0" layoutY="16.0" text="Sample Type:" textFill="WHITE">
                <font>
