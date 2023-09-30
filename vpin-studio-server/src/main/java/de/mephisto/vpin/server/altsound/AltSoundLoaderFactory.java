@@ -50,6 +50,14 @@ public class AltSoundLoaderFactory {
           }
         }
       }
+      else if(gSoundCsv.exists()) {
+        //init file does not exists, but g-sound.csv, which means that the table has not been started yet.
+        AltSound altSound = new AltSound();
+        altSound.setName(gSoundCsv.getParentFile().getName());
+        altSound.setFormat(AltSoundFormats.gsound);
+        altSound.setFilesize(-1);
+        return altSound;
+      }
       else if (altSoundCsv.exists()) {
         return new AltSoundLoader(altSoundCsv).load();
       }

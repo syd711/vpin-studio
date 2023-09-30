@@ -9,10 +9,10 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.AltSoundFileDropEventHandler;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -110,6 +110,10 @@ public class TablesSidebarAltSoundController implements Initializable {
         tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
       }
       else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
+        if(altSound.getFilesize() == -1) {
+          WidgetFactory.showAlert(Studio.stage, "Invalid Configuration", "The table must be played once, so that the necessary configuration files are generated.");
+          return;
+        }
         tablesSidebarController.getTablesController().showAltSound2Editor(this.game.get(), altSound);
       }
       else {
@@ -217,9 +221,16 @@ public class TablesSidebarAltSoundController implements Initializable {
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));
-        bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
-        formatLabel.setText(altSound.getFormat());
+
+        long filesize = altSound.getFilesize();
+        if (filesize == -1) {
+          formatLabel.setText(altSound.getFormat() + " (not played yet)");
+        }
+        else {
+          bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
+          lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
+          formatLabel.setText(altSound.getFormat());
+        }
 
         List<ValidationState> validationStates = altSound.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());

@@ -31,7 +31,7 @@ public class AltSoundAnalyzer {
             audioCount++;
           }
 
-          if (name.contains("altsound.csv")) {
+          if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
             altSoundFound = true;
           }
         }
