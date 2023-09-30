@@ -140,14 +140,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onUpdate() {
-    Date changeDate = VPS.getInstance().getChangeDate();
-    String msg = "Download latest version of the Visual Pinball Spreadsheet database?";
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Virtual Pinball Spreadsheet Update", msg, "Your database last update was on " + DateFormat.getDateTimeInstance().format(changeDate) + ".");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(VPS.getInstance().getVpsDbFile())));
-      List<VpsTable> tables = VPS.getInstance().getTables();
-      refreshSheetData(tables);
-    }
+    Dialogs.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(VPS.getInstance().getVpsDbFile())));
+    List<VpsTable> tables = VPS.getInstance().getTables();
+    refreshSheetData(tables);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
