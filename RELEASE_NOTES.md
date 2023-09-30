@@ -55,9 +55,10 @@ The media can be configured as part of the new asset manager, available in the "
 ### Bugfixes
 
 - Removed table data field "ROM Url".
-- Unified some "Edit" icons.
+- Improved installer: The autostart folder selection is now part of the installer. Several users had problem when the system users default was used.
 - Fixed missing **default message emitting** for new highscores: these have been canceled if there was at least one subscription.
 - Fixed wrong score limit for initial highscore posts of subscriptions and Discord competitions.
 - Fixed automatic resetted nvram downloading (if you have nvram files in the installation folder of the VPin Studio, just delete them).
 - Fixed asset lookup: Instead of the game filename, the game name is used which caused various error in looking up media, deleting and renaming tables. This also affected the upload and clone/replace table actions.
 - Added fallback for ROM scanning: if no ROM name could be resolved, an additional lookup is made into the table details "ROM Name" field of PinUP Popper as a fallback.
+- Removed "Table Mananger": While the idea was nice to have one file and install/play it everywhere, this opened the door to abuse. Since this was the solely intend of the Table Manager, I removed it.

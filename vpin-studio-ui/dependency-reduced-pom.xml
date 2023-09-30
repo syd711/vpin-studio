@@ -153,13 +153,6 @@
               <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../vpin-studio-table-manager/target/</directory>
-                  <includes>
-                    <include>vpin-studio-table-manager.jar</include>
-                    <include>VPin-Studio-Table-Manager.exe</include>
-                  </includes>
-                </resource>
-                <resource>
                   <directory>${basedir}/target/</directory>
                   <includes>
                     <include>vpin-studio-ui.jar</include>
@@ -293,7 +286,6 @@
                 <argument>-t7z</argument>
                 <argument>VPin-Studio-Server.zip</argument>
                 <argument>VPin-Studio-Server.exe</argument>
-                <argument>VPin-Studio-Table-Manager.exe</argument>
               </arguments>
             </configuration>
           </execution>
