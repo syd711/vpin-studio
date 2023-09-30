@@ -51,6 +51,9 @@
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
                   </Label>
                   <GridPane vgap="3.0">
                      <columnConstraints>
@@ -82,7 +85,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="tableCombo" prefWidth="280.0" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="tableCombo" prefHeight="30.0" prefWidth="294.0" GridPane.columnIndex="1" />
                         <Label layoutX="10.0" layoutY="15.0" text=" §" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="18.0" />
@@ -119,13 +122,16 @@
                         </Label>
                      </children>
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets />
                      </VBox.margin>
                   </GridPane>
                   <Label layoutX="10.0" layoutY="182.0" styleClass="default-title" text="Your VPin Settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
                   </Label>
                   <GridPane vgap="3.0">
                      <columnConstraints>
@@ -200,6 +206,24 @@
                </padding>
             </BorderPane>
          </bottom>
+         <top>
+            <VBox styleClass="info-container" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="Rules" />
+                  <Label styleClass="default-text" text="• Subscriptions are created by the ROM name of a table (manually or dynamically)." />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Subscriptions have no end date and no winner." />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Other players may join (subscribe) their bot to these channel." />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </top>
       </BorderPane>
    </center>
 </BorderPane>

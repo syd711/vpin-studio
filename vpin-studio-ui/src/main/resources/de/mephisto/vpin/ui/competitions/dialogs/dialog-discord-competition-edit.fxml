@@ -21,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -50,69 +50,25 @@
             <Insets />
          </BorderPane.margin>
          <center>
-            <VBox fx:id="mainColumn">
+            <VBox fx:id="mainColumn" prefWidth="440.0">
                <children>
-                  <Label text="Server Settings" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <GridPane vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="190.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="672.39990234375" minWidth="10.0" prefWidth="508.59997558593744" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="40.4000244140625" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="Competition Name:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="Discord Server:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label text="Discord Channel:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="nameField" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <ComboBox fx:id="serversCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ComboBox fx:id="channelsCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label styleClass="preference-description" text="The selected channel will be used to sync the highscore between the VPins." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </GridPane>
                   <Label text="Table Selection" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
                   </Label>
-                  <GridPane>
+                  <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.199951171875" minWidth="10.0" prefWidth="190.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="575.0" minWidth="10.0" prefWidth="503.40002441406256" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="320.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="575.0" minWidth="10.0" prefWidth="43.39999999999998" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="30.400000000000006" minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
@@ -165,15 +121,183 @@
                         <Hyperlink fx:id="downloadLinkField" onAction="#onLinkClick" text="Hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="214.0" text="Score Settings" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="182.0" text="Your VPin Settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" top="6.0" />
+                     </VBox.margin>
                   </Label>
-                  <GridPane>
+                  <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.2000732421875" minWidth="10.0" prefWidth="190.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="548.0" minWidth="10.0" prefWidth="548.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="542.4000488281251" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="542.4000488281251" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" />
+                    </rowConstraints>
+                     <children>
+                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <ComboBox fx:id="competitionIconCombo" prefWidth="310.0" />
+                              <Label layoutX="226.0" layoutY="16.0" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label text="Reset Highscores:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. &#10;You can backup your existing highscore to restore it after the competition is finished." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="49.0" text="Highs. Reset Available:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Label fx:id="nvramLabel" prefWidth="100.0" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label textFill="WHITE" GridPane.columnIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
+                           </tooltip>
+                           <GridPane.margin>
+                              <Insets left="6.0" />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </GridPane>
+                  <StackPane alignment="TOP_LEFT" prefHeight="210.0" prefWidth="578.0">
+                     <VBox.margin>
+                        <Insets left="176.0" top="-26.0" />
+                     </VBox.margin>
+                     <children>
+                        <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="badgePreview" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                           <StackPane.margin>
+                              <Insets left="130.0" top="10.0" />
+                           </StackPane.margin>
+                        </ImageView>
+                     </children>
+                  </StackPane>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+         <bottom>
+            <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
+               <top>
+                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
+               </top>
+               <bottom>
+                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </bottom>
+               <BorderPane.margin>
+                  <Insets top="12.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </padding>
+            </BorderPane>
+         </bottom>
+         <top>
+            <VBox styleClass="info-container" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="Rules" />
+                  <Label styleClass="default-text" text="• Competitions are created and stored on the selected Discord channel." />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
+                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </top>
+         <left>
+            <VBox prefWidth="440.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="24.0" top="12.0" />
+               </BorderPane.margin>
+               <children>
+                  <Label text="Server Settings" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="672.39990234375" minWidth="10.0" prefWidth="508.59997558593744" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.6001129150391" minWidth="10.0" prefWidth="40.4000244140625" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -182,33 +306,44 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Score Validation:" textFill="WHITE">
+                        <Label text="Competition Name:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="331.0" />
-                           </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="Score Limit:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="Discord Server:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="preference-description" text="Selects the amount of scores to be stored for the competition." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Spinner fx:id="scoreLimit" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Discord Channel:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="nameField" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <ComboBox fx:id="serversCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="channelsCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="214.0" text="Duration" textFill="WHITE">
+                  <Label text="Duration" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="164.4000244140625" prefWidth="190.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="503.1999755859375" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0000152587891" minWidth="10.0" prefWidth="40.0" />
                     </columnConstraints>
@@ -253,146 +388,57 @@
                         </Label>
                      </children>
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="182.0" text="Your VPin Settings" textFill="WHITE">
+                  <Label text="Score Settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="190.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="542.4000488281251" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="548.0" minWidth="10.0" prefWidth="548.0" />
                     </columnConstraints>
                     <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label text="Score Validation:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <ComboBox fx:id="competitionIconCombo" prefHeight="30.0" prefWidth="210.0" />
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <HBox.margin>
-                                    <Insets left="6.0" />
-                                 </HBox.margin>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                              <Label layoutX="226.0" layoutY="16.0" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
-                                 </tooltip>
-                              </Label>
+                              <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="331.0" />
                            </children>
                         </HBox>
-                        <Label text="Reset Highscores:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="Score Limit:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. &#10;You can backup your existing highscore to restore it after the competition is finished." wrapText="true" />
-                                 </tooltip>
-                              </Label>
+                              <Label styleClass="preference-description" text="Selects the amount of scores to be stored" textFill="WHITE" />
+                              <Label styleClass="preference-description" text="for the competition." textFill="WHITE" />
                            </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="49.0" text="Highscore Reset Available:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <Label fx:id="nvramLabel" prefWidth="100.0" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
+                        </VBox>
+                        <Spinner fx:id="scoreLimit" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
                   </GridPane>
-                  <StackPane alignment="TOP_LEFT" prefHeight="210.0" prefWidth="578.0">
-                     <VBox.margin>
-                        <Insets left="176.0" top="-26.0" />
-                     </VBox.margin>
-                     <children>
-                        <ImageView fx:id="iconPreview" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fx:id="badgePreview" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                           <StackPane.margin>
-                              <Insets left="130.0" top="10.0" />
-                           </StackPane.margin>
-                        </ImageView>
-                     </children>
-                  </StackPane>
                </children>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
             </VBox>
-         </center>
-         <bottom>
-            <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
-               <top>
-                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
-               </top>
-               <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </bottom>
-               <BorderPane.margin>
-                  <Insets top="12.0" />
-               </BorderPane.margin>
-               <padding>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-               </padding>
-            </BorderPane>
-         </bottom>
+         </left>
       </BorderPane>
    </center>
 </BorderPane>
