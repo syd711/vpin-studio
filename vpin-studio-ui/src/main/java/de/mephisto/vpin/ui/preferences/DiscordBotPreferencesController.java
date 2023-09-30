@@ -70,9 +70,9 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @FXML
   private void onReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Token Reset", "Reset this Discord bot token?",
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Token", "Delete this Discord bot token?",
         "If you haven't stored it elsewhere, you have to re-generate a new one using the Discord developer portal.",
-        "Yes, delete token");
+        "Delete Token");
     if (result.get().equals(ButtonType.OK)) {
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
 
