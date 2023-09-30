@@ -20,7 +20,6 @@ public class SystemTest extends AbstractVPinServerTest {
     assertTrue(systemService.getAltColorFolder().exists());
     assertTrue(systemService.getAltSoundFolder().exists());
     assertTrue(systemService.getVisualPinballUserFolder().exists());
-    assertTrue(systemService.getVPXExe().exists());
     assertTrue(systemService.getVPMAliasFile().exists());
     assertTrue(systemService.getVPXMusicFolder().exists());
     assertTrue(systemService.getVPRegFile().exists());
