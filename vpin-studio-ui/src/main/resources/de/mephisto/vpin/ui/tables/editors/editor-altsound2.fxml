@@ -140,8 +140,7 @@
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.199951171875" minWidth="10.0" prefWidth="117.6" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="123.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="46.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -174,15 +173,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="Determines the ducking proifle for the selected sample type." wrapText="true" />
-                           </tooltip>
-                        </Label>
-                        <ComboBox fx:id="channelCombo" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="channelCombo" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="49.0" text="Ducking Profile:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -191,7 +182,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="duckingProfileCombo" layoutX="128.0" layoutY="44.0" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                   <GridPane>
