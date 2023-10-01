@@ -105,11 +105,24 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     dataRoot.getChildren().removeAll(dataRoot.getChildren());
     autoCompleteNameField.reset();
 
+    TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", vpsTable.getPupPackFiles());
+
+    TablesSidebarVpsController.addSection(dataRoot, "Backglasses", vpsTable.getB2sFiles());
+
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", vpsTable.getAltSoundFiles());
+
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Color", vpsTable.getAltColorFiles());
+
     TablesSidebarVpsController.addSection(dataRoot, "Sound", vpsTable.getSoundFiles());
 
     TablesSidebarVpsController.addSection(dataRoot, "Topper", vpsTable.getTopperFiles());
 
+    TablesSidebarVpsController.addSection(dataRoot, "ROM", vpsTable.getRomFiles());
+
     TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", vpsTable.getWheelArtFiles());
+
+    TablesSidebarVpsController.addSection(dataRoot, "POV", vpsTable.getPovFiles());
+
 
     autoCompleteNameField.setText(vpsTable.getName());
 
