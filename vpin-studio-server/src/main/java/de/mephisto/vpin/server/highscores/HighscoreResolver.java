@@ -235,7 +235,8 @@ class HighscoreResolver {
       }
       String stdOut = standardOutputFromCommand.toString();
       if(!stdOut.contains("1")) {
-        metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
+        LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n"  + stdOut);
+        metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted or it contains only a single entry.");
       }
       return stdOut;
     } catch (Exception e) {
