@@ -62,3 +62,7 @@ The media can be configured as part of the new asset manager, available in the "
 - Fixed asset lookup: Instead of the game filename, the game name is used which caused various error in looking up media, deleting and renaming tables. This also affected the upload and clone/replace table actions.
 - Added fallback for ROM scanning: if no ROM name could be resolved, an additional lookup is made into the table details "ROM Name" field of PinUP Popper as a fallback.
 - Removed "Table Mananger": While the idea was nice to have one file and install/play it everywhere, this opened the door to abuse. Since this was the solely intend of the Table Manager, I removed it.
+
+### Known Bugs
+
+- Sometimes the video player for the asset may break. In that case a message is shown, that the asset is there, but cannot be displayed. The issue is usually fixed by re-selecting the table/asset.
