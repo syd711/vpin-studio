@@ -168,7 +168,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
-    Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.Audio);
+    Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
   }
 
   @FXML
