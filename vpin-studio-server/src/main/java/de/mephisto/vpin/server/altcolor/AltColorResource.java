@@ -46,7 +46,7 @@ public class AltColorResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
-    return altColorService.clearCache();
+    return true;
   }
 
   @PostMapping("/upload")

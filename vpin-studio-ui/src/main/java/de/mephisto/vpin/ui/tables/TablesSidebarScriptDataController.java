@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -36,6 +37,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarScriptDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
@@ -205,11 +208,13 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onTablesFolderOpen() {
-    try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "tables").getAbsolutePath()).start();
-    } catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    if(this.game.isPresent()) {
+      try {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+      } catch (Exception e) {
+        LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+      }
     }
   }
 
@@ -246,11 +251,12 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void onDeleteAlias() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
       String alias = g.getRomAlias();
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getRomService().deleteAliasMapping(alias);
+        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
         EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
@@ -259,15 +265,13 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onEdit() {
-    if (this.game.isPresent()) {
-      tablesSidebarController.getTablesController().showScriptEditor(this.game.get());
-    }
+    this.game.ifPresent(gameRepresentation -> tablesSidebarController.getTablesController().showScriptEditor(gameRepresentation));
   }
 
   @FXML
   public void onScan() {
     if (this.game.isPresent()) {
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", Arrays.asList(this.game.get())));
+      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
@@ -330,13 +334,17 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onEMHighscore() {
-    File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
-    File file = new File(folder, game.get().getHsFileName());
-    if (file.exists()) {
-      try {
-        Desktop.getDesktop().open(file);
-      } catch (IOException e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.get().getHsFileName() + "\": " + e.getMessage());
+    if(this.game.isPresent()) {
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+
+      File folder = new File(emulatorRepresentation.getUserDirectory());
+      File file = new File(folder, game.get().getHsFileName());
+      if (file.exists()) {
+        try {
+          Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.get().getHsFileName() + "\": " + e.getMessage());
+        }
       }
     }
   }
@@ -420,15 +428,12 @@ public class TablesSidebarScriptDataController implements Initializable {
         openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
       }
 
-      editHsFileNameBtn.setDisable(!game.getEmulator().isVisualPinball());
-      editRomNameBtn.setDisable(!game.getEmulator().isVisualPinball());
-      editTableNameBtn.setDisable(!game.getEmulator().isVisualPinball());
-      romUploadBtn.setDisable(!game.getEmulator().isVisualPinball());
       deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
 
       if (Studio.client.getSystemService().isLocal()) {
         if (!StringUtils.isEmpty(game.getHsFileName())) {
-          File folder = new File(systemSummary.getVisualPinballDirectory(), "User");
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
+          File folder = new File(emulatorRepresentation.getUserDirectory());
           File file = new File(folder, game.getHsFileName());
           openEMHighscoreBtn.setDisable(!file.exists());
         }

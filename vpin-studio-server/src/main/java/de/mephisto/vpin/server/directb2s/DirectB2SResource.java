@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
@@ -28,7 +27,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequestMapping(VPinStudioServer.API_SEGMENT + "directb2s")
 public class DirectB2SResource {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SResource.class);
-
 
   @Autowired
   private BackglassService backglassService;
@@ -72,29 +70,29 @@ public class DirectB2SResource {
     return JobExecutionResultFactory.empty();
   }
 
-  @GetMapping("/tablesettings/{id}")
-  public DirectB2STableSettings getTableSettings(@PathVariable("id") int id) {
-    return backglassService.getTableSettings(id);
+  @GetMapping("/tablesettings/{gameId}")
+  public DirectB2STableSettings getTableSettings(@PathVariable("gameId") int gameId) {
+    return backglassService.getTableSettings(gameId);
   }
 
-  @PostMapping("/tablesettings")
-  public DirectB2STableSettings saveTableSettings(@RequestBody DirectB2STableSettings settings) {
+  @PostMapping("/tablesettings/{gameId}")
+  public DirectB2STableSettings saveTableSettings(@PathVariable("gameId") int gameId, @RequestBody DirectB2STableSettings settings) {
     try {
-      return backglassService.saveTableSettings(settings);
+      return backglassService.saveTableSettings(gameId, settings);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
     }
   }
 
-  @GetMapping("/serversettings")
-  public DirectB2ServerSettings getServerSettings() {
-    return backglassService.getServerSettings();
+  @GetMapping("/serversettings/{emuId}")
+  public DirectB2ServerSettings getServerSettings(@PathVariable("emuId") int emuId) {
+    return backglassService.getServerSettings(emuId);
   }
 
-  @PostMapping("/serversettings")
-  public DirectB2ServerSettings saveServerSettings(@RequestBody DirectB2ServerSettings settings) {
+  @PostMapping("/serversettings/{emuId}")
+  public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
     try {
-      return backglassService.saveServerSettings(settings);
+      return backglassService.saveServerSettings(emuId, settings);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving custom options failed: " + e.getMessage());
     }

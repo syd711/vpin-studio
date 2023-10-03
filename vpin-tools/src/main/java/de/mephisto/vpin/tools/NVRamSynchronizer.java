@@ -83,6 +83,7 @@ public class NVRamSynchronizer {
           target.delete();
         }
         IOUtils.copy(new FileInputStream(clearedNV), new FileOutputStream(target));
+        System.out.println("Copied " + target.getAbsolutePath());
         zipFile(target, target.getName(), zipOut);
 
         indexTxt.append(FilenameUtils.getBaseName(clearedNV.getName()));

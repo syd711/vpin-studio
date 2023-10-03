@@ -167,14 +167,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     });
 
     List<GameRepresentation> games = client.getGameService().getGamesCached();
-    List<GameRepresentation> filtered = new ArrayList<>();
-    for (GameRepresentation game : games) {
-      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
-      }
-    }
-
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);
+    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       competition.setGameId(t1.getId());

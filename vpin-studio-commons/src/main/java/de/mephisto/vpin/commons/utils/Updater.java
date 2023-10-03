@@ -60,6 +60,7 @@ public class Updater {
       LOG.info("Downloading " + downloadUrl);
       URL url = new URL(downloadUrl);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
       File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);

@@ -19,12 +19,14 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   private final List<File> files;
   private final int gameId;
   private final TableUploadDescriptor tableUploadDescriptor;
+  private final int emuId;
   private double percentage = 0;
 
-  public TableUploadProgressModel(String title, File file, int gameId, TableUploadDescriptor tableUploadDescriptor) {
+  public TableUploadProgressModel(String title, File file, int gameId, TableUploadDescriptor tableUploadDescriptor, int emuId) {
     super(title);
     this.files = Collections.singletonList(file);
     this.gameId = gameId;
+    this.emuId = emuId;
     this.tableUploadDescriptor = tableUploadDescriptor;
     iterator = this.files.iterator();
   }
@@ -52,7 +54,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getHighscoreCardsService().uploadTable(next,tableUploadDescriptor, gameId, percent -> {
+      Studio.client.getHighscoreCardsService().uploadTable(next,tableUploadDescriptor, gameId, emuId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

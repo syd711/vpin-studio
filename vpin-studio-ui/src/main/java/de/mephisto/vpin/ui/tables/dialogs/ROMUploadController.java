@@ -2,12 +2,17 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -35,9 +40,13 @@ public class ROMUploadController implements Initializable, DialogController {
   @FXML
   private Button uploadBtn;
 
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
   private List<File> selection;
 
   private boolean result = false;
+  private GameEmulatorRepresentation emulatorRepresentation;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -54,7 +63,7 @@ public class ROMUploadController implements Initializable, DialogController {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
-        RomUploadProgressModel model = new RomUploadProgressModel("ROM Upload", selection);
+        RomUploadProgressModel model = new RomUploadProgressModel("ROM Upload", selection, emulatorRepresentation.getId());
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -94,6 +103,15 @@ public class ROMUploadController implements Initializable, DialogController {
 
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
+
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getGameEmulators();
+    emulatorRepresentation = gameEmulators.get(0);
+    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+    emulatorCombo.setItems(emulators);
+    emulatorCombo.setValue(emulatorRepresentation);
+    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+      emulatorRepresentation = t1;
+    });
   }
 
   @Override

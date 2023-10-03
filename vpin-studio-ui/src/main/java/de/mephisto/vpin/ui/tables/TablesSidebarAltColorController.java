@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
@@ -30,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarAltColorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltColorController.class);
@@ -90,19 +93,23 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private void onFlexDMDUI() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getVpinMameDirectory(), "FlexDMDUI.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+    if(this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+        try {
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
+          if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+          }
+          else {
+            desktop.open(file);
+          }
+        } catch (Exception e) {
+          LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
         }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
       }
     }
   }

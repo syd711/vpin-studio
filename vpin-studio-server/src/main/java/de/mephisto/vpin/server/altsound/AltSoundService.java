@@ -7,7 +7,9 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,9 @@ public class AltSoundService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   public boolean isAltSoundAvailable(@NonNull Game game) {
     File gSoundCsv = new File(game.getAltSoundFolder(), "g-sound.csv");
     File altSoundCsv = new File(game.getAltSoundFolder(), "altsound.csv");
@@ -59,8 +64,9 @@ public class AltSoundService implements InitializingBean {
     return new AltSound();
   }
 
-  public AltSound getAltSound(String name) {
-    File folder = new File(systemService.getAltSoundFolder(), name);
+  public AltSound getAltSound(int emuId, String name) {
+    GameEmulator emulator = pinUPConnector.getGameEmulator(emuId);
+    File folder = new File(emulator.getAltSoundFolder(), name);
     return new AltSoundLoaderFactory(folder).load();
   }
 
@@ -123,11 +129,5 @@ public class AltSoundService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    File altSoundFolder = systemService.getAltSoundFolder();
-    if (!altSoundFolder.exists() && altSoundFolder.getParentFile().exists()) {
-      if (!altSoundFolder.mkdirs()) {
-        LOG.error("Failed to create altsound folder " + altSoundFolder.getName());
-      }
-    }
   }
 }

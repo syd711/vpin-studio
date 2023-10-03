@@ -44,28 +44,10 @@ public class InstallationDialogController implements Initializable, DialogContro
   private Button popperFolderBtn;
 
   @FXML
-  private Button visualPinballFolderBtn;
-
-  @FXML
-  private Button mameFolderBtn;
-
-  @FXML
-  private Button vpxTablesFolderBtn;
-
-  @FXML
   private Button autostartFolderBtn;
 
   @FXML
   private TextField pinUPSystemFolderField;
-
-  @FXML
-  private TextField visualPinballFolderField;
-
-  @FXML
-  private TextField mameFolderField;
-
-  @FXML
-  private TextField vpxTablesFolderField;
 
   @FXML
   private TextField autostartFolderField;
@@ -85,10 +67,6 @@ public class InstallationDialogController implements Initializable, DialogContro
   private PropertiesStore store;
   private File pinUPSystemInstallationFolder;
   private File autostartFolder;
-  private File visualPinballInstallationFolder;
-  private File vpxTablesFolder;
-  private File mameFolder;
-
 
   private SystemInfo systemInfo = new SystemInfo();
 
@@ -102,15 +80,9 @@ public class InstallationDialogController implements Initializable, DialogContro
   private void onInstall(ActionEvent e) {
     LOG.info("********************************* Installation Overview ***********************************************");
     LOG.info("PinUP System Folder: " + pinUPSystemInstallationFolder.getAbsolutePath());
-    LOG.info("Visual Pinball Folder: " + visualPinballInstallationFolder.getAbsolutePath());
-    LOG.info("Visual Pinball Tables Folder: " + vpxTablesFolder.getAbsolutePath());
-    LOG.info("Mame Folder: " + mameFolder.getAbsolutePath());
     LOG.info("*******************************************************************************************************");
 
-    store.set(SystemInfo.VISUAL_PINBALL_INST_DIR, visualPinballInstallationFolder.getAbsolutePath());
     store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath());
-    store.set(SystemInfo.VPX_TABLES_DIR, vpxTablesFolder.getAbsolutePath());
-    store.set(SystemInfo.MAME_DIR, mameFolder.getAbsolutePath());
     store.set(SystemInfo.AUTOSTART_DIR, autostartFolder.getAbsolutePath());
 
     result = true;
@@ -131,55 +103,6 @@ public class InstallationDialogController implements Initializable, DialogContro
     if (selectedDirectory != null) {
       this.pinUPSystemInstallationFolder = selectedDirectory;
       this.pinUPSystemFolderField.setText(this.pinUPSystemInstallationFolder.getAbsolutePath());
-      validateFolders();
-    }
-  }
-
-  @FXML
-  private void onVisualPinballFolderBtn() {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (visualPinballInstallationFolder != null && visualPinballInstallationFolder.exists()) {
-      directoryChooser.setInitialDirectory(this.visualPinballInstallationFolder);
-    }
-    directoryChooser.setTitle("Select Visual Pinball Installation Folder");
-    File selectedDirectory = directoryChooser.showDialog(stage);
-
-    if (selectedDirectory != null) {
-      this.visualPinballInstallationFolder = selectedDirectory;
-      this.visualPinballFolderField.setText(this.visualPinballInstallationFolder.getAbsolutePath());
-      validateFolders();
-    }
-  }
-
-  @FXML
-  private void onVpxTablesFolderBtn() {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (vpxTablesFolder != null && vpxTablesFolder.exists()) {
-      directoryChooser.setInitialDirectory(this.vpxTablesFolder);
-    }
-    directoryChooser.setTitle("Select VPX Tables Folder");
-    File selectedDirectory = directoryChooser.showDialog(stage);
-
-    if (selectedDirectory != null) {
-      this.vpxTablesFolder = selectedDirectory;
-      this.vpxTablesFolderField.setText(this.vpxTablesFolder.getAbsolutePath());
-      validateFolders();
-    }
-  }
-
-  @FXML
-  private void onMameFolderBtn() {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (mameFolder != null && mameFolder.exists()) {
-      directoryChooser.setInitialDirectory(this.mameFolder);
-    }
-
-    directoryChooser.setTitle("Select VPin MAME Folder");
-    File selectedDirectory = directoryChooser.showDialog(stage);
-
-    if (selectedDirectory != null) {
-      this.mameFolder = selectedDirectory;
-      this.mameFolderField.setText(this.mameFolder.getAbsolutePath());
       validateFolders();
     }
   }
@@ -215,15 +138,6 @@ public class InstallationDialogController implements Initializable, DialogContro
     pinUPSystemInstallationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
     pinUPSystemFolderField.setText(pinUPSystemInstallationFolder.getAbsolutePath());
 
-    visualPinballInstallationFolder = systemInfo.resolveVisualPinballInstallationFolder(pinUPSystemInstallationFolder);
-    visualPinballFolderField.setText(visualPinballInstallationFolder.getAbsolutePath());
-
-    vpxTablesFolder = systemInfo.resolveVpxTablesInstallationFolder(visualPinballInstallationFolder);
-    vpxTablesFolderField.setText(vpxTablesFolder.getAbsolutePath());
-
-    mameFolder = systemInfo.resolveMameInstallationFolder(visualPinballInstallationFolder);
-    mameFolderField.setText(mameFolder.getAbsolutePath());
-
     autostartFolder = ServerInstallationUtil.getAutostartFile().getParentFile();
     autostartFolderField.setText(autostartFolder.getAbsolutePath());
 
@@ -246,70 +160,12 @@ public class InstallationDialogController implements Initializable, DialogContro
       return;
     }
 
-    if (visualPinballInstallationFolder == null) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("No Visual Pinball installation folder set.");
-      return;
-    }
-
-    if (!visualPinballInstallationFolder.exists()) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("Visual Pinball installation folder does not exist.");
-      return;
-    }
-
-    if (vpxTablesFolder == null) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("VPX tables folder set.");
-      return;
-    }
-
-    if (!vpxTablesFolder.exists()) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("VPX tables folder does not exist.");
-      return;
-    }
-
-    if (mameFolder == null) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("VPin MAME folder set.");
-      return;
-    }
-
-    if (!mameFolder.exists()) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("VPin MAME folder does not exist.");
-      return;
-    }
-
-    File[] roms = mameFolder.listFiles((dir, name) -> name.equals("roms"));
-
-    if (roms == null || roms.length == 0) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("The VPin MAME folder is invalid, required subfolders have not been found.");
-      return;
-    }
-
-    File[] userFolder = visualPinballInstallationFolder.listFiles((dir, name) -> name.equals("User"));
-
-    if (userFolder == null || userFolder.length == 0) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("The Visual Pinball folder is invalid,\nrequired subfolders have not been found.");
-      return;
-    }
-
     File[] popMedia = pinUPSystemInstallationFolder.listFiles((dir, name) -> name.equals("POPMedia"));
 
     if (popMedia == null || popMedia.length == 0) {
       validationError.setVisible(true);
       validationErrorLabel.setText("The PinUP Popper installation folder is invalid,\nrequired subfolders have not been found.");
       return;
-    }
-
-    File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
-    if (files == null || files.length == 0) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("The VPX tables folder \"" + vpxTablesFolder.getAbsolutePath() + "\" contains no VPX files.\nAre you sure it's the right folder?");
     }
 
     if (autostartFolder == null || !autostartFolder.exists()) {

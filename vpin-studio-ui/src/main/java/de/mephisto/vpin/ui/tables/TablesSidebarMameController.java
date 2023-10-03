@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -98,22 +99,25 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onMameSetup() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getVpinMameDirectory(), "Setup64.exe");
-        if (!file.exists()) {
-          file = new File(systemSummary.getVpinMameDirectory(), "Setup.exe");
+    if(this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+        try {
+          GameEmulatorRepresentation emulatorRepresentation= Studio.client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
+          if (!file.exists()) {
+            file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
+          }
+          if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+          }
+          else {
+            desktop.open(file);
+          }
+        } catch (Exception e) {
+          LOG.error("Failed to open Mame Setup: " + e.getMessage());
         }
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open Mame Setup: " + e.getMessage());
       }
     }
   }

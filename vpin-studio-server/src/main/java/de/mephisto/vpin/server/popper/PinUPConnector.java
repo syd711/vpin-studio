@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PinUPConnector implements InitializingBean {
@@ -35,7 +36,38 @@ public class PinUPConnector implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private final Map<Integer, Emulator> emulators = new HashMap<>();
+  private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
+
+  public GameEmulator getGameEmulator(int emulatorId) {
+    return this.emulators.get(emulatorId);
+  }
+
+  public List<GameEmulator> getGameEmulators() {
+    return new ArrayList<>(this.emulators.values());
+  }
+
+  public List<GameEmulator> getBackglassGameEmulators() {
+    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
+    return gameEmulators.stream().filter(e -> {
+      return e.getB2STableSettingsXml().exists();
+    }).collect(Collectors.toList());
+  }
+
+  public GameEmulator getDefaultGameEmulator() {
+    Collection<GameEmulator> values = emulators.values();
+    for (GameEmulator value : values) {
+      if(value.getDescription() != null && value.getDescription().contains("default")) {
+        return value;
+      }
+    }
+
+    for (GameEmulator value : values) {
+      if(value.getNvramFolder().exists()) {
+        return value;
+      }
+    }
+    throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved.");
+  }
 
   @Override
   public void afterPropertiesSet() {
@@ -47,12 +79,14 @@ public class PinUPConnector implements InitializingBean {
   private void runConfigCheck() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
-      emulators.put(emulator.getId(), emulator);
-
-      String name = emulator.getName();
-      if (Emulator.isVisualPinball(name)) {
-        initVisualPinballXScripts(emulator);
+      if (!emulator.isVisualPinball()) {
+        continue;
       }
+
+      GameEmulator gameEmulator = new GameEmulator(emulator);
+      emulators.put(emulator.getId(), gameEmulator);
+      initVisualPinballXScripts(emulator);
+      LOG.info("Loaded Emulator: " + gameEmulator);
     }
     LOG.info("Finished Popper scripts configuration check.");
   }
@@ -196,7 +230,9 @@ public class PinUPConnector implements InitializingBean {
         manifest.setDesignedBy(rs.getString("DesignedBy"));
 
         manifest.setAltLaunchExe(rs.getString("ALTEXE"));
-        manifest.setLauncherList(new ArrayList<>(systemService.getAltExeNames()));
+
+        GameEmulator emu = emulators.get(rs.getInt("EMUID"));
+        manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
         manifest.getLauncherList().addAll(altExeList);
       }
       rs.close();
@@ -420,12 +456,11 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
-  public int importGame(@NonNull File file) {
-    String emulator = ArchiveUtil.getEmulatorType(file);
+  public int importGame(@NonNull File file, int emuId) {
     String name = FilenameUtils.getBaseName(file.getName());
     String gameFileName = file.getName();
     String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
-    return importGame(emulator, name, gameFileName, gameDisplayName, null);
+    return importGame(emuId, name, gameFileName, gameDisplayName, null);
   }
 
   /**
@@ -434,9 +469,8 @@ public class PinUPConnector implements InitializingBean {
    *
    * @return the generated game id.
    */
-  public int importGame(@NonNull String emulator, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar) {
+  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar) {
     Connection connect = this.connect();
-    int emulatorId = getEmulatorId(emulator);
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
@@ -702,7 +736,11 @@ public class PinUPConnector implements InitializingBean {
         Emulator e = new Emulator();
         e.setId(rs.getInt("EMUID"));
         e.setName(rs.getString("EmuName"));
-        e.setMediaDir(rs.getString("DirMedia"));
+        e.setDirMedia(rs.getString("DirMedia"));
+        e.setDirGames(rs.getString("DirGames"));
+        e.setDirRoms(rs.getString("DirRoms"));
+        e.setDescription(rs.getString("Description"));
+        e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
         e.setVisible(rs.getInt("Visible") == 1);
         result.add(e);
       }
@@ -717,27 +755,27 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-  public void enablePCGameEmulator() {
-    List<Emulator> ems = this.getEmulators();
-    for (Emulator em : ems) {
-      if (em.getName().equalsIgnoreCase(EmulatorType.PC_GAMES) && em.isVisible()) {
-        return;
-      }
-    }
-
-    Connection connect = this.connect();
-    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + EmulatorType.PC_GAMES + "';";
-    try {
-      Statement stmt = connect.createStatement();
-      stmt.executeUpdate(sql);
-      stmt.close();
-      LOG.info("Enabled PC Games emulator for popper.");
-    } catch (Exception e) {
-      LOG.error("Failed to update script script [" + sql + "]: " + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
-    }
-  }
+//  public void enablePCGameEmulator() {
+//    List<Emulator> ems = this.getEmulators();
+//    for (Emulator em : ems) {
+//      if (em.getName().equalsIgnoreCase(EmulatorType.PC_GAMES) && em.isVisible()) {
+//        return;
+//      }
+//    }
+//
+//    Connection connect = this.connect();
+//    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + EmulatorType.PC_GAMES + "';";
+//    try {
+//      Statement stmt = connect.createStatement();
+//      stmt.executeUpdate(sql);
+//      stmt.close();
+//      LOG.info("Enabled PC Games emulator for popper.");
+//    } catch (Exception e) {
+//      LOG.error("Failed to update script script [" + sql + "]: " + e.getMessage(), e);
+//    } finally {
+//      this.disconnect(connect);
+//    }
+//  }
 
   @Nullable
   private PinUPControl getFunction(@NonNull String description) {
@@ -856,16 +894,10 @@ public class PinUPConnector implements InitializingBean {
     List<Game> results = new ArrayList<>();
     try {
       Statement statement = connect.createStatement();
-      //ResultSet rs = statement.executeQuery("SELECT * from GAMES g LEFT JOIN GamesStats stats ON stats.GameID = g.GameID  WHERE g.EMUID = 1;");
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games WHERE EMUID = 1;");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games;");
       while (rs.next()) {
         Game info = createGame(connect, rs);
         if (info == null) {
-          continue;
-        }
-
-        if (!Emulator.isVisualPinball(info.getEmulator().getName())) {
-          LOG.warn("Loaded \"" + info.getGameDisplayName() + ", but it has wrong emulator name '" + info.getEmulator().getName() + "', skipped table.");
           continue;
         }
 
@@ -1022,7 +1054,15 @@ public class PinUPConnector implements InitializingBean {
 
   @Nullable
   private Game createGame(@NonNull Connection connection, @NonNull ResultSet rs) throws SQLException {
+    int emuId = rs.getInt("EMUID");
+    GameEmulator emulator = emulators.get(emuId);
+    if (emulator == null || !emulator.isVpx()) {
+      return null;
+    }
+
     Game game = new Game(systemService);
+    game.setEmulator(emulator);
+
     int id = rs.getInt("GameID");
     game.setId(id);
 
@@ -1041,21 +1081,8 @@ public class PinUPConnector implements InitializingBean {
     game.setCustom2(rs.getString("CUSTOM2"));
     game.setCustom3(rs.getString("CUSTOM3"));
 
-    int emuId = rs.getInt("EMUID");
-    Emulator emulator = emulators.get(emuId);
-    game.setEmulator(emulator);
-
-    if (Emulator.isVisualPinball(emulator.getName())) {
-      File vpxFile = new File(systemService.getVPXTablesFolder(), gameFileName);
-      game.setGameFile(vpxFile);
-    }
-    else if (emulator.getName().equalsIgnoreCase(EmulatorType.FUTURE_PINBALL)) {
-      File fpFile = new File(systemService.getFuturePinballTablesFolder(), gameFileName);
-      if (!fpFile.exists()) {
-        return null;
-      }
-      game.setGameFile(fpFile);
-    }
+    File vpxFile = new File(emulator.getTablesFolder(), gameFileName);
+    game.setGameFile(vpxFile);
 
     return game;
   }
@@ -1079,9 +1106,9 @@ public class PinUPConnector implements InitializingBean {
   }
 
   private int getEmulatorId(@NonNull String name) {
-    Set<Map.Entry<Integer, Emulator>> entries = this.emulators.entrySet();
-    for (Map.Entry<Integer, Emulator> entry : entries) {
-      if (entry.getValue().getName().equals(name)) {
+    Set<Map.Entry<Integer, GameEmulator>> entries = this.emulators.entrySet();
+    for (Map.Entry<Integer, GameEmulator> entry : entries) {
+      if (entry.getValue().getName().equalsIgnoreCase(name) || entry.getValue().getDescription().equalsIgnoreCase(name)) {
         return entry.getKey();
       }
     }

@@ -626,10 +626,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleStringProperty(rom);
     });
 
-    columnEmulator.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getEmulator().getName());
-    });
+//    columnEmulator.setCellValueFactory(cellData -> {
+//      GameRepresentation value = cellData.getValue();
+//      return new SimpleStringProperty(value.getEmulator().getName());
+//    });
 
     columnHSType.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -788,11 +788,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     PlaylistRepresentation playlist = playlistCombo.getValue();
 
     for (GameRepresentation game : games) {
-      String gameEmuType = game.getEmulator().getName();
-      if (!Emulator.isVisualPinball(gameEmuType)) {
-        continue;
-      }
-
       if (playlist != null && !playlist.getGameIds().contains(game.getId())) {
         continue;
       }

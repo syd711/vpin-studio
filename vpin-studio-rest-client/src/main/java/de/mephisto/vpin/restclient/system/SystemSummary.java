@@ -6,8 +6,6 @@ import java.util.List;
 
 public class SystemSummary {
   private String pinupSystemDirectory;
-  private String visualPinballDirectory;
-  private String vpinMameDirectory;
   private ArchiveType archiveType;
 
   public ArchiveType getArchiveType() {
@@ -34,22 +32,6 @@ public class SystemSummary {
 
   public void setPinupSystemDirectory(String pinupSystemDirectory) {
     this.pinupSystemDirectory = pinupSystemDirectory;
-  }
-
-  public String getVisualPinballDirectory() {
-    return visualPinballDirectory;
-  }
-
-  public void setVisualPinballDirectory(String visualPinballDirectory) {
-    this.visualPinballDirectory = visualPinballDirectory;
-  }
-
-  public String getVpinMameDirectory() {
-    return vpinMameDirectory;
-  }
-
-  public void setVpinMameDirectory(String vpinMameDirectory) {
-    this.vpinMameDirectory = vpinMameDirectory;
   }
 
   public ScreenInfo getMainScreenInfo() {

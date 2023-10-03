@@ -119,7 +119,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       fos = new FileOutputStream(tempFile);
       zipOut = new ZipOutputStream(fos);
       
-      String gameFolderName = systemService.getVisualPinballInstallationFolder().getName();
+      String gameFolderName = game.getEmulator().getInstallationFolder().getName();
 
       //store highscore
       //zip EM file
@@ -137,7 +137,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       //write VPReg.stg data
       if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
         packageInfo.setHighscore(true);
-        File vprRegFile = systemService.getVPRegFile();
+        File vprRegFile = game.getEmulator().getVPRegFile();
         VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
         String gameData = reg.toJson();
         if (gameData != null) {
@@ -212,7 +212,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
         String assets = game.getAssets();
         if (!StringUtils.isEmpty(assets)) {
           String[] tableMusic = assets.split(",");
-          File musicFolder = systemService.getVPXMusicFolder();
+          File musicFolder = game.getEmulator().getMusicFolder();
           if (musicFolder.exists()) {
             File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
             if (findAudioMatch(files, tableMusic)) {
@@ -283,9 +283,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     }
     else {
       String assets = game.getAssets();
-      if (!StringUtils.isEmpty(assets) && systemService.getVPXMusicFolder().exists()) {
+      if (!StringUtils.isEmpty(assets) && game.getEmulator().getMusicFolder().exists()) {
         String[] tableMusic = assets.split(",");
-        File[] files = systemService.getVPXMusicFolder().listFiles((dir, name) -> name.endsWith(".mp3"));
+        File[] files = game.getEmulator().getMusicFolder().listFiles((dir, name) -> name.endsWith(".mp3"));
         if (findAudioMatch(files, tableMusic)) {
           for (File file : files) {
             totalSizeExpected += file.length();

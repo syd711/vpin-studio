@@ -2,10 +2,16 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -43,6 +50,9 @@ public class TableUploadController implements Initializable, DialogController {
   private RadioButton uploadAndCloneRadio;
 
   @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  @FXML
   private Label replaceTitle;
 
   @FXML
@@ -56,6 +66,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   private GameRepresentation game;
   private int gameId;
+  private GameEmulatorRepresentation emulatorRepresentation;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -85,7 +96,7 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, gameId, descriptor);
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, gameId, descriptor, emulatorRepresentation.getId());
         Dialogs.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -127,11 +138,27 @@ public class TableUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getGameEmulators();
+    emulatorRepresentation = gameEmulators.get(0);
+    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+    emulatorCombo.setItems(emulators);
+    emulatorCombo.setValue(emulatorRepresentation);
+    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+      emulatorRepresentation = t1;
+    });
+
     ToggleGroup toggleGroup = new ToggleGroup();
     uploadRadio.setToggleGroup(toggleGroup);
-    uploadAndCloneRadio.setToggleGroup(toggleGroup);
+    uploadRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(false));
+
     uploadAndImportRadio.setToggleGroup(toggleGroup);
+    uploadAndImportRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(false));
+
+    uploadAndCloneRadio.setToggleGroup(toggleGroup);
+    uploadAndCloneRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(true));
+
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
+    uploadAndReplaceRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(true));
   }
 
   public void setGame(GameRepresentation game) {
@@ -141,6 +168,9 @@ public class TableUploadController implements Initializable, DialogController {
       this.gameId = game.getId();
       this.replaceTitle.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.cloneTitle.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+
+      GameEmulatorRepresentation gameEmulator = Studio.client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
+      emulatorCombo.setValue(gameEmulator);
     }
     else {
       this.gameId = -1;

@@ -112,9 +112,9 @@ abstract public class AbstractVPinServerTest {
     systemService.setArchiveType(ArchiveType.VPA);
 
 
-    pinUPConnector.importGame(EM_TABLE);
-    pinUPConnector.importGame(VPREG_TABLE);
-    pinUPConnector.importGame(NVRAM_TABLE);
+    pinUPConnector.importGame(EM_TABLE, 1);
+    pinUPConnector.importGame(VPREG_TABLE, 1);
+    pinUPConnector.importGame(NVRAM_TABLE, 1);
 
     List<Game> games = gameService.getGames();
   }

@@ -272,13 +272,16 @@ public class TablesSidebarDirectB2SController implements Initializable {
   }
 
   private void save() {
-    try {
-      if (this.saveEnabled) {
-        Studio.client.getBackglassServiceClient().saveTableSettings(this.tableSettings);
+    if(this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      try {
+        if (this.saveEnabled) {
+          Studio.client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
       }
-    } catch (Exception e) {
-      LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
     }
   }
 

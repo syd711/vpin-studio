@@ -6,8 +6,9 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
@@ -15,9 +16,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -527,9 +526,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       if (StringUtils.isEmpty(game.getRom())) {
         continue;
       }
-      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
-      }
+
+      filtered.add(game);
     }
 
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);

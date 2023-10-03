@@ -29,7 +29,6 @@ public class GameRepresentation {
   private int id;
   private Date modified;
   private GameMediaRepresentation gameMedia;
-  private EmulatorRepresentation emulator;
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
   private boolean pupPackAvailable;
@@ -47,6 +46,15 @@ public class GameRepresentation {
   private boolean altColorAvailable;
   private String extTableId;
   private String extTableVersionId;
+  private int emulatorId;
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
+  }
 
   public String getGameName() {
     return gameName;
@@ -174,14 +182,6 @@ public class GameRepresentation {
 
   public void setGameMedia(GameMediaRepresentation gameMedia) {
     this.gameMedia = gameMedia;
-  }
-
-  public EmulatorRepresentation getEmulator() {
-    return emulator;
-  }
-
-  public void setEmulator(EmulatorRepresentation emulator) {
-    this.emulator = emulator;
   }
 
   public List<Integer> getIgnoredValidations() {

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -63,7 +64,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
           if(StringUtils.isEmpty(rom)) {
             rom = this.game.getTableName();
           }
-          client.getHigscoreBackupService().restore(rom, selectedItem.getFilename());
+          client.getHigscoreBackupService().restore(game.getId(), selectedItem.getFilename());
           EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         } catch (Exception ex) {
           LOG.error("Failed to restore highscore: " + ex.getMessage(), ex);

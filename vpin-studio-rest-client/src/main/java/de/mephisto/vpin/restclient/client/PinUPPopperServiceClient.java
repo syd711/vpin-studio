@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.tables.GameList;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
@@ -17,9 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*********************************************************************************************************************
  * Popper
@@ -31,13 +31,13 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public SystemData getImportableTables() {
-    return getRestClient().get(API + "popper/imports", SystemData.class);
+  public GameList getImportableTables() {
+    return getRestClient().get(API + "popper/imports", GameList.class);
   }
 
-  public JobExecutionResult importTables(SystemData resourceList) throws Exception {
+  public JobExecutionResult importTables(GameList list) throws Exception {
     try {
-      return getRestClient().post(API + "popper/import", resourceList, JobExecutionResult.class);
+      return getRestClient().post(API + "popper/import", list, JobExecutionResult.class);
     } catch (Exception e) {
       LOG.error("Failed importing tables: " + e.getMessage(), e);
       throw e;
@@ -46,6 +46,19 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return getRestClient().get(API + "popper/pincontrol/" + screen.name(), PinUPControl.class);
+  }
+
+  public GameEmulatorRepresentation getGameEmulator(int id) {
+    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
+  }
+
+  public List<GameEmulatorRepresentation> getGameEmulators() {
+    return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
+  }
+
+  public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
+    return Arrays.asList(getRestClient().getCached(API + "popper/backglassemulators", GameEmulatorRepresentation[].class));
   }
 
   public PinUPControls getPinUPControls() {

@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.tables.GameList;
+import de.mephisto.vpin.restclient.tables.GameListItem;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.event.ActionEvent;
@@ -38,10 +40,13 @@ public class TableImportController implements Initializable, DialogController {
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    SystemData importList = new SystemData();
+    GameList importList = new GameList();
     for (CheckBox checkBox : checkBoxes) {
       if (checkBox.isSelected()) {
-        importList.getItems().add(checkBox.getText());
+        GameListItem item = new GameListItem();
+        item.setName(checkBox.getText());
+        item.setEmuId((Integer) checkBox.getUserData());
+        importList.getItems().add(item);
       }
     }
 
@@ -69,11 +74,10 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    SystemData importableTables = client.getPinUPPopperService().getImportableTables();
-    List<String> items = importableTables.getItems();
-    saveBtn.setDisable(items.isEmpty());
+    GameList importableTables = client.getPinUPPopperService().getImportableTables();
+    saveBtn.setDisable(importableTables.getItems().isEmpty());
 
-    if (items.isEmpty()) {
+    if (importableTables.getItems().isEmpty()) {
       Label label = new Label("No tables found.");
       label.setStyle("-fx-font-size: 14px;");
       tableBox.getChildren().add(label);
@@ -89,8 +93,9 @@ public class TableImportController implements Initializable, DialogController {
       });
       tableBox.getChildren().add(selectCheckbox);
 
-      for (String item : items) {
-        CheckBox checkBox = new CheckBox(item);
+      for (GameListItem item : importableTables.getItems()) {
+        CheckBox checkBox = new CheckBox(item.getName());
+        checkBox.setUserData(item.getEmuId());
         checkBox.setStyle("-fx-font-size: 14px;");
         checkBox.setPrefHeight(30);
         tableBox.getChildren().add(checkBox);

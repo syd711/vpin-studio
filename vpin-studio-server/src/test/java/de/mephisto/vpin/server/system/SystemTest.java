@@ -11,18 +11,7 @@ public class SystemTest extends AbstractVPinServerTest {
 
   @Test
   public void testMaintenanceMode() {
-    assertTrue(systemService.getNvramFolder().exists());
     assertTrue(systemService.getPinUPSystemFolder().exists());
-    assertTrue(systemService.getMameFolder().exists());
-    assertTrue(systemService.getVPXTablesFolder().exists());
-    assertTrue(systemService.getVisualPinballInstallationFolder().exists());
-    assertTrue(systemService.getMameRomFolder().exists());
-    assertTrue(systemService.getAltColorFolder().exists());
-    assertTrue(systemService.getAltSoundFolder().exists());
-    assertTrue(systemService.getVisualPinballUserFolder().exists());
-    assertTrue(systemService.getVPMAliasFile().exists());
-    assertTrue(systemService.getVPXMusicFolder().exists());
-    assertTrue(systemService.getVPRegFile().exists());
     assertTrue(systemService.getPinUPDatabaseFile().exists());
     assertTrue(systemService.getPinemhiCommandFile().exists());
     assertTrue(systemService.getBackupFolder().exists());

@@ -40,9 +40,10 @@ public class HighscoreBackupResources {
     }
   }
 
-  @PutMapping("restore/{rom}/{filename}")
-  public boolean restore(@PathVariable("rom") String rom, @PathVariable("filename") String filename) {
-    return highscoreBackupService.restore(rom, filename);
+  @PutMapping("restore/{gameId}/{filename}")
+  public boolean restore(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
+    Game game = gameService.getGame(gameId);
+    return highscoreBackupService.restore(game, filename);
   }
 
   @DeleteMapping("/{rom}/{filename}")

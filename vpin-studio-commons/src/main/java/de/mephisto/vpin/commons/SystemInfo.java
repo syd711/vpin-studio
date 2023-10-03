@@ -16,11 +16,6 @@ public class SystemInfo {
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
-  public final static String VISUAL_PINBALL_INST_DIR = "visualPinball.installationDir";
-  public final static String FUTURE_PINBALL_INST_DIR = "futurePinball.installationDir";
-  public final static String VPX_TABLES_DIR = "visualPinball.vpxtables.installationDir";
-  public final static String MAME_DIR = "visualPinball.mame.installationDir";
-  public final static String USER_DIR = "visualPinball.user.installationDir";
   public final static String AUTOSTART_DIR = "vpinstudio.user.autostartDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
@@ -75,15 +70,6 @@ public class SystemInfo {
     }
     return file;
   }
-
-  public File resolveFuturePinballInstallationFolder(@NonNull File pinUPSystemInstallationFolder) {
-    File file = new File(pinUPSystemInstallationFolder.getParent(), "FuturePinball");
-    if (!file.exists()) {
-      LOG.info("The system info could not derive the Future Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-    }
-    return file;
-  }
-
 
   public File resolveUserFolder(@NonNull File visualPinballInstallationFolder) {
     return new File(visualPinballInstallationFolder, "User/");

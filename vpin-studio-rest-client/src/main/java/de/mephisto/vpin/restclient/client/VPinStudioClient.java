@@ -55,7 +55,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final SystemServiceClient systemServiceClient;
   private final MameServiceClient mameServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
-  private final TableManagerServiceClient tableManagerServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final RomServiceClient romServiceClient;
@@ -86,7 +85,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
     this.preferencesServiceClient = new PreferencesServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
-    this.tableManagerServiceClient = new TableManagerServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
     this.romServiceClient = new RomServiceClient(this);
@@ -186,10 +184,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public SystemServiceClient getSystemService() {
     return systemServiceClient;
-  }
-
-  public TableManagerServiceClient getTableManagerService() {
-    return tableManagerServiceClient;
   }
 
   public VpxServiceClient getVpxService() {

@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
@@ -93,7 +94,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(manifest.getEmulatorType(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
+        int newGameId = pinUPConnector.importGame(pinUPConnector.getDefaultGameEmulator().getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
         game = gameService.getGame(newGameId);
       }
 
@@ -117,14 +118,13 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private void importHighscore(Game game, File zipFile) {
     String jsonData = VpaArchiveUtil.readVPRegJson(zipFile);
     if (jsonData != null) {
-      VPReg vpReg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
+      VPReg vpReg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
       vpReg.restore(jsonData);
       LOG.info("Imported VPReg.stg data.");
     }
   }
 
   private void unzipArchive() {
-
     try {
       ZipFile zf = new ZipFile(archiveFile);
       int totalCount = zf.size();
@@ -188,8 +188,8 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
 
   private File getDestDirForEntry(ZipEntry entry) {
     String name = entry.getName();
-    if (name.startsWith("VisualPinball") || name.startsWith("Visual Pinball")) {
-      return systemService.getVisualPinballInstallationFolder().getParentFile();
+    if (Emulator.isVisualPinball(name)) {
+      return pinUPConnector.getDefaultGameEmulator().getInstallationFolder().getParentFile();
     }
     else if (name.startsWith("PinUPSystem")) {
       return systemService.getPinUPSystemFolder().getParentFile();
@@ -199,16 +199,13 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private File getGameFile(TableDetails manifest) {
+    File tablesFolder = pinUPConnector.getDefaultGameEmulator().getTablesFolder();
     String emulator = manifest.getEmulatorType();
     if (EmulatorType.VISUAL_PINBALL_X.equals(emulator)) {
-      return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());
+      return new File(tablesFolder, manifest.getGameFileName());
     }
 
-    if (EmulatorType.FUTURE_PINBALL.equals(emulator)) {
-      return new File(systemService.getFuturePinballTablesFolder(), manifest.getGameFileName());
-    }
-
-    return new File(systemService.getVPXTablesFolder(), manifest.getGameFileName());
+    return new File(tablesFolder, manifest.getGameFileName());
   }
 
   public File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {

@@ -20,7 +20,7 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Test
   public void testGameAdding() {
-    int l = connector.importGame(EM_TABLE);
+    int l = connector.importGame(EM_TABLE, 1);
     if (l > 0) {
       assertTrue(connector.deleteGame(l));
     }

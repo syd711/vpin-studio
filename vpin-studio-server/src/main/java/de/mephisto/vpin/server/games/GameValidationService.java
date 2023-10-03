@@ -71,8 +71,7 @@ public class GameValidationService implements InitializingBean {
   private Preferences preferences;
 
   public ValidationState validate(@NonNull Game game) {
-    boolean isVPX = Emulator.isVisualPinball(game.getEmulator().getName());
-    boolean isFP = game.getEmulator().getName().equalsIgnoreCase(EmulatorType.FUTURE_PINBALL);
+    boolean isVPX = game.getEmulator().isVpx();
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {
@@ -240,10 +239,10 @@ public class GameValidationService implements InitializingBean {
       return Collections.emptyList();
     }
 
-    File dmdDevicedll = new File(systemService.getMameFolder(), "DmdDevice.dll");
-    File dmdDevice64dll = new File(systemService.getMameFolder(), "DmdDevice64.dll");
-    File dmdextexe = new File(systemService.getMameFolder(), "dmdext.exe");
-    File dmdDeviceIni = new File(systemService.getMameFolder(), "DmdDevice.ini");
+    File dmdDevicedll = new File(game.getEmulator().getMameFolder(), "DmdDevice.dll");
+    File dmdDevice64dll = new File(game.getEmulator().getMameFolder(), "DmdDevice64.dll");
+    File dmdextexe = new File(game.getEmulator().getMameFolder(), "dmdext.exe");
+    File dmdDeviceIni = new File(game.getEmulator().getMameFolder(), "DmdDevice.ini");
 
     if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
       if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
@@ -277,8 +276,8 @@ public class GameValidationService implements InitializingBean {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
 
-        File serumdll = new File(systemService.getMameFolder(), "Serum.dll");
-        File serum64dll = new File(systemService.getMameFolder(), "Serum64.dll");
+        File serumdll = new File(game.getEmulator().getMameFolder(), "Serum.dll");
+        File serum64dll = new File(game.getEmulator().getMameFolder(), "Serum64.dll");
 
         if (isValidationEnabled(game, CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING) && !serumdll.exists() && !serum64dll.exists()) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING));

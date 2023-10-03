@@ -110,14 +110,15 @@ public class GamesResource {
     return gameService.save(game);
   }
 
-  @PostMapping("/upload/rom")
-  public Boolean uploadRom(@RequestParam(value = "file", required = false) MultipartFile file) {
+  @PostMapping("/upload/rom/{emuId}")
+  public Boolean uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
     try {
       if (file == null) {
         LOG.error("Rom upload request did not contain a file object.");
         return false;
       }
-      File out = new File(systemService.getMameRomFolder(), file.getOriginalFilename());
+      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
+      File out = new File(gameEmulator.getRomFolder(), file.getOriginalFilename());
       return UploadUtil.upload(file, out);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ROM upload failed: " + e.getMessage());
@@ -128,13 +129,16 @@ public class GamesResource {
   @PostMapping("/upload/table")
   public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
                              @RequestParam(value = "gameId") int gameId,
+                             @RequestParam(value = "emuId") int emuId,
                              @RequestParam(value = "mode") String modeString) {
     try {
       if (file == null) {
         LOG.error("Table upload request did not contain a file object.");
         return false;
       }
-      File originalFile = new File(systemService.getVPXTablesFolder(), file.getOriginalFilename());
+      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
+
+      File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
       File uploadFile = FileUtils.uniqueFile(originalFile);
 
       TableUploadDescriptor mode = TableUploadDescriptor.valueOf(modeString);
@@ -160,7 +164,7 @@ public class GamesResource {
             return true;
           }
           case uploadAndImport: {
-            int importedGameId = popperService.importVPXGame(uploadFile, true, -1);
+            int importedGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
             if (importedGameId >= 0) {
               gameService.scanGame(importedGameId);
             }
@@ -177,7 +181,7 @@ public class GamesResource {
             break;
           }
           case uploadAndClone: {
-            int importedGameId = popperService.importVPXGame(uploadFile, true, -1);
+            int importedGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
             if (importedGameId >= 0) {
               String originalName = FilenameUtils.getBaseName(file.getOriginalFilename());
               Game importedGame = gameService.scanGame(importedGameId);

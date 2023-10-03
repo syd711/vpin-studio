@@ -31,13 +31,13 @@ public class VPXCommandLineService {
 
   public boolean execute(@NonNull Game game, @NonNull String commandParam) {
     File gameFile = game.getGameFile();
-    File vpxExe = systemService.getVPXExe();
+    File vpxExe = game.getEmulator().getVPXExe();
 
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
     if(tableDetails != null) {
       String altLaunchExe = tableDetails.getAltLaunchExe();
       if(!StringUtils.isEmpty(altLaunchExe)) {
-        vpxExe = new File(systemService.getVisualPinballInstallationFolder(), altLaunchExe);
+        vpxExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
       }
     }
 
@@ -61,7 +61,7 @@ public class VPXCommandLineService {
 
   public File export(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
     File gameFile = game.getGameFile();
-    File vpxExe = systemService.getVPXExe();
+    File vpxExe = game.getEmulator().getVPXExe();
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {

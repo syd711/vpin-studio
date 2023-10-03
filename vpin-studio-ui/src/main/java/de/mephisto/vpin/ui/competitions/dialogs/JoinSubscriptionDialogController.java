@@ -1,15 +1,14 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -130,7 +129,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
       tableCombo.setDisable(t1 == null);
       if (t1 != null) {
         SubscriptionInfo subscriptionInfo = client.getDiscordService().getSubscriptionInfo(competition.getDiscordServerId(), t1.getId());
-        if(subscriptionInfo == null) {
+        if (subscriptionInfo == null) {
           tableCombo.setDisable(true);
           validationContainer.setVisible(true);
           this.saveBtn.setDisable(true);
@@ -250,10 +249,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
       if (allCompetitions.stream().anyMatch(c -> game.getRom().equalsIgnoreCase(c.getRom()) && c.getDiscordServerId() == competition.getDiscordServerId())) {
         continue;
       }
-
-      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
-      }
+      filtered.add(game);
     }
 
     List<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);

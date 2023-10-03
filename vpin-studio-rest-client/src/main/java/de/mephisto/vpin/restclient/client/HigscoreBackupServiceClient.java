@@ -27,7 +27,7 @@ public class HigscoreBackupServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "highscorebackups/backup/" + gameId, new HashMap<>(), Boolean.class);
   }
 
-  public boolean restore(String rom, String filename) throws Exception {
-    return getRestClient().put(API + "highscorebackups/restore/" + rom + "/" + filename, new HashMap<>(), Boolean.class);
+  public boolean restore(int gameId, String filename) throws Exception {
+    return getRestClient().put(API + "highscorebackups/restore/" + gameId + "/" + filename, new HashMap<>(), Boolean.class);
   }
 }

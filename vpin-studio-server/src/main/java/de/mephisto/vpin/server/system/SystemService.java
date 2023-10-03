@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -34,7 +34,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -50,20 +53,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
-  private final static String VPREG_STG = "VPReg.stg";
-
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
-  private final static String VPM_ALIAS = "VPMAlias.txt";
 
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String DMD = "dmd.png";
 
   private File pinUPSystemInstallationFolder;
-  private File visualPinballInstallationFolder;
-  private File futurePinballInstallationFolder;
-  private File vpxTablesFolder;
-  private File mameFolder;
-  private File userFolder;
   private File backupFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
@@ -73,7 +68,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
-//    initProgramVersions();
 
   private ApplicationContext context;
 
@@ -98,52 +92,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       else {
         this.pinUPSystemInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
       }
-
-      //Visual Pinball Folder
-      this.visualPinballInstallationFolder = this.resolveVisualPinballInstallationFolder(pinUPSystemInstallationFolder);
-      if (!store.containsKey(VISUAL_PINBALL_INST_DIR)) {
-        store.set(VISUAL_PINBALL_INST_DIR, visualPinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.visualPinballInstallationFolder = new File(store.get(VISUAL_PINBALL_INST_DIR));
-      }
-
-      //Future Pinball Folder
-      this.futurePinballInstallationFolder = this.resolveFuturePinballInstallationFolder(pinUPSystemInstallationFolder);
-      if (!store.containsKey(FUTURE_PINBALL_INST_DIR)) {
-        store.set(FUTURE_PINBALL_INST_DIR, futurePinballInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.futurePinballInstallationFolder = new File(store.get(FUTURE_PINBALL_INST_DIR));
-      }
-
-      //VPX Tables Folder
-      this.vpxTablesFolder = this.resolveVpxTablesInstallationFolder(visualPinballInstallationFolder);
-      if (!store.containsKey(VPX_TABLES_DIR)) {
-        store.set(VPX_TABLES_DIR, vpxTablesFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.vpxTablesFolder = new File(store.get(VPX_TABLES_DIR));
-      }
-
-      //Mame Root Folder
-      this.mameFolder = this.resolveMameInstallationFolder(visualPinballInstallationFolder);
-      if (!store.containsKey(MAME_DIR)) {
-        store.set(MAME_DIR, mameFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.mameFolder = new File(store.get(MAME_DIR));
-      }
-
-      //User Folder
-      this.userFolder = this.resolveUserFolder(visualPinballInstallationFolder);
-      if (!store.containsKey(USER_DIR)) {
-        store.set(USER_DIR, userFolder.getAbsolutePath().replaceAll("\\\\", "/"));
-      }
-      else {
-        this.userFolder = new File(store.get(USER_DIR));
-      }
-
 
       if (!getB2SImageExtractionFolder().exists()) {
         boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
@@ -212,17 +160,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
     LOG.info(formatPathLog("PinUP System Folder", this.getPinUPSystemFolder()));
     LOG.info(formatPathLog("PinUP Database File", this.getPinUPDatabaseFile()));
-    LOG.info(formatPathLog("Visual Pinball Folder", this.getVisualPinballInstallationFolder()));
-    LOG.info(formatPathLog("Visual Pinball Tables Folder", this.getVPXTablesFolder()));
-    LOG.info(formatPathLog("Mame Folder", this.getMameFolder()));
-    LOG.info(formatPathLog("ROM Folder", this.getMameRomFolder()));
-    LOG.info(formatPathLog("NVRam Folder", this.getNvramFolder()));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
-    LOG.info(formatPathLog("VPReg File", this.getVPRegFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
-    LOG.info(formatPathLog("VPX Files", String.valueOf(this.getVPXTables().length)));
-//    LOG.info(formatPathLog("VPin MAME Version", this.mameVersion));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
@@ -233,10 +173,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private static String formatPathLog(String label, File file) {
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
-  }
-
-  public File getVPMAliasFile() {
-    return new File(this.getMameFolder(), VPM_ALIAS);
   }
 
   public File getB2SImageExtractionFolder() {
@@ -254,8 +190,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public SystemSummary getSystemSummary() {
     SystemSummary info = new SystemSummary();
     info.setPinupSystemDirectory(getPinUPSystemFolder().getAbsolutePath());
-    info.setVisualPinballDirectory(getVisualPinballInstallationFolder().getAbsolutePath());
-    info.setVpinMameDirectory(getMameFolder().getAbsolutePath());
     info.setScreenInfos(getScreenInfos());
     info.setArchiveType(this.getArchiveType());
     return info;
@@ -300,74 +234,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return Toolkit.getDefaultToolkit().getScreenSize();
   }
 
-  @NonNull
-  public File getVPRegFile() {
-    return new File(this.getVisualPinballUserFolder(), VPREG_STG);
-  }
-
-  @NonNull
-  public File getVisualPinballUserFolder() {
-    return this.userFolder;
-  }
-
-  public File getMameRomFolder() {
-    return new File(this.getMameFolder(), "roms/");
-  }
-
-  @SuppressWarnings("unused")
-  public File getNvramFolder() {
-    return new File(getMameFolder(), "nvram/");
-  }
-
-  @NonNull
-  public File getMameFolder() {
-    return this.mameFolder;
-  }
-
-  @NonNull
-  public File getAltSoundFolder() {
-    return new File(getMameFolder(), "altsound/");
-  }
-
-  @NonNull
-  public File getAltColorFolder() {
-    return new File(getMameFolder(), "altcolor/");
-  }
-
-  public File[] getVPXTables() {
-    return getVPXTablesFolder().listFiles((dir, name) -> name.endsWith(".vpx"));
-  }
-
-  public File getVisualPinballInstallationFolder() {
-    return visualPinballInstallationFolder;
-  }
-
-  public File getFuturePinballInstallationFolder() {
-    return futurePinballInstallationFolder;
-  }
-
-  public File getVPXTablesFolder() {
-    return this.vpxTablesFolder;
-  }
-
-  public File getVPXMusicFolder() {
-    return new File(getVisualPinballInstallationFolder(), "Music/");
-  }
-
-  public File getVPXExe() {
-    return new File(getVisualPinballInstallationFolder(), "VPinballX.exe");
-  }
-
-  public File getFuturePinballTablesFolder() {
-    return new File(getFuturePinballInstallationFolder(), "Tables/");
-  }
-
   public File getPinUPSystemFolder() {
     return pinUPSystemInstallationFolder;
-  }
-
-  public File getB2STableSettingsXml() {
-    return new File(getVPXTablesFolder(), "B2STableSettings.xml");
   }
 
   /**
@@ -404,14 +272,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getPinUPDatabaseFile() {
     return new File(getPinUPSystemFolder(), "PUPDatabase.db");
-  }
-
-  public List<String> getAltExeNames() {
-    String[] exeFiles = getVisualPinballInstallationFolder().list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
-    if(exeFiles == null) {
-      exeFiles = new String[]{};
-    }
-    return Arrays.asList(exeFiles);
   }
 
 
@@ -623,9 +483,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     if (!getPinUPSystemFolder().exists()) {
       throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
     }
-    if (!getVisualPinballInstallationFolder().exists()) {
-      throw new FileNotFoundException("Wrong Visual Pinball installation folder: " + getVisualPinballInstallationFolder().getAbsolutePath() + ".\nPlease fix the Visual Pinball installation path in file ./resources/system.properties");
-    }
+
     logSystemInfo();
   }
 

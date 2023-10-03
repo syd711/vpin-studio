@@ -118,9 +118,9 @@ public class AltSoundResource {
     }
   }
 
-  @GetMapping("/stream/{name}/{filename}")
-  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("name") String name, @PathVariable("filename") String filename) throws IOException {
-    AltSound altSound = altSoundService.getAltSound(name);
+  @GetMapping("/stream/{emuId}/{name}/{filename}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("emuId") int emuId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
+    AltSound altSound = altSoundService.getAltSound(emuId, altSoundName);
     File file = new File(altSound.getCsvFile().getParentFile(), filename);
     if (file.exists()) {
       FileInputStream in = new FileInputStream(file);

@@ -14,13 +14,15 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(RomUploadProgressModel.class);
 
   private final Iterator<File> iterator;
+  private final int emuId;
   private final List<File> files;
   private double percentage = 0;
 
-  public RomUploadProgressModel(String title, List<File> files) {
+  public RomUploadProgressModel(String title, List<File> files, int emuId) {
     super(title);
     this.files = files;
     this.iterator = files.iterator();
+    this.emuId = emuId;
   }
 
   @Override
@@ -46,7 +48,7 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getGameService().uploadRom(next, percent -> {
+      Studio.client.getGameService().uploadRom(emuId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

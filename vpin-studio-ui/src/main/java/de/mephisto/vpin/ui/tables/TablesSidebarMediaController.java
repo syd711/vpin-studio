@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -333,7 +334,8 @@ public class TablesSidebarMediaController implements Initializable {
 
     GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
     if (selection != null) {
-      File emulatorFolder = new File(selection.getEmulator().getMediaDir());
+      GameEmulatorRepresentation emulator = Studio.client.getPinUPPopperService().getGameEmulator(selection.getEmulatorId());
+      File emulatorFolder = new File(emulator.getMediaDirectory());
       SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
       File file = new File(systemSummary.getPinupSystemDirectory() + "/POPMedia/" + emulatorFolder.getName() + "/" + screen);
       if (!file.exists()) {

@@ -2,8 +2,12 @@ package de.mephisto.vpin.server.pinemhi;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -34,6 +38,9 @@ public class PINemHiService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   private boolean enabled = false;
   private INIConfiguration iniConfiguration;
@@ -164,7 +171,7 @@ public class PINemHiService implements InitializingBean {
       String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
       File vp = new File(vpPath);
       if (!vp.exists() || !vpPath.endsWith("/")) {
-        vp = new File(systemService.getNvramFolder().getAbsolutePath());
+        vp = new File(pinUPConnector.getDefaultGameEmulator().getNvramFolder().getAbsolutePath());
         iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
         saveIni();
         LOG.info("Changed VP path to " + vp.getAbsolutePath());

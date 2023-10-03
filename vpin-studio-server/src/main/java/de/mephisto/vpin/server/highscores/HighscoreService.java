@@ -71,7 +71,7 @@ public class HighscoreService implements InitializingBean {
             break;
           }
           case VPReg: {
-            VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
+            VPReg reg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
             result = reg.resetHighscores();
             break;
           }

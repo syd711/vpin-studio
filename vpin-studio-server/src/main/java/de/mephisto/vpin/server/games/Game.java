@@ -30,7 +30,7 @@ public class Game {
   private int id;
   private int nvOffset;
   private String hsFileName;
-  private Emulator emulator;
+  private GameEmulator emulator;
 
   private File gameFile;
 
@@ -150,11 +150,12 @@ public class Game {
   }
 
   @NonNull
-  public Emulator getEmulator() {
+  @JsonIgnore
+  public GameEmulator getEmulator() {
     return emulator;
   }
 
-  public void setEmulator(@NonNull Emulator emulator) {
+  public void setEmulator(@NonNull GameEmulator emulator) {
     this.emulator = emulator;
   }
 
@@ -178,7 +179,7 @@ public class Game {
   @JsonIgnore
   @NonNull
   public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
-    File emulatorMediaFolder = new File(this.emulator.getMediaDir());
+    File emulatorMediaFolder = this.emulator.getGameMediaFolder();
     return new File(emulatorMediaFolder, screen.name());
   }
 
@@ -227,7 +228,7 @@ public class Game {
   @Nullable
   public File getEMHighscoreFile() {
     if (!StringUtils.isEmpty(this.getHsFileName())) {
-      return new File(systemService.getVisualPinballUserFolder(), this.getHsFileName());
+      return new File(emulator.getUserFolder(), this.getHsFileName());
     }
     return null;
   }
@@ -235,13 +236,13 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getPOVFile() {
-    return new File(systemService.getVPXTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
   @NonNull
   @JsonIgnore
   public File getResFile() {
-    return new File(systemService.getVPXTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
+    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }
 
   @NonNull
@@ -259,6 +260,10 @@ public class Game {
       return new Date(this.gameFile.lastModified());
     }
     return null;
+  }
+
+  public int getEmulatorId() {
+    return this.emulator.getId();
   }
 
   public boolean isPovAvailable() {
@@ -280,7 +285,7 @@ public class Game {
   public boolean isDirectB2SAvailable() {
     String name = FilenameUtils.getBaseName(this.getGameFileName());
     String directB2SName = name + ".directb2s";
-    return new File(systemService.getVPXTablesFolder(), directB2SName).exists();
+    return new File(emulator.getTablesFolder(), directB2SName).exists();
   }
 
   public boolean isGameFileAvailable() {
@@ -351,7 +356,7 @@ public class Game {
   @JsonIgnore
   public File getRomFile() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
+      return new File(emulator.getRomFolder(), this.getRom() + ".zip");
     }
     return null;
   }
@@ -376,7 +381,7 @@ public class Game {
   @JsonIgnore
   public File getAltSoundFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getAltSoundFolder(), this.getRom());
+      return new File(emulator.getAltSoundFolder(), this.getRom());
     }
     return null;
   }
@@ -386,7 +391,7 @@ public class Game {
   @JsonIgnore
   public File getCfgFile() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getMameFolder(), "cfg"), this.getRom() + ".cfg");
+      return new File(new File(emulator.getMameFolder(), "cfg"), this.getRom() + ".cfg");
     }
     return null;
   }
@@ -395,7 +400,7 @@ public class Game {
   @JsonIgnore
   public File getAltColorFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(systemService.getMameFolder(), "altcolor"), this.getRom());
+      return new File(new File(emulator.getMameFolder(), "altcolor"), this.getRom());
     }
     return null;
   }
@@ -414,14 +419,14 @@ public class Game {
   @JsonIgnore
   public File getMusicFolder() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(systemService.getVPXMusicFolder(), this.getRom());
+      return new File(emulator.getMusicFolder(), this.getRom());
     }
     return null;
   }
 
   public boolean isRomExists() {
     if (!StringUtils.isEmpty(this.getRom())) {
-      File romFile = new File(systemService.getMameRomFolder(), this.getRom() + ".zip");
+      File romFile = new File(emulator.getRomFolder(), this.getRom() + ".zip");
       if (romFile.exists()) {
         return true;
       }
@@ -433,7 +438,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(systemService.getVPXTablesFolder(), baseName + ".directb2s");
+    return new File(emulator.getTablesFolder(), baseName + ".directb2s");
   }
 
   @Nullable
@@ -459,7 +464,7 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getNvRamFile() {
-    File nvRamFolder = new File(systemService.getMameFolder(), "nvram");
+    File nvRamFolder = new File(emulator.getMameFolder(), "nvram");
 
     String rom = getRom();
     File aliasedNvFile = new File(nvRamFolder, rom + ".nv");
@@ -468,13 +473,13 @@ public class Game {
     }
 
     //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(systemService.getMameFolder(), rom + " v" + getNvOffset() + ".nv");
+    File versionNVAliasedFile = new File(emulator.getMameFolder(), rom + " v" + getNvOffset() + ".nv");
     if (versionNVAliasedFile.exists()) {
       return versionNVAliasedFile;
     }
 
     //if the text file exists, the current nv file contains the highscore of this table
-    File versionTextFile = new File(systemService.getMameFolder(), getRom() + " v" + getNvOffset() + ".txt");
+    File versionTextFile = new File(emulator.getMameFolder(), getRom() + " v" + getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
       return versionTextFile;
     }

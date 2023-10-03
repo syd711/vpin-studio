@@ -160,13 +160,14 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    VPReg reg = new VPReg(systemService.getVPRegFile(), game.getRom(), game.getTableName());
+    File vpRegFile = game.getEmulator().getVPRegFile();
+    VPReg reg = new VPReg(vpRegFile, game.getRom(), game.getTableName());
 
     //TODO cleanup metadata usage
     if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
-      metadata.setFilename(systemService.getVPRegFile().getCanonicalPath());
-      metadata.setModified(new Date(systemService.getVPRegFile().lastModified()));
+      metadata.setFilename(vpRegFile.getCanonicalPath());
+      metadata.setModified(new Date(vpRegFile.lastModified()));
 
       VPRegScoreSummary summary = reg.readHighscores();
       if (summary != null) {

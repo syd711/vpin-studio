@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -13,16 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
@@ -34,11 +30,6 @@ import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
 public class AltColorService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorService.class);
 
-  @Autowired
-  private SystemService systemService;
-
-  private final Map<String, AltColor> altColors = new ConcurrentHashMap<>();
-
   public boolean isAltColorAvailable(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
     return altColor != null && !altColor.getFiles().isEmpty();
@@ -48,7 +39,7 @@ public class AltColorService implements InitializingBean {
     try {
       AltColor altColor = getAltColor(game);
       if (altColor != null) {
-        File dir = new File(systemService.getAltColorFolder(), altColor.getName());
+        File dir = new File(game.getEmulator().getAltColorFolder(), altColor.getName());
         if (dir.exists()) {
           FileUtils.deleteDirectory(dir);
           return true;
@@ -64,61 +55,51 @@ public class AltColorService implements InitializingBean {
   public AltColor getAltColor(@NonNull Game game) {
     String rom = game.getRom();
     String tableName = game.getTableName();
-    if (!StringUtils.isEmpty(rom) && altColors.containsKey(rom.toLowerCase())) {
-      return altColors.get(rom.toLowerCase());
+
+    File altColorFolder = null;
+    if (!StringUtils.isEmpty(rom)) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), rom);
     }
 
-    if (!StringUtils.isEmpty(tableName) && altColors.containsKey(tableName.toLowerCase())) {
-      return altColors.get(tableName.toLowerCase());
+    if (altColorFolder == null || (!altColorFolder.exists() && !StringUtils.isEmpty(tableName))) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), tableName);
     }
-    return new AltColor();
-  }
 
-  public boolean clearCache() {
-    this.altColors.clear();
-    long start = System.currentTimeMillis();
-    File altColorsFolder = systemService.getAltColorFolder();
-    if (altColorsFolder.exists()) {
-      File[] altColorFolders = altColorsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
-      if (altColorFolders != null) {
-        for (File altColorFolder : altColorFolders) {
-          File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
-          if (altColorFiles != null && altColorFiles.length > 0) {
-            AltColor altColor = new AltColor();
-            altColor.setModificationDate(new Date(altColorFolder.lastModified()));
-            altColor.setName(altColorFolder.getName());
-            altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
-            AltColorTypes type = AltColorTypes.mame;
-            Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAC_SUFFIX)).findFirst();
-            Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAL_SUFFIX)).findFirst();
-            Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(SERUM_SUFFIX)).findFirst();
+    if (!altColorFolder.exists()) {
+      return null;
+    }
 
-            if (pacFile.isPresent()) {
-              altColor.setModificationDate(new Date(pacFile.get().lastModified()));
-              type = AltColorTypes.pac;
-            }
-            else if (palFile.isPresent()) {
-              altColor.setModificationDate(new Date(palFile.get().lastModified()));
-              type = AltColorTypes.pal;
-            }
-            else if (crzFile.isPresent()) {
-              altColor.setModificationDate(new Date(crzFile.get().lastModified()));
-              type = AltColorTypes.serum;
-            }
+    File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
+    if (altColorFiles != null && altColorFiles.length > 0) {
+      AltColor altColor = new AltColor();
+      altColor.setModificationDate(new Date(altColorFolder.lastModified()));
+      altColor.setName(altColorFolder.getName());
+      altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
-            altColor.setAltColorType(type);
-            this.altColors.put(altColorFolder.getName().toLowerCase(), altColor);
-          }
-        }
+      AltColorTypes type = AltColorTypes.mame;
+      Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAC_SUFFIX)).findFirst();
+      Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAL_SUFFIX)).findFirst();
+      Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(SERUM_SUFFIX)).findFirst();
+
+      if (pacFile.isPresent()) {
+        altColor.setModificationDate(new Date(pacFile.get().lastModified()));
+        type = AltColorTypes.pac;
       }
+      else if (palFile.isPresent()) {
+        altColor.setModificationDate(new Date(palFile.get().lastModified()));
+        type = AltColorTypes.pal;
+      }
+      else if (crzFile.isPresent()) {
+        altColor.setModificationDate(new Date(crzFile.get().lastModified()));
+        type = AltColorTypes.serum;
+      }
+
+      altColor.setAltColorType(type);
+      return altColor;
     }
-    else {
-      LOG.error("altcolor folder " + altColorsFolder.getAbsolutePath() + " does not exist.");
-    }
-    long end = System.currentTimeMillis();
-    LOG.info("Finished altcolor scan, found " + altColors.size() + " colorizations (" + (end - start) + "ms)");
-    return true;
+
+    return null;
   }
 
   public JobExecutionResult installAltColor(Game game, File out) {
@@ -171,22 +152,11 @@ public class AltColorService implements InitializingBean {
       if (!out.delete()) {
         return JobExecutionResultFactory.error("Failed to delete temporary file.");
       }
-      clearCache();
     }
     return JobExecutionResultFactory.empty();
   }
 
   @Override
   public void afterPropertiesSet() {
-    File altColorFolder = systemService.getAltColorFolder();
-    if (!altColorFolder.exists() && altColorFolder.getParentFile().exists()) {
-      if (!altColorFolder.mkdirs()) {
-        LOG.error("Failed to create altcolor folder " + altColorFolder.getName());
-      }
-    }
-
-    new Thread(() -> {
-      clearCache();
-    }).start();
   }
 }

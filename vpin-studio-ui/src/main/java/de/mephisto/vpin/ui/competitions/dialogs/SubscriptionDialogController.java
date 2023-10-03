@@ -1,15 +1,14 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.restclient.*;
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
-import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
-import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.application.Platform;
@@ -207,9 +206,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
         continue;
       }
 
-      if (game.getEmulator().getName().equalsIgnoreCase(EmulatorType.VISUAL_PINBALL_X)) {
-        filtered.add(game);
-      }
+      filtered.add(game);
     }
 
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(filtered);

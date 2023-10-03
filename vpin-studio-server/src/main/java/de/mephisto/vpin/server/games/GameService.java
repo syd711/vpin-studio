@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
@@ -290,11 +289,6 @@ public class GameService {
     try {
       game = getGame(gameId);
       if (game != null) {
-        Emulator emulator = game.getEmulator();
-        if (!Emulator.isVisualPinball(emulator.getName())) {
-          return game;
-        }
-
         applyGameDetails(game, true);
         highscoreService.scanScore(game);
 
@@ -380,7 +374,7 @@ public class GameService {
 
 
     //use the script ROM name to check if it is an original or a mapping
-    String originalRom = romService.getRomForAlias(gameDetails.getRomName());
+    String originalRom = game.getEmulator().getRomForAlias(gameDetails.getRomName());
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());

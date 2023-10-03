@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ZipUtil;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
@@ -110,7 +111,7 @@ public class HighscoreBackupUtil {
 
       //write VPReg.stg data
       if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-        File vprRegFile = systemService.getVPRegFile();
+        File vprRegFile = game.getEmulator().getVPRegFile();
         VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
         String gameData = reg.toJson();
         if (gameData != null) {
@@ -188,8 +189,7 @@ public class HighscoreBackupUtil {
     return true;
   }
 
-  public static boolean restoreBackupFile(@NonNull SystemService systemService, @NonNull File
-      backupRomFolder, @NonNull String filename) {
+  public static boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupRomFolder, @NonNull String filename) {
     File archiveFile = new File(backupRomFolder, filename);
     HighscoreBackup highscoreBackup = readBackupFile(archiveFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
@@ -197,19 +197,19 @@ public class HighscoreBackupUtil {
 
     switch (highscoreType) {
       case NVRam: {
-        File target = new File(systemService.getNvramFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(gameEmulator.getNvramFolder(), highscoreBackup.getHighscoreFilename());
         ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
         return true;
       }
       case EM: {
-        File target = new File(systemService.getVisualPinballUserFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(gameEmulator.getInstallationFolder(), highscoreBackup.getHighscoreFilename());
         ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
         return true;
       }
       case VPReg: {
         try {
           String json = ZipUtil.readZipFile(archiveFile, VPREG_STG_JSON);
-          VPReg vpReg = new VPReg(systemService.getVPRegFile(), rom, null);
+          VPReg vpReg = new VPReg(gameEmulator.getVPRegFile(), rom, null);
           vpReg.restore(json);
           LOG.info("Imported VPReg.stg data from " + backupRomFolder.getAbsolutePath());
           return true;

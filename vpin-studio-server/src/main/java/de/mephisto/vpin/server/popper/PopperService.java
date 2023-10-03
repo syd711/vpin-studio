@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
@@ -8,9 +7,11 @@ import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.tables.GameList;
+import de.mephisto.vpin.restclient.tables.GameListItem;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -63,29 +64,36 @@ public class PopperService implements InitializingBean {
     this.listeners.add(listener);
   }
 
-  public SystemData getImportTables() {
-    SystemData list = new SystemData();
-    File vpxTablesFolder = systemService.getVPXTablesFolder();
-    File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
-    if (files != null) {
-      List<Game> games = pinUPConnector.getGames();
-      List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-      for (File file : files) {
-        if (!filesNames.contains(file.getName())) {
-          list.getItems().add(file.getName());
+  public GameList getImportTables() {
+    List<GameEmulator> emulators = pinUPConnector.getGameEmulators();
+    GameList list = new GameList();
+    for (GameEmulator emulator : emulators) {
+      File vpxTablesFolder = emulator.getTablesFolder();
+      File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
+      if (files != null) {
+        List<Game> games = pinUPConnector.getGames();
+        List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+        for (File file : files) {
+          if (!filesNames.contains(file.getName())) {
+            GameListItem item = new GameListItem();
+            item.setName(file.getName());
+            item.setEmuId(emulator.getId());
+            list.getItems().add(item);
+          }
         }
       }
     }
     return list;
   }
 
-  public JobExecutionResult importTables(SystemData resourceList) {
-    List<String> items = resourceList.getItems();
+  public JobExecutionResult importTables(GameList list) {
+    List<GameListItem> items = list.getItems();
     int count = 0;
-    for (String item : items) {
-      File tableFile = new File(systemService.getVPXTablesFolder(), item);
+    for (GameListItem item : items) {
+      GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
+      File tableFile = new File(emulator.getTablesFolder(), item.getName());
       if (tableFile.exists()) {
-        int result = importVPXGame(tableFile, true, -1);
+        int result = importVPXGame(tableFile, true, -1, item.getEmuId());
         if (result > 0) {
           gameService.scanGame(result);
           count++;
@@ -96,9 +104,9 @@ public class PopperService implements InitializingBean {
     return JobExecutionResultFactory.ok("Imported " + count + " tables", -1);
   }
 
-  public int importVPXGame(File file, boolean importToPopper, int playListId) {
+  public int importVPXGame(File file, boolean importToPopper, int playListId, int emuId) {
     if (importToPopper) {
-      int gameId = pinUPConnector.importGame(file);
+      int gameId = pinUPConnector.importGame(file, emuId);
       if (gameId >= 0 && playListId >= 0) {
         pinUPConnector.addToPlaylist(playListId, gameId);
       }
@@ -277,21 +285,6 @@ public class PopperService implements InitializingBean {
     }
   }
 
-  public boolean saveArchiveManager(TableManagerSettings archiveManagerDescriptor) {
-    if (archiveManagerDescriptor.getPlaylistId() != -1) {
-      pinUPConnector.enablePCGameEmulator();
-      File file = systemService.getVPinStudioMenuExe();
-      int newGameId = pinUPConnector.importGame(EmulatorType.PC_GAMES, UIDefaults.MANAGER_TITLE, file.getAbsolutePath(),
-          UIDefaults.MANAGER_TITLE, UIDefaults.MANAGER_TITLE);
-      pinUPConnector.addToPlaylist(archiveManagerDescriptor.getPlaylistId(), newGameId);
-    }
-    else {
-      File file = systemService.getVPinStudioMenuExe();
-      pinUPConnector.deleteGame(file.getAbsolutePath());
-    }
-    return true;
-  }
-
   @NonNull
   public TableManagerSettings getArchiveManagerDescriptor() {
     TableManagerSettings descriptor = new TableManagerSettings();
@@ -313,7 +306,7 @@ public class PopperService implements InitializingBean {
             File mediaFile = gameMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
             File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), clone.getGameName() + "." + suffix);
-            if(mediaFile.getName().equals(cloneTarget.getName())) {
+            if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;
             }
@@ -367,6 +360,18 @@ public class PopperService implements InitializingBean {
 
   public boolean saveCustomLauncher(int gameId, String option) {
     return pinUPConnector.updateCustomLauncher(gameId, option);
+  }
+
+  public List<GameEmulator> getGameEmulators() {
+    return pinUPConnector.getGameEmulators();
+  }
+
+  public List<GameEmulator> getBackglassGameEmulators() {
+    return pinUPConnector.getBackglassGameEmulators();
+  }
+
+  public GameEmulator getGameEmulator(int id) {
+    return pinUPConnector.getGameEmulator(id);
   }
 
   @Override

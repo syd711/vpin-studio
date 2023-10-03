@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.tables.GameList;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -53,12 +56,12 @@ public class PopperServiceResource {
   }
 
   @GetMapping("/imports")
-  public SystemData getImportTables() {
+  public GameList getImportTables() {
     return popperService.getImportTables();
   }
 
   @PostMapping("/import")
-  public JobExecutionResult importTables(@RequestBody SystemData resourceList) {
+  public JobExecutionResult importTables(@RequestBody GameList resourceList) {
     return popperService.importTables(resourceList);
   }
 
@@ -72,14 +75,19 @@ public class PopperServiceResource {
     return popperService.getPinUPControls();
   }
 
+  @GetMapping("/emulators")
+  public List<GameEmulator> getGameEmulators() {
+    return popperService.getGameEmulators();
+  }
+
+  @GetMapping("/backglassemulators")
+  public List<GameEmulator> getBackglassGameEmulators() {
+    return popperService.getBackglassGameEmulators();
+  }
+
   @GetMapping("/running")
   public boolean isRunning() {
     return popperService.isPinUPRunning();
-  }
-
-  @PostMapping("/manager")
-  public boolean saveArchiveManager(@RequestBody TableManagerSettings descriptor) {
-    return popperService.saveArchiveManager(descriptor);
   }
 
   @GetMapping("/manager")

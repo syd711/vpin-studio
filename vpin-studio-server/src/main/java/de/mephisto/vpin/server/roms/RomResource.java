@@ -20,20 +20,20 @@ public class RomResource {
   @Autowired
   private RomService romService;
 
-  @PutMapping("/mapping")
-  public boolean saveAliasMapping(@RequestBody Map<String, Object> values) {
+  @PutMapping("/mapping/{emuId}")
+  public boolean saveAliasMapping(@PathVariable("emuId") int emuId, @RequestBody Map<String, Object> values) {
     try {
-      return romService.saveAliasMapping(values);
+      return romService.saveAliasMapping(emuId, values);
     } catch (IOException e) {
       LOG.error("Saving alias mapping failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving alias mapping failed: " + e.getMessage());
     }
   }
 
-  @DeleteMapping("/mapping/{alias}")
-  public boolean saveAliasMapping(@PathVariable("alias") String alias) {
+  @DeleteMapping("/mapping/{emuId}/{alias}")
+  public boolean saveAliasMapping(@PathVariable("emuId") int emuId, @PathVariable("alias") String alias) {
     try {
-      return romService.deleteAliasMapping(alias);
+      return romService.deleteAliasMapping(emuId, alias);
     } catch (IOException e) {
       LOG.error("Saving alias mapping failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Delete alias mapping failed: " + e.getMessage());

@@ -39,9 +39,9 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.games = new ArrayList<>();
   }
 
-  public boolean uploadRom(File file, FileUploadProgressListener listener) throws Exception {
+  public boolean uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/rom";
+      String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;
       return Boolean.TRUE.equals(createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM, listener), Boolean.class).getBody());
     } catch (Exception e) {
       LOG.error("Rom upload failed: " + e.getMessage(), e);

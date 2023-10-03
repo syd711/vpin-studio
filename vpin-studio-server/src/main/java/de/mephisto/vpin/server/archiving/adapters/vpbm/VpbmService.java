@@ -219,7 +219,7 @@ public class VpbmService implements InitializingBean {
 
       File vPinballPath = new File(config.getVpinballBasePath());
       if (!vPinballPath.exists()) {
-        File vpBase = systemService.getVisualPinballInstallationFolder().getParentFile();
+        File vpBase = pinUPConnector.getDefaultGameEmulator().getInstallationFolder().getParentFile();
         config.setVpinballBasePath(vpBase.getAbsolutePath());
         LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
         dirty = true;

@@ -2,10 +2,12 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
@@ -168,8 +170,10 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onNvRam() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "nvram").getAbsolutePath()).start();
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getNvramDirectory()).getAbsolutePath()).start();
+      }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -178,8 +182,11 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onTables() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "Tables").getAbsolutePath()).start();
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+      }
+
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -198,8 +205,10 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onAltSound() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "altsound").getAbsolutePath()).start();
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltSoundDirectory()).getAbsolutePath()).start();
+      }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -208,8 +217,10 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onDirectB2S() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVisualPinballDirectory(), "Tables").getAbsolutePath()).start();
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+      }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -218,8 +229,10 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onAltColor() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getVpinMameDirectory(), "altcolor").getAbsolutePath()).start();
+      if(this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltColorDirectory()).getAbsolutePath()).start();
+      }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -230,11 +243,12 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameRepresentation game = this.game.get();
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        String vpxFilePath = "\"" + new File(systemSummary.getVisualPinballDirectory(), "Tables/" + game.getGameFileName()).getAbsolutePath() + "\"";
-        String vpxExePath = new File(systemSummary.getVisualPinballDirectory(), "VPinballX.exe").getAbsolutePath();
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+
+        String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
+        String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX.exe").getAbsolutePath();
         ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
-        builder.directory(new File(systemSummary.getVisualPinballDirectory()));
+        builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
         builder.start();
       }
     } catch (Exception e) {
@@ -569,35 +583,10 @@ public class TablesSidebarController implements Initializable {
         this.tablesSidebarPlaylistsController.setGame(g);
       }
     });
-
-  }
-
-  public TablesSidebarAltSoundController getTablesSidebarAudioController() {
-    return tablesSidebarAudioController;
-  }
-
-  public TablesSidebarDefaultBackgroundController getTablesSidebarDefaultBackgroundController() {
-    return tablesSidebarDefaultBackgroundController;
   }
 
   public TablesSidebarHighscoresController getTablesSidebarHighscoresController() {
     return tablesSidebarHighscoresController;
-  }
-
-  public TablesSidebarMediaController getTablesSidebarMediaController() {
-    return tablesSidebarMediaController;
-  }
-
-  public TablesSidebarScriptDataController getTablesSidebarMetadataController() {
-    return tablesSidebarMetadataController;
-  }
-
-  public TablesSidebarPovController getTablesSidebarPovController() {
-    return tablesSidebarPovController;
-  }
-
-  public TitledPane getTitledPaneMedia() {
-    return titledPaneMedia;
   }
 
   public void setVisible(boolean b) {
