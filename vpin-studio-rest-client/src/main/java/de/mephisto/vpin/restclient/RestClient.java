@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +29,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
 
+  public static final int TIMEOUT = 5000;
+
   private String baseUrl;
   private String authenticationToken;
   private RestTemplate restTemplate;
@@ -41,7 +44,12 @@ public class RestClient implements ClientHttpRequestInterceptor {
     baseUrl = scheme + "://" + host + ":" + port + "/";
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
-    restTemplate = new RestTemplate();
+
+    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+    httpRequestFactory.setConnectTimeout(TIMEOUT);
+    httpRequestFactory.setReadTimeout(TIMEOUT);
+
+    restTemplate = new RestTemplate(httpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -134,13 +142,13 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return response.getBody();
   }
 
+
+
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 //    request.getHeaders().set("Authorization", authenticationToken);
     ClientHttpResponse execute = execution.execute(request, body);
-//    if(execute.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-//      throw new BadCredentialsException("Authorization failed");
-//    }
+    System.out.println(execute.getRawStatusCode());
     return execute;
   }
 
