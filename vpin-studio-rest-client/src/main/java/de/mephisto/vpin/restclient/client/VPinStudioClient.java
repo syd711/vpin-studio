@@ -35,8 +35,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   private final RestClient restClient;
 
-  private final String host;
-
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
   private final ArchiveServiceClient archiveServiceClient;
@@ -64,7 +62,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
 
   public VPinStudioClient(String host) {
-    this.host = host;
     restClient = RestClient.createInstance(host);
 
     this.altColorServiceClient = new AltColorServiceClient(this);
@@ -92,6 +89,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+  }
+
+  public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
+    restClient.setErrorHandler(errorHandler);
   }
 
   public NVRamsServiceClient getNvRamsService() {
@@ -336,4 +337,5 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void clearWheelCache() {
     getImageCache().clearWheelCache();
   }
+
 }

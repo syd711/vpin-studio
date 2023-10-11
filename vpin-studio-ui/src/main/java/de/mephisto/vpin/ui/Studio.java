@@ -1,10 +1,13 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -35,10 +38,21 @@ public class Studio extends Application {
     launch(args);
   }
 
+  private static VPinStudioClientErrorHandler errorHandler;
+
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
     Locale.setDefault(Locale.ENGLISH);
+
+    Studio.errorHandler = e -> {
+      client.setErrorHandler(null);
+      Platform.runLater(() -> {
+        Studio.stage.close();
+        Studio.loadLauncher(new Stage());
+        WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
+      });
+    };
 
     //replace the OverlayFX client with the Studio one
     Studio.client = new VPinStudioClient("localhost");
@@ -134,6 +148,8 @@ public class Studio extends Application {
 //      ResizeHelper.addResizeListener(stage);
       FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
       stage.setUserData(fxResizeHelper);
+
+      client.setErrorHandler(errorHandler);
 
       stage.show();
     } catch (IOException e) {

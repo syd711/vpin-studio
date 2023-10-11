@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -11,6 +12,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
@@ -32,9 +34,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
   public static final int TIMEOUT = 5000;
 
   private String baseUrl;
-  private String authenticationToken;
   private RestTemplate restTemplate;
   private ObjectCache cache = new ObjectCache();
+  private VPinStudioClientErrorHandler errorHandler;
 
   public static RestClient createInstance(String host) {
     return new RestClient(SCHEME, host, PORT);
@@ -62,6 +64,10 @@ public class RestClient implements ClientHttpRequestInterceptor {
     converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
     messageConverters.add(converter);
     restTemplate.setMessageConverters(messageConverters);
+  }
+
+  public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
+    this.errorHandler = errorHandler;
   }
 
   public String getBaseUrl() {
@@ -93,10 +99,18 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public <T> T get(String path, Class<T> entityType, Map<String, ?> urlVariables) {
     String url = baseUrl + path;
-    long start = System.currentTimeMillis();
-    T forObject = restTemplate.getForObject(url, entityType, urlVariables);
-    LOG.info("HTTP GET " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
-    return forObject;
+    try {
+      long start = System.currentTimeMillis();
+      T forObject = restTemplate.getForObject(url, entityType, urlVariables);
+      LOG.info("HTTP GET " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
+      return forObject;
+    } catch (ResourceAccessException e) {
+      LOG.error("GET request failed: " + e.getMessage());
+      if(errorHandler != null) {
+        errorHandler.onError(e);
+      }
+    }
+    return null;
   }
 
   public Boolean delete(String path) {
@@ -128,7 +142,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange(url, HttpMethod.PUT, entity, Boolean.class);
   }
 
-  public <T> T put(String url, Map<String, Object> model, Class <T> entityType) throws Exception {
+  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) throws Exception {
     LOG.info("HTTP PUT " + url + " " + model);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -143,13 +157,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
 
-
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-//    request.getHeaders().set("Authorization", authenticationToken);
-    ClientHttpResponse execute = execution.execute(request, body);
-    System.out.println(execute.getRawStatusCode());
-    return execute;
+    return execution.execute(request, body);
   }
 
   public byte[] readBinary(String resource) {
