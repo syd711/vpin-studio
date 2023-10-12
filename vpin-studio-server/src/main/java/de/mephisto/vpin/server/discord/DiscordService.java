@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
-import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -677,11 +677,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return true;
   }
 
-  public boolean validateSettings() {
+  public DiscordBotStatus validateSettings() {
+    DiscordBotStatus status = new DiscordBotStatus();
+    status.setValid(true);
     try {
-      this.recreateDiscordClient();
+      if (this.discordClient == null) {
+        this.recreateDiscordClient();
+      }
     } catch (Exception e) {
-      return false;
+      status.setValid(false);
+      return status;
     }
 
     String serverId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
@@ -689,22 +694,26 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
 
     try {
-      if (this.discordClient != null && !StringUtils.isEmpty(serverId)) {
-        long id = Long.parseLong(serverId);
-        GuildInfo guild = this.discordClient.getGuildById(id);
-        if (guild == null) {
-          preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
-          preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-          preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-          preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
-          return false;
+      if (this.discordClient != null) {
+        status.setName(discordClient.getBot().getName());
+        status.setBotId(this.discordClient.getBotId());
+
+        if (!StringUtils.isEmpty(serverId)) {
+          GuildInfo guild = this.discordClient.getGuildById(Long.parseLong(serverId));
+          if (guild == null) {
+            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+            status.setValid(false);
+          }
         }
 
         if (!StringUtils.isEmpty(channelId)) {
           DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
           if (channel == null) {
             preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-            return false;
+            status.setValid(false);
           }
         }
 
@@ -712,15 +721,16 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
           if (category == null) {
             preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-            return false;
+            status.setValid(false);
           }
         }
       }
     } catch (Exception e) {
       LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
-      return false;
+      status.setValid(false);
     }
-    return true;
+
+    return status;
   }
 
   @Override

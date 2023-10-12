@@ -34,7 +34,7 @@ public class DiscordResource {
 
   //TODO duplicate?
   @GetMapping("/validate")
-  public boolean validateSettings() {
+  public DiscordBotStatus validateSettings() {
     return discordService.validateSettings();
   }
 

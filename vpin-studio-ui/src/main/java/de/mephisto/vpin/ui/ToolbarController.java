@@ -93,6 +93,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();
+    NavigationController.refreshAvatar();
     Studio.loadLauncher(new Stage());
   }
 

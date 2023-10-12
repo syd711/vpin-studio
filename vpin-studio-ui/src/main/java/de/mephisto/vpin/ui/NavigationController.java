@@ -150,7 +150,7 @@ public class NavigationController implements Initializable {
     tablesBtn.getStyleClass().add("navigation-button-selected");
   }
 
-  private static void refreshAvatar() {
+  public static void refreshAvatar() {
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
     if (!StringUtils.isEmpty(avatarEntry.getValue())) {

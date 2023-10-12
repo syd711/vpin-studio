@@ -49,6 +49,9 @@ public class Studio extends Application {
       client.setErrorHandler(null);
       Platform.runLater(() -> {
         Studio.stage.close();
+        NavigationController.refreshControllerCache();
+        NavigationController.refreshViewCache();
+
         Studio.loadLauncher(new Stage());
         WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
       });

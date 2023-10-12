@@ -1,10 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.discord.DiscordClient;
-import de.mephisto.vpin.connectors.discord.DiscordMember;
-import de.mephisto.vpin.connectors.discord.GuildInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -74,27 +72,17 @@ public class DiscordBotPreferencesController implements Initializable {
         "If you haven't stored it elsewhere, you have to re-generate a new one using the Discord developer portal.",
         "Delete Token");
     if (result.get().equals(ButtonType.OK)) {
-      client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
-
-      botTokenLabel.setText("-");
-      this.serverCombo.setDisable(true);
-      this.serverCombo.setValue(null);
-      this.channelCombo.setDisable(true);
-      this.channelCombo.setValue(null);
-      this.categoryCombo.setDisable(true);
-      this.categoryCombo.setValue(null);
-      this.dynamicSubscriptions.setDisable(true);
-      this.validateBtn.setDisable(true);
+      resetToken();
     }
   }
 
   @FXML
   private void onValidate() {
     validateBtn.setDisable(true);
-    Platform.runLater(()-> {
+    Platform.runLater(() -> {
       Studio.client.getDiscordService().clearCache();
-      boolean b = client.getDiscordService().validateSettings();
-      if(!b) {
+      DiscordBotStatus status = client.getDiscordService().validateSettings();
+      if (!status.isValid()) {
         validateDefaultSettings();
         WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", "One or more values have been resetted.");
       }
@@ -112,49 +100,32 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @FXML
   private void onTokenEdit() {
-    String value = this.botTokenLabel.getText();
-    if (value.length() == 1) {
-      value = "";
+    String existingToken = this.botTokenLabel.getText();
+    if (existingToken.length() == 1) {
+      existingToken = "";
     }
 
     String token = WidgetFactory.showInputDialog(Studio.stage, "Discord Bot Token", "Discord Bot Token",
-        "Paste the bot token copied from the Discord developer portal here.", null, value);
-    if (StringUtils.isEmpty(token)) {
+        "Paste the bot token copied from the Discord developer portal here.", null, existingToken);
+    if (StringUtils.isEmpty(token) || existingToken.equals(token.trim())) {
       return;
     }
 
-    Studio.stage.getScene().setCursor(Cursor.WAIT);
-    new Thread(() -> {
-      DiscordClient discordClient = null;
-      try {
-        discordClient = new DiscordClient(token.trim(), null);
-        List<GuildInfo> guilds = discordClient.getGuilds();
-        discordClient.shutdown();
-
-        Platform.runLater(() -> {
-          client.clearDiscordCache();
-          Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
-          botTokenLabel.setText(token.trim());
-          serverCombo.setDisable(false);
-          validateBtn.setDisable(false);
-          channelCombo.setDisable(true);
-          categoryCombo.setDisable(true);
-          dynamicSubscriptions.setDisable(false);
-          resetBtn.setDisable(false);
-          validateDefaultSettings();
-        });
-      } catch (Exception e) {
-        if (discordClient != null) {
-          discordClient.shutdown();
-        }
-
-        Platform.runLater(() -> {
-          Studio.stage.getScene().setCursor(Cursor.DEFAULT);
-          WidgetFactory.showAlert(Studio.stage, e.getMessage());
-        });
+    try {
+      client.clearDiscordCache();
+      resetToken();
+      client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
+      DiscordBotStatus status = client.getDiscordService().validateSettings();
+      if (!status.isValid()) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.");
       }
-    }).start();
+      else {
+        botTokenLabel.setText(token.trim());
+        validateDefaultSettings();
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, e.getMessage());
+    }
   }
 
   @Override
@@ -172,6 +143,10 @@ public class DiscordBotPreferencesController implements Initializable {
     if (!StringUtils.isEmpty(token)) {
       serverCombo.setDisable(false);
       resetBtn.setDisable(false);
+
+      List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
+      ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+      serverCombo.setItems(FXCollections.observableList(discordServers));
     }
 
     preference = client.getPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED);
@@ -252,27 +227,21 @@ public class DiscordBotPreferencesController implements Initializable {
   private void validateDefaultSettings() {
     client.clearDiscordCache();
 
-    List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
-    ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
-    serverCombo.setItems(FXCollections.observableList(discordServers));
-
-
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
     PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
-    PreferenceEntryRepresentation tokenPreference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
 
     botNameLabel.setText("-");
-    if(!StringUtils.isEmpty(tokenPreference.getValue())) {
-      try {
-        DiscordClient discordClient = new DiscordClient(tokenPreference.getValue(), null);
-        DiscordMember bot = discordClient.getBot();
-        if(bot != null) {
-          botNameLabel.setText(bot.getName());
-        }
-        discordClient.shutdown();
-      } catch (Exception e) {
-        //ignore
+    DiscordBotStatus status = client.getDiscordService().validateSettings();
+    if (status.isValid()) {
+      List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
+      ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
+      serverCombo.setItems(FXCollections.observableList(discordServers));
+      serverCombo.setDisable(false);
+      validateBtn.setDisable(false);
+
+      if (!StringUtils.isEmpty(status.getName())) {
+        botNameLabel.setText(status.getName());
       }
     }
 
@@ -290,7 +259,12 @@ public class DiscordBotPreferencesController implements Initializable {
         long channelId = channelPreference.getLongValue();
         if (channelId > 0) {
           Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == channelId).findFirst();
-          first.ifPresent(discordChannel -> channelCombo.setValue(discordChannel));
+          if (first.isPresent()) {
+            DiscordChannel selectedValue = channelCombo.getValue();
+            if (selectedValue == null || !selectedValue.equals(first.get())) {
+              channelCombo.setValue(first.get());
+            }
+          }
         }
 
         List<DiscordCategory> discordCategories = discordServer.getCategories();
@@ -298,9 +272,28 @@ public class DiscordBotPreferencesController implements Initializable {
         long categoryId = categoryPreference.getLongValue();
         if (categoryId > 0) {
           Optional<DiscordCategory> first = discordCategories.stream().filter(category -> category.getId() == categoryId).findFirst();
-          first.ifPresent(category -> categoryCombo.setValue(category));
+          if (first.isPresent()) {
+            DiscordCategory existingValue = categoryCombo.getValue();
+            if (existingValue == null || !first.get().equals(existingValue)) {
+              first.ifPresent(category -> categoryCombo.setValue(category));
+            }
+          }
         }
       }
     }
+  }
+
+  private void resetToken() {
+    client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, "");
+
+    botTokenLabel.setText("-");
+    botNameLabel.setText("-");
+    this.serverCombo.setDisable(true);
+    this.serverCombo.setValue(null);
+    this.channelCombo.setDisable(true);
+    this.channelCombo.setValue(null);
+    this.categoryCombo.setDisable(true);
+    this.categoryCombo.setValue(null);
+    this.validateBtn.setDisable(true);
   }
 }

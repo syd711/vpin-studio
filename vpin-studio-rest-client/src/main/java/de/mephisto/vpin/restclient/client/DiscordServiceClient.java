@@ -36,8 +36,8 @@ public class DiscordServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "discord/competition/" + serverId + "/" + channelId, DiscordCompetitionData.class);
   }
 
-  public boolean validateSettings() {
-    return getRestClient().get(API + "discord/validate", Boolean.class);
+  public DiscordBotStatus validateSettings() {
+    return getRestClient().get(API + "discord/validate", DiscordBotStatus.class);
   }
 
   public DiscordBotStatus getDiscordStatus(long serverId) {
