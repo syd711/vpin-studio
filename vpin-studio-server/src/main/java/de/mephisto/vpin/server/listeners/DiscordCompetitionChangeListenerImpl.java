@@ -90,7 +90,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           byte[] image = assetService.getCompetitionStartedCard(competition, game);
           final String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-
+          //do not emit these messages asynchronously, because a finish check is triggered right afterwards and would finish the competition if no message is found
           String imageMessage = description;
           if (!StringUtils.isEmpty(game.getExtTableId())) {
             VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
