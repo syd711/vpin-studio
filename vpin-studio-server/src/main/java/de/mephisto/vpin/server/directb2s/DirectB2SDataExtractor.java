@@ -55,7 +55,7 @@ public class DirectB2SDataExtractor extends DefaultHandler {
   public void startElement(String uri, String lName, String qName, Attributes attr) {
     switch (qName) {
       case "Name": {
-        data.setName(String.valueOf(attr.getValue("Value").trim()));
+        data.setName(attr.getValue("Value").trim());
         break;
       }
       case "TableType": {

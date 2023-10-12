@@ -272,7 +272,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   }
 
   private void save() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       try {
         if (this.saveEnabled) {
@@ -336,7 +336,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
       byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
       if (bytesEncoded != null) {
         Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-        if (tableData.getGrillHeight() > 0 && tableSettings.getHideGrill() == 1) {
+        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
           PixelReader reader = image.getPixelReader();
           image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
         }
@@ -358,26 +358,35 @@ public class TablesSidebarDirectB2SController implements Initializable {
         dmdResolutionLabel.setText("No DMD background available.");
       }
 
-      hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
-      hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
-      hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
-      skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
-      skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
-      skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
-      skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
-      lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-      glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
-      usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
-      startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
-      bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+      boolean settingsAvailable = tableSettings != null;
+      hideGrill.setDisable(!settingsAvailable);
+      hideB2SDMD.setDisable(!settingsAvailable);
+      hideDMD.setDisable(!settingsAvailable);
+      lightBulbOn.setDisable(!settingsAvailable || usedLEDType.getValue().getId() == 2);
+      glowing.setDisable(!settingsAvailable || usedLEDType.getValue().getId() == 2);
+      usedLEDType.setDisable(!settingsAvailable);
+      startBackground.setDisable(!settingsAvailable);
+      bringBGFromTop.setDisable(!settingsAvailable);
 
-      skipGIFrames.setDisable(tableData.getIlluminations() == 0);
-      skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
-      skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
-      skipLampFrames.setDisable(tableData.getIlluminations() == 0);
+      skipLampFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
+      skipGIFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
+      skipSolenoidFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
+      skipLEDFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
 
-      glowing.setDisable(usedLEDType.getValue().getId() == 2);
-      lightBulbOn.setDisable(usedLEDType.getValue().getId() == 2);
+      if (settingsAvailable) {
+        hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
+        hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+        hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
+        skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
+        skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
+        skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
+        skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
+        lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
+        glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+        usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
+        startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+        bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+      }
 
       this.saveEnabled = true;
     }

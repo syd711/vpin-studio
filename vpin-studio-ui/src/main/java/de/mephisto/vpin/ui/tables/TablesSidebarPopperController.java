@@ -45,6 +45,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Slider volumeSlider;
 
   @FXML
+  private Label emulatorLabel;
+
+  @FXML
   private Label labelLastPlayed;
 
   @FXML
@@ -232,6 +235,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       }
       volumeSlider.valueProperty().addListener(this);
 
+      emulatorLabel.setText(client.getPinUPPopperService().getGameEmulator(manifest.getEmulatorId()).getName());
       gameType.setText(manifest.getGameType() != null ? manifest.getGameType().name() : "-");
       gameName.setText(StringUtils.isEmpty(manifest.getGameName()) ? "-" : manifest.getGameName());
       gameFileName.setText(StringUtils.isEmpty(manifest.getGameFileName()) ? "-" : manifest.getGameFileName());

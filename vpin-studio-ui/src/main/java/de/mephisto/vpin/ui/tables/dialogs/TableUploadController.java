@@ -3,13 +3,11 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -149,16 +147,9 @@ public class TableUploadController implements Initializable, DialogController {
 
     ToggleGroup toggleGroup = new ToggleGroup();
     uploadRadio.setToggleGroup(toggleGroup);
-    uploadRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(false));
-
     uploadAndImportRadio.setToggleGroup(toggleGroup);
-    uploadAndImportRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(false));
-
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
-    uploadAndCloneRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(true));
-
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
-    uploadAndReplaceRadio.selectedProperty().addListener((observableValue, aBoolean, t1) -> emulatorCombo.setDisable(true));
   }
 
   public void setGame(GameRepresentation game) {
@@ -174,8 +165,6 @@ public class TableUploadController implements Initializable, DialogController {
     }
     else {
       this.gameId = -1;
-      this.uploadAndReplaceRadio.setDisable(true);
-      this.uploadAndCloneRadio.setDisable(true);
     }
   }
 

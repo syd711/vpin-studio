@@ -190,6 +190,7 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         manifest = new TableDetails();
+        manifest.setEmulatorId(rs.getInt("EMUID"));
         manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
@@ -1115,6 +1116,7 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public void saveTableDetails(int id, TableDetails manifest) {
+    importManifestValue(id, "EMUID", manifest.getEmulatorId());
     importManifestValue(id, "GameName", manifest.getGameName());
     importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
     importManifestValue(id, "GameFileName", manifest.getGameFileName());

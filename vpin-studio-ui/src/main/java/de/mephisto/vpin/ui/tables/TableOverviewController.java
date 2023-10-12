@@ -231,6 +231,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     boolean updated = Dialogs.openTableUploadDialog(game);
     if (updated) {
       onReload();
+
+      if(this.games.contains(game)) {
+        tableView.getSelectionModel().select(game);
+      }
     }
   }
 

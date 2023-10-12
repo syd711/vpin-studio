@@ -1,15 +1,14 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -34,9 +33,6 @@ public class GamesResource {
 
   @Autowired
   private GameService gameService;
-
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private PopperService popperService;
@@ -136,10 +132,6 @@ public class GamesResource {
         LOG.error("Table upload request did not contain a file object.");
         return false;
       }
-      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
-
-      File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
-      File uploadFile = FileUtils.uniqueFile(originalFile);
 
       TableUploadDescriptor mode = TableUploadDescriptor.valueOf(modeString);
       if (gameId > 0) {
@@ -156,6 +148,10 @@ public class GamesResource {
         }
       }
 
+      //determine the target file depending on the selected emulator
+      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
+      File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
+      File uploadFile = FileUtils.uniqueFile(originalFile);
 
       if (UploadUtil.upload(file, uploadFile)) {
         switch (mode) {
@@ -166,18 +162,27 @@ public class GamesResource {
           case uploadAndImport: {
             int importedGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
             if (importedGameId >= 0) {
-              gameService.scanGame(importedGameId);
+              Game game = gameService.scanGame(importedGameId);
+              if (game != null) {
+                popperService.autofillTableDetails(game);
+              }
             }
             return true;
           }
           case uploadAndReplace: {
+            //the game file has already been deleted at this point
             String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
             TableDetails tableDetails = popperService.getTableDetails(gameId);
+            tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
             tableDetails.setGameFileName(uploadFile.getName());
             tableDetails.setGameDisplayName(originalFilename);
+            tableDetails.setFileVersion(""); //reset version to re-apply the newer one
             popperService.saveTableDetails(tableDetails, gameId);
 
-            gameService.scanGame(gameId);
+            Game game = gameService.scanGame(gameId);
+            if (game != null) {
+              popperService.autofillTableDetails(game);
+            }
             break;
           }
           case uploadAndClone: {
@@ -188,10 +193,15 @@ public class GamesResource {
 
               //update table details after new entry creation
               TableDetails tableDetails = popperService.getTableDetails(gameId);
+              tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
               tableDetails.setGameName(originalName);
+              tableDetails.setFileVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId);
+              if (importedGame != null) {
+                popperService.autofillTableDetails(importedGame);
+              }
 
               //clone popper media
               Game original = getGame(gameId);

@@ -39,6 +39,34 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(id);
   }
 
+  @GetMapping("/tablesettings/{gameId}")
+  public DirectB2STableSettings getTableSettings(@PathVariable("gameId") int gameId) {
+    return backglassService.getTableSettings(gameId);
+  }
+
+  @PostMapping("/tablesettings/{gameId}")
+  public DirectB2STableSettings saveTableSettings(@PathVariable("gameId") int gameId, @RequestBody DirectB2STableSettings settings) {
+    try {
+      return backglassService.saveTableSettings(gameId, settings);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
+    }
+  }
+
+  @GetMapping("/serversettings/{emuId}")
+  public DirectB2ServerSettings getServerSettings(@PathVariable("emuId") int emuId) {
+    return backglassService.getServerSettings(emuId);
+  }
+
+  @PostMapping("/serversettings/{emuId}")
+  public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
+    try {
+      return backglassService.saveServerSettings(emuId, settings);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving custom options failed: " + e.getMessage());
+    }
+  }
+
   @PostMapping("/upload")
   public JobExecutionResult directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
                                             @RequestParam(value = "uploadType", required = false) String uploadType,
@@ -68,33 +96,5 @@ public class DirectB2SResource {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     return JobExecutionResultFactory.empty();
-  }
-
-  @GetMapping("/tablesettings/{gameId}")
-  public DirectB2STableSettings getTableSettings(@PathVariable("gameId") int gameId) {
-    return backglassService.getTableSettings(gameId);
-  }
-
-  @PostMapping("/tablesettings/{gameId}")
-  public DirectB2STableSettings saveTableSettings(@PathVariable("gameId") int gameId, @RequestBody DirectB2STableSettings settings) {
-    try {
-      return backglassService.saveTableSettings(gameId, settings);
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
-    }
-  }
-
-  @GetMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings getServerSettings(@PathVariable("emuId") int emuId) {
-    return backglassService.getServerSettings(emuId);
-  }
-
-  @PostMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
-    try {
-      return backglassService.saveServerSettings(emuId, settings);
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving custom options failed: " + e.getMessage());
-    }
   }
 }

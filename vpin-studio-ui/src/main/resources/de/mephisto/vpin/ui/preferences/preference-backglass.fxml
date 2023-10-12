@@ -20,6 +20,7 @@
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the Backglass server." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Only emulators with a backglass server configuration are shown." textFill="WHITE" />
             <VBox>
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">

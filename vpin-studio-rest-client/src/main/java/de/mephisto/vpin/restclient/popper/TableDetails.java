@@ -7,6 +7,7 @@ import java.util.List;
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
 
+  private int emulatorId;
   private String emulatorType;
   private String gameName;
   private String gameFileName;
@@ -36,6 +37,14 @@ public class TableDetails {
   private String designedBy;
   private String altLaunchExe;
   private List<String> launcherList = new ArrayList<>();
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
+  }
 
   public Date getLastPlayed() {
     return lastPlayed;
