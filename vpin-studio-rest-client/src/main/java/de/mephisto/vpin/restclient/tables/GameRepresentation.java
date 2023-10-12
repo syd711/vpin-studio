@@ -24,6 +24,7 @@ public class GameRepresentation {
   private String gameDisplayName;
   private String gameFileName;
   private String gameName;
+  private String version;
   private long gameFileSize;
   private String tableName;
   private int id;
@@ -47,6 +48,14 @@ public class GameRepresentation {
   private String extTableId;
   private String extTableVersionId;
   private int emulatorId;
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
 
   public int getEmulatorId() {
     return emulatorId;

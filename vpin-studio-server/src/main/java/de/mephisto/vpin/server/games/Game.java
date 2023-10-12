@@ -25,8 +25,7 @@ public class Game {
   private String gameFileName;
   private String gameName;
   private String tableName;
-  private String custom2;
-  private String custom3;
+  private String version;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -102,27 +101,19 @@ public class Game {
     return pupPack != null;
   }
 
-  public String getCustom2() {
-    return custom2;
-  }
-
-  public void setCustom2(String custom2) {
-    this.custom2 = custom2;
-  }
-
-  public String getCustom3() {
-    return custom3;
-  }
-
-  public void setCustom3(String custom3) {
-    this.custom3 = custom3;
-  }
-
   public long getGameFileSize() {
     if (this.getGameFile().exists()) {
       return this.getGameFile().length();
     }
     return -1;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 
   public HighscoreType getHighscoreType() {

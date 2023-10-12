@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -17,9 +15,9 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -63,6 +61,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, String> columnDisplayName;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnVersion;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnRom;
@@ -371,7 +372,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation refreshedGame = client.getGameService().getGame(g.getId());
         int index = data.indexOf(refreshedGame);
-        if(index != -1) {
+        if (index != -1) {
           data.remove(index);
           data.add(index, refreshedGame);
         }
@@ -415,7 +416,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxWidth(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if(editorRootStack.getChildren().size() > 1) {
+        if (editorRootStack.getChildren().size() > 1) {
           return;
         }
 
@@ -442,7 +443,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if(editorRootStack.getChildren().size() > 1) {
+        if (editorRootStack.getChildren().size() > 1) {
           return;
         }
 
@@ -467,7 +468,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if(editorRootStack.getChildren().size() > 1) {
+        if (editorRootStack.getChildren().size() > 1) {
           return;
         }
 
@@ -603,6 +604,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       return new SimpleStringProperty(value.getGameDisplayName());
+    });
+
+    columnVersion.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      return new SimpleStringProperty(value.getVersion());
     });
 
     columnId.setCellValueFactory(
@@ -892,7 +898,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     StackPane editorRootStack = tablesController.getEditorRootStack();
     List<Node> nodes = new ArrayList<>(editorRootStack.getChildren());
     for (Node node : nodes) {
-      if(node instanceof TabPane) {
+      if (node instanceof TabPane) {
         continue;
       }
       editorRootStack.getChildren().remove(node);

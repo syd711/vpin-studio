@@ -158,9 +158,10 @@ public class PopperService implements InitializingBean {
     }
   }
 
+  @NonNull
   public TableDetails autofillTableDetails(Game game) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-    if (tableDetails != null && !StringUtils.isEmpty(game.getExtTableId())) {
+    if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable tableData = VPS.getInstance().getTableById(game.getExtTableId());
       if (tableData != null) {
         if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0) && tableData.getYear() > 0) {
@@ -224,10 +225,19 @@ public class PopperService implements InitializingBean {
         }
       }
     }
-
-    if (tableDetails != null) {
-      pinUPConnector.saveTableDetails(game.getId(), tableDetails);
+    else {
+      TableInfo tableInfo = vpxService.getTableInfo(game.getId());
+      if (tableInfo != null) {
+        if (StringUtils.isEmpty(tableDetails.getFileVersion())) {
+          tableDetails.setFileVersion(tableInfo.getTableVersion());
+        }
+        if (StringUtils.isEmpty(tableDetails.getAuthor())) {
+          tableDetails.setAuthor(tableInfo.getAuthorName());
+        }
+      }
     }
+
+    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
 
     return tableDetails;
   }

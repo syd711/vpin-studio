@@ -179,7 +179,7 @@ public class PinUPConnector implements InitializingBean {
     return Collections.emptyList();
   }
 
-  @Nullable
+  @NonNull
   public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;
@@ -1078,8 +1078,7 @@ public class PinUPConnector implements InitializingBean {
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
 
-    game.setCustom2(rs.getString("CUSTOM2"));
-    game.setCustom3(rs.getString("CUSTOM3"));
+    game.setVersion(rs.getString("GAMEVER"));
 
     File vpxFile = new File(emulator.getTablesFolder(), gameFileName);
     game.setGameFile(vpxFile);
