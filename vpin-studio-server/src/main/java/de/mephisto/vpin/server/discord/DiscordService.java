@@ -501,7 +501,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       //delete existing pins for new competition starts
       clearPinnedMessages(serverId, channelId);
       //use the slow mode to avoid concurrent pinning of new highscores
-      discordClient.setSlowMode(serverId, channelId, 5);
+      discordClient.setSlowMode(serverId, channelId, 2);
       discordClient.pinMessage(serverId, channelId, messageId);
 
       if (topic != null) {

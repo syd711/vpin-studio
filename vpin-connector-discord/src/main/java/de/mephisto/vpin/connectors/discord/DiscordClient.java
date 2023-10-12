@@ -209,7 +209,7 @@ public class DiscordClient {
           this.messageCacheById.put(message.getIdLong(), message);
         }
 
-        LOG.info("Pinned messages fetch took " + (System.currentTimeMillis() - start) + "ms.");
+        LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
         List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
         pinnedMessagesCache.put(channelId, new PinnedMessages());
         pinnedMessagesCache.get(channelId).getMessages().addAll(collect);

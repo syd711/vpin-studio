@@ -31,7 +31,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
 
-  public static final int TIMEOUT = 5000;
+  public static final int TIMEOUT = 15000;
 
   private String baseUrl;
   private RestTemplate restTemplate;

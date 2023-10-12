@@ -53,10 +53,10 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
     try {
       CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(next);
       progressResultModel.addProcessed(newCmp);
-      Thread.sleep(3000);
+      Thread.sleep(6000);
     } catch (Exception e) {
       LOG.error("Failed to save competitions data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Competion Update Failed", "Failed to save competitions data: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Competition Update Failed", "Failed to save competitions data: " + e.getMessage());
     }
   }
 

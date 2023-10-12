@@ -75,7 +75,7 @@ public class DiscordCompetitionService {
     LOG.info("The new score: " + newScore);
     String validationMsg = CompetitionScoreValidator.validate(competitionData, game, competition, newScore, botStatus);
     if (validationMsg != null) {
-      LOG.error("Highscore Validation Error: " + validationMsg);
+      LOG.warn("Highscore Validation: " + validationMsg);
       return;
     }
 

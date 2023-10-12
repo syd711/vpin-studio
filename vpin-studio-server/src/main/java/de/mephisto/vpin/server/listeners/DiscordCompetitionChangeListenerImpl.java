@@ -84,11 +84,12 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           LOG.info("The " + competition + " is still available and active, skipping init process.");
         }
         else if (isOwner) {
-          String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
+          final String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
               "Only these will be submitted to the competition.\nCompetition updates are pinned on this channel.";
           String base64Data = CompetitionDataHelper.DATA_INDICATOR + CompetitionDataHelper.toBase64(competition, game);
           byte[] image = assetService.getCompetitionStartedCard(competition, game);
-          String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+          final String message = discordChannelMessageFactory.createDiscordCompetitionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+
 
           String imageMessage = description;
           if (!StringUtils.isEmpty(game.getExtTableId())) {
@@ -103,7 +104,6 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
               }
             }
           }
-
           long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage + "\n\n" + base64Data);
           discordService.initCompetition(serverId, channelId, messageId, "Competition Channel for Table \"" + game.getGameDisplayName() + "\"");
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");

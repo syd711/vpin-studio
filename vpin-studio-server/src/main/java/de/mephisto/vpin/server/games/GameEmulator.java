@@ -260,7 +260,6 @@ public class GameEmulator {
 
   public boolean saveAliasMapping(Map<String, Object> values) throws IOException {
     String oldValue = (String) values.get("#oldValue");
-    System.out.println(values);
     if (!StringUtils.isEmpty(oldValue) && aliasToRomMapping.containsKey(oldValue)) {
       aliasToRomMapping.remove(oldValue);
       LOG.info("Removed old alias mapping '" + oldValue + "'");
