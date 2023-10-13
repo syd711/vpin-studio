@@ -5,7 +5,7 @@
 
 **VPin Studio Connection Handling**
 
-- Added error handler for connection timeouts: If a request failed (e.g. because the Wifi connection is not stable), the Studio will exit to the launcher screen.
+- Added error handler for connection timeouts: If a request failed (e.g. because the wifi connection is not stable), the Studio will exit to the launcher screen.
 
 **Table Management: Multi VPX Emulator Support**
 
@@ -16,13 +16,14 @@
 
 **Table Overview**
 
-- Added new column "version". With more and more VPX releases coming out, this should help to keep an overview what version of a table is installed.
+- Added new column "version". With more and more VPX releases coming out, this should help to keep an overview what version of a table is installed. (**Tip**: Use the "Autofill" button on the table settings section to set the version automatically.)
+- Added "disabled" status: If a table is disabled, all the row texts have a grey color. The flag can be changed in the table settings section. 
 
 ### Bugfixes
 
 - Fixed miscellaneous issues with the bot token preference page and the token validation.
 - Fixed table data auto-fill function so that the table version and author are applied, even if no VPS mapping was configured.
 - Improved bot configuration help texts (hopefully).
-- Fixed version updates after table uploads: If a table is uploaded, replaced or cloned, the version number is reset and an auto-fill is triggered to update to the version stored in the VPX script.
+- Fixed version updates after table uploads: If a table is uploaded, replaced or cloned, the version number is reset and an auto-fill is triggered to update PinUP Popper table data to the version stored in the VPX script.
 - Fixed reading of player highscores for deleted games.
 - Fixed duplicate name check for Discord bots.

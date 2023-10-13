@@ -26,6 +26,7 @@ public class Game {
   private String gameName;
   private String tableName;
   private String version;
+  private boolean disabled;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -85,6 +86,14 @@ public class Game {
 
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
+  }
+
+  public boolean isDisabled() {
+    return disabled;
+  }
+
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
   }
 
   @JsonIgnore

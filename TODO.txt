@@ -1,5 +1,1 @@
-- avoid spam
-- check join dialog
-- check overlapping messages
-- ifpa competition stuff
-- austin powers highs
+-

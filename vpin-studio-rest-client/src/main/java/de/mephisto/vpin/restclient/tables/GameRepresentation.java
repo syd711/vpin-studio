@@ -27,6 +27,7 @@ public class GameRepresentation {
   private String version;
   private long gameFileSize;
   private String tableName;
+  private boolean disabled;
   private int id;
   private Date modified;
   private GameMediaRepresentation gameMedia;
@@ -48,6 +49,14 @@ public class GameRepresentation {
   private String extTableId;
   private String extTableVersionId;
   private int emulatorId;
+
+  public boolean isDisabled() {
+    return disabled;
+  }
+
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
+  }
 
   public String getVersion() {
     return version;

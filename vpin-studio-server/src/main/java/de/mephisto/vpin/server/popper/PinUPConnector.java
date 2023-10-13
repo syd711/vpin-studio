@@ -213,6 +213,10 @@ public class PinUPConnector implements InitializingBean {
         if (rs.wasNull()) {
           manifest.setNumberOfPlayers(null);
         }
+        manifest.setStatus(rs.getInt("Visible"));
+        if (rs.wasNull()) {
+          manifest.setStatus(0);
+        }
         manifest.setTags(rs.getString("TAGS"));
         manifest.setVolume(rs.getString("sysVolume"));
         manifest.setCategory(rs.getString("Category"));
@@ -1067,6 +1071,8 @@ public class PinUPConnector implements InitializingBean {
     int id = rs.getInt("GameID");
     game.setId(id);
 
+    game.setDisabled(rs.getInt("Visible") == 0);
+
     String gameFileName = rs.getString("GameFileName");
     game.setGameFileName(gameFileName);
 
@@ -1140,6 +1146,7 @@ public class PinUPConnector implements InitializingBean {
     importManifestValue(id, "AltRunMode", manifest.getAltRunMode());
     importManifestValue(id, "WebLinkURL", manifest.getUrl());
     importManifestValue(id, "DesignedBy", manifest.getDesignedBy());
+    importManifestValue(id, "Visible", manifest.getStatus());
   }
 
   private void importManifestValue(int gameId, String field, Object value) {

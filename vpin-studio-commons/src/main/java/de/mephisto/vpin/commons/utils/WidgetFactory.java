@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -76,6 +77,17 @@ public class WidgetFactory {
   }
 
 
+  public static FontIcon createCheckIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconLiteral("bi-check-circle");
+    fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+    if(color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    return fontIcon;
+  }
+
   public static FontIcon createBotIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
@@ -116,11 +128,34 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+
+  public static FontIcon createCheckboxIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconLiteral("bi-check-circle");
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    if(color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    return fontIcon;
+  }
+
   public static FontIcon createExclamationIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
     fontIcon.setIconLiteral("bi-exclamation-circle");
+    return fontIcon;
+  }
+
+  public static FontIcon createExclamationIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconLiteral("bi-exclamation-circle");
+    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    if(color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
     return fontIcon;
   }
 

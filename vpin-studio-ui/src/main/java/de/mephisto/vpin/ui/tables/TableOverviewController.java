@@ -34,7 +34,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -232,7 +231,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (updated) {
       onReload();
 
-      if(this.games.contains(game)) {
+      if (this.games.contains(game)) {
         tableView.getSelectionModel().select(game);
       }
     }
@@ -607,17 +606,24 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getGameDisplayName());
+      Label label = new Label(value.getGameDisplayName());
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
     });
 
     columnVersion.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getVersion());
+      Label label = new Label(value.getVersion());
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
     });
 
-    columnId.setCellValueFactory(
-        new PropertyValueFactory<>("id")
-    );
+    columnId.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      Label label = new Label(String.valueOf(value.getId()));
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
+    });
 
     columnRom.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -633,7 +639,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return new SimpleObjectProperty(label);
       }
 
-      return new SimpleStringProperty(rom);
+      Label label = new Label(rom);
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
     });
 
 //    columnEmulator.setCellValueFactory(cellData -> {
@@ -643,13 +651,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnHSType.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(value.getHighscoreType());
+      Label label = new Label(value.getHighscoreType());
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
     });
 
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
       }
       return new SimpleStringProperty("");
     });
@@ -657,7 +667,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPOV.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPovAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
       }
       return new SimpleStringProperty("");
     });
@@ -665,7 +675,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltSoundAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
       }
       return new SimpleStringProperty("");
     });
@@ -673,7 +683,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltColor.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltColorAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
       }
       return new SimpleStringProperty("");
     });
@@ -682,7 +692,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPupPackAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
       }
       return new SimpleStringProperty("");
     });
@@ -691,10 +701,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
       if (validationState.getCode() > 0) {
-        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
       }
 
-      return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+      return new SimpleObjectProperty(WidgetFactory.createCheckIcon(getIconColor(value)));
     });
 
     columnPlaylists.setSortable(false);
@@ -907,5 +917,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       editorRootStack.getChildren().remove(node);
     }
+  }
+
+
+  private String getIconColor(GameRepresentation value) {
+    if (value.isDisabled()) {
+      return "#B0ABAB";
+    }
+    return null;
+  }
+
+  private String getLabelCss(GameRepresentation value) {
+    String status = "";
+    if (value.isDisabled()) {
+      status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+    }
+    return status;
   }
 }

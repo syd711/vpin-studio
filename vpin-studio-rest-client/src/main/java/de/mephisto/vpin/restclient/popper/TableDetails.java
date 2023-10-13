@@ -8,6 +8,7 @@ public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
 
   private int emulatorId;
+  private int status;
   private String emulatorType;
   private String gameName;
   private String gameFileName;
@@ -37,6 +38,14 @@ public class TableDetails {
   private String designedBy;
   private String altLaunchExe;
   private List<String> launcherList = new ArrayList<>();
+
+  public int getStatus() {
+    return status;
+  }
+
+  public void setStatus(int status) {
+    this.status = status;
+  }
 
   public int getEmulatorId() {
     return emulatorId;
