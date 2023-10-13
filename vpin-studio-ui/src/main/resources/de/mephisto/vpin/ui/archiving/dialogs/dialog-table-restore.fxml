@@ -45,24 +45,24 @@
                <center>
                   <VBox>
                      <children>
-                        <GridPane>
+                        <GridPane fx:id="emuGrid">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="204.199951171875" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.7999267578125" minWidth="250.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="123.99999237060547" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.7999267578125" minWidth="250.0" prefWidth="332.00000762939453" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Add to Playlist:">
+                              <Label text="Target Emulator:">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="playlistCombo" prefWidth="150.0" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="258.0" GridPane.columnIndex="1" />
                            </children>
                            <VBox.margin>
-                              <Insets />
+                              <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
                      </children>

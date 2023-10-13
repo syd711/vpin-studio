@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.tables.descriptors;
 
 public class ArchiveRestoreDescriptor {
-  private int playlistId = -1;
+  private int emulatorId = -1;
   private long archiveSourceId;
   private String filename;
 
@@ -21,11 +21,11 @@ public class ArchiveRestoreDescriptor {
     this.archiveSourceId = sourceId;
   }
 
-  public int getPlaylistId() {
-    return playlistId;
+  public int getEmulatorId() {
+    return emulatorId;
   }
 
-  public void setPlaylistId(int playlistId) {
-    this.playlistId = playlistId;
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
   }
 }

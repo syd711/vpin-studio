@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
@@ -56,14 +57,15 @@ public class IOService {
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
+      GameEmulator emulator = pinUPConnector.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
       jobDescriptor.setDescription("Restoring table from \"" + archiveDescriptor.getFilename() + "\"");
 
-      TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
+      TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, emulator);
 
-      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, pinUPConnector, cardService, gameService, archiveService, installDescriptor);
+      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, cardService, gameService, archiveService);
       jobDescriptor.setDescription("Restoring \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 

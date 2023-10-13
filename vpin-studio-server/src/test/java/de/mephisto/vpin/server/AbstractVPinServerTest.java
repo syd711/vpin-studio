@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -104,7 +106,15 @@ abstract public class AbstractVPinServerTest {
   @Autowired
   protected AltSoundService altSoundService;
 
+  protected GameEmulator gameEmulator;
+
   public void setupSystem() {
+    Emulator emulator = new Emulator();
+    emulator.setDescription("VPX");
+    emulator.setName("VPX");
+
+    gameEmulator = new GameEmulator(emulator);
+
     pinUPConnector.deleteGames();
 
     clearVPinStudioDatabase();

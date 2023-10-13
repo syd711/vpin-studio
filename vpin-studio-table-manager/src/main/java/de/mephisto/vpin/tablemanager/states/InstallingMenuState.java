@@ -63,13 +63,13 @@ public class InstallingMenuState extends MenuState {
       descriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
       descriptor.setFilename(archiveDescriptor.getFilename());
 
-      List<PlaylistRepresentation> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
-      if (playlist != null) {
-        descriptor.setPlaylistId(playlist.getId());
-      }
-      else if (!playlists.isEmpty()) {
-        descriptor.setPlaylistId(playlists.get(0).getId());
-      }
+//      List<PlaylistRepresentation> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
+//      if (playlist != null) {
+//        descriptor.setPlaylistId(playlist.getId());
+//      }
+//      else if (!playlists.isEmpty()) {
+//        descriptor.setPlaylistId(playlists.get(0).getId());
+//      }
 
       try {
         Menu.client.getArchiveService().installTable(descriptor);

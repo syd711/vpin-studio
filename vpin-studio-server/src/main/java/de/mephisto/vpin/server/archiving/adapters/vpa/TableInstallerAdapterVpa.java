@@ -4,11 +4,11 @@ import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -34,6 +34,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private final GameService gameService;
   private final PinUPConnector pinUPConnector;
   private final ArchiveDescriptor archiveDescriptor;
+  private final GameEmulator emulator;
 
   private File archiveFile;
   private double progress;
@@ -42,11 +43,13 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   public TableInstallerAdapterVpa(@NonNull SystemService systemService,
                                   @NonNull GameService gameService,
                                   @NonNull PinUPConnector pinUPConnector,
-                                  @NonNull ArchiveDescriptor archiveDescriptor) {
+                                  @NonNull ArchiveDescriptor archiveDescriptor,
+                                  @NonNull GameEmulator emulator) {
     this.systemService = systemService;
     this.gameService = gameService;
     this.pinUPConnector = pinUPConnector;
     this.archiveDescriptor = archiveDescriptor;
+    this.emulator = emulator;
   }
 
   public ArchiveDescriptor getArchiveDescriptor() {
@@ -90,11 +93,11 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
         return null;
       }
 
-      File gameFile = getGameFile(manifest);
+      File gameFile = getGameFile(emulator, manifest);
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(pinUPConnector.getDefaultGameEmulator().getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
+        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
         game = gameService.getGame(newGameId);
       }
 
@@ -189,7 +192,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private File getDestDirForEntry(ZipEntry entry) {
     String name = entry.getName();
     if (Emulator.isVisualPinball(name)) {
-      return pinUPConnector.getDefaultGameEmulator().getInstallationFolder().getParentFile();
+      return emulator.getInstallationFolder().getParentFile();
     }
     else if (name.startsWith("PinUPSystem")) {
       return systemService.getPinUPSystemFolder().getParentFile();
@@ -198,13 +201,8 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
     return systemService.getPinUPSystemFolder().getParentFile();
   }
 
-  private File getGameFile(TableDetails manifest) {
-    File tablesFolder = pinUPConnector.getDefaultGameEmulator().getTablesFolder();
-    String emulator = manifest.getEmulatorType();
-    if (EmulatorType.VISUAL_PINBALL_X.equals(emulator)) {
-      return new File(tablesFolder, manifest.getGameFileName());
-    }
-
+  private File getGameFile(GameEmulator emulator, TableDetails manifest) {
+    File tablesFolder = emulator.getTablesFolder();
     return new File(tablesFolder, manifest.getGameFileName());
   }
 

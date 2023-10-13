@@ -2,9 +2,10 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesController;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,10 @@ public class TableRestoreController implements Initializable, DialogController {
   private Label titleLabel;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
+  private Pane emuGrid;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private List<ArchiveDescriptorRepresentation> archiveDescriptors;
 
@@ -42,10 +47,7 @@ public class TableRestoreController implements Initializable, DialogController {
   @FXML
   private void onImport(ActionEvent e) {
     ArchiveRestoreDescriptor restoreDescriptor = new ArchiveRestoreDescriptor();
-
-    if (!this.playlistCombo.getSelectionModel().isEmpty()) {
-      restoreDescriptor.setPlaylistId(this.playlistCombo.getSelectionModel().getSelectedItem().getId());
-    }
+    restoreDescriptor.setEmulatorId(emulatorCombo.getValue().getId());
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -76,10 +78,10 @@ public class TableRestoreController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<PlaylistRepresentation> playlists = client.getPlaylistsService().getStaticPlaylists();
-    ObservableList<PlaylistRepresentation> data = FXCollections.observableList(playlists);
-    this.playlistCombo.setItems(data);
-    this.playlistCombo.setDisable(false);
+    List<GameEmulatorRepresentation> emulators = client.getPinUPPopperService().getGameEmulators();
+    ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
+    this.emulatorCombo.setItems(data);
+    this.emulatorCombo.setValue(data.get(0));
   }
 
   @Override
@@ -90,10 +92,13 @@ public class TableRestoreController implements Initializable, DialogController {
   public void setData(TablesController tablesController, List<ArchiveDescriptorRepresentation> archiveDescriptors) {
     this.archiveDescriptors = archiveDescriptors;
 
-    String title = "Restore " + this.archiveDescriptors.size() + " Tables";
+    String title = "Restore " + this.archiveDescriptors.size() + " Tables?";
     if (this.archiveDescriptors.size() == 1) {
-      title = "Restore \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"";
+      title = "Restore \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
     }
     titleLabel.setText(title);
+
+    ArchiveType archiveType = client.getSystemService().getSystemSummary().getArchiveType();
+    emuGrid.setVisible(archiveType.equals(ArchiveType.VPA));
   }
 }

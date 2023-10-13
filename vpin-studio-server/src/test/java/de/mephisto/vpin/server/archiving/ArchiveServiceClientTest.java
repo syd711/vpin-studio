@@ -3,17 +3,14 @@ package de.mephisto.vpin.server.archiving;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
-import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
-import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
@@ -50,7 +47,7 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(VpaArchiveSource.DEFAULT_ARCHIVE_SOURCE_ID, name + ".vpa");
     assertNotNull(archiveDescriptor);
 
-    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor);
+    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, gameEmulator);
     JobExecutionResult result = adapter.installTable();
     assertNull(result.getError());
   }

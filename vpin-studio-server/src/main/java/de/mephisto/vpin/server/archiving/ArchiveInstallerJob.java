@@ -4,39 +4,32 @@ import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 public class ArchiveInstallerJob implements Job {
   private final TableInstallerAdapter tableInstallerAdapter;
   private final ArchiveDescriptor archiveDescriptor;
-  private final PinUPConnector pinUPConnector;
   private final CardService cardService;
   private final GameService gameService;
   private final ArchiveService archiveService;
-  private final ArchiveRestoreDescriptor installDescriptor;
   private CopyArchiveToRepositoryJob downloadJob;
 
   public ArchiveInstallerJob(@NonNull TableInstallerAdapter tableInstallerAdapter,
                              @NonNull ArchiveDescriptor archiveDescriptor,
-                             @NonNull PinUPConnector pinUPConnector,
                              @NonNull CardService cardService,
                              @NonNull GameService gameService,
-                             @NonNull ArchiveService archiveService,
-                             @NonNull ArchiveRestoreDescriptor installDescriptor) {
+                             @NonNull ArchiveService archiveService) {
     this.tableInstallerAdapter = tableInstallerAdapter;
     this.archiveDescriptor = archiveDescriptor;
-    this.pinUPConnector = pinUPConnector;
     this.cardService = cardService;
     this.gameService = gameService;
     this.archiveService = archiveService;
-    this.installDescriptor = installDescriptor;
   }
 
   @Override
@@ -56,7 +49,6 @@ public class ArchiveInstallerJob implements Job {
   }
 
   /**
-   *
    * @return
    */
   @Override
@@ -81,10 +73,6 @@ public class ArchiveInstallerJob implements Job {
           cardService.generateCard(game, false);
         } catch (Exception e) {
           //ignore
-        }
-
-        if (installDescriptor.getPlaylistId() != -1) {
-          pinUPConnector.addToPlaylist(installDescriptor.getPlaylistId(), game.getId());
         }
       }
       return result;

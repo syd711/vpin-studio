@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableInstallerAdapterVpa;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.TableInstallerAdapterVpbm;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -27,12 +28,12 @@ public class TableInstallerAdapterFactory {
   @Autowired
   private GameService gameService;
 
-  public TableInstallerAdapter createAdapter(@NonNull ArchiveDescriptor archiveDescriptor) {
+  public TableInstallerAdapter createAdapter(@NonNull ArchiveDescriptor archiveDescriptor, @NonNull GameEmulator emulator) {
     ArchiveType archiveType = systemService.getArchiveType();
 
     switch (archiveType) {
       case VPA: {
-        return new TableInstallerAdapterVpa(systemService, gameService, pinUPConnector, archiveDescriptor);
+        return new TableInstallerAdapterVpa(systemService, gameService, pinUPConnector, archiveDescriptor, emulator);
       }
       case VPBM: {
         return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor);
