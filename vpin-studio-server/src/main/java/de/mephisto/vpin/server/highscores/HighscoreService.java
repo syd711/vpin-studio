@@ -1,15 +1,16 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
@@ -49,6 +50,9 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private NVRamService nvRamService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   private boolean pauseChangeEvents;
 
@@ -179,7 +183,7 @@ public class HighscoreService implements InitializingBean {
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
       ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getNewRaw(), gameId, serverId);
-      if(scoreSummary != null) {
+      if (scoreSummary != null) {
         scoreList.getScores().add(scoreSummary);
       }
       else {
@@ -216,6 +220,11 @@ public class HighscoreService implements InitializingBean {
       List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
+          Game game = pinUPConnector.getGame(score.getGameId());
+          if (game == null) {
+            deleteScores(score.getGameId(), true);
+            continue;
+          }
           summary.getScores().add(score);
         }
       }

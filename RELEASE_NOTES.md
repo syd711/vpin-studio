@@ -23,4 +23,6 @@
 - Fixed miscellaneous issues with the bot token preference page and the token validation.
 - Fixed table data auto-fill function so that the table version and author are applied, even if no VPS mapping was configured.
 - Improved bot configuration help texts (hopefully).
-- Fixed version updates after table uploads: If a table is uploaded, replaced or cloned, the version number is reset and an auto-fill is triggered to update to the version stored in the VPX script. 
+- Fixed version updates after table uploads: If a table is uploaded, replaced or cloned, the version number is reset and an auto-fill is triggered to update to the version stored in the VPX script.
+- Fixed reading of player highscores for deleted games.
+- Fixed duplicate name check for Discord bots.

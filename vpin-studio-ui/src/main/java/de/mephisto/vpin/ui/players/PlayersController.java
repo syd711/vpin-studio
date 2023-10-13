@@ -82,7 +82,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
       if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
-        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials from one of them.");
+        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials for one of them.");
       }
 
       new Thread(() -> {
