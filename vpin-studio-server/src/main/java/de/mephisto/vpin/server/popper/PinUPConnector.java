@@ -1071,7 +1071,7 @@ public class PinUPConnector implements InitializingBean {
     int id = rs.getInt("GameID");
     game.setId(id);
 
-    game.setDisabled(rs.getInt("Visible") == 0);
+    game.setDisabled(rs.getInt("Visible") == 0 || !emulator.isVisible());
 
     String gameFileName = rs.getString("GameFileName");
     game.setGameFileName(gameFileName);

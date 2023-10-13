@@ -49,11 +49,13 @@ public class GameEmulator {
   private final String userDirectory;
   private final String mediaDirectory;
   private final int id;
+  private final boolean visible;
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
+    this.visible = emulator.isVisible();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
@@ -85,6 +87,10 @@ public class GameEmulator {
     }
 
     loadAliasMapping();
+  }
+
+  public boolean isVisible() {
+    return visible;
   }
 
   public String getMediaDirectory() {
