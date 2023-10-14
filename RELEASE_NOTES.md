@@ -9,7 +9,7 @@
 
 **Table Management: Multi VPX Emulator Support**
 
-- This was a design flow from the beginning: The table lookup isn't configured through the installation of the VPin Studio anymore, but solely through the data that is found in the PinUP Popper database. So PinUP Popper is the single source of truth regarding the VPX emulator setup now. You can also configure multiple VPX emulators know. The VPin Studio will resolve the affected emulator automatically (if possible), otherwise you will find a new emulator combobox in some of the upload dialogs to determine an upload target. As a result, the server setup only requires the location of PinUP Popper.
+- This was a design flow from the beginning: The table lookup isn't configured through the installation of the VPin Studio anymore, but solely through the data that is found in the PinUP Popper database. So PinUP Popper is the single source of truth regarding the VPX emulator setup now. You can also configure multiple VPX emulators now. The VPin Studio will resolve the affected emulator automatically (if possible), otherwise you will find a new emulator combobox in some of the upload dialogs to determine an upload target. As a result, the server setup only requires the location of PinUP Popper.
 - Added emulator name field to **PinUP Popper Table Settings** section.
 - Added emulator combo-box for table uploads.
 - Added emulator combo-box for ROM uploads.
@@ -28,3 +28,4 @@
 - Fixed reading of player highscores for deleted games.
 - Fixed duplicate name check for Discord bots.
 - Fixed errors in MAME settings, backglass settings and highscore backups when the ROM name of a table wasn't set.
+- Removed ROM alias mapping cache: performance is not a problem so this way manual changes on the original files are always included too. 

@@ -355,10 +355,11 @@ public class GameService {
         gameDetails = new GameDetails();
       }
 
+      //always prefer PinUP Popper ROM name over the scanned value
       String rom = scanResult.getRom();
       if (!StringUtils.isEmpty(rom)) {
         TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-        if (tableDetails != null && !StringUtils.isEmpty(tableDetails.getRomName())) {
+        if (!StringUtils.isEmpty(tableDetails.getRomName())) {
           rom = tableDetails.getRomName();
         }
       }

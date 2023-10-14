@@ -58,16 +58,17 @@ public class MameRomAliasService {
     return false;
   }
 
-  public boolean saveAliasMapping(@NonNull GameEmulator emulator, Map<String, String> aliasToRomMapping) throws IOException {
-    String oldValue = aliasToRomMapping.get("#oldValue");
+  public boolean saveAliasMapping(@NonNull GameEmulator emulator, Map<String, String> update) throws IOException {
+    Map<String, String> aliasToRomMapping = loadAliasMapping(emulator);
+    String oldValue = update.get("#oldValue");
     if (!StringUtils.isEmpty(oldValue) && aliasToRomMapping.containsKey(oldValue)) {
       aliasToRomMapping.remove(oldValue);
       LOG.info("Removed old alias mapping '" + oldValue + "'");
     }
-    aliasToRomMapping.remove("#oldValue");
+    update.remove("#oldValue");
 
 
-    Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
+    Set<Map.Entry<String, String>> entries = update.entrySet();
     for (Map.Entry<String, String> entry : entries) {
       String alias = entry.getKey();
       String romName = entry.getValue();
