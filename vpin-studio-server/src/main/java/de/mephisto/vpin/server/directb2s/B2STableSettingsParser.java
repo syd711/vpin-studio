@@ -25,7 +25,7 @@ public class B2STableSettingsParser extends DefaultHandler {
   }
 
   @Nullable
-  public DirectB2STableSettings getEntry(String rom) {
+  public DirectB2STableSettings getEntry(@NonNull String rom) {
     DirectB2STableSettings settings = new DirectB2STableSettings();
     settings.setRom(rom);
     try {
@@ -36,7 +36,6 @@ public class B2STableSettingsParser extends DefaultHandler {
       Document doc = db.parse(xmlFile);
 
       doc.getDocumentElement().normalize();
-
       NodeList list = doc.getElementsByTagName(rom);
       if (list == null || list.getLength() == 0) {
         return null;

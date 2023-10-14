@@ -1,22 +1,22 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,12 +99,12 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onMameSetup() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
         try {
-          GameEmulatorRepresentation emulatorRepresentation= Studio.client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = Studio.client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
           File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
           if (!file.exists()) {
             file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
@@ -206,42 +206,62 @@ public class TablesSidebarMameController implements Initializable {
       GameRepresentation game = g.get();
 
       invalidDataBox.setVisible(HighscoreType.VPReg.name().equals(game.getHighscoreType()));
-      if(invalidDataBox.isVisible()) {
+      if (invalidDataBox.isVisible()) {
         applyDefaultsBtn.setDisable(true);
         dataBox.setVisible(false);
         errorBox.setVisible(false);
         return;
       }
 
-      options = Studio.client.getMameService().getOptions(game.getRom());
+      boolean romSet = !StringUtils.isEmpty(game.getRom());
+      setInputDisabled(!romSet);
 
-      if (options != null) {
-        skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
-        useSound.setSelected(options.isUseSound());
-        useSamples.setSelected(options.isUseSamples());
-        compactDisplay.setSelected(options.isCompactDisplay());
-        doubleDisplaySize.setSelected(options.isDoubleDisplaySize());
-        ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
-        cabinetMode.setSelected(options.isCabinetMode());
-        showDmd.setSelected(options.isShowDmd());
-        useExternalDmd.setSelected(options.isUseExternalDmd());
-        colorizeDmd.setSelected(options.isColorizeDmd());
-        soundMode.setSelected(options.isSoundMode());
+      if (romSet) {
+        options = Studio.client.getMameService().getOptions(game.getRom());
+        setInputDisabled(options == null);
 
-        if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
-          ValidationState validationState = options.getValidationStates().get(0);
-          LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
+        if (options != null) {
+          skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
+          useSound.setSelected(options.isUseSound());
+          useSamples.setSelected(options.isUseSamples());
+          compactDisplay.setSelected(options.isCompactDisplay());
+          doubleDisplaySize.setSelected(options.isDoubleDisplaySize());
+          ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
+          cabinetMode.setSelected(options.isCabinetMode());
+          showDmd.setSelected(options.isShowDmd());
+          useExternalDmd.setSelected(options.isUseExternalDmd());
+          colorizeDmd.setSelected(options.isColorizeDmd());
+          soundMode.setSelected(options.isSoundMode());
 
-          this.errorBox.setVisible(true);
-          this.errorTitle.setText(validationResult.getLabel());
-          this.errorText.setText(validationResult.getText());
+          if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
+            ValidationState validationState = options.getValidationStates().get(0);
+            LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
+
+            this.errorBox.setVisible(true);
+            this.errorTitle.setText(validationResult.getLabel());
+            this.errorText.setText(validationResult.getText());
+          }
         }
       }
     }
   }
 
+  private void setInputDisabled(boolean b) {
+    skipPinballStartupTest.setDisable(b);
+    useSound.setDisable(b);
+    useSamples.setDisable(b);
+    compactDisplay.setDisable(b);
+    doubleDisplaySize.setDisable(b);
+    ignoreRomCrcError.setDisable(b);
+    cabinetMode.setDisable(b);
+    showDmd.setDisable(b);
+    useExternalDmd.setDisable(b);
+    colorizeDmd.setDisable(b);
+    soundMode.setDisable(b);
+  }
+
   private void saveOptions() {
-    if(saveDisabled) {
+    if (saveDisabled) {
       return;
     }
 

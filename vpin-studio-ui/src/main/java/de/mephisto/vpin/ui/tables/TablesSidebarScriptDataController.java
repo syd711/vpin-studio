@@ -326,7 +326,8 @@ public class TablesSidebarScriptDataController implements Initializable {
         Studio.client.getGameService().saveGame(gameRepresentation);
         this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+        LOG.info("Error saving updated ROM name: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error saving updated ROM name: " + e.getMessage());
       }
       EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }

@@ -2,6 +2,9 @@ package de.mephisto.vpin.server.roms;
 
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -23,6 +26,9 @@ public class RomService {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
+
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
     if (Emulator.isVisualPinball(game.getEmulator().getName())) {
@@ -37,16 +43,13 @@ public class RomService {
     return new ScanResult();
   }
 
-  public boolean clearCache() {
-    this.pinUPConnector.getGameEmulators().stream().forEach(e -> e.clearCache());
-    return true;
-  }
-
   public boolean deleteAliasMapping(int emuId, String alias) throws IOException {
-    return this.pinUPConnector.getGameEmulator(emuId).deleteAliasMapping(alias);
+    GameEmulator gameEmulator = this.pinUPConnector.getGameEmulator(emuId);
+    return mameRomAliasService.deleteAliasMapping(gameEmulator, alias);
   }
 
-  public boolean saveAliasMapping(int emuId, Map<String, Object> values) throws IOException {
-    return this.pinUPConnector.getGameEmulator(emuId).saveAliasMapping(values);
+  public boolean saveAliasMapping(int emuId, Map<String, String> values) throws IOException {
+    GameEmulator gameEmulator = this.pinUPConnector.getGameEmulator(emuId);
+    return mameRomAliasService.saveAliasMapping(gameEmulator, values);
   }
 }

@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -71,6 +72,9 @@ public class GameService {
 
   @Autowired
   private AltColorService altColorService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
 
   @SuppressWarnings("unused")
   public List<Game> getGames() {
@@ -372,9 +376,8 @@ public class GameService {
       LOG.info("Created GameDetails for " + game.getGameDisplayName());
     }
 
-
     //use the script ROM name to check if it is an original or a mapping
-    String originalRom = game.getEmulator().getRomForAlias(gameDetails.getRomName());
+    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), gameDetails.getRomName());
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());

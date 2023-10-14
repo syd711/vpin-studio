@@ -21,7 +21,7 @@ public class RomResource {
   private RomService romService;
 
   @PutMapping("/mapping/{emuId}")
-  public boolean saveAliasMapping(@PathVariable("emuId") int emuId, @RequestBody Map<String, Object> values) {
+  public boolean saveAliasMapping(@PathVariable("emuId") int emuId, @RequestBody Map<String, String> values) {
     try {
       return romService.saveAliasMapping(emuId, values);
     } catch (IOException e) {
@@ -42,6 +42,6 @@ public class RomResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
-    return romService.clearCache();
+    return true;
   }
 }

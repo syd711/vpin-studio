@@ -4,11 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
-import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -138,7 +134,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       String last = null;
-      if (!this.highscoreBackups.isEmpty()) {
+      if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
         last = "The last backup was created at " + this.highscoreBackups.get(0);
       }
 
@@ -224,6 +220,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       if (StringUtils.isEmpty(rom)) {
         rom = game.getTableName();
       }
+
       if (StringUtils.isEmpty(rom)) {
         backupCountLabel.setText("0");
       }
@@ -251,7 +248,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       if (metadata != null) {
         backupBtn.setDisable(metadata.getType() == null);
-        restoreBtn.setDisable(metadata.getType() == null && highscoreBackups.isEmpty());
+        restoreBtn.setDisable(metadata.getType() == null && (highscoreBackups == null || highscoreBackups.isEmpty()));
 
         if (metadata.getFilename() != null) {
           this.hsFileLabel.setText(metadata.getFilename());

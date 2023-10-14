@@ -27,3 +27,4 @@
 - Fixed version updates after table uploads: If a table is uploaded, replaced or cloned, the version number is reset and an auto-fill is triggered to update PinUP Popper table data to the version stored in the VPX script.
 - Fixed reading of player highscores for deleted games.
 - Fixed duplicate name check for Discord bots.
+- Fixed errors in MAME settings, backglass settings and highscore backups when the ROM name of a table wasn't set.

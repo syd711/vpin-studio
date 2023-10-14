@@ -59,7 +59,7 @@ public class BackglassService {
     }
 
     File settingsXml = game.getEmulator().getB2STableSettingsXml();
-    if(settingsXml.exists()) {
+    if(settingsXml.exists() && !StringUtils.isEmpty(rom)) {
       B2STableSettingsParser tableSettingsParser = new B2STableSettingsParser(settingsXml);
       DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
 
