@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * See https://www.vpforums.org/index.php?showtopic=37182
+ * for a description about all mame options.
  */
 @Service
 public class MameService implements InitializingBean {

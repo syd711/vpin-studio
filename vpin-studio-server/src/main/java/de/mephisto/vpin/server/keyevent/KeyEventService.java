@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.keyevent;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServerTray;
-import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -41,9 +40,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Autowired
   private SystemService systemService;
-
-  @Autowired
-  private PinVolService pinVolService;
 
   private boolean visible;
 

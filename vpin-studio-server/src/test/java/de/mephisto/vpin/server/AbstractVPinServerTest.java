@@ -36,17 +36,17 @@ abstract public class AbstractVPinServerTest {
   public static final String EM_TABLE_NAME = "Baseball (1970).vpx";
   public static final String EM_ROM_NAME = "Baseball_1970";
   public static final String EM_B2S_NAME = "Baseball (1970).directb2s";
-  public static final File EM_TABLE = new File("testsystem/vPinball/VisualPinball/Tables/" + EM_TABLE_NAME);
+  public static final File EM_TABLE = new File("../testsystem/vPinball/VisualPinball/Tables/" + EM_TABLE_NAME);
 
   public static final String VPREG_TABLE_NAME = "Jaws.vpx";
   public static final String VPREG_ROM_NAME = "Jaws";
   public static final String VPREG_B2S_NAME = "Jaws.directb2s";
-  public static final File VPREG_TABLE = new File("testsystem/vPinball/VisualPinball/Tables/" + VPREG_TABLE_NAME);
+  public static final File VPREG_TABLE = new File("../testsystem/vPinball/VisualPinball/Tables/" + VPREG_TABLE_NAME);
 
   public static final String NVRAM_TABLE_NAME = "Twister (1996).vpx";
   public static final String NVRAM_B2S_NAME = "Twister (1996).directb2s";
   public static final String NVRAM_ROM_NAME = "twst_405";
-  public static final File NVRAM_TABLE = new File("testsystem/vPinball/VisualPinball/Tables/" + NVRAM_TABLE_NAME);
+  public static final File NVRAM_TABLE = new File("../testsystem/vPinball/VisualPinball/Tables/" + NVRAM_TABLE_NAME);
 
   public static final List<String> ROM = Arrays.asList(EM_ROM_NAME, VPREG_ROM_NAME, NVRAM_ROM_NAME);
   public static final List<String> TABLE_NAMES = Arrays.asList(EM_TABLE_NAME, VPREG_TABLE_NAME, NVRAM_TABLE_NAME);
@@ -112,6 +112,11 @@ abstract public class AbstractVPinServerTest {
     Emulator emulator = new Emulator();
     emulator.setDescription("VPX");
     emulator.setName("VPX");
+    emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
+    emulator.setDirRoms("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
+    emulator.setDirMedia("../testsystem/vPinball/PinUPSystem/POPMedia");
+    emulator.setDirGames("../testsystem/vPinball/VisualPinball/Tables/");
+    emulator.setGamesExt("vpx");
 
     gameEmulator = new GameEmulator(emulator);
 
@@ -125,8 +130,6 @@ abstract public class AbstractVPinServerTest {
     pinUPConnector.importGame(EM_TABLE, 1);
     pinUPConnector.importGame(VPREG_TABLE, 1);
     pinUPConnector.importGame(NVRAM_TABLE, 1);
-
-    List<Game> games = gameService.getGames();
   }
 
   protected void clearVPinStudioDatabase() {
