@@ -39,7 +39,7 @@ public class DiscordWebhookPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    BindingUtil.bindTextField(webhookText, PreferenceNames.DISCORD_WEBHOOK_URL, null);
+//    BindingUtil.bindTextField(webhookText, PreferenceNames.DISCORD_WEBHOOK_URL, null);
     webhookText.textProperty().addListener((observableValue, s, t1) -> validateInput());
     this.validateInput();
   }

@@ -1,14 +1,14 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;

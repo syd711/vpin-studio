@@ -11,7 +11,6 @@ public interface PreferenceNames {
   String OVERLAY_KEY = "overlayKey";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
 
-  String DISCORD_WEBHOOK_URL = "discordWebHookUrl";
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";

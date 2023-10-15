@@ -20,7 +20,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-<!--        <start-class>de.mephisto.vpin.server.VPinStudioServer</start-class>-->
+        <!--        <start-class>de.mephisto.vpin.server.VPinStudioServer</start-class>-->
     </properties>
 
     <dependencies>
@@ -373,7 +373,7 @@
                                         <include>*.exe</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>competition-bg-default.png</include>
-                                        <include>card-generator.properties</include>
+                                        <include>card-generator.properties.template</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
                                         <include>vpsdb.json</include>
@@ -447,12 +447,24 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>../resources/pinemhi/pinemhi.ini.bak</sourceFile>
+                            <sourceFile>../resources/pinemhi/pinemhi.ini.template</sourceFile>
                             <destinationFile>${basedir}/../Output/VPin-Studio/resources/pinemhi/pinemhi.ini</destinationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>rename-card-generator-properties</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>../resources/card-generator.properties.template</sourceFile>
+                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/card-generator.properties</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.1.2</version>
