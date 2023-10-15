@@ -28,4 +28,6 @@
 - Fixed reading of player highscores for deleted games.
 - Fixed duplicate name check for Discord bots.
 - Fixed errors in MAME settings, backglass settings and highscore backups when the ROM name of a table wasn't set.
-- Removed ROM alias mapping cache: performance is not a problem so this way manual changes on the original files are always included too. 
+- Removed ROM alias mapping cache: performance is not a problem so this way manual changes on the original files are always included too.
+- Optimized execution time of some Discord operation.
+- Fixed accidental Popper Screens config dialog opening in the table preference section which happend during the PinUP Popper running check.

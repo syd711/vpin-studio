@@ -358,22 +358,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
         dmdResolutionLabel.setText("No DMD background available.");
       }
 
-      boolean settingsAvailable = tableSettings != null;
-      hideGrill.setDisable(!settingsAvailable);
-      hideB2SDMD.setDisable(!settingsAvailable);
-      hideDMD.setDisable(!settingsAvailable);
-      lightBulbOn.setDisable(!settingsAvailable || usedLEDType.getValue().getId() == 2);
-      glowing.setDisable(!settingsAvailable || usedLEDType.getValue().getId() == 2);
-      usedLEDType.setDisable(!settingsAvailable);
-      startBackground.setDisable(!settingsAvailable);
-      bringBGFromTop.setDisable(!settingsAvailable);
-
-      skipLampFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
-      skipGIFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
-      skipSolenoidFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0);
-      skipLEDFrames.setDisable(!settingsAvailable || tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
-
-      if (settingsAvailable) {
+      if (tableSettings != null) {
         hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
         hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
         hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
@@ -387,6 +372,15 @@ public class TablesSidebarDirectB2SController implements Initializable {
         startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
         bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
       }
+
+
+      skipGIFrames.setDisable(tableData.getIlluminations() == 0);
+      skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
+      skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
+      skipLampFrames.setDisable(tableData.getIlluminations() == 0);
+
+      glowing.setDisable(usedLEDType.getValue().getId() == 2);
+      lightBulbOn.setDisable(usedLEDType.getValue().getId() == 2);
 
       this.saveEnabled = true;
     }

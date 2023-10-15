@@ -188,14 +188,13 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       try {
         if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
           if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-            Dialogs.openPopperScreensDialog(this.game.get());
             this.refreshView(this.game);
           }
           return;
         }
 
         if (game.isPresent() && tableDetails != null) {
-          if (t1.getValue() == tableDetails.getStatus()) {
+          if (t1 == null || t1.getValue() == tableDetails.getStatus()) {
             return;
           }
           this.tableDetails.setStatus(t1.getValue());
@@ -212,7 +211,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       try {
         if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
           if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-            Dialogs.openPopperScreensDialog(this.game.get());
             this.refreshView(this.game);
           }
           return;
@@ -267,7 +265,10 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       launcherCombo.setItems(FXCollections.observableList(launcherList));
       launcherCombo.setValue(tableDetails.getAltLaunchExe());
 
-      statusCombo.setValue(TABLE_STATUSES.get(tableDetails.getStatus()));
+      if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 2) {
+        TableStatus tableStatus = TABLE_STATUSES.get(tableDetails.getStatus());
+        statusCombo.setValue(tableStatus);
+      }
 
       volumeSlider.valueProperty().removeListener(this);
       if (tableDetails.getVolume() != null) {

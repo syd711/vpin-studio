@@ -545,6 +545,7 @@ public class DiscordClient {
       }
       else {
         LOG.error("No guild found for id \"" + serverId + "\"");
+        guilds.put(id, null);
         return null;
       }
 
