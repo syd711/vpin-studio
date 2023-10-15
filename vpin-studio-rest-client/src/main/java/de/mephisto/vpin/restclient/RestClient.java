@@ -47,11 +47,12 @@ public class RestClient implements ClientHttpRequestInterceptor {
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
 
-    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-    httpRequestFactory.setConnectTimeout(TIMEOUT);
-    httpRequestFactory.setReadTimeout(TIMEOUT);
-
-    restTemplate = new RestTemplate(httpRequestFactory);
+    //TODO
+//    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+//    httpRequestFactory.setConnectTimeout(TIMEOUT);
+//    httpRequestFactory.setReadTimeout(TIMEOUT);
+//    restTemplate = new RestTemplate(httpRequestFactory);
+    restTemplate = new RestTemplate();
     restTemplate.setInterceptors(interceptors);
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -67,7 +68,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
-    this.errorHandler = errorHandler;
+//    this.errorHandler = errorHandler; //TODO
   }
 
   public String getBaseUrl() {
