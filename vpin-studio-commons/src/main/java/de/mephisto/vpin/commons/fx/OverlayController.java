@@ -3,9 +3,9 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,13 +54,13 @@ public class OverlayController implements Initializable {
     titleLabel.setText(name);
 
 
-    if(offlineCompetitionController != null) {
+    if (offlineCompetitionController != null) {
       CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.OFFLINE);
       offlineCompetitionController.setCompetitionType(CompetitionType.OFFLINE);
       offlineCompetitionController.refresh(c);
     }
 
-    if(discordCompetitionController != null) {
+    if (discordCompetitionController != null) {
       CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.DISCORD);
       discordCompetitionController.setCompetitionType(CompetitionType.DISCORD);
       discordCompetitionController.refresh(c);
