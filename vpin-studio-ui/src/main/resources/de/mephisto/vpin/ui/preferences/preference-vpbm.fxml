@@ -27,7 +27,7 @@
             </Label>
             <Label styleClass="preference-description" text="The VPin Studio uses an embedded version of the &quot;Visual Pinball Backup Manager&quot; to create and restore backups." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="You can export tables to other VPins by specifying the host identifier of the other installation here." textFill="WHITE">

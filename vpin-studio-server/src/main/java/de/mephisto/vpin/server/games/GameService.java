@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -268,11 +269,20 @@ public class GameService implements InitializingBean {
     ScoreSummary summary = new ScoreSummary(scores, null);
     List<Score> allHighscoreVersions = highscoreService.getAllHighscoreVersions();
 
+    boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
+    String allowListString = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST);
+    List<String> allowList = new ArrayList<>();
+    if (!StringUtils.isEmpty(allowListString)) {
+      allowList = Arrays.stream(allowListString.split(",")).collect(Collectors.toList());
+    }
+
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
       Game rawGame = pinUPConnector.getGame(version.getGameId());
       if (rawGame != null && !scores.contains(version)) {
-        scores.add(version);
+        if (!filterEnabled || allowList.contains(version.getPlayerInitials().toUpperCase())) {
+          scores.add(version);
+        }
       }
 
       if (count > 0 && scores.size() == count) {

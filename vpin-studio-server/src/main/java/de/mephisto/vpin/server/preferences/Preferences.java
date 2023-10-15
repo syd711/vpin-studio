@@ -30,6 +30,8 @@ public class Preferences {
 
   private String overlayKey;
 
+  private String overlayDesign;
+
   private String showOverlayOnStartup;
 
   private String discordWebHookUrl;
@@ -53,7 +55,13 @@ public class Preferences {
   @Column(length = 1024)
   private String highscoreTitles;
 
+  @Column(length = 1024)
+  private String highscoreAllowList;
+
   private int idleTimeout;
+
+  @Column(name = "highscoreFilterEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean highscoreFilterEnabled;
 
   @Column(name = "activeGame", nullable = false, columnDefinition = "int default -1")
   private int activeGame = -1;
@@ -72,6 +80,30 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getOverlayDesign() {
+    return overlayDesign;
+  }
+
+  public void setOverlayDesign(String overlayDesign) {
+    this.overlayDesign = overlayDesign;
+  }
+
+  public String getHighscoreAllowList() {
+    return highscoreAllowList;
+  }
+
+  public void setHighscoreAllowList(String highscoreAllowList) {
+    this.highscoreAllowList = highscoreAllowList;
+  }
+
+  public boolean getHighscoreFilterEnabled() {
+    return highscoreFilterEnabled;
+  }
+
+  public void setHighscoreFilterEnabled(boolean highscoreFilterEnabled) {
+    this.highscoreFilterEnabled = highscoreFilterEnabled;
+  }
 
   public boolean getDiscordDynamicSubscriptions() {
     return discordDynamicSubscriptions;

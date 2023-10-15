@@ -26,7 +26,7 @@
             </Label>
             <Label styleClass="preference-description" text="You can create a Discord bot and add it to Discord servers to receive notifications and join online competitions." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The member names are mapped against the highscore initials and new highscores." textFill="WHITE" />

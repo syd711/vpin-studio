@@ -23,7 +23,7 @@
             </Label>
             <Label styleClass="preference-description" text="The dashboard overlay can be shown on startup. It will hide once any button is pressed." textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
+                  <Insets bottom="6.0" top="12.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" prefHeight="60.0" prefWidth="708.0">

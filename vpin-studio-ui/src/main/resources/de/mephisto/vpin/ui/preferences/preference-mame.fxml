@@ -17,15 +17,10 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-subtitle" text="Default Options" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
+            <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the default options set for every VPX table." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the default options set for every VPX table." textFill="WHITE" />
+                  <Insets top="12.0" />
+               </VBox.margin></Label>
             <Label styleClass="preference-description" text="These settings can be customized for every table in the table overview." textFill="WHITE">
                <VBox.margin>
                   <Insets />

@@ -20,7 +20,7 @@
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Repositories" />
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="Table repositories are servers that serve Visual Pinball archive files." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can add your own server here to safely create and restore table backups." textFill="WHITE">

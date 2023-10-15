@@ -14,7 +14,7 @@
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPX Validators" />
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every VPX table. The validators can be disabled for every table individually," textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin></Label>
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="when the validation message is dismissed." textFill="WHITE" />
             <CheckBox fx:id="pref_1" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM Name Check" />

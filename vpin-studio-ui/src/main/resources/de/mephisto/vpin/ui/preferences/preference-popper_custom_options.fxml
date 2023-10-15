@@ -24,7 +24,7 @@
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Custom Options" />
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="These are settings that you can tweak behind the scenes of PinUP Popper." textFill="WHITE">
                      <VBox.margin>
-                        <Insets top="24.0" />
+                        <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="The settings are all added to the &quot;Custom Options&quot; box of &quot;GlobalConfig -&gt; Script&quot;." textFill="WHITE" />

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +13,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -18,12 +21,12 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * Coordinates Fixing:
- *
- *        x
- *        |
- *  -y ------- +y
- *        |
- *       -x
+ * <p>
+ * x
+ * |
+ * -y ------- +y
+ * |
+ * -x
  */
 public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
@@ -58,6 +61,18 @@ public class OverlayWindowFX extends Application {
 
   public void setVisible(boolean b) {
     if (b) {
+      try {
+        PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
+        String value = "hs-offline"; //TODO preference.getValue();
+        String resource = resolveDashboard(value);
+
+        FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
+        Parent widgetRoot = loader.load();
+        overlayController = loader.getController();
+        root.setCenter(widgetRoot);
+      } catch (IOException e) {
+        LOG.error("Failed to init dashboard: " + e.getMessage(), e);
+      }
       stage.show();
       overlayController.refreshData();
     }
@@ -66,9 +81,32 @@ public class OverlayWindowFX extends Application {
     }
   }
 
+  private static String resolveDashboard(String value) {
+    String fxml = "scene-overlay-" + resolveDashboardResolution();
+    if (!StringUtils.isEmpty(value)) {
+      fxml = fxml + "-" + value;
+    }
+
+    fxml = fxml + ".fxml";
+    LOG.info("Using Dashboard " + fxml);
+    return fxml;
+  }
+
+  private static String resolveDashboardResolution() {
+    String resource = "uhd";
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    if (screenBounds.getWidth() < 3000 && screenBounds.getWidth() > 2000) {
+      resource = "wqhd";
+    }
+    else if (screenBounds.getWidth() < 2000) {
+      resource = "hd";
+    }
+    return resource;
+  }
+
   public void setMaintenanceVisible(boolean b) {
-    if(maintenanceStage != null) {
-      if(b) {
+    if (maintenanceStage != null) {
+      if (b) {
         maintenanceStage.setFullScreen(true);
         maintenanceStage.show();
       }
@@ -103,7 +141,7 @@ public class OverlayWindowFX extends Application {
       LOG.error("Failed to init dashboard: " + e.getMessage(), e);
     }
 
-    if(b) {
+    if (b) {
       maintenanceStage.setFullScreen(true);
       maintenanceStage.show();
     }
@@ -128,32 +166,7 @@ public class OverlayWindowFX extends Application {
     stage.setFullScreenExitHint("");
     stage.setAlwaysOnTop(true);
     stage.setFullScreen(true);
-//    stage.initStyle(StageStyle.UNDECORATED);
-//    scene.setFill(Color.web("#272b2f"));
     stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
-
-    try {
-      String resource = "scene-overlay-uhd.fxml";
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-      if(screenBounds.getWidth() < 3000 && screenBounds.getWidth() > 2000) {
-        resource = "scene-overlay-wqhd.fxml";
-        LOG.info("Using WQHD Dashboard");
-      }
-      else if(screenBounds.getWidth() < 2000) {
-        resource = "scene-overlay-hd.fxml";
-        LOG.info("Using HD Dashboard");
-      }
-      else {
-        LOG.info("Using UHD Dashboard");
-      }
-
-      FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
-      Parent widgetRoot = loader.load();
-      overlayController = loader.getController();
-      root.setCenter(widgetRoot);
-    } catch (IOException e) {
-      LOG.error("Failed to init dashboard: " + e.getMessage(), e);
-    }
 
     latch.countDown();
   }

@@ -5,10 +5,13 @@ public interface PreferenceNames {
   String IGNORED_MEDIA = "ignoredMedia";
   String SYSTEM_NAME = "systemName";
   String HIGHSCORE_TITLES = "highscoreTitles";
+  String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
+  String HIGHSCORE_ALLOW_LIST = "highscoreAllowList";
   String IDLE_TIMEOUT = "idleTimeout";
   String AVATAR = "avatar";
   String RESET_KEY = "resetKey";
   String OVERLAY_KEY = "overlayKey";
+  String OVERLAY_DESIGN = "overlayDesign";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";

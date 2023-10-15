@@ -29,7 +29,10 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challanges." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challanges." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin></Label>
                   <Label styleClass="preference-description" text="For more information, visit" textFill="WHITE" />
                   <Hyperlink onAction="#onLink" text="http://pinemhi.com/hiscores.php" />
                   <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Note that all text here were copied from the original settings documentation." textFill="WHITE" />

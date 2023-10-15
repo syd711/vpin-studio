@@ -22,7 +22,7 @@
             </Label>
             <Label styleClass="preference-description" text="Screens that are not used on the VPin can be disabled here." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="103.0" styleClass="preference-description" text="Related validations are ignored for disabled screens and they are not shown in the media preview." textFill="WHITE">

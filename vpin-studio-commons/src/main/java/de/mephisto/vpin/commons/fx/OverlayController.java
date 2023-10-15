@@ -54,14 +54,17 @@ public class OverlayController implements Initializable {
     titleLabel.setText(name);
 
 
-    CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.OFFLINE);
-    offlineCompetitionController.setCompetitionType(CompetitionType.OFFLINE);
-    offlineCompetitionController.refresh(c);
+    if(offlineCompetitionController != null) {
+      CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.OFFLINE);
+      offlineCompetitionController.setCompetitionType(CompetitionType.OFFLINE);
+      offlineCompetitionController.refresh(c);
+    }
 
-    c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.DISCORD);
-    discordCompetitionController.setCompetitionType(CompetitionType.DISCORD);
-    discordCompetitionController.refresh(c);
-
+    if(discordCompetitionController != null) {
+      CompetitionRepresentation c = OverlayWindowFX.client.getActiveCompetition(CompetitionType.DISCORD);
+      discordCompetitionController.setCompetitionType(CompetitionType.DISCORD);
+      discordCompetitionController.refresh(c);
+    }
 
     if (latestScoresController != null) {
       latestScoresController.refresh();

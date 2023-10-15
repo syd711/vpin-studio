@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ResetPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ResetPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -22,7 +22,7 @@
             </Label>
             <Label styleClass="preference-description" text="If configured, the reset event will kill all PinUP Popper process (including VPX) and restart the UI. " textFill="WHITE">
                <VBox.margin>
-                  <Insets bottom="6.0" top="24.0" />
+                  <Insets bottom="6.0" top="12.0" />
                </VBox.margin>
             </Label>
             <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefHeight="60.0" prefWidth="708.0">
