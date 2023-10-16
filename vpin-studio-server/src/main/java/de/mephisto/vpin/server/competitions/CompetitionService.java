@@ -273,7 +273,13 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getActiveCompetitions() {
-    return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
+    try {
+      return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read active competitions: " + e.getMessage());
+    }
+    return Collections.emptyList();
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
