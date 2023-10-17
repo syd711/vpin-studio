@@ -78,7 +78,7 @@ public class GameService implements InitializingBean {
   @Autowired
   private MameRomAliasService mameRomAliasService;
 
-  @SuppressWarnings("unused")
+  @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
     List<Game> games = new ArrayList<>(pinUPConnector.getGames());
@@ -86,9 +86,34 @@ public class GameService implements InitializingBean {
     start = System.currentTimeMillis();
 
     for (Game game : games) {
-      applyGameDetails(game, false);
+      applyGameDetails(game, null, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    return games;
+  }
+
+  @SuppressWarnings("unused")
+  public List<Integer> getUnknownGames() {
+    List<Integer> gameIds = new ArrayList<>(getGameIds());
+    List<Integer> filtered = new ArrayList<>();
+    for (Integer id : gameIds) {
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
+      if (gameDetails == null) {
+        filtered.add(id);
+      }
+    }
+    return filtered;
+  }
+
+  @SuppressWarnings("unused")
+  public List<Game> getKnownGames() {
+    List<Game> games = new ArrayList<>(pinUPConnector.getGames());
+    for (Game game : games) {
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      if (gameDetails != null) {
+        applyGameDetails(game, gameDetails, false);
+      }
+    }
     return games;
   }
 
@@ -100,7 +125,7 @@ public class GameService implements InitializingBean {
                 (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
     for (Game game : games) {
-      applyGameDetails(game, false);
+      applyGameDetails(game, null, false);
     }
     return games;
   }
@@ -228,7 +253,7 @@ public class GameService implements InitializingBean {
     return success;
   }
 
-  public List<Integer> getGameId() {
+  public List<Integer> getGameIds() {
     return this.pinUPConnector.getGameIds();
   }
 
@@ -237,7 +262,7 @@ public class GameService implements InitializingBean {
   public synchronized Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
-      applyGameDetails(game, false);
+      applyGameDetails(game, null, false);
       return game;
     }
     return null;
@@ -304,7 +329,7 @@ public class GameService implements InitializingBean {
     try {
       game = getGame(gameId);
       if (game != null) {
-        applyGameDetails(game, true);
+        applyGameDetails(game, null, true);
         highscoreService.scanScore(game);
 
         return getGame(gameId);
@@ -357,8 +382,11 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private void applyGameDetails(@NonNull Game game, boolean forceScan) {
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+  private void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan) {
+    if (gameDetails == null) {
+      gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    }
+
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 

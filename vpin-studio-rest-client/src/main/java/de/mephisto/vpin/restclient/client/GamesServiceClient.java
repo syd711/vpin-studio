@@ -86,6 +86,37 @@ public class GamesServiceClient extends VPinStudioClientService {
     return gameRepresentation;
   }
 
+  public List<Integer> getUnknownGameIds() {
+    try {
+      this.games.clear();
+      return Arrays.asList(getRestClient().get( API + "games/unknowns", Integer[].class));
+    } catch (Exception e) {
+      LOG.error("Failed to read unknowns game ids: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  public List<GameRepresentation> getKnownGames() {
+    try {
+      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
+      return this.games;
+    } catch (Exception e) {
+      LOG.error("Failed to read knowns games: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  @Deprecated
+  public List<GameRepresentation> getGames() {
+    try {
+      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
+      return this.games;
+    } catch (Exception e) {
+      LOG.error("Failed to get games: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public List<Integer> getGameIds() {
     try {
       final RestTemplate restTemplate = new RestTemplate();
@@ -131,16 +162,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<GameRepresentation> getGames() {
-    try {
-      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
-      return this.games;
-    } catch (Exception e) {
-      LOG.error("Failed to get games: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public List<GameRepresentation> getGamesWithScores() {
     List<GameRepresentation> gameList = this.getGamesCached();
     List<GameRepresentation> result = new ArrayList<>();
@@ -154,7 +175,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getGamesCached() {
     if (this.games == null || this.games.isEmpty()) {
-      this.games = this.getGames();
+      this.games = this.getKnownGames();
     }
     return this.games;
   }

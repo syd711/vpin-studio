@@ -37,7 +37,7 @@ public class ProgressDialogController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    cancelButton.setOnAction(event -> service.cancel());
+    cancelButton.setOnAction(event -> this.onDialogCancel());
   }
 
   public void setProgressModel(Stage stage, ProgressModel model) {
@@ -118,6 +118,7 @@ public class ProgressDialogController implements Initializable, DialogController
   @Override
   public void onDialogCancel() {
     service.cancel();
+    progressResultModel.setCancelled(true);
 
     if(this.model != null) {
       model.cancel();

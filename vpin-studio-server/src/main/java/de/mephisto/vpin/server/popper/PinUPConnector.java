@@ -859,13 +859,16 @@ public class PinUPConnector implements InitializingBean {
     int count = 0;
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = 1;");
-      while (rs.next()) {
-        count = rs.getInt("count");
+      Collection<GameEmulator> values = this.emulators.values();
+      for (GameEmulator value : values) {
+        Statement statement = connect.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = " + value.getId() + ";");
+        while (rs.next()) {
+          count = count + rs.getInt("count");
+        }
+        rs.close();
+        statement.close();
       }
-      rs.close();
-      statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
     } finally {
@@ -878,13 +881,18 @@ public class PinUPConnector implements InitializingBean {
     List<Integer> result = new ArrayList<>();
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT GameID FROM Games WHERE EMUID = 1;");
-      while (rs.next()) {
-        result.add(rs.getInt("GameID"));
+      Collection<GameEmulator> values = this.emulators.values();
+      for (GameEmulator value : values) {
+        Statement statement = connect.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT GameID FROM Games WHERE EMUID = " + value.getId() + ";");
+        while (rs.next()) {
+          result.add(rs.getInt("GameID"));
+        }
+        rs.close();
+        statement.close();
       }
-      rs.close();
-      statement.close();
+
+
     } catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
     } finally {

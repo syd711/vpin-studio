@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -105,11 +107,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
   }
 
+  @Override
+  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+    //not used for card generation
+  }
 
   @Override
-  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
     try {
-      generateCard(event.getGame(), false);
+      generateCard(game, false);
     } catch (Exception e) {
       LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
     }

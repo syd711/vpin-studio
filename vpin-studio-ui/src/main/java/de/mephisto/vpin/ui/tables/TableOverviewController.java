@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -506,20 +507,30 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     new Thread(() -> {
 
-      GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      games = client.getGameService().getGames();
-      filterGames(games);
-
       Platform.runLater(() -> {
+        GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+        List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
+        if (!unknownGameIds.isEmpty()) {
+          reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload-alert"));
+          ProgressResultModel progressDialog = Dialogs.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+          if (!progressDialog.isCancelled()) {
+            reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload"));
+          }
+        }
+
+        games = client.getGameService().getKnownGames();
+        filterGames(games);
+
         tableView.setItems(data);
         tableView.refresh();
 
         if (selection != null) {
-          final GameRepresentation updatedGame = client.getGame(selection.getId());
-          if (updatedGame != null) {
-            tableView.getSelectionModel().select(updatedGame);
-            this.playBtn.setDisable(!updatedGame.isGameFileAvailable());
-            this.backupBtn.setDisable(!updatedGame.isGameFileAvailable());
+          final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
+          if (updatedGame.isPresent()) {
+            GameRepresentation gameRepresentation = updatedGame.get();
+            tableView.getSelectionModel().select(gameRepresentation);
+            this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+            this.backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
           }
         }
         else if (!games.isEmpty()) {
@@ -700,7 +711,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
-      if (validationState.getCode() > 0) {
+      if (validationState != null && validationState.getCode() > 0) {
         return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
       }
 

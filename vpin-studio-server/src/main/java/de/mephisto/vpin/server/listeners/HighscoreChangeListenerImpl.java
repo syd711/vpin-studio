@@ -48,6 +48,11 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   private DiscordCompetitionService discordCompetitionService;
 
   @Override
+  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+    //no used for diff calculation
+  }
+
+  @Override
   public synchronized void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     Game game = event.getGame();
 
@@ -101,9 +106,9 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
   private Optional<Competition> runSubscriptionChannelsCheck(Game game, List<Competition> competitionForRom) {
     boolean dynamicSubscriptionsEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
-    String defaultDiscordServerId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
 
     if (dynamicSubscriptionsEnabled) {
+      String defaultDiscordServerId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       if (StringUtils.isEmpty(defaultDiscordServerId) && !competitionForRom.isEmpty()) {
         LOG.info("The default Discord server id is not set, but subscriptions have been created and dynamic subscriptions are enabled. You may want to configure a default server so that subscription are generated for your server too.");
       }

@@ -9,6 +9,7 @@ import java.util.List;
 public class ProgressResultModel {
   private int processed;
   private int skipped;
+  private boolean cancelled = false;
 
   public List<Object> results = new ArrayList<>();
   private ProgressBar progressBar;
@@ -34,6 +35,14 @@ public class ProgressResultModel {
   public void addProcessed(Object result) {
     this.processed++;
     this.results.add(result);
+  }
+
+  public boolean isCancelled() {
+    return cancelled;
+  }
+
+  public void setCancelled(boolean cancelled) {
+    this.cancelled = cancelled;
   }
 
   public List<Object> getResults() {

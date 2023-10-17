@@ -54,7 +54,7 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private PinUPConnector pinUPConnector;
 
-  private boolean pauseChangeEvents;
+  private boolean pauseHighscoreEvents;
 
   private HighscoreResolver highscoreResolver;
 
@@ -424,18 +424,8 @@ public class HighscoreService implements InitializingBean {
       }
 
       LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
-      for (Integer changedPosition : changedPositions) {
-        //so we have a highscore update, let's decide the distribution
-        Score oldScore = oldScores.get(changedPosition - 1);
-        Score newScore = newScores.get(changedPosition - 1);
 
-        //archive old existingScore only if it had actual data
-        if (!StringUtils.isEmpty(oldRaw)) {
-          HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
-          highscoreVersionRepository.saveAndFlush(version);
-          LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
-        }
-
+      if (!changedPositions.isEmpty()) {
         //update existing one
         oldHighscore.setRaw(newHighscore.getRaw());
         oldHighscore.setType(newHighscore.getType());
@@ -447,9 +437,27 @@ public class HighscoreService implements InitializingBean {
         highscoreRepository.saveAndFlush(oldHighscore);
         LOG.info("Saved updated highscore for " + game);
 
-        //finally, fire the update event to notify all listeners
-        HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
-        triggerHighscoreChange(event);
+        //update the highscore card
+        triggerHighscoreUpdate(game, newHighscore);
+
+        boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
+
+        for (Integer changedPosition : changedPositions) {
+          //so we have a highscore update, let's decide the distribution
+          Score oldScore = oldScores.get(changedPosition - 1);
+          Score newScore = newScores.get(changedPosition - 1);
+
+          //archive old existingScore only if it had actual data
+          if (!StringUtils.isEmpty(oldRaw)) {
+            HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
+            highscoreVersionRepository.saveAndFlush(version);
+            LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
+          }
+
+          //finally, fire the update event to notify all listeners
+          HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
+          triggerHighscoreChange(event);
+        }
       }
     }
 
@@ -520,19 +528,30 @@ public class HighscoreService implements InitializingBean {
     return -1;
   }
 
-  public void setPauseChangeEvents(boolean pauseChangeEvents) {
-    this.pauseChangeEvents = pauseChangeEvents;
-    LOG.info("Setting highscore change events to: " + pauseChangeEvents);
+  public void setPauseHighscoreEvents(boolean pauseHighscoreEvents) {
+    this.pauseHighscoreEvents = pauseHighscoreEvents;
+    LOG.info("Setting highscore change events to: " + pauseHighscoreEvents);
   }
 
   private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
-    if (pauseChangeEvents) {
+    if (pauseHighscoreEvents) {
       LOG.info("Skipping highscore change event because change events are paused.");
       return;
     }
 
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreChanged(event);
+    }
+  }
+
+  private void triggerHighscoreUpdate(@NonNull Game game, @NonNull Highscore highscore) {
+    if (pauseHighscoreEvents) {
+      LOG.info("Skipping highscore update event because update events are paused.");
+      return;
+    }
+
+    for (HighscoreChangeListener listener : listeners) {
+      listener.highscoreUpdated(game, highscore);
     }
   }
 

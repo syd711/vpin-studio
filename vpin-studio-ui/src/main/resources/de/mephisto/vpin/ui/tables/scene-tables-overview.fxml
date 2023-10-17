@@ -116,7 +116,7 @@
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                     </graphic>
                            <tooltip>
                               <Tooltip text="Reload all table data" />
@@ -127,7 +127,7 @@
                         <Separator layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
@@ -142,7 +142,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Import existing VPX files into PinUP Popper" />
@@ -153,7 +153,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Upload VPX files to PinUP Popper" />
@@ -164,7 +164,7 @@
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
+                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                                     </graphic>
                            <tooltip>
                               <Tooltip text="Delete table and assets" />
@@ -187,7 +187,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Scans the selected tables to extract metadata" />
@@ -198,7 +198,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Run table scan for all tables" />
@@ -210,7 +210,7 @@
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Launch VPX with the selected table." />
@@ -221,7 +221,7 @@
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="16" />
+                                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Kill all VPX and PinUP Popper processes." />
@@ -233,7 +233,7 @@
                                         <Font size="14.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" iconSize="18" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Exports the selected table into the local repository." />

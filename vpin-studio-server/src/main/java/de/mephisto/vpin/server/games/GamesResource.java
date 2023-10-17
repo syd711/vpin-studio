@@ -38,13 +38,22 @@ public class GamesResource {
   private PopperService popperService;
 
   @GetMapping
-  public List<Game> getGame() {
+  public List<Game> getGames() {
     return gameService.getGames();
   }
 
   @GetMapping("/ids")
-  public List<Integer> getGameId() {
-    return gameService.getGameId();
+  public List<Integer> getGameIds() {
+    return gameService.getGameIds();
+  }
+
+  @GetMapping("/unknowns")
+  public List<Integer> getUnknownGameIds() {
+    return gameService.getUnknownGames();
+  }
+  @GetMapping("/knowns")
+  public List<Game> getKnownGames() {
+    return gameService.getKnownGames();
   }
 
   @GetMapping("/recent/{count}")
