@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,6 +18,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class UpdateDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(UpdateDialogController.class);
 
   @FXML
   private Label clientLabel;
@@ -61,6 +64,7 @@ public class UpdateDialogController implements Initializable, DialogController {
             client.getSystemService().startServerUpdate(newVersion);
             while (true) {
               int progress = client.getSystemService().getServerUpdateProgress();
+              LOG.info("Server Update Download: " + progress);
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {

@@ -84,7 +84,11 @@ public class SystemResource {
 
   @GetMapping("/update/{version}/download/start")
   public boolean downloadUpdate(@PathVariable("version") String version) {
-    return Updater.downloadUpdate(version, Updater.SERVER_ZIP);
+    new Thread(() -> {
+      Thread.currentThread().setName("Server Update Downloader");
+      Updater.downloadUpdate(version, Updater.SERVER_ZIP);
+    }).start();
+    return true;
   }
 
   @GetMapping("/update/download/status")
