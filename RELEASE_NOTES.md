@@ -12,3 +12,4 @@
 - Fixed update progress bar showing progress.
 - Removed "EM" table hint for the highscore filename field in the "Script Details" section: Since not only EM tables, but also original tables use text-files for storing highscores, the "EM" hint was wrong.
 - Fixed highscore parsing for "SpongeBob's Bikini Bottom Pinball VPW". The table has a custom highscore format that was not supported yet.
+- Improved performance of recent highscores (which should fill up the corresponding dashboard widget faster).

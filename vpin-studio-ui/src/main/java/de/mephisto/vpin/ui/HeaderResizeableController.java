@@ -78,7 +78,7 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
-    titleLabel.setText("VPin Studio");
+    titleLabel.setText("VPin Studio - " + Studio.getVersion());
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {

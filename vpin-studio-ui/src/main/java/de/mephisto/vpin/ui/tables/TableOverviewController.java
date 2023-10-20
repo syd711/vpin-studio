@@ -627,8 +627,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
-      FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
-      label.setGraphic(icon);
+//      FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+//      label.setGraphic(icon);
       return new SimpleObjectProperty(label);
     });
 
