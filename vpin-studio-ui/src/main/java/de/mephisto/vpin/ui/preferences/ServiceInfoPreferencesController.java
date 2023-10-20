@@ -33,7 +33,7 @@ public class ServiceInfoPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Date startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
-    versionLabel.setText(client.getSystemService().version());
+    versionLabel.setText(client.getSystemService().getVersion());
 
     onReload();
   }

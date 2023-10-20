@@ -75,7 +75,7 @@ public class SystemServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/install", Boolean.class);
   }
 
-  public String version() {
+  public String getVersion() {
     try {
       final RestTemplate restTemplate = new RestTemplate();
       return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/version", String.class);

@@ -169,7 +169,7 @@ public class LauncherController implements Initializable {
     VPinConnection selectedItem = tableView.getSelectionModel().getSelectedItem();
     VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
     String clientVersion = Studio.getVersion();
-    String serverVersion = client.getSystemService().version();
+    String serverVersion = client.getSystemService().getVersion();
 
     if (serverVersion != null) {
       if (!serverVersion.equals(clientVersion)) {
@@ -204,7 +204,7 @@ public class LauncherController implements Initializable {
       main.setCenter(loadingOverlay);
 
       new Thread(() -> {
-        while (client.getSystemService().version() == null) {
+        while (client.getSystemService().getVersion() == null) {
           try {
             LOG.info("Waiting for server...");
             Thread.sleep(2000);
@@ -213,7 +213,7 @@ public class LauncherController implements Initializable {
           }
         }
 
-        LOG.info("Found server startup, running on version " + client.getSystemService().version() + ", starting table scan.");
+        LOG.info("Found server startup, running on version " + client.getSystemService().getVersion() + ", starting table scan.");
         Platform.runLater(() -> {
           stage.close();
           Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
@@ -232,7 +232,7 @@ public class LauncherController implements Initializable {
         "Install the service or connect to another system."));
 
     this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
-    this.installBtn.setDisable(client.getSystemService().version() != null);
+    this.installBtn.setDisable(client.getSystemService().getVersion() != null);
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
@@ -306,7 +306,7 @@ public class LauncherController implements Initializable {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Future<VPinConnection> future = executor.submit(() -> {
       VPinStudioClient client = new VPinStudioClient(host);
-      String version = client.getSystemService().version();
+      String version = client.getSystemService().getVersion();
       if (version != null) {
         VPinConnection connection = new VPinConnection();
         PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);

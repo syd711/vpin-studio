@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
@@ -75,7 +76,7 @@ public class Updater {
       }
       in.close();
       fileOutputStream.close();
-      if(!tmp.renameTo(target)) {
+      if (!tmp.renameTo(target)) {
         LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
       }
       LOG.info("Downloaded file " + target.getAbsolutePath());
@@ -96,7 +97,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nserver.vbs\nexit");
+    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nserver.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());
@@ -143,15 +144,28 @@ public class Updater {
       int responseCode = conn.getResponseCode();//DO NOT DELETE!!!!
 
       String s = conn.getURL().toString();
-      String versionSegment = s.substring(s.lastIndexOf("/") + 1);
-      if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
-        LATEST_VERSION = versionSegment;
-        return versionSegment;
+      String latestVersion = s.substring(s.lastIndexOf("/") + 1);
+      if (isLargerVersionThan(latestVersion, referenceVersion)) {
+        LATEST_VERSION = latestVersion;
+        return latestVersion;
       }
     } catch (Exception e) {
       LOG.error("Update check failed: " + e.getMessage());
     }
     return null;
+  }
+
+  public static boolean isLargerVersionThan(String versionA, String versionB) {
+    List<Integer> versionASegments = Arrays.asList(versionA.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
+
+    for (int i = 0; i < versionBSegments.size(); i++) {
+      if (versionASegments.get(i) > versionBSegments.get(i)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private static File getBasePath() {

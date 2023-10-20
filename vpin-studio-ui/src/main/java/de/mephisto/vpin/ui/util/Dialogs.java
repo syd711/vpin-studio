@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateDialogController;
+import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -60,6 +61,18 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
+
+  public static void openUpdateInfoDialog(String version) {
+    FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+    stage.showAndWait();
+  }
+
+  public static boolean openUpdateDialog() {
+    Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    stage.showAndWait();
+    return true;
+  }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
     String title = "Add New Player";
@@ -417,13 +430,6 @@ public class Dialogs {
     PINemHiUIPreferenceController controller = (PINemHiUIPreferenceController) stage.getUserData();
     controller.setSettings(settings);
     stage.showAndWait();
-  }
-
-  public static boolean openUpdateDialog() {
-    Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
-    UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
-    stage.showAndWait();
-    return true;
   }
 
   public static void openFile(@NonNull File file) {

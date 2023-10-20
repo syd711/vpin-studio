@@ -35,33 +35,56 @@ public class UpdateDialogController implements Initializable, DialogController {
   private Service serverService;
   private Service clientService;
 
+  private boolean updateServer = false;
+  private boolean updateClient = false;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    String newVersion = Updater.checkForUpdate(Studio.getVersion());
-    clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.UI_ZIP);
-    serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newVersion) + Updater.SERVER_ZIP);
+    String clientVersion = Studio.getVersion();
+    String serverVersion = client.getSystemService().getVersion();
 
+    String newClientVersion = Updater.checkForUpdate(clientVersion);
+    updateClient = newClientVersion != null;
 
-    String existingVersion = client.getSystemService().version();
-    if (existingVersion.equals(newVersion)) {
-      serverProgress.setDisable(true);
-      serverProgress.setProgress(1f);
-      serverLabel.setText("The server is already running on version " + newVersion);
-      startClientUpdate(newVersion);
+    String newServerVersion = Updater.checkForUpdate(serverVersion);
+    updateServer = newServerVersion != null;
+
+    //initialize UI
+    if (!updateClient) {
+      clientProgress.setDisable(true);
+      clientProgress.setProgress(1f);
+      clientLabel.setText("The client is already running on version " + clientVersion);
     }
     else {
-      startServerUpdate(newVersion);
+      clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
+    }
+
+    if (!updateServer) {
+      serverProgress.setDisable(true);
+      serverProgress.setProgress(1f);
+      serverLabel.setText("The server is already running on version " + serverVersion);
+    }
+    else {
+      serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newServerVersion) + Updater.SERVER_ZIP);
+    }
+
+    //execute updates
+    if (updateServer) {
+      startServerUpdate(newServerVersion, newClientVersion);
+    }
+    else if (updateClient) {
+      startClientUpdate(newClientVersion);
     }
   }
 
-  private void startServerUpdate(String newVersion) {
+  private void startServerUpdate(String newServerVersion, String newClientVersion) {
     serverService = new Service() {
       @Override
       protected Task createTask() {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            client.getSystemService().startServerUpdate(newVersion);
+            client.getSystemService().startServerUpdate(newServerVersion);
             while (true) {
               int progress = client.getSystemService().getServerUpdateProgress();
               LOG.info("Server Update Download: " + progress);
@@ -86,18 +109,22 @@ public class UpdateDialogController implements Initializable, DialogController {
 
             while (true) {
               Thread.sleep(1000);
-              if (client.getSystemService().version() != null) {
+              if (client.getSystemService().getVersion() != null) {
                 break;
               }
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Update successful, server is running on version " + client.getSystemService().version());
+              serverLabel.setText("Update successful, server is running on version " + client.getSystemService().getVersion());
               serverProgress.setProgress(1f);
             });
 
             //finished
-            startClientUpdate(newVersion);
+            if (updateClient) {
+              Platform.runLater(() -> {
+                startClientUpdate(newClientVersion);
+              });
+            }
 
             return null;
           }
@@ -114,9 +141,13 @@ public class UpdateDialogController implements Initializable, DialogController {
         return new Task() {
           @Override
           protected Object call() throws Exception {
-            Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
+            new Thread(() -> {
+              Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
+            }).start();
+            Thread.sleep(1000);
             while (true) {
               int progress = Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
+              LOG.info("Client Update Download: " + progress);
               updateProgress(progress, 100);
               Thread.sleep(1000);
               Platform.runLater(() -> {

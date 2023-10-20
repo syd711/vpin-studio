@@ -9,22 +9,17 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -48,6 +43,8 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private HBox toolbarHBox;
+
+  private String newVersion;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -80,7 +77,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onUpdate() {
-    String newVersion = Updater.checkForUpdate(Studio.getVersion());
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + newVersion, "A new update has been found. Download and install update for server and client?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Dialogs.openUpdateDialog();
@@ -126,10 +122,26 @@ public class ToolbarController implements Initializable, StudioEventListener {
     String os = System.getProperty("os.name");
     if (os.contains("Windows")) {
       new Thread(() -> {
-        String s = Updater.checkForUpdate(Studio.getVersion());
-        Platform.runLater(() -> {
-          updateBtn.setVisible(!StringUtils.isEmpty(s));
-        });
+        String serverVersion = client.getSystemService().getVersion();
+        String clientVersion = Studio.getVersion();
+
+        String updateServerVersion = Updater.checkForUpdate(serverVersion);
+        String updateClientVersion = Updater.checkForUpdate(clientVersion);
+
+        if (updateClientVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateClientVersion;
+            updateBtn.setText("Version " + updateClientVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
+          });
+        }
+        else if (updateServerVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateServerVersion;
+            updateBtn.setText("Version " + updateServerVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
+          });
+        }
       }).start();
     }
 

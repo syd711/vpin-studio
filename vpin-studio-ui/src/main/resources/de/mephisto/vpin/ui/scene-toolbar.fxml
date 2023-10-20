@@ -34,9 +34,6 @@
                            <graphic>
                               <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="16" />
                            </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                            <tooltip>
                               <Tooltip text="Update available" />
                            </tooltip>
