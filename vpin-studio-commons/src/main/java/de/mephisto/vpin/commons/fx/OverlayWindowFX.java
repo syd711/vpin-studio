@@ -63,7 +63,7 @@ public class OverlayWindowFX extends Application {
     if (b) {
       try {
         PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
-        String value = "hs-offline"; //TODO preference.getValue();
+        String value = "hs"; //TODO preference.getValue();
         String resource = resolveDashboard(value);
 
         FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
