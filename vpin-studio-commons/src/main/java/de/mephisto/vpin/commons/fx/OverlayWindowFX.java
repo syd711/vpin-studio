@@ -63,7 +63,7 @@ public class OverlayWindowFX extends Application {
     if (b) {
       try {
         PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
-        String value = "hs"; //TODO preference.getValue();
+        String value = preference.getValue();
         String resource = resolveDashboard(value);
 
         FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
@@ -84,7 +84,7 @@ public class OverlayWindowFX extends Application {
   private static String resolveDashboard(String value) {
     String fxml = "scene-overlay-" + resolveDashboardResolution();
     if (!StringUtils.isEmpty(value)) {
-      fxml = fxml + "-" + value;
+      fxml = fxml + value;
     }
 
     fxml = fxml + ".fxml";
