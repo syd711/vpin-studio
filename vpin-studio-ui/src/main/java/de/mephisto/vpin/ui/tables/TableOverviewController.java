@@ -43,6 +43,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -626,6 +627,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
+      FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+      label.setGraphic(icon);
       return new SimpleObjectProperty(label);
     });
 

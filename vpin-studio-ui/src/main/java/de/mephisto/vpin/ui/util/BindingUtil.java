@@ -41,7 +41,7 @@ public class BindingUtil {
     });
   }
 
-  public static void bindTextField(TextField textField, ObservedProperties properties, String property) {
+  public static void bindTextField(TextField textField, ObservedProperties properties, String property, String defaultValue) {
     String value = properties.getProperty(property, "");
     StringProperty stringProperty = new SimpleStringProperty();
     textField.setText(value);
@@ -49,6 +49,10 @@ public class BindingUtil {
     textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(property, () -> {
       properties.set(property, textField.getText());
     }, 1000));
+
+    if(StringUtils.isEmpty(value)) {
+      textField.setText(defaultValue);
+    }
   }
 
   public static void bindTextField(TextField textField, String preference, String defaultValue) {

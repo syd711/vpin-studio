@@ -1,7 +1,8 @@
-package de.mephisto.vpin.server.highscores;
+package de.mephisto.vpin.server.highscores.parsing;
 
-import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -47,6 +48,9 @@ public class HighscoreParser {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private List<CustomParser> customParsers;
+
   @NonNull
   public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, int gameId, long serverId) {
     List<String> titles = getTitleList();
@@ -72,7 +76,7 @@ public class HighscoreParser {
           continue;
         }
 
-        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#")) {
+        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1) {
           Score score = createScore(createdAt, line, gameId, serverId);
           if (score != null) {
             score.setPosition(scores.size() + 1);
@@ -154,6 +158,14 @@ public class HighscoreParser {
       }
       return new Score(createdAt, gameId, playerInitials, player, score, v, -1);
     }
+
+    for (CustomParser customParser : customParsers) {
+      Score customScore = customParser.parse(playerService, createdAt, line, gameId, serverId);
+      if (customScore != null) {
+        return customScore;
+      }
+    }
+
 
     throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
   }

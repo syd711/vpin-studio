@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.popper.GameMedia;
@@ -226,7 +225,7 @@ public class Game {
 
   @JsonIgnore
   @Nullable
-  public File getEMHighscoreFile() {
+  public File getHighscoreTextFile() {
     if (!StringUtils.isEmpty(this.getHsFileName())) {
       return new File(emulator.getUserFolder(), this.getHsFileName());
     }

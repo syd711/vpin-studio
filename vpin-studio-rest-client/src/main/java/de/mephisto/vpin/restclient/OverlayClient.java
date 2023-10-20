@@ -24,6 +24,8 @@ public interface OverlayClient {
 
   GameRepresentation getGame(int id);
 
+  GameRepresentation getGameCached(int id);
+
   InputStream getCachedUrlImage(String url);
 
   ScoreSummaryRepresentation getCompetitionScore(long id);

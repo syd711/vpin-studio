@@ -24,7 +24,7 @@ import java.util.List;
 
 class HighscoreResolver {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
-  public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or EM highscore file found.";
+  public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
   private List<String> supportedRoms;
   private final SystemService systemService;
@@ -90,7 +90,7 @@ class HighscoreResolver {
   }
 
   private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    File hsFile = game.getEMHighscoreFile();
+    File hsFile = game.getHighscoreTextFile();
     if (hsFile != null && hsFile.exists()) {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
@@ -100,7 +100,8 @@ class HighscoreResolver {
       try {
         fileInputStream = new FileInputStream(hsFile);
         List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-        if(lines.size() == 16) {
+
+        if (lines.size() == 16) {
           lines = lines.subList(1, lines.size());
         }
 
@@ -142,6 +143,29 @@ class HighscoreResolver {
           builder.append("   ");
           builder.append(score1);
           builder.append("\n");
+
+          return builder.toString();
+        }
+        else if (lines.size() == 7 && lines.get(1).indexOf(".:") == 1) {
+          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+          for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (StringUtils.isEmpty(line.trim())) {
+              continue;
+            }
+
+            List<String> scoreLineSegments = Arrays.asList(line.split(":"));
+            String initials = scoreLineSegments.get(1);
+            String score = scoreLineSegments.get(2);
+
+            builder.append("#");
+            builder.append(i);
+            builder.append(" ");
+            builder.append(initials);
+            builder.append("   ");
+            builder.append(score);
+            builder.append("\n");
+          }
 
           return builder.toString();
         }
@@ -235,8 +259,8 @@ class HighscoreResolver {
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();
-      if(!stdOut.contains("1")) {
-        LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n"  + stdOut);
+      if (!stdOut.contains("1")) {
+        LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
         metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted or it contains only a single entry.");
       }
       return stdOut;

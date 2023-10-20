@@ -33,7 +33,7 @@ public class PropertiesStore {
         fileInputStream.close();
       }
       else {
-        LOG.error("No properties file found " + file.getAbsolutePath());
+        LOG.warn("No properties file found " + file.getAbsolutePath());
       }
     } catch (Exception e) {
       LOG.error("Failed to load data store: " + e.getMessage(), e);

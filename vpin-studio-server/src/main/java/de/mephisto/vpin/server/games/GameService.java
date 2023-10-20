@@ -290,15 +290,25 @@ public class GameService implements InitializingBean {
   }
 
   public ScoreSummary getRecentHighscores(int count) {
+    long start = System.currentTimeMillis();
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, null);
-    List<Score> allHighscoreVersions = highscoreService.getAllHighscoreVersions();
 
     boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
     String allowListString = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST);
     List<String> allowList = new ArrayList<>();
     if (!StringUtils.isEmpty(allowListString)) {
       allowList = Arrays.stream(allowListString.split(",")).collect(Collectors.toList());
+    }
+
+    List<Score> allHighscoreVersions = new ArrayList<>();
+    if (allowList.isEmpty()) {
+      allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
+    }
+    else {
+      for (String initials : allowList) {
+        allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(initials));
+      }
     }
 
     //check if the actual game still exists
@@ -315,6 +325,8 @@ public class GameService implements InitializingBean {
       }
     }
 
+    long duration = System.currentTimeMillis() - start;
+    LOG.info("Recent score fetch took " + duration + "ms.");
     return summary;
   }
 

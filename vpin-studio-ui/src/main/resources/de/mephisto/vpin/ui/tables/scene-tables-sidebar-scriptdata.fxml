@@ -141,7 +141,7 @@
                                             </Label>
                                         </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="EM Score Filename:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="Score .txt Filename:" textFill="WHITE" GridPane.rowIndex="6">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
@@ -169,7 +169,7 @@
                                                     <Font size="14.0" />
                                                 </font>
                                                 <tooltip>
-                                                    <Tooltip prefWidth="300.0" text="The value is read from EM table scripts and defines the highscore filename, located in &quot;VisualPinball\User&quot;." wrapText="true" />
+                                                    <Tooltip prefWidth="300.0" text="The value is read from table scripts and defines the highscore filename, located in &quot;VisualPinball\User&quot;." wrapText="true" />
                                                 </tooltip>
                                                 <graphic>
                                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />

@@ -30,10 +30,10 @@
                             <children>
                                 <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                     <columns>
-                                        <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="58.399959564208984" style="-fx-alignment: baseline-right;" text="ID" />
-                                        <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="53.5999755859375" style="-fx-alignment: CENTER;" text="Status" />
+                                        <TableColumn fx:id="columnId" minWidth="35.99993896484375" prefWidth="46.0" style="-fx-alignment: baseline-right;" text="ID" />
+                                        <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="50.0" style="-fx-alignment: CENTER;" text="Status" />
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                              <TableColumn fx:id="columnVersion" minWidth="60.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
+                              <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
                               <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="130.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                         <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="126.4000244140625" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" visible="false" />
                                         <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />

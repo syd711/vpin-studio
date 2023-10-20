@@ -216,6 +216,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   @Override
+  public GameRepresentation getGameCached(int id) {
+    return getGameService().getGameCached(id);
+  }
+
+  @Override
   public InputStream getCachedUrlImage(String url) {
     return getImageCache().getCachedUrlImage(url);
   }

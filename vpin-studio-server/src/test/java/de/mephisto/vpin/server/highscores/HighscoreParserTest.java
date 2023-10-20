@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
@@ -136,7 +135,6 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "4) JAP       500.000.000\n";
 
 
-
   private String singleton = "HIGHEST SCORES\n" +
       "1)       5.555.555\n" +
       "2)       4.000.000\n" +
@@ -189,7 +187,23 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
       "3) CPG    5,000,000\n" +
       "4) PFZ    4,500,000";
 
+  private String SPONGE_BOB = "High Scores\n" +
+      "1.:PLK:200000000\n" +
+      "2.:SPB:150000000\n" +
+      "3.:MFA:103091920\n" +
+      "4.:PAT:100000000\n" +
+      "5.:MFA:72363730\n" +
+      "5.:SDY:30000000\n";
+
   private final List<String> testlings = Arrays.asList(RAW1, RAW2, RAW3, RAW4, RAW5);
+
+  @Test
+  public void testSpongebob() {
+    List<Score> test = highscoreParser.parseScores(new Date(), SPONGE_BOB, -1, -1l);
+    assertFalse(test.isEmpty());
+    assertTrue(test.size() > 3);
+    assertTrue(test.get(0).getPosition() == 1);
+  }
 
   @Test
   public void testParsing() {

@@ -2,9 +2,9 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -69,12 +69,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private CheckBox grayScaleCheckbox;
-//
-//  @FXML
-//  private ComboBox<String> imageRatioCombo;
-//
-//  @FXML
-//  private ComboBox<String> imageScalingCombo;
 
   @FXML
   private ColorPicker fontColorSelector;
@@ -223,7 +217,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onGenerateAll() {
     ObservedProperties properties = Studio.client.getProperties("card-generator");
     String targetScreen = properties.getProperty("popper.screen", null);
-    if(StringUtils.isEmpty(targetScreen)) {
+    if (StringUtils.isEmpty(targetScreen)) {
       WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
@@ -240,7 +234,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     tableCombo.getItems().clear();
     tableCombo.getItems().addAll(gameRepresentations);
 
-    if(game != null) {
+    if (game != null) {
       tableCombo.getSelectionModel().select(game);
     }
     onGenerateClick();
@@ -282,65 +276,60 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void initFields() {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
 
-    BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
-    BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
-    BindingUtil.bindFontLabel(scoreFontLabel, properties, "card.score");
+    try {
+      BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
+      BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
+      BindingUtil.bindFontLabel(scoreFontLabel, properties, "card.score");
 
-    BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
+      BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
+      BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "card.sampleTable");
 
-    BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "card.sampleTable");
+      BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
+      BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "card.grayScale");
 
+      imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
+      backgroundImageCombo.setItems(imageList);
+      backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
+      backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
 
-    BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
-    BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "card.grayScale");
-//    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageRatioCombo.setDisable(!t1));
-//    useDirectB2SCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> imageScalingCombo.setDisable(!t1));
-
-//    imageRatioCombo.setItems(FXCollections.observableList(Arrays.asList("RATIO_16x9", "RATIO_4x3")));
-//    imageRatioCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
-//
-//    imageRatioCombo.setCellFactory(c -> new WidgetFactory.RationListCell());
-//    imageRatioCombo.setButtonCell(new WidgetFactory.RationListCell());
-//    BindingUtil.bindComboBox(imageRatioCombo, properties, "card.ratio");
-//
-//    imageScalingCombo.setItems(FXCollections.observableList(Arrays.asList("1024", "1280", "1920", "2560")));
-//    imageScalingCombo.setDisable(!useDirectB2SCheckbox.selectedProperty().get());
-//    BindingUtil.bindComboBox(imageScalingCombo, properties, "card.scaling", "1280");
-
-    imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
-    backgroundImageCombo.setItems(imageList);
-    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
-    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
-    BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
-
-    BindingUtil.bindTextField(titleText, properties, "card.title.text");
-    BindingUtil.bindSlider(brightenSlider, properties, "card.alphacomposite.white");
-    BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
-    BindingUtil.bindSlider(blurSlider, properties, "card.blur");
-    BindingUtil.bindSlider(borderSlider, properties, "card.border.width");
-    BindingUtil.bindSpinner(marginTopSpinner, properties, "card.padding");
-    BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
-    BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
-
-    BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawHighscore");
-    renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      wheelImageSpinner.setDisable(t1);
-      rowSeparatorSpinner.setDisable(t1);
-    });
-
-    wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
-    rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-
-    tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      if (t1 == null) {
-        refreshRawPreview(Optional.empty());
+      BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
+      String backgroundName = properties.getProperty("card.background", null);
+      if (StringUtils.isEmpty(backgroundName)) {
+        backgroundImageCombo.setValue(imageList.get(0));
       }
-      else {
-        refreshRawPreview(Optional.of(t1));
-      }
-    });
+
+      BindingUtil.bindTextField(titleText, properties, "card.title.text", "Highscores");
+      BindingUtil.bindSlider(brightenSlider, properties, "card.alphacomposite.white");
+      BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
+      BindingUtil.bindSlider(blurSlider, properties, "card.blur");
+      BindingUtil.bindSlider(borderSlider, properties, "card.border.width");
+      BindingUtil.bindSpinner(marginTopSpinner, properties, "card.padding");
+      BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
+      BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
+
+      BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawHighscore");
+      renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+        wheelImageSpinner.setDisable(t1);
+        rowSeparatorSpinner.setDisable(t1);
+      });
+
+      wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
+      rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
+
+      tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+        if (t1 == null) {
+          refreshRawPreview(Optional.empty());
+        }
+        else {
+          refreshRawPreview(Optional.of(t1));
+        }
+      });
+    } catch (Exception e) {
+      LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
+    }
 
     rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
+
     Tooltip tooltip = new Tooltip();
     tooltip.setGraphic(rawHighscoreHelp);
     Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));

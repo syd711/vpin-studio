@@ -180,6 +180,13 @@ public class GamesServiceClient extends VPinStudioClientService {
     return this.games;
   }
 
+  public GameRepresentation getGameCached(int gameId) {
+    if (this.games == null || this.games.isEmpty()) {
+      this.games = this.getKnownGames();
+    }
+    return this.games.stream().filter(g -> g.getId() == gameId).findFirst().orElseGet(null);
+  }
+
   public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
     return getRestClient().get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
   }

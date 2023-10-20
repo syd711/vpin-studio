@@ -83,7 +83,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
           }
           else {
             for (ScoreRepresentation score : scores) {
-              GameRepresentation game = OverlayWindowFX.client.getGame(score.getGameId());
+              GameRepresentation game = OverlayWindowFX.client.getGameCached(score.getGameId());
               if(game == null) {
                 continue;
               }

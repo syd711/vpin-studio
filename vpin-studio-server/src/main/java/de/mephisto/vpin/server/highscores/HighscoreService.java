@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -67,7 +68,7 @@ public class HighscoreService implements InitializingBean {
       if (highscoreType != null) {
         switch (highscoreType) {
           case EM: {
-            result = game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists() && game.getEMHighscoreFile().delete();
+            result = game.getHighscoreTextFile() != null && game.getHighscoreTextFile().exists() && game.getHighscoreTextFile().delete();
             break;
           }
           case NVRam: {
@@ -272,17 +273,18 @@ public class HighscoreService implements InitializingBean {
   /**
    * Used for the dashboard widget to show the list of newly created highscores
    */
-  public List<Score> getAllHighscoreVersions() {
+  public List<Score> getAllHighscoreVersions(@Nullable String initials) {
     List<Score> scores = new ArrayList<>();
-    List<HighscoreVersion> all = highscoreVersionRepository.findAllByOrderByCreatedAtDesc();
+    List<HighscoreVersion> all;
+    if (!StringUtils.isEmpty(initials)) {
+      all = highscoreVersionRepository.findAllByInitials(initials);
+    }
+    else {
+      all = highscoreVersionRepository.findAllLimited();
+    }
+
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-
     for (HighscoreVersion version : all) {
-      //ignore initial versions
-      if (version.getChangedPosition() < 0) {
-        continue;
-      }
-
       List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId(), serverId);
       //change positions start with 1!
       if (version.getChangedPosition() > versionScores.size()) {

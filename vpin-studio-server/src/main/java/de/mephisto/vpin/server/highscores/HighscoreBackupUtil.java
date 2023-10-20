@@ -98,8 +98,8 @@ public class HighscoreBackupUtil {
 
       //store highscore
       //zip EM file
-      if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
-        ZipUtil.zipFile(game.getEMHighscoreFile(), game.getEMHighscoreFile().getName(), zipOut);
+      if (game.getHighscoreTextFile() != null && game.getHighscoreTextFile().exists()) {
+        ZipUtil.zipFile(game.getHighscoreTextFile(), game.getHighscoreTextFile().getName(), zipOut);
         highscoreWritten = true;
       }
 

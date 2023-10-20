@@ -123,9 +123,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
       //store highscore
       //zip EM file
-      if (game.getEMHighscoreFile() != null && game.getEMHighscoreFile().exists()) {
+      if (game.getHighscoreTextFile() != null && game.getHighscoreTextFile().exists()) {
         packageInfo.setHighscore(true);
-        zipFile(game.getEMHighscoreFile(), gameFolderName + "/User/" + game.getEMHighscoreFile().getName(), zipOut);
+        zipFile(game.getHighscoreTextFile(), gameFolderName + "/User/" + game.getHighscoreTextFile().getName(), zipOut);
       }
 
       //zip nvram file
