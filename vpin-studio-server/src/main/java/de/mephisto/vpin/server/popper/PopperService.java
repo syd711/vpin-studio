@@ -164,15 +164,15 @@ public class PopperService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable tableData = VPS.getInstance().getTableById(game.getExtTableId());
       if (tableData != null) {
-        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0) && tableData.getYear() > 0) {
+        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && tableData.getYear() > 0) {
           tableDetails.setGameYear(tableData.getYear());
         }
 
-        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0) && tableData.getPlayers() > 0) {
+        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0 || overwrite) && tableData.getPlayers() > 0) {
           tableDetails.setNumberOfPlayers(tableData.getPlayers());
         }
 
-        if (StringUtils.isEmpty(tableDetails.getUrl()) && !StringUtils.isEmpty(tableData.getIpdbUrl())) {
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getUrl())) && !StringUtils.isEmpty(tableData.getIpdbUrl())) {
           tableDetails.setUrl(tableData.getIpdbUrl());
 
           String url = tableData.getIpdbUrl();
@@ -181,19 +181,19 @@ public class PopperService implements InitializingBean {
           }
         }
 
-        if (StringUtils.isEmpty(tableDetails.getGameTheme()) && tableData.getTheme() != null && !tableData.getTheme().isEmpty()) {
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getGameTheme())) && tableData.getTheme() != null && !tableData.getTheme().isEmpty()) {
           tableDetails.setGameTheme(String.join(",", tableData.getTheme()));
         }
 
-        if (StringUtils.isEmpty(tableDetails.getDesignedBy()) && tableData.getDesigners() != null && !tableData.getDesigners().isEmpty()) {
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getDesignedBy())) && tableData.getDesigners() != null && !tableData.getDesigners().isEmpty()) {
           tableDetails.setDesignedBy(String.join(",", tableData.getDesigners()));
         }
 
-        if (StringUtils.isEmpty(tableDetails.getManufacturer()) && !StringUtils.isEmpty(tableData.getManufacturer())) {
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getManufacturer())) && !StringUtils.isEmpty(tableData.getManufacturer())) {
           tableDetails.setManufacturer(tableData.getManufacturer());
         }
 
-        if (tableDetails.getGameType() == null && !StringUtils.isEmpty(tableData.getType())) {
+        if ((overwrite || tableDetails.getGameType() == null) && !StringUtils.isEmpty(tableData.getType())) {
           try {
             GameType gameType = GameType.valueOf(tableData.getType());
             tableDetails.setGameType(gameType);
@@ -207,7 +207,7 @@ public class PopperService implements InitializingBean {
           Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
           if (tableVersion.isPresent()) {
             VpsTableFile version = tableVersion.get();
-            if (StringUtils.isEmpty(tableDetails.getFileVersion()) && !StringUtils.isEmpty(version.getVersion())) {
+            if ((overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) && !StringUtils.isEmpty(version.getVersion())) {
               tableDetails.setFileVersion(version.getVersion());
             }
           }
@@ -215,11 +215,11 @@ public class PopperService implements InitializingBean {
 
         TableInfo tableInfo = vpxService.getTableInfo(game.getId());
         if (tableInfo != null) {
-          if (StringUtils.isEmpty(tableDetails.getFileVersion()) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
+          if ((overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
             tableDetails.setFileVersion(tableInfo.getTableVersion());
           }
 
-          if (StringUtils.isEmpty(tableDetails.getAuthor()) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
+          if ((overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
             tableDetails.setAuthor(tableInfo.getAuthorName());
           }
         }
@@ -228,10 +228,10 @@ public class PopperService implements InitializingBean {
     else {
       TableInfo tableInfo = vpxService.getTableInfo(game.getId());
       if (tableInfo != null) {
-        if (StringUtils.isEmpty(tableDetails.getFileVersion())) {
+        if (overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) {
           tableDetails.setFileVersion(tableInfo.getTableVersion());
         }
-        if (StringUtils.isEmpty(tableDetails.getAuthor())) {
+        if (overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) {
           tableDetails.setAuthor(tableInfo.getAuthorName());
         }
       }
