@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
@@ -47,6 +48,8 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarVpsController.class);
 
@@ -88,7 +91,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openBtn;
 
   @FXML
-  private Button resetBtn;
+  private SplitMenuButton autoFillBtn;
 
   @FXML
   private Button openTableBtn;
@@ -121,19 +124,38 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   @FXML
-  private void onMappingReset() {
-    try {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Reset Virtual Pinball Spreadsheet Mapping?", null, null, "Reset");
-      if (result.get().equals(ButtonType.OK)) {
-        GameRepresentation g = game.get();
-        g.setExtTableId(null);
-        g.setExtTableVersionId(null);
-        Studio.client.getGameService().saveGame(g);
+  private void onAutoFill() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-fill table type and version?", "The tablename and display name is used to find the matching table.",
+      "You may have to adept the result manually.", "Auto-Fill");
+    if (result.get().equals(ButtonType.OK)) {
+      GameRepresentation g = game.get();
+      String term = g.getGameDisplayName();
+      List<VpsTable> vpsTables = VPS.getInstance().find(term);
+      if (!vpsTables.isEmpty()) {
+        VpsTable vpsTable = vpsTables.get(0);
+        refreshTableView(vpsTable);
+        saveExternalTableId(g, vpsTable.getId());
+
+        TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
+        VpsTableFile version = VPS.getInstance().findVersion(vpsTable, game.get().getGameFileName(), game.get().getGameDisplayName(), tableInfo.getTableVersion());
+        if (version != null) {
+          tablesCombo.setValue(version);
+        }
+
         EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
-    } catch (Exception e) {
-      LOG.error("Failed to reset external game id: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error resetting external game reference: " + e.getMessage());
+    }
+  }
+
+  @FXML
+  private void onAutoFillAll() {
+    if (this.game.isPresent()) {
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table type and version for all " + client.getGameService().getGamesCached().size() + " tables?",
+        "Cancel", "Continue", "The tablename and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing assignments", false);
+      if (!result.isApplied()) {
+        Dialogs.createProgressDialog(new TableVpsDataAutoFillProgressModel(this, client.getGameService().getGamesCached(), result.isChecked()));
+        EventManager.getInstance().notifyTablesChanged();
+      }
     }
   }
 
@@ -206,7 +228,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
-      saveExternalTableId(vpsTable.getId());
+      saveExternalTableId(this.game.get(), vpsTable.getId());
     }
   }
 
@@ -227,7 +249,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openBtn.setDisable(true);
-    resetBtn.setDisable(g.isEmpty());
+    autoFillBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -251,16 +273,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());
         if (tableById != null) {
           refreshTableView(tableById);
-          return;
+          if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
+            TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
+            VpsTableFile version = VPS.getInstance().findVersion(tableById, game.getGameFileName(), game.getGameDisplayName(), tableInfo.getTableVersion());
+            if (version != null) {
+              tablesCombo.setValue(version);
+            }
+          }
         }
-      }
-
-      String term = game.getGameDisplayName();
-      List<VpsTable> vpsTables = VPS.getInstance().find(term);
-      if (!vpsTables.isEmpty()) {
-        VpsTable vpsTable = vpsTables.get(0);
-        refreshTableView(vpsTable);
-        saveExternalTableId(vpsTable.getId());
       }
     }
   }
@@ -277,13 +297,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             tablesCombo.setValue(tableFile);
             break;
           }
-        }
-      }
-      else {
-        TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
-        VpsTableFile version = VPS.getInstance().findVersion(vpsTable, game.get().getGameFileName(), game.get().getGameDisplayName(), tableInfo.getTableVersion());
-        if (version != null) {
-          tablesCombo.setValue(version);
         }
       }
     }
@@ -386,13 +399,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     this.tablesSidebarController = tablesSidebarController;
   }
 
-  private void saveExternalTableId(String id) {
+  public void saveExternalTableId(GameRepresentation g, String id) {
     try {
-      GameRepresentation g = game.get();
       if (!id.equals(g.getExtTableId())) {
         g.setExtTableId(id);
         Studio.client.getGameService().saveGame(g);
-        EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
     } catch (Exception e) {
       LOG.error("Failed to set external game id: " + e.getMessage(), e);
@@ -400,13 +411,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
-  private void saveExternalTableVersionId(String id) {
+  public void saveExternalTableVersionId(GameRepresentation g, String id) {
     try {
-      GameRepresentation g = game.get();
       if (!id.equals(g.getExtTableVersionId())) {
         g.setExtTableVersionId(id);
         Studio.client.getGameService().saveGame(g);
-        EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
     } catch (Exception e) {
       LOG.error("Failed to set external game id: " + e.getMessage(), e);
@@ -449,7 +458,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
 
-        saveExternalTableVersionId(newValue.getId());
+        saveExternalTableVersionId(this.game.get(), newValue.getId());
       }
     });
   }

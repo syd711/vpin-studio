@@ -111,7 +111,7 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
   }
 
   public void setChecked(boolean b) {
-    this.checkBox.setSelected(true);
+    this.checkBox.setSelected(b);
   }
 
   public void setCheckboxMandatory() {

@@ -2,9 +2,9 @@ package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -82,7 +82,7 @@ public class WidgetFactory {
     fontIcon.setIconSize(18);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
-    if(color != null) {
+    if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
     }
     return fontIcon;
@@ -134,7 +134,7 @@ public class WidgetFactory {
     fontIcon.setIconSize(18);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if(color != null) {
+    if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
     }
     return fontIcon;
@@ -153,7 +153,7 @@ public class WidgetFactory {
     fontIcon.setIconSize(18);
     fontIcon.setIconLiteral("bi-exclamation-circle");
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-    if(color != null) {
+    if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
     }
     return fontIcon;
@@ -302,11 +302,15 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showAlertOptionWithCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText) {
+    return showAlertOptionWithCheckbox(owner, msg, altOptionText, okText, help1, help2, checkBoxText, true);
+  }
+
+  public static ConfirmationResult showAlertOptionWithCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText, boolean checked) {
     Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2, checkBoxText);
-    controller.setChecked(true);
+    controller.setChecked(checked);
     stage.showAndWait();
     return controller.getResult();
   }
@@ -347,9 +351,9 @@ public class WidgetFactory {
       setText(null);
       if (item != null) {
         setText(item
-            .replaceAll("_", " ")
-            .replaceAll("ATIO", "atio")
-            .replaceAll("x", " x ")
+          .replaceAll("_", " ")
+          .replaceAll("ATIO", "atio")
+          .replaceAll("x", " x ")
         );
       }
     }
@@ -404,7 +408,7 @@ public class WidgetFactory {
     boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
 
     String mimeType = mediaItem.getMimeType();
-    if(mimeType == null) {
+    if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
       return;
     }

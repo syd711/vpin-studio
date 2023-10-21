@@ -11,14 +11,14 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableAutoFillProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAutoFillProgressModel.class);
+public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresentation> {
+  private final static Logger LOG = LoggerFactory.getLogger(TableDataAutoFillProgressModel.class);
   private List<GameRepresentation> games;
 
   private final boolean overwrite;
   private Iterator<GameRepresentation> gameIterator;
 
-  public TableAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite) {
+  public TableDataAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite) {
     super("Auto-Fill Table Data");
     this.overwrite = overwrite;
     this.games = games;

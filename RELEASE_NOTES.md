@@ -11,10 +11,16 @@
 
 - Renamed "PinUP Popper Validators" to "Screen Validators".
 - Renamed "VPX Validators" to "Configuration Validators".
+- Added "Virtual Pinball Spreadsheet" validator: The new validator checks if the table has been mapped against the VPS. This way, version updates can be detected and displayed in the table overview.
+
+**Table Management: Table Settings**
+
+- Added bulk operation to execute the "Auto-fill" for all tables.
 
 **Table Management: Spreadsheet Data**
 
 - Added auto-resolving for table version. Not only the table itself is resolved automatically (when the view is selected), but also the table version will be resolved. Note that this auto-assignment does not work a 100%, so its recommended to check these manually too.
+- Added reset button which executes the automatic table resolvement again.
 
 **Table Management: Overview**
 

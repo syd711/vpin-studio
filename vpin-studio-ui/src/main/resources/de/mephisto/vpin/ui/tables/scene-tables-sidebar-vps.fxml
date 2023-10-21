@@ -6,8 +6,10 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
@@ -259,14 +261,21 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
-            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onMappingReset" text="Reset" textFill="#ff3333">
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-               </graphic>
+            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                     </graphic>
+                  </MenuItem>
+               </items>
                <font>
                   <Font size="14.0" />
                </font>
-            </Button>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+               </graphic>
+            </SplitMenuButton>
             <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />
             <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Resources" textFill="WHITE">
                <font>

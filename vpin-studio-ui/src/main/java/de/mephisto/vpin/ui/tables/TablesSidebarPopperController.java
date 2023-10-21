@@ -177,7 +177,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       if (!result.isApplied()) {
         try {
           boolean checked = result.isChecked();
-          Dialogs.createProgressDialog(new TableAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
+          Dialogs.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
           EventManager.getInstance().notifyTablesChanged();
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
