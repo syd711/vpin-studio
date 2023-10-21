@@ -159,7 +159,7 @@ public class PopperService implements InitializingBean {
   }
 
   @NonNull
-  public TableDetails autofillTableDetails(Game game) {
+  public TableDetails autofillTableDetails(Game game, boolean overwrite) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable tableData = VPS.getInstance().getTableById(game.getExtTableId());

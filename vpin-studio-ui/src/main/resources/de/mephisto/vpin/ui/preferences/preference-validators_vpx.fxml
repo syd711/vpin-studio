@@ -21,7 +21,7 @@
             <Label styleClass="checkbox-description" text="Checks if a ROM name was resolved for the table." textFill="WHITE" />
             <CheckBox fx:id="pref_3" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM File Check" />
             <Label styleClass="checkbox-description" text="Checks if a ROM file for the selected table was found." textFill="WHITE" />
-            <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="DirectB2S or Pup Pack Required" />
+            <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX File Check" />
             <Label styleClass="checkbox-description" text="Checks if the VPX file for the selected table was found." textFill="WHITE" />
             <CheckBox fx:id="pref_20" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="DirectB2S or Pup Pack Required" />
             <Label styleClass="checkbox-description" text="Checks if either a PUP pack or a directb2s file was found." textFill="WHITE" />
@@ -37,6 +37,9 @@
             <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="Checks if the &quot;Colorize DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
             <CheckBox fx:id="pref_81" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="External DMD Not Enabled" />
             <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the &quot;External DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
+            <CheckBox fx:id="pref_70" layoutX="34.0" layoutY="700.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Virtual Pinball Spreadsheet Data" />
+            <Label layoutX="34.0" layoutY="738.0" styleClass="checkbox-description" text="Checks if a table and its version has been matched against the &quot;Virtual Pinball Spreadsheet&quot; data." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="798.0" styleClass="checkbox-description" text="This ensures that table updates will be shown in the table overview." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

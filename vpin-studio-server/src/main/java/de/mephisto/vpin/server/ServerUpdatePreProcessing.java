@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -18,9 +19,18 @@ public class ServerUpdatePreProcessing {
   private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg");
 
   public static void execute() {
+    runVPSCheck();
     runResourcesCheck();
     synchronizeNVRams();
     LOG.info("Finished resource updates check.");
+  }
+
+  private static void runVPSCheck() {
+    try {
+      VPS.getInstance().download();
+    } catch (Exception e) {
+      LOG.error("Failed to update VPS sheet: " + e.getMessage(), e);
+    }
   }
 
   private static void runResourcesCheck() {

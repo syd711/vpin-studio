@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -154,11 +155,12 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto Fill Data for \"" + game.get().getGameDisplayName() + "\"?",
-          "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.", null, "Continue");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto Fill Data for \"" + game.get().getGameDisplayName() + "\"?",
+          "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet." , null, "Overwrite existing values");
+      if (!result.isApplied()) {
         try {
-          client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId());
+          boolean checked = result.isChecked();
+          client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId(), checked);
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());

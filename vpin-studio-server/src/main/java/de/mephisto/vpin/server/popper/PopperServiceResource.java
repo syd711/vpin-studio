@@ -110,9 +110,9 @@ public class PopperServiceResource {
     return popperService.getTableDetails(gameId);
   }
 
-  @PutMapping("/tabledetails/autofill/{gameId}")
-  public TableDetails autofill(@PathVariable("gameId") int gameId) {
-    return popperService.autofillTableDetails(gameService.getGame(gameId));
+  @PutMapping("/tabledetails/autofill/{gameId}/{mode}")
+  public TableDetails autofill(@PathVariable("gameId") int gameId, @PathVariable("mode") int mode) {
+    return popperService.autofillTableDetails(gameService.getGame(gameId), mode == 1);
   }
 
   @PostMapping("/tabledetails/{gameId}")

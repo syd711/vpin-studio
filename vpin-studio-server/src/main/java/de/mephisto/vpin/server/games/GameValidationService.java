@@ -193,6 +193,11 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
+    if (isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        return GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING);
+      }
+    }
 
     List<ValidationState> validationStates = validateAltSound(game);
     if (!validationStates.isEmpty()) {

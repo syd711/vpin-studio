@@ -139,6 +139,11 @@ public class GameValidationTexts {
         }
         break;
       }
+      case CODE_VPS_MAPPING_MISSING: {
+        label = "No \"Virtual Pinball Spreadsheet\" match found.";
+        text = "The table and its version has not been matched against the Virtual Pinball Spreadsheet.";
+        break;
+      }
       case CODE_ALT_COLOR_FILES_MISSING: {
         label = "ALT Color files missing.";
         text = "An ALT Color file is missing: " + state.getOptions().get(0);

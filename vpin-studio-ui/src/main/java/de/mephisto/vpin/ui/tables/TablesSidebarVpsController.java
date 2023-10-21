@@ -3,18 +3,25 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
 import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,6 +88,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openBtn;
 
   @FXML
+  private Button resetBtn;
+
+  @FXML
   private Button openTableBtn;
 
   @FXML
@@ -90,11 +100,49 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Label updateDateLabel;
 
   @FXML
+  private VBox errorBox;
+
+  @FXML
+  private Label errorTitle;
+
+  @FXML
+  private Label errorText;
+
+
+  @FXML
   private Hyperlink ipdbLink;
   private AutoCompleteTextField autoCompleteNameField;
 
+  private ValidationState validationState;
+
+
   // Add a public no-args constructor
   public TablesSidebarVpsController() {
+  }
+
+  @FXML
+  private void onMappingReset() {
+    try {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Reset Virtual Pinball Spreadsheet Mapping?", null, null, "Reset");
+      if (result.get().equals(ButtonType.OK)) {
+        GameRepresentation g = game.get();
+        g.setExtTableId(null);
+        g.setExtTableVersionId(null);
+        Studio.client.getGameService().saveGame(g);
+        EventManager.getInstance().notifyTableChange(g.getId(), null);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to reset external game id: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Error resetting external game reference: " + e.getMessage());
+    }
+  }
+
+  @FXML
+  private void onDismiss() {
+    if (validationState != null) {
+      GameRepresentation g = game.get();
+      tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+    }
   }
 
   @FXML
@@ -164,6 +212,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
 
   public void refreshView(Optional<GameRepresentation> g) {
+    errorBox.setVisible(false);
+
     dataRoot.getChildren().removeAll(dataRoot.getChildren());
     tablesCombo.setItems(FXCollections.emptyObservableList());
 
@@ -177,9 +227,23 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openBtn.setDisable(true);
+    resetBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
+        List<String> csvValue = entry.getCSVValue();
+        if (!csvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
+          errorBox.setVisible(true);
+          validationState = new ValidationState();
+          validationState.setCode(GameValidationCode.CODE_VPS_MAPPING_MISSING);
+          LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
+          errorTitle.setText(validationResult.getLabel());
+          errorText.setText(validationResult.getText());
+        }
+      }
 
       openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
 
@@ -329,6 +393,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (!id.equals(g.getExtTableId())) {
         g.setExtTableId(id);
         Studio.client.getGameService().saveGame(g);
+        EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
     } catch (Exception e) {
       LOG.error("Failed to set external game id: " + e.getMessage(), e);
@@ -342,6 +407,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (!id.equals(g.getExtTableVersionId())) {
         g.setExtTableVersionId(id);
         Studio.client.getGameService().saveGame(g);
+        EventManager.getInstance().notifyTableChange(g.getId(), null);
       }
     } catch (Exception e) {
       LOG.error("Failed to set external game id: " + e.getMessage(), e);
@@ -359,6 +425,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   public void initialize(URL url, ResourceBundle resourceBundle) {
     detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
     openTableBtn.setDisable(true);
 

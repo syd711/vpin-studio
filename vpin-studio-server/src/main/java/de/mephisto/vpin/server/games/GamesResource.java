@@ -173,7 +173,7 @@ public class GamesResource {
             if (importedGameId >= 0) {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
-                popperService.autofillTableDetails(game);
+                popperService.autofillTableDetails(game, false);
               }
             }
             return true;
@@ -190,7 +190,7 @@ public class GamesResource {
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
-              popperService.autofillTableDetails(game);
+              popperService.autofillTableDetails(game, false);
             }
             break;
           }
@@ -209,7 +209,7 @@ public class GamesResource {
               tableDetails.setFileVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId);
               if (importedGame != null) {
-                popperService.autofillTableDetails(importedGame);
+                popperService.autofillTableDetails(importedGame, false);
               }
 
               //clone popper media

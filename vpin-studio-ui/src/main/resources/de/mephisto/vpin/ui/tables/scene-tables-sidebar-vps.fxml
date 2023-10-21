@@ -21,214 +21,234 @@
 
 <BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
-         <content>
-            <VBox>
-               <children>
-                  <VBox fx:id="detailsBox">
+         <center>
+            <ScrollPane hbarPolicy="NEVER">
+               <content>
+                  <VBox>
                      <children>
-                        <Label text="Sheet Data" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <GridPane>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.2000732421875" minWidth="10.0" prefWidth="130.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.7999496459961" minWidth="10.0" prefWidth="438.0000305175781" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <VBox fx:id="detailsBox">
                            <children>
-                              <Label text="Last Updated:" textFill="WHITE">
+                              <Label text="Sheet Data" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Entries:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="updateDateLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="entriesLabel" layoutX="143.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="12.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <Label layoutX="10.0" layoutY="10.0" text="Table Data" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <GridPane>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="130.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="433.5999267578125" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="1.6000488281249545" prefWidth="8.000073242187455" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <VBox.margin>
-                              <Insets top="6.0" />
-                           </VBox.margin>
-                           <children>
-                              <Label text="Name:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="116.0" text="Players:" textFill="WHITE" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="116.0" text="Year:" textFill="WHITE" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <HBox GridPane.columnIndex="1">
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.2000732421875" minWidth="10.0" prefWidth="130.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.7999496459961" minWidth="10.0" prefWidth="438.0000305175781" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
                                  <children>
-                                    <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="Enter Table Name...">
+                                    <Label text="Last Updated:" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
-                                    </TextField>
-                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
-                                       </graphic>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="Entries:" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
-                                       <HBox.margin>
-                                          <Insets left="4.0" top="1.0" />
-                                       </HBox.margin>
-                                    </Button>
+                                    </Label>
+                                    <Label fx:id="updateDateLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="entriesLabel" layoutX="143.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
                                  </children>
-                              </HBox>
-                              <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" />
+                                 </VBox.margin>
+                              </GridPane>
+                              <Label layoutX="10.0" layoutY="10.0" text="Table Data" textFill="WHITE">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                 <children>
-                                    <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
-                                    <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="4.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <Label layoutX="10.0" layoutY="198.0" text="Features:" textFill="WHITE" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <HBox fx:id="featureBox" alignment="BASELINE_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                                 <GridPane.margin>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="130.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="433.5999267578125" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="1.6000488281249545" prefWidth="8.000073242187455" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <VBox.margin>
                                     <Insets top="6.0" />
-                                 </GridPane.margin>
-                              </HBox>
-                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
-                                 </graphic>
-                                 <GridPane.margin>
-                                    <Insets right="47.0" />
-                                 </GridPane.margin>
-                              </Label>
+                                 </VBox.margin>
+                                 <children>
+                                    <Label text="Name:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="116.0" text="Players:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="116.0" text="Year:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox GridPane.columnIndex="1">
+                                       <children>
+                                          <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="Enter Table Name...">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="4.0" top="1.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                       <children>
+                                          <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
+                                          <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="4.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <Label layoutX="10.0" layoutY="198.0" text="Features:" textFill="WHITE" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox fx:id="featureBox" alignment="BASELINE_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <GridPane.margin>
+                                          <Insets top="6.0" />
+                                       </GridPane.margin>
+                                    </HBox>
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
+                                       </graphic>
+                                       <GridPane.margin>
+                                          <Insets right="47.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                              </GridPane>
                            </children>
-                        </GridPane>
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox fx:id="dataRoot" prefHeight="200.0" prefWidth="100.0">
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
                      </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
                   </VBox>
-                  <VBox fx:id="dataRoot" prefHeight="200.0" prefWidth="100.0" />
+               </content>
+            </ScrollPane>
+         </center>
+         <top>
+            <VBox fx:id="errorBox" styleClass="error-container" BorderPane.alignment="CENTER">
+               <children>
+                  <BorderPane>
+                     <left>
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
                </children>
-               <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </padding>
             </VBox>
-         </content>
-      </ScrollPane>
+         </top>
+      </BorderPane>
     </center>
    <padding>
       <Insets left="1.0" right="1.0" />
    </padding>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar BorderPane.alignment="CENTER">
         <items>
           <Button mnemonicParsing="false" onAction="#onUpdate" text="Refresh Data">
                <font>
@@ -239,6 +259,15 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onMappingReset" text="Reset" textFill="#ff3333">
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />
             <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Resources" textFill="WHITE">
                <font>
                   <Font size="14.0" />

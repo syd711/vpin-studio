@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameList;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
@@ -90,9 +89,9 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails autoFillTableDetails(int gameId) throws Exception {
+  public TableDetails autoFillTableDetails(int gameId, boolean checked) throws Exception {
     try {
-      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId, Collections.emptyMap(), TableDetails.class);
+      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId + "/" + (checked ? "1" : "0"), Collections.emptyMap(), TableDetails.class);
     } catch (Exception e) {
       LOG.error("Failed autofilling table details: " + e.getMessage(), e);
       throw e;
