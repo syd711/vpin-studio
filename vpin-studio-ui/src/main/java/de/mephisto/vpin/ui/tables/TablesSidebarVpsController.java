@@ -125,25 +125,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onAutoFill() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-fill table type and version?", "The tablename and display name is used to find the matching table.",
-      "You may have to adept the result manually.", "Auto-Fill");
-    if (result.get().equals(ButtonType.OK)) {
-      GameRepresentation g = game.get();
-      String term = g.getGameDisplayName();
-      List<VpsTable> vpsTables = VPS.getInstance().find(term);
-      if (!vpsTables.isEmpty()) {
-        VpsTable vpsTable = vpsTables.get(0);
-        refreshTableView(vpsTable);
-        saveExternalTableId(g, vpsTable.getId());
-
-        TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
-        VpsTableFile version = VPS.getInstance().findVersion(vpsTable, game.get().getGameFileName(), game.get().getGameDisplayName(), tableInfo.getTableVersion());
-        if (version != null) {
-          tablesCombo.setValue(version);
-        }
-
-        EventManager.getInstance().notifyTableChange(g.getId(), null);
-      }
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table type and version?",
+      "Cancel", "Continue", "The tablename and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing assignments", false);
+    if (!result.isApplied()) {
+      Dialogs.createProgressDialog(new TableVpsDataAutoFillProgressModel(this, Arrays.asList(this.game.get()), result.isChecked()));
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
 
