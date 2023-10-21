@@ -64,7 +64,7 @@ public class VPS {
 
   public VpsTableFile findVersion(VpsTable table, String tableFileName, String tableName, String version) {
     List<VpsTableFile> tableFiles = table.getTableFiles();
-    if(tableFiles.size() == 1) {
+    if (tableFiles.size() == 1) {
       return tableFiles.get(0);
     }
 
@@ -89,6 +89,10 @@ public class VPS {
       if (versionMatches(versionString, tableFileName, tableName, "VPinWorkshop")) {
         return tableFile;
       }
+    }
+
+    if (!tableFiles.isEmpty()) {
+      return tableFiles.get(0);
     }
     return null;
   }
@@ -166,8 +170,8 @@ public class VPS {
     try {
       VpsTable[] vpsTables = objectMapper.readValue(getVpsDbFile(), VpsTable[].class);
       return Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures().contains(VpsFeatures.VPX))
-          .collect(Collectors.toList());
+        .filter(t -> t.getFeatures().contains(VpsFeatures.VPX))
+        .collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);
     }

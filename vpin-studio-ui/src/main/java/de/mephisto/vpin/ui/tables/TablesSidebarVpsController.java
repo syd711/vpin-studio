@@ -260,7 +260,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (!vpsTables.isEmpty()) {
         VpsTable vpsTable = vpsTables.get(0);
         refreshTableView(vpsTable);
-
         saveExternalTableId(vpsTable.getId());
       }
     }

@@ -43,7 +43,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Button tableEditBtn;
 
   @FXML
-  private Button autoFillBtn;
+  private SplitMenuButton autoFillBtn;
 
   @FXML
   private Button editScreensBtn;
@@ -155,13 +155,30 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto Fill Data for \"" + game.get().getGameDisplayName() + "\"?",
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for \"" + game.get().getGameDisplayName() + "\"?",
           "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet." , null, "Overwrite existing values");
       if (!result.isApplied()) {
         try {
           boolean checked = result.isChecked();
           client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId(), checked);
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onAutoFillAll() {
+    if (this.game.isPresent()) {
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for all " + client.getGameService().getGamesCached().size() + " tables?",
+          "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet." , null, "Overwrite existing values");
+      if (!result.isApplied()) {
+        try {
+          boolean checked = result.isChecked();
+          Dialogs.createProgressDialog(new TableAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
+          EventManager.getInstance().notifyTablesChanged();
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
         }

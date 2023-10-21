@@ -13,6 +13,10 @@ public interface StudioEventListener {
 
   }
 
+  default void tablesChanged() {
+
+  }
+
   default void repositoryUpdated() {
 
   }

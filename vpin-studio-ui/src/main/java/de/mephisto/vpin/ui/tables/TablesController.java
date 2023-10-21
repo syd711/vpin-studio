@@ -186,4 +186,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
       this.tableOverviewController.onReload();
     });
   }
+
+  @Override
+  public void tablesChanged() {
+    preferencesChanged();
+  }
 }

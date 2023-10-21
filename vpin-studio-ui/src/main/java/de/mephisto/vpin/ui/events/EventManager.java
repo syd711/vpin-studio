@@ -93,6 +93,14 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyTablesChanged() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.tablesChanged();
+      }
+    }).start();
+  }
+
   public void removeListener(StudioEventListener listener) {
     this.listeners.remove(listener);
   }
