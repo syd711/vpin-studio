@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +12,13 @@ import java.util.Arrays;
 public class ShutdownThread extends Thread {
   private final static Logger LOG = LoggerFactory.getLogger(ShutdownThread.class);
 
-  private PreferencesService preferencesService;
+  private final PreferencesService preferencesService;
+  private final JobQueue queue;
   private int idleMinutes;
 
-  public ShutdownThread(PreferencesService preferencesService) {
+  public ShutdownThread(PreferencesService preferencesService, JobQueue queue) {
     this.preferencesService = preferencesService;
+    this.queue = queue;
   }
 
   public void run() {
@@ -34,8 +37,13 @@ public class ShutdownThread extends Thread {
           }
 
           if (idlePreference > 0 && idlePreference <= idleMinutes) {
-            LOG.error("Executing shutdown after being idle for " + idleMinutes + " minutes");
-            shutdown();
+            if (!queue.isEmpty()) {
+              LOG.info("Cancelled shutdown, because job queue is still executing " + queue.status().size() + " jobs.");
+            }
+            else {
+              LOG.info("Executing shutdown after being idle for " + idleMinutes + " minutes");
+              shutdown();
+            }
           }
         }
       } catch (InterruptedException e) {

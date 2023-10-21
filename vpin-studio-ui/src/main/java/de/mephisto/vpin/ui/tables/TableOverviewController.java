@@ -665,7 +665,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnHSType.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      Label label = new Label(value.getHighscoreType());
+      String hsType = value.getHighscoreType();
+      if(!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
+        hsType = "Text";
+      }
+      Label label = new Label(hsType);
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });

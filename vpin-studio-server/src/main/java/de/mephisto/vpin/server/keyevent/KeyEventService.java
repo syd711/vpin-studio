@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.keyevent;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -41,36 +42,12 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private JobQueue queue;
+
   private boolean visible;
 
   private ShutdownThread shutdownThread;
-
-  @Override
-  public void afterPropertiesSet() throws NativeHookException {
-    GlobalScreen.registerNativeHook();
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-    logger.setLevel(Level.OFF);
-    logger.setUseParentHandlers(false);
-    GlobalScreen.addNativeKeyListener(this);
-
-    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
-    if (StringUtils.isEmpty(hotkey)) {
-      LOG.warn("No overlay hotkey defined! Define a key binding on the overlay configuration tab.");
-    }
-
-    new Thread(() -> {
-      OverlayWindowFX.main(new String[]{});
-      LOG.info("Overlay listener started.");
-    }).start();
-
-    shutdownThread = new ShutdownThread(preferencesService);
-    shutdownThread.start();
-
-    OverlayWindowFX.client = overlayClient;
-    OverlayWindowFX.waitForOverlay();
-    LOG.info("Finished initialization of OverlayWindowFX");
-    afterStartup();
-  }
 
 
   @Override
@@ -173,5 +150,32 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     } catch (UnknownHostException e) {
       //
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws NativeHookException {
+    GlobalScreen.registerNativeHook();
+    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+    logger.setLevel(Level.OFF);
+    logger.setUseParentHandlers(false);
+    GlobalScreen.addNativeKeyListener(this);
+
+    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
+    if (StringUtils.isEmpty(hotkey)) {
+      LOG.warn("No overlay hotkey defined! Define a key binding on the overlay configuration tab.");
+    }
+
+    new Thread(() -> {
+      OverlayWindowFX.main(new String[]{});
+      LOG.info("Overlay listener started.");
+    }).start();
+
+    shutdownThread = new ShutdownThread(preferencesService, queue);
+    shutdownThread.start();
+
+    OverlayWindowFX.client = overlayClient;
+    OverlayWindowFX.waitForOverlay();
+    LOG.info("Finished initialization of OverlayWindowFX");
+    afterStartup();
   }
 }

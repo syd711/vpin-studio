@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,46 @@ public class VPS {
 
   public List<VpsTable> getTables() {
     return tables;
+  }
+
+  public VpsTableFile findVersion(VpsTable table, String tableFileName, String tableName, String version) {
+    List<VpsTableFile> tableFiles = table.getTableFiles();
+    if(tableFiles.size() == 1) {
+      return tableFiles.get(0);
+    }
+
+    for (VpsTableFile tableFile : tableFiles) {
+      if (version != null && tableFile.toString().toLowerCase().contains(version.toLowerCase())) {
+        return tableFile;
+      }
+
+      String versionString = tableFile.toString();
+      if (versionMatches(versionString, tableFileName, tableName, "vpw")) {
+        return tableFile;
+      }
+      if (versionMatches(versionString, tableFileName, tableName, "bigus")) {
+        return tableFile;
+      }
+      if (versionMatches(versionString, tableFileName, tableName, "TastyWasps")) {
+        return tableFile;
+      }
+      if (versionMatches(versionString, tableFileName, tableName, "Salas")) {
+        return tableFile;
+      }
+      if (versionMatches(versionString, tableFileName, tableName, "VPinWorkshop")) {
+        return tableFile;
+      }
+    }
+    return null;
+  }
+
+  private boolean versionMatches(String version, String tableFileName, String tableName, String term) {
+    if (version.toLowerCase().contains(term)) {
+      if (tableFileName.toLowerCase().contains(term) || tableName.toLowerCase().contains(term)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public List<VpsTable> find(String searchTerm) {

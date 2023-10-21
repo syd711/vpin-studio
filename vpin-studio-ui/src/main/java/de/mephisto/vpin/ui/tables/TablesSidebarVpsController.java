@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
@@ -213,6 +214,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             tablesCombo.setValue(tableFile);
             break;
           }
+        }
+      }
+      else {
+        TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
+        VpsTableFile version = VPS.getInstance().findVersion(vpsTable, game.get().getGameFileName(), game.get().getGameDisplayName(), tableInfo.getTableVersion());
+        if (version != null) {
+          tablesCombo.setValue(version);
         }
       }
     }

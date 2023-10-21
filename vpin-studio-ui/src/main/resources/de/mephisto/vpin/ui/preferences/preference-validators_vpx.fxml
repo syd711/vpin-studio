@@ -11,7 +11,7 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPX Validators" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Configuration Validators" />
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every VPX table. The validators can be disabled for every table individually," textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
