@@ -213,7 +213,7 @@ public class PopperService implements InitializingBean {
           }
         }
 
-        TableInfo tableInfo = vpxService.getTableInfo(game.getId());
+        TableInfo tableInfo = vpxService.getTableInfo(game);
         if (tableInfo != null) {
           if ((overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
             tableDetails.setFileVersion(tableInfo.getTableVersion());
@@ -226,7 +226,7 @@ public class PopperService implements InitializingBean {
       }
     }
     else {
-      TableInfo tableInfo = vpxService.getTableInfo(game.getId());
+      TableInfo tableInfo = vpxService.getTableInfo(game);
       if (tableInfo != null) {
         if (overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) {
           tableDetails.setFileVersion(tableInfo.getTableVersion());

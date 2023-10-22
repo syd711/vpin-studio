@@ -34,6 +34,15 @@ public class VPSTest {
   }
 
   @Test
+  public void testSearch2() {
+    VPS vps = VPS.getInstance();
+    List<VpsTable> tables = vps.getTables();
+    assertFalse(tables.isEmpty());
+    List<VpsTable> vpsTables = vps.find("Red and");
+    assertEquals(1, vpsTables.size());
+  }
+
+  @Test
   public void testAll() throws IOException {
     InputStream inputStream = VPSTest.class.getResourceAsStream("tablenames.txt");
     StringBuilder textBuilder = new StringBuilder();

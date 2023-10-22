@@ -10,16 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableVpsDataAutoFillProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableVpsDataAutoFillProgressModel.class);
+public class TableHighscoresScanProgressModel extends ProgressModel<GameRepresentation> {
+  private final static Logger LOG = LoggerFactory.getLogger(TableHighscoresScanProgressModel.class);
   private List<GameRepresentation> games;
 
-  private final boolean overwrite;
   private final Iterator<GameRepresentation> gameIterator;
 
-  public TableVpsDataAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite) {
-    super("Auto-Fill");
-    this.overwrite = overwrite;
+  public TableHighscoresScanProgressModel(List<GameRepresentation> games) {
+    super("Scanning Highsore Updates");
     this.games = games;
     this.gameIterator = games.iterator();
   }
@@ -52,7 +50,7 @@ public class TableVpsDataAutoFillProgressModel extends ProgressModel<GameReprese
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.getVpsService().autofill(game.getId(), overwrite);
+      Studio.client.getGameService().scanGameScore(game.getId());
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);

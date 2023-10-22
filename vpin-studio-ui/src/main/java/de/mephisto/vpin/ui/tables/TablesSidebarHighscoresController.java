@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarHighscoresController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarHighscoresController.class);
@@ -64,7 +67,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button resetBtn;
 
   @FXML
-  private Button scanHighscoreBtn;
+  private SplitMenuButton scanHighscoreBtn;
 
   @FXML
   private Button cardBtn;
@@ -130,6 +133,15 @@ public class TablesSidebarHighscoresController implements Initializable {
   }
 
   @FXML
+  private void onScanAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getGamesCached().size() + " tables?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Dialogs.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  @FXML
   private void onBackup() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
@@ -157,8 +169,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       if (StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
-            "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
-            "You can enter the values for this manually in the \"Script Details\" section.");
+          "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
+          "You can enter the values for this manually in the \"Script Details\" section.");
       }
       else {
         Dialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
@@ -171,7 +183,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
-          "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
+        "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
       if (confirmationResult.isChecked() && !confirmationResult.isApplied()) {
         Studio.client.getGameService().resetHighscore(g.getId());
         this.refreshView(this.game, true);

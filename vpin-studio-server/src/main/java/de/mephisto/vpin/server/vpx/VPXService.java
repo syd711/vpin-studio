@@ -142,6 +142,14 @@ public class VPXService {
 
   public TableInfo getTableInfo(int gameId) {
     Game game = gameService.getGame(gameId);
+    if (game == null) {
+      LOG.error("No game found for table info " + gameId);
+      return null;
+    }
+    return getTableInfo(game);
+  }
+
+  public TableInfo getTableInfo(Game game) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
@@ -149,7 +157,6 @@ public class VPXService {
         return new TableInfo(values);
       }
     }
-    LOG.error("No game found for table info, id " + gameId);
     return null;
   }
 

@@ -25,7 +25,10 @@ public class VPS {
 
   private final ObjectMapper objectMapper;
 
+  private final List<String> versionIndicators = Arrays.asList("vpw", "bigus", "salas", "tasty", "thalamus", "VPinWorkshop", "Paulie");
+
   private List<VpsTable> tables;
+
 
   private static VPS instance;
 
@@ -74,20 +77,10 @@ public class VPS {
       }
 
       String versionString = tableFile.toString();
-      if (versionMatches(versionString, tableFileName, tableName, "vpw")) {
-        return tableFile;
-      }
-      if (versionMatches(versionString, tableFileName, tableName, "bigus")) {
-        return tableFile;
-      }
-      if (versionMatches(versionString, tableFileName, tableName, "TastyWasps")) {
-        return tableFile;
-      }
-      if (versionMatches(versionString, tableFileName, tableName, "Salas")) {
-        return tableFile;
-      }
-      if (versionMatches(versionString, tableFileName, tableName, "VPinWorkshop")) {
-        return tableFile;
+      for (String versionIndicator : versionIndicators) {
+        if (versionMatches(versionString, tableFileName, tableName, versionIndicator)) {
+          return tableFile;
+        }
       }
     }
 
@@ -98,7 +91,7 @@ public class VPS {
   }
 
   private boolean versionMatches(String version, String tableFileName, String tableName, String term) {
-    if (version.toLowerCase().contains(term)) {
+    if (version.toLowerCase().contains(term.toLowerCase())) {
       if (tableFileName.toLowerCase().contains(term) || tableName.toLowerCase().contains(term)) {
         return true;
       }
@@ -149,6 +142,7 @@ public class VPS {
       String name = table.getName().toLowerCase();
       name = name.replaceAll("-", " ");
       name = name.replaceAll("'", " ");
+      name = name.replaceAll("&", "and");
       if (!name.contains(term)) {
         continue;
       }

@@ -56,6 +56,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final RomServiceClient romServiceClient;
+  private final VpsServiceClient vpsServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
@@ -83,6 +84,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.preferencesServiceClient = new PreferencesServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
+    this.vpsServiceClient = new VpsServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
     this.romServiceClient = new RomServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
@@ -99,6 +101,9 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     return nvRamsServiceClient;
   }
 
+  public VpsServiceClient getVpsService() {
+    return vpsServiceClient;
+  }
   public HigscoreBackupServiceClient getHigscoreBackupService() {
     return higscoreBackupServiceClient;
   }

@@ -406,7 +406,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     if (oldRaw.equals(newRaw)) {
-      LOG.info("Skipped highscore change event for {} because the no score change for rom '{}' detected.", game, game.getRom());
+      LOG.info("Skipped highscore change event for \"{}\" because the no score change for rom '{}' detected.", game, game.getRom());
       return Optional.of(oldHighscore);
     }
 
@@ -443,6 +443,7 @@ public class HighscoreService implements InitializingBean {
         triggerHighscoreUpdate(game, newHighscore);
 
         boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
+        List<String> allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
 
         for (Integer changedPosition : changedPositions) {
           //so we have a highscore update, let's decide the distribution
@@ -456,14 +457,35 @@ public class HighscoreService implements InitializingBean {
             LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
           }
 
-          //finally, fire the update event to notify all listeners
-          HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
-          triggerHighscoreChange(event);
+          if (!isScoreFiltered(highscoreFilterEnabled, allowList, newScore)) {
+            //finally, fire the update event to notify all listeners
+            HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
+            triggerHighscoreChange(event);
+          }
         }
       }
     }
 
     return Optional.of(oldHighscore);
+  }
+
+  private boolean isScoreFiltered(boolean highscoreFilterEnabled, List<String> allowList, Score newScore) {
+    if (StringUtils.isEmpty(newScore.getPlayerInitials())) {
+      LOG.info("Filtered highscore update \"" + newScore + "\": player initials are empty");
+      return true;
+    }
+    if (newScore.getPlayerInitials().equalsIgnoreCase("???")) {
+      LOG.info("Filtered highscore update \"" + newScore + "\": player initials are ???");
+      return true;
+    }
+
+    if (highscoreFilterEnabled) {
+      if (!allowList.contains(newScore.getPlayerInitials())) {
+        LOG.info("Filtered highscore update \"" + newScore + "\": player initials '" + newScore.getPlayerInitials() + "' are not on the allow list");
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
