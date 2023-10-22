@@ -184,7 +184,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
-          "All existing VPX and Popper processes will be terminated.");
+        "All existing VPX and Popper processes will be terminated.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getVpxService().playGame(game.getId());
       }
@@ -257,7 +257,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       for (GameRepresentation game : selectedGames) {
         if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
           WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
+            + "\" is used by at least one competition.", "Delete all competitions for this table first.");
           return;
         }
       }
@@ -288,7 +288,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
+      "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
       this.onReload();
@@ -299,7 +299,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onTablesScanAll() {
     String title = "Re-scan all " + games.size() + " tables?";
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
+      "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.clearCache();
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
@@ -323,7 +323,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onValidate() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table \"" + game.getGameDisplayName() + "\"?",
-        "This will reset the dismissed validations for this table too.", null);
+      "This will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       game.setIgnoredValidations(null);
 
@@ -345,7 +345,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void dismissValidation(@NonNull GameRepresentation game, @NonNull ValidationState validationState) {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
-        "The warning can be re-enabled by validating the table again.");
+      "The warning can be re-enabled by validating the table again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       List<Integer> ignoredValidations = game.getIgnoredValidations();
       if (ignoredValidations == null) {
@@ -627,8 +627,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
-//      FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
-//      label.setGraphic(icon);
+      if (value.isUpdateAvailable()) {
+        FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+        label.setGraphic(icon);
+      }
       return new SimpleObjectProperty(label);
     });
 
@@ -666,7 +668,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHSType.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       String hsType = value.getHighscoreType();
-      if(!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
+      if (!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
         hsType = "Text";
       }
       Label label = new Label(hsType);
@@ -754,61 +756,61 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.getSelectionModel().getSelectedItems().addListener(this);
 
     tableView.setRowFactory(
-        tableView -> {
-          final TableRow<GameRepresentation> row = new TableRow<>();
-          final ContextMenu rowMenu = new ContextMenu();
+      tableView -> {
+        final TableRow<GameRepresentation> row = new TableRow<>();
+        final ContextMenu rowMenu = new ContextMenu();
 
-          MenuItem scanItem = new MenuItem("Scan");
-          scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
-          scanItem.setOnAction(actionEvent -> onTablesScan());
-          scanItem.setDisable(tableView.getSelectionModel().isEmpty());
-          rowMenu.getItems().add(scanItem);
+        MenuItem scanItem = new MenuItem("Scan");
+        scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
+        scanItem.setOnAction(actionEvent -> onTablesScan());
+        scanItem.setDisable(tableView.getSelectionModel().isEmpty());
+        rowMenu.getItems().add(scanItem);
 
-          MenuItem scanAllItem = new MenuItem("Scan All");
-          scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
-          scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
-          rowMenu.getItems().add(scanAllItem);
+        MenuItem scanAllItem = new MenuItem("Scan All");
+        scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
+        scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
+        rowMenu.getItems().add(scanAllItem);
 
-          rowMenu.getItems().add(new SeparatorMenuItem());
+        rowMenu.getItems().add(new SeparatorMenuItem());
 
-          MenuItem validateItem = new MenuItem("Validate");
-          validateItem.setGraphic(WidgetFactory.createIcon("sil-magnifier"));
-          validateItem.setDisable(tableView.getSelectionModel().isEmpty());
-          validateItem.setOnAction(actionEvent -> onValidate());
-          rowMenu.getItems().add(validateItem);
+        MenuItem validateItem = new MenuItem("Validate");
+        validateItem.setGraphic(WidgetFactory.createIcon("sil-magnifier"));
+        validateItem.setDisable(tableView.getSelectionModel().isEmpty());
+        validateItem.setOnAction(actionEvent -> onValidate());
+        rowMenu.getItems().add(validateItem);
 
-          rowMenu.getItems().add(new SeparatorMenuItem());
+        rowMenu.getItems().add(new SeparatorMenuItem());
 
-          MenuItem launchItem = new MenuItem("Launch");
-          launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
-          launchItem.setDisable(tableView.getSelectionModel().isEmpty());
-          launchItem.setOnAction(actionEvent -> onPlay());
-          rowMenu.getItems().add(launchItem);
+        MenuItem launchItem = new MenuItem("Launch");
+        launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
+        launchItem.setDisable(tableView.getSelectionModel().isEmpty());
+        launchItem.setOnAction(actionEvent -> onPlay());
+        rowMenu.getItems().add(launchItem);
 
-          rowMenu.getItems().add(new SeparatorMenuItem());
+        rowMenu.getItems().add(new SeparatorMenuItem());
 
-          MenuItem exportItem = new MenuItem("Export");
-          exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-          exportItem.setDisable(tableView.getSelectionModel().isEmpty());
-          exportItem.setOnAction(actionEvent -> onBackup());
-          rowMenu.getItems().add(exportItem);
+        MenuItem exportItem = new MenuItem("Export");
+        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+        exportItem.setDisable(tableView.getSelectionModel().isEmpty());
+        exportItem.setOnAction(actionEvent -> onBackup());
+        rowMenu.getItems().add(exportItem);
 
-          rowMenu.getItems().add(new SeparatorMenuItem());
+        rowMenu.getItems().add(new SeparatorMenuItem());
 
 
-          MenuItem removeItem = new MenuItem("Delete");
-          removeItem.setOnAction(actionEvent -> onDelete());
-          removeItem.setDisable(tableView.getSelectionModel().isEmpty());
-          removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-          rowMenu.getItems().add(removeItem);
+        MenuItem removeItem = new MenuItem("Delete");
+        removeItem.setOnAction(actionEvent -> onDelete());
+        removeItem.setDisable(tableView.getSelectionModel().isEmpty());
+        removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+        rowMenu.getItems().add(removeItem);
 
-          // only display context menu for non-empty rows:
-          row.contextMenuProperty().bind(
-              Bindings.when(row.emptyProperty())
-                  .then((ContextMenu) null)
-                  .otherwise(rowMenu));
-          return row;
-        });
+        // only display context menu for non-empty rows:
+        row.contextMenuProperty().bind(
+          Bindings.when(row.emptyProperty())
+            .then((ContextMenu) null)
+            .otherwise(rowMenu));
+        return row;
+      });
 
 
 //    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));

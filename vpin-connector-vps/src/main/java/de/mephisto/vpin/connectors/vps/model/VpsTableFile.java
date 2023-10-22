@@ -51,10 +51,14 @@ public class VpsTableFile extends VpsAuthoredUrls {
       builder.append(comment);
     }
     else {
-      builder.append(String.join(", ", getAuthors()));
+      String authors = String.join(", ", getAuthors());
+      if (authors.length() > 40) {
+        authors = authors.substring(0, 39) + "...";
+      }
+      builder.append(authors);
     }
 
-    if(getVersion() != null && getVersion().trim().length() > 0) {
+    if (getVersion() != null && getVersion().trim().length() > 0) {
       builder.append(" ");
       builder.append("(");
       builder.append("Version ");

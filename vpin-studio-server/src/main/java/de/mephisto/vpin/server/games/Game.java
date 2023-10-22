@@ -26,6 +26,7 @@ public class Game {
   private String tableName;
   private String version;
   private boolean disabled;
+  private boolean updateAvailable;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -53,6 +54,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public boolean isUpdateAvailable() {
+    return updateAvailable;
+  }
+
+  public void setUpdateAvailable(boolean updateAvailable) {
+    this.updateAvailable = updateAvailable;
   }
 
   public String getGameName() {

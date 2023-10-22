@@ -212,4 +212,15 @@ public class VpsTable {
   public String toString() {
     return this.getName();
   }
+
+  public VpsTableFile getVersion(String extTableVersionId) {
+    if (this.tableFiles != null) {
+      for (VpsTableFile tableFile : this.tableFiles) {
+        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
+          return tableFile;
+        }
+      }
+    }
+    return null;
+  }
 }

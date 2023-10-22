@@ -28,6 +28,7 @@ public class GameRepresentation {
   private long gameFileSize;
   private String tableName;
   private boolean disabled;
+  private boolean updateAvailable;
   private int id;
   private Date modified;
   private GameMediaRepresentation gameMedia;
@@ -49,6 +50,14 @@ public class GameRepresentation {
   private String extTableId;
   private String extTableVersionId;
   private int emulatorId;
+
+  public boolean isUpdateAvailable() {
+    return updateAvailable;
+  }
+
+  public void setUpdateAvailable(boolean updateAvailable) {
+    this.updateAvailable = updateAvailable;
+  }
 
   public boolean isDisabled() {
     return disabled;

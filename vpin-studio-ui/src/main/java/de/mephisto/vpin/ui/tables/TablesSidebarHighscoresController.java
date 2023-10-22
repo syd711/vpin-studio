@@ -129,7 +129,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScan() {
-    refreshView(game, true);
+    this.refreshView(game, true);
   }
 
   @FXML

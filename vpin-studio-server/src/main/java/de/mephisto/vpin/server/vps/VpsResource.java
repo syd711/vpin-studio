@@ -21,12 +21,12 @@ public class VpsResource {
   }
 
   @PutMapping("/table/{gameId}/{vpsId}")
-  public boolean saveTable(@PathVariable("gameId") int gameId, @PathVariable("gameId") String vpsId) {
+  public boolean saveTable(@PathVariable("gameId") int gameId, @PathVariable("vpsId") String vpsId) {
     return vpsService.saveExternalTableId(gameId, vpsId);
   }
 
   @PutMapping("/version/{gameId}/{vpsId}")
-  public boolean saveVersion(@PathVariable("gameId") int gameId, @PathVariable("gameId") String vpsId) {
+  public boolean saveVersion(@PathVariable("gameId") int gameId, @PathVariable("vpsId") String vpsId) {
     return vpsService.saveExternalTableVersionId(gameId, vpsId);
   }
 }

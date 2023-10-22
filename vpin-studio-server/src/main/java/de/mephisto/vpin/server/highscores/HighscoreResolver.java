@@ -227,7 +227,7 @@ class HighscoreResolver {
       metadata.setModified(new Date(nvRam.lastModified()));
 
       if (!this.supportedRoms.contains(nvRamName)) {
-        String msg = "The resolved NV ram file '" + nvRamName + "' of game '" + game.getGameDisplayName() + "' is not supported by PINemHi.";
+        String msg = "The NV ram file \"" + nvRamName + ".nv\" for \"" + game.getGameDisplayName() + "\" is not supported by PINemHi.";
         LOG.info(msg);
         metadata.setStatus(msg);
         return null;

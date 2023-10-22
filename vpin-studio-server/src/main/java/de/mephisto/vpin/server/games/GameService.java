@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -119,11 +122,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-        .stream()
-        .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-        .collect(Collectors.toList());
+      .stream()
+      .filter(g ->
+        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+      .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -447,12 +450,37 @@ public class GameService implements InitializingBean {
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorAvailable(altColorService.isAltColorAvailable(game));
+    game.setUpdateAvailable(isUpdateAvailable(game));
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
     game.setValidationState(gameValidator.validate(game));
+  }
+
+  public boolean isUpdateAvailable(Game game) {
+    if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId()) || StringUtils.isEmpty(game.getVersion())) {
+      return false;
+    }
+
+    VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+    if (vpsTable == null) {
+      return false;
+    }
+
+    VpsTableFile tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+    if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
+      return false;
+    }
+
+    String gameVersion = game.getVersion();
+    String tableVrs = tableVersion.getVersion();
+    if (!StringUtils.isEmpty(tableVersion.getVersion()) && !gameVersion.equalsIgnoreCase(tableVrs)) {
+      return true;
+    }
+
+    return false;
   }
 
   public List<ValidationState> getRomValidations(Game game) {
@@ -479,7 +507,7 @@ public class GameService implements InitializingBean {
       pinUPConnector.updateRom(game, game.getRom());
     }
 
-    LOG.info("Saved " + game);
+    LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
     Game updated = getGame(game.getId());
     if (romChanged) {
       highscoreService.scanScore(updated);

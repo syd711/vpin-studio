@@ -12,7 +12,6 @@ import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
@@ -260,8 +259,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (tableById != null) {
           refreshTableView(tableById);
           if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-            TableInfo tableInfo = Studio.client.getVpxService().getTableInfo(this.game.get());
-            VpsTableFile version = VPS.getInstance().findVersion(tableById, game.getGameFileName(), game.getGameDisplayName(), tableInfo.getTableVersion());
+            VpsTableFile version = tableById.getVersion(game.getExtTableVersionId());
             if (version != null) {
               tablesCombo.setValue(version);
             }
@@ -399,7 +397,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     openTableBtn.setDisable(true);
 
-    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty()));
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    });
     filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
     List<VpsTable> tables = VPS.getInstance().getTables();
@@ -420,7 +420,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
 
-        client.getVpsService().saveVersion(this.game.get().getId(), newValue.getId());
+        String existingValueId = this.game.get().getExtTableVersionId();
+        String newValueId = newValue.getId();
+        if (existingValueId != null && !existingValueId.equals(newValueId)) {
+          client.getVpsService().saveVersion(this.game.get().getId(), newValueId);
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+        }
       }
     });
   }
