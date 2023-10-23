@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -41,6 +42,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private ThreadPoolTaskScheduler scheduler;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private CampaignValidationService campaignValidationService;
@@ -168,7 +172,7 @@ public class CompetitionService implements InitializingBean {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
-    return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
   }
 
 
@@ -322,7 +326,7 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
-    return highscoreService.getScoreSummary(serverId, competition.getGameId(), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
   }
 
   @Override

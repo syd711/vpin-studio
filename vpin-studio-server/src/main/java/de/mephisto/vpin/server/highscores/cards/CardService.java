@@ -59,7 +59,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game.getId(), game.getGameDisplayName());
+      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         Config.getCardGeneratorConfig().reload();
 

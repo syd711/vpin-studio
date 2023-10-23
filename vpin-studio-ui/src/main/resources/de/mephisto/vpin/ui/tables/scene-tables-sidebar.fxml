@@ -235,7 +235,7 @@
                             <right>
                         <HBox spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
                            <children>
-                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onNvRam" styleClass="external-component">
+                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="external-component">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                                  </graphic>

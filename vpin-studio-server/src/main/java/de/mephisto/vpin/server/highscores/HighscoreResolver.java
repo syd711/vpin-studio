@@ -125,7 +125,26 @@ class HighscoreResolver {
           }
           return builder.toString();
         }
-        else if (lines.size() == 8) {
+
+        if (lines.size() == 12) {
+          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+
+          for (int index = 0; index < 5; index++) {
+            String score = lines.get(index + 2);
+            String initials = lines.get(index + 2 + 5);
+
+            builder.append("#");
+            builder.append(index + 1);
+            builder.append(" ");
+            builder.append(initials);
+            builder.append("   ");
+            builder.append(score);
+            builder.append("\n");
+          }
+          return builder.toString();
+        }
+
+        if (lines.size() == 8) {
           StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
           String score1 = lines.get(1);
@@ -146,7 +165,8 @@ class HighscoreResolver {
 
           return builder.toString();
         }
-        else if (lines.size() == 7 && lines.get(1).indexOf(".:") == 1) {
+
+        if (lines.size() == 7 && lines.get(1).indexOf(".:") == 1) {
           StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
           for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);

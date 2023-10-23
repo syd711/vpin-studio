@@ -241,13 +241,13 @@ public class HighscoreService implements InitializingBean {
    * @return all highscores of the given player
    */
   @NonNull
-  public ScoreSummary getScoreSummary(long serverId, int gameId, @Nullable String displayName) {
+  public ScoreSummary getScoreSummary(long serverId, Game game, @Nullable String displayName) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
-    Optional<Highscore> highscore = highscoreRepository.findByGameId(gameId);
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), gameId, serverId);
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId(), serverId);
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
@@ -262,8 +262,8 @@ public class HighscoreService implements InitializingBean {
       summary.setMetadata(metadata);
     }
     else {
-//      HighscoreMetadata metadata = highscoreResolver.readHighscore()
-//      summary.setMetadata(metadata);
+      HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
+      summary.setMetadata(metadata);
     }
     return summary;
   }
@@ -416,6 +416,20 @@ public class HighscoreService implements InitializingBean {
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
 
+    //if the highscores are not equal, we still want to update the old highscore
+    //update existing one
+    oldHighscore.setRaw(newHighscore.getRaw());
+    oldHighscore.setType(newHighscore.getType());
+    oldHighscore.setLastScanned(newHighscore.getLastScanned());
+    oldHighscore.setLastModified(newHighscore.getLastModified());
+    oldHighscore.setFilename(newHighscore.getFilename());
+    oldHighscore.setStatus(null);
+    oldHighscore.setDisplayName(newHighscore.getDisplayName());
+    highscoreRepository.saveAndFlush(oldHighscore);
+    LOG.info("Saved updated highscore for " + game);
+
+    triggerHighscoreUpdate(game, oldHighscore);
+
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
       if (changedPositions.isEmpty()) {
@@ -424,22 +438,7 @@ public class HighscoreService implements InitializingBean {
       }
 
       LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
-
       if (!changedPositions.isEmpty()) {
-        //update existing one
-        oldHighscore.setRaw(newHighscore.getRaw());
-        oldHighscore.setType(newHighscore.getType());
-        oldHighscore.setLastScanned(newHighscore.getLastScanned());
-        oldHighscore.setLastModified(newHighscore.getLastModified());
-        oldHighscore.setFilename(newHighscore.getFilename());
-        oldHighscore.setStatus(null);
-        oldHighscore.setDisplayName(newHighscore.getDisplayName());
-        highscoreRepository.saveAndFlush(oldHighscore);
-        LOG.info("Saved updated highscore for " + game);
-
-        //update the highscore card
-        triggerHighscoreUpdate(game, newHighscore);
-
         boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
         List<String> allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
 

@@ -46,7 +46,6 @@ public class StateMananger implements JobListener, NativeKeyListener {
     Menu.client.getArchiveService().invalidateArchiveCache();
 
     String s = Menu.class.getResource("select.mp3").toExternalForm();
-    System.out.println(s);
     Media media = new Media(Menu.class.getResource("select.mp3").toExternalForm());
     navPlayer = new MediaPlayer(media);
     navPlayer.setOnEndOfMedia(() -> {

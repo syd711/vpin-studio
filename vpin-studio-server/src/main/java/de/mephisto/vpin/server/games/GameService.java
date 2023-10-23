@@ -279,7 +279,7 @@ public class GameService implements InitializingBean {
    */
   public ScoreSummary getScores(int gameId) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return highscoreService.getScoreSummary(serverId, gameId, null);
+    return highscoreService.getScoreSummary(serverId, getGame(gameId), null);
   }
 
   /**

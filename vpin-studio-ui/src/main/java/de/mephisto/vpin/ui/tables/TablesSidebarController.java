@@ -2,12 +2,12 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
@@ -168,9 +168,19 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
-  private void onNvRam() {
+  private void onHighscores() {
     try {
       if (this.game.isPresent()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        if (gameRepresentation.getHighscoreType() != null) {
+          HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
+          if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
+            GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+            new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getUserDirectory()).getAbsolutePath()).start();
+            return;
+          }
+        }
+
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getNvramDirectory()).getAbsolutePath()).start();
       }
@@ -229,7 +239,7 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onAltColor() {
     try {
-      if(this.game.isPresent()) {
+      if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltColorDirectory()).getAbsolutePath()).start();
       }
