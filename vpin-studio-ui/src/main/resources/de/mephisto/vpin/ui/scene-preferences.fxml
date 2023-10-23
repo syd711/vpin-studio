@@ -31,21 +31,31 @@
                <content>
                   <VBox fx:id="navigationBox" alignment="TOP_RIGHT" fillWidth="false" prefWidth="400.0">
                      <children>
-                        <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN PREFERENCES">
+                        <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN STUDIO PREFERENCES">
                            <font>
                               <Font size="13.0" />
                            </font>
                         </Label>
-                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Name &amp; Avatar" />
+                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Name / Avatar / UI Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
                         </Button>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
+                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
                         <Button fx:id="backglass" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="167.0" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol" />
                         <Button fx:id="mame" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="75.0" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER SETTINGS">
                            <font>
                               <Font size="13.0" />
@@ -54,9 +64,9 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="45.0" mnemonicParsing="false" onAction="#onScreens" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Screens" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onCustomOptions" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Custom Options" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="159.0" mnemonicParsing="false" onAction="#onReset" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Reset Options" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="45.0" mnemonicParsing="false" onAction="#onScreens" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Screens" />
                         <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">
                            <font>
                               <Font size="13.0" />
@@ -75,12 +85,12 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button fx:id="highscores" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Highscore Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Card Settings">
                            <VBox.margin>
                               <Insets top="4.0" />
                            </VBox.margin>
                         </Button>
+                        <Button fx:id="highscores" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Highscore Settings" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="380.0" styleClass="preference-section" text="PLAYER PREFERENCES">
                            <font>
                               <Font size="13.0" />
@@ -100,16 +110,6 @@
                         </Label>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="Bot FAQ" />
-                        <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="256.0" styleClass="preference-section" text="TABLE MANAGEMENT">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="470.0" styleClass="preference-section" text="SERVICE PREFERENCES">
                            <font>
                               <Font size="13.0" />
@@ -118,8 +118,8 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="623.0" mnemonicParsing="false" onAction="#onServiceOptions" styleClass="preference-button" text="Service Options" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Service Info" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="623.0" mnemonicParsing="false" onAction="#onServiceOptions" styleClass="preference-button" text="Service Options" />
                      </children>
                      <opaqueInsets>
                         <Insets />

@@ -9,6 +9,7 @@
 
 **Preferences**
 
+- Reorganized preferences section (still figuring out the best grouping here).
 - Renamed "PinUP Popper Validators" to "Screen Validators".
 - Renamed "VPX Validators" to "Configuration Validators".
 - Added "Virtual Pinball Spreadsheet" validator: The new validator checks if the table has been mapped against the VPS. This way, version updates can be detected and displayed in the table overview.

@@ -408,14 +408,6 @@ public class HighscoreService implements InitializingBean {
       return Optional.of(oldHighscore);
     }
 
-    /*
-     * Diff calculation:
-     * Note that this only determines if the highscore has changed locally and a change event should be fired.
-     */
-    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
-    List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
-
     //if the highscores are not equal, we still want to update the old highscore
     //update existing one
     oldHighscore.setRaw(newHighscore.getRaw());
@@ -430,6 +422,13 @@ public class HighscoreService implements InitializingBean {
 
     triggerHighscoreUpdate(game, oldHighscore);
 
+    /*
+     * Diff calculation:
+     * Note that this only determines if the highscore has changed locally and a change event should be fired.
+     */
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
+    List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
       if (changedPositions.isEmpty()) {
