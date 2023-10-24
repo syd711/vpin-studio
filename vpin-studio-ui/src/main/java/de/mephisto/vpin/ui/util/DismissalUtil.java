@@ -18,6 +18,7 @@ public class DismissalUtil {
     List<String> csvValue = client.getPreference(PreferenceNames.UI_SETTINGS).getCSVValue();
     if (csvValue.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS)) {
       dismiss(game, validationState);
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
     else {
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", "Dismiss",
@@ -32,6 +33,7 @@ public class DismissalUtil {
           client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", csvValue));
         }
       }
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 
@@ -52,6 +54,5 @@ public class DismissalUtil {
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
-    EventManager.getInstance().notifyTableChange(game.getId(), null);
   }
 }
