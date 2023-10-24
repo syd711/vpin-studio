@@ -73,6 +73,9 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
     if (altText != null) {
       this.altButton.setText(altText);
     }
+    else {
+      this.altButton.setText("Cancel");
+    }
 
     if (helpText1 != null) {
       this.helpLabel1.setText(helpText1);

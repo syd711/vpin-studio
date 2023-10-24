@@ -97,7 +97,7 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private void onAvatar(ActionEvent event) throws IOException {
-    load("preference-avatar.fxml", event);
+    load("preference-ui.fxml", event);
   }
 
   @FXML

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="400.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.ConfirmationDialogWithCheckboxController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <center>
+      <VBox alignment="BASELINE_LEFT" prefHeight="90.0" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <Label fx:id="textLabel" text="Label" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="helpLabel1" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin></Label>
+            <Label fx:id="helpLabel2" layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true" />
+            <CheckBox fx:id="checkBox" mnemonicParsing="false" text="Label" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </CheckBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onDialogCancel" styleClass="default-button" text="Cancel">
+               <HBox.margin>
+                  <Insets right="12.0" />
+               </HBox.margin></Button>
+            <Button fx:id="altButton" cancelButton="true" layoutX="248.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAltButton" styleClass="default-button" text="-" />
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="   OK   " />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

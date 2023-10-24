@@ -315,6 +315,16 @@ public class WidgetFactory {
     return controller.getResult();
   }
 
+  public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String help1, String help2, String checkBoxText, boolean checked) {
+    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
+    controller.hideCancel();
+    controller.initDialog(stage, null, okText, msg, help1, help2, checkBoxText);
+    controller.setChecked(checked);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
   public static ConfirmationResult showAlertOptionWithMandatoryCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText) {
     Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();

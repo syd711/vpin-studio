@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class AvatarPreferencesController implements Initializable {
+public class UIPreferencesController implements Initializable {
 
 
   @FXML
