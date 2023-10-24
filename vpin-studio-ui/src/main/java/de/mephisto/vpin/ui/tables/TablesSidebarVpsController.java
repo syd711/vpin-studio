@@ -18,10 +18,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
 import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
-import de.mephisto.vpin.ui.util.AutoCompleteTextField;
-import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -148,7 +145,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private void onDismiss() {
     if (validationState != null) {
       GameRepresentation g = game.get();
-      tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+      DismissalUtil.dismissValidation(g, this.validationState);
     }
   }
 

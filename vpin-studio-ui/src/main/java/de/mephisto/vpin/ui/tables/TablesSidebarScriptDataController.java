@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
@@ -377,7 +378,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
-    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+    DismissalUtil.dismissValidation(g, this.validationState);
   }
 
   public void refreshView(Optional<GameRepresentation> g) {

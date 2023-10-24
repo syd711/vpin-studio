@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -146,7 +147,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
-    tablesSidebarController.getTablesController().dismissValidation(g, options.getValidationStates().get(0));
+    DismissalUtil.dismissValidation(g, options.getValidationStates().get(0));
   }
 
   @Override

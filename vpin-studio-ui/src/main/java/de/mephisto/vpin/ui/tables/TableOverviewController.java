@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -17,6 +19,7 @@ import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -159,6 +162,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
+  private boolean showVersionUpdates = true;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -340,33 +344,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     ValidationState validationState = game.getValidationState();
-    dismissValidation(game, validationState);
+    DismissalUtil.dismissValidation(game, validationState);
   }
-
-  public void dismissValidation(@NonNull GameRepresentation game, @NonNull ValidationState validationState) {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?",
-      "The warning can be re-enabled by validating the table again.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      List<Integer> ignoredValidations = game.getIgnoredValidations();
-      if (ignoredValidations == null) {
-        ignoredValidations = new ArrayList<>();
-      }
-
-      if (!ignoredValidations.contains(validationState.getCode())) {
-        ignoredValidations.add(validationState.getCode());
-      }
-
-      game.setIgnoredValidations(ignoredValidations);
-
-      try {
-        client.getGameService().saveGame(game);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    }
-  }
-
 
   public void reload(String rom) {
     List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
@@ -489,6 +468,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onReload() {
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
+    List<String> values = preference.getCSVValue();
+    this.showVersionUpdates = !values.contains(PreferenceNames.UI_HIDE_VERSIONS);
+
     refreshPlaylists();
 
     this.textfieldSearch.setDisable(true);
@@ -627,7 +610,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
-      if (value.isUpdateAvailable()) {
+      if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
         label.setGraphic(icon);
       }

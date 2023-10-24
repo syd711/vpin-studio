@@ -58,6 +58,9 @@ public class Preferences {
   @Column(length = 1024)
   private String highscoreAllowList;
 
+  @Column(length = 1024)
+  private String uiSettings;
+
   private int idleTimeout;
 
   @Column(name = "highscoreFilterEnabled", nullable = false, columnDefinition = "boolean default false")
@@ -80,6 +83,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getUiSettings() {
+    return uiSettings;
+  }
+
+  public void setUiSettings(String uiSettings) {
+    this.uiSettings = uiSettings;
+  }
 
   public String getOverlayDesign() {
     return overlayDesign;

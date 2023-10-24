@@ -5,13 +5,11 @@
 
 **Discord Messages**
 
-- Added message filtering by the allow list, configurable in the Highscores settings.
+- Added message filtering by an allow list. They are configurable in the highscores settings.
 
 **Preferences**
 
-- Reorganized preferences section (still figuring out the best grouping here).
-- Renamed "PinUP Popper Validators" to "Screen Validators".
-- Renamed "VPX Validators" to "Configuration Validators".
+- Reorganized and renamed preferences sections (still figuring out the best grouping here).
 - Added "Virtual Pinball Spreadsheet" validator: The new validator checks if the table has been mapped against the VPS. This way, version updates can be detected and displayed in the table overview.
 
 **Table Management: Table Settings**

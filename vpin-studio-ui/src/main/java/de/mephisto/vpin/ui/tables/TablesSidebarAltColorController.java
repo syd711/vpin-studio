@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.AltColorFileDropEventHandler;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -135,7 +136,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
-    tablesSidebarController.getTablesController().dismissValidation(g, this.validationState);
+    DismissalUtil.dismissValidation(g, this.validationState);
   }
 
   @Override

@@ -14,6 +14,10 @@ public interface PreferenceNames {
   String OVERLAY_DESIGN = "overlayDesign";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
 
+  String UI_SETTINGS = "uiSettings";
+  String UI_HIDE_VERSIONS = "hideVersions";
+  String UI_HIDE_CONFIRM_DISMISSALS = "hideDismissConfirmations";
+
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";

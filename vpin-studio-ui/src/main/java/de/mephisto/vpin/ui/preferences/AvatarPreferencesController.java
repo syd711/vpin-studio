@@ -2,10 +2,11 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import eu.hansolo.tilesfx.Tile;
@@ -13,6 +14,7 @@ import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -37,6 +40,12 @@ public class AvatarPreferencesController implements Initializable {
   @FXML
   private TextField vpinNameText;
 
+  @FXML
+  private CheckBox uiDismissalConfirm;
+
+  @FXML
+  private CheckBox uiShowVersion;
+
   private Tile avatar;
 
   @FXML
@@ -44,7 +53,7 @@ public class AvatarPreferencesController implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -61,6 +70,33 @@ public class AvatarPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     BindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
 
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
+    List<String> values = preference.getCSVValue();
+
+    uiDismissalConfirm.setSelected(values.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS));
+    uiDismissalConfirm.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (!t1) {
+        values.remove(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS);
+      }
+      else if (!values.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS)) {
+        values.add(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS);
+      }
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+    });
+
+
+    uiShowVersion.setSelected(values.contains(PreferenceNames.UI_HIDE_VERSIONS));
+    uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (!t1) {
+        values.remove(PreferenceNames.UI_HIDE_VERSIONS);
+      }
+      else if (!values.contains(PreferenceNames.UI_HIDE_VERSIONS)) {
+        values.add(PreferenceNames.UI_HIDE_VERSIONS);
+      }
+      PreferencesController.markDirty();
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+    });
+
     refreshAvatar();
   }
 
@@ -73,14 +109,14 @@ public class AvatarPreferencesController implements Initializable {
 
     if (avatar == null) {
       avatar = TileBuilder.create()
-          .skinType(Tile.SkinType.IMAGE)
-          .prefSize(300, 300)
-          .backgroundColor(Color.TRANSPARENT)
-          .image(image)
-          .imageMask(Tile.ImageMask.ROUND)
-          .textSize(Tile.TextSize.BIGGER)
-          .textAlignment(TextAlignment.CENTER)
-          .build();
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(300, 300)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
       avatarBorderPane.setCenter(avatar);
     }
     avatar.setImage(image);
