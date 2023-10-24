@@ -64,7 +64,7 @@ public class PreferencesService implements InitializingBean {
     return defaultValue;
   }
 
-  public boolean savePreference(Map<String, Object> values) throws Exception {
+  public synchronized boolean savePreference(Map<String, Object> values) throws Exception {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
 
     Map<String, Object> oldValues = new HashMap<>();

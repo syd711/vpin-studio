@@ -58,15 +58,10 @@ public class PreferencesController implements Initializable {
 
   private static boolean dirty = false;
 
+  private static String lastScreen = "preference-ui.fxml";
+
   static {
-    if (preferencesRoot == null) {
-      try {
-        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
-        preferencesRoot = loader.load();
-      } catch (IOException e) {
-        LOG.error("Failed to load preferences: " + e.getMessage(), e);
-      }
-    }
+
   }
 
   public static void markDirty() {
@@ -74,10 +69,29 @@ public class PreferencesController implements Initializable {
   }
 
   public static void open() {
-    Node lookup = Studio.stage.getScene().lookup("#root");
-    BorderPane main = (BorderPane) lookup;
-    StackPane stack = (StackPane) main.getCenter();
-    stack.getChildren().add(preferencesRoot);
+    if (preferencesRoot == null) {
+      try {
+        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
+        PreferencesController controller = loader.getController();
+        preferencesRoot = loader.load();
+        preferencesRoot.setUserData(controller);
+      } catch (IOException e) {
+        LOG.error("Failed to load preferences: " + e.getMessage(), e);
+      }
+
+      Node lookup = Studio.stage.getScene().lookup("#root");
+      BorderPane main = (BorderPane) lookup;
+      StackPane stack = (StackPane) main.getCenter();
+      stack.getChildren().add(preferencesRoot);
+    }
+    else {
+      Node lookup = Studio.stage.getScene().lookup("#root");
+      BorderPane main = (BorderPane) lookup;
+      StackPane stack = (StackPane) main.getCenter();
+      stack.getChildren().add(preferencesRoot);
+
+      loadScreen(lastScreen);
+    }
   }
 
   @FXML
@@ -240,13 +254,19 @@ public class PreferencesController implements Initializable {
       lastSelection = (Button) event.getSource();
       lastSelection.getStyleClass().add("preference-button-selected");
     }
-    else {
+    else if (btnId != null) {
       Optional<Node> first = navBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
       if (first.isPresent()) {
         lastSelection = (Button) first.get();
         lastSelection.getStyleClass().add("preference-button-selected");
       }
     }
+
+    loadScreen(screen);
+  }
+
+  public static void loadScreen(String screen) {
+    lastScreen = screen;
 
     try {
       FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
