@@ -49,7 +49,16 @@ public class GameRepresentation {
   private boolean altColorAvailable;
   private String extTableId;
   private String extTableVersionId;
+  private String extVersion;
   private int emulatorId;
+
+  public String getExtVersion() {
+    return extVersion;
+  }
+
+  public void setExtVersion(String extVersion) {
+    this.extVersion = extVersion;
+  }
 
   public boolean isUpdateAvailable() {
     return updateAvailable;

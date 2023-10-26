@@ -265,7 +265,10 @@
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                           <font>
+                              <Font size="14.0" />
+                           </font></FontIcon>
                      </graphic>
                   </MenuItem>
                </items>

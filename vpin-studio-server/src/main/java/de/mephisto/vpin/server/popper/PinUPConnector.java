@@ -56,13 +56,13 @@ public class PinUPConnector implements InitializingBean {
   public GameEmulator getDefaultGameEmulator() {
     Collection<GameEmulator> values = emulators.values();
     for (GameEmulator value : values) {
-      if(value.getDescription() != null && value.getDescription().contains("default")) {
+      if (value.getDescription() != null && value.getDescription().contains("default")) {
         return value;
       }
     }
 
     for (GameEmulator value : values) {
-      if(value.getNvramFolder().exists()) {
+      if (value.getNvramFolder().exists()) {
         return value;
       }
     }
@@ -71,6 +71,8 @@ public class PinUPConnector implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+
+
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
     runConfigCheck();
@@ -195,7 +197,7 @@ public class PinUPConnector implements InitializingBean {
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
-        manifest.setFileVersion(rs.getString("GAMEVER"));
+        manifest.setGameVersion(rs.getString("GAMEVER"));
         manifest.setDateAdded(rs.getTimestamp("DateAdded"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
@@ -1148,7 +1150,7 @@ public class PinUPConnector implements InitializingBean {
     importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
     importManifestValue(id, "GameRating", manifest.getGameRating());
     importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
-    importManifestValue(id, "GAMEVER", manifest.getFileVersion());
+    importManifestValue(id, "GAMEVER", manifest.getGameVersion());
     importManifestValue(id, "DOFStuff", manifest.getDof());
     importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
     importManifestValue(id, "AltRunMode", manifest.getAltRunMode());

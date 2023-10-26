@@ -207,16 +207,16 @@ public class PopperService implements InitializingBean {
           Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
           if (tableVersion.isPresent()) {
             VpsTableFile version = tableVersion.get();
-            if ((overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) && !StringUtils.isEmpty(version.getVersion())) {
-              tableDetails.setFileVersion(version.getVersion());
+            if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(version.getVersion())) {
+              tableDetails.setGameVersion(version.getVersion());
             }
           }
         }
 
         TableInfo tableInfo = vpxService.getTableInfo(game);
         if (tableInfo != null) {
-          if ((overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
-            tableDetails.setFileVersion(tableInfo.getTableVersion());
+          if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
+            tableDetails.setGameVersion(tableInfo.getTableVersion());
           }
 
           if ((overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
@@ -228,8 +228,8 @@ public class PopperService implements InitializingBean {
     else {
       TableInfo tableInfo = vpxService.getTableInfo(game);
       if (tableInfo != null) {
-        if (overwrite || StringUtils.isEmpty(tableDetails.getFileVersion())) {
-          tableDetails.setFileVersion(tableInfo.getTableVersion());
+        if (overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) {
+          tableDetails.setGameVersion(tableInfo.getTableVersion());
         }
         if (overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) {
           tableDetails.setAuthor(tableInfo.getAuthorName());

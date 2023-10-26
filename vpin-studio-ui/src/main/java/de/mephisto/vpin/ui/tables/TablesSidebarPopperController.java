@@ -43,6 +43,9 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Button tableEditBtn;
 
   @FXML
+  private Button fixVersionBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -139,6 +142,27 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   }
 
   @FXML
+  private void onVersionFix() {
+    if (game.isPresent()) {
+      GameRepresentation gameRepresentation = game.get();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
+        + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
+        gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        TableDetails td = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
+        td.setGameVersion(gameRepresentation.getExtVersion());
+        try {
+          client.getPinUPPopperService().saveTableDetails(td, gameRepresentation.getId());
+          EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+        } catch (Exception ex) {
+          LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
@@ -156,8 +180,8 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private void onAutoFill() {
     if (this.game.isPresent()) {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for \"" + game.get().getGameDisplayName() + "\"?",
-          "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet." ,
-      "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
+        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
+        "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
       if (!result.isApplied()) {
         try {
           boolean checked = result.isChecked();
@@ -174,7 +198,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private void onAutoFillAll() {
     if (this.game.isPresent()) {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for all " + client.getGameService().getGamesCached().size() + " tables?",
-          "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet." ,
+        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
         "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
       if (!result.isApplied()) {
         try {
@@ -262,6 +286,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.tableEditBtn.setDisable(g.isEmpty());
+    this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
     this.editScreensBtn.setDisable(g.isEmpty());
     volumeSlider.setDisable(g.isEmpty());
     autoFillBtn.setDisable(g.isEmpty());
@@ -304,7 +329,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : "-");
       gameName.setText(StringUtils.isEmpty(tableDetails.getGameName()) ? "-" : tableDetails.getGameName());
       gameFileName.setText(StringUtils.isEmpty(tableDetails.getGameFileName()) ? "-" : tableDetails.getGameFileName());
-      gameVersion.setText(StringUtils.isEmpty(tableDetails.getFileVersion()) ? "-" : tableDetails.getFileVersion());
+      gameVersion.setText(StringUtils.isEmpty(tableDetails.getGameVersion()) ? "-" : tableDetails.getGameVersion());
       gameDisplayName.setText(StringUtils.isEmpty(tableDetails.getGameDisplayName()) ? "-" : tableDetails.getGameDisplayName());
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       dateAdded.setText(tableDetails.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(tableDetails.getDateAdded()));

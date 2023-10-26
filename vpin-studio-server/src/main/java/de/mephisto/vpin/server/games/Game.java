@@ -47,6 +47,7 @@ public class Game {
   private SystemService systemService;
   private String extTableId;
   private String extTableVersionId;
+  private String extVersion;
 
   public Game() {
 
@@ -54,6 +55,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public String getExtVersion() {
+    return extVersion;
+  }
+
+  public void setExtVersion(String extVersion) {
+    this.extVersion = extVersion;
   }
 
   public boolean isUpdateAvailable() {

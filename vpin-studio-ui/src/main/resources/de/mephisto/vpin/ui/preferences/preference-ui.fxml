@@ -115,7 +115,7 @@
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the version in the VPX script " textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the version stored in PinUP Popper" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
             <CheckBox fx:id="uiDismissalConfirm" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Hide validation dismissal confirmation dialogs." textFill="WHITE">
                <font>

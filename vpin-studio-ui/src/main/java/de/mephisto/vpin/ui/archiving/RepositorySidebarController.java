@@ -233,7 +233,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
       romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
       gameType.setText(tableDetails.getGameType() == null ? "-" : tableDetails.getGameType().name());
-      gameVersion.setText(StringUtils.isEmpty(tableDetails.getFileVersion()) ? "-" : tableDetails.getFileVersion());
+      gameVersion.setText(StringUtils.isEmpty(tableDetails.getGameVersion()) ? "-" : tableDetails.getGameVersion());
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));

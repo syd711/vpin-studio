@@ -35,53 +35,53 @@ public class VPXResource {
 
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
-    return vpxService.getScript(id);
+    return vpxService.getScript(gameService.getGame(id));
   }
 
   @GetMapping("/checksum/{id}")
   public String checksum(@PathVariable("id") int id) {
-    return vpxService.getChecksum(id);
+    return vpxService.getChecksum(gameService.getGame(id));
   }
 
   @GetMapping("/tableinfo/{id}")
   public TableInfo tableInfo(@PathVariable("id") int id) {
-    return vpxService.getTableInfo(id);
+    return vpxService.getTableInfo(gameService.getGame(id));
   }
 
   @GetMapping("/sources/{id}")
   public String sources(@PathVariable("id") int id) {
-    return vpxService.getSources(id);
+    return vpxService.getSources(gameService.getGame(id));
   }
 
   @PutMapping("/sources/{id}")
   public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     String base64Source = (String) values.get("source");
-    return vpxService.saveSources(id, base64Source);
+    return vpxService.saveSources(gameService.getGame(id), base64Source);
   }
 
   @GetMapping("/pov/{id}")
   public POV getPov(@PathVariable("id") int id) {
-    return vpxService.getPOV(id);
+    return vpxService.getPOV(gameService.getGame(id));
   }
 
   @PutMapping("/pov/{id}")
   public boolean put(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpxService.savePOVPreference(id, values);
+    return vpxService.savePOVPreference(gameService.getGame(id), values);
   }
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpxService.play(id);
+    return vpxService.play(gameService.getGame(id));
   }
 
   @PostMapping("/pov/{id}")
   public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpxService.create(id);
+    return vpxService.create(gameService.getGame(id));
   }
 
   @DeleteMapping("/pov/{id}")
   public boolean delete(@PathVariable("id") int id) {
-    return vpxService.delete(id);
+    return vpxService.delete(gameService.getGame(id));
   }
 
 

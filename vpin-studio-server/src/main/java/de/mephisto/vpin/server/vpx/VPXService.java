@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -30,21 +29,17 @@ public class VPXService {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
   private SystemService systemService;
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
 
-  public POV getPOV(int gameId) {
+  public POV getPOV(Game game) {
     try {
-      Game game = gameService.getGame(gameId);
       if (game != null) {
         File povFile = game.getPOVFile();
         if (povFile.exists()) {
-          return POVParser.parse(povFile, gameId);
+          return POVParser.parse(povFile, game.getId());
         }
       }
       return null;
@@ -53,22 +48,21 @@ public class VPXService {
     }
   }
 
-  public boolean savePOVPreference(int gameId, Map<String, Object> values) {
-    POV pov = getPOV(gameId);
+  public boolean savePOVPreference(Game game, Map<String, Object> values) {
+    POV pov = getPOV(game);
     if (pov != null) {
       BeanWrapper bean = new BeanWrapperImpl(pov);
       String property = (String) values.get("property");
       Object value = values.get("value");
       bean.setPropertyValue(property, value);
-      save(pov);
+      save(game, pov);
       return true;
     }
     return false;
   }
 
   @Nullable
-  public POV create(int gameId) {
-    Game game = gameService.getGame(gameId);
+  public POV create(Game game) {
     if (game != null) {
       if (game.getPOVFile().exists()) {
         if (!game.getPOVFile().delete()) {
@@ -77,20 +71,19 @@ public class VPXService {
       }
 
       if (!game.getPOVFile().exists()) {
-        createPOV(game.getId());
-        return getPOV(game.getId());
+        createPOV(game);
+        return getPOV(game);
       }
     }
     return null;
   }
 
-  public POV save(POV pov) {
+  public POV save(Game game, POV pov) {
     try {
-      Game game = gameService.getGame(pov.getGameId());
       if (game != null) {
         if (!game.getPOVFile().exists()) {
-          createPOV(game.getId());
-          return getPOV(game.getId());
+          createPOV(game);
+          return getPOV(game);
         }
 
         POVSerializer.serialize(pov, game);
@@ -101,24 +94,22 @@ public class VPXService {
     }
   }
 
-  public POV createPOV(int gameId) {
-    Game game = gameService.getGame(gameId);
+  public POV createPOV(Game game) {
     if (game != null) {
       try {
         File target = vpxCommandLineService.export(game, "-Pov", "pov");
         if (target.exists()) {
-          return getPOV(gameId);
+          return getPOV(game);
         }
       } catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
       }
     }
-    LOG.error("No game found for pov creation with id " + gameId);
+    LOG.error("No game found for pov creation of " + game.getGameDisplayName());
     return null;
   }
 
-  public String getScript(int gameId) {
-    Game game = gameService.getGame(gameId);
+  public String getScript(Game game) {
     if (game != null) {
       File target = vpxCommandLineService.export(game, "-ExtractVBS", "vbs");
       if (target.exists()) {
@@ -136,17 +127,8 @@ public class VPXService {
       }
 
     }
-    LOG.error("No game found for script extraction, id " + gameId);
+    LOG.error("No game found for script extraction for " + game.getGameDisplayName());
     return null;
-  }
-
-  public TableInfo getTableInfo(int gameId) {
-    Game game = gameService.getGame(gameId);
-    if (game == null) {
-      LOG.error("No game found for table info " + gameId);
-      return null;
-    }
-    return getTableInfo(game);
   }
 
   public TableInfo getTableInfo(Game game) {
@@ -160,8 +142,7 @@ public class VPXService {
     return null;
   }
 
-  public String getSources(int gameId) {
-    Game game = gameService.getGame(gameId);
+  public String getSources(Game game) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
@@ -169,12 +150,11 @@ public class VPXService {
         return Base64.getEncoder().encodeToString(sources.getBytes());
       }
     }
-    LOG.error("No game found for table sources, id " + gameId);
+    LOG.error("No game found for table sources for " + game.getGameDisplayName());
     return null;
   }
 
-  public boolean saveSources(int gameId, String base64Source) {
-    Game game = gameService.getGame(gameId);
+  public boolean saveSources(Game game, String base64Source) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
@@ -191,8 +171,7 @@ public class VPXService {
     return false;
   }
 
-  public boolean delete(int id) {
-    Game game = gameService.getGame(id);
+  public boolean delete(Game game) {
     if (game != null) {
       File povFile = game.getPOVFile();
       if (povFile.exists()) {
@@ -203,12 +182,11 @@ public class VPXService {
         LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
       }
     }
-    LOG.error("No game found for pov creation with id " + id);
+    LOG.error("No game found for pov creation of " + game.getGameDisplayName());
     return false;
   }
 
-  public boolean play(int id) {
-    Game game = gameService.getGame(id);
+  public boolean play(Game game) {
     if (game != null) {
       systemService.killPopper();
       return vpxCommandLineService.execute(game, "-Play");
@@ -216,8 +194,7 @@ public class VPXService {
     return false;
   }
 
-  public String getChecksum(int id) {
-    Game game = gameService.getGame(id);
+  public String getChecksum(Game game) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
@@ -227,7 +204,7 @@ public class VPXService {
         LOG.info("Game file " + gameFile.getAbsolutePath() + " does not exist for reading the checksum.");
       }
     }
-    LOG.error("No game found reading checksum " + id);
+    LOG.error("No game found reading checksum of " + game.getGameDisplayName());
     return null;
   }
 }

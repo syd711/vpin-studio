@@ -185,7 +185,7 @@ public class GamesResource {
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
             tableDetails.setGameFileName(uploadFile.getName());
             tableDetails.setGameDisplayName(originalFilename);
-            tableDetails.setFileVersion(""); //reset version to re-apply the newer one
+            tableDetails.setGameVersion(""); //reset version to re-apply the newer one
             popperService.saveTableDetails(tableDetails, gameId);
 
             Game game = gameService.scanGame(gameId);
@@ -206,7 +206,7 @@ public class GamesResource {
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
               tableDetails.setGameName(originalName);
-              tableDetails.setFileVersion(""); //reset version to re-apply the newer one
+              tableDetails.setGameVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId);
               if (importedGame != null) {
                 popperService.autofillTableDetails(importedGame, false);

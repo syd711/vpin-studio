@@ -394,9 +394,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     openTableBtn.setDisable(true);
 
-    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
-    });
     filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
     List<VpsTable> tables = VPS.getInstance().getTables();
@@ -405,6 +402,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
       featureBox.getChildren().removeAll(featureBox.getChildren());
       if (newValue != null) {
         List<String> features = newValue.getFeatures();
@@ -419,7 +417,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
         String existingValueId = this.game.get().getExtTableVersionId();
         String newValueId = newValue.getId();
-        if (existingValueId != null && !existingValueId.equals(newValueId)) {
+        if (existingValueId == null || !existingValueId.equals(newValueId)) {
           client.getVpsService().saveVersion(this.game.get().getId(), newValueId);
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         }

@@ -138,8 +138,8 @@ public class TableDataController implements Initializable, DialogController {
     gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameDisplayName(newValue.trim()));
     gameTheme.setText(manifest.getGameTheme());
     gameTheme.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameTheme(newValue));
-    gameVersion.setText(manifest.getFileVersion());
-    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> manifest.setFileVersion(newValue));
+    gameVersion.setText(manifest.getGameVersion());
+    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> manifest.setGameVersion(newValue));
 
     gameTypeCombo.setItems(FXCollections.observableList(Arrays.asList(GameType.values())));
     GameType gt = manifest.getGameType();

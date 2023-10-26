@@ -202,7 +202,10 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="Scan All">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="sil-refresh">
+                           <font>
+                              <Font size="14.0" />
+                           </font></FontIcon>
                      </graphic>
                   </MenuItem>
               </items>

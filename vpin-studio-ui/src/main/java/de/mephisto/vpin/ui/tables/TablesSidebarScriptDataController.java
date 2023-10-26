@@ -17,10 +17,10 @@ import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -84,7 +83,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button editBtn;
 
   @FXML
-  private Button scanBtn;
+  private SplitMenuButton scanBtn;
 
   @FXML
   private Button openEMHighscoreBtn;
@@ -165,7 +164,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onShowTableRules() {
-    if(tableInfo == null || game.isEmpty()) {
+    if (tableInfo == null || game.isEmpty()) {
       return;
     }
 
@@ -187,7 +186,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onShowTableDescription() {
-    if(tableInfo == null || game.isEmpty()) {
+    if (tableInfo == null || game.isEmpty()) {
       return;
     }
 
@@ -209,7 +208,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onTablesFolderOpen() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       try {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.get().getEmulatorId());
         new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
@@ -223,7 +222,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onHsFileNameEdit() {
     GameRepresentation gameRepresentation = game.get();
     String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename", "Enter EM Highscore Filename",
-        "Enter the name of the highscore file for this table.", "If available, the file is located in the 'VisualPinball\\User' folder.", gameRepresentation.getHsFileName());
+      "Enter the name of the highscore file for this table.", "If available, the file is located in the 'VisualPinball\\User' folder.", gameRepresentation.getHsFileName());
     if (fs != null) {
       gameRepresentation.setHsFileName(fs);
 
@@ -270,6 +269,17 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
+  public void onScanAll() {
+    if (this.game.isPresent()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan all " + client.getGameService().getGamesCached().size() + " tables?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", client.getGameService().getGamesCached()));
+        EventManager.getInstance().notifyTablesChanged();
+      }
+    }
+  }
+
+  @FXML
   public void onScan() {
     if (this.game.isPresent()) {
       Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
@@ -280,7 +290,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onVPSaveEdit() {
     try {
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
       ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
       builder.directory(new File("resources"));
       builder.start();
@@ -302,9 +311,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onTableNameEdit() {
     GameRepresentation gameRepresentation = game.get();
     String tableName = WidgetFactory.showInputDialog(Studio.stage, "Table Name", "Enter Table Name",
-        "Enter the value for the 'TableName' property.",
-        "The value is configured for some tables and used during highscore extraction.",
-        gameRepresentation.getTableName());
+      "Enter the value for the 'TableName' property.",
+      "The value is configured for some tables and used during highscore extraction.",
+      gameRepresentation.getTableName());
     if (tableName != null) {
       gameRepresentation.setTableName(tableName);
       try {
@@ -336,7 +345,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private void onEMHighscore() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
 
       File folder = new File(emulatorRepresentation.getUserDirectory());
@@ -355,8 +364,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onInspect() {
     if (game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
-          "This will extract the table script into a temporary file.",
-          "It will be opened afterwards in a text editor.");
+        "This will extract the table script into a temporary file.",
+        "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
         ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));

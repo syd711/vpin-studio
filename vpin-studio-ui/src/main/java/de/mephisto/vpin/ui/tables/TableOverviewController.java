@@ -612,6 +612,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+        Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"  +
+          "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
+        tt.setWrapText(true);
+        tt.setMaxWidth(400);
+        Tooltip.install(icon, tt);
         label.setGraphic(icon);
       }
       return new SimpleObjectProperty(label);

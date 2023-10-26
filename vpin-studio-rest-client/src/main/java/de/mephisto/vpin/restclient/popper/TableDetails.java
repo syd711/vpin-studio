@@ -14,7 +14,7 @@ public class TableDetails {
   private String gameFileName;
   private String gameDisplayName;
   private GameType gameType;
-  private String fileVersion;
+  private String gameVersion;
   private Date dateAdded;
   private String gameTheme;
   private String notes;
@@ -95,12 +95,12 @@ public class TableDetails {
     this.gameType = gameType;
   }
 
-  public String getFileVersion() {
-    return fileVersion;
+  public String getGameVersion() {
+    return gameVersion;
   }
 
-  public void setFileVersion(String fileVersion) {
-    this.fileVersion = fileVersion;
+  public void setGameVersion(String gameVersion) {
+    this.gameVersion = gameVersion;
   }
 
   public Integer getGameYear() {

@@ -26,11 +26,13 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runVPSCheck() {
-    try {
-      VPS.getInstance().download();
-    } catch (Exception e) {
-      LOG.error("Failed to update VPS sheet: " + e.getMessage(), e);
-    }
+    new Thread(() -> {
+      try {
+        VPS.getInstance().download();
+      } catch (Exception e) {
+        LOG.error("Failed to update VPS sheet: " + e.getMessage(), e);
+      }
+    }).start();
   }
 
   private static void runResourcesCheck() {
