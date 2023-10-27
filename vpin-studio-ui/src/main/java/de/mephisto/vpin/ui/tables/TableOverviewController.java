@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -22,7 +23,6 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -45,6 +45,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -61,19 +62,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnId;
+  private TableColumn<GameRepresentation, Label> columnId;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnDisplayName;
+  private TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnVersion;
+  private TableColumn<GameRepresentation, Label> columnVersion;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnRom;
-
-  @FXML
-  private TableColumn<GameRepresentation, String> columnEmulator;
+  private TableColumn<GameRepresentation, Label> columnRom;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnB2S;
@@ -149,9 +147,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private Button reloadBtn;
-
-  @FXML
-  private ComboBox<String> emulatorTypeCombo;
 
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
@@ -544,6 +539,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    new Thread(() -> {
+      try {
+        VPS.getInstance().download();
+      } catch (Exception e) {
+        LOG.error("VPS update failed: " + e.getMessage(), e);
+      }
+    }).start();
+
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       tablesLoadingOverlay = loader.load();
@@ -612,7 +615,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
-        Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"  +
+        Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
           "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
@@ -647,11 +650,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
-
-//    columnEmulator.setCellValueFactory(cellData -> {
-//      GameRepresentation value = cellData.getValue();
-//      return new SimpleStringProperty(value.getEmulator().getName());
-//    });
 
     columnHSType.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();

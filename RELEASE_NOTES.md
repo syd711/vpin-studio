@@ -15,8 +15,12 @@
 **Table Management: Table Settings**
 
 - Added bulk operation to execute the "Auto-fill" for all tables.
-  
- 
+
+
+**Table Management: PinUP Popper Table Settings**
+
+- Added "Fix Version" button. If selected, the version of the selected VPS table will be written into PinUP Popper. As a result, the update indicator in the table overview is not shown anymore.
+
 **Table Management: Highscores**
 
 - Added bulk operation to execute highscore scans for all tables.
@@ -32,14 +36,14 @@
 **Table Management: Overview**
 
 - Renamed highscore type "EM" to "Text" (see bugfixes).
-- Added version icon: If the table has been matched against a version of the Virtual Pinball Spreadsheet and the version stored in PinUP Popper does not match against it, an update icon is shown in front of the version number now.
+- Added version icon: If the table has been matched against a version of the Virtual Pinball Spreadsheet and the version stored in PinUP Popper does not match against it, an update icon is shown in front of the version number now. The feature can be disabled in the UI settings.
 
 ### Bugfixes
 
 - Fixed initial game scan: All VPX emulators are taken into account.
 - Fixed table (re)loading: Tables that are detected during a reload are not scanned "on-the-fly" anymore, but in a separate progress dialog. 
 - Increased icon size of table overview buttons toolbar.
-- Fixed update dialog: The update progress bar showing progress again.
+- Fixed update dialog: The update progress bar showing progress again (for the next update of cause).
 - Improved update button: The update button is now shown together with the target version.
 - Improved updates: The update button is now also shown when the server is older than the client, so that the update dialog can be invoked too.
 - Removed "EM" table hint for the highscore filename field in the "Script Details" section: Since not only EM tables, but also original tables use text-files for storing highscores, the "EM" hint was wrong.

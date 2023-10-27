@@ -320,7 +320,8 @@ public class TablesSidebarScriptDataController implements Initializable {
         Studio.client.getGameService().saveGame(gameRepresentation);
         tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+        LOG.error("Saving tablename failed: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Saving tablename failed: " + e.getMessage());
       }
       EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }

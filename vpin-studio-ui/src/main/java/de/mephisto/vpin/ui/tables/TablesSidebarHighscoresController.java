@@ -46,9 +46,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Label hsLastModifiedLabel;
 
   @FXML
-  private Label hsStatusLabel;
-
-  @FXML
   private Label hsLastScannedLabel;
 
   @FXML
@@ -96,6 +93,15 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private BorderPane scoreGraph;
 
+  @FXML
+  private Label statusLabel;
+
+  @FXML
+  private VBox statusPane;
+
+  @FXML
+  private VBox dataPane;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -107,7 +113,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
   }
 
   @FXML
@@ -202,7 +208,6 @@ public class TablesSidebarHighscoresController implements Initializable {
     formattedScoreLabel.setText("");
 
     this.hsFileLabel.setText("-");
-    this.hsStatusLabel.setText("-");
     this.hsTypeLabel.setText("-");
     this.hsLastModifiedLabel.setText("-");
     this.hsLastScannedLabel.setText("-");
@@ -251,6 +256,19 @@ public class TablesSidebarHighscoresController implements Initializable {
         EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
       }
 
+      boolean hasHighscore = !StringUtils.isEmpty(summary.getRaw());
+      dataPane.setVisible(hasHighscore);
+      statusPane.setVisible(!hasHighscore);
+
+      if(!hasHighscore) {
+        if(!StringUtils.isEmpty(metadata.getStatus())) {
+          statusLabel.setText(metadata.getStatus());
+        }
+        else {
+          statusLabel.setText("Unknown status.");
+        }
+      }
+
       ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());
       hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
       if (!scoreHistory.getScores().isEmpty()) {
@@ -264,10 +282,6 @@ public class TablesSidebarHighscoresController implements Initializable {
 
         if (metadata.getFilename() != null) {
           this.hsFileLabel.setText(metadata.getFilename());
-        }
-
-        if (metadata.getStatus() != null) {
-          this.hsStatusLabel.setText(metadata.getStatus());
         }
 
         if (metadata.getType() != null) {
