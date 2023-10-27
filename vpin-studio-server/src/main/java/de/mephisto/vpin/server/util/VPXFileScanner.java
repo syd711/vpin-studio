@@ -31,8 +31,6 @@ public class VPXFileScanner {
 
   private final static String PATTERN_TABLENAME = "TableName";
   private final static List<String> PATTERNS = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName", PATTERN_TABLENAME);
-  private final static List<String> ASSET_TYPES = Arrays.asList("mp3", "ogg");
-
 
   private final static List<Pattern> patternList = new ArrayList<>();
 
@@ -109,7 +107,6 @@ public class VPXFileScanner {
         lineSearchRom(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
-        lineSearchAsset(gameFile, result, line);
         lineSearchEMHighscore(gameFile, result, line);
       }
     } catch (Exception e) {
@@ -151,26 +148,6 @@ public class VPXFileScanner {
       lineSearchRom(result, line);
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
-      lineSearchAsset(gameFile, result, line);
-    }
-  }
-
-  /**
-   * Searches the given line for assets.
-   *
-   * @param gameFile the game file that is scanned
-   * @param result   the current scan result to add the asset info to
-   * @param line     the line that is currently parsed
-   */
-  private static void lineSearchAsset(@NonNull File gameFile, @NonNull ScanResult result, @NonNull String line) {
-    for (String assetType : ASSET_TYPES) {
-      if (line.contains("." + assetType + "\"")) {
-        String asset = extractAsset(line, assetType);
-        if (asset != null && !result.getAssets().contains(asset)) {
-          LOG.info(gameFile.getAbsolutePath() + ": Added asset '" + asset + "'");
-          result.getAssets().add(asset);
-        }
-      }
     }
   }
 

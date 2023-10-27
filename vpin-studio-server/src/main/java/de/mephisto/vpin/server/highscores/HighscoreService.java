@@ -188,7 +188,7 @@ public class HighscoreService implements InitializingBean {
         scoreList.getScores().add(scoreSummary);
       }
       else {
-        LOG.error("Failed to create score summary for " + gameId);
+        LOG.warn("Failed to create score history summary for version with id '" + version.getId() + "', may happen because of older unsupported formats.");
       }
     }
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));

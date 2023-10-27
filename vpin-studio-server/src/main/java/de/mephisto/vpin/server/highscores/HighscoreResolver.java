@@ -36,7 +36,7 @@ class HighscoreResolver {
 
   private void loadSupportedScores() {
     try {
-      String roms = executePINemHi("-lr", new HighscoreMetadata());
+      String roms = readPINemHiStatus("-lr");
       this.supportedRoms = Arrays.asList(roms.split("\n"));
     } catch (Exception e) {
       LOG.error("Failed to load supported rom names from PINemHi: " + e.getMessage(), e);
@@ -100,95 +100,7 @@ class HighscoreResolver {
       try {
         fileInputStream = new FileInputStream(hsFile);
         List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-
-        if (lines.size() == 16) {
-          lines = lines.subList(1, lines.size());
-        }
-
-        if (lines.size() >= 15) {
-          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
-
-          int index = 5;
-          for (int i = 1; i < 6; i++) {
-            String score = lines.get(index);
-            String initials = lines.get(index + 5);
-
-            builder.append("#");
-            builder.append(i);
-            builder.append(" ");
-            builder.append(initials);
-            builder.append("   ");
-            builder.append(score);
-            builder.append("\n");
-
-            index++;
-          }
-          return builder.toString();
-        }
-
-        if (lines.size() == 12) {
-          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
-
-          for (int index = 0; index < 5; index++) {
-            String score = lines.get(index + 2);
-            String initials = lines.get(index + 2 + 5);
-
-            builder.append("#");
-            builder.append(index + 1);
-            builder.append(" ");
-            builder.append(initials);
-            builder.append("   ");
-            builder.append(score);
-            builder.append("\n");
-          }
-          return builder.toString();
-        }
-
-        if (lines.size() == 8) {
-          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
-
-          String score1 = lines.get(1);
-          String score2 = lines.get(2);
-          builder.append("#1");
-          builder.append(" ");
-          builder.append("???");
-          builder.append("   ");
-          builder.append(score2);
-          builder.append("\n");
-
-          builder.append("#2");
-          builder.append(" ");
-          builder.append("???");
-          builder.append("   ");
-          builder.append(score1);
-          builder.append("\n");
-
-          return builder.toString();
-        }
-
-        if (lines.size() == 7 && lines.get(1).indexOf(".:") == 1) {
-          StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
-          for (int i = 1; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if (StringUtils.isEmpty(line.trim())) {
-              continue;
-            }
-
-            List<String> scoreLineSegments = Arrays.asList(line.split(":"));
-            String initials = scoreLineSegments.get(1);
-            String score = scoreLineSegments.get(2);
-
-            builder.append("#");
-            builder.append(i);
-            builder.append(" ");
-            builder.append(initials);
-            builder.append("   ");
-            builder.append(score);
-            builder.append("\n");
-          }
-
-          return builder.toString();
-        }
+        return HighscoreRawToMachineReadableConverter.convertToMachineReadable(lines);
       } catch (IOException e) {
         LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
       } finally {
@@ -262,7 +174,23 @@ class HighscoreResolver {
     return null;
   }
 
-  private String executePINemHi(String nvRamFileName, HighscoreMetadata metadata) throws Exception {
+  private String readPINemHiStatus(String cmd) {
+    File commandFile = systemService.getPinemhiCommandFile();
+    try {
+      List<String> commands = Arrays.asList(commandFile.getName(), cmd);
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(commandFile.getParentFile());
+      executor.executeCommand();
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      return standardOutputFromCommand.toString();
+    } catch (Exception e) {
+      LOG.error("Failed to read pinemhi data: " + e.getMessage(), e);
+    }
+    return "";
+  }
+
+  private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata) throws Exception {
     metadata.setType(HighscoreType.NVRam);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
@@ -279,9 +207,19 @@ class HighscoreResolver {
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();
-      if (!stdOut.contains("1")) {
-        LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
-        metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted or it contains only a single entry.");
+
+      //check for pre-formatting
+      List<String> list = Arrays.asList(stdOut.trim().split("\n"));
+      if(list.size() < 5) {
+        LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format.");
+        String raw = HighscoreRawToMachineReadableConverter.convertToMachineReadable(list);
+        if(raw == null) {
+          LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
+          metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
+        }
+        else {
+          return raw;
+        }
       }
       return stdOut;
     } catch (Exception e) {

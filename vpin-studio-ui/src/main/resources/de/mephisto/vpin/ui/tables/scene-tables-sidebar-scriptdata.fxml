@@ -77,7 +77,7 @@
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="31.0" styleClass=",default-text" text="Rom Name:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="31.0" styleClass=",default-text" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="3">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
@@ -97,12 +97,12 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="56.0" styleClass="default-text" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="56.0" styleClass="default-text" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="5">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -184,17 +184,17 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="110.0" styleClass="default-text" text="Tablename:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="110.0" styleClass="default-text" text="Alt. ROM Name:" textFill="WHITE" GridPane.rowIndex="4">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <Label fx:id="labelTableName" layoutX="188.0" layoutY="110.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                    <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                         <children>
                                             <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
                                                 <graphic>
@@ -237,7 +237,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                  <children>
                                     <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
                                        <graphic>
