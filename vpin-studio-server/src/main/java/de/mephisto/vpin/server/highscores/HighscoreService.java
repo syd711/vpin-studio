@@ -408,20 +408,6 @@ public class HighscoreService implements InitializingBean {
       return Optional.of(oldHighscore);
     }
 
-    //if the highscores are not equal, we still want to update the old highscore
-    //update existing one
-    oldHighscore.setRaw(newHighscore.getRaw());
-    oldHighscore.setType(newHighscore.getType());
-    oldHighscore.setLastScanned(newHighscore.getLastScanned());
-    oldHighscore.setLastModified(newHighscore.getLastModified());
-    oldHighscore.setFilename(newHighscore.getFilename());
-    oldHighscore.setStatus(null);
-    oldHighscore.setDisplayName(newHighscore.getDisplayName());
-    highscoreRepository.saveAndFlush(oldHighscore);
-    LOG.info("Saved updated highscore for " + game);
-
-    triggerHighscoreUpdate(game, oldHighscore);
-
     /*
      * Diff calculation:
      * Note that this only determines if the highscore has changed locally and a change event should be fired.
@@ -433,34 +419,50 @@ public class HighscoreService implements InitializingBean {
       List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
       if (changedPositions.isEmpty()) {
         LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
-        return Optional.of(oldHighscore);
       }
+      else {
+        LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
+        if (!changedPositions.isEmpty()) {
+          boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
+          List<String> allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
 
-      LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
-      if (!changedPositions.isEmpty()) {
-        boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-        List<String> allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
+          for (Integer changedPosition : changedPositions) {
+            //so we have a highscore update, let's decide the distribution
+            Score oldScore = oldScores.get(changedPosition - 1);
+            Score newScore = newScores.get(changedPosition - 1);
 
-        for (Integer changedPosition : changedPositions) {
-          //so we have a highscore update, let's decide the distribution
-          Score oldScore = oldScores.get(changedPosition - 1);
-          Score newScore = newScores.get(changedPosition - 1);
+            //archive old existingScore only if it had actual data
+            if (!StringUtils.isEmpty(oldRaw)) {
+              HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
+              highscoreVersionRepository.saveAndFlush(version);
+              LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
+            }
 
-          //archive old existingScore only if it had actual data
-          if (!StringUtils.isEmpty(oldRaw)) {
-            HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
-            highscoreVersionRepository.saveAndFlush(version);
-            LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
-          }
-
-          if (!isScoreFiltered(highscoreFilterEnabled, allowList, newScore)) {
-            //finally, fire the update event to notify all listeners
-            HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
-            triggerHighscoreChange(event);
+            if (!isScoreFiltered(highscoreFilterEnabled, allowList, newScore)) {
+              //finally, fire the update event to notify all listeners
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
+              triggerHighscoreChange(event);
+            }
           }
         }
       }
     }
+
+    /*
+     * The old and the new highscores are not matching.
+     * Even if no diff was calculated, we upate the latest score and generated the highscore card.
+     */
+    oldHighscore.setRaw(newHighscore.getRaw());
+    oldHighscore.setType(newHighscore.getType());
+    oldHighscore.setLastScanned(newHighscore.getLastScanned());
+    oldHighscore.setLastModified(newHighscore.getLastModified());
+    oldHighscore.setFilename(newHighscore.getFilename());
+    oldHighscore.setStatus(null);
+    oldHighscore.setDisplayName(newHighscore.getDisplayName());
+    highscoreRepository.saveAndFlush(oldHighscore);
+    LOG.info("Saved updated highscore for " + game);
+
+    triggerHighscoreUpdate(game, oldHighscore);
 
     return Optional.of(oldHighscore);
   }

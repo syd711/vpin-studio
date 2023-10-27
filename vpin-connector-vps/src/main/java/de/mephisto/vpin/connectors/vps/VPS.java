@@ -124,15 +124,6 @@ public class VPS {
       results = findInternal(term);
     }
 
-//    if (results.isEmpty()) {
-//      String[] segments = searchTerm.split(" ");
-//      for (String segment : segments) {
-//        if (results.isEmpty() && segment.length() >= 4) {
-//          results = findInternal(term);
-//        }
-//      }
-//    }
-
     return results;
   }
 

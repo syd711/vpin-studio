@@ -25,6 +25,7 @@
 
 - Added bulk operation to execute highscore scans for all tables.
 - Changed green open button for this section so that the folder opens for the given highscore format.
+- Changed status display: when the Studio has a problem reading the highscore, only the error message is shown now (well, this is actually more of a bugfix since some errors were not displayed at all). 
 
 **Table Management: Spreadsheet Data**
 
