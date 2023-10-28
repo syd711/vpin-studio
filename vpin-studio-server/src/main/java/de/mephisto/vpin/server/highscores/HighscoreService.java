@@ -450,7 +450,7 @@ public class HighscoreService implements InitializingBean {
 
     /*
      * The old and the new highscores are not matching.
-     * Even if no diff was calculated, we upate the latest score and generated the highscore card.
+     * Even if no diff was calculated, we update the latest score and generated the highscore card.
      */
     oldHighscore.setRaw(newHighscore.getRaw());
     oldHighscore.setType(newHighscore.getType());

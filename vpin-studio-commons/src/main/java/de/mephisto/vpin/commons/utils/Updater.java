@@ -160,9 +160,11 @@ public class Updater {
     List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
 
     for (int i = 0; i < versionBSegments.size(); i++) {
-      if (versionASegments.get(i) > versionBSegments.get(i)) {
-        return true;
+      if (versionASegments.get(i).intValue() == versionBSegments.get(i).intValue()) {
+        continue;
       }
+
+      return versionASegments.get(i) > versionBSegments.get(i);
     }
 
     return false;

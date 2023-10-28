@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class VPXFileScanner {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
 
-  private final static int MAX_ROM_FILENAME_LENGTH = 16;
+  private final static int MAX_ROM_FILENAME_LENGTH = 32;
   private final static int MAX_FILENAME_LENGTH = 128;
 
   private final static String PATTERN_TABLENAME = "TableName";
@@ -71,7 +71,6 @@ public class VPXFileScanner {
     }
 
     if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
-      System.out.println(result.getTableName());
       result.setRom(result.getTableName());
     }
 
@@ -212,15 +211,20 @@ public class VPXFileScanner {
     int patternMatch = matchesPatterns(line);
     if (patternMatch != -1) {
       String pattern = PATTERNS.get(patternMatch);
+
+      //check if pattern match is behind a comment, then we ignore the line
       if (line.contains("'") && line.trim().indexOf("'") < line.indexOf(pattern)) {
         return;
       }
 
+      //remove leading quote
       String extract = line.substring(line.indexOf(pattern) + pattern.length() + 1);
       int start = extract.indexOf("\"") + 1;
       String rom = extract.substring(start);
       int end = rom.indexOf("\"");
 
+      //check if the name matches with the allowed length of the filename
+      //this may differ: EM highscore filenames are usually longer that nvram names, this is not differed here!
       if (end - start < MAX_ROM_FILENAME_LENGTH) {
         rom = rom.substring(0, end).trim();
       }
