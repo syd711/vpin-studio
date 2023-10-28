@@ -87,7 +87,13 @@ public class CardGraphics {
       backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
     }
     else {
-      backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
+      try {
+        backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
+      } catch (Exception e) {
+        LOG.info("Using default image as fallback instead of " + croppedDefaultPicture.getAbsolutePath());
+        BufferedImage sImage = ImageUtil.loadImage(sourceImage);
+        backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
+      }
     }
 
 
