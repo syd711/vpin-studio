@@ -7,6 +7,10 @@
 
 - Added message filtering by an allow list. They are configurable in the highscores settings.
 
+**Overlay**
+
+- Added dashboard variants in the preferences section. All variants support HD, WQHD and 4K resolutions. 
+
 **Preferences**
 
 - Reorganized and renamed preferences sections (still figuring out the best grouping here).
@@ -58,3 +62,7 @@
 - Fixed highscore parsing for EM highscore textfiles with 12 or 14 lines (e.g. "Apache Playmatic").
 - Fixed highscore parsing for older SS tables which only stored one score (e.g. "Algar").
 - Changed table-scanning so that when only a "tablename", but ROM name is found, the resolved "tablename" value is used as ROM name.
+
+### Known Bugs
+
+- Table sorting is broken :/
