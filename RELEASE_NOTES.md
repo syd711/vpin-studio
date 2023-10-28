@@ -15,10 +15,11 @@
 
 - Reorganized and renamed preferences sections (still figuring out the best grouping here).
 - Added "Virtual Pinball Spreadsheet" validator: The new validator checks if the table has been mapped against the VPS. This way, version updates can be detected and displayed in the table overview.
+- Added UI preferences section. The section will grow over time, e.g. providing more "do not show again" options for confirmation dialogs.
 
 **Table Management: Table Settings**
 
-- Added bulk operation to execute the "Auto-fill" for all tables.
+- Added bulk operation to execute the "Auto-Fill" for all tables.
 
 
 **Table Management: PinUP Popper Table Settings**
@@ -33,7 +34,7 @@
 
 **Table Management: Spreadsheet Data**
 
-- Added auto-resolving for table version. Not only the table itself is resolved automatically (when the view is selected), but also the table version will be resolved. Note that this auto-assignment does not work a 100%, so its recommended to check these manually too.
+- Added auto-resolving for table version. Not only the table itself is resolved automatically, but also the table version will be resolved. Note that this auto-assignment does not work a 100%, so I recommended to double-check these.
 - Added auto-fill button which executes the automatic table assignment.
 - Added bulk auto-fill button which executes the automatic table assignment for all tables.
 - The table assignment is not executed automatically anymore when the view is opened for a table selection. The auto-fill button or textfield and combo-box must be used.
@@ -50,7 +51,7 @@
 ### Bugfixes
 
 - Fixed initial game scan: All VPX emulators are taken into account.
-- Fixed table (re)loading: Tables that are detected during a reload are not scanned "on-the-fly" anymore, but in a separate progress dialog. 
+- Fixed table (re)loading: Tables that are detected during a reload are not scanned "on-the-fly" anymore, but one-by-one in a separate progress dialog. This is one step towards providing timeouts again, but there are still a lot of requests to adept. 
 - Increased icon size of table overview buttons toolbar.
 - Fixed update dialog: The update progress bar showing progress again (for the next update of cause).
 - Improved update button: The update button is now shown together with the target version.
@@ -61,7 +62,7 @@
 - Fixed highscore parsing for "SpongeBob's Bikini Bottom Pinball VPW". The table has a custom highscore format that was not supported yet.
 - Fixed highscore parsing for EM highscore textfiles with 12 or 14 lines (e.g. "Apache Playmatic").
 - Fixed highscore parsing for older SS tables which only stored one score (e.g. "Algar").
-- Changed table-scanning so that when only a "tablename", but ROM name is found, the resolved "tablename" value is used as ROM name.
+- Changed table-scanning so that when only a "tablename", but no ROM name is found, the resolved "tablename" value is used as ROM name.
 
 ### Known Bugs
 
