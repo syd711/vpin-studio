@@ -64,6 +64,9 @@ public class OverlayWindowFX extends Application {
       try {
         PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
         String value = preference.getValue();
+        if (StringUtils.isEmpty(value) || value.equalsIgnoreCase("null")) {
+          value = "";
+        }
         String resource = resolveDashboard(value);
 
         FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));

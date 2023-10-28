@@ -56,7 +56,7 @@
          <bottom>
             <ToolBar fx:id="toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
-                <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install Service" textFill="WHITE">
+                <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="Install Service" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
