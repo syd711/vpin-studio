@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.dmd;
 
+import de.mephisto.vpin.restclient.validation.ValidationState;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +11,16 @@ public class DMDPackage {
   private DMDPackageTypes dmdPackageTypes;
   private Date modificationDate;
   private List<String> files = new ArrayList<>();
+  private List<ValidationState> validationStates = new ArrayList<>();
   private long size;
+
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
+  }
+
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
+  }
 
   public long getSize() {
     return size;

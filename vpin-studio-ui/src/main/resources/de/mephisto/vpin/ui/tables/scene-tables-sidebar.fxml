@@ -128,6 +128,32 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
+            <TitledPane fx:id="titledPaneDMD" expanded="false" layoutX="10.0" layoutY="137.0">
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <right>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="external-component">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open DMD folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </right>
+                     <left>
+                        <Label text="DMD" BorderPane.alignment="CENTER" />
+                     </left>
+                  </BorderPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPanePUPPack" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">

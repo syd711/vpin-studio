@@ -1,19 +1,19 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.AltColorFileDropEventHandler;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,11 +35,16 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarAltColorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltColorController.class);
+public class TablesSidebarDMDController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarDMDController.class);
+
+  private Optional<GameRepresentation> game = Optional.empty();
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button flexDMDUIBtn;
 
   @FXML
   private Button reloadBtn;
@@ -48,10 +53,7 @@ public class TablesSidebarAltColorController implements Initializable {
   private Label lastModifiedLabel;
 
   @FXML
-  private Label typeLabel;
-
-  @FXML
-  private Label filesLabel;
+  private Label bundleSizeLabel;
 
   @FXML
   private VBox emptyDataBox;
@@ -69,23 +71,36 @@ public class TablesSidebarAltColorController implements Initializable {
   private Label errorText;
 
   @FXML
-  private Pane altColorRoot;
-
-  private AltColor altColor;
-  private ValidationState validationState;
-
-  private Optional<GameRepresentation> game = Optional.empty();
+  private Pane pupRoot;
 
   private TablesSidebarController tablesSidebarController;
+  private DMDPackage dmdPackage;
+  private ValidationState validationState;
 
   // Add a public no-args constructor
-  public TablesSidebarAltColorController() {
+  public TablesSidebarDMDController() {
   }
 
   @FXML
-  private void onUpload() {
-    if (game.isPresent()) {
-      Dialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
+  private void onFlexDMDUI() {
+    if(this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+        try {
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
+          if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+          }
+          else {
+            desktop.open(file);
+          }
+        } catch (Exception e) {
+          LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
+        }
+      }
     }
   }
 
@@ -95,13 +110,11 @@ public class TablesSidebarAltColorController implements Initializable {
 
     Platform.runLater(() -> {
       new Thread(() -> {
-        Studio.client.getAltColorService().clearCache();
-
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);
-          EventManager.getInstance().notifyRepositoryUpdate();
+          this.refreshView(this.game);
         });
       }).start();
     });
@@ -113,14 +126,29 @@ public class TablesSidebarAltColorController implements Initializable {
     DismissalUtil.dismissValidation(g, this.validationState);
   }
 
+  @FXML
+  private void onUpload() {
+    if (game.isPresent()) {
+      GameRepresentation g = game.get();
+      if (StringUtils.isEmpty(g.getRom())) {
+        WidgetFactory.showAlert(Studio.stage, "No ROM name found for \"" + g.getGameDisplayName() + "\".", "To upload a PUP pack, a ROM name must have been resolved for the table.");
+        return;
+      }
+
+      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    errorBox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
-    uploadBtn.setDisable(true);
+
+    flexDMDUIBtn.setVisible(Studio.client.getSystemService().isLocal());
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -129,39 +157,33 @@ public class TablesSidebarAltColorController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
-    this.altColor = null;
+    this.dmdPackage = null;
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
-
+    bundleSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
-    typeLabel.setText("-");
-    filesLabel.setText("-");
 
     errorBox.setVisible(false);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      boolean altColorAvailable = game.isAltColorAvailable();
+      dmdPackage = Studio.client.getDmdService().getDMDPackage(game.getId());
+      boolean packageAvailable = dmdPackage != null;
 
-      dataBox.setVisible(altColorAvailable);
-      emptyDataBox.setVisible(!altColorAvailable);
+      dataBox.setVisible(packageAvailable);
+      emptyDataBox.setVisible(!packageAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
 
-      if (altColorAvailable) {
-        altColor = Studio.client.getAltColorService().getAltColor(game.getId());
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
-        typeLabel.setText(altColor.getAltColorType().name());
+      if (packageAvailable) {
+        bundleSizeLabel.setText(FileUtils.readableFileSize(dmdPackage.getSize()));
+        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(dmdPackage.getModificationDate()));
 
-        List<String> files = altColor.getFiles();
-        filesLabel.setText(String.join(", ", files));
-
-
-        List<ValidationState> validationStates = altColor.getValidationStates();
+        List<ValidationState> validationStates = dmdPackage.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
           validationState = validationStates.get(0);
@@ -176,7 +198,7 @@ public class TablesSidebarAltColorController implements Initializable {
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
 
-    altColorRoot.setOnDragOver(new FileDragEventHandler(altColorRoot, true, "zip", "pac", "vni", "pal", "cRZ"));
-    altColorRoot.setOnDragDropped(new AltColorFileDropEventHandler(tablesSidebarController));
+    pupRoot.setOnDragOver(new FileDragEventHandler(pupRoot, true, "zip"));
+    pupRoot.setOnDragDropped(new PupPackFileDropEventHandler(tablesSidebarController));
   }
 }
