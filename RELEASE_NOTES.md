@@ -5,17 +5,17 @@
 
 **Discord Messages**
 
-- Added message filtering by an allow list. They are configurable in the highscores settings.
+- Added message filtering by an allow list. The list is configurable in the highscores settings.
 
 **Overlay**
 
-- Added dashboard variants in the preferences section. All variants support HD, WQHD and 4K resolutions. 
+- Added dashboard variants in the preferences section. All variants support HD, WQHD and 4K resolutions.
 
 **Preferences**
 
 - Reorganized and renamed preferences sections (still figuring out the best grouping here).
 - Added "Virtual Pinball Spreadsheet" validator: The new validator checks if the table has been mapped against the VPS. This way, version updates can be detected and displayed in the table overview.
-- Added UI preferences section. The section will grow over time, e.g. providing more "do not show again" options for confirmation dialogs.
+- Added UI preferences section.
 
 **Table Management: Table Settings**
 
@@ -30,7 +30,7 @@
 
 - Added bulk operation to execute highscore scans for all tables.
 - Changed green open button for this section so that the folder opens for the given highscore format.
-- Changed status display: when the Studio has a problem reading the highscore, only the error message is shown now (well, this is actually more of a bugfix since some errors were not displayed at all). 
+- Changed status display: When the Studio has a problem reading the highscore, only the error message is shown now (well, this is actually more of a bugfix since some errors were not displayed at all).
 
 **Table Management: Spreadsheet Data**
 
@@ -51,7 +51,7 @@
 ### Bugfixes
 
 - Fixed initial game scan: All VPX emulators are taken into account.
-- Fixed table (re)loading: Tables that are detected during a reload are not scanned "on-the-fly" anymore, but one-by-one in a separate progress dialog. This is one step towards providing timeouts again, but there are still a lot of requests to adept. 
+- Fixed table (re)loading: Tables that are detected during a reload are not scanned "on-the-fly" anymore, but one-by-one in a separate progress dialog. This is one step towards providing timeouts again, but there are still a lot of requests to adept.
 - Increased icon size of table overview buttons toolbar.
 - Fixed update dialog: The update progress bar showing progress again (for the next update of cause).
 - Improved update button: The update button is now shown together with the target version.
