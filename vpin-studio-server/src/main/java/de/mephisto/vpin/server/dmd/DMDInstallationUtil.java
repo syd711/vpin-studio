@@ -25,9 +25,10 @@ public class DMDInstallationUtil {
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
           String folderName = zipEntry.getName();
-          if (folderName.endsWith(DMDPackageTypes.FlexDMD.name()) || folderName.endsWith(DMDPackageTypes.UltraDMD.name())) {
+          if (folderName.contains(DMDPackageTypes.FlexDMD.name()) || folderName.contains(DMDPackageTypes.UltraDMD.name())) {
             dmdFolder = new File(tablesFolder, folderName);
             dmdFolder.mkdirs();
+            LOG.info("Created/Found DMD folder \"" + dmdFolder.getAbsolutePath() + "\"");
           }
         }
         else if (dmdFolder != null) {
@@ -59,8 +60,7 @@ public class DMDInstallationUtil {
       zis.close();
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return false;
     }
-    return true;
+    return unpacked;
   }
 }

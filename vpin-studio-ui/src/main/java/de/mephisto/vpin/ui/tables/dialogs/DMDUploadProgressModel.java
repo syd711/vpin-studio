@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -72,6 +73,7 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
         });
       }
       progressResultModel.addProcessed();
+      EventManager.getInstance().notifyTableChange(gameId, null);
     } catch (Exception e) {
       LOG.error("DMD bundle upload failed: " + e.getMessage(), e);
     }
