@@ -48,7 +48,6 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
@@ -57,6 +56,11 @@
                            </font>
                         </Label>
                         <Label layoutX="10.0" layoutY="49.0" text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Type:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -71,17 +75,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lastModifiedLabel1" layoutX="182.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Script Only:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Type:" textFill="WHITE">
+                        <Label fx:id="bundleTypeLabel" layoutX="174.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -98,7 +92,7 @@
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No PUP pack found." textFill="WHITE">
+                  <Label text="No DMD media found." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

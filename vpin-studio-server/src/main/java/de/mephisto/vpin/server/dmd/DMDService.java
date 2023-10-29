@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -249,9 +250,18 @@ public class TablesSidebarController implements Initializable {
   private void onDMD() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
+        if (dmdPackage != null) {
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+          File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
+          File dmdFolder = new File(tablesFolder, dmdPackage.getName());
+          new ProcessBuilder("explorer.exe", dmdFolder.getAbsolutePath()).start();
+          return;
+        }
       }
+
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+      new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }

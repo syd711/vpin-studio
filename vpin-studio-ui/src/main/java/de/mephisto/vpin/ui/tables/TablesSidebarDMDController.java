@@ -56,6 +56,9 @@ public class TablesSidebarDMDController implements Initializable {
   private Label bundleSizeLabel;
 
   @FXML
+  private Label bundleTypeLabel;
+
+  @FXML
   private VBox emptyDataBox;
 
   @FXML
@@ -73,6 +76,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private Pane pupRoot;
 
+
   private TablesSidebarController tablesSidebarController;
   private DMDPackage dmdPackage;
   private ValidationState validationState;
@@ -83,7 +87,7 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private void onFlexDMDUI() {
-    if(this.game.isPresent()) {
+    if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
 
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -111,11 +115,6 @@ public class TablesSidebarDMDController implements Initializable {
     Platform.runLater(() -> {
       new Thread(() -> {
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-
-        Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
-          this.refreshView(this.game);
-        });
       }).start();
     });
   }
@@ -129,13 +128,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      GameRepresentation g = game.get();
-      if (StringUtils.isEmpty(g.getRom())) {
-        WidgetFactory.showAlert(Studio.stage, "No ROM name found for \"" + g.getGameDisplayName() + "\".", "To upload a PUP pack, a ROM name must have been resolved for the table.");
-        return;
-      }
-
-      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
+      Dialogs.openDMDUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 
@@ -181,6 +174,7 @@ public class TablesSidebarDMDController implements Initializable {
 
       if (packageAvailable) {
         bundleSizeLabel.setText(FileUtils.readableFileSize(dmdPackage.getSize()));
+        bundleTypeLabel.setText(dmdPackage.getDmdPackageTypes().name());
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(dmdPackage.getModificationDate()));
 
         List<ValidationState> validationStates = dmdPackage.getValidationStates();
