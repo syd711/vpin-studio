@@ -38,7 +38,11 @@
             <scope>test</scope>
             <version>2.5.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>de.mephisto</groupId>
+            <artifactId>github-downloader</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
@@ -448,7 +452,8 @@
                         </goals>
                         <configuration>
                             <sourceFile>../resources/pinemhi/pinemhi.ini.template</sourceFile>
-                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/pinemhi/pinemhi.ini</destinationFile>
+                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/pinemhi/pinemhi.ini
+                            </destinationFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -459,7 +464,8 @@
                         </goals>
                         <configuration>
                             <sourceFile>../resources/card-generator.properties.template</sourceFile>
-                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/card-generator.properties</destinationFile>
+                            <destinationFile>${basedir}/../Output/VPin-Studio/resources/card-generator.properties
+                            </destinationFile>
                         </configuration>
                     </execution>
                 </executions>

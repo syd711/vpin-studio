@@ -6,6 +6,7 @@ import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,32 +50,28 @@ public class MamePreferencesController implements Initializable {
   @FXML
   private CheckBox soundMode;
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    MameOptions options = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+  @FXML
+  private Button setVersionBtn;
 
-    skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
-    skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    useSound.setSelected(options.isUseSound());
-    useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    useSamples.setSelected(options.isUseSamples());
-    useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    compactDisplay.setSelected(options.isUseSamples());
-    compactDisplay.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    doubleDisplaySize.setSelected(options.isUseSamples());
-    doubleDisplaySize.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
-    ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    cabinetMode.setSelected(options.isCabinetMode());
-    cabinetMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    showDmd.setSelected(options.isShowDmd());
-    showDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    useExternalDmd.setSelected(options.isUseExternalDmd());
-    useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    colorizeDmd.setSelected(options.isColorizeDmd());
-    colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    soundMode.setSelected(options.isColorizeDmd());
-    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+  @FXML
+  private Button simulateInstallBtn;
+
+  @FXML
+  private Button installBtn;
+
+  @FXML
+  private void onInstall() {
+
+  }
+
+  @FXML
+  private void onInstallSimulate() {
+
+  }
+
+  @FXML
+  private void onVersionSet() {
+
   }
 
   private void saveOptions() {
@@ -102,5 +99,33 @@ public class MamePreferencesController implements Initializable {
     }
 
     PreferencesController.markDirty();
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    MameOptions options = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+
+    skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
+    skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useSound.setSelected(options.isUseSound());
+    useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useSamples.setSelected(options.isUseSamples());
+    useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    compactDisplay.setSelected(options.isUseSamples());
+    compactDisplay.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    doubleDisplaySize.setSelected(options.isUseSamples());
+    doubleDisplaySize.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
+    ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    cabinetMode.setSelected(options.isCabinetMode());
+    cabinetMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    showDmd.setSelected(options.isShowDmd());
+    showDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    useExternalDmd.setSelected(options.isUseExternalDmd());
+    useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    colorizeDmd.setSelected(options.isColorizeDmd());
+    colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    soundMode.setSelected(options.isColorizeDmd());
+    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 }

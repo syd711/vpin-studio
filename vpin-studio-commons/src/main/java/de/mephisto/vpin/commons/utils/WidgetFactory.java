@@ -76,7 +76,6 @@ public class WidgetFactory {
     return fontIcon;
   }
 
-
   public static FontIcon createCheckIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
