@@ -88,60 +88,6 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public JobExecutionResult installAltColor(Game game, File out) {
-    File folder = game.getAltColorFolder();
-    if (folder != null) {
-      LOG.info("Extracting archive to " + folder.getAbsolutePath());
-      if (!folder.exists()) {
-        if (!folder.mkdirs()) {
-          return JobExecutionResultFactory.error("Failed to create ALT color directory " + folder.getAbsolutePath());
-        }
-      }
-
-      String name = out.getName();
-      if (name.endsWith(".zip")) {
-        AltColorUtil.unzip(out, folder);
-      }
-      else if (name.endsWith(PAC_SUFFIX)) {
-        try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"));
-        } catch (IOException e) {
-          LOG.error("Failed to copy pac file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
-        }
-      }
-      else if (name.endsWith(PAL_SUFFIX)) {
-        try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"));
-        } catch (IOException e) {
-          LOG.error("Failed to copy pal file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
-        }
-      }
-      else if (name.endsWith(VNI_SUFFIX)) {
-        try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"));
-        } catch (IOException e) {
-          LOG.error("Failed to copy vni file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
-        }
-      }
-      else if (name.endsWith(SERUM_SUFFIX)) {
-        try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + SERUM_SUFFIX));
-        } catch (IOException e) {
-          LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
-        }
-      }
-
-      if (!out.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete temporary file.");
-      }
-    }
-    return JobExecutionResultFactory.empty();
-  }
-
   public JobExecutionResult installDMDPackage(Game game, File archive) {
     DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
     return JobExecutionResultFactory.empty();
