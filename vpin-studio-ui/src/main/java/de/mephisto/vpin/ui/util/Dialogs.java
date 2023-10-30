@@ -2,8 +2,6 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.util.ini.IniSettings;
-import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -11,19 +9,22 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.preferences.ComponentUpdateDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
@@ -70,6 +71,15 @@ public class Dialogs {
 
   public static boolean openUpdateDialog() {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    stage.showAndWait();
+    return true;
+  }
+
+  public static boolean openComponentUpdateDialog(ComponentType type, boolean simulate, String title) {
+    FXMLLoader fxmlLoader = new FXMLLoader(ComponentUpdateDialogController.class.getResource("preference-install-update-dialog.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    ComponentUpdateDialogController controller = (ComponentUpdateDialogController) stage.getUserData();
+    controller.setInstallOptions(type, simulate, title);
     stage.showAndWait();
     return true;
   }
@@ -544,8 +554,8 @@ public class Dialogs {
     boolean local = client.getSystemService().isLocal();
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-          "PinUP Popper is running. To perform this operation, you have to close it.",
-          "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
+        "PinUP Popper is running. To perform this operation, you have to close it.",
+        "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplied()) {
         client.getPinUPPopperService().terminatePopper();
         if (confirmationResult.isChecked()) {
@@ -557,8 +567,8 @@ public class Dialogs {
     }
     else {
       Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-          "PinUP Popper is running. To perform this operation, you have to close it.",
-          "This will also KILL the the current emulator process!");
+        "PinUP Popper is running. To perform this operation, you have to close it.",
+        "This will also KILL the the current emulator process!");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getPinUPPopperService().terminatePopper();
         return true;

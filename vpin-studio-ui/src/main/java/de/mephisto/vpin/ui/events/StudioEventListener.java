@@ -25,6 +25,10 @@ public interface StudioEventListener {
 
   }
 
+  default void thirdPartyVersionUpdated() {
+
+  }
+
   default void maintenanceEnabled(boolean b) {
 
   }

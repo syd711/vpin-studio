@@ -34,36 +34,21 @@ public class ComponentService implements InitializingBean {
     return components.keySet().stream().filter(c -> c.getType().equals(type)).findFirst().orElse(null);
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    ComponentType[] values = ComponentType.values();
-    for (ComponentType value : values) {
-      Optional<Component> byName = componentRepository.findByType(value);
-      if (byName.isEmpty()) {
-        Component component = new Component();
-        component.setType(value);
-        Component updatedComponent = componentRepository.saveAndFlush(component);
-        fillComponentForType(value, updatedComponent);
-      }
-      else {
-        fillComponentForType(value, byName.get());
-      }
-    }
-  }
-
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
     Optional<Component> byType = componentRepository.findByType(type);
     if (byType.isPresent()) {
       Component component = byType.get();
       component.setInstalledVersion(version);
       componentRepository.saveAndFlush(component);
+      getComponent(type).setInstalledVersion(version);
+      LOG.info("Applied version " + version + " for " + type.name());
       return true;
     }
     return false;
   }
 
   @Nullable
-  public InstallLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, boolean simulate) {
+  public InstallLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String version, boolean simulate) {
     Component component = getComponent(type);
     GithubRelease githubRelease = components.get(component);
     if (githubRelease != null && githubRelease.getLatestArtifact() != null) {
@@ -71,7 +56,11 @@ public class ComponentService implements InitializingBean {
       if (simulate) {
         return githubRelease.getLatestArtifact().simulateInstall(targetFolder);
       }
-      return githubRelease.getLatestArtifact().install(targetFolder);
+
+      InstallLog install = githubRelease.getLatestArtifact().install(targetFolder);
+      if(install.getStatus() == null) {
+        getComponent(type).setInstalledVersion(version);
+      }
     }
     return null;
   }
@@ -117,16 +106,43 @@ public class ComponentService implements InitializingBean {
   }
 
   private void setLatestReleaseVersion(Component component, List<String> allowList, List<String> denyList) {
-    new Thread(() -> {
-      try {
-        GithubRelease githubRelease = GithubReleaseFactory.loadRelease(component.getUrl(), allowList, denyList);
-        if (githubRelease != null) {
-          component.setLatestReleaseVersion(githubRelease.getTag());
-        }
-        this.components.put(component, githubRelease);
-      } catch (IOException e) {
-        LOG.error("Failed to retrieve release information for \"" + component + "\": " + e.getMessage(), e);
+    try {
+      loadReleases(component, allowList, denyList);
+    } catch (IOException e) {
+      LOG.error("Failed to retrieve release information for \"" + component + "\": " + e.getMessage(), e);
+    }
+  }
+
+  private void loadReleases(Component component, List<String> allowList, List<String> denyList) throws IOException {
+    GithubRelease githubRelease = GithubReleaseFactory.loadRelease(component.getUrl(), allowList, denyList);
+    if (githubRelease != null) {
+      component.setLatestReleaseVersion(githubRelease.getTag());
+    }
+    System.out.println(component.getInstalledVersion());
+    this.components.put(component, githubRelease);
+  }
+
+  public boolean clearCache() {
+    ComponentType[] values = ComponentType.values();
+    for (ComponentType value : values) {
+      Optional<Component> byName = componentRepository.findByType(value);
+      if (byName.isEmpty()) {
+        Component component = new Component();
+        component.setType(value);
+        Component updatedComponent = componentRepository.saveAndFlush(component);
+        fillComponentForType(value, updatedComponent);
       }
+      else {
+        fillComponentForType(value, byName.get());
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    new Thread(() -> {
+      clearCache();
     }).start();
   }
 }

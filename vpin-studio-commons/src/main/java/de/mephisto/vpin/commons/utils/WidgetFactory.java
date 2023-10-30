@@ -76,6 +76,15 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createUpdateIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(12);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2f-flare");
+    return fontIcon;
+  }
+
+
   public static FontIcon createCheckIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);

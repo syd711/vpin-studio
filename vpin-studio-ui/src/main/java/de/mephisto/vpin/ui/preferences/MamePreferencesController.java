@@ -1,18 +1,28 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class MamePreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MamePreferencesController.class);
@@ -60,18 +70,53 @@ public class MamePreferencesController implements Initializable {
   private Button installBtn;
 
   @FXML
-  private void onInstall() {
+  private Button refreshBtn;
 
+  @FXML
+  private Label installedVersion;
+
+  @FXML
+  private Label latestVersion;
+
+  private ComponentRepresentation component;
+
+  @FXML
+  private void onInstall() {
+    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, false, "Installation Simulation of \"VPin MAME " + this.latestVersion.getText() + "\"");
   }
 
   @FXML
   private void onInstallSimulate() {
+    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, true, "Installation Simulation of \"VPin MAME " + this.latestVersion.getText() + "\"");
+  }
 
+  @FXML
+  private void onVersionRefresh() {
+    refreshBtn.setDisable(true);
+
+    new Thread(() -> {
+      client.getComponentService().clearCache();
+
+      Platform.runLater(() -> {
+        EventManager.getInstance().notify3rdPartyVersionUpdate();
+        this.refreshUpdate();
+      });
+      refreshBtn.setDisable(false);
+    }).start();
   }
 
   @FXML
   private void onVersionSet() {
-
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Set Version", "Apply \"" + component.getLatestReleaseVersion() + "\" as the current version of VPin MAME?", null, "Apply");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      try {
+        client.getComponentService().setVersion(ComponentType.vpinmame, component.getLatestReleaseVersion());
+        EventManager.getInstance().notify3rdPartyVersionUpdate();
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to apply version: " + e.getMessage());
+      }
+      refreshUpdate();
+    }
   }
 
   private void saveOptions() {
@@ -92,7 +137,7 @@ public class MamePreferencesController implements Initializable {
     options.setSoundMode(soundMode.isSelected());
 
     try {
-      Studio.client.getMameService().saveOptions(options);
+      client.getMameService().saveOptions(options);
     } catch (Exception e) {
       LOG.error("Failed to save mame settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
@@ -103,7 +148,8 @@ public class MamePreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    MameOptions options = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    MameOptions options = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+
 
     skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
@@ -127,5 +173,15 @@ public class MamePreferencesController implements Initializable {
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     soundMode.setSelected(options.isColorizeDmd());
     soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+
+    refreshUpdate();
+  }
+
+  private void refreshUpdate() {
+    component = client.getComponentService().getComponent(ComponentType.vpinmame);
+    if (component != null) {
+      installedVersion.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
+      latestVersion.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
+    }
   }
 }

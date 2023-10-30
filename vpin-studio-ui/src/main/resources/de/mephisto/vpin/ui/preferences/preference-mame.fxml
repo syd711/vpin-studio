@@ -148,24 +148,36 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label fx:id="installedVersion" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
                   <Label fx:id="latestVersion" layoutX="136.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" iconSize="16" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="refreshBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVersionRefresh" text="Refresh" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Label fx:id="installedVersion" text="-" textFill="WHITE" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" iconSize="16" />
-                     </graphic>
-                  </Button>
+                  </Label>
                </children>
             </GridPane>
          </children>

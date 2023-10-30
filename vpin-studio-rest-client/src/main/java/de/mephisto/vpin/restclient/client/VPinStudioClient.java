@@ -40,6 +40,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final ArchiveServiceClient archiveServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
+  private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final GamesServiceClient gamesServiceClient;
@@ -71,6 +72,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.archiveServiceClient = new ArchiveServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
+    this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
@@ -97,6 +99,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
     restClient.setErrorHandler(errorHandler);
+  }
+
+  public ComponentServiceClient getComponentService() {
+    return componentServiceClient;
   }
 
   public DMDServiceClient getDmdService() {

@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.components;
 
 import de.mephisto.githubloader.InstallLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +18,21 @@ public class ComponentsResource {
   @Autowired
   private ComponentService componentService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   @GetMapping
   public List<Component> getComponents() {
     return componentService.getComponents();
   }
 
-  @GetMapping("/component/{type}")
+  @GetMapping("/{type}")
   public Component getComponent(@PathVariable("type") ComponentType type) {
     return componentService.getComponent(type);
+  }
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return componentService.clearCache();
   }
 
   @PutMapping("/setversion/{type}/{version}")
@@ -35,11 +42,13 @@ public class ComponentsResource {
 
   @PostMapping("/install/{type}")
   public InstallLog install(@PathVariable("type") ComponentType type) {
-    return componentService.install(type, false);
+    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    return componentService.install(defaultGameEmulator, type, false);
   }
 
   @PostMapping("/simulate/{type}")
   public InstallLog simulate(@PathVariable("type") ComponentType type) {
-    return componentService.install(type, true);
+    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    return componentService.install(defaultGameEmulator, type, true);
   }
 }

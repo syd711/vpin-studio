@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -21,10 +25,11 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class PreferencesController implements Initializable {
+public class PreferencesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
   // Add a public no-args constructor
@@ -39,6 +44,15 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private Button avatarBtn;
+
+  @FXML
+  private Button backglassBtn;
+
+  @FXML
+  private Button vpxBtn;
+
+  @FXML
+  private Button mameBtn;
 
   @FXML
   private BorderPane preferencesMain;
@@ -109,9 +123,19 @@ public class PreferencesController implements Initializable {
     }
   }
 
+  @Override
+  public void thirdPartyVersionUpdated() {
+    refreshUpdateIcons();
+  }
+
   @FXML
   private void onAvatar(ActionEvent event) throws IOException {
     load("preference-ui.fxml", event);
+  }
+
+  @FXML
+  private void onVPX(ActionEvent event) throws IOException {
+    load("preference-vpx.fxml", event);
   }
 
   @FXML
@@ -278,6 +302,41 @@ public class PreferencesController implements Initializable {
     }
   }
 
+  private void refreshUpdateIcons() {
+    Platform.runLater(() -> {
+      mameBtn.setGraphic(null);
+      vpxBtn.setGraphic(null);
+      backglassBtn.setGraphic(null);
+
+      List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
+      for (ComponentRepresentation component : components) {
+        if(component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
+          ComponentType type = component.getType();
+          switch (type) {
+            case vpinmame: {
+              mameBtn.setGraphic(WidgetFactory.createUpdateIcon());
+              mameBtn.setGraphicTextGap(6);
+              break;
+            }
+            case vpinball: {
+              vpxBtn.setGraphic(WidgetFactory.createUpdateIcon());
+              vpxBtn.setGraphicTextGap(6);
+              break;
+            }
+            case b2sbackglass: {
+              backglassBtn.setGraphic(WidgetFactory.createUpdateIcon());
+              backglassBtn.setGraphicTextGap(6);
+              break;
+            }
+            default: {
+              throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
+            }
+          }
+        }
+      }
+    });
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     avatarButton = avatarBtn;
@@ -287,5 +346,9 @@ public class PreferencesController implements Initializable {
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
     hostLabel.setText(System.getProperty("os.name"));
+
+    refreshUpdateIcons();
+
+    EventManager.getInstance().addListener(this);
   }
 }

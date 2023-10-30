@@ -101,6 +101,14 @@ public class EventManager {
     }).start();
   }
 
+  public void notify3rdPartyVersionUpdate() {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.thirdPartyVersionUpdated();
+      }
+    }).start();
+  }
+
   public void removeListener(StudioEventListener listener) {
     this.listeners.remove(listener);
   }

@@ -94,7 +94,7 @@
                               <Tooltip text="Disconnect" />
                            </tooltip>
                         </Button>
-                        <Button layoutX="90.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
+                        <Button fx:id="preferencesBtn" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
