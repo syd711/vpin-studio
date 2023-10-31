@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.components;
 
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.githubloader.GithubReleaseFactory;
-import de.mephisto.githubloader.InstallLog;
 import de.mephisto.githubloader.ReleaseArtifact;
+import de.mephisto.githubloader.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -55,29 +55,29 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
+  public ReleaseArtifactActionLog check(@NonNull GameEmulator defaultGameEmulator, @NonNull ComponentType type) {
+    return null;
+  }
+
   @NonNull
-  public InstallLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean simulate) {
+  public ReleaseArtifactActionLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean simulate) {
     Component component = getComponent(type);
     GithubRelease githubRelease = releases.get(component.getType());
-    InstallLog install = null;
-    if (githubRelease != null && githubRelease.getLatestArtifact() != null) {
-      ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
-
-      File targetFolder = resolveTargetFolder(emulator, type);
-      if (simulate) {
-        return releaseArtifact.simulateInstall(targetFolder);
-      }
-
-      install = releaseArtifact.install(targetFolder);
-      if (install.getStatus() == null) {
-        component.setInstalledVersion(githubRelease.getTag());
-        componentRepository.saveAndFlush(component);
-      }
-      return install;
+    ReleaseArtifactActionLog install = null;
+    if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
+      throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
     }
-    else {
-      install = new InstallLog(null, simulate);
-      install.setStatus("No release found for " + type.name());
+
+    ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+    File targetFolder = resolveTargetFolder(emulator, type);
+    if (simulate) {
+      return releaseArtifact.simulateInstall(targetFolder);
+    }
+
+    install = releaseArtifact.install(targetFolder);
+    if (install.getStatus() == null) {
+      component.setInstalledVersion(githubRelease.getTag());
+      componentRepository.saveAndFlush(component);
     }
     return install;
   }

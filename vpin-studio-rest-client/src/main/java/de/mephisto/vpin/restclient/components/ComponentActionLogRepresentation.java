@@ -3,10 +3,19 @@ package de.mephisto.vpin.restclient.components;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstallLogRepresentation {
+public class ComponentActionLogRepresentation {
   private List<String> logs = new ArrayList<>();
   private String status;
   private boolean simulated;
+  private boolean diff;
+
+  public boolean isDiff() {
+    return diff;
+  }
+
+  public void setDiff(boolean diff) {
+    this.diff = diff;
+  }
 
   public boolean isSimulated() {
     return simulated;

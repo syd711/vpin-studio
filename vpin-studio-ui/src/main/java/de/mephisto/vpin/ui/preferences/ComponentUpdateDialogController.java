@@ -3,11 +3,9 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.components.InstallLogRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -95,11 +93,11 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
         String artifactName = artifactCombo.getValue();
 
         if (simulate) {
-          InstallLogRepresentation install = client.getComponentService().simulate(type, artifactName);
+          ComponentActionLogRepresentation install = client.getComponentService().simulate(type, artifactName);
           processResult(install);
         }
         else {
-          InstallLogRepresentation install = client.getComponentService().install(type, artifactName);
+          ComponentActionLogRepresentation install = client.getComponentService().install(type, artifactName);
           processResult(install);
         }
         loaderStack.getChildren().remove(tablesLoadingOverlay);
@@ -136,7 +134,7 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
   public void onDialogCancel() {
   }
 
-  private void processResult(InstallLogRepresentation install) {
+  private void processResult(ComponentActionLogRepresentation install) {
     StringBuilder result = new StringBuilder();
     install.getLogs().stream().forEach(l -> result.append(l + "\n"));
 

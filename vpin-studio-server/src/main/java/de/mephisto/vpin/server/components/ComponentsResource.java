@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.components;
 
-import de.mephisto.githubloader.InstallLog;
+import de.mephisto.githubloader.ReleaseArtifactActionLog;
+import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -43,16 +44,34 @@ public class ComponentsResource {
     return componentService.setVersion(type, version);
   }
 
-  @PostMapping("/install/{type}/{artifact}")
-  public InstallLog install(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) {
+  @PostMapping("/check/{type}")
+  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    return componentService.install(defaultGameEmulator, type, artifact, false);
+    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type);
+    return toActionLog(log);
+  }
+
+  @PostMapping("/install/{type}/{artifact}")
+  public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) throws Exception {
+    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, false);
+    return toActionLog(log);
   }
 
   @PostMapping("/simulate/{type}/{artifact}")
-  public InstallLog simulate(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) {
+  public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) throws Exception {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    return componentService.install(defaultGameEmulator, type, artifact, true);
+    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, true);
+    return toActionLog(log);
+  }
+
+  private ComponentActionLogRepresentation toActionLog(ReleaseArtifactActionLog log) {
+    ComponentActionLogRepresentation representation = new ComponentActionLogRepresentation();
+    representation.setLogs(log.getLogs());
+    representation.setStatus(log.getStatus());
+    representation.setSimulated(log.isSimulated());
+    representation.setDiff(log.isDiff());
+    return representation;
   }
 
   private ComponentRepresentation toComponentRepresentation(Component component) {

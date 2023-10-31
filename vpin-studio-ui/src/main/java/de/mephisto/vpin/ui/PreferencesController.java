@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
@@ -15,7 +14,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -49,7 +47,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button backglassBtn;
 
   @FXML
-  private Button vpxBtn;
+  private Button systemManagerBtn;
 
   @FXML
   private Button mameBtn;
@@ -134,8 +132,8 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private void onVPX(ActionEvent event) throws IOException {
-    load("preference-vpx.fxml", event);
+  private void onUpdateManager(ActionEvent event) throws IOException {
+    load("preference-update-manager.fxml", event);
   }
 
   @FXML
@@ -224,11 +222,6 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private void onServiceOptions(ActionEvent event) throws IOException {
-    load("preference-service-options.fxml", event);
-  }
-
-  @FXML
   private void onDiscordBot(ActionEvent event) throws IOException {
     load("preference-discord_bot.fxml", event);
   }
@@ -304,34 +297,14 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private void refreshUpdateIcons() {
     Platform.runLater(() -> {
-      mameBtn.setGraphic(null);
-      vpxBtn.setGraphic(null);
-      backglassBtn.setGraphic(null);
+      systemManagerBtn.setGraphic(null);
 
       List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
       for (ComponentRepresentation component : components) {
-        if(component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
-          ComponentType type = component.getType();
-          switch (type) {
-            case vpinmame: {
-              mameBtn.setGraphic(WidgetFactory.createUpdateIcon());
-              mameBtn.setGraphicTextGap(6);
-              break;
-            }
-            case vpinball: {
-              vpxBtn.setGraphic(WidgetFactory.createUpdateIcon());
-              vpxBtn.setGraphicTextGap(6);
-              break;
-            }
-            case b2sbackglass: {
-              backglassBtn.setGraphic(WidgetFactory.createUpdateIcon());
-              backglassBtn.setGraphicTextGap(6);
-              break;
-            }
-            default: {
-              throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
-            }
-          }
+        if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
+          systemManagerBtn.setGraphic(WidgetFactory.createUpdateIcon());
+          systemManagerBtn.setGraphicTextGap(6);
+          break;
         }
       }
     });

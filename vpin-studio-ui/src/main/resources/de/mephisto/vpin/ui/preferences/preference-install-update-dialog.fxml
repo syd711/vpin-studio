@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -28,7 +29,6 @@
                <children>
                   <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
                   <Button fx:id="simBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="submit-button" text="Simulate Installation" />
-                  <Button fx:id="okBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOkClick" styleClass="submit-button" text="Start Installation" />
                </children>
             </HBox>
          </right>
@@ -56,7 +56,19 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="artifactCombo" GridPane.columnIndex="1" />
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                     <children>
+                        <ComboBox fx:id="artifactCombo" />
+                        <Button fx:id="okBtn" mnemonicParsing="false" onAction="#onOkClick" styleClass="external-component" text="Start Installation">
+                           <tooltip>
+                              <Tooltip text="Updates can only be installed on the cabinet itself." />
+                           </tooltip>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
                <VBox.margin>
                   <Insets top="6.0" />
