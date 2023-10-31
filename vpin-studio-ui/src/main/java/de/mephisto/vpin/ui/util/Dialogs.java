@@ -75,11 +75,11 @@ public class Dialogs {
     return true;
   }
 
-  public static boolean openComponentUpdateDialog(ComponentType type, boolean simulate, String title) {
+  public static boolean openComponentUpdateDialog(ComponentType type, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(ComponentUpdateDialogController.class.getResource("preference-install-update-dialog.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     ComponentUpdateDialogController controller = (ComponentUpdateDialogController) stage.getUserData();
-    controller.setInstallOptions(type, simulate, title);
+    controller.setInstallOptions(type, title);
     stage.showAndWait();
     return true;
   }

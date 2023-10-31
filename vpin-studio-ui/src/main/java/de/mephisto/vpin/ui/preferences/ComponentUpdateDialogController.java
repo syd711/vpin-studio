@@ -6,6 +6,9 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.InstallLogRepresentation;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +34,12 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
 
   @FXML
   private Button cancelBtn;
+  @FXML
+
+  private Button simBtn;
+
+  @FXML
+  private Button okBtn;
 
   @FXML
   private Label titleLabel;
@@ -42,12 +51,11 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
   private StackPane loaderStack;
 
   @FXML
-  private ComboBox artifactCombo;
+  private ComboBox<String> artifactCombo;
 
   private Parent tablesLoadingOverlay;
 
   private ComponentType type;
-  private boolean simulate;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -56,8 +64,21 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
   }
 
   @FXML
+  private void onInstallSimulate() {
+    run(true);
+  }
+
+  @FXML
   private void onOkClick() {
+    run(false);
+  }
+
+  private void run(boolean simulate) {
+    textArea.setText("");
     cancelBtn.setDisable(true);
+    simBtn.setDisable(true);
+    okBtn.setDisable(true);
+
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       tablesLoadingOverlay = loader.load();
@@ -71,12 +92,14 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
 
     Platform.runLater(() -> {
       try {
+        String artifactName = artifactCombo.getValue();
+
         if (simulate) {
-          InstallLogRepresentation install = client.getComponentService().simulate(type);
+          InstallLogRepresentation install = client.getComponentService().simulate(type, artifactName);
           processResult(install);
         }
         else {
-          InstallLogRepresentation install = client.getComponentService().install(type);
+          InstallLogRepresentation install = client.getComponentService().install(type, artifactName);
           processResult(install);
         }
         loaderStack.getChildren().remove(tablesLoadingOverlay);
@@ -86,19 +109,27 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
       }
 
       cancelBtn.setDisable(false);
+      simBtn.setDisable(false);
+      okBtn.setDisable(false);
     });
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    ComponentRepresentation component = client.getComponentService().getComponent(type);
-//    component.
+    simBtn.setDisable(true);
+    okBtn.setDisable(true);
   }
 
-  public void setInstallOptions(ComponentType type, boolean simulate, String label) {
+  public void setInstallOptions(ComponentType type, String label) {
     this.type = type;
-    this.simulate = simulate;
     this.titleLabel.setText(label);
+
+    ComponentRepresentation component = client.getComponentService().getComponent(type);
+    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
+    artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      simBtn.setDisable(t1 == null);
+      okBtn.setDisable(t1 == null);
+    });
   }
 
   @Override
@@ -110,12 +141,23 @@ public class ComponentUpdateDialogController implements Initializable, DialogCon
     install.getLogs().stream().forEach(l -> result.append(l + "\n"));
 
 
-    if(install.getStatus() != null) {
-      result.append("\nINSTALLATION FAILED\n");
-      result.append(install.getStatus());
+    if (install.isSimulated()) {
+      if (install.getStatus() != null) {
+        result.append("\nSIMULATION FAILED\n");
+        result.append(install.getStatus());
+      }
+      else {
+        result.append("\nSIMULATION SUCCESSFUL\n");
+      }
     }
     else {
-      result.append("\nINSTALLATION SUCCESSFUL\n");
+      if (install.getStatus() != null) {
+        result.append("\nINSTALLATION FAILED\n");
+        result.append(install.getStatus());
+      }
+      else {
+        result.append("\nINSTALLATION SUCCESSFUL\n");
+      }
     }
 
     textArea.setText(result.toString());

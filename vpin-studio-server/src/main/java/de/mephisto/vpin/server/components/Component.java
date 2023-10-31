@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.components;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.vpin.restclient.components.ComponentType;
 
 import javax.persistence.*;
@@ -15,19 +16,7 @@ public class Component {
 
   private String installedVersion;
 
-  @Transient
-  private String url;
-
-  @Transient
   private String latestReleaseVersion;
-
-  public String getUrl() {
-    return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
 
   public String getLatestReleaseVersion() {
     return latestReleaseVersion;

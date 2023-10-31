@@ -6,6 +6,15 @@ import java.util.List;
 public class InstallLogRepresentation {
   private List<String> logs = new ArrayList<>();
   private String status;
+  private boolean simulated;
+
+  public boolean isSimulated() {
+    return simulated;
+  }
+
+  public void setSimulated(boolean simulated) {
+    this.simulated = simulated;
+  }
 
   public List<String> getLogs() {
     return logs;

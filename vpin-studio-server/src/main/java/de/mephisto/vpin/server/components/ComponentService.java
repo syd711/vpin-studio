@@ -3,10 +3,10 @@ package de.mephisto.vpin.server.components;
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.githubloader.GithubReleaseFactory;
 import de.mephisto.githubloader.InstallLog;
+import de.mephisto.githubloader.ReleaseArtifact;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,14 +24,22 @@ public class ComponentService implements InitializingBean {
   @Autowired
   private ComponentRepository componentRepository;
 
-  private Map<Component, GithubRelease> components = new HashMap<>();
+  private Map<ComponentType, GithubRelease> releases = new HashMap<>();
 
   public List<Component> getComponents() {
-    return new ArrayList<>(components.keySet());
+    return componentRepository.findAll();
   }
 
   public Component getComponent(ComponentType type) {
-    return components.keySet().stream().filter(c -> c.getType().equals(type)).findFirst().orElse(null);
+    return componentRepository.findByType(type).get();
+  }
+
+  public List<ReleaseArtifact> getLatestReleaseArtifacts(ComponentType type) {
+    GithubRelease githubRelease = releases.get(type);
+    if (githubRelease != null) {
+      return githubRelease.getArtifacts();
+    }
+    return Collections.emptyList();
   }
 
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
@@ -47,22 +55,31 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  @Nullable
-  public InstallLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String version, boolean simulate) {
+  @NonNull
+  public InstallLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean simulate) {
     Component component = getComponent(type);
-    GithubRelease githubRelease = components.get(component);
+    GithubRelease githubRelease = releases.get(component.getType());
+    InstallLog install = null;
     if (githubRelease != null && githubRelease.getLatestArtifact() != null) {
+      ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+
       File targetFolder = resolveTargetFolder(emulator, type);
       if (simulate) {
-        return githubRelease.getLatestArtifact().simulateInstall(targetFolder);
+        return releaseArtifact.simulateInstall(targetFolder);
       }
 
-      InstallLog install = githubRelease.getLatestArtifact().install(targetFolder);
-      if(install.getStatus() == null) {
-        getComponent(type).setInstalledVersion(version);
+      install = releaseArtifact.install(targetFolder);
+      if (install.getStatus() == null) {
+        component.setInstalledVersion(githubRelease.getTag());
+        componentRepository.saveAndFlush(component);
       }
+      return install;
     }
-    return null;
+    else {
+      install = new InstallLog(null, simulate);
+      install.setStatus("No release found for " + type.name());
+    }
+    return install;
   }
 
   private File resolveTargetFolder(GameEmulator gameEmulator, ComponentType type) {
@@ -82,44 +99,33 @@ public class ComponentService implements InitializingBean {
     }
   }
 
-  private void fillComponentForType(ComponentType type, Component component) {
-    switch (type) {
-      case vpinmame: {
-        component.setUrl("https://github.com/vpinball/pinmame/releases");
-        setLatestReleaseVersion(component, Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
-        break;
-      }
-      case vpinball: {
-        component.setUrl("https://github.com/vpinball/vpinball/releases");
-        setLatestReleaseVersion(component, Collections.emptyList(), Arrays.asList("Debug"));
-        break;
-      }
-      case b2sbackglass: {
-        component.setUrl("https://github.com/vpinball/b2s-backglass/releases");
-        setLatestReleaseVersion(component, Collections.emptyList(), Arrays.asList("Source"));
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
-      }
-    }
-  }
-
-  private void setLatestReleaseVersion(Component component, List<String> allowList, List<String> denyList) {
+  private void loadReleases(Component component) {
     try {
-      loadReleases(component, allowList, denyList);
-    } catch (IOException e) {
-      LOG.error("Failed to retrieve release information for \"" + component + "\": " + e.getMessage(), e);
-    }
-  }
+      GithubRelease githubRelease = null;
+      switch (component.getType()) {
+        case vpinmame: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/pinmame/releases", Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
+          break;
+        }
+        case vpinball: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug"));
+          break;
+        }
+        case b2sbackglass: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/b2s-backglass/releases", Collections.emptyList(), Arrays.asList("Source"));
+          break;
+        }
+        default: {
+          throw new UnsupportedOperationException("Unsupported component type '" + component.getType() + "'");
+        }
+      }
 
-  private void loadReleases(Component component, List<String> allowList, List<String> denyList) throws IOException {
-    GithubRelease githubRelease = GithubReleaseFactory.loadRelease(component.getUrl(), allowList, denyList);
-    if (githubRelease != null) {
       component.setLatestReleaseVersion(githubRelease.getTag());
+      componentRepository.saveAndFlush(component);
+      this.releases.put(component.getType(), githubRelease);
+    } catch (IOException e) {
+      LOG.error("Failed to initialize release for " + component + ": " + e.getMessage(), e);
     }
-    System.out.println(component.getInstalledVersion());
-    this.components.put(component, githubRelease);
   }
 
   public boolean clearCache() {
@@ -129,12 +135,13 @@ public class ComponentService implements InitializingBean {
       if (byName.isEmpty()) {
         Component component = new Component();
         component.setType(value);
-        Component updatedComponent = componentRepository.saveAndFlush(component);
-        fillComponentForType(value, updatedComponent);
+        componentRepository.saveAndFlush(component);
       }
-      else {
-        fillComponentForType(value, byName.get());
-      }
+    }
+
+    List<Component> all = componentRepository.findAll();
+    for (Component component : all) {
+      loadReleases(component);
     }
     return true;
   }

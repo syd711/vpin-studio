@@ -64,9 +64,6 @@ public class MamePreferencesController implements Initializable {
   private Button setVersionBtn;
 
   @FXML
-  private Button simulateInstallBtn;
-
-  @FXML
   private Button installBtn;
 
   @FXML
@@ -82,12 +79,7 @@ public class MamePreferencesController implements Initializable {
 
   @FXML
   private void onInstall() {
-    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, false, "Installation Simulation of \"VPin MAME " + this.latestVersion.getText() + "\"");
-  }
-
-  @FXML
-  private void onInstallSimulate() {
-    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, true, "Installation Simulation of \"VPin MAME " + this.latestVersion.getText() + "\"");
+    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, "Installation of \"VPin MAME " + this.latestVersion.getText() + "\"");
   }
 
   @FXML

@@ -3,8 +3,6 @@ package de.mephisto.vpin.restclient.client;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.InstallLogRepresentation;
-import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
-import de.mephisto.vpin.restclient.mame.MameOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,18 +32,18 @@ public class ComponentServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "components/setversion/" + type.name() + "/" + version, new HashMap<>(), Boolean.class);
   }
 
-  public InstallLogRepresentation install(ComponentType type) throws Exception {
+  public InstallLogRepresentation install(ComponentType type, String artifactName) throws Exception {
     try {
-      return getRestClient().post(API + "components/install/" + type, new HashMap<>(), InstallLogRepresentation.class);
+      return getRestClient().post(API + "components/install/" + type + "/" + artifactName, new HashMap<>(), InstallLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update installation: " + e.getMessage(), e);
       throw new Exception("Installation failed");
     }
   }
 
-  public InstallLogRepresentation simulate(ComponentType type) throws Exception {
+  public InstallLogRepresentation simulate(ComponentType type, String artifactName) throws Exception {
     try {
-      return getRestClient().post(API + "components/simulate/" + type, new HashMap<>(), InstallLogRepresentation.class);
+      return getRestClient().post(API + "components/simulate/" + type + "/" + artifactName, new HashMap<>(), InstallLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update installation: " + e.getMessage(), e);
       throw new Exception("Installation failed");
