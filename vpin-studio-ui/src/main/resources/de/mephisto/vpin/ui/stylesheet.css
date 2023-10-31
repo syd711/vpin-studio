@@ -798,3 +798,8 @@
 .green {
     -fx-background-color: #338800;
 }
+
+.orange {
+    -fx-text-fill: #FF9933;
+    -fx-font-weight : bold;
+}

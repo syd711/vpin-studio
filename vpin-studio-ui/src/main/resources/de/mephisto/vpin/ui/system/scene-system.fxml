@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.system.SystemController">
+
+    <center>
+        <BorderPane minWidth="400.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+            <center>
+                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <tabs>
+                        <Tab fx:id="buildInUsersTab" closable="false" text="Visual Pinball">
+                            <content>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="discordTab" closable="false" text="VPin MAME" />
+                  <Tab fx:id="discordTab1" closable="false" text="B2S Server" />
+                  <Tab fx:id="discordTab11" closable="false" text="Freezy" />
+                  <Tab fx:id="discordTab111" closable="false" text="FlexDMD" />
+                  <Tab fx:id="discordTab1111" closable="false" text="Serum" />
+                    </tabs>
+                    <BorderPane.margin>
+                        <Insets left="12.0" right="12.0" top="12.0" />
+                    </BorderPane.margin>
+                </TabPane>
+            </center>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
+         <bottom>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </BorderPane>
+         </bottom>
+        </BorderPane>
+    </center>
+   <right>
+      <VBox prefWidth="800.0" spacing="12.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="200.0" styleClass="subpanel">
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+               <children>
+                  <Label styleClass="preference-title" text="System Summary" />
+               </children>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title" text="System Information">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

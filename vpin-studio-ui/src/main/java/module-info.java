@@ -40,6 +40,8 @@ module de.mephisto.vpin.ui {
   exports de.mephisto.vpin.ui.events;
   opens de.mephisto.vpin.ui.events to javafx.fxml;
   exports de.mephisto.vpin.ui.tables;
+  opens de.mephisto.vpin.ui.system to javafx.fxml;
+  exports de.mephisto.vpin.ui.system;
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;

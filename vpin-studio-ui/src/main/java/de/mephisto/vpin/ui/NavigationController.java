@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.players.PlayersController;
+import de.mephisto.vpin.ui.system.SystemController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -95,6 +96,11 @@ public class NavigationController implements Initializable {
   @FXML
   private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
+  }
+
+  @FXML
+  private void onSystemClick(MouseEvent event) throws IOException {
+    loadScreen(event, SystemController.class, "scene-system.fxml");
   }
 
   public static void load(String fxml) throws IOException {

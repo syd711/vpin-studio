@@ -3,13 +3,21 @@ package de.mephisto.vpin.restclient;
 public interface PreferenceNames {
   String IGNORED_VALIDATIONS = "ignoredValidations";
   String IGNORED_MEDIA = "ignoredMedia";
+
   String SYSTEM_NAME = "systemName";
+  String SYSTEM_PRESET = "systemPreset";
+
+  String SYSTEM_PRESET_32_BIT = "32-bit";
+  String SYSTEM_PRESET_64_BIT = "64-bit";
+
   String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
   String HIGHSCORE_ALLOW_LIST = "highscoreAllowList";
+
   String IDLE_TIMEOUT = "idleTimeout";
   String AVATAR = "avatar";
   String RESET_KEY = "resetKey";
+
   String OVERLAY_KEY = "overlayKey";
   String OVERLAY_DESIGN = "overlayDesign";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
@@ -31,6 +39,7 @@ public interface PreferenceNames {
   String PREVIEW_ENABLED = "previewEnabled";
   String PINVOL_AUTOSTART_ENABLED = "pinVolAutoStartEnabled";
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
+
   String VPBM_INTERNAL_HOST_IDENTIFIER = "vpbmInternalHostId";
   String VPBM_EXTERNAL_HOST_IDENTIFIER = "vpbmExternalHostId";
 }

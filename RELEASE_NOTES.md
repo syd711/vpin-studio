@@ -3,11 +3,19 @@
 
 ### Changes
 
+**Navigation**
+
+- Switched to MUI icons.
+
 **Preferences**
 
 - Combined "Service Info" and "Service Options" to "VPin Studio Service" entry.
 - Renamed section to "VPin System Preferences"
 - Add entry "System Manager"
+
+**System Manager**
+
+- Added main navigation item "System Manager"
 
 **Table Management: DMD**
 

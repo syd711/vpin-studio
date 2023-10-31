@@ -26,6 +26,8 @@ public class Preferences {
 
   private String systemName;
 
+  private String systemPreset;
+
   private String resetKey;
 
   private String overlayKey;
@@ -83,6 +85,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getSystemPreset() {
+    return systemPreset;
+  }
+
+  public void setSystemPreset(String systemPreset) {
+    this.systemPreset = systemPreset;
+  }
 
   public String getUiSettings() {
     return uiSettings;

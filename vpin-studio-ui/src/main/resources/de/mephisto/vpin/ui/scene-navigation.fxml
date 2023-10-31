@@ -15,7 +15,7 @@
               <children>
                   <VBox fx:id="tablesBtn" alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="24" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="28" />
                         <Label text="Tables" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -25,7 +25,7 @@
                   </VBox>
                   <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-grid" iconSize="24" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
                         <Label text="Dashboard" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -35,7 +35,7 @@
                   </VBox>
                   <VBox alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-person" iconSize="24" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple-outline" iconSize="28" />
                         <Label text="Players" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -45,7 +45,7 @@
                   </VBox>
                   <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" iconSize="24" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-outline" iconSize="28" />
                         <Label text="Competitions" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -55,13 +55,28 @@
                   </VBox>
                   <VBox alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" iconSize="24" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
                         <Label text="Highscore" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label layoutX="30.0" layoutY="34.0" text="Cards" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" layoutX="28.0" layoutY="362.0" onMousePressed="#onSystemClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-remote-desktop" iconSize="24" />
+                        <Label text="System" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="30.0" layoutY="34.0" text="Manager" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

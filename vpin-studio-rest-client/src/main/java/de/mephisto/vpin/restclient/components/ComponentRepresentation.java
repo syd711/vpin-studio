@@ -42,4 +42,15 @@ public class ComponentRepresentation {
   public void setInstalledVersion(String installedVersion) {
     this.installedVersion = installedVersion;
   }
+
+  public boolean isVersionDiff() {
+    if (installedVersion == null) {
+      return false;
+    }
+    if (latestReleaseVersion == null) {
+      return false;
+    }
+
+    return !installedVersion.equals(latestReleaseVersion);
+  }
 }
