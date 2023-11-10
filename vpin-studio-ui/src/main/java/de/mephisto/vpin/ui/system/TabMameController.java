@@ -2,20 +2,16 @@ package de.mephisto.vpin.ui.system;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,25 +28,11 @@ public class TabMameController extends SystemTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabMameController.class);
 
   @FXML
-  private Button installBtn;
-
-  @FXML
-  private Button setVersionBtn;
-
-  @FXML
-  private Button checkVersionBtn;
-
-  @FXML
   private Button mameBtn;
   @FXML
   private BorderPane installerPane;
+
   private ComponentUpdateController componentUpdateController;
-
-
-  @FXML
-  private void onCheck() {
-
-  }
 
   @FXML
   private void onMameSetup() {
@@ -81,18 +63,17 @@ public class TabMameController extends SystemTab implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Set Version", "Apply \"" + latestVersionLabel.getText() + "\" as the current version of VPin MAME?", null, "Apply");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
-        ComponentRepresentation component = client.getComponentService().getComponent(ComponentType.vpinmame);
         client.getComponentService().setVersion(component.getType(), component.getLatestReleaseVersion());
-        EventManager.getInstance().notify3rdPartyVersionUpdate();
+        EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to apply version: " + e.getMessage());
       }
-      refreshUpdate(ComponentType.vpinmame);
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     mameBtn.setDisable(!client.getSystemService().isLocal());
 
     try {
@@ -104,8 +85,6 @@ public class TabMameController extends SystemTab implements Initializable {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
-    componentUpdateController.setComponentType(ComponentType.vpinmame);
-
-    refreshUpdate(ComponentType.vpinmame);
+    componentUpdateController.setComponent(component);
   }
 }

@@ -31,7 +31,11 @@ public class ComponentService implements InitializingBean {
   }
 
   public Component getComponent(ComponentType type) {
-    return componentRepository.findByType(type).get();
+    Component component = componentRepository.findByType(type).get();
+    if (releases.get(type) == null) {
+      loadReleases(component);
+    }
+    return component;
   }
 
   public List<ReleaseArtifact> getLatestReleaseArtifacts(ComponentType type) {
@@ -55,8 +59,18 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull GameEmulator defaultGameEmulator, @NonNull ComponentType type) {
-    return null;
+  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact) {
+    Component component = getComponent(type);
+    GithubRelease githubRelease = releases.get(component.getType());
+    ReleaseArtifactActionLog install = null;
+    if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
+      throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
+    }
+
+    ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+    File targetFolder = resolveTargetFolder(emulator, type);
+    install = releaseArtifact.diff(targetFolder);
+    return install;
   }
 
   @NonNull
@@ -148,8 +162,5 @@ public class ComponentService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    new Thread(() -> {
-      clearCache();
-    }).start();
   }
 }

@@ -20,9 +20,6 @@ public class ComponentRepresentationFactory {
   private ComponentService componentService;
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private PinUPConnector pinUPConnector;
 
   @Autowired

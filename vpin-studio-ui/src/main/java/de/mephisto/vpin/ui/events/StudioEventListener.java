@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.events;
 
 
+import de.mephisto.vpin.restclient.components.ComponentType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -25,7 +26,7 @@ public interface StudioEventListener {
 
   }
 
-  default void thirdPartyVersionUpdated() {
+  default void thirdPartyVersionUpdated(@NonNull ComponentType type) {
 
   }
 

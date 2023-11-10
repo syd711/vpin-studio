@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.system;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -27,10 +29,13 @@ public class ComponentUpdateController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
   @FXML
-  private Button simBtn;
+  private Button installBtn;
 
   @FXML
-  private Button okBtn;
+  private Button checkBtn;
+
+  @FXML
+  private Button simBtn;
 
   @FXML
   private TextArea textArea;
@@ -46,31 +51,38 @@ public class ComponentUpdateController implements Initializable {
   private ComponentType type;
 
   @FXML
+  private void onInstall() {
+    run(false);
+  }
+
+  @FXML
   private void onInstallSimulate() {
     run(true);
   }
 
   @FXML
-  private void onOkClick() {
-    run(false);
+  private void onCheck() {
+    String release = artifactCombo.getValue();
+    loaderStack.getChildren().add(tablesLoadingOverlay);
+    Platform.runLater(() -> {
+      try {
+        ComponentActionLogRepresentation diff = client.getComponentService().check(ComponentType.vpinmame, release);
+        textArea.setText(diff.getDiffLog());
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create diff: " + e.getMessage());
+      } finally {
+        loaderStack.getChildren().remove(tablesLoadingOverlay);
+      }
+    });
   }
 
   private void run(boolean simulate) {
     textArea.setText("");
     simBtn.setDisable(true);
-    okBtn.setDisable(true);
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      tablesLoadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Installing Update...");
-    } catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
+    installBtn.setDisable(true);
+    checkBtn.setDisable(true);
 
     loaderStack.getChildren().add(tablesLoadingOverlay);
-
     Platform.runLater(() -> {
       try {
         String artifactName = artifactCombo.getValue();
@@ -90,24 +102,8 @@ public class ComponentUpdateController implements Initializable {
       }
 
       simBtn.setDisable(false);
-      okBtn.setDisable(false);
-    });
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    simBtn.setDisable(true);
-    okBtn.setDisable(true);
-  }
-
-  public void setComponentType(ComponentType type) {
-    this.type = type;
-
-    ComponentRepresentation component = client.getComponentService().getComponent(type);
-    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
-    artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      simBtn.setDisable(t1 == null);
-      okBtn.setDisable(t1 == null);
+      installBtn.setDisable(false);
+      checkBtn.setDisable(false);
     });
   }
 
@@ -136,5 +132,37 @@ public class ComponentUpdateController implements Initializable {
     }
 
     textArea.setText(result.toString());
+  }
+
+  public void setComponent(ComponentRepresentation component) {
+    this.type = component.getType();
+    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
+    artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      checkBtn.setDisable(t1 == null);
+      installBtn.setDisable(t1 == null);
+      simBtn.setDisable(t1 == null);
+    });
+
+    artifactCombo.setDisable(component.getArtifacts().isEmpty());
+    checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
+    simBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
+    installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    simBtn.setDisable(true);
+    installBtn.setDisable(true);
+    artifactCombo.setDisable(true);
+    checkBtn.setDisable(true);
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      tablesLoadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Please wait...");
+    } catch (IOException e) {
+      LOG.error("Failed to load overlay: " + e.getMessage(), e);
+    }
   }
 }

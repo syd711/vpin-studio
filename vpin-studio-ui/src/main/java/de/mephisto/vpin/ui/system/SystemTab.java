@@ -4,6 +4,9 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
@@ -17,7 +20,7 @@ import java.text.DateFormat;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class SystemTab {
+public class SystemTab implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(SystemTab.class);
 
   @FXML
@@ -35,6 +38,7 @@ public class SystemTab {
   @FXML
   private Hyperlink githubLink;
 
+  protected ComponentRepresentation component;
 
   @FXML
   public void onHyperlink(ActionEvent event) {
@@ -50,8 +54,7 @@ public class SystemTab {
     }
   }
 
-  protected void refreshUpdate(ComponentType type) {
-    ComponentRepresentation component = client.getComponentService().getComponent(type);
+  protected void refreshUpdate() {
     latestVersionLabel.getStyleClass().remove("orange-label");
     latestVersionLabel.getStyleClass().remove("green-label");
 
@@ -80,5 +83,20 @@ public class SystemTab {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  protected void initialize() {
+    EventManager.getInstance().addListener(this);
+    refresh();
+  }
+
+  protected void refresh() {
+    component = client.getComponentService().getComponent(ComponentType.vpinmame);
+    refreshUpdate();
+  }
+
+  @Override
+  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
+    refresh();
   }
 }

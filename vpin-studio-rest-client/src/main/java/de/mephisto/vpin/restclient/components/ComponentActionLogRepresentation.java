@@ -5,9 +5,18 @@ import java.util.List;
 
 public class ComponentActionLogRepresentation {
   private List<String> logs = new ArrayList<>();
+  private String diffLog;
   private String status;
   private boolean simulated;
   private boolean diff;
+
+  public String getDiffLog() {
+    return diffLog;
+  }
+
+  public void setDiffLog(String diffLog) {
+    this.diffLog = diffLog;
+  }
 
   public boolean isDiff() {
     return diff;

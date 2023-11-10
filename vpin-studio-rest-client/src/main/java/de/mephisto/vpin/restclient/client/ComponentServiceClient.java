@@ -41,6 +41,15 @@ public class ComponentServiceClient extends VPinStudioClientService {
     }
   }
 
+  public ComponentActionLogRepresentation check(ComponentType type, String artifactName) throws Exception {
+    try {
+      return getRestClient().post(API + "components/check/" + type + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed execute update diff: " + e.getMessage(), e);
+      throw new Exception("Diff failed");
+    }
+  }
+
   public ComponentActionLogRepresentation simulate(ComponentType type, String artifactName) throws Exception {
     try {
       return getRestClient().post(API + "components/simulate/" + type + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);

@@ -47,10 +47,10 @@ public class ComponentsResource {
     return componentService.setVersion(type, version);
   }
 
-  @PostMapping("/check/{type}")
-  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type) {
+  @PostMapping("/check/{type}/{artifact}")
+  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type);
+    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, artifact);
     return toActionLog(log);
   }
 
@@ -74,6 +74,7 @@ public class ComponentsResource {
     representation.setStatus(log.getStatus());
     representation.setSimulated(log.isSimulated());
     representation.setDiff(log.isDiff());
+    representation.setDiffLog(log.toDiffString());
     return representation;
   }
 }

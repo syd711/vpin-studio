@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.events;
 
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -101,10 +102,10 @@ public class EventManager {
     }).start();
   }
 
-  public void notify3rdPartyVersionUpdate() {
+  public void notify3rdPartyVersionUpdate(ComponentType type) {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.thirdPartyVersionUpdated();
+        listener.thirdPartyVersionUpdated(type);
       }
     }).start();
   }

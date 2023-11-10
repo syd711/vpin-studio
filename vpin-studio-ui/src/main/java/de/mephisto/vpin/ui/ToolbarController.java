@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -16,15 +15,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -152,32 +148,8 @@ public class ToolbarController implements Initializable, StudioEventListener {
       }).start();
     }
 
-    refreshUpdateIcon();
-
     JobPoller.getInstance().setPolling();
 
     this.messagesBtn.setDisable(client.getJobsService().getResults().isEmpty());
-  }
-
-  @Override
-  public void thirdPartyVersionUpdated() {
-    refreshUpdateIcon();
-  }
-
-  private void refreshUpdateIcon() {
-    Platform.runLater(() -> {
-      FontIcon icon = (FontIcon) preferencesBtn.getGraphic();
-      icon.setIconColor(Paint.valueOf("#FFFFFF"));
-      icon.setIconLiteral("sil-settings");
-
-      List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
-      for (ComponentRepresentation component : components) {
-        if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
-          icon.setIconColor(Paint.valueOf("#FF9933"));
-          icon.setIconLiteral("mdi2f-flare");
-          break;
-        }
-      }
-    });
   }
 }

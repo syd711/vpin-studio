@@ -42,18 +42,21 @@
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="artifactCombo" />
+                        <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="Check Against Installation" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Checks the installation files for possible errors and creates a diff against the latest available version." wrapText="true" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="Simulate Installation">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
                            </graphic></Button>
-                        <Button fx:id="okBtn" mnemonicParsing="false" onAction="#onOkClick" styleClass="external-component" text="Start Installation">
-                           <tooltip>
-                              <Tooltip text="Updates can only be installed on the cabinet itself." />
-                           </tooltip>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
                      </children>
                   </HBox>
                </children>
@@ -61,12 +64,9 @@
                   <Insets top="6.0" />
                </VBox.margin>
             </GridPane>
-            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="Installation Log" textFill="WHITE">
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
+            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="Log" textFill="WHITE">
                <font>
-                  <Font size="14.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Label>
             <StackPane fx:id="loaderStack">
@@ -74,7 +74,7 @@
                   <Insets top="6.0" />
                </VBox.margin>
                <children>
-                  <TextArea fx:id="textArea" editable="false" prefHeight="600.0" prefWidth="900.0">
+                  <TextArea fx:id="textArea" editable="false" prefHeight="350.0" prefWidth="900.0">
                      <font>
                         <Font size="13.0" />
                      </font>
@@ -87,4 +87,21 @@
    <padding>
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER_RIGHT">
+         <children>
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="external-component" text="Start Installation">
+               <tooltip>
+                  <Tooltip text="Updates can only be installed on the cabinet itself." />
+               </tooltip>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets top="6.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
 </BorderPane>

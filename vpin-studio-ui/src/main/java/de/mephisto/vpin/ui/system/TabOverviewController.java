@@ -33,10 +33,10 @@ public class TabOverviewController implements Initializable {
     new Thread(() -> {
       client.getComponentService().clearCache();
 
-      Platform.runLater(() -> {
-        EventManager.getInstance().notify3rdPartyVersionUpdate();
-        refreshAll();
-      });
+//      Platform.runLater(() -> {
+//        EventManager.getInstance().notify3rdPartyVersionUpdate(type);
+//        refreshAll();
+//      });
       refreshBtn.setDisable(false);
     }).start();
   }
