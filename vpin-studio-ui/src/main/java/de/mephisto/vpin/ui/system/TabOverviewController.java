@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.system;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,7 +17,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TabOverviewController extends SystemTab implements Initializable {
+public class TabOverviewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabOverviewController.class);
 
   @FXML
@@ -51,10 +49,10 @@ public class TabOverviewController extends SystemTab implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-//    presetCombo.setItems(FXCollections.observableList(Arrays.asList(PreferenceNames.SYSTEM_PRESET_32_BIT, PreferenceNames.SYSTEM_PRESET_64_BIT)));
-//
-//    String preset = getSystemPreset();
-//    presetCombo.setValue(preset);
-//    presetCombo.valueProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(PreferenceNames.SYSTEM_PRESET, t1));
+    presetCombo.setItems(FXCollections.observableList(Arrays.asList(PreferenceNames.SYSTEM_PRESET_32_BIT, PreferenceNames.SYSTEM_PRESET_64_BIT)));
+
+    String preset = SystemTab.getSystemPreset();
+    presetCombo.setValue(preset);
+    presetCombo.valueProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(PreferenceNames.SYSTEM_PRESET, t1));
   }
 }

@@ -3,8 +3,10 @@ package de.mephisto.vpin.server.components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "Components")
@@ -13,6 +15,8 @@ public class Component {
 
   @Id
   private ComponentType type;
+
+  private Date lastCheck;
 
   private String installedVersion;
 
@@ -40,6 +44,14 @@ public class Component {
 
   public void setInstalledVersion(String installedVersion) {
     this.installedVersion = installedVersion;
+  }
+
+  public Date getLastCheck() {
+    return lastCheck;
+  }
+
+  public void setLastCheck(Date lastCheck) {
+    this.lastCheck = lastCheck;
   }
 
   @Override

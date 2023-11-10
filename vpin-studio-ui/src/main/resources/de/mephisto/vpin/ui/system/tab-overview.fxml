@@ -43,7 +43,7 @@
             </ToolBar>
         </top>
       <center>
-            <VBox styleClass="base-component" BorderPane.alignment="CENTER">
+            <VBox styleClass="subpanel-tabbed" BorderPane.alignment="CENTER">
                 <children>
                     <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="VPin MAME" />
                     <GridPane vgap="3.0">

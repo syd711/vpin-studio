@@ -24,7 +24,7 @@ import de.mephisto.vpin.ui.competitions.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.preferences.ComponentUpdateDialogController;
+import de.mephisto.vpin.ui.system.ComponentUpdateController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
@@ -71,15 +71,6 @@ public class Dialogs {
 
   public static boolean openUpdateDialog() {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
-    stage.showAndWait();
-    return true;
-  }
-
-  public static boolean openComponentUpdateDialog(ComponentType type, String title) {
-    FXMLLoader fxmlLoader = new FXMLLoader(ComponentUpdateDialogController.class.getResource("preference-install-update-dialog.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
-    ComponentUpdateDialogController controller = (ComponentUpdateDialogController) stage.getUserData();
-    controller.setInstallOptions(type, title);
     stage.showAndWait();
     return true;
   }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.components;
 
+import java.util.Date;
 import java.util.List;
 
 public class ComponentRepresentation {
@@ -7,9 +8,15 @@ public class ComponentRepresentation {
 
   private List<String> artifacts;
 
+  private Date lastCheck;
+
+  private Date lastModified;
+
   private String installedVersion;
 
   private String latestReleaseVersion;
+
+  private String url;
 
   public List<String> getArtifacts() {
     return artifacts;
@@ -41,6 +48,30 @@ public class ComponentRepresentation {
 
   public void setInstalledVersion(String installedVersion) {
     this.installedVersion = installedVersion;
+  }
+
+  public Date getLastCheck() {
+    return lastCheck;
+  }
+
+  public void setLastCheck(Date lastCheck) {
+    this.lastCheck = lastCheck;
+  }
+
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public boolean isVersionDiff() {

@@ -341,6 +341,15 @@
     -fx-background-color: #2a2a2a;
 }
 
+.subpanel-tabbed {
+    -fx-background-radius: 0 0 6 6;
+    -fx-border-radius: 0 0 6 6;
+    -fx-background-color: #2a2a2a;
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-6;
+    -fx-border-width: 0 2 2 2;
+}
+
 /**
  * Common Component Theme
  */
@@ -799,7 +808,23 @@
     -fx-background-color: #338800;
 }
 
-.orange {
+.orange-label {
     -fx-text-fill: #FF9933;
     -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+.green-label {
+    -fx-text-fill: #338800;
+    -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+.text-area {
+    -fx-font-size: 14px;
+}
+
+.text-area .content {
+    -fx-background-color: black;
+    -fx-font-size: 14px;
 }

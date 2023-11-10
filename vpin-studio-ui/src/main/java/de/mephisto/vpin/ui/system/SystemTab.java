@@ -13,11 +13,28 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.net.URI;
+import java.text.DateFormat;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class SystemTab {
   private final static Logger LOG = LoggerFactory.getLogger(SystemTab.class);
+
+  @FXML
+  public Label installedVersionLabel;
+
+  @FXML
+  public Label latestVersionLabel;
+
+  @FXML
+  public Label lastModifiedLabel;
+
+  @FXML
+  public Label lastCheckLabel;
+
+  @FXML
+  private Hyperlink githubLink;
+
 
   @FXML
   public void onHyperlink(ActionEvent event) {
@@ -33,13 +50,25 @@ public class SystemTab {
     }
   }
 
-  protected void refreshUpdate(ComponentType type, javafx.scene.control.Label installedLabel, Label latestLabel) {
+  protected void refreshUpdate(ComponentType type) {
     ComponentRepresentation component = client.getComponentService().getComponent(type);
-    latestLabel.getStyleClass().remove("orange");
+    latestVersionLabel.getStyleClass().remove("orange-label");
+    latestVersionLabel.getStyleClass().remove("green-label");
 
     if (component != null) {
-      installedLabel.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
-      latestLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
+      if (component.isVersionDiff()) {
+        latestVersionLabel.getStyleClass().add("orange-label");
+      }
+      else if (component.getInstalledVersion() != null) {
+        latestVersionLabel.getStyleClass().add("green-label");
+      }
+
+      installedVersionLabel.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
+      latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
+      lastCheckLabel.setText(component.getLastCheck() != null ? DateFormat.getDateTimeInstance().format(component.getLastCheck()) : "?");
+      lastModifiedLabel.setText(component.getLastModified() != null ? DateFormat.getDateTimeInstance().format(component.getLastModified()) : "?");
+
+      githubLink.setText(component.getUrl());
     }
   }
 

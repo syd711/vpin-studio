@@ -24,14 +24,17 @@ public class ComponentsResource {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private ComponentRepresentationFactory componentRepresentationFactory;
+
   @GetMapping
   public List<ComponentRepresentation> getComponents() {
-    return componentService.getComponents().stream().map(this::toComponentRepresentation).collect(Collectors.toList());
+    return componentService.getComponents().stream().map(c -> componentRepresentationFactory.createComponentRepresentation(c)).collect(Collectors.toList());
   }
 
   @GetMapping("/{type}")
   public ComponentRepresentation getComponent(@PathVariable("type") ComponentType type) {
-    return toComponentRepresentation(componentService.getComponent(type));
+    return componentRepresentationFactory.createComponentRepresentation(componentService.getComponent(type));
   }
 
   @GetMapping("/clearcache")
@@ -71,15 +74,6 @@ public class ComponentsResource {
     representation.setStatus(log.getStatus());
     representation.setSimulated(log.isSimulated());
     representation.setDiff(log.isDiff());
-    return representation;
-  }
-
-  private ComponentRepresentation toComponentRepresentation(Component component) {
-    ComponentRepresentation representation = new ComponentRepresentation();
-    representation.setType(component.getType());
-    representation.setInstalledVersion(component.getInstalledVersion());
-    representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
-    representation.setArtifacts(componentService.getLatestReleaseArtifacts(component.getType()).stream().map(a -> a.getName()).collect(Collectors.toList()));
     return representation;
   }
 }

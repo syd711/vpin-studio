@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.system;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
@@ -8,7 +9,10 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -27,38 +32,25 @@ public class TabMameController extends SystemTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabMameController.class);
 
   @FXML
-  private Button mameInstallBtn;
+  private Button installBtn;
 
   @FXML
-  private Button mameSetVersionBtn;
+  private Button setVersionBtn;
 
   @FXML
-  private Button mameCheckBtn;
+  private Button checkVersionBtn;
 
   @FXML
   private Button mameBtn;
-
   @FXML
-  private Label mameInstalledVersionLabel;
-
-  @FXML
-  private Label mameLatestVersionLabel;
-
-  @FXML
-  private Label mameLastModifiedLabel;
+  private BorderPane installerPane;
+  private ComponentUpdateController componentUpdateController;
 
 
   @FXML
   private void onCheck() {
 
   }
-
-
-  @FXML
-  private void onInstall() {
-    Dialogs.openComponentUpdateDialog(ComponentType.vpinmame, "Installation of \"VPin MAME " + this.mameLatestVersionLabel.getText() + "\"");
-  }
-
 
   @FXML
   private void onMameSetup() {
@@ -67,9 +59,10 @@ public class TabMameController extends SystemTab implements Initializable {
       try {
         GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
         File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-//        if (presetCombo.getValue().equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
-//          file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
-//        }
+        String systemPreset = getSystemPreset();
+        if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
+          file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
+        }
 
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -85,7 +78,7 @@ public class TabMameController extends SystemTab implements Initializable {
 
   @FXML
   private void onVersionSet() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Set Version", "Apply \"" + mameLatestVersionLabel.getText() + "\" as the current version of VPin MAME?", null, "Apply");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Set Version", "Apply \"" + latestVersionLabel.getText() + "\" as the current version of VPin MAME?", null, "Apply");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         ComponentRepresentation component = client.getComponentService().getComponent(ComponentType.vpinmame);
@@ -94,12 +87,25 @@ public class TabMameController extends SystemTab implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to apply version: " + e.getMessage());
       }
-      refreshUpdate(ComponentType.vpinmame, mameInstalledVersionLabel, mameLatestVersionLabel);
+      refreshUpdate(ComponentType.vpinmame);
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     mameBtn.setDisable(!client.getSystemService().isLocal());
+
+    try {
+      FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
+      Parent builtInRoot = loader.load();
+      componentUpdateController = loader.getController();
+      installerPane.setCenter(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tab: " + e.getMessage(), e);
+    }
+
+    componentUpdateController.setComponentType(ComponentType.vpinmame);
+
+    refreshUpdate(ComponentType.vpinmame);
   }
 }
