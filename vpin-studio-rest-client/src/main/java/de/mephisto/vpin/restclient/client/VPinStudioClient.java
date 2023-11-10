@@ -63,10 +63,12 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
+  private final AlxServiceClient alxServiceClient;
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host);
 
+    this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.archiveServiceClient = new ArchiveServiceClient(this);
@@ -99,6 +101,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
     restClient.setErrorHandler(errorHandler);
+  }
+
+  public AlxServiceClient getAlxService() {
+    return alxServiceClient;
   }
 
   public ComponentServiceClient getComponentService() {

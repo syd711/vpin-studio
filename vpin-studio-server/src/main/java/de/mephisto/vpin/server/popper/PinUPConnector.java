@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -755,6 +756,33 @@ public class PinUPConnector implements InitializingBean {
       statement.close();
     } catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @NonNull
+  public List<TableAlxEntry> getAlxData() {
+    Connection connect = this.connect();
+    List<TableAlxEntry> result = new ArrayList<>();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("select * from GamesStats JOIN GAMES ON GAMES.GameID = GamesStats.GameID;");
+      while (rs.next()) {
+        TableAlxEntry e = new TableAlxEntry();
+        e.setDisplayName(rs.getString("GameDisplay"));
+        e.setGameId(rs.getInt("GameId"));
+        e.setUniqueId(rs.getInt("UniqueId"));
+        e.setLastPlayed(rs.getDate("LastPlayed"));
+        e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
+        e.setNumberOfPlays(rs.getInt("NumberPlays"));
+        result.add(e);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get alx data: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }

@@ -1,22 +1,33 @@
 package de.mephisto.vpin.ui.system;
 
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.skins.BarChartItem;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class SystemController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(SystemController.class);
@@ -47,6 +58,10 @@ public class SystemController implements Initializable, StudioFXController {
 
   @FXML
   private TabPane tabPane;
+
+
+  @FXML
+  private Pane alx1;
 
   // Add a public no-args constructor
   public SystemController() {
@@ -102,6 +117,8 @@ public class SystemController implements Initializable, StudioFXController {
     });
 
     updateForTabSelection(0);
+
+    TileFactory.createAlxTiles(alx1);
   }
 
   @Override

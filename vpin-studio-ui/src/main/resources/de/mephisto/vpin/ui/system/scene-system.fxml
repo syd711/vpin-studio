@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -12,7 +11,7 @@
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets right="12.0" />
+                <Insets bottom="12.0" right="12.0" />
             </BorderPane.margin>
             <bottom>
                 <BorderPane BorderPane.alignment="CENTER">
@@ -39,30 +38,18 @@
          </center>
         </BorderPane>
     </center>
-    <right>
-        <VBox prefWidth="600.0" spacing="12.0" BorderPane.alignment="CENTER">
-            <children>
-                <VBox prefHeight="200.0" styleClass="subpanel">
-                    <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                    </padding>
-                    <children>
-                        <Label styleClass="preference-title" text="System Summary" />
-                    </children>
+   <right>
+      <BorderPane prefWidth="600.0" BorderPane.alignment="CENTER">
+         <center>
+                <VBox fx:id="alx1" spacing="12.0">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" />
+               </BorderPane.margin>
                 </VBox>
-                <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" styleClass="subpanel">
-                    <children>
-                        <Label styleClass="preference-title" text="System Information">
-                            <VBox.margin>
-                                <Insets />
-                            </VBox.margin>
-                        </Label>
-                    </children>
-                    <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                    </padding>
-                </VBox>
-            </children>
-        </VBox>
-    </right>
+         </center>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </right>
 </BorderPane>
