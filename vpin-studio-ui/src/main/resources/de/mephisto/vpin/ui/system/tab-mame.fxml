@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane fx:id="stack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css"
+           xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="de.mephisto.vpin.ui.system.TabMameController">
+    <BorderPane>
+        <top>
+            <ToolBar BorderPane.alignment="CENTER">
+                <items>
+                    <Button fx:id="mameInstallBtn" mnemonicParsing="false" onAction="#onInstall"
+                            text="Install Latest Version ..."
+                            textFill="WHITE">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                        <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline"
+                                      iconSize="18"/>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onVersionSet"
+                            text="Set As Installed Version" textFill="WHITE">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                        <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16"/>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip prefWidth="300.0"
+                                     text="This will set the latest available version as the installed version."
+                                     wrapText="true"/>
+                        </tooltip>
+                    </Button>
+                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0"/>
+                    <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onCheck" text="Check Installation"
+                            textFill="WHITE">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                        <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="16"/>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip prefWidth="300.0"
+                                     text="Checks the installation files for possible arrows and creates a diff against the latest available version."
+                                     wrapText="true"/>
+                        </tooltip>
+                    </Button>
+                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0"/>
+                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup"
+                            styleClass="external-component"
+                            text="VPin MAME Setup" textFill="WHITE">
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                        <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop"/>
+                        </graphic>
+                    </Button>
+                </items>
+            </ToolBar>
+        </top>
+        <center>
+            <VBox styleClass="base-component" BorderPane.alignment="CENTER">
+                <children>
+                <GridPane vgap="3.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="190.0" prefWidth="190.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <Label styleClass="default-text" text="Installed Version:"/>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Version:"
+                               GridPane.rowIndex="2"/>
+                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1"
+                               GridPane.rowIndex="2">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Last Modified:"
+                               GridPane.rowIndex="1"/>
+                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                </GridPane>
+                </children>
+            </VBox>
+        </center>
+    </BorderPane>
+</StackPane>

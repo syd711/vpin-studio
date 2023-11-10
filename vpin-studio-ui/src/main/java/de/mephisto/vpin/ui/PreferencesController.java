@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
@@ -23,7 +22,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -45,9 +43,6 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private Button backglassBtn;
-
-  @FXML
-  private Button systemManagerBtn;
 
   @FXML
   private Button mameBtn;
@@ -121,19 +116,9 @@ public class PreferencesController implements Initializable, StudioEventListener
     }
   }
 
-  @Override
-  public void thirdPartyVersionUpdated() {
-    refreshUpdateIcons();
-  }
-
   @FXML
   private void onAvatar(ActionEvent event) throws IOException {
     load("preference-ui.fxml", event);
-  }
-
-  @FXML
-  private void onUpdateManager(ActionEvent event) throws IOException {
-    load("preference-update-manager.fxml", event);
   }
 
   @FXML
@@ -231,11 +216,6 @@ public class PreferencesController implements Initializable, StudioEventListener
     load("preference-discord_faq.fxml", event);
   }
 
-  @FXML
-  private void onDiscordWebhook(ActionEvent event) throws IOException {
-    load("preference-discord_webhook.fxml", event);
-  }
-
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
@@ -295,21 +275,6 @@ public class PreferencesController implements Initializable, StudioEventListener
     }
   }
 
-  private void refreshUpdateIcons() {
-    Platform.runLater(() -> {
-      systemManagerBtn.setGraphic(null);
-
-      List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
-      for (ComponentRepresentation component : components) {
-        if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
-          systemManagerBtn.setGraphic(WidgetFactory.createUpdateIcon());
-          systemManagerBtn.setGraphicTextGap(6);
-          break;
-        }
-      }
-    });
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     avatarButton = avatarBtn;
@@ -319,8 +284,6 @@ public class PreferencesController implements Initializable, StudioEventListener
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
     hostLabel.setText(System.getProperty("os.name"));
-
-    refreshUpdateIcons();
 
     EventManager.getInstance().addListener(this);
   }
