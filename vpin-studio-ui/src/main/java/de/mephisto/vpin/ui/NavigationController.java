@@ -1,14 +1,19 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.system.SystemController;
 import de.mephisto.vpin.ui.tables.TablesController;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -23,9 +28,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +46,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class NavigationController implements Initializable {
+public class NavigationController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
   @FXML
@@ -46,6 +54,14 @@ public class NavigationController implements Initializable {
 
   @FXML
   private Pane tablesBtn;
+
+  @FXML
+  private Pane buttonList;
+
+  private static Pane staticButtonList;
+
+  @FXML
+  private Pane systemManagerOverlay;
 
   public static StudioFXController activeController;
 
@@ -116,9 +132,10 @@ public class NavigationController implements Initializable {
   public static void loadScreen(MouseEvent event, Class<?> controller, String name) throws IOException {
     if (event != null) {
       Pane b = (Pane) event.getSource();
-      ObservableList<Node> childrenUnmodifiable = b.getParent().getChildrenUnmodifiable();
-      for (Node node : childrenUnmodifiable) {
+      for (Node node : staticButtonList.getChildren()) {
+        Pane child = (Pane) node;
         node.getStyleClass().remove("navigation-button-selected");
+        child.getChildren().stream().forEach(c -> c.getStyleClass().remove("navigation-button-selected"));
       }
       b.getStyleClass().add("navigation-button-selected");
     }
@@ -146,14 +163,6 @@ public class NavigationController implements Initializable {
     }
 
     main.setCenter(root);
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    staticAvatarPane = this.avatarPane;
-    refreshAvatar();
-
-    tablesBtn.getStyleClass().add("navigation-button-selected");
   }
 
   public static void refreshAvatar() {
@@ -198,5 +207,29 @@ public class NavigationController implements Initializable {
         breadCrumb.setText("/ " + join);
       }
     });
+  }
+
+  @Override
+  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
+    FontIcon icon = WidgetFactory.createUpdateIcon();
+    systemManagerOverlay.getChildren().add(icon);
+    List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
+    for (ComponentRepresentation component : components) {
+      if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
+        systemManagerOverlay.getChildren().add(icon);
+        break;
+      }
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    staticAvatarPane = this.avatarPane;
+    refreshAvatar();
+
+    tablesBtn.getStyleClass().add("navigation-button-selected");
+    thirdPartyVersionUpdated(ComponentType.vpinmame);
+
+    staticButtonList = this.buttonList;
   }
 }
