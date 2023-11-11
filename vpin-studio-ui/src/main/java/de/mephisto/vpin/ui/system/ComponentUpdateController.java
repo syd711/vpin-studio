@@ -63,8 +63,13 @@ public class ComponentUpdateController implements Initializable {
         ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifactName);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
-        ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
-        textArea.setText(log.toString());
+        if(!resultModel.getResults().isEmpty()) {
+          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+          textArea.setText(log.toString());
+        }
+        else {
+          textArea.setText("Check failed. See log for details.");
+        }
 
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       } catch (Exception e) {

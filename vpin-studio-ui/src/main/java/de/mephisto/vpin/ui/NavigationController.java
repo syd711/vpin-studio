@@ -2,13 +2,14 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.system.SystemController;
@@ -17,7 +18,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,9 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -48,6 +46,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
+
+  private final static FontIcon updateIcon = WidgetFactory.createUpdateIcon();
 
   @FXML
   private BorderPane avatarPane;
@@ -179,15 +179,15 @@ public class NavigationController implements Initializable, StudioEventListener 
     }
 
     Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
+      .skinType(Tile.SkinType.IMAGE)
+      .prefSize(300, 300)
+      .backgroundColor(Color.TRANSPARENT)
+      .image(image)
+      .imageMask(Tile.ImageMask.ROUND)
+      .text("")
+      .textSize(Tile.TextSize.BIGGER)
+      .textAlignment(TextAlignment.CENTER)
+      .build();
     staticAvatarPane.setCenter(avatar);
 
     Studio.stage.setTitle("VPin Studio - " + name);
@@ -211,15 +211,16 @@ public class NavigationController implements Initializable, StudioEventListener 
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    FontIcon icon = WidgetFactory.createUpdateIcon();
-    systemManagerOverlay.getChildren().add(icon);
-    List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
-    for (ComponentRepresentation component : components) {
-      if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
-        systemManagerOverlay.getChildren().add(icon);
-        break;
+    Platform.runLater(() -> {
+      systemManagerOverlay.getChildren().remove(updateIcon);
+      List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
+      for (ComponentRepresentation component : components) {
+        if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
+          systemManagerOverlay.getChildren().add(updateIcon);
+          break;
+        }
       }
-    }
+    });
   }
 
   @Override
@@ -231,5 +232,6 @@ public class NavigationController implements Initializable, StudioEventListener 
     thirdPartyVersionUpdated(ComponentType.vpinmame);
 
     staticButtonList = this.buttonList;
+    EventManager.getInstance().addListener(this);
   }
 }
