@@ -5,13 +5,13 @@ import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
@@ -19,11 +19,8 @@ import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class ComponentUpdateController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
@@ -46,8 +43,6 @@ public class ComponentUpdateController implements Initializable {
   @FXML
   private ComboBox<String> artifactCombo;
 
-  private Parent tablesLoadingOverlay;
-
   private ComponentType type;
 
   @FXML
@@ -62,76 +57,38 @@ public class ComponentUpdateController implements Initializable {
 
   @FXML
   private void onCheck() {
-    String release = artifactCombo.getValue();
-    loaderStack.getChildren().add(tablesLoadingOverlay);
     Platform.runLater(() -> {
       try {
-        ComponentActionLogRepresentation diff = client.getComponentService().check(ComponentType.vpinmame, release);
-        textArea.setText(diff.getDiffLog());
+        String artifactName = artifactCombo.getValue();
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifactName);
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
+
+        ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+        textArea.setText(log.toString());
+
+        EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create diff: " + e.getMessage());
-      } finally {
-        loaderStack.getChildren().remove(tablesLoadingOverlay);
+        LOG.error("Failed to execute component check: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute component check: " + e.getMessage());
       }
     });
   }
 
   private void run(boolean simulate) {
     textArea.setText("");
-    simBtn.setDisable(true);
-    installBtn.setDisable(true);
-    checkBtn.setDisable(true);
-
-    loaderStack.getChildren().add(tablesLoadingOverlay);
     Platform.runLater(() -> {
       try {
         String artifactName = artifactCombo.getValue();
+        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, artifactName);
+        ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
-        if (simulate) {
-          ComponentActionLogRepresentation install = client.getComponentService().simulate(type, artifactName);
-          processResult(install);
-        }
-        else {
-          ComponentActionLogRepresentation install = client.getComponentService().install(type, artifactName);
-          processResult(install);
-        }
-        loaderStack.getChildren().remove(tablesLoadingOverlay);
+        ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+        textArea.setText(log.toString());
       } catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
         textArea.setText("Action failed: " + ex.getMessage());
       }
-
-      simBtn.setDisable(false);
-      installBtn.setDisable(false);
-      checkBtn.setDisable(false);
     });
-  }
-
-  private void processResult(ComponentActionLogRepresentation install) {
-    StringBuilder result = new StringBuilder();
-    install.getLogs().stream().forEach(l -> result.append(l + "\n"));
-
-
-    if (install.isSimulated()) {
-      if (install.getStatus() != null) {
-        result.append("\nSIMULATION FAILED\n");
-        result.append(install.getStatus());
-      }
-      else {
-        result.append("\nSIMULATION SUCCESSFUL\n");
-      }
-    }
-    else {
-      if (install.getStatus() != null) {
-        result.append("\nINSTALLATION FAILED\n");
-        result.append(install.getStatus());
-      }
-      else {
-        result.append("\nINSTALLATION SUCCESSFUL\n");
-      }
-    }
-
-    textArea.setText(result.toString());
   }
 
   public void setComponent(ComponentRepresentation component) {
@@ -155,14 +112,5 @@ public class ComponentUpdateController implements Initializable {
     installBtn.setDisable(true);
     artifactCombo.setDisable(true);
     checkBtn.setDisable(true);
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      tablesLoadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Please wait...");
-    } catch (IOException e) {
-      LOG.error("Failed to load overlay: " + e.getMessage(), e);
-    }
   }
 }

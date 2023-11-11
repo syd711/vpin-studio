@@ -84,4 +84,9 @@ public class ComponentRepresentation {
 
     return !installedVersion.equals(latestReleaseVersion);
   }
+
+  @Override
+  public String toString() {
+    return type.toString();
+  }
 }

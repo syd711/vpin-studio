@@ -70,11 +70,12 @@ public class ComponentsResource {
 
   private ComponentActionLogRepresentation toActionLog(ReleaseArtifactActionLog log) {
     ComponentActionLogRepresentation representation = new ComponentActionLogRepresentation();
-    representation.setLogs(log.getLogs());
+    representation.setLogsSummary(log.toLogString());
     representation.setStatus(log.getStatus());
     representation.setSimulated(log.isSimulated());
     representation.setDiff(log.isDiff());
-    representation.setDiffLog(log.toDiffString());
+    representation.setDiffSummary(log.toDiffString());
+    representation.setSummary(log.getSummary());
     return representation;
   }
 }

@@ -71,6 +71,6 @@ public class Component {
 
   @Override
   public String toString() {
-    return "'" + this.getType() + "'";
+    return type.toString();
   }
 }

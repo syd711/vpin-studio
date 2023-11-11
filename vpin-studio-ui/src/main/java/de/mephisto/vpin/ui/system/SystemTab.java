@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
@@ -58,6 +59,11 @@ public class SystemTab implements StudioEventListener {
     latestVersionLabel.getStyleClass().remove("orange-label");
     latestVersionLabel.getStyleClass().remove("green-label");
 
+    installedVersionLabel.setText("?");
+    latestVersionLabel.setText("?");
+    lastCheckLabel.setText("?");
+    lastModifiedLabel.setText("?");
+
     if (component != null) {
       if (component.isVersionDiff()) {
         latestVersionLabel.getStyleClass().add("orange-label");
@@ -97,6 +103,8 @@ public class SystemTab implements StudioEventListener {
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    refresh();
+    Platform.runLater(() -> {
+      refresh();
+    });
   }
 }

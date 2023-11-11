@@ -69,7 +69,16 @@ public class ComponentService implements InitializingBean {
 
     ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
     File targetFolder = resolveTargetFolder(emulator, type);
-    install = releaseArtifact.diff(targetFolder);
+    install = releaseArtifact.diff(targetFolder, "Setup64.exe", "Setup.exe", "VPinMAME.dll", "Bass.dll");
+    boolean diff = install.isDiffering();
+    if (!diff) {
+      component.setInstalledVersion(githubRelease.getTag());
+      LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+    }
+
+    component.setLastCheck(new Date());
+    componentRepository.saveAndFlush(component);
+
     return install;
   }
 
