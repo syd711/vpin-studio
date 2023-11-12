@@ -27,7 +27,9 @@ public class ComponentService implements InitializingBean {
   private Map<ComponentType, GithubRelease> releases = new HashMap<>();
 
   public List<Component> getComponents() {
-    return componentRepository.findAll();
+    List<Component> all = componentRepository.findAll();
+    all.stream().forEach(c -> getComponent(c.getType()));
+    return all;
   }
 
   public Component getComponent(ComponentType type) {
@@ -39,11 +41,15 @@ public class ComponentService implements InitializingBean {
   }
 
   public List<ReleaseArtifact> getLatestReleaseArtifacts(ComponentType type) {
-    GithubRelease githubRelease = releases.get(type);
+    GithubRelease githubRelease = getLatestRelease(type);
     if (githubRelease != null) {
       return githubRelease.getArtifacts();
     }
     return Collections.emptyList();
+  }
+
+  public GithubRelease getLatestRelease(ComponentType type) {
+    return releases.get(type);
   }
 
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
@@ -69,7 +75,7 @@ public class ComponentService implements InitializingBean {
 
     ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
     File targetFolder = resolveTargetFolder(emulator, type);
-    install = releaseArtifact.diff(targetFolder, "Setup64.exe", "Setup.exe", "VPinMAME.dll", "Bass.dll");
+    install = releaseArtifact.diff(targetFolder, getDiffList(type));
     boolean diff = install.isDiffering();
     if (!diff) {
       component.setInstalledVersion(githubRelease.getTag());
@@ -107,7 +113,10 @@ public class ComponentService implements InitializingBean {
 
   private File resolveTargetFolder(GameEmulator gameEmulator, ComponentType type) {
     switch (type) {
-      case vpinmame: {
+      case vpinmame:
+      case freezy:
+      case serum:
+      case flexdmd: {
         return gameEmulator.getMameFolder();
       }
       case vpinball: {
@@ -115,6 +124,32 @@ public class ComponentService implements InitializingBean {
       }
       case b2sbackglass: {
         return gameEmulator.getTablesFolder();
+      }
+      default: {
+        throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
+      }
+    }
+  }
+
+  private String[] getDiffList(ComponentType type) {
+    switch (type) {
+      case vpinmame: {
+        return new String[]{"Setup64.exe", "Setup.exe", ".dll"};
+      }
+      case vpinball: {
+        return new String[]{".vbs", ".dll"};
+      }
+      case b2sbackglass: {
+        return new String[]{".dll"};
+      }
+      case freezy: {
+        return new String[]{".dll"};
+      }
+      case flexdmd: {
+        return new String[]{".dll"};
+      }
+      case serum: {
+        return new String[]{".dll", ".lib"};
       }
       default: {
         throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
@@ -131,11 +166,23 @@ public class ComponentService implements InitializingBean {
           break;
         }
         case vpinball: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug"));
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug", "Source"));
           break;
         }
         case b2sbackglass: {
           githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/b2s-backglass/releases", Collections.emptyList(), Arrays.asList("Source"));
+          break;
+        }
+        case freezy: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/freezy/dmd-extensions/releases", Collections.emptyList(), Arrays.asList("Source", ".msi"));
+          break;
+        }
+        case flexdmd: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vbousquet/flexdmd/releases", Collections.emptyList(), Arrays.asList("Source"));
+          break;
+        }
+        case serum: {
+          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/zesinger/libserum/releases", Collections.emptyList(), Arrays.asList("Source", "tvos", "macOS", "linux", "arm", "android"));
           break;
         }
         default: {
@@ -152,16 +199,6 @@ public class ComponentService implements InitializingBean {
   }
 
   public boolean clearCache() {
-    ComponentType[] values = ComponentType.values();
-    for (ComponentType value : values) {
-      Optional<Component> byName = componentRepository.findByType(value);
-      if (byName.isEmpty()) {
-        Component component = new Component();
-        component.setType(value);
-        componentRepository.saveAndFlush(component);
-      }
-    }
-
     List<Component> all = componentRepository.findAll();
     for (Component component : all) {
       loadReleases(component);
@@ -171,5 +208,14 @@ public class ComponentService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    ComponentType[] values = ComponentType.values();
+    for (ComponentType value : values) {
+      Optional<Component> byName = componentRepository.findByType(value);
+      if (byName.isEmpty()) {
+        Component component = new Component();
+        component.setType(value);
+        componentRepository.saveAndFlush(component);
+      }
+    }
   }
 }

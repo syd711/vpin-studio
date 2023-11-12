@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.components;
 
+import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +28,16 @@ public class ComponentRepresentationFactory {
   public ComponentRepresentation createComponentRepresentation(Component component) {
     String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
 
-    ComponentRepresentation representation = new ComponentRepresentation();
     ComponentType componentType = component.getType();
+    GithubRelease latestRelease = componentService.getLatestRelease(componentType);
+
+    ComponentRepresentation representation = new ComponentRepresentation();
     representation.setType(componentType);
+    representation.setUrl(latestRelease.getReleasesUrl());
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
     representation.setLastCheck(component.getLastCheck());
-    representation.setArtifacts(componentService.getLatestReleaseArtifacts(componentType).stream().map(a -> a.getName()).collect(Collectors.toList()));
+    representation.setArtifacts(latestRelease.getArtifacts().stream().map(a -> a.getName()).collect(Collectors.toList()));
 
     switch (componentType) {
       case vpinmame: {
@@ -45,11 +48,53 @@ public class ComponentRepresentationFactory {
         if (setupExe.exists()) {
           representation.setLastModified(new Date(setupExe.lastModified()));
         }
-        representation.setUrl("https://github.com/vpinball/pinmame/releases");
+        break;
+      }
+      case vpinball: {
+        File file = new File(pinUPConnector.getDefaultGameEmulator().getInstallationFolder(), "VisualPinballX64.exe");
+        if (!file.exists()) {
+          file = new File(pinUPConnector.getDefaultGameEmulator().getMameFolder(), "VisualPinballX.exe");
+        }
+
+        if (file.exists()) {
+          representation.setLastModified(new Date(file.lastModified()));
+        }
+        break;
+      }
+      case b2sbackglass: {
+        File file = new File(pinUPConnector.getDefaultGameEmulator().getTablesFolder(), "B2SBackglassServer.dll");
+        if (file.exists()) {
+          representation.setLastModified(new Date(file.lastModified()));
+        }
+        break;
+      }
+      case flexdmd: {
+        File file = new File(pinUPConnector.getDefaultGameEmulator().getMameFolder(), "FlexDMD.dll");
+        if (file.exists()) {
+          representation.setLastModified(new Date(file.lastModified()));
+        }
+        break;
+      }
+      case freezy: {
+        File file = new File(pinUPConnector.getDefaultGameEmulator().getMameFolder(), "DmdDevice64.dll");
+        if (!file.exists()) {
+          file = new File(pinUPConnector.getDefaultGameEmulator().getMameFolder(), "DmdDevice.dll");
+        }
+
+        if (file.exists()) {
+          representation.setLastModified(new Date(file.lastModified()));
+        }
+        break;
+      }
+      case serum: {
+        File file = new File(pinUPConnector.getDefaultGameEmulator().getMameFolder(), "serum.lib");
+        if (file.exists()) {
+          representation.setLastModified(new Date(file.lastModified()));
+        }
         break;
       }
       default: {
-//        throw new UnsupportedOperationException("Invalid component type " + componentType);
+        throw new UnsupportedOperationException("Invalid component type " + componentType);
       }
     }
 

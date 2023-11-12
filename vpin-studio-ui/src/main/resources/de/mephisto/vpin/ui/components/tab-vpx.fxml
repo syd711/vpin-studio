@@ -7,20 +7,11 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css"
            xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.mephisto.vpin.ui.components.TabMameController">
+           fx:controller="de.mephisto.vpin.ui.components.TabVpxController">
     <BorderPane>
         <top>
             <ToolBar BorderPane.alignment="CENTER">
                 <items>
-                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup"
-                            styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">
-                        <font>
-                            <Font size="14.0"/>
-                        </font>
-                        <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop"/>
-                        </graphic>
-                    </Button>
                 </items>
             </ToolBar>
         </top>

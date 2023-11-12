@@ -13,13 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -40,9 +41,6 @@ public class ComponentUpdateController implements Initializable {
   private TextArea textArea;
 
   @FXML
-  private StackPane loaderStack;
-
-  @FXML
   private ComboBox<String> artifactCombo;
 
   private AbstractComponentTab componentTab;
@@ -50,7 +48,11 @@ public class ComponentUpdateController implements Initializable {
 
   @FXML
   private void onInstall() {
-    run(false);
+    String artifactName = artifactCombo.getValue();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifactName + "\"?","Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      run(false);
+    }
   }
 
   @FXML
@@ -66,7 +68,7 @@ public class ComponentUpdateController implements Initializable {
         ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifactName);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
-        if(!resultModel.getResults().isEmpty()) {
+        if (!resultModel.getResults().isEmpty()) {
           ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
           textArea.setText(log.toString());
         }

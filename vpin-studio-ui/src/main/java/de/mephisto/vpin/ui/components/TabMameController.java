@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
@@ -16,7 +16,6 @@ import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -65,6 +64,12 @@ public class TabMameController extends AbstractComponentTab implements Initializ
       executor.executeCommandAsync();
     }
   }
+
+  @Override
+  protected ComponentType getComponentType() {
+    return ComponentType.vpinmame;
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {

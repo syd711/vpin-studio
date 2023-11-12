@@ -42,7 +42,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="artifactCombo" />
-                        <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="Check Against Installation" textFill="WHITE">
+                        <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="Compare With Installation" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -53,10 +53,6 @@
                               <Tooltip prefWidth="300.0" text="Checks the installation against the selected version." wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="Simulate Installation">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
-                           </graphic></Button>
                      </children>
                   </HBox>
                </children>
@@ -88,8 +84,13 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
    <bottom>
-      <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER_RIGHT">
+      <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
          <children>
+            <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="Simulate Installation">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
+               </graphic>
+            </Button>
             <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="Start Installation">
                <tooltip>
                   <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />

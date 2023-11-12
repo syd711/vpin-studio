@@ -91,13 +91,8 @@ public class ComponentsController implements Initializable, StudioFXController {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TabMameController.class.getResource("tab-mame.fxml"));
-      Parent builtInRoot = loader.load();
-      mameTab.setContent(builtInRoot);
-    } catch (IOException e) {
-      LOG.error("Failed to load tab: " + e.getMessage(), e);
-    }
+    loadTab(vpxTab, "tab-vpx.fxml");
+    loadTab(mameTab, "tab-mame.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());
@@ -106,6 +101,16 @@ public class ComponentsController implements Initializable, StudioFXController {
     updateForTabSelection(0);
 
     TileFactory.createAlxTiles(alx1);
+  }
+
+  private void loadTab(Tab tab, String file) {
+    try {
+      FXMLLoader loader = new FXMLLoader(TabMameController.class.getResource(file));
+      Parent builtInRoot = loader.load();
+      tab.setContent(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tab: " + e.getMessage(), e);
+    }
   }
 
   @Override
