@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
@@ -28,26 +29,22 @@
                             <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
                         </graphic>
                     </Button>
-                    <Button fx:id="refreshBtn1" mnemonicParsing="false" onAction="#onVersionRefresh" text="Run Full System Check " textFill="WHITE">
-                        <font>
-                            <Font size="14.0" />
-                        </font>
-                        <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" iconSize="16" />
-                        </graphic>
-                    </Button>
                 </items>
             </ToolBar>
         </top>
       <center>
-            <VBox fx:id="componentList" styleClass="subpanel-tabbed" BorderPane.alignment="CENTER">
-                <BorderPane.margin>
-                    <Insets />
-                </BorderPane.margin>
-                <padding>
-                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                </padding>
-            </VBox>
+         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+               <Insets />
+            </BorderPane.margin>
+            <content>
+                  <VBox fx:id="componentList" styleClass="subpanel-tabbed">
+                      <padding>
+                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                      </padding>
+                  </VBox>
+            </content>
+         </ScrollPane>
       </center>
     </BorderPane>
 </StackPane>

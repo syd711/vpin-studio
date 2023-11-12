@@ -26,10 +26,10 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   public ComponentInstallProgressModel(ComponentType type, boolean simulate, String artifactName) {
     super("");
     if(simulate) {
-      super.setTitle("Installation Simulator");
+      super.setTitle("Installation Simulator for " + artifactName);
     }
     else {
-      super.setTitle("Installer");
+      super.setTitle("Installing " + artifactName);
     }
 
     this.components = Arrays.asList(type);

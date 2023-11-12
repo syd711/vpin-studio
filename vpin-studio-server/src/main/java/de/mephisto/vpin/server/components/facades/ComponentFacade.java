@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.githubloader.GithubRelease;
+import de.mephisto.githubloader.ReleaseArtifact;
+import de.mephisto.githubloader.ReleaseArtifactActionLog;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -23,4 +25,8 @@ public interface ComponentFacade {
 
   @Nullable
   Date getModificationDate(@NonNull GameEmulator gameEmulator);
+
+  default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+
+  }
 }

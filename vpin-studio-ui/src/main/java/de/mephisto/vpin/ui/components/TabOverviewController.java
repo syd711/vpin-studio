@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,12 +46,6 @@ public class TabOverviewController implements Initializable {
 //      });
       refreshBtn.setDisable(false);
     }).start();
-  }
-
-  private void refreshAll() {
-    Platform.runLater(() -> {
-//      refreshUpdate(ComponentType.vpinmame, mameTitleLabel, mameInstalledVersionLabel, mameLatestVersionLabel);
-    });
   }
 
   @Override

@@ -17,6 +17,16 @@ public class ComponentShortSummaryController {
   private Label latestVersionLabel;
 
   public void refresh(@NonNull ComponentRepresentation component) {
+    latestVersionLabel.getStyleClass().remove("orange-label");
+    latestVersionLabel.getStyleClass().remove("green-label");
+
+    if (component.isVersionDiff()) {
+      latestVersionLabel.getStyleClass().add("orange-label");
+    }
+    else if (component.getInstalledVersion() != null) {
+      latestVersionLabel.getStyleClass().add("green-label");
+    }
+
     titleLabel.setText(component.getType().toString());
     installedVersionLabel.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
     latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");

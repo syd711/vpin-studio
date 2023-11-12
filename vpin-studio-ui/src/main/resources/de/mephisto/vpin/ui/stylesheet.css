@@ -382,8 +382,8 @@
     -fx-background-radius: 0 0 6 6;
     -fx-border-radius: 0 0 6 6;
     -fx-background-color: #2a2a2a;
-    -fx-border-style: solid;
-    -fx-border-color: -fx-base-6;
+   /* -fx-border-style: solid;
+    -fx-border-color: -fx-base-6;*/
     -fx-border-width: 0 2 2 2;
 }
 

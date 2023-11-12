@@ -97,11 +97,17 @@ public class ComponentService implements InitializingBean {
       return releaseArtifact.simulateInstall(targetFolder);
     }
 
+    //we have a real installation from here on
     install = releaseArtifact.install(targetFolder);
     if (install.getStatus() == null) {
+      //unzipping was successful
       component.setInstalledVersion(githubRelease.getTag());
       componentRepository.saveAndFlush(component);
+
+      //execute optional post processing
+      componentFacade.postProcess(emulator, releaseArtifact, install);
     }
+
     return install;
   }
 
