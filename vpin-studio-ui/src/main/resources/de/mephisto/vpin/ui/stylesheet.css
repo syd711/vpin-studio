@@ -266,6 +266,43 @@
 }
 
 
+
+/**
+ * Installer Button
+ */
+.installer-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-color: #FF9933;
+    -fx-border-radius: 3px;
+    -fx-text-fill: #DDDDDD;
+}
+
+.installer-button:hover {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF0033;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
+.installer-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF9933;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
 /**
  * Common Buttons
  */
@@ -546,6 +583,7 @@
     -fx-text-fill: white;
     -fx-background-color: #2a2a2a;
 }
+
 .list-view .list-cell:even {
     -fx-font-size: 14px;
     -fx-text-fill: white;
@@ -562,6 +600,39 @@
     -fx-font-size: 14px;
     -fx-text-fill: #7381fa;
 }
+
+.media-list .list-view {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: #FFFFFF;
+    /*-fx-border-style: solid solid solid solid;*/
+    /*-fx-border-color: -fx-base-5;
+    -fx-border-width: 1;*/
+}
+
+.media-list .list-view .list-cell:selected {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.media-list .list-view .list-cell:hover {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7381fa;
+}
+
+
+.media-list .list-view .list-cell:odd {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: #414141;
+}
+.media-list .list-view .list-cell:even {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: #494949;
+}
+
 
 /**
  * Accordion & Titled Pane

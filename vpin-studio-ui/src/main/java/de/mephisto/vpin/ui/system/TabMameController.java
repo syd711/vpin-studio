@@ -4,22 +4,15 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -29,10 +22,6 @@ public class TabMameController extends SystemTab implements Initializable {
 
   @FXML
   private Button mameBtn;
-  @FXML
-  private BorderPane installerPane;
-
-  private ComponentUpdateController componentUpdateController;
 
   @FXML
   private void onMameSetup() {
@@ -58,33 +47,9 @@ public class TabMameController extends SystemTab implements Initializable {
     }
   }
 
-  @FXML
-  private void onVersionSet() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Set Version", "Apply \"" + latestVersionLabel.getText() + "\" as the current version of VPin MAME?", null, "Apply");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      try {
-        client.getComponentService().setVersion(component.getType(), component.getLatestReleaseVersion());
-        EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to apply version: " + e.getMessage());
-      }
-    }
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     mameBtn.setDisable(!client.getSystemService().isLocal());
-
-    try {
-      FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
-      Parent builtInRoot = loader.load();
-      componentUpdateController = loader.getController();
-      installerPane.setCenter(builtInRoot);
-    } catch (IOException e) {
-      LOG.error("Failed to load tab: " + e.getMessage(), e);
-    }
-
-    componentUpdateController.setComponent(component);
   }
 }

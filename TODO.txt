@@ -1,1 +1,2 @@
--
+- add blank media for other screens
+- add screen checkboxes to media manager

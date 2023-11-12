@@ -9,9 +9,8 @@
 
 **Preferences**
 
-- Combined "Service Info" and "Service Options" to "VPin Studio Service" entry.
+- Combined "Service Info" and "Service Options" to "Service" entry and moved this to the Studio settings section.
 - Renamed section to "VPin System Preferences"
-- Add entry "System Manager"
 
 **System Manager**
 
@@ -19,12 +18,10 @@
 
 **Table Management: DMD**
 
-- Added bulk operation to execute the "Auto-Fill" for all tables.
-
 
 **Table Management: ALT Color**
 
-- Move FlexDMD button to DMD section.
+- Moved FlexDMD button to DMD section.
 
 
 ### Bugfixes

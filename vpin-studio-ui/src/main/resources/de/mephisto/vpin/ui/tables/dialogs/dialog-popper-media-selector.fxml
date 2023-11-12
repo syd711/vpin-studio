@@ -225,12 +225,12 @@
                         </Label>
                         <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                            <top>
-                              <BorderPane BorderPane.alignment="CENTER">
+                              <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
                                     <Insets />
                                  </BorderPane.margin>
                                  <left>
-                                    <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+                                    <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" styleClass="media-list" BorderPane.alignment="CENTER" />
                                  </left>
                                  <center>
                                     <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -316,12 +316,12 @@
                         </Label>
                         <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
                            <top>
-                              <BorderPane BorderPane.alignment="CENTER">
+                              <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>
                                     <Insets />
                                  </BorderPane.margin>
                                  <left>
-                                    <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+                                    <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" styleClass="media-list" BorderPane.alignment="CENTER" />
                                  </left>
                                  <center>
                                     <BorderPane BorderPane.alignment="CENTER">

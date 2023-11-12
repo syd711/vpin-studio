@@ -50,7 +50,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="16" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Checks the installation files for possible errors and creates a diff against the latest available version." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Checks the installation against the selected version." wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="Simulate Installation">
@@ -90,9 +90,9 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER_RIGHT">
          <children>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="external-component" text="Start Installation">
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="Start Installation">
                <tooltip>
-                  <Tooltip text="Updates can only be installed on the cabinet itself." />
+                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
                </tooltip>
                <font>
                   <Font size="14.0" />

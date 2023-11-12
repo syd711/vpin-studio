@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class ComponentUpdateController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
@@ -101,14 +103,14 @@ public class ComponentUpdateController implements Initializable {
     artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
       checkBtn.setDisable(t1 == null);
-      installBtn.setDisable(t1 == null);
+      installBtn.setDisable(t1 == null || !client.getSystemService().isLocal());
       simBtn.setDisable(t1 == null);
     });
 
     artifactCombo.setDisable(component.getArtifacts().isEmpty());
     checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
-    installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
+    installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
   }
 
   @Override
