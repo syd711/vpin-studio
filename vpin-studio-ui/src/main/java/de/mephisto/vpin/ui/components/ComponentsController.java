@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class ComponentsController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);

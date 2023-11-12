@@ -3,11 +3,10 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,9 +33,9 @@ public class VPXCommandLineService {
     File vpxExe = game.getEmulator().getVPXExe();
 
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-    if(tableDetails != null) {
+    if (tableDetails != null) {
       String altLaunchExe = tableDetails.getAltLaunchExe();
-      if(!StringUtils.isEmpty(altLaunchExe)) {
+      if (!StringUtils.isEmpty(altLaunchExe)) {
         vpxExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
       }
     }
@@ -94,5 +93,23 @@ public class VPXCommandLineService {
     }
 
     return target;
+  }
+
+  public boolean launch() {
+    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    File vpxExe = defaultGameEmulator.getVPXExe();
+    try {
+      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath());
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      executor.executeCommandAsync();
+
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+      }
+    } catch (Exception e) {
+      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+    }
+    return false;
   }
 }

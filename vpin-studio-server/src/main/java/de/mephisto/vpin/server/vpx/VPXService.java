@@ -187,11 +187,13 @@ public class VPXService {
   }
 
   public boolean play(Game game) {
+    systemService.killPopper();
+
     if (game != null) {
-      systemService.killPopper();
       return vpxCommandLineService.execute(game, "-Play");
     }
-    return false;
+
+    return vpxCommandLineService.launch();
   }
 
   public String getChecksum(Game game) {

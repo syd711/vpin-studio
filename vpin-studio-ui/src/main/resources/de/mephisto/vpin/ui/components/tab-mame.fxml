@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css"
-           xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="de.mephisto.vpin.ui.components.TabMameController">
+
+<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabMameController">
     <BorderPane>
         <top>
             <ToolBar BorderPane.alignment="CENTER">
                 <items>
-                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup"
-                            styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">
+                    <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">
                         <font>
-                            <Font size="14.0"/>
+                            <Font size="14.0" />
                         </font>
                         <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop"/>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
                         </graphic>
                     </Button>
                 </items>
@@ -27,21 +29,19 @@
         <center>
             <VBox styleClass="subpanel-tabbed" BorderPane.alignment="CENTER">
                 <children>
-                    <VBox fx:id="componentSummaryPane"/>
-                    <BorderPane fx:id="componentInstallerPane"/>
+                    <VBox fx:id="componentSummaryPane" />
+                    <BorderPane fx:id="componentInstallerPane" />
                     <VBox styleClass="info-container">
                         <VBox.margin>
-                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                         </VBox.margin>
                         <children>
-                            <Label styleClass="default-text" text="After updating to the lastest VPin MAME version:"/>
-                            <Label layoutX="23.0" layoutY="23.0" styleClass="default-text"
-                                   text="- The installer will open the &quot;Setup(64).exe&quot; from VPin MAME."/>
-                            <Label layoutX="23.0" layoutY="43.0" styleClass="default-text"
-                                   text="- Press the &quot;Install&quot; button in the VPin MAME setup."/>
+                            <Label styleClass="default-text" text="After updating to the lastest VPin MAME version:" />
+                            <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- The installer will open the &quot;Setup(64).exe&quot; from VPin MAME." />
+                            <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Press the &quot;Install&quot; button in the VPin MAME setup to finish the installation." />
                         </children>
                         <padding>
-                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                         </padding>
                     </VBox>
                 </children>

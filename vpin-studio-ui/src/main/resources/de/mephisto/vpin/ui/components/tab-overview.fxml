@@ -7,9 +7,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -43,35 +40,7 @@
             </ToolBar>
         </top>
       <center>
-            <VBox styleClass="subpanel-tabbed" BorderPane.alignment="CENTER">
-                <children>
-                    <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="VPin MAME" />
-                    <GridPane vgap="3.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                            <Label styleClass="default-text" text="Installed Version:" />
-                            <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Version:" GridPane.rowIndex="1" />
-                            <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                <font>
-                                    <Font size="14.0" />
-                                </font>
-                            </Label>
-                            <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                <font>
-                                    <Font size="14.0" />
-                                </font>
-                            </Label>
-                        </children>
-                    </GridPane>
-                </children>
+            <VBox fx:id="componentList" styleClass="subpanel-tabbed" BorderPane.alignment="CENTER">
                 <BorderPane.margin>
                     <Insets />
                 </BorderPane.margin>

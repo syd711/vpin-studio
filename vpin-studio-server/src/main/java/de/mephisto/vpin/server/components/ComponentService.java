@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.components;
 
 import de.mephisto.githubloader.GithubRelease;
-import de.mephisto.githubloader.GithubReleaseFactory;
 import de.mephisto.githubloader.ReleaseArtifact;
 import de.mephisto.githubloader.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -40,14 +40,6 @@ public class ComponentService implements InitializingBean {
     return component;
   }
 
-  public List<ReleaseArtifact> getLatestReleaseArtifacts(ComponentType type) {
-    GithubRelease githubRelease = getLatestRelease(type);
-    if (githubRelease != null) {
-      return githubRelease.getArtifacts();
-    }
-    return Collections.emptyList();
-  }
-
   public GithubRelease getLatestRelease(ComponentType type) {
     return releases.get(type);
   }
@@ -74,8 +66,9 @@ public class ComponentService implements InitializingBean {
     }
 
     ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
-    File targetFolder = resolveTargetFolder(emulator, type);
-    install = releaseArtifact.diff(targetFolder, getDiffList(type));
+    ComponentFacade componentFacade = getComponentFacade(type);
+    File targetFolder = componentFacade.getTargetFolder(emulator);
+    install = releaseArtifact.diff(targetFolder, componentFacade.getDiffList());
     boolean diff = install.isDiffering();
     if (!diff) {
       component.setInstalledVersion(githubRelease.getTag());
@@ -98,7 +91,8 @@ public class ComponentService implements InitializingBean {
     }
 
     ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
-    File targetFolder = resolveTargetFolder(emulator, type);
+    ComponentFacade componentFacade = getComponentFacade(type);
+    File targetFolder = componentFacade.getTargetFolder(emulator);
     if (simulate) {
       return releaseArtifact.simulateInstall(targetFolder);
     }
@@ -111,85 +105,10 @@ public class ComponentService implements InitializingBean {
     return install;
   }
 
-  private File resolveTargetFolder(GameEmulator gameEmulator, ComponentType type) {
-    switch (type) {
-      case vpinmame:
-      case freezy:
-      case serum:
-      case flexdmd: {
-        return gameEmulator.getMameFolder();
-      }
-      case vpinball: {
-        return gameEmulator.getInstallationFolder();
-      }
-      case b2sbackglass: {
-        return gameEmulator.getTablesFolder();
-      }
-      default: {
-        throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
-      }
-    }
-  }
-
-  private String[] getDiffList(ComponentType type) {
-    switch (type) {
-      case vpinmame: {
-        return new String[]{"Setup64.exe", "Setup.exe", ".dll"};
-      }
-      case vpinball: {
-        return new String[]{".vbs", ".dll"};
-      }
-      case b2sbackglass: {
-        return new String[]{".dll"};
-      }
-      case freezy: {
-        return new String[]{".dll"};
-      }
-      case flexdmd: {
-        return new String[]{".dll"};
-      }
-      case serum: {
-        return new String[]{".dll", ".lib"};
-      }
-      default: {
-        throw new UnsupportedOperationException("Unsupported component type '" + type + "'");
-      }
-    }
-  }
-
   private void loadReleases(Component component) {
     try {
-      GithubRelease githubRelease = null;
-      switch (component.getType()) {
-        case vpinmame: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/pinmame/releases", Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
-          break;
-        }
-        case vpinball: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug", "Source"));
-          break;
-        }
-        case b2sbackglass: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/b2s-backglass/releases", Collections.emptyList(), Arrays.asList("Source"));
-          break;
-        }
-        case freezy: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/freezy/dmd-extensions/releases", Collections.emptyList(), Arrays.asList("Source", ".msi"));
-          break;
-        }
-        case flexdmd: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vbousquet/flexdmd/releases", Collections.emptyList(), Arrays.asList("Source"));
-          break;
-        }
-        case serum: {
-          githubRelease = GithubReleaseFactory.loadRelease("https://github.com/zesinger/libserum/releases", Collections.emptyList(), Arrays.asList("Source", "tvos", "macOS", "linux", "arm", "android"));
-          break;
-        }
-        default: {
-          throw new UnsupportedOperationException("Unsupported component type '" + component.getType() + "'");
-        }
-      }
-
+      ComponentFacade componentFacade = getComponentFacade(component.getType());
+      GithubRelease githubRelease = componentFacade.loadRelease();
       component.setLatestReleaseVersion(githubRelease.getTag());
       componentRepository.saveAndFlush(component);
       this.releases.put(component.getType(), githubRelease);
@@ -204,6 +123,32 @@ public class ComponentService implements InitializingBean {
       loadReleases(component);
     }
     return true;
+  }
+
+  public ComponentFacade getComponentFacade(ComponentType type) {
+    switch (type) {
+      case vpinmame: {
+        return new VPinMAMEComponent();
+      }
+      case vpinball: {
+        return new VpxComponent();
+      }
+      case b2sbackglass: {
+        return new BackglassComponent();
+      }
+      case flexdmd: {
+        return new FlexDMDComponent();
+      }
+      case freezy: {
+        return new FreezyComponent();
+      }
+      case serum: {
+        return new SerumComponent();
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid component type " + type);
+      }
+    }
   }
 
   @Override
