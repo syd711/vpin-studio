@@ -94,6 +94,7 @@ public class ComponentsController implements Initializable, StudioFXController {
 
     loadTab(vpxTab, "tab-vpx.fxml");
     loadTab(mameTab, "tab-mame.fxml");
+    loadTab(serumTab, "tab-serum.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());

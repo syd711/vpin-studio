@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabSerumController">
+    <BorderPane>
+        <top>
+            <ToolBar BorderPane.alignment="CENTER">
+            <items>
+
+            </items>
+            </ToolBar>
+        </top>
+        <center>
+         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+            <content>
+                  <VBox styleClass="subpanel-tabbed">
+                      <children>
+                          <VBox fx:id="componentSummaryPane" />
+                          <BorderPane fx:id="componentInstallerPane" />
+
+                     <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
+                        <children>
+                           <Label styleClass="default-text" text="The installer will extract the latest Serum files into the &quot;VPinMame&quot; folder." />
+                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="Simulate the installation and check if the target folders match with your installation." />
+                        </children>
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        </padding>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        </VBox.margin>
+                     </VBox>
+                      </children>
+                  </VBox>
+            </content>
+         </ScrollPane>
+        </center>
+    </BorderPane>
+</StackPane>

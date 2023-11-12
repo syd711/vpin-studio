@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class FlexDMDComponent implements ComponentFacade {
 
@@ -46,5 +47,16 @@ public class FlexDMDComponent implements ComponentFacade {
       return new Date(file.lastModified());
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public List<String> getExclusionList() {
+    return Arrays.asList("DmdDevice.ini");
+  }
+
+  @Override
+  public boolean isSkipRootFolder() {
+    return true;
   }
 }

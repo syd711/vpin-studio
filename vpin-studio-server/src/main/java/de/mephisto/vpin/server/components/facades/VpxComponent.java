@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class VpxComponent implements ComponentFacade {
   @NotNull
@@ -89,5 +90,16 @@ public class VpxComponent implements ComponentFacade {
     } catch (IOException e) {
       install.setStatus("Post processing failed: " + e.getMessage());
     }
+  }
+
+  @Nullable
+  @Override
+  public List<String> getExclusionList() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isSkipRootFolder() {
+    return true;
   }
 }

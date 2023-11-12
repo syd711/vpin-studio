@@ -10,7 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class VPinMAMEComponent implements ComponentFacade {
   @NotNull
@@ -47,5 +49,16 @@ public class VPinMAMEComponent implements ComponentFacade {
       return new Date(setupExe.lastModified());
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public List<String> getExclusionList() {
+    return Arrays.asList("VPMAlias.txt");
+  }
+
+  @Override
+  public boolean isSkipRootFolder() {
+    return true;
   }
 }

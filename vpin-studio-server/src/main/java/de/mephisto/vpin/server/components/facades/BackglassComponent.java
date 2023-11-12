@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class BackglassComponent implements ComponentFacade {
 
@@ -46,5 +47,16 @@ public class BackglassComponent implements ComponentFacade {
       return new Date(file.lastModified());
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public List<String> getExclusionList() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isSkipRootFolder() {
+    return true;
   }
 }

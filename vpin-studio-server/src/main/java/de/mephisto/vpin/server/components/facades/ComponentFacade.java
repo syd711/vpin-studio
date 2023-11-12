@@ -10,6 +10,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 public interface ComponentFacade {
   @NonNull
@@ -25,6 +26,11 @@ public interface ComponentFacade {
 
   @Nullable
   Date getModificationDate(@NonNull GameEmulator gameEmulator);
+
+  @NonNull
+  List<String> getExclusionList();
+
+  boolean isSkipRootFolder();
 
   default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 

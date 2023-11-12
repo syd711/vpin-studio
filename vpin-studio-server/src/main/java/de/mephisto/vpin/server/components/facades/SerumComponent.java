@@ -12,12 +12,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class SerumComponent implements ComponentFacade {
   @NotNull
   @Override
   public String[] getDiffList() {
-    return new String[]{".dll", ".lib"};
+    return new String[]{".dll", ".lib", ".exp"};
   }
 
   @NotNull
@@ -45,5 +46,16 @@ public class SerumComponent implements ComponentFacade {
       return new Date(file.lastModified());
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public List<String> getExclusionList() {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isSkipRootFolder() {
+    return true;
   }
 }

@@ -96,6 +96,8 @@ public class ComponentUpdateController implements Initializable {
         textArea.setText(log.toString());
 
         componentTab.postProcessing(simulate);
+
+        EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       } catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
         textArea.setText("Action failed: " + ex.getMessage());
