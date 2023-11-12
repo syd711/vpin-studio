@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
@@ -45,6 +45,7 @@ public class ComponentUpdateController implements Initializable {
   @FXML
   private ComboBox<String> artifactCombo;
 
+  private AbstractComponentTab componentTab;
   private ComponentType type;
 
   @FXML
@@ -91,6 +92,8 @@ public class ComponentUpdateController implements Initializable {
 
         ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
         textArea.setText(log.toString());
+
+        componentTab.postProcessing(simulate);
       } catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
         textArea.setText("Action failed: " + ex.getMessage());
@@ -98,7 +101,8 @@ public class ComponentUpdateController implements Initializable {
     });
   }
 
-  public void setComponent(ComponentRepresentation component) {
+  public void setComponent(AbstractComponentTab tab, ComponentRepresentation component) {
+    this.componentTab = tab;
     this.type = component.getType();
     artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {

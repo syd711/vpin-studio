@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.system.TabMameController">
+<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabMameController">
     <BorderPane>
         <top>
             <ToolBar BorderPane.alignment="CENTER">
@@ -118,7 +118,7 @@
                   </VBox.margin>
                   <children>
                      <Label styleClass="default-text" text="After updating to the lastest VPin MAME version:" />
-                     <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- Open the &quot;VPin MAME Setup&quot; using the button from the toolbar." />
+                     <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- The installer will open the &quot;Setup(64).exe&quot; from VPin MAME." />
                      <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Press the &quot;Install&quot; button in the VPin MAME setup." />
                   </children>
                   <padding>

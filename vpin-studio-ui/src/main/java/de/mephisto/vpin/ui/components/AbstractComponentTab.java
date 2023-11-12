@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -29,8 +29,8 @@ import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class SystemTab implements StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemTab.class);
+abstract public class AbstractComponentTab implements StudioEventListener {
+  private final static Logger LOG = LoggerFactory.getLogger(AbstractComponentTab.class);
 
   @FXML
   public Label installedVersionLabel;
@@ -107,7 +107,6 @@ public class SystemTab implements StudioEventListener {
     }
   }
 
-
   public static String getSystemPreset() {
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.SYSTEM_PRESET);
     String preset = preference.getValue();
@@ -115,6 +114,22 @@ public class SystemTab implements StudioEventListener {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  protected void refresh() {
+    component = client.getComponentService().getComponent(ComponentType.vpinmame);
+    refreshUpdate();
+  }
+
+  @Override
+  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
+    Platform.runLater(() -> {
+      refresh();
+    });
+  }
+
+  public void postProcessing(boolean simulate) {
+
   }
 
   protected void initialize() {
@@ -128,19 +143,7 @@ public class SystemTab implements StudioEventListener {
     }
     refresh();
 
-    componentUpdateController.setComponent(component);
+    componentUpdateController.setComponent(this, component);
     EventManager.getInstance().addListener(this);
-  }
-
-  protected void refresh() {
-    component = client.getComponentService().getComponent(ComponentType.vpinmame);
-    refreshUpdate();
-  }
-
-  @Override
-  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    Platform.runLater(() -> {
-      refresh();
-    });
   }
 }

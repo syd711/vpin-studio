@@ -1,8 +1,7 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 

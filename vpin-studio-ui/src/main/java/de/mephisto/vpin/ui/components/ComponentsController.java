@@ -1,25 +1,14 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.skins.BarChartItem;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +16,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
-public class SystemController implements Initializable, StudioFXController {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemController.class);
+public class ComponentsController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);
 
   @FXML
   private Parent root;
@@ -64,7 +51,7 @@ public class SystemController implements Initializable, StudioFXController {
   private Pane alx1;
 
   // Add a public no-args constructor
-  public SystemController() {
+  public ComponentsController() {
   }
 
   private void updateForTabSelection(int index) {
@@ -94,7 +81,7 @@ public class SystemController implements Initializable, StudioFXController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setInitialController("scene-system.fxml", this, root);
+    NavigationController.setInitialController("scene-components.fxml", this, root);
     NavigationController.setBreadCrumb(Arrays.asList("System Manager"));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));

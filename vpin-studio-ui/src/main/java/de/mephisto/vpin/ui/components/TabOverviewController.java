@@ -1,7 +1,6 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -51,7 +50,7 @@ public class TabOverviewController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     presetCombo.setItems(FXCollections.observableList(Arrays.asList(PreferenceNames.SYSTEM_PRESET_32_BIT, PreferenceNames.SYSTEM_PRESET_64_BIT)));
 
-    String preset = SystemTab.getSystemPreset();
+    String preset = AbstractComponentTab.getSystemPreset();
     presetCombo.setValue(preset);
     presetCombo.valueProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(PreferenceNames.SYSTEM_PRESET, t1));
   }

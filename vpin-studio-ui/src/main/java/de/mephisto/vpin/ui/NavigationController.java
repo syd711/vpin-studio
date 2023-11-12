@@ -12,7 +12,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
-import de.mephisto.vpin.ui.system.SystemController;
+import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
@@ -116,7 +116,7 @@ public class NavigationController implements Initializable, StudioEventListener 
 
   @FXML
   private void onSystemClick(MouseEvent event) throws IOException {
-    loadScreen(event, SystemController.class, "scene-system.fxml");
+    loadScreen(event, ComponentsController.class, "scene-components.fxml");
   }
 
   public static void load(String fxml) throws IOException {

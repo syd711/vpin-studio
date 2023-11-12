@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="stack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.system.TabOverviewController">
+<StackPane fx:id="stack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabOverviewController">
     <BorderPane>
         <top>
             <ToolBar BorderPane.alignment="CENTER">

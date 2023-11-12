@@ -1,10 +1,9 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.skins.BarChartItem;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;

@@ -1,5 +1,7 @@
-package de.mephisto.vpin.ui.system;
+package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
@@ -13,11 +15,13 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TabMameController extends SystemTab implements Initializable {
+public class TabMameController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabMameController.class);
 
   @FXML
@@ -44,6 +48,21 @@ public class TabMameController extends SystemTab implements Initializable {
       } catch (Exception e) {
         LOG.error("Failed to open Mame Setup: " + e.getMessage());
       }
+    }
+  }
+
+  @Override
+  public void postProcessing(boolean simulate) {
+    if(!simulate) {
+      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
+      String systemPreset = getSystemPreset();
+      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
+        file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
+      }
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
+      executor.setDir(file.getParentFile());
+      executor.executeCommandAsync();
     }
   }
 
