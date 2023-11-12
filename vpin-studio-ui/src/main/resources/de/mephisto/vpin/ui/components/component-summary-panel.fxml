@@ -26,26 +26,19 @@
       <GridPane vgap="3.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Label styleClass="default-text" text="Installed Version:" />
             <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Version:" GridPane.rowIndex="1" />
-            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="latestVersionLabel" text="-" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
                   <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -58,26 +51,65 @@
                      </tooltip>
                   </Button>
                </children>
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
+               <children>
+                  <Button fx:id="resetVersionBtn" mnemonicParsing="false" onAction="#onVersionReset" text="Reset Version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-outline" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     </tooltip>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
             </HBox>
             <Label fx:id="installedVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Last Modified:" GridPane.rowIndex="2" />
-            <Label fx:id="lastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label fx:id="latestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Last Check:" GridPane.rowIndex="3" />
-            <Label fx:id="lastCheckLabel" layoutX="200.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         </children>
+      </GridPane>
+      <GridPane vgap="3.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="default-text" text="Last Modified:" />
+            <Label styleClass="default-text" text="Last Check:" GridPane.rowIndex="1" />
+            <Label styleClass="default-text" text="Github URL:" GridPane.rowIndex="2" />
+            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Github URL:" GridPane.rowIndex="4" />
-            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="-5.0" />
                </GridPane.margin>

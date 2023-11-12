@@ -40,6 +40,7 @@
                               </VBox.margin>
                               <children>
                                   <Label styleClass="default-text" text="After updating to the latest VPin MAME version:" />
+                           <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- The &quot;VPMAlias.txt&quot; will be skipped during the installation." />
                                   <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- The installer will open the &quot;Setup(64).exe&quot; from VPin MAME." />
                                   <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Press the &quot;Install&quot; button in the VPin MAME setup to finish the installation." />
                               </children>

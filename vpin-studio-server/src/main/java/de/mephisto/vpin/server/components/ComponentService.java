@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -47,6 +48,9 @@ public class ComponentService implements InitializingBean {
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
     Optional<Component> byType = componentRepository.findByType(type);
     if (byType.isPresent()) {
+      if(StringUtils.isEmpty(version) || version.equals("-")) {
+        version = null;
+      }
       Component component = byType.get();
       component.setInstalledVersion(version);
       componentRepository.saveAndFlush(component);

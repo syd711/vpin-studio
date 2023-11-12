@@ -54,7 +54,7 @@ public class FreezyComponent implements ComponentFacade {
   @Nullable
   @Override
   public List<String> getExclusionList() {
-    return Collections.emptyList();
+    return Arrays.asList("DmdDevice.log.config", "DmdDevice.ini", "dmdext.log.config");
   }
 
   @Override

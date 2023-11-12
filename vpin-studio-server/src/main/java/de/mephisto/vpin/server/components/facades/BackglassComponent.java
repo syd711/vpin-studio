@@ -19,7 +19,7 @@ public class BackglassComponent implements ComponentFacade {
   @NonNull
   @Override
   public String[] getDiffList() {
-    return new String[]{".dll"};
+    return new String[]{".dll", ".cmd", ".exe"};
   }
 
   @NotNull

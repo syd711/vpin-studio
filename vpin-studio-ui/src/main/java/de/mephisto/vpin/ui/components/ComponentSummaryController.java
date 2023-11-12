@@ -28,6 +28,9 @@ public class ComponentSummaryController {
   private Button setVersionBtn;
 
   @FXML
+  private Button resetVersionBtn;
+
+  @FXML
   private Label installedVersionLabel;
 
   @FXML
@@ -71,6 +74,19 @@ public class ComponentSummaryController {
     }
   }
 
+  @FXML
+  public void onVersionReset() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Reset Version", "Reset version \"" + latestVersionLabel.getText() + "\"?", null, "Reset");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      try {
+        client.getComponentService().setVersion(component.getType(), "-");
+        EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset version: " + e.getMessage());
+      }
+    }
+  }
+
   protected void refreshComponent(ComponentRepresentation component) {
     this.component = component;
 
@@ -84,6 +100,7 @@ public class ComponentSummaryController {
 
     if (component != null) {
       setVersionBtn.setDisable(!StringUtils.isEmpty(component.getInstalledVersion()) && component.getInstalledVersion().equals(component.getLatestReleaseVersion()));
+      resetVersionBtn.setDisable(StringUtils.isEmpty(component.getInstalledVersion()));
 
       if (component.isVersionDiff()) {
         latestVersionLabel.getStyleClass().add("orange-label");

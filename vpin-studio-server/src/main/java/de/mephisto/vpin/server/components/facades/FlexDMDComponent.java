@@ -19,7 +19,7 @@ public class FlexDMDComponent implements ComponentFacade {
   @NotNull
   @Override
   public String[] getDiffList() {
-    return new String[]{".dll"};
+    return new String[]{".dll", ".exe"};
   }
 
   @NotNull
@@ -52,7 +52,7 @@ public class FlexDMDComponent implements ComponentFacade {
   @Nullable
   @Override
   public List<String> getExclusionList() {
-    return Arrays.asList("DmdDevice.ini");
+    return Arrays.asList("FlexDMD.log.config");
   }
 
   @Override
