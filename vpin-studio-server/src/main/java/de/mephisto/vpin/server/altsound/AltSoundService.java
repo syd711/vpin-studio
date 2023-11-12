@@ -30,9 +30,6 @@ public class AltSoundService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private AltSoundBackupService altSoundBackupService;
 
   @Autowired
