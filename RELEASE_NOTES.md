@@ -26,6 +26,8 @@
 
 ### Bugfixes
 
+- Fixed error handling for broken VPX files.
+
 ### Known Bugs
 
 - Table sorting is broken :/

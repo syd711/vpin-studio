@@ -14,7 +14,7 @@
               <fx:include fx:id="mainToolbar" source="scene-toolbar.fxml" />
           </top>
           <center>
-              <fx:include fx:id="mainCenter" source="components/scene-components.fxml" />
+              <fx:include fx:id="mainCenter" source="tables/scene-tables.fxml" />
           </center>
       </BorderPane>
    </center>
