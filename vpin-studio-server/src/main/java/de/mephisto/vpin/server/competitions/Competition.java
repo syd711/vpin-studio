@@ -44,7 +44,7 @@ public class Competition {
   @Column(name = "scoreLimit", nullable = false, columnDefinition = "integer default 5")
   private int scoreLimit;
 
-  private CompetitionType type;
+  private String type;
 
   private String owner;
 
@@ -175,11 +175,11 @@ public class Competition {
     this.badge = badge;
   }
 
-  public CompetitionType getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(CompetitionType type) {
+  public void setType(String type) {
     this.type = type;
   }
 

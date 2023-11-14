@@ -167,7 +167,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize "+ competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing " + competitionRepresentations + " Competition", competitionRepresentations));
+      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
       this.onReload();
     }
   }

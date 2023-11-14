@@ -116,7 +116,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
     competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.OFFLINE);
+    competition.setType(CompetitionType.OFFLINE.name());
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 

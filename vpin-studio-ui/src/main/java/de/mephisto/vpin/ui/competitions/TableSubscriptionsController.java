@@ -139,9 +139,9 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> subscriptions = client.getCompetitionService().getSubscriptions();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + subscriptions.size() + " Subscriptions?", "This will re-check your local highscores against the Discord server data.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + subscriptions.size() + " Subscription(s)?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing " + subscriptions + " Table Subscriptions", subscriptions));
+      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Table Subscriptions", subscriptions));
       this.onReload();
     }
   }

@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -50,7 +50,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     DiscordBotStatus status = new DiscordBotStatus();
     status.setServerId(serverId);
     status.setBotId(botId);
-    status.setValid(botId != -1 && this.discordClient != null && this.discordClient.getGuilds().size() > 0);
+    status.setValid(botId != -1 && this.discordClient != null && !this.discordClient.getGuilds().isEmpty());
     if (botId != -1) {
       try {
         DiscordMember member = this.discordClient.getMember(serverId, botId);
@@ -110,10 +110,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public DiscordChannel getChannel(long serverId, long channelId) {
     if (this.discordClient != null) {
       List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() == channelId).map(c -> {
-        DiscordChannel ct = new DiscordChannel();
-        ct.setName(c.getName());
-        ct.setId(c.getId());
-        return ct;
+        return toChannel(c);
       }).collect(Collectors.toList());
       if (!collect.isEmpty()) {
         return collect.get(0);
@@ -125,10 +122,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public List<DiscordChannel> getChannels() {
     if (this.discordClient != null) {
       return this.discordClient.getChannels().stream().map(c -> {
-        DiscordChannel ct = new DiscordChannel();
-        ct.setName(c.getName());
-        ct.setId(c.getId());
-        return ct;
+        return toChannel(c);
       }).collect(Collectors.toList());
     }
     return Collections.emptyList();
@@ -137,10 +131,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public List<DiscordChannel> getChannels(long guildId) {
     if (this.discordClient != null) {
       return this.discordClient.getChannels(guildId).stream().map(c -> {
-        DiscordChannel ct = new DiscordChannel();
-        ct.setName(c.getName());
-        ct.setId(c.getId());
-        return ct;
+        return toChannel(c);
       }).collect(Collectors.toList());
     }
     return Collections.emptyList();

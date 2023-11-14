@@ -96,7 +96,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     }
 
     //send the default message if no competition updates was sent
-    if (!event.isInitialScore()) {
+    if (!event.isInitialScore() && !event.isEventReplay()) {
       LOG.info("Sending default notification for: " + game.getGameDisplayName());
       if (!StringUtils.isEmpty(raw)) {
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
@@ -118,7 +118,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         //if the dynamic subscriptions are enabled and no competition has been created yet, we must create a new one.
         if (!subscriptionUpdated) {
           Competition competition = new Competition();
-          competition.setType(CompetitionType.SUBSCRIPTION);
+          competition.setType(CompetitionType.SUBSCRIPTION.name());
           competition.setHighscoreReset(false);
           competition.setDiscordServerId(Long.parseLong(defaultDiscordServerId));
           competition.setOwner(String.valueOf(this.discordService.getBotId()));

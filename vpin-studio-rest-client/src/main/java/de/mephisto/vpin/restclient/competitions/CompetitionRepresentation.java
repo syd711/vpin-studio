@@ -22,7 +22,7 @@ public class CompetitionRepresentation {
 
   private String badge;
 
-  private CompetitionType type;
+  private String type;
 
   private Date createdAt;
 
@@ -180,11 +180,11 @@ public class CompetitionRepresentation {
     this.gameId = gameId;
   }
 
-  public CompetitionType getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(CompetitionType type) {
+  public void setType(String type) {
     this.type = type;
   }
 

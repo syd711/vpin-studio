@@ -188,6 +188,10 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   }
 
   private void validate() {
+    if (this.competition.getId() != null) {
+      return;
+    }
+
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
@@ -258,11 +262,11 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       }
 
       if (!this.competition.getUuid().equals(existingCompetition.getUuid())
-          && existingCompetition.isOverlappingWith(startSelection, endSelection)
-          && existingCompetition.getDiscordServerId() == this.competition.getDiscordServerId()
-          && existingCompetition.getDiscordChannelId() == this.competition.getDiscordChannelId()) {
+        && existingCompetition.isOverlappingWith(startSelection, endSelection)
+        && existingCompetition.getDiscordServerId() == this.competition.getDiscordServerId()
+        && existingCompetition.getDiscordChannelId() == this.competition.getDiscordChannelId()) {
         validationTitle.setText("Overlapping competition found.");
-        validationDescription.setText("The competition " + existingCompetition.getName() + "overlaps for the the given Discord channel for this time span.");
+        validationDescription.setText("The competition " + existingCompetition.getName() + " overlaps with this competition for the the given Discord channel for this time span.");
         return;
       }
 
@@ -280,7 +284,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     if (discordCompetitionData != null) {
       //separate call since the data is still there, even if the competition is finished
       boolean active = client.getDiscordService().isCompetitionActive(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordCompetitionData.getUuid());
-      if (active) {
+      if (active && !this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
         if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
           validationTitle.setText("Active competition found.");
           validationDescription.setText("The selected channel is already running the competition '" + discordCompetitionData.getName() + "' for this time span.");
@@ -326,6 +330,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     this.downloadLinkField.setText("-");
 
     if (selectedCompetition != null) {
+      this.saveBtn.setDisable(selectedCompetition.getId() != null);
+
       this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
       this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
 
@@ -439,7 +445,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     competition = new CompetitionRepresentation();
     competition.setScoreLimit(5);
-    competition.setType(CompetitionType.DISCORD);
+    competition.setType(CompetitionType.DISCORD.name());
     competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));
