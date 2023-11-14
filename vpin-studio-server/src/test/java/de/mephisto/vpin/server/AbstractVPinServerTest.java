@@ -144,7 +144,7 @@ abstract public class AbstractVPinServerTest {
 
     Competition competition = new Competition();
     competition.setGameId(game.getId());
-    competition.setType(CompetitionType.OFFLINE.name());
+    competition.setType(CompetitionType.OFFLINE);
     competition.setName(String.valueOf(new Date().getTime()));
     competition.setStartDate(new Date());
     competition.setEndDate(new Date());

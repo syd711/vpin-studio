@@ -360,6 +360,10 @@ public class DiscordClient {
           DiscordTextChannel t = new DiscordTextChannel();
           t.setId(channel.getIdLong());
           t.setName(channel.getName());
+
+          long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
+          t.setCreationDate(new Date(epochMilli));
+
           channelList.add(t);
         }
       }

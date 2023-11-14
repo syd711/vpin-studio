@@ -478,6 +478,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     DiscordChannel s = new DiscordChannel();
     s.setId(channel.getId());
     s.setName(channel.getName());
+    s.setCreationDate(channel.getCreationDate());
     return s;
   }
 

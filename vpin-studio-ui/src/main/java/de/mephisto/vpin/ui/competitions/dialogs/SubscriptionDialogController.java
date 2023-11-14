@@ -93,7 +93,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
     competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.SUBSCRIPTION.name());
+    competition.setType(CompetitionType.SUBSCRIPTION);
     competition.setName("");
     competition.setJoinMode(JoinMode.ROM_ONLY.name());
     competition.setScoreLimit(SubscriptionInfo.DEFAULT_SCORE_LIMIT);

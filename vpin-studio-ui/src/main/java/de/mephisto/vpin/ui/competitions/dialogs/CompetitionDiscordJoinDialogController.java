@@ -123,7 +123,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
   @FXML
   private void onSaveClick(ActionEvent e) {
     competition = new CompetitionRepresentation();
-    competition.setType(CompetitionType.DISCORD.name());
+    competition.setType(CompetitionType.DISCORD);
 
     competition.setName(this.discordCompetitionData.getName());
     competition.setUuid(this.discordCompetitionData.getUuid());

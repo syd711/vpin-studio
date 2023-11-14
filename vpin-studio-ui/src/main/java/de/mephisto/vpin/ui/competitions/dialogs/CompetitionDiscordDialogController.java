@@ -439,7 +439,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     competition = new CompetitionRepresentation();
     competition.setScoreLimit(5);
-    competition.setType(CompetitionType.DISCORD.name());
+    competition.setType(CompetitionType.DISCORD);
     competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
     competition.setUuid(UUID.randomUUID().toString());
     competition.setOwner(String.valueOf(botStatus.getBotId()));

@@ -3,11 +3,11 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -173,15 +173,15 @@ public class CompetitionsController implements Initializable, StudioFXController
     scoreLimitLabel.setText("-");
 
     if (competitionRepresentation.isPresent()) {
-      String type = competitionRepresentation.get().getType();
-      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
+      CompetitionType type = competitionRepresentation.get().getType();
+      if (type.equals(CompetitionType.DISCORD) || type.equals(CompetitionType.SUBSCRIPTION)) {
         CompetitionRepresentation competition = competitionRepresentation.get();
         if (metaDataPane.isVisible()) {
           uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
-          if(competition.getJoinMode() != null) {
+          if (competition.getJoinMode() != null) {
             JoinMode joinMode = JoinMode.valueOf(competition.getJoinMode());
             switch (joinMode) {
               case STRICT: {
@@ -200,7 +200,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           }
 
-          if(competition.getScoreLimit() == 0) {
+          if (competition.getScoreLimit() == 0) {
             scoreLimitLabel.setText("Table Defaults");
           }
           else {
@@ -256,7 +256,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             ownerBox.getChildren().addAll(view, label);
           }
 
-          if(competition.getStartDate() != null) {
+          if (competition.getStartDate() != null) {
             startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
             endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
           }
@@ -270,7 +270,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     metaDataPane.setDisable(cp.isEmpty());
 
     if (cp.isPresent()) {
-      CompetitionType competitionType = CompetitionType.valueOf(cp.get().getType());
+      CompetitionType competitionType = cp.get().getType();
       switch (competitionType) {
         case DISCORD: {
           competitionMembersPane.setDisable(false);

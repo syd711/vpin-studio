@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionScoreValidator;
@@ -10,9 +11,10 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,16 +50,62 @@ public class DiscordCompetitionService {
   @Autowired
   private GameService gameService;
 
-  public List<Score> runCompetitionCheck(long id) {
+  public boolean runCompetitionCheck(long id) {
     Competition competition = competitionService.getCompetition(id);
     if (competition != null) {
-      if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
         Game game = gameService.getGame(competition.getGameId());
-        highscoreService.deleteScores(game.getId(), false);
-        highscoreService.scanScore(game);
+
+        LOG.info("Synchronizing " + competition);
+        Date startDate = null;
+        switch (competition.getType()) {
+          case DISCORD: {
+            DiscordCompetitionData competitionData = discordService.getCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
+            if (competitionData != null) {
+              LOG.info("Fetched channel data for " + competition + ", which started " + competitionData.getSdt());
+              startDate = competitionData.getSdt();
+            }
+            else {
+              LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
+            }
+            break;
+          }
+          case SUBSCRIPTION: {
+            DiscordChannel channel = discordService.getChannel(competition.getDiscordServerId(), competition.getDiscordChannelId());
+            if (channel != null) {
+              startDate = channel.getCreationDate();
+            }
+            else {
+              LOG.info("Sync for " + competition + " cancelled, no matching channel found.");
+            }
+            break;
+          }
+        }
+
+        if (startDate == null) {
+          LOG.info("Sync for " + competition + " failed.");
+          return false;
+        }
+
+
+        ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
+        List<ScoreSummary> scores = scoreHistory.getScores();
+        Collections.sort(scores, Comparator.comparing(ScoreSummary::getCreatedAt));
+
+        LOG.info("Fetched " + scores.size() + " for " + competition);
+        for (ScoreSummary score : scores) {
+          System.out.println(score.getCreatedAt());
+        }
+
+//        highscoreService.deleteScores(game.getId(), false);
+//        highscoreService.scanScore(game);
+      }
+      else {
+        LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
       }
     }
-    return Collections.emptyList();
+
+    return false;
   }
 
   /**
@@ -71,7 +119,7 @@ public class DiscordCompetitionService {
   public void runDiscordServerUpdate(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, @Nullable DiscordCompetitionData competitionData) {
     DiscordBotStatus botStatus = discordService.getStatus(competition.getDiscordServerId());
 
-    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " | " + competition.getType() + " *********");
+    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " | " + competition.getType().name() + " *********");
     LOG.info("The new score: " + newScore);
     String validationMsg = CompetitionScoreValidator.validate(competitionData, game, competition, newScore, botStatus);
     if (validationMsg != null) {
@@ -84,7 +132,7 @@ public class DiscordCompetitionService {
     ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (discordScoreSummary.getScores().isEmpty()) {
       LOG.info("Emitting initial highscore message for " + competition);
-      int scoreLimit = resolveScoreLimit(CompetitionType.valueOf(competition.getType()), competitionData);
+      int scoreLimit = resolveScoreLimit(competition.getType(), competitionData);
       String msg = createInitialHighscoreMessage(game, newScore, competition, scoreLimit);
       long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
       discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
@@ -110,7 +158,7 @@ public class DiscordCompetitionService {
         Score oldScore = oldScores.get(position - 1);
         updatedScores.add(position - 1, newScore);
 
-        updatedScores = sanitizeScoreList(competition.getGameId(), CompetitionType.valueOf(competition.getType()), updatedScores, competitionData);
+        updatedScores = sanitizeScoreList(competition.getGameId(), competition.getType(), updatedScores, competitionData);
 
         //update the player info for the server the message is emitted to
         Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
@@ -126,15 +174,15 @@ public class DiscordCompetitionService {
   }
 
   private String createHighscoreMessage(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, List<Score> updatedScores, Score oldScore) {
-    if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
+    if (competition.getType().equals(CompetitionType.SUBSCRIPTION)) {
       return discordSubscriptionMessageFactory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
     }
     return discordChannelMessageFactory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
   }
 
   private String createInitialHighscoreMessage(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, int scoreLimit) {
-    if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
-      return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition,  newScore, scoreLimit);
+    if (competition.getType().equals(CompetitionType.SUBSCRIPTION)) {
+      return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, newScore, scoreLimit);
     }
     return discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, scoreLimit);
   }
@@ -186,10 +234,10 @@ public class DiscordCompetitionService {
 
   private static int resolveScoreLimit(@NonNull CompetitionType competitionType, @Nullable DiscordCompetitionData competitionData) {
     int scoreLimit = 5;
-    if(competitionData != null && competitionData.getScrL() > 0) {
+    if (competitionData != null && competitionData.getScrL() > 0) {
       scoreLimit = competitionData.getScrL();
     }
-    else if(competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+    else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
       scoreLimit = SubscriptionInfo.DEFAULT_SCORE_LIMIT;
     }
     return scoreLimit;

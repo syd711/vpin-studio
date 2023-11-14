@@ -167,8 +167,7 @@ public class CompetitionService implements InitializingBean {
     long serverId = competition.getDiscordServerId();
     long channelId = competition.getDiscordChannelId();
 
-    String type = competition.getType();
-    if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
+    if (competition.equals(CompetitionType.DISCORD) || competition.equals(CompetitionType.SUBSCRIPTION)) {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
@@ -179,7 +178,7 @@ public class CompetitionService implements InitializingBean {
   public Competition save(Competition c) {
     boolean isNew = c.getId() == null;
     if (c.getType() == null) {
-      c.setType(CompetitionType.OFFLINE.name());
+      c.setType(CompetitionType.OFFLINE);
     }
     Competition updated = competitionsRepository.saveAndFlush(c);
     LOG.info("Saved " + updated);
