@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -90,7 +92,49 @@ public class TableDataController implements Initializable, DialogController {
   private TextField designedBy;
 
   @FXML
-  private TextField notes;
+  private TextArea notes;
+
+  @FXML
+  private TextField altRomName;
+
+  @FXML
+  private TextField custom2;
+
+  @FXML
+  private TextField custom3;
+
+  @FXML
+  private TextField custom4;
+
+  @FXML
+  private TextField custom5;
+
+  @FXML
+  private TextField webDbId;
+
+  @FXML
+  private TextField webLink;
+
+  @FXML
+  private CheckBox modCheckbox;
+
+  @FXML
+  private TextField tourneyId;
+
+  @FXML
+  private TextArea gNotes;
+
+  @FXML
+  private TextArea gDetails;
+
+  @FXML
+  private TextArea gLog;
+
+  @FXML
+  private TextArea gPlayLog;
+
+  @FXML
+  private Tab extrasTab;
 
   private GameRepresentation game;
   private TableDetails manifest;
@@ -222,5 +266,49 @@ public class TableDataController implements Initializable, DialogController {
 
     notes.setText(manifest.getNotes());
     notes.textProperty().addListener((observable, oldValue, newValue) -> manifest.setNotes(newValue));
+
+    custom2.setText(manifest.getCustom2());
+    custom2.textProperty().addListener((observable, oldValue, newValue) -> manifest.setCustom2(newValue));
+
+    custom3.setText(manifest.getCustom3());
+    custom3.textProperty().addListener((observable, oldValue, newValue) -> manifest.setCustom3(newValue));
+
+    extrasTab.setDisable(manifest.getSqlVersion() < 64);
+    if(extrasTab.isDisable()) {
+      return;
+    }
+
+    custom4.setText(manifest.getCustom4());
+    custom4.textProperty().addListener((observable, oldValue, newValue) -> manifest.setCustom4(newValue));
+
+    custom5.setText(manifest.getCustom5());
+    custom5.textProperty().addListener((observable, oldValue, newValue) -> manifest.setCustom5(newValue));
+
+    altRomName.setText(manifest.getRomAlt());
+    altRomName.textProperty().addListener((observable, oldValue, newValue) -> manifest.setRomAlt(newValue));
+
+    webDbId.setText(manifest.getWebGameId());
+    webDbId.textProperty().addListener((observable, oldValue, newValue) -> manifest.setWebGameId(newValue));
+
+    webLink.setText(manifest.getWebLink2Url());
+    webLink.textProperty().addListener((observable, oldValue, newValue) -> manifest.setWebLink2Url(newValue));
+
+    tourneyId.setText(manifest.getTourneyId());
+    tourneyId.textProperty().addListener((observable, oldValue, newValue) -> manifest.setTourneyId(newValue));
+
+    modCheckbox.setSelected(manifest.isMod());
+    modCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> manifest.setMod(t1));
+
+    gDetails.setText(manifest.getgDetails());
+    gDetails.textProperty().addListener((observableValue, oldValue, newValue) -> manifest.setgDetails(newValue));
+
+    gLog.setText(manifest.getgLog());
+    gLog.textProperty().addListener((observableValue, oldValue, newValue) -> manifest.setgLog(newValue));
+
+    gPlayLog.setText(manifest.getgPlayLog());
+    gPlayLog.textProperty().addListener((observableValue, oldValue, newValue) -> manifest.setgPlayLog(newValue));
+
+    gNotes.setText(manifest.getgNotes());
+    gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> manifest.setgNotes(newValue));
   }
 }
