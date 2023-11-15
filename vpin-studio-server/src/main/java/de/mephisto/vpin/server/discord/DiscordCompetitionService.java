@@ -58,32 +58,7 @@ public class DiscordCompetitionService {
         Game game = gameService.getGame(competition.getGameId());
 
         LOG.info("Synchronizing " + competition);
-        Date startDate = null;
-        if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-          DiscordCompetitionData competitionData = discordService.getCompetitionData(competition.getDiscordServerId(), competition.getDiscordChannelId());
-          if (competitionData != null) {
-            LOG.info("Fetched channel data for " + competition + ", which started " + competitionData.getSdt());
-            startDate = competitionData.getSdt();
-          }
-          else {
-            LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
-          }
-        }
-        else if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
-          DiscordChannel channel = discordService.getChannel(competition.getDiscordServerId(), competition.getDiscordChannelId());
-          if (channel != null) {
-            startDate = channel.getCreationDate();
-          }
-          else {
-            LOG.info("Sync for " + competition + " cancelled, no matching channel found.");
-          }
-        }
-
-        if (startDate == null) {
-          LOG.info("Sync for " + competition + " failed, the start date could not be determined.");
-          return false;
-        }
-
+        Date startDate = competition.getCreatedAt();
         ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
         List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
@@ -101,6 +76,7 @@ public class DiscordCompetitionService {
             List<Score> newScores = versionedScores.get(i + 1).getScores();
             List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
             if (!changedPositions.isEmpty()) {
+              LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
               for (Integer changedPosition : changedPositions) {
                 Score oldScore = oldScores.get(changedPosition - 1);
                 Score newScore = newScores.get(changedPosition - 1);
