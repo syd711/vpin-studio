@@ -69,27 +69,29 @@ public class DiscordCompetitionService {
         Collections.sort(versionedScores, Comparator.comparing(ScoreSummary::getCreatedAt));
 
         LOG.info("Fetched " + versionedScores.size() + " highscore versions for " + competition);
-        if (!versionedScores.isEmpty()) {
-          for (int i = 0; i < versionedScores.size() - 1; i++) {
-            ScoreSummary versionedScoreSummary = versionedScores.get(i);
-            List<Score> oldScores = versionedScoreSummary.getScores();
-            List<Score> newScores = versionedScores.get(i + 1).getScores();
-            List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
-            if (!changedPositions.isEmpty()) {
-              LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
-              for (Integer changedPosition : changedPositions) {
-                Score oldScore = oldScores.get(changedPosition - 1);
-                Score newScore = newScores.get(changedPosition - 1);
+        for (int i = 0; i < versionedScores.size(); i++) {
+          ScoreSummary versionedScoreSummary = versionedScores.get(i);
+          List<Score> newScores = versionedScoreSummary.getScores();
+          List<Score> oldScores = null;
+          if (i > 0) {
+            oldScores = versionedScores.get(i - 1).getScores();
+          }
+          else {
+            oldScores = versionedScoreSummary.cloneEmptyScores();
+          }
 
-                HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), false);
-                event.setEventReplay(true);
-                highscoreService.triggerHighscoreChange(event);
-              }
+          List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+          if (!changedPositions.isEmpty()) {
+            LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
+            for (Integer changedPosition : changedPositions) {
+              Score oldScore = oldScores.get(changedPosition - 1);
+              Score newScore = newScores.get(changedPosition - 1);
+
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), false);
+              event.setEventReplay(true);
+              highscoreService.triggerHighscoreChange(event);
             }
           }
-        }
-        else {
-          LOG.info("Sync for " + competition + " cancelled, the score history for " + game + " is empty.");
         }
       }
       else {
