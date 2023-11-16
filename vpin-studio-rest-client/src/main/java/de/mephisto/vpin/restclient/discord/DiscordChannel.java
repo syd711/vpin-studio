@@ -1,8 +1,19 @@
 package de.mephisto.vpin.restclient.discord;
 
+import java.util.Date;
+
 public class DiscordChannel {
   private long id;
   private String name;
+  private Date creationDate;
+
+  public Date getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
 
   public long getId() {
     return id;

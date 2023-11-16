@@ -18,12 +18,22 @@ public class HighscoreChangeEvent {
 
   private boolean initialScore;
 
+  private boolean eventReplay;
+
   public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, int scoreCount, boolean initialScore) {
     this.game = game;
     this.scoreCount = scoreCount;
     this.oldScore = oldScore;
     this.newScore = newScore;
     this.initialScore = initialScore;
+  }
+
+  public boolean isEventReplay() {
+    return eventReplay;
+  }
+
+  public void setEventReplay(boolean eventReplay) {
+    this.eventReplay = eventReplay;
   }
 
   public boolean isInitialScore() {

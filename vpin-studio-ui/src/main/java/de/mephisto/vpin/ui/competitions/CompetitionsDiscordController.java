@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -105,7 +107,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private Button clearCacheBtn;
 
   @FXML
-  private Button validateBtn;
+  private SplitMenuButton validateBtn;
+
+  @FXML
+  private MenuItem validateAllBtn;
 
   @FXML
   private Button joinBtn;
@@ -157,6 +162,15 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     }
   }
 
+  @FXML
+  private void onCompetitionValidateAll() {
+    List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize "+ competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
+    if (result.get().equals(ButtonType.OK)) {
+      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
+      this.onReload();
+    }
+  }
 
   @FXML
   private void onCompetitionCreate() {
@@ -600,7 +614,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(this.discordBotId));
     editBtn.setDisable(disable || !isOwner || newSelection.isFinished());
-    validateBtn.setDisable(disable || newSelection.isFinished());
+    validateBtn.setDisable(competition.isEmpty() || competition.get().isFinished());
     finishBtn.setDisable(disable || !isOwner || !newSelection.isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable || !isOwner);

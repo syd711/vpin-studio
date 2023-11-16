@@ -96,7 +96,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     }
 
     //send the default message if no competition updates was sent
-    if (!event.isInitialScore()) {
+    if (!event.isInitialScore() && !event.isEventReplay()) {
       LOG.info("Sending default notification for: " + game.getGameDisplayName());
       if (!StringUtils.isEmpty(raw)) {
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));

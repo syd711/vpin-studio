@@ -112,6 +112,10 @@ public class DiscordClient {
         DiscordTextChannel t = new DiscordTextChannel();
         t.setId(channel.getIdLong());
         t.setName(channel.getName());
+
+        long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
+        t.setCreationDate(new Date(epochMilli));
+
         return t;
       } catch (Exception e) {
         LOG.error("Failed to create text channel \"" + name + "\": " + e.getMessage(), e);
@@ -360,6 +364,10 @@ public class DiscordClient {
           DiscordTextChannel t = new DiscordTextChannel();
           t.setId(channel.getIdLong());
           t.setName(channel.getName());
+
+          long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
+          t.setCreationDate(new Date(epochMilli));
+
           channelList.add(t);
         }
       }

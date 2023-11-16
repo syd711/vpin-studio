@@ -457,9 +457,6 @@ public class GameService implements InitializingBean {
     game.setAltColorAvailable(altColorService.isAltColorAvailable(game));
     vpsService.applyVersionInfo(game);
 
-    vpxService.getTableInfo(game);
-    vpsService.getTableVersion(game);
-
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 

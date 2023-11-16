@@ -91,7 +91,7 @@ public class DiscordResource {
   }
 
   @GetMapping("/competition/check/{id}")
-  public List<Score> checkCompetitionScores(@PathVariable("id") int id) {
+  public boolean checkCompetitionScores(@PathVariable("id") int id) {
     return discordCompetitionService.runCompetitionCheck(id);
   }
 

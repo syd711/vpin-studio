@@ -555,7 +555,7 @@ public class HighscoreService implements InitializingBean {
     LOG.info("Setting highscore change events to: " + pauseHighscoreEvents);
   }
 
-  private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
+  public void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
     if (pauseHighscoreEvents) {
       LOG.info("Skipping highscore change event because change events are paused.");
       return;

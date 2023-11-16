@@ -131,12 +131,15 @@ public class VPXService {
     return null;
   }
 
+  @Nullable
   public TableInfo getTableInfo(Game game) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         Map<String, String> values = VPXUtil.readTableInfo(gameFile);
-        return new TableInfo(values);
+        if(values != null) {
+          return new TableInfo(values);
+        }
       }
     }
     return null;
