@@ -23,7 +23,6 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -84,7 +83,7 @@ public class GameService implements InitializingBean {
   private VpsService vpsService;
 
   @Autowired
-  private VPXService vpxService;
+  private ScoreFilter scoreFilter;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -321,11 +320,13 @@ public class GameService implements InitializingBean {
 
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
+      if (scoreFilter.isScoreFiltered(version)) {
+        continue;
+      }
+
       Game rawGame = pinUPConnector.getGame(version.getGameId());
       if (rawGame != null && !scores.contains(version)) {
-        if (!filterEnabled || allowList.contains(version.getPlayerInitials().toUpperCase())) {
-          scores.add(version);
-        }
+        scores.add(version);
       }
 
       if (count > 0 && scores.size() == count) {

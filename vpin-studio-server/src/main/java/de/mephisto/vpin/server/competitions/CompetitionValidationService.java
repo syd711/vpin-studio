@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CampaignValidationService {
+public class CompetitionValidationService {
 
   @Autowired
   private DiscordService discordService;
