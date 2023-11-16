@@ -10,10 +10,14 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class CompetitionValidationService {
+/**
+ * Filters competition on the data level:
+ * If the server is gone or the game not available anymore, the competition if filtered here.
+ */
+@Component
+public class CompetitionValidator {
 
   @Autowired
   private DiscordService discordService;

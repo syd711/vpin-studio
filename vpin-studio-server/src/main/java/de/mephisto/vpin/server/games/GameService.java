@@ -309,7 +309,7 @@ public class GameService implements InitializingBean {
     }
 
     List<Score> allHighscoreVersions = new ArrayList<>();
-    if (allowList.isEmpty()) {
+    if (!filterEnabled || allowList.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
     }
     else {
