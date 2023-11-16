@@ -92,6 +92,7 @@ public class ProgressDialogController implements Initializable, DialogController
 
               Platform.runLater(() -> {
                 stage.close();
+                model.finalizeModel();
                 if (model.isShowSummary()) {
                   Platform.runLater(() -> {
                     String msg = model.getTitle() + " finished.";

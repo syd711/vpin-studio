@@ -264,6 +264,10 @@ public class PinUPConnector implements InitializingBean {
 
       if (manifest != null) {
         loadStats(connect, manifest, id);
+
+        if (manifest.getSqlVersion() >= 64) {
+          loadGameExtras(connect, manifest, id);
+        }
       }
     } catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
@@ -313,6 +317,8 @@ public class PinUPConnector implements InitializingBean {
       importManifestValue(id, "TourneyID", manifest.getTourneyId());
       importManifestValue(id, "CUSTOM4", manifest.getCustom4());
       importManifestValue(id, "CUSTOM5", manifest.getCustom5());
+
+      importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
     }
   }
 
@@ -1199,6 +1205,29 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  private void loadGameExtras(@NonNull Connection connection, @NonNull TableDetails manifest, int gameId) {
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GamesExtra where GameID = " + gameId + ";");
+      while (rs.next()) {
+        String gLog = rs.getString("gLOG");
+        String gNotes = rs.getString("gNotes");
+        String gPlayLog = rs.getString("gPlayLog");
+        String gDetails = rs.getString("gDetails");
+
+        manifest.setgLog(gLog);
+        manifest.setgNotes(gNotes);
+        manifest.setgPlayLog(gPlayLog);
+        manifest.setgDetails(gDetails);
+
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read table stats info: " + e.getMessage(), e);
+    }
+  }
+
   private int getEmulatorId(@NonNull String name) {
     Set<Map.Entry<Integer, GameEmulator>> entries = this.emulators.entrySet();
     for (Map.Entry<Integer, GameEmulator> entry : entries) {
@@ -1223,6 +1252,24 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
     } catch (Exception e) {
       LOG.error("Failed to update game manifest value'" + field + "' (" + value + "):" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  private void importGameExtraValues(int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("insert or replace into GamesExtra (GameID, gLOG, gNotes, gPlayLog, gDetails) values (?,?,?,?,?)");
+      preparedStatement.setInt(1, gameId);
+      preparedStatement.setString(2, gLog);
+      preparedStatement.setString(3, gNotes);
+      preparedStatement.setString(4, gPlayLog);
+      preparedStatement.setString(5, gDetails);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }

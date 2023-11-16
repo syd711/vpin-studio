@@ -390,11 +390,12 @@
 }
 
 .text-area {
-    -fx-background-color: transparent, white, transparent, white;
+    -fx-font-size : 14px;
+    -fx-background-color: white;
     -fx-background-insets: 0;
-    -fx-focus-color: transparent;
+    -fx-focus-color: white;
     -fx-border-color: #111111;
-    -fx-text-fill: white;
+    -fx-text-fill: -fx-base-6;
     -fx-font-weight: normal;
     -fx-background-radius: 3 3 3 3;
  }
@@ -407,12 +408,12 @@
 
 .text-area:focused {
  -fx-background-insets: 0;
-    -fx-focus-color: transparent;
+    -fx-focus-color: white;
     -fx-background-radius: 3 3 3 3;
 }
 
 .text-area .content {
-
+    -fx-background-color: white;
 }
 
 .text-area:focused .content {
