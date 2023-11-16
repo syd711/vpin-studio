@@ -53,12 +53,16 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
   @Override
   public void processNext(ProgressResultModel progressResultModel, CompetitionRepresentation next) {
     try {
-      client.getDiscordService().clearCache();
       client.getDiscordService().checkCompetition(next);
     } catch (Exception e) {
       LOG.error("Failed sync competitions data: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Competition Synchronize Failed", "Failed to sync competitions data: " + e.getMessage());
     }
+  }
+
+  @Override
+  public void finalizeModel() {
+    client.getDiscordService().clearCache();
   }
 
   @Override
