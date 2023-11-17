@@ -50,6 +50,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PinUPPopperServiceClient pinUPPopperServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
+  private final DMDServiceClient dmdServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final MameServiceClient mameServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
@@ -71,6 +72,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
+    this.dmdServiceClient = new DMDServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
@@ -95,6 +97,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
     restClient.setErrorHandler(errorHandler);
+  }
+
+  public DMDServiceClient getDmdService() {
+    return dmdServiceClient;
   }
 
   public NVRamsServiceClient getNvRamsService() {

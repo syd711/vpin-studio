@@ -211,7 +211,7 @@ class HighscoreResolver {
       //check for pre-formatting
       List<String> list = Arrays.asList(stdOut.trim().split("\n"));
       if(list.size() < 5) {
-        LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format.");
+        LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format, because output length are only " + list.size() + " lines.");
         String raw = HighscoreRawToMachineReadableConverter.convertToMachineReadable(list);
         if(raw == null) {
           LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);

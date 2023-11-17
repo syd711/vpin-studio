@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -67,6 +68,9 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPanePUPPack;
 
   @FXML
+  private TitledPane titledPaneDMD;
+
+  @FXML
   private TitledPane titledPanePopper;
 
   @FXML
@@ -106,6 +110,9 @@ public class TablesSidebarController implements Initializable {
   private Button pupBackBtn;
 
   @FXML
+  private Button dmdBtn;
+
+  @FXML
   private HBox popperTitleButtonArea;
 
   @FXML
@@ -131,6 +138,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TablesSidebarPUPPackController tablesSidebarPUPPackController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarDMDController tablesSidebarDMDController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarPopperController tablesSidebarPopperController; //fxml magic! Not unused
@@ -237,6 +247,27 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onDMD() {
+    try {
+      if (this.game.isPresent()) {
+        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
+        if (dmdPackage != null) {
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+          File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
+          File dmdFolder = new File(tablesFolder, dmdPackage.getName());
+          new ProcessBuilder("explorer.exe", dmdFolder.getAbsolutePath()).start();
+          return;
+        }
+      }
+
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+      new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
@@ -321,6 +352,7 @@ public class TablesSidebarController implements Initializable {
     tablesBtn.setVisible(client.getSystemService().isLocal());
     povBtn.setVisible(client.getSystemService().isLocal());
     pupBackBtn.setVisible(client.getSystemService().isLocal());
+    dmdBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
@@ -433,6 +465,16 @@ public class TablesSidebarController implements Initializable {
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarDMDController.class.getResource("scene-tables-sidebar-dmd.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarDMDController = loader.getController();
+      tablesSidebarDMDController.setSidebarController(this);
+      titledPaneDMD.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
+    try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarPopperController.class.getResource("scene-tables-sidebar-popper.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarPopperController = loader.getController();
@@ -491,6 +533,11 @@ public class TablesSidebarController implements Initializable {
       }
     });
     titledPaneDirectB2s.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+    titledPaneDMD.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -561,6 +608,9 @@ public class TablesSidebarController implements Initializable {
       }
       if (titledPanePUPPack.isExpanded()) {
         this.tablesSidebarPUPPackController.setGame(g);
+      }
+      if (titledPaneDMD.isExpanded()) {
+        this.tablesSidebarDMDController.setGame(g);
       }
       if (titledPaneDirectB2s.isExpanded()) {
         this.tablesSidebarDirectB2SController.setGame(g);

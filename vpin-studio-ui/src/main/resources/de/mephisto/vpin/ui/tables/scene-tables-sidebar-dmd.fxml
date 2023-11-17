@@ -14,13 +14,10 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="altColorRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarAltColorController">
+<BorderPane fx:id="pupRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarDMDController">
     <center>
-      <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <children>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
             <VBox fx:id="errorBox" styleClass="error-container">
                <children>
                   <BorderPane>
@@ -33,58 +30,52 @@
                   </BorderPane>
                   <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
                </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
             </VBox>
-              <VBox fx:id="dataBox">
-                  <children>
-                  <Label text="ALT Color Data" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
+            <VBox fx:id="dataBox">
+               <children>
+                  <Label text="DMD Data" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <GridPane>
+                  <GridPane vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="114.39997558593751" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="472.0000900268555" minWidth="10.0" prefWidth="460.80002441406253" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="283.2000732421875" minWidth="10.0" prefWidth="164.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="421.39997558593745" minWidth="10.0" prefWidth="411.20000000000005" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lastModifiedLabel" layoutX="175.0" layoutY="76.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Type:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Type:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="typeLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="bundleSizeLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="File(s):" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label fx:id="lastModifiedLabel" layoutX="182.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="filesLabel" layoutX="175.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="bundleTypeLabel" layoutX="174.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -94,14 +85,14 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  </children>
+               </children>
                <VBox.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" />
+                  <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
-              </VBox>
+            </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No ALT color files found." textFill="WHITE">
+                  <Label text="No DMD media found." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -109,19 +100,23 @@
                   <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
                      <VBox.margin>
                         <Insets top="12.0" />
-                     </VBox.margin></Label>
+                     </VBox.margin>
+                  </Label>
                   <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
                </children>
                <VBox.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </VBox>
-         </children>
-      </VBox>
+            </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+        </VBox>
     </center>
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
+         <items>
             <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -130,7 +125,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                </graphic>
             </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
                <font>
                   <Font size="14.0" />
@@ -139,7 +134,16 @@
                   <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                </graphic>
             </Button>
-        </items>
+            <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="flexDMDUIBtn" mnemonicParsing="false" onAction="#onFlexDMDUI" styleClass="external-component" text="FlexDMD Helper">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+               </graphic>
+            </Button>
+         </items>
       </ToolBar>
    </top>
    <padding>

@@ -249,6 +249,17 @@ public class Dialogs {
     return controller.uploadFinished();
   }
 
+  public static boolean openDMDUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+    Stage stage = createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
+    DMDUploadController controller = (DMDUploadController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    controller.setFile(file, stage);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
   public static boolean openDirectB2SUploadDialog(GameRepresentation game, File file) {
     Stage stage = createStudioDialogStage(DirectB2SUploadController.class, "dialog-directb2s-upload.fxml", "DirectB2S File Upload");
     DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
