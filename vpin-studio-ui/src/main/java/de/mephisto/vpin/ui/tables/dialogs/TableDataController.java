@@ -32,7 +32,7 @@ public class TableDataController implements Initializable, DialogController {
   private final static TableStatus STATUS_WIP = new TableStatus(3, "Work In Progress");
 
   private final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE));
-  private final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
 
   @FXML
   private Label titleLabel;
@@ -78,9 +78,6 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private TextField launchCustomVar;
-
-  @FXML
-  private TextField keepDisplays;
 
   @FXML
   private Spinner<Integer> gameRating;
@@ -406,9 +403,6 @@ public class TableDataController implements Initializable, DialogController {
     launchCustomVar.setText(tableDetails.getLaunchCustomVar());
     launchCustomVar.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
 
-    keepDisplays.setText(tableDetails.getKeepDisplays());
-    keepDisplays.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setKeepDisplays(newValue));
-
     SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     gameRating.setValueFactory(ratingFactory);
     if (tableDetails.getGameRating() != null) {
@@ -581,9 +575,9 @@ public class TableDataController implements Initializable, DialogController {
     gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
   }
 
-  static class TableStatus {
-    private final int value;
-    private final String label;
+  public static class TableStatus {
+    public final int value;
+    public final String label;
 
     TableStatus(int value, String label) {
       this.value = value;

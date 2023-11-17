@@ -12,7 +12,7 @@
 
 - Added DMD section.
 
-**PinUP Popper Table Settings**
+**Table Management: PinUP Popper Table Settings**
 
 - Added missing "custom2" and "custom3" fields.
 - Moved "Keep Screens On" dialog into the regular table data edit dialog.
@@ -22,7 +22,7 @@
 
 - Moved FlexDMD button to new DMD section.
 
-**Table Subscription & Discord Competitions**
+**Competitions: Table Subscription & Discord Competitions**
 
 - Added "Synchronize All" button.
 - Improved competition/subscription "Synchronize" action: Instead synchronizing only the latest highscore of a table against a competition or subscription, the full highscore history is "replayed", starting the start-date of a competition or subscription. This way, untracked highscores are pushed into table subscription channels.
@@ -31,6 +31,7 @@
 ### Bugfixes
 
 - Fixed ignored "enabled" flag when highscores were fetched for generating highscore lists on the dashboard.
+- Fixed the "PinUP Popper Custom Preferences" section.
 
 ### Known Bugs
 

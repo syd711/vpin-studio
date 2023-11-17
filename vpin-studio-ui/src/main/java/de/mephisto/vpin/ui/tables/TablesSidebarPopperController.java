@@ -6,23 +6,22 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class TablesSidebarPopperController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPopperController.class);
@@ -112,7 +111,56 @@ public class TablesSidebarPopperController implements Initializable {
   private Label designedBy;
 
   @FXML
-  private Label notes;
+  private TextArea notes;
+
+  @FXML
+  private Label status;
+
+  @FXML
+  private Label altLaunch;
+
+  @FXML
+  private Label custom2;
+
+  @FXML
+  private Label custom3;
+
+  @FXML
+  private Label volume;
+
+  //extras
+  @FXML
+  private VBox extrasPanel;
+
+  @FXML
+  private Label custom4;
+
+  @FXML
+  private Label custom5;
+
+  @FXML
+  private Label altRomName;
+
+  @FXML
+  private Label webDbId;
+
+  @FXML
+  private Label webLink;
+
+  @FXML
+  private Label isMod;
+
+  @FXML
+  private TextArea gNotes;
+
+  @FXML
+  private TextArea gDetails;
+
+  @FXML
+  private TextArea gLog;
+
+  @FXML
+  private TextArea gPlayLog;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -214,6 +262,8 @@ public class TablesSidebarPopperController implements Initializable {
       GameRepresentation game = g.get();
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
+      extrasPanel.setVisible(tableDetails.getSqlVersion() >= 64);
+
       labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
       if (tableDetails.getNumberPlays() != null) {
         labelTimesPlayed.setText(String.valueOf(tableDetails.getNumberPlays()));
@@ -234,6 +284,7 @@ public class TablesSidebarPopperController implements Initializable {
       romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
+      altLaunch.setText(tableDetails.getAltLaunchExe() == null ? "-" : tableDetails.getAltLaunchExe());
       tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
@@ -246,6 +297,30 @@ public class TablesSidebarPopperController implements Initializable {
       url.setText(StringUtils.isEmpty(tableDetails.getUrl()) ? "-" : tableDetails.getUrl());
       designedBy.setText(StringUtils.isEmpty(tableDetails.getDesignedBy()) ? "-" : tableDetails.getDesignedBy());
       notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "-" : tableDetails.getNotes());
+      custom2.setText(StringUtils.isEmpty(tableDetails.getCustom2()) ? "-" : tableDetails.getCustom2());
+      custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
+      volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
+
+      if (tableDetails.getStatus() > 0) {
+        Optional<TableDataController.TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+        if (first.isPresent()) {
+          status.setText(first.get().label);
+        }
+      }
+
+      //extras
+      if (tableDetails.getSqlVersion() >= 64) {
+        custom4.setText(StringUtils.isEmpty(tableDetails.getCustom4()) ? "-" : tableDetails.getCustom4());
+        custom5.setText(StringUtils.isEmpty(tableDetails.getCustom5()) ? "-" : tableDetails.getCustom5());
+        altRomName.setText(StringUtils.isEmpty(tableDetails.getRomAlt()) ? "-" : tableDetails.getRomAlt());
+        webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
+        webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
+        isMod.setText(String.valueOf(tableDetails.isMod()));
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "-" : tableDetails.getgDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "-" : tableDetails.getgNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "-" : tableDetails.getgLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "-" : tableDetails.getgPlayLog());
+      }
     }
     else {
       labelLastPlayed.setText("-");
