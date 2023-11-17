@@ -310,13 +310,6 @@ public class Dialogs {
     stage.showAndWait();
   }
 
-  public static void openPopperScreensDialog(GameRepresentation game) {
-    Stage stage = createStudioDialogStage(PopperScreensController.class, "dialog-popper-screens.fxml", "Keep Displays On");
-    PopperScreensController controller = (PopperScreensController) stage.getUserData();
-    controller.setGame(game);
-    stage.showAndWait();
-  }
-
   public static void openTableImportDialog() {
     Stage stage = createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
     TableImportController controller = (TableImportController) stage.getUserData();

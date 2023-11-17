@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,5 +52,13 @@ public class ScoreSummary {
 
   public boolean contains(Score newScore) {
     return scores.stream().anyMatch(s -> s.matches(newScore));
+  }
+
+  public List<Score> cloneEmptyScores() {
+    List<Score> emptyClone= new ArrayList<>();
+    for (Score score : scores) {
+      emptyClone.add(score.cloneEmpty());
+    }
+    return emptyClone;
   }
 }

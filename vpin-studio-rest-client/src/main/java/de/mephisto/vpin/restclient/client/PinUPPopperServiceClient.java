@@ -98,22 +98,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails saveCustomLauncher(int gameId, String value) throws Exception {
-    try {
-      Map<String, String> data = new HashMap<>();
-      data.put("altExe", value);
-      return getRestClient().post(API + "popper/launcher/" + gameId, data, TableDetails.class);
-    } catch (HttpClientErrorException e) {
-      if (e.getStatusCode().is4xxClientError()) {
-        throw new DatabaseLockException(e);
-      }
-      throw e;
-    } catch (Exception e) {
-      LOG.error("Failed save launcher options: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws Exception {
     try {
       return getRestClient().post(API + "popper/custompoptions", options, PopperCustomOptions.class);

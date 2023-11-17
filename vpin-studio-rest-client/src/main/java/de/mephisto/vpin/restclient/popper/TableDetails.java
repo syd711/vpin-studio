@@ -7,7 +7,9 @@ import java.util.List;
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
 
+  private int sqlVersion;
   private int emulatorId;
+
   private int status;
   private String emulatorType;
   private String gameName;
@@ -37,6 +39,136 @@ public class TableDetails {
   private String url;
   private String designedBy;
   private String altLaunchExe;
+  private String custom2;
+  private String custom3;
+
+  //1.5 values
+  private String custom4;
+  private String custom5;
+  private String webGameId;
+  private String romAlt;
+  private String webLink2Url;
+  private String tourneyId;
+  private boolean mod;
+
+  //Game Extra
+  private String gDetails;
+  private String gNotes;
+  private String gLog;
+  private String gPlayLog;
+
+  public boolean isMod() {
+    return mod;
+  }
+
+  public void setMod(boolean mod) {
+    this.mod = mod;
+  }
+
+  public int getSqlVersion() {
+    return sqlVersion;
+  }
+
+  public void setSqlVersion(int sqlVersion) {
+    this.sqlVersion = sqlVersion;
+  }
+
+  public String getgPlayLog() {
+    return gPlayLog;
+  }
+
+  public void setgPlayLog(String gPlayLog) {
+    this.gPlayLog = gPlayLog;
+  }
+
+  public String getCustom2() {
+    return custom2;
+  }
+
+  public void setCustom2(String custom2) {
+    this.custom2 = custom2;
+  }
+
+  public String getCustom3() {
+    return custom3;
+  }
+
+  public void setCustom3(String custom3) {
+    this.custom3 = custom3;
+  }
+
+  public String getCustom4() {
+    return custom4;
+  }
+
+  public void setCustom4(String custom4) {
+    this.custom4 = custom4;
+  }
+
+  public String getCustom5() {
+    return custom5;
+  }
+
+  public void setCustom5(String custom5) {
+    this.custom5 = custom5;
+  }
+
+  public String getWebGameId() {
+    return webGameId;
+  }
+
+  public void setWebGameId(String webGameId) {
+    this.webGameId = webGameId;
+  }
+
+  public String getRomAlt() {
+    return romAlt;
+  }
+
+  public void setRomAlt(String romAlt) {
+    this.romAlt = romAlt;
+  }
+
+  public String getWebLink2Url() {
+    return webLink2Url;
+  }
+
+  public void setWebLink2Url(String webLink2Url) {
+    this.webLink2Url = webLink2Url;
+  }
+
+  public String getTourneyId() {
+    return tourneyId;
+  }
+
+  public void setTourneyId(String tourneyId) {
+    this.tourneyId = tourneyId;
+  }
+
+  public String getgDetails() {
+    return gDetails;
+  }
+
+  public void setgDetails(String gDetails) {
+    this.gDetails = gDetails;
+  }
+
+  public String getgNotes() {
+    return gNotes;
+  }
+
+  public void setgNotes(String gNotes) {
+    this.gNotes = gNotes;
+  }
+
+  public String getgLog() {
+    return gLog;
+  }
+
+  public void setgLog(String gLog) {
+    this.gLog = gLog;
+  }
+
   private List<String> launcherList = new ArrayList<>();
 
   public int getStatus() {

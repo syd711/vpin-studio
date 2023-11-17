@@ -85,14 +85,14 @@ public class Score {
 
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof Score)) {
+    if (!(obj instanceof Score)) {
       return false;
     }
 
     Score score = (Score) obj;
     return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
-        && score.getPosition() == this.getPosition()
-        && score.getNumericScore() == this.getNumericScore();
+      && score.getPosition() == this.getPosition()
+      && score.getNumericScore() == this.getNumericScore();
   }
 
   public void setScore(String score) {
@@ -101,16 +101,20 @@ public class Score {
 
   public boolean matches(Score newScore) {
     return this.playerInitials != null && this.playerInitials.equals(newScore.getPlayerInitials())
-        && this.score != null && this.numericScore == newScore.getNumericScore();
+      && this.score != null && this.numericScore == newScore.getNumericScore();
 
   }
 
   @Override
   public String toString() {
     String name = this.getPlayerInitials();
-    if(this.player != null) {
+    if (this.player != null) {
       name = this.player.getName();
     }
     return "#" + this.getPosition() + " " + name + "   " + this.getScore();
+  }
+
+  public Score cloneEmpty() {
+    return new Score(this.createdAt, this.gameId, "???", this.player, this.score, this.numericScore, this.position);
   }
 }

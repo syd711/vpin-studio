@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionScoreValidator;
@@ -10,9 +11,11 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,16 +51,54 @@ public class DiscordCompetitionService {
   @Autowired
   private GameService gameService;
 
-  public List<Score> runCompetitionCheck(long id) {
+  public boolean runCompetitionCheck(long id) {
     Competition competition = competitionService.getCompetition(id);
     if (competition != null) {
-      if (competition.getType().equals(CompetitionType.DISCORD.name())) {
+      if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
         Game game = gameService.getGame(competition.getGameId());
-        highscoreService.deleteScores(game.getId(), false);
-        highscoreService.scanScore(game);
+
+        LOG.info("Synchronizing " + competition);
+        Date startDate = competition.getCreatedAt();
+        ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
+        List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
+
+        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game, null);
+        versionedScores.add(latestScore);
+
+        //oldest versionedScores first to replay in the correct order
+        Collections.sort(versionedScores, Comparator.comparing(ScoreSummary::getCreatedAt));
+
+        LOG.info("Fetched " + versionedScores.size() + " highscore versions for " + competition);
+        for (int i = 0; i < versionedScores.size(); i++) {
+          ScoreSummary versionedScoreSummary = versionedScores.get(i);
+          List<Score> newScores = versionedScoreSummary.getScores();
+          List<Score> oldScores = null;
+          if (i > 0) {
+            oldScores = versionedScores.get(i - 1).getScores();
+          }
+          else {
+            oldScores = versionedScoreSummary.cloneEmptyScores();
+          }
+
+          List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+          if (!changedPositions.isEmpty()) {
+            LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
+            for (Integer changedPosition : changedPositions) {
+              Score oldScore = oldScores.get(changedPosition - 1);
+              Score newScore = newScores.get(changedPosition - 1);
+
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), false);
+              event.setEventReplay(true);
+              highscoreService.triggerHighscoreChange(event);
+            }
+          }
+        }
+      }
+      else {
+        LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
       }
     }
-    return Collections.emptyList();
+    return true;
   }
 
   /**
@@ -97,7 +138,8 @@ public class DiscordCompetitionService {
       }
 
       if (discordScoreSummary.contains(newScore)) {
-        LOG.info("The score " + newScore + " already exists in channels highscore list, skipping update");
+        DiscordChannel channel = discordService.getChannel(competition.getDiscordServerId(), competition.getDiscordChannelId());
+        LOG.info("The score " + newScore + " already exists for " + competition + " in channel \"" + channel.getName() + "\"'s highscore list, skipping update");
         return;
       }
 
@@ -134,7 +176,7 @@ public class DiscordCompetitionService {
 
   private String createInitialHighscoreMessage(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, int scoreLimit) {
     if (competition.getType().equalsIgnoreCase(CompetitionType.SUBSCRIPTION.name())) {
-      return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition,  newScore, scoreLimit);
+      return discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, newScore, scoreLimit);
     }
     return discordChannelMessageFactory.createFirstCompetitionHighscoreCreatedMessage(game, competition, newScore, scoreLimit);
   }
@@ -186,10 +228,10 @@ public class DiscordCompetitionService {
 
   private static int resolveScoreLimit(@NonNull CompetitionType competitionType, @Nullable DiscordCompetitionData competitionData) {
     int scoreLimit = 5;
-    if(competitionData != null && competitionData.getScrL() > 0) {
+    if (competitionData != null && competitionData.getScrL() > 0) {
       scoreLimit = competitionData.getScrL();
     }
-    else if(competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+    else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
       scoreLimit = SubscriptionInfo.DEFAULT_SCORE_LIMIT;
     }
     return scoreLimit;
