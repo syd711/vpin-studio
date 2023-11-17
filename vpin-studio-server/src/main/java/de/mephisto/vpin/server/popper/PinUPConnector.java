@@ -297,6 +297,7 @@ public class PinUPConnector implements InitializingBean {
     importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
     importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
     importManifestValue(id, "GameRating", manifest.getGameRating());
+    importManifestValue(id, "ALTEXE", manifest.getAltLaunchExe());
     importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
     importManifestValue(id, "GAMEVER", manifest.getGameVersion());
     importManifestValue(id, "DOFStuff", manifest.getDof());
@@ -444,7 +445,7 @@ public class PinUPConnector implements InitializingBean {
     return options;
   }
 
-  public void updateCustomOptions(@NonNull PopperCustomOptions options) throws SQLException {
+  public void updateCustomOptions(@NonNull PopperCustomOptions options) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
@@ -454,28 +455,9 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Updated of custom options");
     } catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
-      throw e;
     } finally {
       this.disconnect(connect);
     }
-  }
-
-  public boolean updateCustomLauncher(int gameId, String launcherExe) {
-    Connection connect = this.connect();
-    try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'ALTEXE'=? WHERE GameID=?");
-      preparedStatement.setString(1, launcherExe);
-      preparedStatement.setInt(2, gameId);
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-      LOG.info("Updated of custom launcher");
-    } catch (Exception e) {
-      LOG.error("Failed to update custom launcher:" + e.getMessage(), e);
-      return false;
-    } finally {
-      this.disconnect(connect);
-    }
-    return true;
   }
 
   public void updateRom(@NonNull Game game, String rom) {
@@ -530,22 +512,6 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
     return value;
-  }
-
-  public void updateVolume(@NonNull Game game, int volume) {
-    Connection connect = this.connect();
-    try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'sysVolume'=? WHERE GameID=?");
-      preparedStatement.setInt(1, volume);
-      preparedStatement.setInt(2, game.getId());
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-      LOG.info("Updated of volume of " + game + " to " + volume);
-    } catch (Exception e) {
-      LOG.error("Failed to update volume:" + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
-    }
   }
 
   public int importGame(@NonNull File file, int emuId) {

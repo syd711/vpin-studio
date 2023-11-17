@@ -28,8 +28,8 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
   private final static List<FadeoutLoading> FADEOUT_LOADINGS = Arrays.asList(new FadeoutLoading(0, "Normal"),
-      new FadeoutLoading(1, "Fade out video and audio"),
-      new FadeoutLoading(2, "Continue playing until loading video ends or a key is pressed."));
+    new FadeoutLoading(1, "Fade out video and audio"),
+    new FadeoutLoading(2, "Continue playing until loading video ends or a key is pressed."));
 
 
   @FXML
@@ -269,6 +269,7 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     try {
       Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
     } catch (DatabaseLockException e) {
+      LOG.error("Failed to save custom options: " + e.getMessage(), e);
       if (!Dialogs.openPopperRunningWarning(Studio.stage)) {
         this.setDisabled(true);
       }

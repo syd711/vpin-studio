@@ -15,6 +15,8 @@
 **PinUP Popper Table Settings**
 
 - Added missing "custom2" and "custom3" fields.
+- Moved "Keep Screens On" dialog into the regular table data edit dialog.
+- Moved other input components ("Status", "Alternative Launcher") into the regular table edit dialog.
 
 **Table Management: ALT Color**
 
