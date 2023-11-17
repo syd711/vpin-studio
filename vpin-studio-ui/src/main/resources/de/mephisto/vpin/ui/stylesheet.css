@@ -400,9 +400,10 @@
     -fx-background-radius: 3 3 3 3;
  }
 
-.text-area:disabled {
- -fx-background-insets: 0;
+.text-area:readonly {
+    -fx-background-insets: 0;
     -fx-opacity: 1.0;
+    -fx-text-fill: white;
     -fx-background-radius: 3 3 3 3;
 }
 

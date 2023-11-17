@@ -17,6 +17,8 @@
 - Added missing "custom2" and "custom3" fields.
 - Moved "Keep Screens On" dialog into the regular table data edit dialog.
 - Moved other input components ("Status", "Alternative Launcher") into the regular table edit dialog.
+- Added support for all new Popper 1.5 fields (including WIP status).
+- Reorganized fields into sections.
 
 **Table Management: ALT Color**
 
