@@ -1,13 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
-import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.tables.GameList;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -15,13 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static org.springframework.http.HttpStatus.CONFLICT;
 
 /**
  *
@@ -42,17 +36,9 @@ public class PopperServiceResource {
     return popperService.getCustomOptions();
   }
 
-
-  @PostMapping("/launcher/{gameId}")
-  public TableDetails saveCustomLauncher(@PathVariable("gameId") int gameId, @RequestBody Map<String, String> data) {
-    try {
-      if(popperService.saveCustomLauncher(gameId, data.get("altExe"))) {
-        return getTableDetails(gameId);
-      }
-    } catch (Exception e) {
-      throw new ResponseStatusException(CONFLICT, "Saving custom launcher failed: " + e.getMessage());
-    }
-    return null;
+  @PostMapping("/custompoptions")
+  public PopperCustomOptions getCustomOptions(@RequestBody PopperCustomOptions customOptions) {
+    return popperService.saveCustomOptions(customOptions);
   }
 
   @GetMapping("/imports")

@@ -47,7 +47,7 @@ public class CompetitionService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private CampaignValidationService campaignValidationService;
+  private CompetitionValidator campaignValidationService;
 
   private final List<CompetitionChangeListener> listeners = new ArrayList<>();
 

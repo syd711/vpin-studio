@@ -55,6 +55,9 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private ScoreFilter scoreFilter;
+
   private boolean pauseHighscoreEvents;
 
   private HighscoreResolver highscoreResolver;
@@ -236,7 +239,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns a list of all scores for the given game
    *
-   * @param gameId      the game to retrieve the highscores for
+   * @param game        the game to retrieve the highscores for
    * @param displayName the optional display name/name of the table the summary is for
    * @return all highscores of the given player
    */
@@ -423,8 +426,6 @@ public class HighscoreService implements InitializingBean {
       else {
         LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
         if (!changedPositions.isEmpty()) {
-          boolean highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-          List<String> allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
 
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
@@ -438,7 +439,7 @@ public class HighscoreService implements InitializingBean {
               LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
             }
 
-            if (!isScoreFiltered(highscoreFilterEnabled, allowList, newScore)) {
+            if (!scoreFilter.isScoreFiltered(newScore)) {
               //finally, fire the update event to notify all listeners
               HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
               triggerHighscoreChange(event);
@@ -465,25 +466,6 @@ public class HighscoreService implements InitializingBean {
     triggerHighscoreUpdate(game, oldHighscore);
 
     return Optional.of(oldHighscore);
-  }
-
-  private boolean isScoreFiltered(boolean highscoreFilterEnabled, List<String> allowList, Score newScore) {
-    if (StringUtils.isEmpty(newScore.getPlayerInitials())) {
-      LOG.info("Filtered highscore update \"" + newScore + "\": player initials are empty");
-      return true;
-    }
-    if (newScore.getPlayerInitials().equalsIgnoreCase("???")) {
-      LOG.info("Filtered highscore update \"" + newScore + "\": player initials are ???");
-      return true;
-    }
-
-    if (highscoreFilterEnabled) {
-      if (!allowList.contains(newScore.getPlayerInitials())) {
-        LOG.info("Filtered highscore update \"" + newScore + "\": player initials '" + newScore.getPlayerInitials() + "' are not on the allow list");
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -555,7 +537,7 @@ public class HighscoreService implements InitializingBean {
     LOG.info("Setting highscore change events to: " + pauseHighscoreEvents);
   }
 
-  private void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
+  public void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
     if (pauseHighscoreEvents) {
       LOG.info("Skipping highscore change event because change events are paused.");
       return;

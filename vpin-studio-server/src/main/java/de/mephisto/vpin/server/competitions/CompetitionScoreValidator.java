@@ -23,7 +23,7 @@ public class CompetitionScoreValidator {
       return "Highscore update has been skipped, initials with '?' are filtered.";
     }
 
-    if (!newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
+    if (!competition.getType().equals(CompetitionType.SUBSCRIPTION.name()) && !newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
       return "Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').";
     }
 

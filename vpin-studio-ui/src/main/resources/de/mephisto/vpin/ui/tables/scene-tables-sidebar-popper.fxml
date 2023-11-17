@@ -2,19 +2,16 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -27,11 +24,16 @@
             <Insets />
          </BorderPane.margin>
          <content>
-              <VBox>
+              <VBox prefWidth="580.0">
                   <children>
+                  <Label text="Details" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
                       <GridPane vgap="2.0">
                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.2000732421875" minWidth="10.0" prefWidth="152.8000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="511.79992294311523" minWidth="10.0" prefWidth="423.1999755859375" />
                           </columnConstraints>
                           <rowConstraints>
@@ -41,51 +43,20 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                              <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="27">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="26">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="labelLastPlayed" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="27">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="labelTimesPlayed" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="26">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="2">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -95,298 +66,472 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="12">
+                              <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="6">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE" GridPane.rowIndex="1">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="76.0" text="Game Year:" textFill="WHITE" GridPane.rowIndex="13">
+                              <Label layoutX="10.0" layoutY="168.0" text="Tags:" textFill="WHITE" GridPane.rowIndex="7">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="106.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="14">
+                              <Label layoutX="10.0" layoutY="259.0" text="Custom Launch Parameters:" textFill="WHITE" GridPane.rowIndex="9">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="289.0" text="Author:" textFill="WHITE" GridPane.rowIndex="15">
+                              <Label layoutX="10.0" layoutY="380.0" text="DOF Parameters:" textFill="WHITE" GridPane.rowIndex="12">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="137.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="16">
+                              <Label layoutX="10.0" layoutY="15.0" text="Alternative Run Mode:" textFill="WHITE" GridPane.rowIndex="13">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="168.0" text="Tags:" textFill="WHITE" GridPane.rowIndex="17">
+                              <Label fx:id="gameName" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="198.0" text="Category;" textFill="WHITE" GridPane.rowIndex="18">
+                              <Label fx:id="gameDisplayName" layoutX="173.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="259.0" text="Launch Variables:" textFill="WHITE" GridPane.rowIndex="8">
+                              <Label fx:id="gameFileName" layoutX="168.0" layoutY="132.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-      
-                              <Label layoutX="10.0" layoutY="320.0" text="Keep Displays:" textFill="WHITE" GridPane.rowIndex="19">
+                              <Label fx:id="romName" layoutX="173.0" layoutY="41.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="349.0" text="Game Rating:" textFill="WHITE" GridPane.rowIndex="20">
+                              <Label fx:id="tags" layoutX="173.0" layoutY="163.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="380.0" text="DOF Parameters:" textFill="WHITE" GridPane.rowIndex="21">
+                              <Label fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="22">
+                              <Label fx:id="dof" layoutX="173.0" layoutY="344.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Alternative Run Mode:" textFill="WHITE" GridPane.rowIndex="9">
+                              <Label fx:id="altRunMode" layoutX="173.0" layoutY="436.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="URL:" textFill="WHITE" GridPane.rowIndex="23">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="501.0" text="Designed By:" textFill="WHITE" GridPane.rowIndex="24">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="532.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="25">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="gameName" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="gameDisplayName" layoutX="173.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="romName" layoutX="173.0" layoutY="41.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="gameYear" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="manufacturer" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="author" layoutX="173.0" layoutY="284.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="numberOfPlayers" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="16">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="category" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="keepDisplays" layoutX="173.0" layoutY="315.0" GridPane.columnIndex="1" GridPane.rowIndex="19">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="gameRating" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="dof" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="IPDBNum" layoutX="173.0" layoutY="405.0" GridPane.columnIndex="1" GridPane.rowIndex="22">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="altRunMode" layoutX="173.0" layoutY="436.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="url" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="23">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="designedBy" layoutX="173.0" layoutY="496.0" GridPane.columnIndex="1" GridPane.rowIndex="24">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="notes" layoutX="173.0" layoutY="527.0" GridPane.columnIndex="1" GridPane.rowIndex="25">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                        <Label layoutX="10.0" layoutY="76.0" text="Date Added:" textFill="WHITE" GridPane.rowIndex="11">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="dateAdded" layoutX="168.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="76.0" text="Game Type:" textFill="WHITE" GridPane.rowIndex="5">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="gameType" layoutX="168.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
                         <Label layoutX="10.0" layoutY="106.0" text="Game Version:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="gameVersion" layoutX="164.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label fx:id="gameVersion" layoutX="164.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="137.0" text="Game Theme:" textFill="WHITE" GridPane.rowIndex="10">
+                        <Label layoutX="10.0" layoutY="592.0" text="Alternative Launcher:" textFill="WHITE" GridPane.rowIndex="8">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="gameTheme" layoutX="164.0" layoutY="137.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                        <Label fx:id="altLaunch" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="592.0" text="Alternative Launcher:" textFill="WHITE" GridPane.rowIndex="7">
+                        <Label fx:id="emulatorLabel" layoutX="164.0" layoutY="805.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                        <Label layoutX="10.0" layoutY="180.0" text="Status:" textFill="WHITE" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="311.0" text="Custom 2:" textFill="WHITE" GridPane.rowIndex="10">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="344.0" text="Custom 3:" textFill="WHITE" GridPane.rowIndex="11">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="custom2" layoutX="190.0" layoutY="311.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="custom3" layoutX="190.0" layoutY="344.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="442.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="14" GridPane.valignment="TOP">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextArea fx:id="notes" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <Label layoutX="10.0" layoutY="600.0" text="Volume:" textFill="WHITE" GridPane.rowIndex="15">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="volume" layoutX="190.0" layoutY="442.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="190.0" layoutY="245.0" styleClass="default-text" text="Emulator:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="status" layoutX="190.0" layoutY="146.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                          </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                      </GridPane>
+                  <Label layoutX="22.0" layoutY="22.0" text="Info" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Game Type:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="gameType" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Game Theme:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="gameTheme" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                              <Label text="Game Year:" textFill="WHITE" GridPane.rowIndex="3">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="gameYear" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="4">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="manufacturer" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Author:" textFill="WHITE" GridPane.rowIndex="5">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="author" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Category:" textFill="WHITE" GridPane.rowIndex="6">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="category" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="7">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="numberOfPlayers" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Game Rating:" textFill="WHITE" GridPane.rowIndex="8">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="gameRating" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="9">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="IPDBNum" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="URL:" textFill="WHITE" GridPane.rowIndex="10">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="url" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Designed By:" textFill="WHITE" GridPane.rowIndex="11">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="designedBy" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Times Played:" textFill="WHITE" GridPane.rowIndex="12">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="13">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelTimesPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="labelLastPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                        <Label text="Date Added:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="dateAdded" styleClass="default-text" text="-" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
+                  <Label layoutX="22.0" layoutY="1297.0" text="Screens" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+      
+                              <Label text="Keep Displays:" textFill="WHITE">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                              <Label fx:id="keepDisplays" styleClass="default-text" text="-" GridPane.columnIndex="1">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                     </children>
+                  </GridPane>
+                  <VBox fx:id="extrasPanel">
+                     <children>
+                        <Label text="Extras" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <ComboBox fx:id="launcherCombo" prefHeight="30.0" prefWidth="306.0" />
-                              <Label>
+                              <Label text="Custom 4:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="If no value is set, the PinUP Popper default will be used." />
-                                 </tooltip>
                               </Label>
+                              <Label layoutX="10.0" layoutY="15.0" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="45.0" text="Alternative ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="76.0" text="Web DB Id:" textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="106.0" text="Web Link:" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="137.0" text="Is Mod:" textFill="WHITE" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="168.0" text="Details:" textFill="WHITE" GridPane.rowIndex="6" GridPane.valignment="TOP">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="198.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="228.0" text="Log:" textFill="WHITE" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="259.0" text="Play Log:" textFill="WHITE" GridPane.rowIndex="9" GridPane.valignment="TOP">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="custom4" styleClass="default-text" text="-" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="custom5" layoutX="190.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="altRomName" layoutX="190.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="webDbId" layoutX="190.0" layoutY="76.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="webLink" layoutX="190.0" layoutY="106.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="isMod" layoutX="190.0" layoutY="137.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="gDetails" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextArea fx:id="gNotes" editable="false" layoutX="190.0" layoutY="192.0" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextArea fx:id="gLog" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <TextArea fx:id="gPlayLog" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                            </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="45.0" text="Emulator:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="emulatorLabel" layoutX="164.0" layoutY="805.0" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="168.0" text="Status:" textFill="WHITE" GridPane.rowIndex="6">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="196.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                          </children>
-                     <VBox.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </VBox.margin>
-                      </GridPane>
-                      <HBox alignment="BOTTOM_LEFT" spacing="6.0">
-                          <children>
-                              <Label text="PinUP Popper Table Volume" textFill="WHITE">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label>
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                                  <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                  </graphic>
-                                  <tooltip>
-                                      <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
-                                  </tooltip>
-                              </Label>
-                          </children>
-                     <VBox.margin>
-                        <Insets left="12.0" />
-                     </VBox.margin>
-                      </HBox>
-                      <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0">
-                          <VBox.margin>
-                              <Insets bottom="12.0" left="12.0" right="36.0" top="12.0" />
-                          </VBox.margin>
-                      </Slider>
+                        </GridPane>
+                     </children>
+                  </VBox>
                   </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
               </VBox>
          </content>
       </ScrollPane>
@@ -420,21 +565,13 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
                </graphic>
             </SplitMenuButton>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
             <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
-               </graphic>
-            </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="editScreensBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenEdit" text="Keep Displays On" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" />
                </graphic>
             </Button>
             </items>

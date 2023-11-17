@@ -37,4 +37,8 @@ abstract public class ProgressModel<T> {
   public void cancel() {
 
   }
+
+  public void finalizeModel() {
+
+  }
 }

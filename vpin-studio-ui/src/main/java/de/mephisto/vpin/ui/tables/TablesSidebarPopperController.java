@@ -6,38 +6,25 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
-public class TablesSidebarPopperController implements Initializable, ChangeListener<Number> {
+public class TablesSidebarPopperController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPopperController.class);
-
-  private final static TableStatus STATUS_DISABLED = new TableStatus(0, "InActive (Disabled)");
-  private final static TableStatus STATUS_NORMAL = new TableStatus(1, "Visible (Normal)");
-  private final static TableStatus STATUS_MATURE = new TableStatus(2, "Visible (Mature/Hidden)");
-
-  private final static List<TableStatus> TABLE_STATUSES = Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE);
-
-  @FXML
-  private ComboBox<String> launcherCombo;
-
-  @FXML
-  private ComboBox<TableStatus> statusCombo;
 
   @FXML
   private Button tableEditBtn;
@@ -47,12 +34,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   @FXML
   private SplitMenuButton autoFillBtn;
-
-  @FXML
-  private Button editScreensBtn;
-
-  @FXML
-  private Slider volumeSlider;
 
   @FXML
   private Label emulatorLabel;
@@ -130,7 +111,56 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
   private Label designedBy;
 
   @FXML
-  private Label notes;
+  private TextArea notes;
+
+  @FXML
+  private Label status;
+
+  @FXML
+  private Label altLaunch;
+
+  @FXML
+  private Label custom2;
+
+  @FXML
+  private Label custom3;
+
+  @FXML
+  private Label volume;
+
+  //extras
+  @FXML
+  private VBox extrasPanel;
+
+  @FXML
+  private Label custom4;
+
+  @FXML
+  private Label custom5;
+
+  @FXML
+  private Label altRomName;
+
+  @FXML
+  private Label webDbId;
+
+  @FXML
+  private Label webLink;
+
+  @FXML
+  private Label isMod;
+
+  @FXML
+  private TextArea gNotes;
+
+  @FXML
+  private TextArea gDetails;
+
+  @FXML
+  private TextArea gLog;
+
+  @FXML
+  private TextArea gPlayLog;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -212,90 +242,27 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
     }
   }
 
-  @FXML
-  private void onScreenEdit() {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        Dialogs.openPopperScreensDialog(this.game.get());
-        this.refreshView(this.game);
-      }
-      return;
-    }
-
-    Dialogs.openPopperScreensDialog(this.game.get());
-    this.refreshView(this.game);
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES));
-    statusCombo.valueProperty().addListener((observableValue, tableStatus, t1) -> {
-      try {
-        if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-          if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-            this.refreshView(this.game);
-          }
-          return;
-        }
-
-        if (game.isPresent() && tableDetails != null) {
-          if (t1 == null || t1.getValue() == tableDetails.getStatus()) {
-            return;
-          }
-          this.tableDetails.setStatus(t1.getValue());
-          this.tableDetails = client.getPinUPPopperService().saveTableDetails(tableDetails, game.get().getId());
-          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to save table status: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to table status: " + e.getMessage());
-      }
-    });
-
-    launcherCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      try {
-        if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-          if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-            this.refreshView(this.game);
-          }
-          return;
-        }
-
-        if (game.isPresent() && tableDetails != null) {
-          String altLauncher = tableDetails.getAltLaunchExe();
-          if (StringUtils.equals(altLauncher, t1)) {
-            return;
-          }
-          this.tableDetails = client.getPinUPPopperService().saveCustomLauncher(this.game.get().getId(), t1);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to save alt launcher: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save alt launcher: " + e.getMessage());
-      }
-    });
   }
 
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.tableDetails = null;
-    this.launcherCombo.setValue(null);
-    this.statusCombo.setValue(null);
     this.refreshView(game);
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
     this.tableEditBtn.setDisable(g.isEmpty());
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
-    this.editScreensBtn.setDisable(g.isEmpty());
-    volumeSlider.setDisable(g.isEmpty());
     autoFillBtn.setDisable(g.isEmpty());
-    launcherCombo.setDisable(g.isEmpty());
-    statusCombo.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+
+      extrasPanel.setVisible(tableDetails.getSqlVersion() >= 64);
 
       labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
       if (tableDetails.getNumberPlays() != null) {
@@ -304,26 +271,6 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       else {
         labelTimesPlayed.setText("0");
       }
-
-
-      List<String> launcherList = new ArrayList<>(tableDetails.getLauncherList());
-      launcherList.add(0, null);
-      launcherCombo.setItems(FXCollections.observableList(launcherList));
-      launcherCombo.setValue(tableDetails.getAltLaunchExe());
-
-      if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 2) {
-        TableStatus tableStatus = TABLE_STATUSES.get(tableDetails.getStatus());
-        statusCombo.setValue(tableStatus);
-      }
-
-      volumeSlider.valueProperty().removeListener(this);
-      if (tableDetails.getVolume() != null) {
-        volumeSlider.setValue(Integer.parseInt(tableDetails.getVolume()));
-      }
-      else {
-        volumeSlider.setValue(100);
-      }
-      volumeSlider.valueProperty().addListener(this);
 
       emulatorLabel.setText(client.getPinUPPopperService().getGameEmulator(tableDetails.getEmulatorId()).getName());
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : "-");
@@ -337,6 +284,7 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
+      altLaunch.setText(tableDetails.getAltLaunchExe() == null ? "-" : tableDetails.getAltLaunchExe());
       tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
@@ -349,11 +297,32 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
       url.setText(StringUtils.isEmpty(tableDetails.getUrl()) ? "-" : tableDetails.getUrl());
       designedBy.setText(StringUtils.isEmpty(tableDetails.getDesignedBy()) ? "-" : tableDetails.getDesignedBy());
       notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "-" : tableDetails.getNotes());
+      custom2.setText(StringUtils.isEmpty(tableDetails.getCustom2()) ? "-" : tableDetails.getCustom2());
+      custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
+      volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
+
+      if (tableDetails.getStatus() > 0) {
+        Optional<TableDataController.TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+        if (first.isPresent()) {
+          status.setText(first.get().label);
+        }
+      }
+
+      //extras
+      if (tableDetails.getSqlVersion() >= 64) {
+        custom4.setText(StringUtils.isEmpty(tableDetails.getCustom4()) ? "-" : tableDetails.getCustom4());
+        custom5.setText(StringUtils.isEmpty(tableDetails.getCustom5()) ? "-" : tableDetails.getCustom5());
+        altRomName.setText(StringUtils.isEmpty(tableDetails.getRomAlt()) ? "-" : tableDetails.getRomAlt());
+        webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
+        webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
+        isMod.setText(String.valueOf(tableDetails.isMod()));
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "-" : tableDetails.getgDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "-" : tableDetails.getgNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "-" : tableDetails.getgLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "-" : tableDetails.getgPlayLog());
+      }
     }
     else {
-      launcherCombo.setValue(null);
-      volumeSlider.setValue(100);
-
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
@@ -384,68 +353,5 @@ public class TablesSidebarPopperController implements Initializable, ChangeListe
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-  }
-
-  @Override
-  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-    if (game.isPresent()) {
-      final GameRepresentation g = game.get();
-      debouncer.debounce("tableVolume" + g.getId(), () -> {
-        int value = newValue.intValue();
-        if (value == 0) {
-          value = 1;
-        }
-
-        if (tableDetails.getVolume() != null && Integer.parseInt(tableDetails.getVolume()) == value) {
-          return;
-        }
-
-        tableDetails.setVolume(String.valueOf(value));
-        LOG.info("Updates volume of " + g.getGameDisplayName() + " to " + value);
-        try {
-          this.tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(tableDetails, g.getId());
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, e.getMessage());
-        }
-      }, 500);
-    }
-  }
-
-  static class TableStatus {
-    private final int value;
-    private final String label;
-
-    TableStatus(int value, String label) {
-      this.value = value;
-      this.label = label;
-    }
-
-    public int getValue() {
-      return value;
-    }
-
-    public String getLabel() {
-      return label;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof TableStatus)) return false;
-
-      TableStatus that = (TableStatus) o;
-
-      return value == that.value;
-    }
-
-    @Override
-    public int hashCode() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return label;
-    }
   }
 }

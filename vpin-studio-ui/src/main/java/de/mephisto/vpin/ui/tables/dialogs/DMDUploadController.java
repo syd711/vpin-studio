@@ -135,7 +135,7 @@ public class DMDUploadController implements Initializable, DialogController {
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Select PUP pack for \"" + game.getGameDisplayName() + "\":");
+    this.titleLabel.setText("Select DMD Bundle for \"" + game.getGameDisplayName() + "\":");
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {

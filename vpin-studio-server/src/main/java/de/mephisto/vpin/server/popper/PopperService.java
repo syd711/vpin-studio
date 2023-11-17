@@ -362,14 +362,9 @@ public class PopperService implements InitializingBean {
     return pinUPConnector.getCustomOptions();
   }
 
-  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws SQLException {
+  public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) {
     pinUPConnector.updateCustomOptions(options);
     return options;
-  }
-
-
-  public boolean saveCustomLauncher(int gameId, String option) {
-    return pinUPConnector.updateCustomLauncher(gameId, option);
   }
 
   public List<GameEmulator> getGameEmulators() {

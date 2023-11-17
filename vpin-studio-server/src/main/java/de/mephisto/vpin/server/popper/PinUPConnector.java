@@ -184,6 +184,8 @@ public class PinUPConnector implements InitializingBean {
 
   @NonNull
   public TableDetails getTableDetails(int id) {
+    int sqlVersion = this.getSqlVersion();
+
     Connection connect = connect();
     TableDetails manifest = null;
     List<String> altExeList = getAltExeList();
@@ -193,6 +195,8 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         manifest = new TableDetails();
+        manifest.setSqlVersion(sqlVersion);
+
         manifest.setEmulatorId(rs.getInt("EMUID"));
         manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
@@ -225,6 +229,8 @@ public class PinUPConnector implements InitializingBean {
         manifest.setCategory(rs.getString("Category"));
         manifest.setAuthor(rs.getString("Author"));
         manifest.setLaunchCustomVar(rs.getString("LaunchCustomVar"));
+        manifest.setCustom2(rs.getString("CUSTOM2"));
+        manifest.setCustom3(rs.getString("CUSTOM3"));
         manifest.setKeepDisplays(rs.getString("GKeepDisplays"));
         manifest.setGameTheme(rs.getString("GameTheme"));
         manifest.setGameRating(rs.getInt("GameRating"));
@@ -242,12 +248,27 @@ public class PinUPConnector implements InitializingBean {
         GameEmulator emu = emulators.get(rs.getInt("EMUID"));
         manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
         manifest.getLauncherList().addAll(altExeList);
+
+        //check for popper DB update 1.5
+        if (sqlVersion >= 64) {
+          manifest.setWebGameId(rs.getString("WEBGameID"));
+          manifest.setRomAlt(rs.getString("ROMALT"));
+          manifest.setMod(rs.getInt("ISMOD") == 1);
+          manifest.setWebLink2Url(rs.getString("WebLink2URL"));
+          manifest.setTourneyId(rs.getString("TourneyID"));
+          manifest.setCustom4(rs.getString("CUSTOM4"));
+          manifest.setCustom5(rs.getString("CUSTOM5"));
+        }
       }
       rs.close();
       statement.close();
 
       if (manifest != null) {
         loadStats(connect, manifest, id);
+
+        if (manifest.getSqlVersion() >= 64) {
+          loadGameExtras(connect, manifest, id);
+        }
       }
     } catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
@@ -255,6 +276,52 @@ public class PinUPConnector implements InitializingBean {
       disconnect(connect);
     }
     return manifest;
+  }
+
+  public void saveTableDetails(int id, TableDetails manifest) {
+    int sqlVersion = getSqlVersion();
+
+    importManifestValue(id, "EMUID", manifest.getEmulatorId());
+    importManifestValue(id, "GameName", manifest.getGameName());
+    importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
+    importManifestValue(id, "GameFileName", manifest.getGameFileName());
+    importManifestValue(id, "GameTheme", manifest.getGameTheme());
+    importManifestValue(id, "Notes", manifest.getNotes());
+    importManifestValue(id, "GameYear", manifest.getGameYear());
+    importManifestValue(id, "ROM", manifest.getRomName());
+    importManifestValue(id, "Manufact", manifest.getManufacturer());
+    importManifestValue(id, "NumPlayers", manifest.getNumberOfPlayers());
+    importManifestValue(id, "TAGS", manifest.getTags());
+    importManifestValue(id, "Category", manifest.getCategory());
+    importManifestValue(id, "Author", manifest.getAuthor());
+    importManifestValue(id, "sysVolume", manifest.getVolume());
+    importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
+    importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
+    importManifestValue(id, "GameRating", manifest.getGameRating());
+    importManifestValue(id, "ALTEXE", manifest.getAltLaunchExe());
+    importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
+    importManifestValue(id, "GAMEVER", manifest.getGameVersion());
+    importManifestValue(id, "DOFStuff", manifest.getDof());
+    importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
+    importManifestValue(id, "AltRunMode", manifest.getAltRunMode());
+    importManifestValue(id, "WebLinkURL", manifest.getUrl());
+    importManifestValue(id, "DesignedBy", manifest.getDesignedBy());
+    importManifestValue(id, "Visible", manifest.getStatus());
+    importManifestValue(id, "CUSTOM2", manifest.getCustom2());
+    importManifestValue(id, "CUSTOM3", manifest.getCustom3());
+
+    //check for popper DB update 1.5
+    if (sqlVersion >= 64) {
+      importManifestValue(id, "WEBGameID", manifest.getWebGameId());
+      importManifestValue(id, "ROMALT", manifest.getRomAlt());
+      importManifestValue(id, "ISMOD", manifest.isMod());
+      importManifestValue(id, "WebLink2URL", manifest.getWebLink2Url());
+      importManifestValue(id, "TourneyID", manifest.getTourneyId());
+      importManifestValue(id, "CUSTOM4", manifest.getCustom4());
+      importManifestValue(id, "CUSTOM5", manifest.getCustom5());
+
+      importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
+    }
   }
 
   @Nullable
@@ -324,6 +391,25 @@ public class PinUPConnector implements InitializingBean {
     return script;
   }
 
+  @NonNull
+  public int getSqlVersion() {
+    int version = -1;
+    Connection connect = this.connect();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
+      rs.next();
+      version = rs.getInt("SQLVersion");
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read startup script: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return version;
+  }
+
   public void updateStartupScript(@NonNull String content) {
     Connection connect = this.connect();
     try {
@@ -360,7 +446,7 @@ public class PinUPConnector implements InitializingBean {
     return options;
   }
 
-  public void updateCustomOptions(@NonNull PopperCustomOptions options) throws SQLException {
+  public void updateCustomOptions(@NonNull PopperCustomOptions options) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
@@ -370,28 +456,9 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Updated of custom options");
     } catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
-      throw e;
     } finally {
       this.disconnect(connect);
     }
-  }
-
-  public boolean updateCustomLauncher(int gameId, String launcherExe) {
-    Connection connect = this.connect();
-    try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'ALTEXE'=? WHERE GameID=?");
-      preparedStatement.setString(1, launcherExe);
-      preparedStatement.setInt(2, gameId);
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-      LOG.info("Updated of custom launcher");
-    } catch (Exception e) {
-      LOG.error("Failed to update custom launcher:" + e.getMessage(), e);
-      return false;
-    } finally {
-      this.disconnect(connect);
-    }
-    return true;
   }
 
   public void updateRom(@NonNull Game game, String rom) {
@@ -446,22 +513,6 @@ public class PinUPConnector implements InitializingBean {
       this.disconnect(connect);
     }
     return value;
-  }
-
-  public void updateVolume(@NonNull Game game, int volume) {
-    Connection connect = this.connect();
-    try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'sysVolume'=? WHERE GameID=?");
-      preparedStatement.setInt(1, volume);
-      preparedStatement.setInt(2, game.getId());
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-      LOG.info("Updated of volume of " + game + " to " + volume);
-    } catch (Exception e) {
-      LOG.error("Failed to update volume:" + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
-    }
   }
 
   public int importGame(@NonNull File file, int emuId) {
@@ -788,7 +839,6 @@ public class PinUPConnector implements InitializingBean {
     }
     return result;
   }
-
 
 //  public void enablePCGameEmulator() {
 //    List<Emulator> ems = this.getEmulators();
@@ -1149,6 +1199,29 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
+  private void loadGameExtras(@NonNull Connection connection, @NonNull TableDetails manifest, int gameId) {
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GamesExtra where GameID = " + gameId + ";");
+      while (rs.next()) {
+        String gLog = rs.getString("gLOG");
+        String gNotes = rs.getString("gNotes");
+        String gPlayLog = rs.getString("gPlayLog");
+        String gDetails = rs.getString("gDetails");
+
+        manifest.setgLog(gLog);
+        manifest.setgNotes(gNotes);
+        manifest.setgPlayLog(gPlayLog);
+        manifest.setgDetails(gDetails);
+
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read table stats info: " + e.getMessage(), e);
+    }
+  }
+
   private int getEmulatorId(@NonNull String name) {
     Set<Map.Entry<Integer, GameEmulator>> entries = this.emulators.entrySet();
     for (Map.Entry<Integer, GameEmulator> entry : entries) {
@@ -1157,34 +1230,6 @@ public class PinUPConnector implements InitializingBean {
       }
     }
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
-  }
-
-  public void saveTableDetails(int id, TableDetails manifest) {
-    importManifestValue(id, "EMUID", manifest.getEmulatorId());
-    importManifestValue(id, "GameName", manifest.getGameName());
-    importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
-    importManifestValue(id, "GameFileName", manifest.getGameFileName());
-    importManifestValue(id, "GameTheme", manifest.getGameTheme());
-    importManifestValue(id, "Notes", manifest.getNotes());
-    importManifestValue(id, "GameYear", manifest.getGameYear());
-    importManifestValue(id, "ROM", manifest.getRomName());
-    importManifestValue(id, "Manufact", manifest.getManufacturer());
-    importManifestValue(id, "NumPlayers", manifest.getNumberOfPlayers());
-    importManifestValue(id, "TAGS", manifest.getTags());
-    importManifestValue(id, "Category", manifest.getCategory());
-    importManifestValue(id, "Author", manifest.getAuthor());
-    importManifestValue(id, "sysVolume", manifest.getVolume());
-    importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
-    importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
-    importManifestValue(id, "GameRating", manifest.getGameRating());
-    importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
-    importManifestValue(id, "GAMEVER", manifest.getGameVersion());
-    importManifestValue(id, "DOFStuff", manifest.getDof());
-    importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
-    importManifestValue(id, "AltRunMode", manifest.getAltRunMode());
-    importManifestValue(id, "WebLinkURL", manifest.getUrl());
-    importManifestValue(id, "DesignedBy", manifest.getDesignedBy());
-    importManifestValue(id, "Visible", manifest.getStatus());
   }
 
   private void importManifestValue(int gameId, String field, Object value) {
@@ -1201,6 +1246,24 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
     } catch (Exception e) {
       LOG.error("Failed to update game manifest value'" + field + "' (" + value + "):" + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  private void importGameExtraValues(int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("insert or replace into GamesExtra (GameID, gLOG, gNotes, gPlayLog, gDetails) values (?,?,?,?,?)");
+      preparedStatement.setInt(1, gameId);
+      preparedStatement.setString(2, gLog);
+      preparedStatement.setString(3, gNotes);
+      preparedStatement.setString(4, gPlayLog);
+      preparedStatement.setString(5, gDetails);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
