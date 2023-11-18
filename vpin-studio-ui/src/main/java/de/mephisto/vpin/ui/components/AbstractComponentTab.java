@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -25,7 +26,7 @@ import java.io.IOException;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-abstract public class AbstractComponentTab implements StudioEventListener {
+abstract public class AbstractComponentTab implements StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AbstractComponentTab.class);
 
   @FXML
@@ -61,6 +62,8 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
   protected void initialize() {
     openFolderButton.setDisable(!client.getSystemService().isLocal());
+
+    client.getPreferenceService().addListener(this);
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
@@ -135,6 +138,13 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if(key.equals(PreferenceNames.SYSTEM_PRESET)) {
+      componentUpdateController.refresh();
     }
   }
 

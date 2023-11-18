@@ -37,7 +37,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
         Set<Map.Entry<String, Object>> entries = values.entrySet();
         for (Map.Entry<String, Object> entry : entries) {
           listeners.stream().forEach(listener -> {
-            listener.preferenceChanged(entry.getKey(), entry.getValue());
+            listener.preferencesChanged(entry.getKey(), entry.getValue());
           });
         }
       }

@@ -100,6 +100,6 @@ public class VpxComponent implements ComponentFacade {
 
   @Override
   public boolean isSkipRootFolder() {
-    return true;
+    return false;
   }
 }

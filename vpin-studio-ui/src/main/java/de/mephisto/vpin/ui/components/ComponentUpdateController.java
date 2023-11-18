@@ -47,6 +47,7 @@ public class ComponentUpdateController implements Initializable {
 
   private AbstractComponentTab componentTab;
   private ComponentType type;
+  private ComponentRepresentation component;
 
   @FXML
   private void onInstall() {
@@ -110,6 +111,7 @@ public class ComponentUpdateController implements Initializable {
   public void setComponent(AbstractComponentTab tab, ComponentRepresentation component) {
     this.componentTab = tab;
     this.type = component.getType();
+    this.component = component;
     artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
       checkBtn.setDisable(t1 == null);
@@ -117,24 +119,28 @@ public class ComponentUpdateController implements Initializable {
       simBtn.setDisable(t1 == null);
     });
 
-    String systemPreset = client.getSystemPreset();
-    if(component.getArtifacts().size() == 1) {
-      artifactCombo.setValue(component.getArtifacts().get(0));
-    }
-
-    if(systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
-      Optional<String> first = component.getArtifacts().stream().filter(r -> r.contains("64")).findFirst();
-      first.ifPresent(s -> artifactCombo.setValue(s));
-    }
-    else {
-      Optional<String> first = component.getArtifacts().stream().filter(r -> !r.contains("64")).findFirst();
-      first.ifPresent(s -> artifactCombo.setValue(s));
-    }
-
     artifactCombo.setDisable(component.getArtifacts().isEmpty());
     checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
+
+    refresh();
+  }
+
+  public void refresh() {
+    if(component.getArtifacts().size() == 1) {
+      artifactCombo.setValue(component.getArtifacts().get(0));
+    }
+
+    String systemPreset = client.getSystemPreset();
+    if(systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+      Optional<String> first = component.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
+      first.ifPresent(s -> artifactCombo.setValue(s));
+    }
+    else {
+      Optional<String> first = component.getArtifacts().stream().filter(r -> !r.contains("x64")).findFirst();
+      first.ifPresent(s -> artifactCombo.setValue(s));
+    }
   }
 
   @Override

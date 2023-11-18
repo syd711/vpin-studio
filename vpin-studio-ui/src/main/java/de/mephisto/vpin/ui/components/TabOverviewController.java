@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -22,7 +21,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TabOverviewController implements Initializable, PreferenceChangeListener {
+public class TabOverviewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabOverviewController.class);
 
   @FXML
@@ -69,12 +68,5 @@ public class TabOverviewController implements Initializable, PreferenceChangeLis
         LOG.error("Failed to load tab: " + e.getMessage(), e);
       }
     }
-
-    client.getPreferenceService().addListener(this);
-  }
-
-  @Override
-  public void preferenceChanged(String key, Object value) {
-    System.out.println("Changed: " + key);
   }
 }

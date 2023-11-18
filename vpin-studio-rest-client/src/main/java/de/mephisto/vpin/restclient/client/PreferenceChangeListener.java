@@ -1,5 +1,5 @@
 package de.mephisto.vpin.restclient.client;
 
 public interface PreferenceChangeListener {
-  void preferenceChanged(String key, Object value);
+  void preferencesChanged(String key, Object value);
 }

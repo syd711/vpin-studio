@@ -9,10 +9,10 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
+import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
-import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
@@ -188,7 +188,14 @@ public class NavigationController implements Initializable, StudioEventListener 
       .textSize(Tile.TextSize.BIGGER)
       .textAlignment(TextAlignment.CENTER)
       .build();
-    staticAvatarPane.setCenter(avatar);
+
+    try {
+      if(staticAvatarPane.isVisible()) {
+        staticAvatarPane.setCenter(avatar);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to refresh avatar tile: " + e.getMessage());
+    }
 
     Studio.stage.setTitle("VPin Studio - " + name);
 
