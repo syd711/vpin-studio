@@ -48,7 +48,7 @@ public class ComponentService implements InitializingBean {
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
     Optional<Component> byType = componentRepository.findByType(type);
     if (byType.isPresent()) {
-      if(StringUtils.isEmpty(version) || version.equals("-")) {
+      if (StringUtils.isEmpty(version) || version.equals("-")) {
         version = null;
       }
       Component component = byType.get();
@@ -77,6 +77,12 @@ public class ComponentService implements InitializingBean {
     if (!diff) {
       component.setInstalledVersion(githubRelease.getTag());
       LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+    }
+    else {
+      if (githubRelease.getTag().equals(component.getInstalledVersion())) {
+        component.setInstalledVersion(null);
+        LOG.info("Reverted current version for " + component.getType());
+      }
     }
 
     component.setLastCheck(new Date());

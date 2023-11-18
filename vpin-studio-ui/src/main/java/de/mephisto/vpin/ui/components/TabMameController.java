@@ -27,13 +27,20 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   private Button mameBtn;
 
   @FXML
+  private void onFolder() {
+    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    File folder = new File(defaultGameEmulator.getMameDirectory());
+    openFolder(folder);
+  }
+
+  @FXML
   private void onMameSetup() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
         GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
         File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-        String systemPreset = getSystemPreset();
+        String systemPreset = client.getSystemPreset();
         if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
           file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
         }
@@ -52,10 +59,10 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @Override
   public void postProcessing(boolean simulate) {
-    if(!simulate) {
+    if (!simulate) {
       GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
       File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-      String systemPreset = getSystemPreset();
+      String systemPreset = client.getSystemPreset();
       if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
         file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
       }

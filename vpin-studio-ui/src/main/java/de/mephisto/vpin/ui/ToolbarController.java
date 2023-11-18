@@ -89,10 +89,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   @FXML
   private void onDisconnect() {
     client.getSystemService().setMaintenanceMode(false);
-    Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();
-    NavigationController.refreshAvatar();
+    Studio.stage.close();
     Studio.loadLauncher(new Stage());
   }
 

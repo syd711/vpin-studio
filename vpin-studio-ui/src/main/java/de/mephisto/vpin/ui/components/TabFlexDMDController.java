@@ -24,6 +24,13 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   private Button flexDMDBtn;
 
   @FXML
+  private void onFolder() {
+    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    File folder = new File(defaultGameEmulator.getInstallationDirectory());
+    openFolder(folder);
+  }
+
+  @FXML
   private void onFlexDMD() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {

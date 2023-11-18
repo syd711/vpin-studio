@@ -200,6 +200,9 @@ public class VPXFileScanner {
         if (hsFileName.equals(".txt")) {
           return;
         }
+        if (hsFileName.endsWith("LUT.txt")) {
+          return;
+        }
 
         result.setHsFileName(hsFileName);
       }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
@@ -19,6 +20,7 @@ import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -114,6 +116,20 @@ public class ComponentUpdateController implements Initializable {
       installBtn.setDisable(t1 == null || !client.getSystemService().isLocal());
       simBtn.setDisable(t1 == null);
     });
+
+    String systemPreset = client.getSystemPreset();
+    if(component.getArtifacts().size() == 1) {
+      artifactCombo.setValue(component.getArtifacts().get(0));
+    }
+
+    if(systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+      Optional<String> first = component.getArtifacts().stream().filter(r -> r.contains("64")).findFirst();
+      first.ifPresent(s -> artifactCombo.setValue(s));
+    }
+    else {
+      Optional<String> first = component.getArtifacts().stream().filter(r -> !r.contains("64")).findFirst();
+      first.ifPresent(s -> artifactCombo.setValue(s));
+    }
 
     artifactCombo.setDisable(component.getArtifacts().isEmpty());
     checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);

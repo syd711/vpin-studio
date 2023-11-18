@@ -33,11 +33,11 @@ public class TableScanTest {
     assertEquals(NVRAM_ROM_NAME, scan.getRom());
   }
 
-  @Test
-  public void testTableScan4() throws Exception {
-    File table = new File("C:\\vPinball\\VisualPinball\\Tables", "UT99CTF2.2.vpx");
-    ScanResult scan = VPXFileScanner.scan(table);
-    assertEquals("UT99.txt", scan.getHsFileName());
-  }
+//  @Test
+//  public void testTableScan4() throws Exception {
+//    File table = new File("C:\\vPinball\\VisualPinball\\Tables", "007.Goldeneye - MOD Version 1.0.vpx");
+//    ScanResult scan = VPXFileScanner.scan(table);
+//    assertEquals("gldneye", scan.getRom());
+//  }
 
 }

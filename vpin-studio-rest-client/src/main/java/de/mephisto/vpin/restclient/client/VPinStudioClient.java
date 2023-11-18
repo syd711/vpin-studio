@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -97,6 +98,15 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+  }
+
+  public String getSystemPreset() {
+    PreferenceEntryRepresentation preference = getPreference(PreferenceNames.SYSTEM_PRESET);
+    String preset = preference.getValue();
+    if (preset == null) {
+      preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
+    }
+    return preset;
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
