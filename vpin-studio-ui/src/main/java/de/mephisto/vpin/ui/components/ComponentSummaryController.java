@@ -37,6 +37,9 @@ public class ComponentSummaryController {
   private Label latestVersionLabel;
 
   @FXML
+  private Label folderLabel;
+
+  @FXML
   private Label lastModifiedLabel;
 
   @FXML
@@ -97,6 +100,7 @@ public class ComponentSummaryController {
     latestVersionLabel.setText("?");
     lastCheckLabel.setText("?");
     lastModifiedLabel.setText("?");
+    folderLabel.setText("-");
 
     if (component != null) {
       setVersionBtn.setDisable(!StringUtils.isEmpty(component.getInstalledVersion()) && component.getInstalledVersion().equals(component.getLatestReleaseVersion()));
@@ -113,6 +117,7 @@ public class ComponentSummaryController {
       latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
       lastCheckLabel.setText(component.getLastCheck() != null ? DateFormat.getDateTimeInstance().format(component.getLastCheck()) : "?");
       lastModifiedLabel.setText(component.getLastModified() != null ? DateFormat.getDateTimeInstance().format(component.getLastModified()) : "?");
+      folderLabel.setText(component.getTargetFolder() != null ? component.getTargetFolder() : "?");
 
       githubLink.setText(component.getUrl());
     }

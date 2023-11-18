@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,9 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
       progressResultModel.getResults().add(check);
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information for  " + next + ": " + e.getMessage());
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information for  " + next + ": " + e.getMessage());
+      });
     }
   }
 

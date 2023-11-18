@@ -32,6 +32,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -46,6 +47,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -537,45 +539,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }).start();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    new Thread(() -> {
-      try {
-        VPS.getInstance().download();
-      } catch (Exception e) {
-        LOG.error("VPS update failed: " + e.getMessage(), e);
-      }
-    }).start();
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      tablesLoadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
-
-
-    playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
-      @Override
-      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlistRepresentation, PlaylistRepresentation t1) {
-        tableView.getSelectionModel().clearSelection();
-        filterGames(games);
-        tableView.setItems(data);
-
-        if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-      }
-    });
-
-    bindTable();
-    bindSearchField();
-  }
-
   private void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
@@ -740,6 +703,79 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setItems(data);
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
+    tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
+      @Override
+      public Boolean call(TableView<GameRepresentation> gameRepresentationTableView) {
+        GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if(!gameRepresentationTableView.getSortOrder().isEmpty()) {
+          TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          if(column.equals(columnDisplayName)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnVersion)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVersion()));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnB2S)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnPUPPack)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPupPackAvailable));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnAltColor)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltColorAvailable));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnAltSound)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltSoundAvailable));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnRom)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getRom())));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnPOV)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPovAvailable));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if(column.equals(columnHSType)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getHighscoreType())));
+            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+        }
+        return true;
+      }
+    });
 
     tableView.setRowFactory(
       tableView -> {
@@ -939,5 +975,48 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
     }
     return status;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    new Thread(() -> {
+      try {
+        VPS.getInstance().download();
+      } catch (Exception e) {
+        LOG.error("VPS update failed: " + e.getMessage(), e);
+      }
+    }).start();
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      tablesLoadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Tables...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+
+    playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
+    playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
+    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlistRepresentation, PlaylistRepresentation t1) {
+        tableView.getSelectionModel().clearSelection();
+        filterGames(games);
+        tableView.setItems(data);
+
+        if (!data.isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+      }
+    });
+
+    bindTable();
+    bindSearchField();
+
+    new Thread(() -> {
+      EventManager.getInstance().notify3rdPartyVersionUpdate(null);
+    }).start();
   }
 }

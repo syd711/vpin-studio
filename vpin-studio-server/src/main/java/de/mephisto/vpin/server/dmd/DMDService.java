@@ -4,24 +4,27 @@ import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.altcolor.AltColorUtil;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
 
 /**
  *
@@ -91,6 +94,36 @@ public class DMDService implements InitializingBean {
   public JobExecutionResult installDMDPackage(Game game, File archive) {
     DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
     return JobExecutionResultFactory.empty();
+  }
+
+  public boolean isVniKeySet(@NonNull GameEmulator emulator) throws ConfigurationException, IOException {
+    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
+    try {
+      if (iniFile.exists()) {
+        throw new UnsupportedOperationException(iniFile.getAbsolutePath() + " does not exist.");
+      }
+
+      INIConfiguration iniConfiguration = new INIConfiguration();
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setSeparatorUsedInOutput("=");
+      iniConfiguration.setSeparatorUsedInInput("=");
+
+      FileReader fileReader = new FileReader(iniFile);
+      iniConfiguration.read(fileReader);
+      SubnodeConfiguration s = iniConfiguration.getSection("global");
+      if (s == null) {
+        throw new UnsupportedOperationException("'global' section in " + iniFile.getAbsolutePath() + " does ont exist");
+      }
+
+      if (s.containsKey("vni.key")) {
+        throw new UnsupportedOperationException("'vni.key' not found in " + iniFile.getAbsolutePath());
+      }
+      String key = s.getString("vni.key");
+      return !StringUtils.isEmpty(key);
+    } catch (Exception e) {
+      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   @Override

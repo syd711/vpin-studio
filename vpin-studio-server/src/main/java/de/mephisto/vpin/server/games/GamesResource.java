@@ -51,6 +51,7 @@ public class GamesResource {
   public List<Integer> getUnknownGameIds() {
     return gameService.getUnknownGames();
   }
+
   @GetMapping("/knowns")
   public List<Game> getKnownGames() {
     return gameService.getKnownGames();

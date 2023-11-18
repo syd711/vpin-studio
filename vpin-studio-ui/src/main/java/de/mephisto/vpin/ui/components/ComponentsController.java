@@ -105,12 +105,12 @@ public class ComponentsController implements Initializable, StudioFXController {
 
     updateForTabSelection(0);
 
-//    TileFactory.createAlxTiles(alx1);
+    TileFactory.createAlxTiles(alx1);
   }
 
   private void loadTab(Tab tab, String file) {
     try {
-      FXMLLoader loader = new FXMLLoader(TabMameController.class.getResource(file));
+      FXMLLoader loader = new FXMLLoader(ComponentsController.class.getResource(file));
       Parent builtInRoot = loader.load();
       tab.setContent(builtInRoot);
     } catch (IOException e) {

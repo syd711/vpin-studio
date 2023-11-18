@@ -18,6 +18,8 @@ public class ComponentRepresentation {
 
   private String url;
 
+  private String targetFolder;
+
   public List<String> getArtifacts() {
     return artifacts;
   }
@@ -72,6 +74,14 @@ public class ComponentRepresentation {
 
   public void setUrl(String url) {
     this.url = url;
+  }
+
+  public String getTargetFolder() {
+    return targetFolder;
+  }
+
+  public void setTargetFolder(String targetFolder) {
+    this.targetFolder = targetFolder;
   }
 
   public boolean isVersionDiff() {

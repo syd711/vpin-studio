@@ -190,7 +190,7 @@ public class NavigationController implements Initializable, StudioEventListener 
       .build();
 
     try {
-      if(staticAvatarPane.isVisible()) {
+      if (staticAvatarPane.isVisible()) {
         staticAvatarPane.setCenter(avatar);
       }
     } catch (Exception e) {
@@ -236,7 +236,6 @@ public class NavigationController implements Initializable, StudioEventListener 
     refreshAvatar();
 
     tablesBtn.getStyleClass().add("navigation-button-selected");
-    thirdPartyVersionUpdated(ComponentType.vpinmame);
 
     staticButtonList = this.buttonList;
     EventManager.getInstance().addListener(this);
