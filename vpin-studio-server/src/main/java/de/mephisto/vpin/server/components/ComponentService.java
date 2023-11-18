@@ -3,11 +3,15 @@ package de.mephisto.vpin.server.components;
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.githubloader.ReleaseArtifact;
 import de.mephisto.githubloader.ReleaseArtifactActionLog;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,6 +28,9 @@ public class ComponentService implements InitializingBean {
 
   @Autowired
   private ComponentRepository componentRepository;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private Map<ComponentType, GithubRelease> releases = new HashMap<>();
 
@@ -69,7 +76,7 @@ public class ComponentService implements InitializingBean {
       throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
     }
 
-    ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+    ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
     ComponentFacade componentFacade = getComponentFacade(type);
     File targetFolder = componentFacade.getTargetFolder(emulator);
     install = releaseArtifact.diff(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
@@ -89,6 +96,31 @@ public class ComponentService implements InitializingBean {
     componentRepository.saveAndFlush(component);
 
     return install;
+  }
+
+  @Nullable
+  private ReleaseArtifact getReleaseArtifact(@NotNull String artifact, GithubRelease githubRelease) {
+    ReleaseArtifact releaseArtifact = null;
+    if (artifact.equals("-latest-")) {
+      if(githubRelease.getArtifacts().size() == 1) {
+        releaseArtifact = githubRelease.getLatestArtifact();
+      }
+      else {
+        String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
+        if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+          releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> r.getName().contains("x64")).findFirst().orElse(null);
+        }
+        else {
+          releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> !r.getName().contains("x64")).findFirst().orElse(null);
+        }
+      }
+
+    }
+
+    if (releaseArtifact == null) {
+      releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+    }
+    return releaseArtifact;
   }
 
   @NonNull

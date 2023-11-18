@@ -5,7 +5,17 @@
 
 **PinUP Popper 1.5 Support**
 
-- Added additional fields to the "PinUP Popper Table Settings" section. You can now configure all new PinUP Popper metadata fields there. The new fields are only shown if you already use version 1.5.
+Added additional fields to the "PinUP Popper Table Settings" section. You can now configure all new PinUP Popper metadata fields there. The new fields are only shown if you already use version 1.5.
+
+**Added New "System Manager"**
+
+Added main navigation item "System Manager". You can use the System Manager to check if your VPin software stack is up-to-date.
+The integrated installation simulator allows to to check if you want to to use the support automatic update.
+The System Manager uses the latest Github releases from various projects and compares these against your local files.
+Note that there is always the possibility that the released artifacts of these projects may change in an unexpected way.
+
+
+### Other Changes
 
 **Navigation**
 
@@ -15,10 +25,6 @@
 
 - Combined "Service Info" and "Service Options" to "Service" entry and moved this to the Studio settings section.
 - Renamed section to "VPin System Preferences"
-
-**System Manager**
-
-- Added main navigation item "System Manager".
 
 **Table Management: Overview**
 
@@ -54,4 +60,4 @@
 - Fixed ignored "enabled" flag when highscores were fetched for generating highscore lists on the dashboard.
 - Fixed the "PinUP Popper Custom Preferences" section.
 - Improved text file highscore parsing: If the highscore text filename is not set, the resolved alternativ ROM name/tablename is used as a fallback (E.g. the Alt. ROM name has value \"Apache-playmatic1975\", the server will search also the highscore file **User\Apache-playmatic1975.txt**. 
-- Fixed table sorting - wuhu!
+- Fixed table's table sorting - wuhu!

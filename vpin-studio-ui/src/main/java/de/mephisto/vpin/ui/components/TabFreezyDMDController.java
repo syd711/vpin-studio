@@ -23,6 +23,14 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
     openFolder(folder);
   }
 
+  @FXML
+  private void onDmdDevice() {
+    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    File folder = new File(defaultGameEmulator.getMameDirectory());
+    File exe = new File(folder, "DmdDevice.ini");
+    super.editFile(exe);
+  }
+
   @Override
   protected ComponentType getComponentType() {
     return ComponentType.freezy;

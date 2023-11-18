@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -35,17 +36,8 @@ public class TabOverviewController implements Initializable {
 
   @FXML
   private void onVersionRefresh() {
-    refreshBtn.setDisable(true);
-
-    new Thread(() -> {
-      client.getComponentService().clearCache();
-
-//      Platform.runLater(() -> {
-//        EventManager.getInstance().notify3rdPartyVersionUpdate(type);
-//        refreshAll();
-//      });
-      refreshBtn.setDisable(false);
-    }).start();
+    ComponentChecksProgressModel model = new ComponentChecksProgressModel("Running Component Checks");
+    Dialogs.createProgressDialog(model);
   }
 
   @Override
