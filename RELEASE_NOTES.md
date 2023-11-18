@@ -20,6 +20,11 @@
 
 - Added main navigation item "System Manager".
 
+**Table Management: Overview**
+
+- Added "VPS" toolbar button for a quicker access to missing resources.
+- Added "Edit Popper Table Data" toolbar button for a quicker access to the table data.
+
 **Table Management: PinUP Popper Table Settings**
 
 - Added missing "custom2" and "custom3" fields.

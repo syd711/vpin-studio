@@ -32,13 +32,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -46,16 +51,18 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -118,6 +125,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Label labelTableCount;
 
   @FXML
+  private Button tableEditBtn;
+
+  @FXML
   private Button validateBtn;
 
   @FXML
@@ -151,6 +161,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button reloadBtn;
 
   @FXML
+  private Button vpsBtn;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
@@ -172,6 +185,35 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
     Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
+  }
+
+  @FXML
+  private void onVps() {
+    GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItems != null && !StringUtils.isEmpty(selectedItems.getExtTableVersionId())) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + selectedItems.getExtTableId() + "/"));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onTableEdit() {
+    GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItems != null) {
+      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+          Dialogs.openTableDataDialog(selectedItems);
+        }
+        return;
+      }
+      Dialogs.openTableDataDialog(selectedItems);
+    }
   }
 
   @FXML
@@ -477,11 +519,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.scanAllBtn.setDisable(true);
     this.playBtn.setDisable(true);
     this.validateBtn.setDisable(true);
+    this.tableEditBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.uploadTableBtn.setDisable(true);
     this.backupBtn.setDisable(true);
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
+    this.vpsBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -523,6 +567,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
+          this.tableEditBtn.setDisable(false);
+
+          GameRepresentation gameRepresentation = games.get(0);
+          this.vpsBtn.setDisable(StringUtils.isEmpty(gameRepresentation.getExtTableVersionId()));
         }
 
         this.importBtn.setDisable(false);
@@ -707,67 +755,67 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       @Override
       public Boolean call(TableView<GameRepresentation> gameRepresentationTableView) {
         GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-        if(!gameRepresentationTableView.getSortOrder().isEmpty()) {
+        if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
           TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
-          if(column.equals(columnDisplayName)) {
+          if (column.equals(columnDisplayName)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnVersion)) {
+          else if (column.equals(columnVersion)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVersion()));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnB2S)) {
+          else if (column.equals(columnB2S)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnPUPPack)) {
+          else if (column.equals(columnPUPPack)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPupPackAvailable));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnAltColor)) {
+          else if (column.equals(columnAltColor)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltColorAvailable));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnAltSound)) {
+          else if (column.equals(columnAltSound)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltSoundAvailable));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnRom)) {
+          else if (column.equals(columnRom)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getRom())));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnPOV)) {
+          else if (column.equals(columnPOV)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPovAvailable));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if(column.equals(columnHSType)) {
+          else if (column.equals(columnHSType)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getHighscoreType())));
-            if(column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
@@ -938,6 +986,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playBtn.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
+    tableEditBtn.setDisable(disable);
+
+    vpsBtn.setDisable(c.getList().isEmpty() || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());
@@ -1014,6 +1065,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     bindTable();
     bindSearchField();
+
+
+    Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
+    ImageView view = new ImageView(image);
+    view.setFitWidth(18);
+    view.setFitHeight(18);
+    vpsBtn.setGraphic(view);
 
     new Thread(() -> {
       EventManager.getInstance().notify3rdPartyVersionUpdate(null);

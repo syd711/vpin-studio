@@ -110,7 +110,6 @@
                                         <Font size="14.0" />
                                     </font>
                                 </TextField>
-                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                                 <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
@@ -134,6 +133,25 @@
                            </font>
                            <tooltip>
                               <Tooltip text="Asset Manager" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Edit Popper Table Data" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="vpsBtn" layoutX="588.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVps" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open VPS Entry" />
                            </tooltip>
                         </Button>
                         <Separator layoutX="527.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
