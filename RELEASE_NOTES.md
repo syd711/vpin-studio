@@ -48,6 +48,7 @@
 - Fixed error handling for broken VPX files.
 - Fixed ignored "enabled" flag when highscores were fetched for generating highscore lists on the dashboard.
 - Fixed the "PinUP Popper Custom Preferences" section.
+- Improved text file highscore parsing: If the highscore text filename is not set, the resolved alternativ ROM name/tablename is used as a fallback (E.g. the Alt. ROM name has value \"Apache-playmatic1975\", the server will search also the highscore file **User\Apache-playmatic1975.txt**. 
 
 
 ### Known Bugs

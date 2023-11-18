@@ -39,6 +39,7 @@ public class VPXFileScanner {
   }
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
+  private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
 
   private VPXFileScanner() {
     //force scan method
@@ -185,6 +186,23 @@ public class VPXFileScanner {
 
       String hsFileName = extractLineValue(line, pattern);
       result.setHsFileName(hsFileName);
+    }
+
+    if (TXT_FILENAME_PATTERN.matcher(line).matches()) {
+      String pattern = ".txt";
+      if (line.contains("'") && line.trim().indexOf("'") < line.indexOf(pattern)) {
+        return;
+      }
+
+      String hsFileName = line.substring(0, line.indexOf(".txt") + 4);
+      if (hsFileName.contains("\"")) {
+        hsFileName = hsFileName.substring(hsFileName.lastIndexOf("\"") + 1);
+        if (hsFileName.equals(".txt")) {
+          return;
+        }
+
+        result.setHsFileName(hsFileName);
+      }
     }
   }
 
