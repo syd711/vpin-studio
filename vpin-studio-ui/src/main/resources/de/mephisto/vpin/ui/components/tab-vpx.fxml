@@ -61,6 +61,7 @@
                   <VBox styleClass="subpanel-tabbed">
                       <children>
                           <VBox fx:id="componentSummaryPane" />
+                          <VBox fx:id="componentCustomValues" layoutX="10.0" layoutY="10.0" />
                           <BorderPane fx:id="componentInstallerPane" />
                           <VBox styleClass="info-container">
                               <VBox.margin>

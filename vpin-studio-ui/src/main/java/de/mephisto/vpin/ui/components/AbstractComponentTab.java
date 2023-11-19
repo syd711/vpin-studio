@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -13,9 +12,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,9 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
 
   @FXML
   public VBox componentSummaryPane;
+
+  @FXML
+  private VBox componentCustomValues;
 
   protected ComponentRepresentation component;
   protected ComponentUpdateController componentUpdateController;
@@ -90,12 +96,26 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
     EventManager.getInstance().addListener(this);
   }
 
+  public void clearCustomValues() {
+    componentCustomValues.getChildren().removeAll(componentCustomValues.getChildren());
+  }
+
   protected ComponentCustomValueController addCustomValue(String key, String value) {
     try {
       FXMLLoader loader = new FXMLLoader(ComponentCustomValueController.class.getResource("component-custom-value.fxml"));
       Parent builtInRoot = loader.load();
       ComponentCustomValueController controller = loader.getController();
-      componentSummaryPane.getChildren().add(builtInRoot);
+
+      if(componentCustomValues.getChildren().isEmpty()) {
+        Label label = new Label("Installation Details");
+        label.getStyleClass().add("preference-subtitle");
+        HBox box = new HBox(label);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(12, 12, 12, 12));
+        componentCustomValues.getChildren().add(box);
+      }
+
+      componentCustomValues.getChildren().add(builtInRoot);
 
       if (!key.endsWith(":")) {
         key += ":";

@@ -2,9 +2,9 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,5 +35,14 @@ public class DMDServiceClient extends VPinStudioClientService {
       LOG.error("DMD upload failed: " + e.getMessage(), e);
       return JobExecutionResultFactory.error("DMD upload failed: " + e.getMessage());
     }
+  }
+
+  public FreezySummary getFreezySummary(int emulatorId) {
+    return getRestClient().get(API + "dmd/freezy/" + emulatorId, FreezySummary.class);
+  }
+
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "dmd/clearcache", Boolean.class);
   }
 }

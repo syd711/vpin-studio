@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.altcolor.AltColorService;
@@ -41,6 +42,16 @@ public class DMDResource {
       return dmdService.getDMDPackage(game);
     }
     return new DMDPackage();
+  }
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return dmdService.clearCache();
+  }
+
+  @GetMapping("/freezy/{emulatorId}")
+  public FreezySummary getFreezySummary(@PathVariable("emulatorId") int emulatorId) {
+    return dmdService.getFreezySummary(emulatorId);
   }
 
   @PostMapping("/upload")

@@ -47,6 +47,7 @@
                   <VBox styleClass="subpanel-tabbed">
                       <children>
                           <VBox fx:id="componentSummaryPane" />
+                          <VBox fx:id="componentCustomValues" layoutX="10.0" layoutY="10.0" />
                           <BorderPane fx:id="componentInstallerPane" />
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">

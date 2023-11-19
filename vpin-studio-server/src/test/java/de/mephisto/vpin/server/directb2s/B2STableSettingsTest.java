@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.server.util.WinRegistry;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 public class B2STableSettingsTest {
 
@@ -21,6 +23,12 @@ public class B2STableSettingsTest {
 
     Assertions.assertTrue(settings.getHideGrill() > 0);
     Assertions.assertEquals(3, settings.getSolenoidsSkipFrames());
+  }
+
+  @Test
+  public void testWinRegRead() {
+    Map<String, Object> values = WinRegistry.getClassesValues("b2sserver.directb2s\\shell\\open\\command");
+    Assertions.assertFalse(values.isEmpty());
   }
 
   @Test

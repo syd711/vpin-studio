@@ -42,7 +42,7 @@ public class BackglassComponent implements ComponentFacade {
   @Nullable
   @Override
   public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File file = new File(gameEmulator.getTablesFolder(), "B2SBackglassServer.dll");
+    File file = new File(gameEmulator.getTablesFolder(), "B2S_ScreenResIdentifier.exe");
     if (file.exists()) {
       return new Date(file.lastModified());
     }
@@ -52,7 +52,7 @@ public class BackglassComponent implements ComponentFacade {
   @Nullable
   @Override
   public List<String> getExclusionList() {
-    return Collections.emptyList();
+    return Arrays.asList("B2S_ScreenResIdentifier.exe.config", "B2SBackglassServerEXE.exe.config");
   }
 
   @Override

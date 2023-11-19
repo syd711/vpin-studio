@@ -2,28 +2,27 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +31,11 @@ import java.util.stream.Collectors;
 @Service
 public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  private Map<Integer, FreezySummary> cache = new HashMap<>();
 
   public boolean isDMDPackageAvailable(@NonNull Game game) {
     DMDPackage dmdPackage = getDMDPackage(game);
@@ -96,11 +100,20 @@ public class DMDService implements InitializingBean {
     return JobExecutionResultFactory.empty();
   }
 
-  public boolean isVniKeySet(@NonNull GameEmulator emulator) throws ConfigurationException, IOException {
+  public FreezySummary getFreezySummary(int emulatorId) {
+    if (!cache.containsKey(emulatorId)) {
+      GameEmulator defaultGameEmulator = pinUPConnector.getGameEmulator(emulatorId);
+      cache.put(emulatorId, readFreezyDetails(defaultGameEmulator));
+    }
+    return cache.get(emulatorId);
+  }
+
+  private FreezySummary readFreezyDetails(@NonNull GameEmulator emulator) {
+    FreezySummary summary = new FreezySummary();
     File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
     try {
-      if (iniFile.exists()) {
-        throw new UnsupportedOperationException(iniFile.getAbsolutePath() + " does not exist.");
+      if (!iniFile.exists()) {
+        throw new Exception(iniFile.getAbsolutePath() + " does not exist.");
       }
 
       INIConfiguration iniConfiguration = new INIConfiguration();
@@ -112,21 +125,38 @@ public class DMDService implements InitializingBean {
       iniConfiguration.read(fileReader);
       SubnodeConfiguration s = iniConfiguration.getSection("global");
       if (s == null) {
-        throw new UnsupportedOperationException("'global' section in " + iniFile.getAbsolutePath() + " does ont exist");
+        throw new Exception("'global' section in " + iniFile.getAbsolutePath() + " does ont exist");
       }
 
       if (s.containsKey("vni.key")) {
-        throw new UnsupportedOperationException("'vni.key' not found in " + iniFile.getAbsolutePath());
+        throw new Exception("'vni.key' not found in " + iniFile.getAbsolutePath());
       }
-      String key = s.getString("vni.key");
-      return !StringUtils.isEmpty(key);
+
+      String vniKey = s.getString("vni.key");
+      if (StringUtils.isEmpty(vniKey)) {
+        throw new Exception("No value for 'vni.key' in " + iniFile.getAbsolutePath());
+      }
+      summary.setVniKey(vniKey);
+
+      int pluginIndex = 0;
+      String key = "plugin." + pluginIndex + ".path";
+      while (s.containsKey(key)) {
+        summary.getPlugins().add(s.getString(key));
+        pluginIndex++;
+        key = "plugin." + pluginIndex + ".path";
+      }
     } catch (Exception e) {
-      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
-      throw e;
+      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage());
+      summary.setStatus(e.getMessage());
     }
+    return summary;
   }
 
   @Override
   public void afterPropertiesSet() {
+  }
+
+  public boolean clearCache() {
+    return false;
   }
 }
