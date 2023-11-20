@@ -38,6 +38,18 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
                         </graphic>
                     </Button>
+               <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button mnemonicParsing="false" onAction="#onPrefsMame" text="VPin MAME Preferences" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="16" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                  </tooltip>
+               </Button>
                 </items>
             </ToolBar>
         </top>
@@ -54,10 +66,8 @@
                                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                               </VBox.margin>
                               <children>
-                                  <Label styleClass="default-text" text="After updating to the latest VPin MAME version:" />
-                           <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- The &quot;VPMAlias.txt&quot; will be skipped during the installation." />
-                                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- The installer will open the &quot;Setup(64).exe&quot; from VPin MAME." />
-                                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Press the &quot;Install&quot; button in the VPin MAME setup to finish the installation." />
+                                  <Label styleClass="default-text" text="After updating to the latest VPin MAME version - the installer will open the &quot;Setup(64).exe&quot; from VPin MAME." />
+                                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="Press the &quot;Install&quot; button in the VPin MAME setup to finish the installation." />
                               </children>
                               <padding>
                                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

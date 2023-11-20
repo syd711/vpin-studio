@@ -41,6 +41,18 @@
                      <Tooltip text="PinUP Popper Setup" />
                   </tooltip>
                </Button>
+               <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button mnemonicParsing="false" onAction="#onPrefsB2S" text="Backglass Server Preferences" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="16" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                  </tooltip>
+               </Button>
             </items>
             </ToolBar>
         </top>

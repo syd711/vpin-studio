@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,6 +20,12 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   @FXML
   private Button registerBtn;
+
+  @FXML
+  private void onPrefsB2S() {
+    PreferencesController.open("backglass");
+  }
+
 
   @FXML
   private void onRegister() {

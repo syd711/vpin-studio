@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,6 +26,11 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private Button mameBtn;
+
+  @FXML
+  private void onPrefsMame() {
+    PreferencesController.open("mame");
+  }
 
   @FXML
   private void onFolder() {

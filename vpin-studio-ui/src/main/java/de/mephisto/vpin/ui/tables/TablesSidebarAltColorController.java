@@ -96,6 +96,7 @@ public class TablesSidebarAltColorController implements Initializable {
     Platform.runLater(() -> {
       new Thread(() -> {
         Studio.client.getAltColorService().clearCache();
+        Studio.client.getDmdService().clearCache();
 
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 

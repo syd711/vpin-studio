@@ -1,16 +1,17 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -54,14 +55,12 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   private void refreshCustomValues() {
     clearCustomValues();
-    if (client.getSystemService().isLocal()) {
-      super.addCustomValue("DMDDEVICE_CONFIG Value", System.getenv("DMDDEVICE_CONFIG"));
-    }
 
     GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-    FreezySummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
-
-    super.addCustomValue("Plugins:", freezySummary.getPlugins().isEmpty() ? "-" : String.join(", ", freezySummary.getPlugins()));
-    super.addCustomValue("Status:", freezySummary.getStatus() == null ? "OK" : freezySummary.getStatus());
+    ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
+    List<ComponentSummaryEntry> entries = freezySummary.getEntries();
+    for (ComponentSummaryEntry entry : entries) {
+      super.addCustomValue(entry);
+    }
   }
 }

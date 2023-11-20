@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentCustomValueController">
+<VBox fx:id="root" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentSummaryEntryController">
    <children>
       <GridPane vgap="3.0">
         <columnConstraints>
@@ -27,8 +27,16 @@
             </Label>
          </children>
       </GridPane>
+      <Label fx:id="description" text="Label" textFill="WHITE">
+         <font>
+            <Font name="System Italic" size="14.0" />
+         </font>
+         <VBox.margin>
+            <Insets left="170.0" />
+         </VBox.margin>
+      </Label>
    </children>
    <padding>
-      <Insets left="12.0" right="12.0" />
+      <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
    </padding>
 </VBox>

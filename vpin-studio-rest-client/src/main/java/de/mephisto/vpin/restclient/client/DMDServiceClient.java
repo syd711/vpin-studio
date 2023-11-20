@@ -1,8 +1,8 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
@@ -37,8 +37,8 @@ public class DMDServiceClient extends VPinStudioClientService {
     }
   }
 
-  public FreezySummary getFreezySummary(int emulatorId) {
-    return getRestClient().get(API + "dmd/freezy/" + emulatorId, FreezySummary.class);
+  public ComponentSummary getFreezySummary(int emulatorId) {
+    return getRestClient().get(API + "dmd/freezy/" + emulatorId, ComponentSummary.class);
   }
 
   public boolean clearCache() {

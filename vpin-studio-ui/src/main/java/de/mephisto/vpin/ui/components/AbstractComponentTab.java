@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -100,11 +101,11 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
     componentCustomValues.getChildren().removeAll(componentCustomValues.getChildren());
   }
 
-  protected ComponentCustomValueController addCustomValue(String key, String value) {
+  protected ComponentSummaryEntryController addCustomValue(ComponentSummaryEntry entry) {
     try {
-      FXMLLoader loader = new FXMLLoader(ComponentCustomValueController.class.getResource("component-custom-value.fxml"));
+      FXMLLoader loader = new FXMLLoader(ComponentSummaryEntryController.class.getResource("component-summary-entry.fxml"));
       Parent builtInRoot = loader.load();
-      ComponentCustomValueController controller = loader.getController();
+      ComponentSummaryEntryController controller = loader.getController();
 
       if(componentCustomValues.getChildren().isEmpty()) {
         Label label = new Label("Installation Details");
@@ -116,11 +117,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       }
 
       componentCustomValues.getChildren().add(builtInRoot);
-
-      if (!key.endsWith(":")) {
-        key += ":";
-      }
-      controller.refresh(key, value);
+      controller.refresh(entry);
       return controller;
     } catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);

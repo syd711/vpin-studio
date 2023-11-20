@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.dmd;
 
+import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
-import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
@@ -35,12 +35,7 @@ public class DMDService implements InitializingBean {
   @Autowired
   private PinUPConnector pinUPConnector;
 
-  private Map<Integer, FreezySummary> cache = new HashMap<>();
-
-  public boolean isDMDPackageAvailable(@NonNull Game game) {
-    DMDPackage dmdPackage = getDMDPackage(game);
-    return dmdPackage != null && !dmdPackage.getFiles().isEmpty();
-  }
+  private Map<Integer, ComponentSummary> cache = new HashMap<>();
 
   public boolean delete(@NonNull Game game) {
     try {
@@ -100,63 +95,20 @@ public class DMDService implements InitializingBean {
     return JobExecutionResultFactory.empty();
   }
 
-  public FreezySummary getFreezySummary(int emulatorId) {
+  public ComponentSummary getFreezySummary(int emulatorId) {
     if (!cache.containsKey(emulatorId)) {
       GameEmulator defaultGameEmulator = pinUPConnector.getGameEmulator(emulatorId);
-      cache.put(emulatorId, readFreezyDetails(defaultGameEmulator));
+      cache.put(emulatorId, FreezySummarizer.summarizeFreezy(defaultGameEmulator));
     }
     return cache.get(emulatorId);
   }
 
-  private FreezySummary readFreezyDetails(@NonNull GameEmulator emulator) {
-    FreezySummary summary = new FreezySummary();
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
-    try {
-      if (!iniFile.exists()) {
-        throw new Exception(iniFile.getAbsolutePath() + " does not exist.");
-      }
-
-      INIConfiguration iniConfiguration = new INIConfiguration();
-      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-      iniConfiguration.setSeparatorUsedInOutput("=");
-      iniConfiguration.setSeparatorUsedInInput("=");
-
-      FileReader fileReader = new FileReader(iniFile);
-      iniConfiguration.read(fileReader);
-      SubnodeConfiguration s = iniConfiguration.getSection("global");
-      if (s == null) {
-        throw new Exception("'global' section in " + iniFile.getAbsolutePath() + " does ont exist");
-      }
-
-      if (s.containsKey("vni.key")) {
-        throw new Exception("'vni.key' not found in " + iniFile.getAbsolutePath());
-      }
-
-      String vniKey = s.getString("vni.key");
-      if (StringUtils.isEmpty(vniKey)) {
-        throw new Exception("No value for 'vni.key' in " + iniFile.getAbsolutePath());
-      }
-      summary.setVniKey(vniKey);
-
-      int pluginIndex = 0;
-      String key = "plugin." + pluginIndex + ".path";
-      while (s.containsKey(key)) {
-        summary.getPlugins().add(s.getString(key));
-        pluginIndex++;
-        key = "plugin." + pluginIndex + ".path";
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage());
-      summary.setStatus(e.getMessage());
-    }
-    return summary;
+  public boolean clearCache() {
+    this.cache.clear();
+    return true;
   }
 
   @Override
   public void afterPropertiesSet() {
-  }
-
-  public boolean clearCache() {
-    return false;
   }
 }

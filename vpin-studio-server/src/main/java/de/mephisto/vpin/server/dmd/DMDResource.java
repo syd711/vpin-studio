@@ -1,16 +1,12 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.restclient.altcolor.AltColor;
+import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.dmd.FreezySummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +46,7 @@ public class DMDResource {
   }
 
   @GetMapping("/freezy/{emulatorId}")
-  public FreezySummary getFreezySummary(@PathVariable("emulatorId") int emulatorId) {
+  public ComponentSummary getFreezySummary(@PathVariable("emulatorId") int emulatorId) {
     return dmdService.getFreezySummary(emulatorId);
   }
 
