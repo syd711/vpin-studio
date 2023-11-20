@@ -36,7 +36,7 @@ public class TabOverviewController implements Initializable {
 
   @FXML
   private void onVersionRefresh() {
-    ComponentChecksProgressModel model = new ComponentChecksProgressModel("Running Component Checks");
+    ComponentChecksProgressModel model = new ComponentChecksProgressModel();
     Dialogs.createProgressDialog(model);
   }
 

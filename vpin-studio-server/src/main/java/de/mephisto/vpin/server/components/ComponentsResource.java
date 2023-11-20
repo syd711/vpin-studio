@@ -77,28 +77,22 @@ public class ComponentsResource {
     GithubRelease latestRelease = componentService.getLatestRelease(componentType);
 
     ComponentRepresentation representation = new ComponentRepresentation();
-    if(latestRelease != null) {
-      representation.setUrl(latestRelease.getReleasesUrl());
-      representation.setArtifacts(latestRelease.getArtifacts().stream().map(a -> a.getName()).collect(Collectors.toList()));
-    }
     representation.setType(componentType);
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
     representation.setLastCheck(component.getLastCheck());
 
-
-    representation.setLastModified(componentFacade.getModificationDate(pinUPConnector.getDefaultGameEmulator()));
-
-    if (representation.getLastModified() == null) {
-      LOG.warn("Failed to resolve modification date for " + component);
-    }
-
     try {
+      representation.setLastModified(componentFacade.getModificationDate(pinUPConnector.getDefaultGameEmulator()));
       representation.setTargetFolder(componentFacade.getTargetFolder(pinUPConnector.getDefaultGameEmulator()).getAbsolutePath());
-    } catch (Exception e) {
-      LOG.error("Failed to resolve target folder: " + e.getMessage());
-    }
 
+      if (latestRelease != null) {
+        representation.setUrl(latestRelease.getReleasesUrl());
+        representation.setArtifacts(latestRelease.getArtifacts().stream().map(a -> a.getName()).collect(Collectors.toList()));
+      }
+    } catch (Exception e) {
+      LOG.error("Error returning component data: " + e.getMessage(), e);
+    }
     return representation;
   }
 

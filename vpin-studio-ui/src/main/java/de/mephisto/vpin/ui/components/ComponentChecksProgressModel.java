@@ -21,8 +21,8 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
 
   private final Iterator<ComponentType> iterator;
 
-  public ComponentChecksProgressModel(String title) {
-    super(title);
+  public ComponentChecksProgressModel() {
+    super("Fetching Latest Github Releases");
     this.iterator = Arrays.asList(ComponentType.values()).iterator();
   }
 

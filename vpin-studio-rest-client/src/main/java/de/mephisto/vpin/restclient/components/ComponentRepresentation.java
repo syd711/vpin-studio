@@ -1,12 +1,13 @@
 package de.mephisto.vpin.restclient.components;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ComponentRepresentation {
   private ComponentType type;
 
-  private List<String> artifacts;
+  private List<String> artifacts = new ArrayList<>();
 
   private Date lastCheck;
 

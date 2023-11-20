@@ -42,7 +42,7 @@ public class BackglassComponent implements ComponentFacade {
   @Nullable
   @Override
   public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File file = new File(gameEmulator.getTablesFolder(), "B2S_ScreenResIdentifier.exe");
+    File file = new File(gameEmulator.getBackglassServerDirectory(), "B2S_ScreenResIdentifier.exe");
     if (file.exists()) {
       return new Date(file.lastModified());
     }

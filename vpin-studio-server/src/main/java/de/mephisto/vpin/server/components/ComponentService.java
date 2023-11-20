@@ -35,17 +35,16 @@ public class ComponentService implements InitializingBean {
   private Map<ComponentType, GithubRelease> releases = new HashMap<>();
 
   public List<Component> getComponents() {
-    List<Component> all = componentRepository.findAll();
-    all.stream().forEach(c -> getComponent(c.getType()));
-    return all;
+    List<Component> result = new ArrayList<>();
+    ComponentType[] values = ComponentType.values();
+    for (ComponentType value : values) {
+      result.add(getComponent(value));
+    }
+    return result;
   }
 
   public Component getComponent(ComponentType type) {
-    Component component = componentRepository.findByType(type).get();
-    if (releases.get(type) == null) {
-      loadReleases(component);
-    }
-    return component;
+    return componentRepository.findByType(type).get();
   }
 
   public GithubRelease getLatestRelease(ComponentType type) {
@@ -70,6 +69,8 @@ public class ComponentService implements InitializingBean {
 
   public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact) {
     Component component = getComponent(type);
+    loadReleases(component);
+
     GithubRelease githubRelease = releases.get(component.getType());
     ReleaseArtifactActionLog install = null;
     if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
@@ -102,7 +103,7 @@ public class ComponentService implements InitializingBean {
   private ReleaseArtifact getReleaseArtifact(@NotNull String artifact, GithubRelease githubRelease) {
     ReleaseArtifact releaseArtifact = null;
     if (artifact.equals("-latest-")) {
-      if(githubRelease.getArtifacts().size() == 1) {
+      if (githubRelease.getArtifacts().size() == 1) {
         releaseArtifact = githubRelease.getLatestArtifact();
       }
       else {
@@ -203,6 +204,7 @@ public class ComponentService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     ComponentType[] values = ComponentType.values();
     for (ComponentType value : values) {
+      this.releases.put(value, null);
       Optional<Component> byName = componentRepository.findByType(value);
       if (byName.isEmpty()) {
         Component component = new Component();

@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -50,6 +52,8 @@ public class ComponentsController implements Initializable, StudioFXController {
 
   @FXML
   private Pane alx1;
+
+  private boolean initialized = false;
 
   // Add a public no-args constructor
   public ComponentsController() {
@@ -120,6 +124,10 @@ public class ComponentsController implements Initializable, StudioFXController {
 
   @Override
   public void onViewActivated() {
-
+    if(!initialized) {
+      ComponentChecksProgressModel model = new ComponentChecksProgressModel();
+      Dialogs.createProgressDialog(model);
+      initialized = true;
+    }
   }
 }
