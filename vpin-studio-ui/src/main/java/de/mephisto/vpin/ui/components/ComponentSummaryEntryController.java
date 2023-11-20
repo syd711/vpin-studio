@@ -33,16 +33,9 @@ public class ComponentSummaryEntryController implements Initializable {
     if (!key.endsWith(":")) {
       key += ":";
     }
+
     titleLabel.setText(key);
-
-    if(entry.getValue() != null && (entry.getValue().equalsIgnoreCase("true") || entry.getValue().equalsIgnoreCase("Yes"))) {
-      valueLabel.setGraphic(WidgetFactory.createCheckIcon());
-      valueLabel.setText("");
-    }
-    else {
-      valueLabel.setText(entry.getValue());
-    }
-
+    valueLabel.setText(entry.getValue());
     description.setVisible(!StringUtils.isEmpty(entry.getDescription()));
     description.setText(entry.getDescription());
 

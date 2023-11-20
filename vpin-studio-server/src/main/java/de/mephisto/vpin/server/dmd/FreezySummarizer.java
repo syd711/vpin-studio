@@ -48,8 +48,11 @@ public class FreezySummarizer {
       if (StringUtils.isEmpty(vniKey)) {
         summary.addEntry("VNI Key", null, false, "\"vni.key\" not set in " + iniFile.getAbsolutePath(), "The \"vni.key\" must be set so that .pac files can be decoded.");
       }
+      else if(!vniKey.equals("f0ad135937ffa111c60b24d88ebb2e59")) {
+        summary.addEntry("VNI Key", vniKey + " invalid, must be \"f0ad135937ffa111c60b24d88ebb2e59\"", false, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
+      }
       else {
-        summary.addEntry("VNI Key", "vni.key = " + vniKey + " (pac file colorizations are enabled)", true, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
+        summary.addEntry("VNI Key", vniKey + " (pac file colorizations are enabled)", true, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
       }
 
       int pluginIndex = 0;
@@ -83,7 +86,11 @@ public class FreezySummarizer {
       else {
         String enabled = virtualDmdSection.getString("enabled");
         summary.addEntry("Virtual DMD Enabled", (enabled != null && enabled.equals("true")) ? "Yes" : "No");
+
+        enabled = virtualDmdSection.getString("stayontop");
         summary.addEntry("Stay On Top", (enabled != null && enabled.equals("true")) ? "Yes" : "No", true, null, "If enabled, the virtual dmd stays on top of all other windows.");
+
+        enabled = virtualDmdSection.getString("useregistry");
         summary.addEntry("Use Registry", (enabled != null && enabled.equals("true")) ? "Yes" : "No", true, null, "If enabled, DMD values (e.g. the position) will be written into the VPM's registry instead of the DmdDevice.ini.");
       }
 

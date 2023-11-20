@@ -535,9 +535,8 @@ public class Dialogs {
   public static boolean openPopperRunningWarning(Stage stage) {
     boolean local = client.getSystemService().isLocal();
     if (!local) {
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-        "PinUP Popper is running. To perform this operation, you have to close it.",
-        "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
+        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplied()) {
         client.getPinUPPopperService().terminatePopper();
         if (confirmationResult.isChecked()) {
@@ -548,9 +547,9 @@ public class Dialogs {
       return false;
     }
     else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-        "PinUP Popper is running. To perform this operation, you have to close it.",
-        "This will also KILL the the current emulator process!");
+      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
+        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.",
+        null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getPinUPPopperService().terminatePopper();
         return true;

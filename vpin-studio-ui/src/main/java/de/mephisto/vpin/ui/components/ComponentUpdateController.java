@@ -20,7 +20,6 @@ import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -51,10 +50,13 @@ public class ComponentUpdateController implements Initializable {
 
   @FXML
   private void onInstall() {
-    String artifactName = artifactCombo.getValue();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifactName + "\"?","Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      run(false);
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        runInstall();
+      }
+    }
+    else {
+      runInstall();
     }
   }
 
@@ -85,6 +87,14 @@ public class ComponentUpdateController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute component check: " + e.getMessage());
       }
     });
+  }
+
+  private void runInstall() {
+    String artifactName = artifactCombo.getValue();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifactName + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      run(false);
+    }
   }
 
   private void run(boolean simulate) {
@@ -128,12 +138,12 @@ public class ComponentUpdateController implements Initializable {
   }
 
   public void refresh() {
-    if(component.getArtifacts().size() == 1) {
+    if (component.getArtifacts().size() == 1) {
       artifactCombo.setValue(component.getArtifacts().get(0));
     }
 
     String systemPreset = client.getSystemPreset();
-    if(systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+    if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
       Optional<String> first = component.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
       first.ifPresent(s -> artifactCombo.setValue(s));
     }
