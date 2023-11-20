@@ -30,6 +30,14 @@
                   </tooltip>
                </Button>
                <Separator layoutX="259.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component" text="FlexDMD UI" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+                  </graphic>
+               </Button>
                <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="external-component" text="DmdDevice.ini" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
@@ -65,7 +73,7 @@
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
                            <Label styleClass="default-text" text="The installer will extract the latest Freezy files into the &quot;VPinMame&quot; folder." />
-                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="Simulate the installation and check if the target folders match with your installation." />
+                           <Label styleClass="default-text" text="After updating to the latest Freezy version, the installer will open the &quot;FlexDMD UI&quot;." />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

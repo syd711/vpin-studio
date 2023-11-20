@@ -5,8 +5,10 @@ import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -72,14 +74,9 @@ public class PinUPConnector implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-
-
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-    runConfigCheck();
-  }
 
-  private void runConfigCheck() {
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
       if (!emulator.isVisualPinball()) {
@@ -92,6 +89,48 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Loaded Emulator: " + gameEmulator);
     }
     LOG.info("Finished Popper scripts configuration check.");
+
+    GameEmulator defaultEmulator = getDefaultGameEmulator();
+    if (defaultEmulator != null) {
+      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
+      if (!pathEntry.isEmpty()) {
+        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
+        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
+        if (!exeFile.exists()) {
+          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
+          boolean found = false;
+          while (fileIterator.hasNext()) {
+            File next = fileIterator.next();
+            if (next.getName().equals(exeFile.getName())) {
+              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
+              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
+          }
+        }
+        else {
+          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
+        }
+      }
+      else {
+        String path = String.valueOf(pathEntry.values().iterator().next());
+        if (path.contains("\"")) {
+          path = path.substring(1);
+          path = path.substring(0, path.indexOf("\""));
+          File exeFile = new File(path);
+          File b2sFolder = exeFile.getParentFile();
+          if (b2sFolder.exists()) {
+            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+            defaultEmulator.setBackglassServerDirectory(b2sFolder);
+          }
+        }
+      }
+    }
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {

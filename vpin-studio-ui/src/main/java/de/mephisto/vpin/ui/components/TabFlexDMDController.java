@@ -49,6 +49,12 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
     }
   }
 
+  @Override
+  public void postProcessing(boolean simulate) {
+    if (!simulate) {
+      onFlexDMD();
+    }
+  }
 
   @Override
   protected ComponentType getComponentType() {

@@ -36,7 +36,7 @@ public class BackglassComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    return gameEmulator.getTablesFolder();
+    return gameEmulator.getBackglassServerDirectory();
   }
 
   @Nullable

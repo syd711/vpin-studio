@@ -53,7 +53,7 @@
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
                            <Label styleClass="default-text" text="The installer will extract the latest FlexDMD files into the &quot;VPinMame&quot; folder." />
-                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="The file &quot;FlexDMD.log.config&quot; will be skipped during the installation." />
+                           <Label styleClass="default-text" text="After updating to the latest version, the installer will open the &quot;FlexDMD UI&quot;." />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

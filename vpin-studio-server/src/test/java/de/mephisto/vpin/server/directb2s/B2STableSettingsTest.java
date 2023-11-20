@@ -27,7 +27,7 @@ public class B2STableSettingsTest {
 
   @Test
   public void testWinRegRead() {
-    Map<String, Object> values = WinRegistry.getClassesValues("b2sserver.directb2s\\shell\\open\\command");
+    Map<String, Object> values = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
     Assertions.assertFalse(values.isEmpty());
   }
 

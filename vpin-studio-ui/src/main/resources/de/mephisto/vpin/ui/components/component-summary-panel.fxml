@@ -128,6 +128,9 @@
                </font>
             </Label>
          </children>
+         <VBox.margin>
+            <Insets top="24.0" />
+         </VBox.margin>
       </GridPane>
    </children>
    <padding>
