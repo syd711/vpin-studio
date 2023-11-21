@@ -9,7 +9,16 @@ public class ScanResult {
   private int nvOffset = 0;
   private String rom;
   private String hsFileName;
+  private String someTextFile;
   private String tableName;
+
+  public String getSomeTextFile() {
+    return someTextFile;
+  }
+
+  public void setSomeTextFile(String someTextFile) {
+    this.someTextFile = someTextFile;
+  }
 
   public String getTableName() {
     return tableName;
