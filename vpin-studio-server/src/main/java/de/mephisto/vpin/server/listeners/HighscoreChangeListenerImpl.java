@@ -65,11 +65,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
       discordCompetitionService.runDiscordServerUpdate(event.getGame(), event.getNewScore(), competition, null);
     }
 
-    String raw = null;
-    Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
-    if (highscore.isPresent()) {
-      raw = highscore.get().getRaw();
-    }
+    String raw = event.getNewRaw();
 
     //find competition to notify about highscore updates
     List<Competition> competitionForGame = competitionService.getCompetitionForGame(game.getId());
