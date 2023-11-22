@@ -248,7 +248,7 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>a</argument>
-                <argument>-tzip</argument>
+                <argument>-t7z</argument>
                 <argument>VPin-Studio.zip</argument>
                 <argument>VPin-Studio.exe</argument>
               </arguments>
@@ -265,7 +265,7 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>a</argument>
-                <argument>-tzip</argument>
+                <argument>-t7z</argument>
                 <argument>VPin-Studio-Client.zip</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio.sh</argument>

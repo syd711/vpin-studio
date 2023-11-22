@@ -108,7 +108,7 @@ public class ComponentService implements InitializingBean {
       }
       else {
         String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
-        if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+        if (systemPreset == null || systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
           releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> r.getName().contains("x64")).findFirst().orElse(null);
         }
         else {

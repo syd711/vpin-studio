@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -58,15 +60,23 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
       progressResultModel.getResults().add(check);
       EventManager.getInstance().notify3rdPartyVersionUpdate(next);
     } catch (Exception e) {
+      progressResultModel.getResults().add(e.getMessage());
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
-      Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information for  " + next + ": " + e.getMessage());
-      });
     }
   }
 
   @Override
   public boolean hasNext() {
     return iterator.hasNext();
+  }
+
+  @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    if (!progressResultModel.getResults().isEmpty()) {
+      List<String> collect = progressResultModel.getResults().stream().map(r -> r.toString() + "\n").collect(Collectors.toList());
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information:\n\n" + String.join("\n", collect));
+      });
+    }
   }
 }

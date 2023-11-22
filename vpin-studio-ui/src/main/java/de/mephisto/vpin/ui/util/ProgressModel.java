@@ -38,7 +38,7 @@ abstract public class ProgressModel<T> {
 
   }
 
-  public void finalizeModel() {
+  public void finalizeModel(ProgressResultModel progressResultModel) {
 
   }
 }

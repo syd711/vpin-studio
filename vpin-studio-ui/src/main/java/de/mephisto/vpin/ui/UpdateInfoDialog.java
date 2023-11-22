@@ -6,7 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -21,7 +24,7 @@ public class UpdateInfoDialog implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(UpdateInfoDialog.class);
 
   @FXML
-  private HTMLEditor html;
+  private BorderPane center;
 
   @FXML
   private Button updateBtn;
@@ -51,9 +54,10 @@ public class UpdateInfoDialog implements Initializable, DialogController {
 //    String render = renderer.render(document);
 
     try {
-//      WebEngine webEngine = webview.getEngine();
-//      webEngine.load("<p>bubu</p>");
-      html.setHtmlText("<p>bubu</p>");
+      WebView webview = new WebView();
+      WebEngine webEngine = webview.getEngine();
+      webEngine.load("https://www.zeit.de/index");
+      center.setCenter(webview);
     } catch (Exception e) {
       LOG.error("Failed to load HTML: " + e.getMessage());
     }

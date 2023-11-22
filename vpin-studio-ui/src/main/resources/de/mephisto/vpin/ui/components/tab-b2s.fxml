@@ -67,7 +67,8 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="The installer will extract the latest Backglass Server files into the &quot;Tables&quot; folder." />
+                           <Label styleClass="default-text" text="The installer will extract the latest update into the Backglass server folder." />
+                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="Make sure that the resolved target path matches with your installation." />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
