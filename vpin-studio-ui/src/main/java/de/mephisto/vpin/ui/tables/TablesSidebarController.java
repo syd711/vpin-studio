@@ -215,6 +215,15 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onPupPack() {
     try {
+      if (this.game.isPresent()) {
+        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+        File pupFolder = new File(systemSummary.getPinupSystemDirectory(), "PUPVideos");
+        File gamePupFolder = new File(pupFolder, game.get().getRom());
+        if (gamePupFolder.exists()) {
+          new ProcessBuilder("explorer.exe",.getAbsolutePath()).start();
+          return;
+        }
+      }
       SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
       new ProcessBuilder("explorer.exe", new File(systemSummary.getPinupSystemDirectory(), "PUPVideos").getAbsolutePath()).start();
     } catch (Exception e) {
@@ -227,11 +236,18 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
+        if (altSoundFolder.exists()) {
+          new ProcessBuilder("explorer.exe", altSoundFolder.getAbsolutePath()).start();
+          return;
+        }
         new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltSoundDirectory()).getAbsolutePath()).start();
       }
-    } catch (Exception e) {
+    } catch (
+      Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
+
   }
 
   @FXML
