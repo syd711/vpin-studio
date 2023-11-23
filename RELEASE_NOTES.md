@@ -41,16 +41,16 @@ Note that there is always the possibility that the released artifacts of these p
 
 **Table Management: DMD**
 
-- Added DMD section.
+- Added DMD section for uploading Flex- or UltraDMD packages.
 
 **Table Management: ALT Color**
 
-- Move FlexDMD button to DMD section.
+- Moved FlexDMD button to DMD section.
 
 **Competitions: Table Subscription & Discord Competitions**
 
-- Added "Synchronize All" buttons.
 - Improved competition/subscription "Synchronize" action: Instead synchronizing only the latest highscore of a table against a competition or subscription, the full highscore history is "replayed", starting the start-date of a competition or subscription. This way, untracked highscores are pushed into table subscription channels.
+- Added "Synchronize All" buttons.
 - Added offline players to subscription: This way the highscores of other players using your VPin will also be pushed into the subscription. This will also include the initial highscores of a table. You can avoid this using the highscore filter option in the preferences.
 
 

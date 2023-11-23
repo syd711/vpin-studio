@@ -220,7 +220,7 @@ public class TablesSidebarController implements Initializable {
         File pupFolder = new File(systemSummary.getPinupSystemDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
         if (gamePupFolder.exists()) {
-          new ProcessBuilder("explorer.exe",.getAbsolutePath()).start();
+          new ProcessBuilder("explorer.exe", gamePupFolder.getAbsolutePath()).start();
           return;
         }
       }

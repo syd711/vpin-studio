@@ -55,7 +55,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, ComponentType next) {
     try {
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, releaseArtifact);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, releaseArtifact, true);
       progressResultModel.getResults().add(check);
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);

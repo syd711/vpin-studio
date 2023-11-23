@@ -125,7 +125,7 @@ public class ComponentsController implements Initializable, StudioFXController {
   @Override
   public void onViewActivated() {
     if(!initialized) {
-      ComponentChecksProgressModel model = new ComponentChecksProgressModel();
+      ComponentChecksProgressModel model = new ComponentChecksProgressModel(false);
       Dialogs.createProgressDialog(model);
       initialized = true;
     }

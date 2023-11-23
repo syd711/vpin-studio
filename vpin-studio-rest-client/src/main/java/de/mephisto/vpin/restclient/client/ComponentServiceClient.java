@@ -1,8 +1,8 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +41,9 @@ public class ComponentServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ComponentActionLogRepresentation check(ComponentType type, String artifactName) throws Exception {
+  public ComponentActionLogRepresentation check(ComponentType type, String artifactName, boolean forceDownload) throws Exception {
     try {
-      return getRestClient().post(API + "components/check/" + type.name() + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
+      return getRestClient().post(API + "components/check/" + type.name() + "/" + artifactName + "/" + forceDownload, new HashMap<>(), ComponentActionLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update diff: " + e.getMessage(), e);
       throw new Exception("Diff failed");

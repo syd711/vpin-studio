@@ -49,10 +49,10 @@ public class ComponentsResource {
     return componentService.setVersion(type, version);
   }
 
-  @PostMapping("/check/{type}/{artifact}")
-  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) {
+  @PostMapping("/check/{type}/{artifact}/{forceDownload}")
+  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact, @PathVariable("forceDownload") boolean forceDownload) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, artifact);
+    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, artifact, forceDownload);
     return toActionLog(log);
   }
 

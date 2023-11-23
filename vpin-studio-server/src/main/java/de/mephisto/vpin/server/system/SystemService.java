@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -308,8 +309,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+      .collect(Collectors.toList());
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -324,26 +325,26 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+      .collect(Collectors.toList());
     return !filteredProceses.isEmpty();
   }
 
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
-        .allProcesses()
-        .filter(p -> p.info().command().isPresent() &&
-            (
-                p.info().command().get().contains("PinUpMenu") ||
-                    p.info().command().get().contains("PinUpDisplay") ||
-                    p.info().command().get().contains("PinUpPlayer") ||
-                    p.info().command().get().contains("VPXStarter") ||
-                    p.info().command().get().contains("PinUpPackEditor") ||
-                    p.info().command().get().contains("VPinballX") ||
-                    p.info().command().get().startsWith("VPinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE") ||
-                    p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
+      .allProcesses()
+      .filter(p -> p.info().command().isPresent() &&
+        (
+          p.info().command().get().contains("PinUpMenu") ||
+            p.info().command().get().contains("PinUpDisplay") ||
+            p.info().command().get().contains("PinUpPlayer") ||
+            p.info().command().get().contains("VPXStarter") ||
+            p.info().command().get().contains("PinUpPackEditor") ||
+            p.info().command().get().contains("VPinballX") ||
+            p.info().command().get().startsWith("VPinball") ||
+            p.info().command().get().contains("B2SBackglassServerEXE") ||
+            p.info().command().get().contains("DOF")))
+      .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No PinUP processes found, termination canceled.");
@@ -465,6 +466,18 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public void shutdown() {
     ((ConfigurableApplicationContext) context).close();
     System.exit(0);
+  }
+
+  public File getComponentArchiveFolder(ComponentType type) {
+    File folder = new File(RESOURCES, "component-archives/");
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    folder = new File(folder, type.name() + "/");
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    return folder;
   }
 
   @Override

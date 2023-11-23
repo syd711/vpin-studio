@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,9 @@ public class ComponentService implements InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private SystemService systemService;
 
   private Map<ComponentType, GithubRelease> releases = new HashMap<>();
 
@@ -67,7 +71,7 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact) {
+  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean forceDownload) {
     Component component = getComponent(type);
     loadReleases(component);
 
@@ -80,7 +84,15 @@ public class ComponentService implements InitializingBean {
     ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
     ComponentFacade componentFacade = getComponentFacade(type);
     File targetFolder = componentFacade.getTargetFolder(emulator);
-    install = releaseArtifact.diff(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+
+    File folder = systemService.getComponentArchiveFolder(type);
+    File artifactArchive = new File(folder, releaseArtifact.getName());
+    if (artifactArchive.exists() && forceDownload) {
+      artifactArchive.delete();
+    }
+
+    install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+
     boolean diff = install.isDiffering();
     if (!diff) {
       component.setInstalledVersion(githubRelease.getTag());
