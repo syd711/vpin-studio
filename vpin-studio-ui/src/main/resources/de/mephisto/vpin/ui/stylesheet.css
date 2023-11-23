@@ -203,6 +203,23 @@
     -fx-cursor: hand;
 }
 
+.ghost-button-small {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-small:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 /**
  * Window Toolbar
  */

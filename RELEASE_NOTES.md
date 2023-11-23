@@ -25,6 +25,7 @@ Note that there is always the possibility that the released artifacts of these p
 
 - Combined "Service Info" and "Service Options" to "Service" entry and moved this to the Studio settings section.
 - Renamed section to "VPin System Preferences"
+- Added reset button for "Do not show again" dialogs.
 
 **Table Management: Overview**
 

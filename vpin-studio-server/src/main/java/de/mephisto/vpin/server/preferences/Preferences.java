@@ -63,6 +63,9 @@ public class Preferences {
   @Column(length = 1024)
   private String uiSettings;
 
+  @Column(length = 1024)
+  private String doNotShowAgains;
+
   private int idleTimeout;
 
   @Column(name = "highscoreFilterEnabled", nullable = false, columnDefinition = "boolean default false")
@@ -85,6 +88,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getDoNotShowAgains() {
+    return doNotShowAgains;
+  }
+
+  public void setDoNotShowAgains(String doNotShowAgains) {
+    this.doNotShowAgains = doNotShowAgains;
+  }
 
   public String getSystemPreset() {
     return systemPreset;

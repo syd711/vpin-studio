@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentsController">
 
@@ -21,20 +26,106 @@
                 </BorderPane>
             </bottom>
          <center>
-                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-                    <tabs>
-                        <Tab fx:id="overviewTab" closable="false" text="Overview" />
-                        <Tab fx:id="vpxTab" closable="false" text="Visual Pinball" />
-                        <Tab fx:id="mameTab" closable="false" text="VPin MAME" />
-                        <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
-                        <Tab fx:id="freezyTab" closable="false" text="Freezy" />
-                        <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
-                        <Tab fx:id="serumTab" closable="false" text="Serum" />
-                    </tabs>
-                    <BorderPane.margin>
-                        <Insets left="12.0" right="12.0" top="12.0" />
-                    </BorderPane.margin>
-                </TabPane>
+            <VBox fx:id="center" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <children>
+                  <BorderPane fx:id="hint" styleClass="error-message">
+                     <left>
+                        <VBox BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </BorderPane.margin>
+                           <children>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-exclamation-octagon-fill" iconSize="28" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets left="6.0" top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </left>
+                     <center>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <Label styleClass="error-title" text="Use at your own risk:" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="- Read the instruction boxes carefully." textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="- Use the installation simulator and check if the results match with your installation." textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="error-title" text="- You miss some checks or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="https://discord.gg/69YqHYd3wD" textFill="WHITE">
+                                 <padding>
+                                    <Insets bottom="2.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets left="9.0" />
+                                 </VBox.margin>
+                              </Hyperlink>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </center>
+                     <right>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="ghost-button-small">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </padding>
+                        </VBox>
+                     </right>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </BorderPane>
+                      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                              <Tab fx:id="overviewTab" closable="false" text="Overview" />
+                              <Tab fx:id="vpxTab" closable="false" text="Visual Pinball" />
+                              <Tab fx:id="mameTab" closable="false" text="VPin MAME" />
+                              <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
+                              <Tab fx:id="freezyTab" closable="false" text="Freezy" />
+                              <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
+                              <Tab fx:id="serumTab" closable="false" text="Serum" />
+                          </tabs>
+                      </TabPane>
+               </children>
+            </VBox>
          </center>
         </BorderPane>
     </center>
