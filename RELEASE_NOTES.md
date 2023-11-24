@@ -27,6 +27,9 @@ Note that there is always the possibility that the released artifacts of these p
 - Renamed section to "VPin System Preferences"
 - Added reset button for "Do not show again" dialogs.
 
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/misc/tray.png" width="400" />
+
+
 **Table Management: Overview**
 
 - Added "VPS" toolbar button for a quicker access to missing resources.
