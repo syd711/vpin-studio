@@ -52,7 +52,7 @@ public class UpdateInfoDialog implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Parser parser = Parser.builder().build();
-    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/main/RELEASE_NOTES.md"));
+    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/update-installer/RELEASE_NOTES.md"));
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     String render = renderer.render(document);
 
