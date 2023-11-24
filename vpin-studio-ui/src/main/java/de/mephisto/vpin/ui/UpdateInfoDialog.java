@@ -12,6 +12,9 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,15 +51,17 @@ public class UpdateInfoDialog implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-//    Parser parser = Parser.builder().build();
-//    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/main/RELEASE_NOTES.md"));
-//    HtmlRenderer renderer = HtmlRenderer.builder().build();
-//    String render = renderer.render(document);
+    Parser parser = Parser.builder().build();
+    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/main/RELEASE_NOTES.md"));
+    HtmlRenderer renderer = HtmlRenderer.builder().build();
+    String render = renderer.render(document);
 
     try {
       WebView webview = new WebView();
+      webview.setPrefSize(900, 700);
       WebEngine webEngine = webview.getEngine();
-      webEngine.load("https://www.zeit.de/index");
+      webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
+      webEngine.loadContent(render);
       center.setCenter(webview);
     } catch (Exception e) {
       LOG.error("Failed to load HTML: " + e.getMessage());

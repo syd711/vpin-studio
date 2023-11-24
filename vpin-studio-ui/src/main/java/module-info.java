@@ -3,6 +3,7 @@ module de.mephisto.vpin.ui {
   requires javafx.fxml;
   requires javafx.web;
 
+  requires org.commonmark;
   requires org.controlsfx.controls;
   requires org.kordamp.ikonli.javafx;
   requires eu.hansolo.tilesfx;

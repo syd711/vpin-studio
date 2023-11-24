@@ -1072,5 +1072,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsBtn.setGraphic(view);
+
+    Platform.runLater(() -> {
+      Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion());
+    });
   }
 }
