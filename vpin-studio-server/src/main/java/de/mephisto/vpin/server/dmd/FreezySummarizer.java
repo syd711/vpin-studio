@@ -65,19 +65,19 @@ public class FreezySummarizer {
       }
       summary.addEntry("Plugins", plugins.isEmpty() ? "-" : String.join(", ", plugins), true, null, "The plugins that have been added in the DmdDevice.ini.");
 
-      String env = System.getenv("DMDDEVICE_CONFIG");
-      if (StringUtils.isEmpty(env)) {
-        summary.addEntry("DMDDEVICE_CONFIG", null, false, "The environment variable 'DMDDEVICE_CONFIG' is not set and must point to the DmdDevice.ini file.");
-      }
-      else {
-        File settings = new File(env);
-        if (!settings.exists()) {
-          summary.addEntry("DMDDEVICE_CONFIG", null, false, "Invalid path: " + settings.getAbsolutePath());
-        }
-        else {
-          summary.addEntry("DMDDEVICE_CONFIG", settings.getAbsolutePath(), true, null, "This environment variable must point to the DmdDevice.ini file.");
-        }
-      }
+//      String env = System.getenv("DMDDEVICE_CONFIG");
+//      if (StringUtils.isEmpty(env)) {
+//        summary.addEntry("DMDDEVICE_CONFIG", null, false, "The environment variable 'DMDDEVICE_CONFIG' is not set and must point to the DmdDevice.ini file.");
+//      }
+//      else {
+//        File settings = new File(env);
+//        if (!settings.exists()) {
+//          summary.addEntry("DMDDEVICE_CONFIG", null, false, "Invalid path: " + settings.getAbsolutePath());
+//        }
+//        else {
+//          summary.addEntry("DMDDEVICE_CONFIG", settings.getAbsolutePath(), true, null, "This environment variable must point to the DmdDevice.ini file.");
+//        }
+//      }
 
       SubnodeConfiguration virtualDmdSection = iniConfiguration.getSection("virtualdmd");
       if (virtualDmdSection == null) {

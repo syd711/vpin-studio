@@ -35,7 +35,7 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
     if (component.isVersionDiff()) {
       latestVersionLabel.getStyleClass().add("orange-label");
     }
-    else if (component.getInstalledVersion() != null) {
+    else if (component.getInstalledVersion() != null && !component.getInstalledVersion().equals("?")) {
       latestVersionLabel.getStyleClass().add("green-label");
     }
 

@@ -222,7 +222,7 @@ public class NavigationController implements Initializable, StudioEventListener 
       systemManagerOverlay.getChildren().remove(updateIcon);
       List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
       for (ComponentRepresentation component : components) {
-        if (component.getLatestReleaseVersion() != null && component.getInstalledVersion() != null && !component.getInstalledVersion().equals(component.getLatestReleaseVersion())) {
+        if (component.isVersionDiff()) {
           systemManagerOverlay.getChildren().add(updateIcon);
           break;
         }

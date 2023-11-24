@@ -73,42 +73,44 @@ public class ComponentService implements InitializingBean {
 
   public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean forceDownload) {
     Component component = getComponent(type);
-    loadReleases(component);
+    if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
+      loadReleases(component);
 
-    GithubRelease githubRelease = releases.get(component.getType());
-    ReleaseArtifactActionLog install = null;
-    if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
-      throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
-    }
-
-    ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-    ComponentFacade componentFacade = getComponentFacade(type);
-    File targetFolder = componentFacade.getTargetFolder(emulator);
-
-    File folder = systemService.getComponentArchiveFolder(type);
-    File artifactArchive = new File(folder, releaseArtifact.getName());
-    if (artifactArchive.exists() && forceDownload) {
-      artifactArchive.delete();
-    }
-
-    install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
-
-    boolean diff = install.isDiffering();
-    if (!diff) {
-      component.setInstalledVersion(githubRelease.getTag());
-      LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
-    }
-    else {
-      if (githubRelease.getTag().equals(component.getInstalledVersion())) {
-        component.setInstalledVersion(null);
-        LOG.info("Reverted current version for " + component.getType());
+      GithubRelease githubRelease = releases.get(component.getType());
+      ReleaseArtifactActionLog install = null;
+      if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
+        throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
       }
+
+      ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
+      ComponentFacade componentFacade = getComponentFacade(type);
+      File targetFolder = componentFacade.getTargetFolder(emulator);
+
+      File folder = systemService.getComponentArchiveFolder(type);
+      File artifactArchive = new File(folder, releaseArtifact.getName());
+      if (artifactArchive.exists() && forceDownload) {
+        artifactArchive.delete();
+      }
+
+      install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+      boolean diff = install.isDiffering();
+      if (!diff) {
+        component.setInstalledVersion(githubRelease.getTag());
+        LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+      }
+      else {
+        if (githubRelease.getTag().equals(component.getInstalledVersion())) {
+          component.setInstalledVersion("?");
+          LOG.info("Reverted current version for " + component.getType());
+        }
+      }
+
+      component.setLastCheck(new Date());
+      componentRepository.saveAndFlush(component);
+
+      return install;
     }
-
-    component.setLastCheck(new Date());
-    componentRepository.saveAndFlush(component);
-
-    return install;
+    return new ReleaseArtifactActionLog(false, true);
   }
 
   @Nullable
@@ -221,6 +223,7 @@ public class ComponentService implements InitializingBean {
       if (byName.isEmpty()) {
         Component component = new Component();
         component.setType(value);
+        component.setInstalledVersion("?");
         componentRepository.saveAndFlush(component);
       }
     }

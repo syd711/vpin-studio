@@ -86,7 +86,7 @@ public class ComponentRepresentation {
   }
 
   public boolean isVersionDiff() {
-    if (installedVersion == null) {
+    if (installedVersion == null || installedVersion.equals("?")) {
       return false;
     }
     if (latestReleaseVersion == null) {

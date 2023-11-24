@@ -103,8 +103,8 @@ public class ComponentSummaryController {
     folderLabel.setText("-");
 
     if (component != null) {
-      setVersionBtn.setDisable(!StringUtils.isEmpty(component.getInstalledVersion()) && component.getInstalledVersion().equals(component.getLatestReleaseVersion()));
-      resetVersionBtn.setDisable(StringUtils.isEmpty(component.getInstalledVersion()));
+      setVersionBtn.setDisable(!StringUtils.isEmpty(component.getInstalledVersion()) &&  !component.getInstalledVersion().equals("?") && component.getInstalledVersion().equals(component.getLatestReleaseVersion()));
+      resetVersionBtn.setDisable(StringUtils.isEmpty(component.getInstalledVersion()) || component.getInstalledVersion().equals("?"));
 
       if (component.isVersionDiff()) {
         latestVersionLabel.getStyleClass().add("orange-label");
