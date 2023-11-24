@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -30,29 +28,15 @@ public class UpdateInfoDialog implements Initializable, DialogController {
   private BorderPane center;
 
   @FXML
-  private Button updateBtn;
-
-  @FXML
-  private Button cancelBtn;
-
-
-  @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
-  @FXML
-  private void onUpdateClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-    stage.close();
-    Dialogs.openUpdateDialog();
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Parser parser = Parser.builder().build();
-    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/update-installer/RELEASE_NOTES.md"));
+    Node document = parser.parse(download("https://raw.githubusercontent.com/syd711/vpin-studio/main/RELEASE_NOTES.md"));
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     String render = renderer.render(document);
 
@@ -88,6 +72,5 @@ public class UpdateInfoDialog implements Initializable, DialogController {
 
   @Override
   public void onDialogCancel() {
-
   }
 }

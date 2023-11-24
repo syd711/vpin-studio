@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -62,9 +64,18 @@ public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
   public static void openUpdateInfoDialog(String version) {
-    FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
-    stage.showAndWait();
+    PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
+    List<String> csvValue = doNotShowAgainPref.getCSVValue();
+    if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+      FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
+      Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+      stage.showAndWait();
+    }
+
+    if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+      csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO);
+      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
+    }
   }
 
   public static boolean openUpdateDialog() {

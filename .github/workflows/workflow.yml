@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: syd711/github-project-downloader
-          path: ./vpin-studio-popper-client
+          path: ./github-project-downloader
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Popper Client Repo
