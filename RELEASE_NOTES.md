@@ -21,11 +21,16 @@ Note that there is always the possibility that the released artifacts of these p
 
 - Switched to MUI icons.
 
+**Overlay**
+
+- Added new overlay style that can embed an external page. This way you can embed your iscored.info dashboard.
+
 **Preferences**
 
 - Combined "Service Info" and "Service Options" to "Service" entry and moved this to the Studio settings section.
 - Renamed section to "VPin System Preferences"
 - Added reset button for "Do not show again" dialogs.
+- Added configuration parameters for overlay widget "External Page".
 
 <img src="https://github.com/syd711/vpin-studio/blob/update-installer/documentation/releases/2.3.0/ui-prefs.png?raw=true" width="400" />
 

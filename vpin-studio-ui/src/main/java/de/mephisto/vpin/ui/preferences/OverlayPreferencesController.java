@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -103,6 +104,7 @@ public class OverlayPreferencesController implements Initializable {
     externalPageUrl.setText(externalPageUrlValue);
     preview.setZoom(0.25);
     preview.setVisible(false);
+    preview.getEngine().setUserStyleSheetLocation(OverlayWindowFX.class.getResource("web-style.css").toString());
     if (!StringUtils.isEmpty(externalPageUrlValue)) {
       preview.setVisible(true);
       preview.getEngine().load(externalPageUrlValue);

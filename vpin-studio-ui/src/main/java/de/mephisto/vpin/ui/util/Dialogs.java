@@ -63,10 +63,10 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
-  public static void openUpdateInfoDialog(String version) {
+  public static void openUpdateInfoDialog(String version, boolean force) {
     PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
     List<String> csvValue = doNotShowAgainPref.getCSVValue();
-    if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+    if (force || !csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
       Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();

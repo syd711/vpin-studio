@@ -1074,7 +1074,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     vpsBtn.setGraphic(view);
 
     Platform.runLater(() -> {
-      Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion());
+      Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
     });
   }
 }
