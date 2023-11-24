@@ -17,7 +17,7 @@
          <children>
               <BorderPane>
                <center>
-                  <WebView fx:id="webView" BorderPane.alignment="CENTER" />
+                  <WebView fx:id="webView" prefHeight="500.0" BorderPane.alignment="CENTER" />
                </center>
               </BorderPane>
          </children>

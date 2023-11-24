@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<?import javafx.scene.text.Font?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
+   <children>
+      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-920.0" >
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <fx:include fx:id="players" prefHeight="200" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-player-rank.fxml" translateX="0" translateY="-578.0" />
+      <fx:include fx:id="latestScores" prefHeight="570" scaleX="1.3" prefWidth="816.0" scaleY="1.0" source="widgets/widget-latest-scores.fxml" translateX="0" translateY="36.0" />
+      <fx:include fx:id="externalPage" prefHeight="610"  prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-external-page.fxml" translateX="0" translateY="648.0" />
+   </children>
+</StackPane>
