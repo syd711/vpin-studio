@@ -20,6 +20,7 @@ public interface PreferenceNames {
 
   String OVERLAY_KEY = "overlayKey";
   String OVERLAY_DESIGN = "overlayDesign";
+  String OVERLAY_PAGE_URL = "overlayPageUrl";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
 
   String UI_SETTINGS = "uiSettings";

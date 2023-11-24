@@ -34,6 +34,8 @@ public class Preferences {
 
   private String overlayDesign;
 
+  private String overlayPageUrl;
+
   private String showOverlayOnStartup;
 
   private String discordWebHookUrl;
@@ -88,6 +90,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getOverlayPageUrl() {
+    return overlayPageUrl;
+  }
+
+  public void setOverlayPageUrl(String overlayPageUrl) {
+    this.overlayPageUrl = overlayPageUrl;
+  }
 
   public String getDoNotShowAgains() {
     return doNotShowAgains;
