@@ -10,6 +10,15 @@ public class TableAlxEntry {
   private int timePlayedSecs;
   private String displayName;
   private int scores;
+  private int highscores;
+
+  public int getHighscores() {
+    return highscores;
+  }
+
+  public void setHighscores(int highscores) {
+    this.highscores = highscores;
+  }
 
   public int getScores() {
     return scores;

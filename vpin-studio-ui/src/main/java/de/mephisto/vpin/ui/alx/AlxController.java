@@ -1,11 +1,17 @@
 package de.mephisto.vpin.ui.alx;
 
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +35,12 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   @FXML
   private VBox scoresWidget;
 
+  @FXML
+  private VBox tileList;
+
+  @FXML
+  private BorderPane root;
+
 
   // Add a public no-args constructor
   public AlxController() {
@@ -36,10 +48,16 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<TableAlxEntry> entries = client.getAlxService().getAlxEntries();
+    AlxSummary alxSummary = client.getAlxService().getAlxSummary();
+    List<TableAlxEntry> entries = alxSummary.getEntries();
     AlxFactory.createMostPlayed(mostPlayedWidget, entries);
     AlxFactory.createLongestPlayed(timePlayedWidget, entries);
-//    AlxFactory.createRecordedScores(scoresWidget, entries);
+    AlxFactory.createRecordedScores(scoresWidget, entries);
+    AlxFactory.createTotalTimeTile(tileList, entries);
+    AlxFactory.createTotalGamesPlayedTile(tileList, entries);
+    AlxFactory.createTotalScoresTile(tileList, entries);
+    AlxFactory.createTotalHighScoresTile(tileList, entries);
+    AlxFactory.createAvgWeekTimeTile(tileList, entries, alxSummary.getStartDate());
 
     NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
   }

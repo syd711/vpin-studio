@@ -1047,6 +1047,27 @@ public class PinUPConnector implements InitializingBean {
     return results;
   }
 
+  @NonNull
+  public java.util.Date getStartDate() {
+    Connection connect = this.connect();
+    Date date = null;
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT DateAdded from Games asc limit 1;");
+      while (rs.next()) {
+        date = rs.getDate(1);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to get start time: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+
+    return date;
+  }
+
   public void deleteGames() {
     Connection connect = this.connect();
     try {

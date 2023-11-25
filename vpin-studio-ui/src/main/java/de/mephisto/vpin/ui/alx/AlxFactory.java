@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.alx;
 
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
+import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import eu.hansolo.tilesfx.Tile;
@@ -13,6 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class AlxFactory {
@@ -20,33 +26,109 @@ public class AlxFactory {
 
   private static final List<Color> colors = Arrays.asList(Tile.BLUE, Tile.RED, Tile.ORANGE, Tile.GREEN, Tile.MAGENTA, Tile.PINK.grayscale(), Tile.YELLOW, Tile.DARK_BLUE);
 
-//    Tile totalGamesPlayedTile = TileBuilder.create().skinType(Tile.SkinType.CHARACTER)
-//      .backgroundColor(Color.web("#2a2a2a"))
-//      .autoScale(false)
-//      .borderColor(Color.TRANSPARENT)
-//      .borderWidth(0)
-//      .title("Total Games Played")
-//      .customFontEnabled(true)
-//      .description(String.valueOf(totalGamesPlayed))
-//      .decimals(0)
-//      .build();
-//
-//    root.getChildren().add(totalGamesPlayedTile);
-//
-//    String totalTimeFormatted = DurationFormatUtils.formatDuration(totalTimePlayed * 1000, "HH 'hr'", false);
-//    Tile totalTimePlayedTile = TileBuilder.create().skinType(Tile.SkinType.CHARACTER)
-//      .backgroundColor(Color.web("#2a2a2a"))
-//      .autoScale(false)
-//      .borderColor(Color.TRANSPARENT)
-//      .borderWidth(0)
-//      .title("Total Time Played")
-//      .customFontEnabled(true)
-//      .prefWidth(400)
-//      .description(totalTimeFormatted)
-//      .decimals(0)
-//      .build();
-//
-//    root.getChildren().add(totalTimePlayedTile);
+
+  public static void createTotalTimeTile(Pane root, List<TableAlxEntry> entries) {
+    int total = 0;
+    for (TableAlxEntry entry : entries) {
+      total += entry.getTimePlayedSecs();
+    }
+
+    String totalTimeFormatted = DurationFormatUtils.formatDuration(total * 1000 * 1000, "HH 'hrs'", false);
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxTileEntryController controller = loader.getController();
+      controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", totalTimeFormatted));
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+  }
+
+  public static void createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
+    int total = 0;
+    for (TableAlxEntry entry : entries) {
+      total += entry.getScores();
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxTileEntryController controller = loader.getController();
+      controller.refresh(new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+  }
+
+
+  public static void createTotalHighScoresTile(Pane root, List<TableAlxEntry> entries) {
+    int total = 0;
+    for (TableAlxEntry entry : entries) {
+      total += entry.getHighscores();
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxTileEntryController controller = loader.getController();
+      controller.refresh(new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+  }
+
+  public static void createAvgWeekTimeTile(Pane root, List<TableAlxEntry> entries, Date start) {
+    int total = 0;
+    for (TableAlxEntry entry : entries) {
+      total += entry.getTimePlayedSecs();
+    }
+
+
+    Instant d1i = Instant.ofEpochMilli(start.getTime());
+    Instant d2i = Instant.ofEpochMilli(new Date().getTime());
+
+    LocalDateTime startDate = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
+    LocalDateTime endDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
+
+    long weeks = ChronoUnit.WEEKS.between(startDate, endDate);
+
+    long avgSeksPerWeek = total / weeks;
+    String time = (avgSeksPerWeek / 60) + " min";
+    if (avgSeksPerWeek / 60 / 60 > 0) {
+      time = (avgSeksPerWeek / 60 / 60) + " hrs";
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxTileEntryController controller = loader.getController();
+      controller.refresh(new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+  }
+
+  public static void createTotalGamesPlayedTile(Pane root, List<TableAlxEntry> entries) {
+    int total = 0;
+    for (TableAlxEntry entry : entries) {
+      total += entry.getNumberOfPlays();
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxTileEntryController controller = loader.getController();
+      controller.refresh(new AlxTileEntry("Total Games Played", "(The total number of table launches from Popper)", String.valueOf(total)));
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+  }
 
 
   public static void createRecordedScores(Pane root, List<TableAlxEntry> entries) {
@@ -63,6 +145,10 @@ public class AlxFactory {
 
     int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
+      if (alxEntry.getScores() == 0) {
+        continue;
+      }
+
       int percentage = alxEntry.getScores() * 100 / maxValue;
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, BindingUtil.toHexString(colors.get(counter)));
       try {
@@ -96,6 +182,10 @@ public class AlxFactory {
 
     int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
+      if (alxEntry.getTimePlayedSecs() <= 0) {
+        continue;
+      }
+
       int percentage = alxEntry.getTimePlayedSecs() * 100 / maxValue;
       String durationText = DurationFormatUtils.formatDuration(alxEntry.getTimePlayedSecs() * 1000, "HH 'hours', mm 'minutes'", false);
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, BindingUtil.toHexString(colors.get(counter)));
@@ -130,6 +220,10 @@ public class AlxFactory {
 
     int counter = 0;
     for (TableAlxEntry alxEntry : mostPlayedEntries) {
+      if (alxEntry.getNumberOfPlays() <= 0) {
+        continue;
+      }
+
       int percentage = alxEntry.getNumberOfPlays() * 100 / maxValue;
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, BindingUtil.toHexString(colors.get(counter)));
       try {

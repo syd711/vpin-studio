@@ -8,9 +8,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.alx.AlxController">
-
-    <center>
-      <HBox spacing="12.0">
+   <left>
+      <HBox spacing="12.0" BorderPane.alignment="CENTER">
          <children>
                 <VBox styleClass="subpanel">
                <padding>
@@ -18,7 +17,11 @@
                </padding>
                <children>
                   <Label styleClass="default-title" text="Most Played" />
-                  <Label styleClass="default-text" text="(Number of times a table has been launched)" />
+                  <Label styleClass="default-text" text="(Number of times a table has been launched)">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
                   <ScrollPane hbarPolicy="NEVER">
                      <content>
                         <VBox fx:id="mostPlayedWidget" prefWidth="450.0" />
@@ -32,7 +35,11 @@
                </padding>
                <children>
                   <Label styleClass="default-title" text="Time Played" />
-                  <Label styleClass="default-text" text="(Total emulation time of the table)" />
+                  <Label styleClass="default-text" text="(Total emulation time by table)">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
                   <ScrollPane hbarPolicy="NEVER">
                      <content>
                         <VBox fx:id="timePlayedWidget" prefWidth="450.0" />
@@ -40,16 +47,20 @@
                   </ScrollPane>
                </children>
             </VBox>
-            <VBox fx:id="scoresWidget" layoutX="489.0" layoutY="10.0" styleClass="subpanel">
+            <VBox layoutX="489.0" layoutY="10.0" styleClass="subpanel">
                <padding>
                   <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                </padding>
                <children>
                   <Label styleClass="default-title" text="Record Scores" />
-                  <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio by table)" />
+                  <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio by table)">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
                   <ScrollPane hbarPolicy="NEVER">
                      <content>
-                        <VBox fx:id="timePlayedWidget1" prefWidth="450.0" />
+                        <VBox fx:id="scoresWidget" prefWidth="450.0" />
                      </content>
                   </ScrollPane>
                </children>
@@ -59,5 +70,12 @@
             <Insets bottom="12.0" />
          </BorderPane.margin>
       </HBox>
-    </center>
+   </left>
+   <center>
+      <VBox fx:id="tileList" spacing="12.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="12.0" right="3.0" />
+         </padding>
+      </VBox>
+   </center>
 </BorderPane>

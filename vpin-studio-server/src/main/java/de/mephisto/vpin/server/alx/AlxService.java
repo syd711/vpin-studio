@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.alx;
 
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.highscores.HighscoreVersionRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AlxService {
@@ -18,12 +20,21 @@ public class AlxService {
   @Autowired
   private HighscoreVersionRepository highscoreVersionRepository;
 
-  public List<TableAlxEntry> getAlxEntries() {
+  public AlxSummary getAlxSummary() {
+    AlxSummary summary = new AlxSummary();
+
+    summary.setStartDate(pinUPConnector.getStartDate());
+
     List<TableAlxEntry> alxData = pinUPConnector.getAlxData();
     for (TableAlxEntry entry : alxData) {
       List<HighscoreVersion> byGameId = highscoreVersionRepository.findByGameId(entry.getGameId());
-      entry.setScores(byGameId.size());
+      List<HighscoreVersion> collect = byGameId.stream().filter(score -> score.getChangedPosition() > 0).collect(Collectors.toList());
+      List<HighscoreVersion> highscores = byGameId.stream().filter(score -> score.getChangedPosition() == 1).collect(Collectors.toList());
+      entry.setScores(collect.size());
+      entry.setHighscores(highscores.size());
+
+      summary.getEntries().add(entry);
     }
-    return alxData;
+    return summary;
   }
 }

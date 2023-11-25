@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public class AlxServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public List<TableAlxEntry> getAlxEntries() {
-    return Arrays.asList(getRestClient().get(API + "alx", TableAlxEntry[].class));
+  public AlxSummary getAlxSummary() {
+    return getRestClient().get(API + "alx", AlxSummary.class);
   }
 }
