@@ -40,6 +40,11 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   }
 
   @Override
+  public boolean isShowSummary() {
+    return false;
+  }
+
+  @Override
   public String nextToString(Integer id) {
     if (lastScannedName != null) {
       return "Scanned \"" + lastScannedName + "\"";

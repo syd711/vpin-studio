@@ -52,7 +52,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @FXML
   private void onFetch() {
-    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Fetching Latest Releases for " + type, type, "-latest-");
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-");
     ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
