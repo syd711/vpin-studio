@@ -7,8 +7,10 @@ import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -26,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentUpdateController implements Initializable {
+public class ComponentUpdateController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
   @FXML
@@ -47,6 +49,20 @@ public class ComponentUpdateController implements Initializable {
   private AbstractComponentTab componentTab;
   private ComponentType type;
   private ComponentRepresentation component;
+
+  @FXML
+  private void onFetch() {
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Fetching Latest Releases for " + type, type, "-latest-");
+    ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
+    if (!resultModel.getResults().isEmpty()) {
+      ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+      textArea.setText(log.toString());
+      EventManager.getInstance().notify3rdPartyVersionUpdate(type);
+    }
+    else {
+      textArea.setText("Check failed. See log for details.");
+    }
+  }
 
   @FXML
   private void onInstall() {
@@ -122,22 +138,25 @@ public class ComponentUpdateController implements Initializable {
     this.componentTab = tab;
     this.type = component.getType();
     this.component = component;
-    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
+
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
       checkBtn.setDisable(t1 == null);
       installBtn.setDisable(t1 == null || !client.getSystemService().isLocal());
       simBtn.setDisable(t1 == null);
     });
 
+    refresh();
+  }
+
+  public void refresh() {
+    artifactCombo.getItems().clear();
+    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
+
     artifactCombo.setDisable(component.getArtifacts().isEmpty());
     checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
 
-    refresh();
-  }
-
-  public void refresh() {
     if (component.getArtifacts().size() == 1) {
       artifactCombo.setValue(component.getArtifacts().get(0));
     }
@@ -155,9 +174,21 @@ public class ComponentUpdateController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    EventManager.getInstance().addListener(this);
+
     simBtn.setDisable(true);
     installBtn.setDisable(true);
     artifactCombo.setDisable(true);
     checkBtn.setDisable(true);
+  }
+
+  @Override
+  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
+    if (type.equals(this.type)) {
+      Platform.runLater(() -> {
+        this.component = client.getComponentService().getComponent(type);
+        refresh();
+      });
+    }
   }
 }

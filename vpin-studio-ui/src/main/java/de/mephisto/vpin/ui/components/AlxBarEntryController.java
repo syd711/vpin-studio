@@ -31,7 +31,7 @@ public class AlxBarEntryController implements Initializable {
     bar.setStyle("-fx-background-color: " + entry.getColor() + ";");
 
     int percentage = entry.getPercentage();
-    double width = 560 * percentage / 100;
+    double width = 570 * percentage / 100;
     bar.setPrefWidth(width);
   }
 
