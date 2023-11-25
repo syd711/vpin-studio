@@ -167,7 +167,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     updateForTabSelection(0);
 
-    TileFactory.createAlxTiles(alx1);
+//    TileFactory.createAlxTiles(alx1);
+    AlxFactory.createStats(alx1);
   }
 
   private void loadTab(Tab tab, String file) {

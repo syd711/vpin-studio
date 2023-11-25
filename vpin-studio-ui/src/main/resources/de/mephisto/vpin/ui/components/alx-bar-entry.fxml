@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.AlxBarEntryController">
+   <top>
+      <BorderPane BorderPane.alignment="CENTER_LEFT">
+         <left>
+            <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </left>
+         <right>
+            <Label fx:id="valueLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
+         </right>
+      </BorderPane>
+   </top>
+   <center>
+      <HBox fx:id="parent" prefHeight="10.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="bar" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="6.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+</BorderPane>
