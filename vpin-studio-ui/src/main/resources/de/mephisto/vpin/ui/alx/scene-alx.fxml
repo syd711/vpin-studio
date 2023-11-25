@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.alx.AlxController">
-   <left>
+   <center>
       <HBox spacing="12.0" BorderPane.alignment="CENTER">
          <children>
                 <VBox styleClass="subpanel">
@@ -65,17 +65,15 @@
                   </ScrollPane>
                </children>
             </VBox>
+            <VBox fx:id="tileList" spacing="12.0">
+               <padding>
+                  <Insets right="3.0" />
+               </padding>
+            </VBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" />
          </BorderPane.margin>
       </HBox>
-   </left>
-   <center>
-      <VBox fx:id="tileList" spacing="12.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets left="12.0" right="3.0" />
-         </padding>
-      </VBox>
    </center>
 </BorderPane>
