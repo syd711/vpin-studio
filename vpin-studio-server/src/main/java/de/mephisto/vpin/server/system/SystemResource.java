@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

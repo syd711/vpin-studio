@@ -61,7 +61,7 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
   }
 
   @Override
-  public void finalizeModel() {
+  public void finalizeModel(ProgressResultModel progressResultModel) {
     client.getDiscordService().clearCache();
   }
 

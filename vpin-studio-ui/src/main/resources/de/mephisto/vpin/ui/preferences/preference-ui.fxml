@@ -126,6 +126,15 @@
                </VBox.margin>
             </CheckBox>
             <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, no additional confirmation dialog is shown on error dismissals." textFill="WHITE" />
+            <Button mnemonicParsing="false" onAction="#onHideReset" text="Restore Hidden Dialogs" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="24.0" top="12.0" />
+               </VBox.margin>
+            </Button>
+            <Label layoutX="34.0" layoutY="708.0" styleClass="checkbox-description" text="Resets the &quot;Do not show again&quot; flags for all dialogs." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

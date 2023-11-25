@@ -17,9 +17,20 @@ public class WinRegistry {
   /**
    * Try "SOFTWARE\\Freeware\\Visual PinMame"
    */
-  public static List<String> getKeys(@NonNull String path) {
+  public static List<String> getCurrentUserKeys(@NonNull String path) {
     try {
       return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, path));
+    } catch (Exception e) {
+      LOG.error("Failed to read registry folder " + path + ": " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+  /**
+   * Try "SOFTWARE\\Freeware\\Visual PinMame"
+   */
+  public static List<String> getClassesKeys(@NonNull String path) {
+    try {
+      return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_CLASSES_ROOT, path));
     } catch (Exception e) {
       LOG.error("Failed to read registry folder " + path + ": " + e.getMessage(), e);
     }
@@ -29,9 +40,18 @@ public class WinRegistry {
   /**
    * Trr SOFTWARE\\Freeware\\Visual PinMame\\" + s + "\\"
    */
-  public static Map<String, Object> getValues(@NonNull String path) {
+  public static Map<String, Object> getCurrentUserValues(@NonNull String path) {
     try {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, path);
+    } catch (Exception e) {
+      LOG.error("Failed to read registry key '" + path + "': " + e.getMessage());
+    }
+    return Collections.emptyMap();
+  }
+
+  public static Map<String, Object> getClassesValues(@NonNull String path) {
+    try {
+      return Advapi32Util.registryGetValues(WinReg.HKEY_CLASSES_ROOT, path);
     } catch (Exception e) {
       LOG.error("Failed to read registry key '" + path + "': " + e.getMessage());
     }

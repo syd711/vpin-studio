@@ -250,6 +250,15 @@ public class Game {
     return null;
   }
 
+  @JsonIgnore
+  @Nullable
+  public File getAlternateHighscoreTextFile() {
+    if (!StringUtils.isEmpty(this.getTableName())) {
+      return new File(emulator.getUserFolder(), this.getTableName() + ".txt");
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getPOVFile() {

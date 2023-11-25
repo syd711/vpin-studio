@@ -87,7 +87,7 @@ public class DiscordCompetitionService {
               Score oldScore = oldScores.get(changedPosition - 1);
               Score newScore = newScores.get(changedPosition - 1);
 
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), false);
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false);
               event.setEventReplay(true);
               highscoreService.triggerHighscoreChange(event);
             }

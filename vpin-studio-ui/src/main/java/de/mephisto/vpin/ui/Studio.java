@@ -5,14 +5,18 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.ui.launcher.LauncherController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -151,6 +155,15 @@ public class Studio extends Application {
 //      ResizeHelper.addResizeListener(stage);
       FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
       stage.setUserData(fxResizeHelper);
+
+      scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
+            Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
+            ke.consume();
+          }
+        }
+      });
 
       client.setErrorHandler(errorHandler);
 

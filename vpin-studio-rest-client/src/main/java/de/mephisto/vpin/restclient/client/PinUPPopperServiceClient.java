@@ -52,6 +52,11 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
   }
 
+  public GameEmulatorRepresentation getDefaultGameEmulator() {
+    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    return gameEmulators.get(0);
+  }
+
   public List<GameEmulatorRepresentation> getGameEmulators() {
     return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
   }

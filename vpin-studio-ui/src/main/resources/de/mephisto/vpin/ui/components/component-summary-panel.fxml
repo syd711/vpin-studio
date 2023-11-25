@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentSummaryController">
+   <children>
+      <Label styleClass="preference-subtitle" text="Summary" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="6.0" />
+         </VBox.margin>
+      </Label>
+      <GridPane vgap="3.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label styleClass="default-text" text="Installed Version:" />
+            <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Version:" GridPane.rowIndex="1" />
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <children>
+                  <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     </tooltip>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3">
+               <children>
+                  <Button fx:id="resetVersionBtn" mnemonicParsing="false" onAction="#onVersionReset" text="Reset Version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-outline" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     </tooltip>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets left="12.0" />
+               </GridPane.margin>
+            </HBox>
+            <Label fx:id="installedVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="latestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="latestVersionLabel1" layoutX="180.0" layoutY="49.0" text="-" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </GridPane>
+      <GridPane vgap="3.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="default-text" text="Last Modified:" GridPane.rowIndex="1" />
+            <Label styleClass="default-text" text="Last Check:" GridPane.rowIndex="2" />
+            <Label styleClass="default-text" text="Github URL:" GridPane.rowIndex="3" />
+            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="-5.0" />
+               </GridPane.margin>
+            </Hyperlink>
+            <Label styleClass="default-text" text="Folder:" />
+            <Label fx:id="folderLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets top="24.0" />
+         </VBox.margin>
+      </GridPane>
+   </children>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+</VBox>

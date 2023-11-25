@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class MamePreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MamePreferencesController.class);
 
@@ -49,9 +51,37 @@ public class MamePreferencesController implements Initializable {
   @FXML
   private CheckBox soundMode;
 
+  private void saveOptions() {
+    MameOptions options = new MameOptions();
+    options.setRom(MameOptions.DEFAULT_KEY);
+
+    options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());
+    options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
+    options.setUseSamples(useSamples.isSelected());
+    options.setUseSound(useSound.isSelected());
+    options.setCompactDisplay(compactDisplay.isSelected());
+    options.setDoubleDisplaySize(doubleDisplaySize.isSelected());
+    options.setUseSound(useSound.isSelected());
+    options.setShowDmd(showDmd.isSelected());
+    options.setUseExternalDmd(useExternalDmd.isSelected());
+    options.setCabinetMode(cabinetMode.isSelected());
+    options.setColorizeDmd(colorizeDmd.isSelected());
+    options.setSoundMode(soundMode.isSelected());
+
+    try {
+      client.getMameService().saveOptions(options);
+    } catch (Exception e) {
+      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+    }
+
+    PreferencesController.markDirty();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    MameOptions options = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    MameOptions options = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+
 
     skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
@@ -75,32 +105,5 @@ public class MamePreferencesController implements Initializable {
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     soundMode.setSelected(options.isColorizeDmd());
     soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-  }
-
-  private void saveOptions() {
-    MameOptions options = new MameOptions();
-    options.setRom(MameOptions.DEFAULT_KEY);
-
-    options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());
-    options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
-    options.setUseSamples(useSamples.isSelected());
-    options.setUseSound(useSound.isSelected());
-    options.setCompactDisplay(compactDisplay.isSelected());
-    options.setDoubleDisplaySize(doubleDisplaySize.isSelected());
-    options.setUseSound(useSound.isSelected());
-    options.setShowDmd(showDmd.isSelected());
-    options.setUseExternalDmd(useExternalDmd.isSelected());
-    options.setCabinetMode(cabinetMode.isSelected());
-    options.setColorizeDmd(colorizeDmd.isSelected());
-    options.setSoundMode(soundMode.isSelected());
-
-    try {
-      Studio.client.getMameService().saveOptions(options);
-    } catch (Exception e) {
-      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
-    }
-
-    PreferencesController.markDirty();
   }
 }

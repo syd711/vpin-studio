@@ -2,8 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.util.ini.IniSettings;
-import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -13,11 +12,13 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.ProgressDialogController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
@@ -62,10 +63,19 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
-  public static void openUpdateInfoDialog(String version) {
-    FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
-    stage.showAndWait();
+  public static void openUpdateInfoDialog(String version, boolean force) {
+    PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
+    List<String> csvValue = doNotShowAgainPref.getCSVValue();
+    if (force || !csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+      FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
+      Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+      stage.showAndWait();
+    }
+
+    if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+      csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO);
+      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
+    }
   }
 
   public static boolean openUpdateDialog() {
@@ -536,9 +546,8 @@ public class Dialogs {
   public static boolean openPopperRunningWarning(Stage stage) {
     boolean local = client.getSystemService().isLocal();
     if (!local) {
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-          "PinUP Popper is running. To perform this operation, you have to close it.",
-          "This will also KILL the current emulator process!", "Switch cabinet to maintenance mode");
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
+        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplied()) {
         client.getPinUPPopperService().terminatePopper();
         if (confirmationResult.isChecked()) {
@@ -549,9 +558,9 @@ public class Dialogs {
       return false;
     }
     else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper is running.", "Close PinUP Popper", "Cancel",
-          "PinUP Popper is running. To perform this operation, you have to close it.",
-          "This will also KILL the the current emulator process!");
+      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
+        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.",
+        null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getPinUPPopperService().terminatePopper();
         return true;

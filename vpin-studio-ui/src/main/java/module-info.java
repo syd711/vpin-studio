@@ -3,6 +3,7 @@ module de.mephisto.vpin.ui {
   requires javafx.fxml;
   requires javafx.web;
 
+  requires org.commonmark;
   requires org.controlsfx.controls;
   requires org.kordamp.ikonli.javafx;
   requires eu.hansolo.tilesfx;
@@ -40,6 +41,8 @@ module de.mephisto.vpin.ui {
   exports de.mephisto.vpin.ui.events;
   opens de.mephisto.vpin.ui.events to javafx.fxml;
   exports de.mephisto.vpin.ui.tables;
+  opens de.mephisto.vpin.ui.components to javafx.fxml;
+  exports de.mephisto.vpin.ui.components;
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
@@ -67,4 +70,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.editors to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.editors.dialogs;
   opens de.mephisto.vpin.ui.tables.editors.dialogs to javafx.fxml;
+  exports de.mephisto.vpin.ui.alx;
+  opens de.mephisto.vpin.ui.alx to javafx.fxml;
 }

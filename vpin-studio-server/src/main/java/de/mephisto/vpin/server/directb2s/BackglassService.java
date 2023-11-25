@@ -26,7 +26,6 @@ public class BackglassService {
   @Autowired
   private GameService gameService;
 
-
   @Autowired
   private PinUPConnector pinUPConnector;
 

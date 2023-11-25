@@ -39,7 +39,7 @@ public class MameService implements InitializingBean {
   public boolean clearCache() {
     long l = System.currentTimeMillis();
     mameCache.clear();
-    List<String> romFolders = WinRegistry.getKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     for (String romFolder : romFolders) {
       mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
     }
@@ -53,13 +53,13 @@ public class MameService implements InitializingBean {
       return mameCache.get(rom.toLowerCase());
     }
 
-    List<String> romFolders = WinRegistry.getKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     MameOptions options = new MameOptions();
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
 
     if (options.isExistInRegistry()) {
-      Map<String, Object> values = WinRegistry.getValues(MAME_REG_FOLDER_KEY + rom);
+      Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
 
       options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
       options.setUseSound(getBoolean(values, KEY_USE_SOUND));

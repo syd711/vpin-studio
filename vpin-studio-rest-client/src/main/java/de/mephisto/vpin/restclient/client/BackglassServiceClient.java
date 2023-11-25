@@ -48,7 +48,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public DirectB2ServerSettings saveServerSettings(int emuId, DirectB2ServerSettings settings) throws Exception {
     try {
-      return getRestClient().post(API + "directb2s/serversetting/" + emuId, settings, DirectB2ServerSettings.class);
+      return getRestClient().post(API + "directb2s/serversettings/" + emuId, settings, DirectB2ServerSettings.class);
     } catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;

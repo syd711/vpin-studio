@@ -203,6 +203,23 @@
     -fx-cursor: hand;
 }
 
+.ghost-button-small {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-small:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 /**
  * Window Toolbar
  */
@@ -265,6 +282,43 @@
     -fx-cursor: hand;
 }
 
+
+
+/**
+ * Installer Button
+ */
+.installer-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-color: #FF9933;
+    -fx-border-radius: 3px;
+    -fx-text-fill: #DDDDDD;
+}
+
+.installer-button:hover {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF0033;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
+
+.installer-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #FF9933;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+    -fx-cursor: hand;
+}
 
 /**
  * Common Buttons
@@ -339,6 +393,15 @@
     -fx-background-radius: 6 6 6 6;
     -fx-border-radius: 6 6 6 6;
     -fx-background-color: #2a2a2a;
+}
+
+.subpanel-tabbed {
+    -fx-background-radius: 0 0 6 6;
+    -fx-border-radius: 0 0 6 6;
+    -fx-background-color: #2a2a2a;
+   /* -fx-border-style: solid;
+    -fx-border-color: -fx-base-6;*/
+    -fx-border-width: 0 2 2 2;
 }
 
 /**
@@ -529,7 +592,7 @@
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-text-background-color: #FFFFFF;
-    -fx-border-style: solid solid solid solid;
+    /*-fx-border-style: solid solid solid solid;*/
     /*-fx-border-color: -fx-base-5;
     -fx-border-width: 1;*/
 }
@@ -537,12 +600,13 @@
 .list-view .list-cell:odd {
     -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-background-color: #414141;
+    -fx-background-color: #2a2a2a;
 }
+
 .list-view .list-cell:even {
     -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-background-color: #494949;
+    -fx-background-color: #2a2a2a;
 }
 
 .list-view .list-cell:selected {
@@ -555,6 +619,39 @@
     -fx-font-size: 14px;
     -fx-text-fill: #7381fa;
 }
+
+.media-list .list-view {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: #FFFFFF;
+    /*-fx-border-style: solid solid solid solid;*/
+    /*-fx-border-color: -fx-base-5;
+    -fx-border-width: 1;*/
+}
+
+.media-list .list-view .list-cell:selected {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.media-list .list-view .list-cell:hover {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7381fa;
+}
+
+
+.media-list .list-view .list-cell:odd {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: #414141;
+}
+.media-list .list-view .list-cell:even {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-background-color: #494949;
+}
+
 
 /**
  * Accordion & Titled Pane
@@ -799,4 +896,25 @@
 
 .green {
     -fx-background-color: #338800;
+}
+
+.orange-label {
+    -fx-text-fill: #FF9933;
+    -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+.green-label {
+    -fx-text-fill: #338800;
+    -fx-font-weight : bold;
+    -fx-font-size: 14px;
+}
+
+.text-area {
+    -fx-font-size: 14px;
+}
+
+.text-area .content {
+    -fx-background-color: black;
+    -fx-font-size: 14px;
 }

@@ -22,6 +22,13 @@ jobs:
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
 
+      - name: Checkout github-project-downloader
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/github-project-downloader
+          path: ./github-project-downloader
+          token: ${{ secrets.ACCESS_TOKEN }}
+
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
@@ -29,12 +36,16 @@ jobs:
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Setup Corretto JDK
+      - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'
+          distribution: 'zulu'
           java-version: '11'
           cache: 'maven'
+
+      - name: Run maven build for github-project-downloader
+        working-directory: ./github-project-downloader
+        run: mvn clean install
 
       - name: Run maven build for Assets API
         working-directory: ./vpin-connector-assets

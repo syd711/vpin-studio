@@ -441,7 +441,7 @@ public class HighscoreService implements InitializingBean {
 
             if (!scoreFilter.isScoreFiltered(newScore)) {
               //finally, fire the update event to notify all listeners
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, oldScores.size(), initialScore);
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore);
               triggerHighscoreChange(event);
             }
           }

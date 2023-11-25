@@ -44,6 +44,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   @FXML
   private HBox toolbarHBox;
 
+  @FXML
+  private Button preferencesBtn;
+
   private String newVersion;
 
   // Add a public no-args constructor
@@ -55,7 +58,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     boolean maintenanceMode = EventManager.getInstance().isMaintenanceMode();
     if (!maintenanceMode) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Maintenance Mode", "Switch cabinet to maintenance mode?",
-          "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
+        "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         return;
       }
@@ -89,7 +92,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();
-    NavigationController.refreshAvatar();
+//    NavigationController.refreshAvatar();
     Studio.loadLauncher(new Stage());
   }
 
@@ -144,7 +147,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
         }
       }).start();
     }
-
 
     JobPoller.getInstance().setPolling();
 

@@ -18,14 +18,21 @@ public class HighscoreChangeEvent {
 
   private boolean initialScore;
 
+  private String newRaw;
+
   private boolean eventReplay;
 
-  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, int scoreCount, boolean initialScore) {
+  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, @NonNull String newRaw, int scoreCount, boolean initialScore) {
     this.game = game;
     this.scoreCount = scoreCount;
     this.oldScore = oldScore;
     this.newScore = newScore;
+    this.newRaw = newRaw;
     this.initialScore = initialScore;
+  }
+
+  public String getNewRaw() {
+    return newRaw;
   }
 
   public boolean isEventReplay() {

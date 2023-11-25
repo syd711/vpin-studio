@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
+import de.mephisto.vpin.commons.fx.widgets.WidgetExternalPageController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -35,6 +36,9 @@ public class OverlayController implements Initializable {
   @FXML
   private WidgetPlayerRankController playersController; //fxml magic! Not unused -> id + "Controller"
 
+  @FXML
+  private WidgetExternalPageController externalPageController; //fxml magic! Not unused -> id + "Controller"
+
   // Add a public no-args constructor
   public OverlayController() {
   }
@@ -68,6 +72,10 @@ public class OverlayController implements Initializable {
 
     if (latestScoresController != null) {
       latestScoresController.refresh();
+    }
+
+    if (externalPageController != null) {
+      externalPageController.refresh();
     }
 
     if (playersController != null) {

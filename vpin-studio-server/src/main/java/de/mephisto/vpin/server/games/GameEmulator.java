@@ -17,6 +17,7 @@ public class GameEmulator {
 
   private final File installationFolder;
   private final File tablesFolder;
+  private File backglassServerDirectory;
   private final File gameMediaFolder;
   private final File mameFolder;
   private final File userFolder;
@@ -52,6 +53,8 @@ public class GameEmulator {
 
     this.installationFolder = new File(emulator.getEmuLaunchDir());
     this.tablesFolder = new File(emulator.getDirGames());
+    this.backglassServerDirectory = new File(emulator.getDirGames());
+
     this.gameMediaFolder = new File(emulator.getDirMedia());
     this.musicFolder = new File(installationFolder, "Music");
 
@@ -138,6 +141,16 @@ public class GameEmulator {
       exeFiles = new String[]{};
     }
     return Arrays.asList(exeFiles);
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getBackglassServerDirectory() {
+    return backglassServerDirectory;
+  }
+
+  public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
+    this.backglassServerDirectory = backglassServerDirectory;
   }
 
   @NonNull

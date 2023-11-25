@@ -1,27 +1,29 @@
 package de.mephisto.vpin.server.dmd;
 
+import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.altcolor.AltColorUtil;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.io.FileReader;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
 
 /**
  *
@@ -30,10 +32,10 @@ import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
 public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
 
-  public boolean isDMDPackageAvailable(@NonNull Game game) {
-    DMDPackage dmdPackage = getDMDPackage(game);
-    return dmdPackage != null && !dmdPackage.getFiles().isEmpty();
-  }
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  private Map<Integer, ComponentSummary> cache = new HashMap<>();
 
   public boolean delete(@NonNull Game game) {
     try {
@@ -91,6 +93,19 @@ public class DMDService implements InitializingBean {
   public JobExecutionResult installDMDPackage(Game game, File archive) {
     DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
     return JobExecutionResultFactory.empty();
+  }
+
+  public ComponentSummary getFreezySummary(int emulatorId) {
+    if (!cache.containsKey(emulatorId)) {
+      GameEmulator defaultGameEmulator = pinUPConnector.getGameEmulator(emulatorId);
+      cache.put(emulatorId, FreezySummarizer.summarizeFreezy(defaultGameEmulator));
+    }
+    return cache.get(emulatorId);
+  }
+
+  public boolean clearCache() {
+    this.cache.clear();
+    return true;
   }
 
   @Override

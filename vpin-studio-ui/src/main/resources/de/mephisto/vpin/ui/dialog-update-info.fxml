@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.web.HTMLEditor?>
 
 <BorderPane styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.UpdateInfoDialog">
    <top>
@@ -13,24 +12,16 @@
    <center>
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <top>
-            <BorderPane BorderPane.alignment="CENTER">
+            <BorderPane fx:id="center" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
-               <center>
-                  <HTMLEditor fx:id="html" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" BorderPane.alignment="CENTER" />
-               </center>
             </BorderPane>
          </top>
          <bottom>
-            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-                     <HBox.margin>
-                        <Insets right="12.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="updateBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpdateClick" styleClass="submit-button" text="Install Update">
+                  <Button fx:id="updateBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

@@ -8,8 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*********************************************************************************************************************
  * Preferences
@@ -21,13 +20,28 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+  private List<PreferenceChangeListener> listeners = new ArrayList<>();
+
+  public void addListener(PreferenceChangeListener listener) {
+    this.listeners.add(listener);
+  }
+
   public PreferenceEntryRepresentation getPreference(String key) {
     return getRestClient().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
   public boolean setPreferences(Map<String, Object> values) {
     try {
-      return getRestClient().put(API + "preferences", values);
+      boolean result = getRestClient().put(API + "preferences", values);
+      if (result) {
+        Set<Map.Entry<String, Object>> entries = values.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+          listeners.stream().forEach(listener -> {
+            listener.preferencesChanged(entry.getKey(), entry.getValue());
+          });
+        }
+      }
+      return result;
     } catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }

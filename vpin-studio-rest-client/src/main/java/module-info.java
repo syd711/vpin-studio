@@ -9,6 +9,7 @@ open module de.mephisto.vpin.restclient {
   requires de.mephisto.vpin.connectors.assets;
 
   exports de.mephisto.vpin.restclient;
+  exports de.mephisto.vpin.restclient.alx;
   exports de.mephisto.vpin.restclient.representations;
   exports de.mephisto.vpin.restclient.discord;
   exports de.mephisto.vpin.restclient.util;
@@ -34,4 +35,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.util.ini;
   exports de.mephisto.vpin.restclient.util.properties;
   exports de.mephisto.vpin.restclient.dmd;
+  exports de.mephisto.vpin.restclient.components;
 }

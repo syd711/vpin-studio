@@ -26,11 +26,15 @@ public class Preferences {
 
   private String systemName;
 
+  private String systemPreset;
+
   private String resetKey;
 
   private String overlayKey;
 
   private String overlayDesign;
+
+  private String overlayPageUrl;
 
   private String showOverlayOnStartup;
 
@@ -61,6 +65,9 @@ public class Preferences {
   @Column(length = 1024)
   private String uiSettings;
 
+  @Column(length = 1024)
+  private String doNotShowAgains;
+
   private int idleTimeout;
 
   @Column(name = "highscoreFilterEnabled", nullable = false, columnDefinition = "boolean default false")
@@ -83,6 +90,30 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getOverlayPageUrl() {
+    return overlayPageUrl;
+  }
+
+  public void setOverlayPageUrl(String overlayPageUrl) {
+    this.overlayPageUrl = overlayPageUrl;
+  }
+
+  public String getDoNotShowAgains() {
+    return doNotShowAgains;
+  }
+
+  public void setDoNotShowAgains(String doNotShowAgains) {
+    this.doNotShowAgains = doNotShowAgains;
+  }
+
+  public String getSystemPreset() {
+    return systemPreset;
+  }
+
+  public void setSystemPreset(String systemPreset) {
+    this.systemPreset = systemPreset;
+  }
 
   public String getUiSettings() {
     return uiSettings;

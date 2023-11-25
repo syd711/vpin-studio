@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class PreferencesController implements Initializable {
+public class PreferencesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
   // Add a public no-args constructor
@@ -39,6 +40,12 @@ public class PreferencesController implements Initializable {
 
   @FXML
   private Button avatarBtn;
+
+  @FXML
+  private Button backglassBtn;
+
+  @FXML
+  private Button mameBtn;
 
   @FXML
   private BorderPane preferencesMain;
@@ -200,11 +207,6 @@ public class PreferencesController implements Initializable {
   }
 
   @FXML
-  private void onServiceOptions(ActionEvent event) throws IOException {
-    load("preference-service-options.fxml", event);
-  }
-
-  @FXML
   private void onDiscordBot(ActionEvent event) throws IOException {
     load("preference-discord_bot.fxml", event);
   }
@@ -212,11 +214,6 @@ public class PreferencesController implements Initializable {
   @FXML
   private void onDiscordBotFaq(ActionEvent event) throws IOException {
     load("preference-discord_faq.fxml", event);
-  }
-
-  @FXML
-  private void onDiscordWebhook(ActionEvent event) throws IOException {
-    load("preference-discord_webhook.fxml", event);
   }
 
   public static void open(String preferenceType) {
@@ -287,5 +284,7 @@ public class PreferencesController implements Initializable {
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
     hostLabel.setText(System.getProperty("os.name"));
+
+    EventManager.getInstance().addListener(this);
   }
 }

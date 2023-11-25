@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -40,6 +41,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final ArchiveServiceClient archiveServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
+  private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final GamesServiceClient gamesServiceClient;
@@ -62,15 +64,18 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
+  private final AlxServiceClient alxServiceClient;
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host);
 
+    this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.archiveServiceClient = new ArchiveServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
+    this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
@@ -95,8 +100,25 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
   }
 
+  public String getSystemPreset() {
+    PreferenceEntryRepresentation preference = getPreference(PreferenceNames.SYSTEM_PRESET);
+    String preset = preference.getValue();
+    if (preset == null) {
+      preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
+    }
+    return preset;
+  }
+
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
     restClient.setErrorHandler(errorHandler);
+  }
+
+  public AlxServiceClient getAlxService() {
+    return alxServiceClient;
+  }
+
+  public ComponentServiceClient getComponentService() {
+    return componentServiceClient;
   }
 
   public DMDServiceClient getDmdService() {

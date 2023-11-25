@@ -19,7 +19,7 @@
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="TABLE MANAGEMENT" textFill="WHITE" />
+            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Visual Pinball Backup Manager">
                <VBox.margin>
                   <Insets />

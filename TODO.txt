@@ -1,1 +1,4 @@
--
+- add screen checkboxes to media manager
+- fix duplicate message emitting
+- mame pac validator
+- pac validator

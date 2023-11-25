@@ -91,7 +91,11 @@ class HighscoreResolver {
 
   private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
-    if (hsFile != null && hsFile.exists()) {
+    if ((hsFile == null || !hsFile.exists())) {
+      hsFile = game.getAlternateHighscoreTextFile();
+    }
+
+    if(hsFile != null && hsFile.exists()) {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
