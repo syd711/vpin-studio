@@ -59,6 +59,10 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, ComponentType next) {
     try {
+      if (progressResultModel.isCancelled()) {
+        return;
+      }
+
       ComponentActionLogRepresentation check = client.getComponentService().check(next, "-latest-", forceDownload);
       progressResultModel.getResults().add(check.getStatus());
       EventManager.getInstance().notify3rdPartyVersionUpdate(next);
