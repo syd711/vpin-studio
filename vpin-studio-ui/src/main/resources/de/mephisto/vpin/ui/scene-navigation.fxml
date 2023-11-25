@@ -52,6 +52,16 @@
                         </HBox>
                      </children>
                   </StackPane>
+                  <VBox alignment="CENTER" onMousePressed="#onAlxClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-chart-bar" iconSize="28" />
+                        <Label text="Analytics" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
                   <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
@@ -82,15 +92,10 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
+                  <VBox fx:id="dashboardBtn1" alignment="CENTER" layoutX="28.0" layoutY="186.0" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
-                        <Label text="Highscore" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="30.0" layoutY="34.0" text="Cards" textFill="WHITE">
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
+                        <Label text="Dashboard" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

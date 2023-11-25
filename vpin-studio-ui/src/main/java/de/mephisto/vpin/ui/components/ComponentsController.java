@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.alx.AlxFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -166,9 +167,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
     });
 
     updateForTabSelection(0);
-
-//    TileFactory.createAlxTiles(alx1);
-    AlxFactory.createStats(alx1);
   }
 
   private void loadTab(Tab tab, String file) {
@@ -183,6 +181,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @Override
   public void onViewActivated() {
+    updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+
     if (!initialized) {
       ComponentChecksProgressModel model = new ComponentChecksProgressModel(false);
       Dialogs.createProgressDialog(model);

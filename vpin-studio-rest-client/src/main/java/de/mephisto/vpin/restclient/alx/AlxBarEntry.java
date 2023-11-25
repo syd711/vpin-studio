@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient.components;
+package de.mephisto.vpin.restclient.alx;
 
 public class AlxBarEntry {
   private final String title;

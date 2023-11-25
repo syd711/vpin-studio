@@ -1,6 +1,6 @@
-package de.mephisto.vpin.ui.components;
+package de.mephisto.vpin.ui.alx;
 
-import de.mephisto.vpin.restclient.components.AlxBarEntry;
+import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,7 +31,11 @@ public class AlxBarEntryController implements Initializable {
     bar.setStyle("-fx-background-color: " + entry.getColor() + ";");
 
     int percentage = entry.getPercentage();
-    double width = 570 * percentage / 100;
+    double width = 430 * percentage / 100;
+    if(width < 1) {
+      width = 1;
+    }
+
     bar.setPrefWidth(width);
   }
 

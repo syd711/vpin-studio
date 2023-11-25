@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.AlxBarEntryController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.alx.AlxBarEntryController">
    <top>
       <BorderPane BorderPane.alignment="CENTER_LEFT">
          <left>
@@ -25,7 +25,7 @@
       </BorderPane>
    </top>
    <center>
-      <HBox fx:id="parent" prefHeight="10.0" prefWidth="560.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="parent" prefHeight="10.0" prefWidth="430.0" BorderPane.alignment="CENTER">
          <children>
             <HBox fx:id="bar" />
          </children>

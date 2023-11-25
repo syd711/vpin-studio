@@ -9,6 +9,15 @@ public class TableAlxEntry {
   private int numberOfPlays;
   private int timePlayedSecs;
   private String displayName;
+  private int scores;
+
+  public int getScores() {
+    return scores;
+  }
+
+  public void setScores(int scores) {
+    this.scores = scores;
+  }
 
   public String getDisplayName() {
     return displayName;
