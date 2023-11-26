@@ -15,6 +15,8 @@ The System Manager uses the latest Github releases from various projects and com
 Note that there is always the possibility that the released artifacts of these projects may change in an unexpected way.
 
 
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/alx/overview.png?raw=true" width="800" />
+
 ### Other Changes
 
 **Navigation**
