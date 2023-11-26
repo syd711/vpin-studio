@@ -63,6 +63,8 @@ Added a new "Analytics" section which uses the collected data from PinUP Popper 
 - Added support for all new Popper 1.5 fields (including WIP status).
 - Reorganized fields into sections.
 
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/tables/table-settings.png" width="400" />
+
 **Table Management: DMD**
 
 - Added DMD section for uploading Flex- or UltraDMD packages.
