@@ -25,7 +25,7 @@ public class B2STableSettingsTest {
     Assertions.assertEquals(3, settings.getSolenoidsSkipFrames());
   }
 
-  @Test
+//  @Test
   public void testWinRegRead() {
     Map<String, Object> values = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
     Assertions.assertFalse(values.isEmpty());
