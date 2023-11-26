@@ -296,7 +296,7 @@ public class TablesSidebarPopperController implements Initializable {
       altRunMode.setText(StringUtils.isEmpty(tableDetails.getAltRunMode()) ? "-" : tableDetails.getAltRunMode());
       url.setText(StringUtils.isEmpty(tableDetails.getUrl()) ? "-" : tableDetails.getUrl());
       designedBy.setText(StringUtils.isEmpty(tableDetails.getDesignedBy()) ? "-" : tableDetails.getDesignedBy());
-      notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "-" : tableDetails.getNotes());
+      notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "" : tableDetails.getNotes());
       custom2.setText(StringUtils.isEmpty(tableDetails.getCustom2()) ? "-" : tableDetails.getCustom2());
       custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
@@ -316,10 +316,10 @@ public class TablesSidebarPopperController implements Initializable {
         webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
         webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
         isMod.setText(String.valueOf(tableDetails.isMod()));
-        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "-" : tableDetails.getgDetails());
-        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "-" : tableDetails.getgNotes());
-        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "-" : tableDetails.getgLog());
-        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "-" : tableDetails.getgPlayLog());
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "" : tableDetails.getgDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "" : tableDetails.getgNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "" : tableDetails.getgLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "" : tableDetails.getgPlayLog());
       }
     }
     else {

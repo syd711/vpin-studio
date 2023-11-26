@@ -22,7 +22,7 @@ public class VpxComponent implements ComponentFacade {
   @NotNull
   @Override
   public String[] getDiffList() {
-    return new String[]{".vbs", ".dll"};
+    return new String[]{".vbs", ".dll", ".exe"};
   }
 
   @NotNull

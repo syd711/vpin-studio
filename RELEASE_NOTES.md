@@ -32,7 +32,7 @@ Note that there is always the possibility that the released artifacts of these p
 - Added reset button for "Do not show again" dialogs.
 - Added configuration parameters for overlay widget "External Page".
 
-<img src="https://github.com/syd711/vpin-studio/blob/update-installer/documentation/releases/2.3.0/ui-prefs.png?raw=true" width="400" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/ui-prefs.png?raw=true" width="400" />
 
 
 **Table Management: Overview**
