@@ -92,16 +92,6 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox fx:id="dashboardBtn1" alignment="CENTER" layoutX="28.0" layoutY="186.0" onMousePressed="#onDashboardClick" styleClass="navigation-button">
-                     <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
-                        <Label text="Dashboard" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
               </children>
                <BorderPane.margin>
                   <Insets top="24.0" />
