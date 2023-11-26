@@ -56,6 +56,7 @@ public class DiscordCompetitionService {
     if (competition != null) {
       if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
         Game game = gameService.getGame(competition.getGameId());
+        highscoreService.scanScore(game);
 
         LOG.info("Synchronizing " + competition);
         Date startDate = competition.getCreatedAt();

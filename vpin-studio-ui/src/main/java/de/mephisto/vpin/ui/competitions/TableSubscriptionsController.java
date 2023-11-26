@@ -273,7 +273,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
         tableView.setItems(data);
         tableView.refresh();
-        if (selection != null) {
+        if (selection != null && data.contains(selection)) {
           tableView.getSelectionModel().select(selection);
         }
         else if (!data.isEmpty()) {
@@ -388,7 +388,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       return new SimpleObjectProperty(hBox);
     });
 
-    tableView.setPlaceholder(new Label("            Try table subscriptions!\n" +
+    tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
         "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));

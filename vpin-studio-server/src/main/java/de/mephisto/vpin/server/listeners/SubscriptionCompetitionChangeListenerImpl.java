@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -73,7 +74,15 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
           long serverId = competition.getDiscordServerId();
 
           if (isOwner) {
-            DiscordChannel subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
+            //check if the channel already exists, then simply re-join
+            DiscordChannel subscriptionChannel = discordService.getSubscriptionChannel(competition, game);
+            if(subscriptionChannel == null) {
+              subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
+            }
+            else {
+              joinCompetition(competition, bot);
+              return;
+            }
 
             LOG.info("Created text channel " + subscriptionChannel);
             if (subscriptionChannel != null) {
@@ -109,10 +118,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
             }
           }
           else {
-            //the bot is not the owner, so it has joined the subscription
-            long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
-            discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
-            LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+            joinCompetition(competition, bot);
           }
         }
       } catch (Exception e) {
@@ -167,6 +173,13 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         }
       }
     }
+  }
+
+  private void joinCompetition(@NotNull Competition competition, DiscordMember bot) {
+    //the bot is not the owner, so it has joined the subscription OR re-joined it
+    long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
+    discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
+    LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
   }
 
   @Override

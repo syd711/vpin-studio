@@ -302,4 +302,5 @@ public class CompetitionRepresentation {
   public String toString() {
     return this.name;
   }
+
 }

@@ -144,12 +144,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
-          VIEW_CHANNEL,
-          MESSAGE_SEND,
-          MESSAGE_MANAGE,
-          MESSAGE_EMBED_LINKS,
-          MESSAGE_ATTACH_FILES,
-          MESSAGE_HISTORY);
+        VIEW_CHANNEL,
+        MESSAGE_SEND,
+        MESSAGE_MANAGE,
+        MESSAGE_EMBED_LINKS,
+        MESSAGE_ATTACH_FILES,
+        MESSAGE_HISTORY);
     }
     return false;
   }
@@ -159,12 +159,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
 //          MANAGE_CHANNEL,
-          VIEW_CHANNEL,
-          MESSAGE_SEND,
-          MESSAGE_MANAGE,
-          MESSAGE_EMBED_LINKS,
-          MESSAGE_ATTACH_FILES,
-          MESSAGE_HISTORY);
+        VIEW_CHANNEL,
+        MESSAGE_SEND,
+        MESSAGE_MANAGE,
+        MESSAGE_EMBED_LINKS,
+        MESSAGE_ATTACH_FILES,
+        MESSAGE_HISTORY);
     }
     return false;
   }
@@ -174,12 +174,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, memberId,
 //          MANAGE_CHANNEL,
-          VIEW_CHANNEL,
-          MESSAGE_SEND,
-          MESSAGE_MANAGE,
-          MESSAGE_EMBED_LINKS,
-          MESSAGE_ATTACH_FILES,
-          MESSAGE_HISTORY);
+        VIEW_CHANNEL,
+        MESSAGE_SEND,
+        MESSAGE_MANAGE,
+        MESSAGE_EMBED_LINKS,
+        MESSAGE_ATTACH_FILES,
+        MESSAGE_HISTORY);
     }
     return false;
   }
@@ -549,7 +549,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     for (DiscordMessage pinnedMessage : pinnedMessages) {
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)
-          || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
+        || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
         LOG.info("Found finished or canceled message indicator for competition " + uuid);
         return false;
       }
@@ -596,24 +596,36 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return Collections.emptyList();
   }
 
-  public DiscordChannel createSubscriptionChannel(Competition competition, Game game) {
+  @Nullable
+  public DiscordChannel getSubscriptionChannel(@NonNull Competition competition, @NonNull Game game) {
     if (this.discordClient != null) {
       long serverId = competition.getDiscordServerId();
       List<DiscordTextChannel> channels = this.discordClient.getChannels(serverId);
       for (DiscordTextChannel c : channels) {
         String name = c.getName();
         if (name.endsWith("§" + game.getRom())) {
-          LOG.warn("Text channel \"" + name + "\" already exists for table \"" + game.getGameDisplayName() + "\"");
           return toChannel(c);
         }
       }
+    }
+    return null;
+  }
 
-      String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
-      String name = competition.getName() + "§" + game.getRom();
-      String topic = "Channel for highscores of table \"" + game.getGameDisplayName() + "\"";
-      DiscordTextChannel c = this.discordClient.createChannel(serverId, Long.parseLong(categoryId), name, topic);
+  @Nullable
+  public DiscordChannel createSubscriptionChannel(@NonNull Competition competition, @NonNull Game game) {
+    if (this.discordClient != null) {
+      long serverId = competition.getDiscordServerId();
+      DiscordChannel subsChannel = getSubscriptionChannel(competition, game);
+      if (subsChannel == null) {
+        String categoryId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CATEGORY_ID);
+        String name = competition.getName() + "§" + game.getRom();
+        String topic = "Channel for highscores of table \"" + game.getGameDisplayName() + "\"";
+        DiscordTextChannel c = this.discordClient.createChannel(serverId, Long.parseLong(categoryId), name, topic);
 
-      return toChannel(c);
+        subsChannel = toChannel(c);
+      }
+
+      return subsChannel;
     }
     return null;
   }
