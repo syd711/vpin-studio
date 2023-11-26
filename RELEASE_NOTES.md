@@ -7,15 +7,20 @@
 
 Added additional fields to the "PinUP Popper Table Settings" section. You can now configure all new PinUP Popper metadata fields there. The new fields are only shown if you already use version 1.5.
 
-**Added New "System Manager"**
+**Added New "System Manager" Section**
 
 Added main navigation item "System Manager". You can use the System Manager to check if your VPin software stack is up-to-date.
 The integrated installation simulator allows to to check if you want to to use the support automatic update.
 The System Manager uses the latest Github releases from various projects and compares these against your local files.
 Note that there is always the possibility that the released artifacts of these projects may change in an unexpected way.
 
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/alx/overview.png" width="800" />
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/alx/overview.png?raw=true" width="800" />
+**Added New "Analytics" Section**
+
+Added a new "Analytics" section which uses the collected data from PinUP Popper and VPin Studio Server to show some graphs.
+
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/alx/alx.png?raw=true" width="800" />
 
 ### Other Changes
 
