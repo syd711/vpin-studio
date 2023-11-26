@@ -69,6 +69,8 @@ Added a new "Analytics" section which uses the collected data from PinUP Popper 
 
 - Added DMD section for uploading Flex- or UltraDMD packages.
 
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/tables/dmd-section.png" width="400" />
+
 **Table Management: ALT Color**
 
 - Moved FlexDMD button to DMD section.
