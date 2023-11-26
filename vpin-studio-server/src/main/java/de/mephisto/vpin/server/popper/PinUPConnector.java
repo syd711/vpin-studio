@@ -93,10 +93,11 @@ public class PinUPConnector implements InitializingBean {
     GameEmulator defaultEmulator = getDefaultGameEmulator();
     if (defaultEmulator != null) {
       Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
-      if (!pathEntry.isEmpty()) {
+      if (pathEntry.isEmpty()) {
         File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
         File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
         if (!exeFile.exists()) {
+          //search recursively for the server exe file
           Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
           boolean found = false;
           while (fileIterator.hasNext()) {
