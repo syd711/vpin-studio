@@ -23,9 +23,14 @@ Note that there is always the possibility that the released artifacts of these p
 
 - Switched to MUI icons.
 
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/mui.png?raw=true" width="50" />
+
 **Overlay**
 
 - Added new overlay style that can embed an external page. This way you can embed your iscored.info dashboard.
+
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/preferences/overlay-designs.png" width="600" />
+
 
 **Preferences**
 
@@ -34,13 +39,16 @@ Note that there is always the possibility that the released artifacts of these p
 - Added reset button for "Do not show again" dialogs.
 - Added configuration parameters for overlay widget "External Page".
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/ui-prefs.png?raw=true" width="400" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/ui-prefs.png?raw=true" width="200" />
 
 
 **Table Management: Overview**
 
 - Added "VPS" toolbar button for a quicker access to missing resources.
 - Added "Edit Popper Table Data" toolbar button for a quicker access to the table data.
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/vps.png?raw=true" width="200" />
+
 
 **Table Management: PinUP Popper Table Settings**
 
