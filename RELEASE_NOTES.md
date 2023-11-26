@@ -70,4 +70,5 @@ Note that there is always the possibility that the released artifacts of these p
 - Fixed the "PinUP Popper Custom Preferences" section.
 - Improved text file highscore parsing: If the highscore text filename is not set, the resolved alternativ ROM name/tablename is used as a fallback (E.g. the Alt. ROM name has value \"Apache-playmatic1975\", the server will search also the highscore file **User\Apache-playmatic1975.txt**. 
 - Fixed error in table scanning that led to unnecessary deep scans of table files (parsing with binaries). So the overall table scan is faster now.
-- Fixed table's table sorting - wuhu!
+- Added fallback for ROM names: In case no ROM has been resolved, but a highscore file has been found (e.g. EM tables like "2 in 1"), the filename is used as ROM name. While this is technically not correct there are so many other occasions where the ROM name is used for something else that it felt safer to have some value than none. 
+- Fixed table overview's table sorting - wuhu!

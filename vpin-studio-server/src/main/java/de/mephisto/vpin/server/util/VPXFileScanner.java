@@ -53,7 +53,7 @@ public class VPXFileScanner {
     String l = null;
     String script = VPXUtil.readScript(gameFile);
 
-    List<String> allLines= new ArrayList<>();
+    List<String> allLines = new ArrayList<>();
     script = script.replaceAll("\r", "\n");
 
     allLines.addAll(Arrays.asList(script.split("\n")));
@@ -81,8 +81,12 @@ public class VPXFileScanner {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
     }
 
-    if(!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
+    if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
       result.setHsFileName(result.getSomeTextFile());
+    }
+
+    if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getHsFileName())) {
+      result.setRom(FilenameUtils.getBaseName(result.getHsFileName()));
     }
 
     return result;
