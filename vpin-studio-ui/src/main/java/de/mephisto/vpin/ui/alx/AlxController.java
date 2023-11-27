@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.alx;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import javafx.application.Platform;
@@ -61,6 +63,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createAvgWeekTimeTile(tileList, entries, alxSummary.getStartDate());
     } catch (Exception e) {
       LOG.error("Failed to initialize dashboard: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit an issue on Discord for this.");
     }
 
     NavigationController.setBreadCrumb(Arrays.asList("Analytics"));

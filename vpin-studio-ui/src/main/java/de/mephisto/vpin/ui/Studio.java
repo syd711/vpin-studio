@@ -134,6 +134,10 @@ public class Studio extends Application {
         }
       }
 
+      if (screenBounds.getWidth() > 2460 && screenBounds.getWidth() < 2600) {
+        width = width + 200;
+      }
+
       if (screenBounds.getHeight() > 1280) {
         height = 1300;
       }

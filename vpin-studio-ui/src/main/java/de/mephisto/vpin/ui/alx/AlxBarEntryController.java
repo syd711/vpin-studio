@@ -25,18 +25,24 @@ public class AlxBarEntryController implements Initializable {
   private HBox parent;
 
   public void refresh(@NonNull AlxBarEntry entry) {
-    titleLabel.setText(entry.getTitle());
+    String title = entry.getTitle();
+    if(title.length() > 40) {
+      title = title.substring(0, 39) + "...";
+    }
+
+    titleLabel.setText(title);
     valueLabel.setText(entry.getValue());
+
 
     bar.setStyle("-fx-background-color: " + entry.getColor() + ";");
 
     int percentage = entry.getPercentage();
-    double width = 430 * percentage / 100;
-    if(width < 1) {
-      width = 1;
+    double barWidth = 400 * percentage / 100;
+    if(barWidth < 1) {
+      barWidth = 1;
     }
 
-    bar.setPrefWidth(width);
+    bar.setPrefWidth(barWidth);
   }
 
   @Override

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.alx;
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXMLLoader;

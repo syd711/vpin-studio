@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,10 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
 
       ComponentActionLogRepresentation check = client.getComponentService().check(next, "-latest-", forceDownload);
       progressResultModel.getResults().add(check.getStatus());
+      if (!StringUtils.isEmpty(check.getStatus())) {
+        LOG.error("Failed to check component " + next + ": " + check.getStatus());
+      }
+
       EventManager.getInstance().notify3rdPartyVersionUpdate(next);
     } catch (Exception e) {
       progressResultModel.getResults().add(e.getMessage());

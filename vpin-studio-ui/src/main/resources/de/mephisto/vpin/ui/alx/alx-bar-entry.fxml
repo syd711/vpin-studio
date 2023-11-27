@@ -4,28 +4,36 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.alx.AlxBarEntryController">
    <top>
-      <BorderPane BorderPane.alignment="CENTER_LEFT">
-         <left>
-            <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-         </left>
-         <right>
-            <Label fx:id="valueLabel" text="Label" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font></Label>
-         </right>
-      </BorderPane>
+      <StackPane BorderPane.alignment="CENTER_LEFT">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxWidth="320.0" StackPane.alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="titleLabel" contentDisplay="RIGHT" maxWidth="340.0" text="-" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" styleClass="base-component">
+               <children>
+                  <Label fx:id="valueLabel" text="Label" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
    </top>
    <center>
-      <HBox fx:id="parent" prefHeight="10.0" prefWidth="430.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="parent" minWidth="400.0" prefHeight="10.0" prefWidth="400.0" BorderPane.alignment="CENTER">
          <children>
             <HBox fx:id="bar" />
          </children>
