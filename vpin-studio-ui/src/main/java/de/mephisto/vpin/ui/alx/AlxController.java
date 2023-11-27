@@ -48,16 +48,20 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    AlxSummary alxSummary = client.getAlxService().getAlxSummary();
-    List<TableAlxEntry> entries = alxSummary.getEntries();
-    AlxFactory.createMostPlayed(mostPlayedWidget, entries);
-    AlxFactory.createLongestPlayed(timePlayedWidget, entries);
-    AlxFactory.createRecordedScores(scoresWidget, entries);
-    AlxFactory.createTotalTimeTile(tileList, entries);
-    AlxFactory.createTotalGamesPlayedTile(tileList, entries);
-    AlxFactory.createTotalScoresTile(tileList, entries);
-    AlxFactory.createTotalHighScoresTile(tileList, entries);
-    AlxFactory.createAvgWeekTimeTile(tileList, entries, alxSummary.getStartDate());
+    try {
+      AlxSummary alxSummary = client.getAlxService().getAlxSummary();
+      List<TableAlxEntry> entries = alxSummary.getEntries();
+      AlxFactory.createMostPlayed(mostPlayedWidget, entries);
+      AlxFactory.createLongestPlayed(timePlayedWidget, entries);
+      AlxFactory.createRecordedScores(scoresWidget, entries);
+      AlxFactory.createTotalTimeTile(tileList, entries);
+      AlxFactory.createTotalGamesPlayedTile(tileList, entries);
+      AlxFactory.createTotalScoresTile(tileList, entries);
+      AlxFactory.createTotalHighScoresTile(tileList, entries);
+      AlxFactory.createAvgWeekTimeTile(tileList, entries, alxSummary.getStartDate());
+    } catch (Exception e) {
+      LOG.error("Failed to initialize dashboard: " + e.getMessage(), e);
+    }
 
     NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
   }
