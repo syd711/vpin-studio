@@ -43,7 +43,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="artifactCombo" />
-                        <Button mnemonicParsing="false" onAction="#onFetch" text="Fetch Latest Artifacts" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onFetch" text="Fetch Latest Artifact Names" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

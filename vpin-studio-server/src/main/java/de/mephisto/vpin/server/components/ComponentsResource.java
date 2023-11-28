@@ -81,6 +81,7 @@ public class ComponentsResource {
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
     representation.setLastCheck(component.getLastCheck());
+    representation.setExclusions(componentFacade.getExclusionList());
 
     try {
       representation.setLastModified(componentFacade.getModificationDate(pinUPConnector.getDefaultGameEmulator()));

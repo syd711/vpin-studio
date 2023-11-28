@@ -21,6 +21,16 @@ public class ComponentRepresentation {
 
   private String targetFolder;
 
+  private List<String> exclusions = new ArrayList<>();
+
+  public List<String> getExclusions() {
+    return exclusions;
+  }
+
+  public void setExclusions(List<String> exclusions) {
+    this.exclusions = exclusions;
+  }
+
   public List<String> getArtifacts() {
     return artifacts;
   }
@@ -86,7 +96,7 @@ public class ComponentRepresentation {
   }
 
   public boolean isVersionDiff() {
-    if (installedVersion == null || installedVersion.equals("?")) {
+    if (installedVersion == null || installedVersion.equals("?") || installedVersion.equals("Outdated")) {
       return false;
     }
     if (latestReleaseVersion == null) {

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -78,7 +79,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @FXML
   private void onInstallSimulate() {
-    run(true);
+//    run(true);
   }
 
   @FXML
@@ -107,13 +108,19 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   private void runInstall() {
     String artifactName = artifactCombo.getValue();
+    List<String> exclusions = component.getExclusions();
+    if(!exclusions.isEmpty()) {
+//      sadfsa
+    }
+
+
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifactName + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      run(false);
+//      run(false);
     }
   }
 
-  private void run(boolean simulate) {
+  private void run(boolean simulate, List<String> exclusions) {
     textArea.setText("");
     Platform.runLater(() -> {
       try {

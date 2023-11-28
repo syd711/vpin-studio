@@ -99,10 +99,7 @@ public class ComponentService implements InitializingBean {
         LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
       }
       else {
-        if (githubRelease.getTag().equals(component.getInstalledVersion())) {
-          component.setInstalledVersion("?");
-          LOG.info("Reverted current version for " + component.getType());
-        }
+        component.setInstalledVersion("Outdated");
       }
 
       component.setLastCheck(new Date());
