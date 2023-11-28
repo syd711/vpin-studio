@@ -3,8 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -25,33 +23,6 @@
                         </Label>
                      </children>
                   </VBox>
-                  <StackPane fx:id="systemManagerStack" onMousePressed="#onSystemClick" styleClass="navigation-button">
-                     <children>
-                        <VBox alignment="CENTER" onMousePressed="#onSystemClick">
-                           <children>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-remote-desktop" iconSize="24" />
-                              <Label text="System" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="30.0" layoutY="34.0" text="Manager" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <HBox fx:id="systemManagerOverlay" alignment="TOP_RIGHT" maxHeight="20.0" maxWidth="20.0" minWidth="20.0" prefHeight="20.0" prefWidth="20.0" StackPane.alignment="TOP_RIGHT">
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                           <padding>
-                              <Insets right="12.0" top="3.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </StackPane>
                   <VBox alignment="CENTER" onMousePressed="#onAlxClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-chart-bar" iconSize="28" />
