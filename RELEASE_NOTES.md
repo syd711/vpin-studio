@@ -15,6 +15,7 @@ Added a new "Analytics" section which uses the collected data from PinUP Popper 
 
 ### Other Changes
 
+
 **Navigation**
 
 - Switched navigation icons to MUI icons.
