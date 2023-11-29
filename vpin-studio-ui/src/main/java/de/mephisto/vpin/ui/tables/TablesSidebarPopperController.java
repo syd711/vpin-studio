@@ -244,6 +244,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
   }
 
 
