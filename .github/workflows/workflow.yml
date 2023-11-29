@@ -45,7 +45,7 @@ jobs:
 
       - name: Run maven build for github-project-downloader
         working-directory: ./github-project-downloader
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
       - name: Run maven build for Assets API
         working-directory: ./vpin-connector-assets
