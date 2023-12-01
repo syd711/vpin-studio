@@ -62,7 +62,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+        (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }
@@ -75,21 +75,26 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public GameRepresentation getGame(int id) {
-    GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
-    if (gameRepresentation != null && !this.games.isEmpty()) {
-      int index = this.games.indexOf(gameRepresentation);
-      if (index != -1) {
-        this.games.remove(index);
-        this.games.add(index, gameRepresentation);
+    try {
+      GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
+      if (gameRepresentation != null && !this.games.isEmpty()) {
+        int index = this.games.indexOf(gameRepresentation);
+        if (index != -1) {
+          this.games.remove(index);
+          this.games.add(index, gameRepresentation);
+        }
       }
+      return gameRepresentation;
+    } catch (Exception e) {
+      LOG.error("Failed to retrieve game: " + e.getMessage());
     }
-    return gameRepresentation;
+    return null;
   }
 
   public List<Integer> getUnknownGameIds() {
     try {
       this.games.clear();
-      return Arrays.asList(getRestClient().get( API + "games/unknowns", Integer[].class));
+      return Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
     } catch (Exception e) {
       LOG.error("Failed to read unknowns game ids: " + e.getMessage(), e);
     }
