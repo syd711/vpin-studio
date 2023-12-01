@@ -124,8 +124,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       if (b) {
         ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(g);
         MediaUtil.openMedia(s);
-      }
-      else {
+      } else {
         ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(g.getId());
         String status = summary.getMetadata().getStatus();
         WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
@@ -177,8 +176,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
           "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
           "You can enter the values for this manually in the \"Script Details\" section.");
-      }
-      else {
+      } else {
         Dialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
       }
     }
@@ -191,7 +189,9 @@ public class TablesSidebarHighscoresController implements Initializable {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
         "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
       if (confirmationResult.isChecked() && !confirmationResult.isApplied()) {
-        Studio.client.getGameService().resetHighscore(g.getId());
+        if (!Studio.client.getGameService().resetHighscore(g.getId())) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
+        }
         this.refreshView(this.game, true);
       }
     }
@@ -240,8 +240,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       if (StringUtils.isEmpty(rom)) {
         backupCountLabel.setText("0");
-      }
-      else {
+      } else {
         highscoreBackups = Studio.client.getHigscoreBackupService().get(rom);
         backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
         if (!highscoreBackups.isEmpty()) {
@@ -260,11 +259,10 @@ public class TablesSidebarHighscoresController implements Initializable {
       dataPane.setVisible(hasHighscore);
       statusPane.setVisible(!hasHighscore);
 
-      if(!hasHighscore) {
-        if(!StringUtils.isEmpty(metadata.getStatus())) {
+      if (!hasHighscore) {
+        if (!StringUtils.isEmpty(metadata.getStatus())) {
           statusLabel.setText(metadata.getStatus());
-        }
-        else {
+        } else {
           statusLabel.setText("Unknown status.");
         }
       }

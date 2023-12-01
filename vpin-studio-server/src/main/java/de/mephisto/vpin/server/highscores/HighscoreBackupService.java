@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +23,6 @@ public class HighscoreBackupService implements InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
-
-  @Autowired
-  private GameService gameService;
 
   @Autowired
   private SystemService systemService;
@@ -70,7 +66,7 @@ public class HighscoreBackupService implements InitializingBean {
     return HighscoreBackupUtil.writeBackupFile(highscoreService, systemService, game, folder);
   }
 
-  public boolean restore(@NonNull Game game, @NonNull String filename) {
+  public boolean restore(@NonNull Game game, @NonNull List<Game> games, @NonNull String filename) {
     String rom = game.getRom();
     if(StringUtils.isEmpty(rom)) {
       rom = game.getTableName();
@@ -80,8 +76,7 @@ public class HighscoreBackupService implements InitializingBean {
     boolean result = HighscoreBackupUtil.restoreBackupFile(game.getEmulator(), backupRomFolder, filename);
     if (result) {
       highscoreService.setPauseHighscoreEvents(true);
-      List<Game> gamesByRom = gameService.getGamesByRom(rom);
-      for (Game allRomGames : gamesByRom) {
+      for (Game allRomGames : games) {
         highscoreService.scanScore(allRomGames);
       }
       highscoreService.setPauseHighscoreEvents(false);

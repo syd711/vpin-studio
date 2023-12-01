@@ -59,6 +59,9 @@ public class GameService implements InitializingBean {
   private HighscoreService highscoreService;
 
   @Autowired
+  private HighscoreBackupService highscoreBackupService;
+
+  @Autowired
   private PreferencesService preferencesService;
 
   @Autowired
@@ -142,7 +145,13 @@ public class GameService implements InitializingBean {
     if (game == null) {
       return false;
     }
-    return highscoreService.resetHighscore(game);
+
+
+    if (highscoreBackupService.backup(game)) {
+      return highscoreService.resetHighscore(game);
+    }
+
+    return false;
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
@@ -311,8 +320,7 @@ public class GameService implements InitializingBean {
     List<Score> allHighscoreVersions = new ArrayList<>();
     if (!filterEnabled || allowList.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
-    }
-    else {
+    } else {
       for (String initials : allowList) {
         allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(initials));
       }
@@ -354,15 +362,13 @@ public class GameService implements InitializingBean {
         highscoreService.scanScore(game);
 
         return getGame(gameId);
-      }
-      else {
+      } else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
     } catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
-      }
-      else {
+      } else {
         LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
       }
     }
@@ -442,8 +448,7 @@ public class GameService implements InitializingBean {
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());
-    }
-    else {
+    } else {
       game.setRom(gameDetails.getRomName());
     }
 

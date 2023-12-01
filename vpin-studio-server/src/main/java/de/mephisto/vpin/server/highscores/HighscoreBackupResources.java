@@ -3,12 +3,15 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -43,7 +46,11 @@ public class HighscoreBackupResources {
   @PutMapping("restore/{gameId}/{filename}")
   public boolean restore(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
     Game game = gameService.getGame(gameId);
-    return highscoreBackupService.restore(game, filename);
+    List<Game> gamesByRom = Collections.emptyList();
+    if (game != null && !StringUtils.isEmpty(game.getRom())) {
+      gamesByRom = gameService.getGamesByRom(game.getRom());
+    }
+    return highscoreBackupService.restore(game, gamesByRom, filename);
   }
 
   @DeleteMapping("/{rom}/{filename}")
