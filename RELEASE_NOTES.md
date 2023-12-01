@@ -1,4 +1,4 @@
-# Hotfix 2.3.1
+## Hotfix 2.3.1
 
 ### Bugfixes
 
