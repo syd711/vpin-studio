@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.components;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity

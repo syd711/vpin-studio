@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="130.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
+<BorderPane prefWidth="130.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.NavigationController">
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
@@ -62,6 +62,21 @@
                            </font>
                         </Label>
                      </children>
+                  </VBox>
+                  <VBox alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
+                      <children>
+                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
+                          <Label text="Highscore" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Label layoutX="30.0" layoutY="34.0" text="Cards" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Label>
+                      </children>
                   </VBox>
               </children>
                <BorderPane.margin>
