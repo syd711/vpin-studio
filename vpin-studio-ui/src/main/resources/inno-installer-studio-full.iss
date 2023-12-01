@@ -47,7 +47,7 @@ Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\wi
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.exe.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
