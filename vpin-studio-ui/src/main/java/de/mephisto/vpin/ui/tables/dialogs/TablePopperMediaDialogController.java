@@ -17,7 +17,9 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -844,6 +846,44 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     refreshTableMediaView();
     onSearch();
+
+
+    screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio, false, "mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Audio, "mp3"));
+
+    screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch, false, "mp3"));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.AudioLaunch, "mp3"));
+
+    screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper, false, "mp4", "png", "jpg"));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Topper, "mp4", "png", "jpg"));
+
+    screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading, false, "mp4"));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Loading, "mp4"));
+
+    screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField, false, "mp4"));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.PlayField, "mp4"));
+
+    screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.BackGlass, "mp4", "png", "jpg"));
+
+    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameInfo, "png", "jpg"));
+
+    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameHelp, "png", "jpg"));
+
+    screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Menu, "mp4", "png", "jpg"));
+
+    screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD, false, "mp4", "png", "jpg"));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.DMD, "mp4", "png", "jpg"));
+
+    screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Other2, "mp4", "png", "jpg"));
+
+    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Wheel, "png", "apng"));
+
   }
 
   private void refreshTableView() {
@@ -863,7 +903,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   }
 
 
-  private void refreshTableMediaView() {
+  public void refreshTableMediaView() {
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
     if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
@@ -894,5 +934,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     Platform.runLater(() -> {
       refreshTableMediaView();
     });
+  }
+
+  public GameRepresentation getGame() {
+    return game;
   }
 }

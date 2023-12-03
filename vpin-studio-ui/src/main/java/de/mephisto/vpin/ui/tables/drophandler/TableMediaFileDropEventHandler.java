@@ -4,8 +4,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
+import de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -21,10 +22,17 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
 
   private final PopperScreen screen;
   private final List<String> suffixes;
-  private final TablesSidebarController tablesSidebarController;
+  private TableOverviewController tablesController;
+  private TablePopperMediaDialogController dialogController;
 
-  public TableMediaFileDropEventHandler(TablesSidebarController tablesSidebarController, PopperScreen screen, String... suffix) {
-    this.tablesSidebarController = tablesSidebarController;
+  public TableMediaFileDropEventHandler(TableOverviewController tablesController, PopperScreen screen, String... suffix) {
+    this.tablesController = tablesController;
+    this.screen = screen;
+    this.suffixes = Arrays.asList(suffix);
+  }
+
+  public TableMediaFileDropEventHandler(TablePopperMediaDialogController dialogController, PopperScreen screen, String... suffix) {
+    this.dialogController = dialogController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);
   }
@@ -34,7 +42,13 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     List<File> files = event.getDragboard().getFiles();
 
     Platform.runLater(() -> {
-      GameRepresentation game = tablesSidebarController.getTablesController().getSelection();
+      GameRepresentation game = null;
+      if (this.tablesController != null) {
+        game = tablesController.getSelection();
+      }
+      else {
+        game = dialogController.getGame();
+      }
 
       List<File> filtered = files.stream().filter(f -> {
         String suffix = FilenameUtils.getExtension(f.getName());
@@ -43,12 +57,16 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
 
       if (filtered.isEmpty()) {
         WidgetFactory.showAlert(Studio.stage, "Error", "None of the selected is valid for this upload.",
-            "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
+          "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }
       else {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-            "Popper Media Upload", filtered, "popperMedia", screen);
+          "Popper Media Upload", filtered, "popperMedia", screen);
         Dialogs.createProgressDialog(model);
+
+        if (dialogController != null) {
+          dialogController.refreshTableMediaView();
+        }
       }
     });
   }

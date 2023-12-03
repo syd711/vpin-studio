@@ -11,6 +11,8 @@
 - Fixed VPS table selection: Because the auto-completion did only show the table name, duplicates have been filtered. The auto-completion shows the manufacturer and the year of the table, allowing the selection to be unique now (e.g. "Mustang" or "Star Trek").
 - Added "PinUP Popper/VPX Running" check for ROM uploads this the process may block the file writing.
 - Fixed occasional layout glitch in the table version dropdown menu of the VPS section.
+- Fixed drag and drop for the "PinUP Popper Media" section: You can drop matching media files directly on the screens there now (again).
+
 
 ### Interaction Improvements
 
