@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,10 +161,30 @@ public class GamesResource {
 
       //determine the target file depending on the selected emulator
       GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
-      File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
-      File uploadFile = FileUtils.uniqueFile(originalFile);
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
 
-      if (UploadUtil.upload(file, uploadFile)) {
+
+      File uploadFile = null;
+      if (suffix.equalsIgnoreCase("zip")) {
+        try {
+          File tempFile = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + suffix);
+          UploadUtil.upload(file, tempFile);
+          String name = ZipUtil.contains(tempFile, ".vpx");
+          File originalFile = new File(gameEmulator.getTablesFolder(), name);
+          uploadFile = FileUtils.uniqueFile(originalFile);
+          ZipUtil.unzipFile(tempFile, uploadFile, name);
+        } catch (Exception e) {
+          LOG.error("Upload of zip vpx file failed: " + e.getMessage(), e);
+          throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of zipped VPX file failed: " + e.getMessage());
+        }
+      }
+      else {
+        File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
+        uploadFile = FileUtils.uniqueFile(originalFile);
+        UploadUtil.upload(file, uploadFile);
+      }
+
+      if (uploadFile.exists()) {
         switch (mode) {
           case upload: {
             //nothing, we are done here

@@ -6,7 +6,6 @@ import org.springframework.lang.NonNull;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -15,18 +14,11 @@ public class ZipUtil {
 
   public static void unzip(File archiveFile, File destinationDir) {
     try {
-      ZipFile zf = new ZipFile(archiveFile);
-      int totalCount = zf.size();
-      zf.close();
-
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
-      int currentCount = 0;
       while (zipEntry != null) {
-        currentCount++;
-
         File newFile = new File(destinationDir, zipEntry.getName());
         LOG.info("Writing " + newFile.getAbsolutePath());
         if (zipEntry.isDirectory()) {
@@ -56,6 +48,55 @@ public class ZipUtil {
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
+  }
+
+  public static boolean unzipFile(File archiveFile, File targetFile, String name) {
+    boolean written = false;
+    File destinationDir = targetFile.getParentFile();
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(archiveFile);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+      while (zipEntry != null) {
+        File newFile = new File(destinationDir, zipEntry.getName());
+        if (zipEntry.isDirectory()) {
+          if (!newFile.isDirectory() && !newFile.mkdirs()) {
+            throw new IOException("Failed to create directory " + newFile);
+          }
+        }
+        else {
+          // fix for Windows-created archives
+          File parent = newFile.getParentFile();
+          if (!parent.isDirectory() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory " + parent);
+          }
+
+          if (zipEntry.getName().equals(name)) {
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fos.write(buffer, 0, len);
+            }
+            fos.close();
+            written = true;
+            LOG.info("Extracted file " + targetFile.getAbsolutePath());
+          }
+        }
+        zis.closeEntry();
+        zipEntry = zis.getNextEntry();
+
+        if (written) {
+          zipEntry = null;
+        }
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    } catch (Exception e) {
+      LOG.error("Unzipping of " + targetFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+    return written;
   }
 
   public static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
@@ -184,8 +225,8 @@ public class ZipUtil {
     return false;
   }
 
-  public static boolean contains(@NonNull File file, @NonNull String filename) {
-    boolean fileFound = false;
+  public static String contains(@NonNull File file, @NonNull String suffix) {
+    String fileFound = null;
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
@@ -198,13 +239,13 @@ public class ZipUtil {
         }
         else {
           String name = zipEntry.getName();
-          if (name.endsWith(filename)) {
-            fileFound = true;
+          if (name.endsWith(suffix)) {
+            fileFound = name;
           }
         }
         zis.closeEntry();
 
-        if(fileFound) {
+        if (fileFound != null) {
           break;
         }
 
@@ -215,7 +256,7 @@ public class ZipUtil {
       zis.close();
     } catch (Exception e) {
       LOG.error("Unzipping of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return false;
+      return null;
     }
 
     return fileFound;

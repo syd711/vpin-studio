@@ -111,7 +111,7 @@ public class TableUploadController implements Initializable, DialogController {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip"));
 
     if (TableUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(TableUploadController.lastFolderSelection);
