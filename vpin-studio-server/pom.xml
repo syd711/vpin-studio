@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -369,6 +369,7 @@
                                         <include>nvrams/**</include>
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
+                                        <include>*.dll</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>competition-bg-default.png</include>
                                         <include>card-generator.properties.template</include>
@@ -401,6 +402,7 @@
                                     <includes>
                                         <include>server.bat</include>
                                         <include>server.vbs</include>
+                                        <include>VPin-Studio-Server.l4j.ini</include>
                                     </includes>
                                 </resource>
                             </resources>

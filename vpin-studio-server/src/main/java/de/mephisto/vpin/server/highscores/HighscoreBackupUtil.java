@@ -176,8 +176,7 @@ public class HighscoreBackupUtil {
 
       if (written) {
         LOG.info("Written highscore backup " + target.getAbsolutePath());
-      }
-      else {
+      } else {
         LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
         return true;
       }
@@ -198,13 +197,11 @@ public class HighscoreBackupUtil {
     switch (highscoreType) {
       case NVRam: {
         File target = new File(gameEmulator.getNvramFolder(), highscoreBackup.getHighscoreFilename());
-        ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
-        return true;
+        return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
         File target = new File(gameEmulator.getInstallationFolder(), highscoreBackup.getHighscoreFilename());
-        ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
-        return true;
+        return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {
         try {

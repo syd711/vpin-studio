@@ -154,7 +154,7 @@ public class ZipUtil {
         }
         else {
           String name = zipEntry.getName();
-          if (name.equals(filename)) {
+          if (name.equalsIgnoreCase(filename)) {
             descriptorFound = true;
 
             FileOutputStream fileOutputStream = new FileOutputStream(target);

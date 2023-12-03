@@ -163,6 +163,14 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>de.mephisto</groupId>
+      <artifactId>github-downloader</artifactId>
+      <version>1.0.0</version>
+      <licenses>
+        <!-- No license information available. -->
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-assets</artifactId>
       <version>1.0.0</version>
@@ -173,7 +181,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>2.2.0</version>
+      <version>2.3.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -181,7 +189,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>2.2.0</version>
+      <version>2.3.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -189,7 +197,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>2.2.0</version>
+      <version>2.3.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -205,7 +213,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>2.2.0</version>
+      <version>2.3.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -410,6 +418,19 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+      <version>0.20.0</version>
+      <licenses>
+        <license>
+          <name>BSD 2-Clause License</name>
+          <url>https://opensource.org/licenses/BSD-2-Clause</url>
+          <distribution>repo</distribution>
+          <file>bsd 2-clause license - bsd-2-clause.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>org.controlsfx</groupId>
       <artifactId>controlsfx</artifactId>
       <version>11.1.1</version>
@@ -595,11 +616,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
-      <version>16</version>
+      <version>11</version>
       <licenses>
         <license>
           <name>GPLv2+CE</name>
-          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
           <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
@@ -609,11 +630,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>16</version>
+      <version>11</version>
       <licenses>
         <license>
           <name>GPLv2+CE</name>
-          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
           <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
@@ -637,11 +658,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>16</version>
+      <version>11</version>
       <licenses>
         <license>
           <name>GPLv2+CE</name>
-          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
           <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
@@ -665,11 +686,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
-      <version>16</version>
+      <version>11</version>
       <licenses>
         <license>
           <name>GPLv2+CE</name>
-          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
           <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
@@ -707,11 +728,11 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
-      <version>16</version>
+      <version>11</version>
       <licenses>
         <license>
           <name>GPLv2+CE</name>
-          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
           <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>

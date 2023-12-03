@@ -2,3 +2,5 @@
 - fix duplicate message emitting
 - mame pac validator
 - pac validator
+- move assets project into popper client project
+- scan highscores only after scanning games
