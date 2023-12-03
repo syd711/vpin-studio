@@ -12,8 +12,11 @@
 
 - Added drop zones for the "Asset Manager" dialog: You can drop matching media files directly on the screens there now.
 
-
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-drop.png?raw=true" width="300" />
+
+- Added "Dismiss All" button for table validations.
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/validation-error.png?raw=true" width="700" />
 
 ### Bugfixes
 
