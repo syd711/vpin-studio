@@ -4,15 +4,16 @@
 
 - Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/am-open-folder.png?raw=true" width="700" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-open-folder.png?raw=true" width="700" />
 
 - Added "Rename" button for the screen asset list in the "Asset Manager" dialog.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/am-rename-btn.png?raw=true" width="700" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-rename-btn.png?raw=true" width="700" />
 
 - Added drop zones for the "Asset Manager" dialog: You can drop matching media files directly on the screens there now.
-- 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/am-drop.png?raw=true" width="300" />
+
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-drop.png?raw=true" width="300" />
 
 ### Bugfixes
 
