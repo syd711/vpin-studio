@@ -36,15 +36,11 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class UIPreferencesController implements Initializable {
 
-
   @FXML
   private BorderPane avatarBorderPane;
 
   @FXML
   private TextField vpinNameText;
-
-  @FXML
-  private CheckBox uiDismissalConfirm;
 
   @FXML
   private CheckBox uiShowVersion;
@@ -84,17 +80,6 @@ public class UIPreferencesController implements Initializable {
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
     List<String> values = preference.getCSVValue();
-
-    uiDismissalConfirm.setSelected(values.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS));
-    uiDismissalConfirm.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        values.remove(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS);
-      }
-      else if (!values.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS)) {
-        values.add(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS);
-      }
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
-    });
 
 
     uiShowVersion.setSelected(values.contains(PreferenceNames.UI_HIDE_VERSIONS));

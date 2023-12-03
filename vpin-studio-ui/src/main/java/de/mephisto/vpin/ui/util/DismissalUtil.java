@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -14,9 +16,33 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class DismissalUtil {
+  public static void dismissValidations(GameRepresentation game) {
+    PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
+    List<String> csvValue = doNotShowAgainPref.getCSVValue();
+    if (csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISS_ALL)) {
+      dismissAll(game);
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
+    }
+    else {
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, "Ignore all warnings for future validations of table '" + game.getGameDisplayName() + "?", "Dismiss",
+        "The warning can be re-enabled by validating the table again.", null, "Do not show again", false);
+      if (!confirmationResult.isApplied()) {
+        dismissAll(game);
+      }
+
+      if (!confirmationResult.isApplied() && confirmationResult.isChecked()) {
+        if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAINS)) {
+          csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISS_ALL);
+          client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
+        }
+      }
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
+    }
+  }
+
   public static void dismissValidation(GameRepresentation game, ValidationState validationState) {
-    List<String> csvValue = client.getPreference(PreferenceNames.UI_SETTINGS).getCSVValue();
-    if (csvValue.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS)) {
+    List<String> csvValue = client.getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS).getCSVValue();
+    if (csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS)) {
       dismiss(game, validationState);
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
@@ -28,9 +54,9 @@ public class DismissalUtil {
       }
 
       if (!confirmationResult.isApplied() && confirmationResult.isChecked()) {
-        if (!csvValue.contains(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS)) {
-          csvValue.add(PreferenceNames.UI_HIDE_CONFIRM_DISMISSALS);
-          client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", csvValue));
+        if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS)) {
+          csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS);
+          client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
         }
       }
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -47,6 +73,18 @@ public class DismissalUtil {
       ignoredValidations.add(validationState.getCode());
     }
 
+    game.setIgnoredValidations(ignoredValidations);
+
+    try {
+      client.getGameService().saveGame(game);
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, e.getMessage());
+    }
+  }
+
+  private static void dismissAll(GameRepresentation game) {
+    List<Integer> ignoredValidations =  new ArrayList<>();
+    ignoredValidations.add(-1);
     game.setIgnoredValidations(ignoredValidations);
 
     try {

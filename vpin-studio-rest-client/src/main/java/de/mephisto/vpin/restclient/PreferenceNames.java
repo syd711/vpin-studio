@@ -25,9 +25,11 @@ public interface PreferenceNames {
 
   String UI_SETTINGS = "uiSettings";
   String UI_HIDE_VERSIONS = "hideVersions";
-  String UI_HIDE_CONFIRM_DISMISSALS = "hideDismissConfirmations";
+
   String UI_DO_NOT_SHOW_AGAINS = "doNotShowAgains";
   String UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING = "componentsWarning";
+  String UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS = "hideDismissConfirmations";
+  String UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISS_ALL = "hideDimissAllConfirmations";
   String UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO = "updateInfo";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
