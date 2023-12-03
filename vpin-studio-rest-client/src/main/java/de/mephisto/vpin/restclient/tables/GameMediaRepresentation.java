@@ -4,9 +4,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameMediaRepresentation {
   private Map<String, List<GameMediaItemRepresentation>> media = new HashMap<>();
@@ -20,7 +18,9 @@ public class GameMediaRepresentation {
   }
 
   public List<GameMediaItemRepresentation> getMediaItems(PopperScreen screen) {
-    return this.media.get(screen.name());
+    List<GameMediaItemRepresentation> gameMediaItemRepresentations = this.media.get(screen.name());
+    Collections.sort(gameMediaItemRepresentations, Comparator.comparing(GameMediaItemRepresentation::getName));
+    return gameMediaItemRepresentations;
   }
 
   @Nullable

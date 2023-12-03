@@ -251,6 +251,23 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
+  private void onAltColor() {
+    try {
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
+        if (folder.exists()) {
+          new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
+          return;
+        }
+        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltColorDirectory()).getAbsolutePath()).start();
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
   private void onDirectB2S() {
     try {
       if (this.game.isPresent()) {
@@ -278,18 +295,6 @@ public class TablesSidebarController implements Initializable {
 
       GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
       new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
-    } catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
-  }
-
-  @FXML
-  private void onAltColor() {
-    try {
-      if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltColorDirectory()).getAbsolutePath()).start();
-      }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }

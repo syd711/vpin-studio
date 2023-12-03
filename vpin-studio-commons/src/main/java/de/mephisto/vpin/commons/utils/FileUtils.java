@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
 
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
-  private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
+  private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
 
   public static void cloneFile(File original, String updatedName) throws IOException {
     if (original.exists()) {

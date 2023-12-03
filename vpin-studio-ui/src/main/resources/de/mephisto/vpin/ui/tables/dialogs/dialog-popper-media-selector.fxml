@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -353,6 +353,17 @@
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
                                              </graphic>
+                                          </Button>
+                                          <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Update the ROM name for this table." />
+                                             </tooltip>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
                                           </Button>
                                           <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                           <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">

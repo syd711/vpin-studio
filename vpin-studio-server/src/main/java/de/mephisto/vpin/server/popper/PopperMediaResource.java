@@ -187,10 +187,33 @@ public class PopperMediaResource implements InitializingBean {
 
   @PutMapping("/media/{gameId}/{screen}")
   public boolean doPut(@PathVariable("gameId") int gameId, @PathVariable("screen") PopperScreen screen, @RequestBody Map<String, String> data) throws Exception {
-    if (data.containsKey("fullscreen")) {
-      return toFullscreenMedia(gameId, screen);
+    try {
+      if (data.containsKey("fullscreen")) {
+        return toFullscreenMedia(gameId, screen);
+      }
+      if (data.containsKey("oldName")) {
+        return renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
+      }
+      return true;
+    } catch (Exception e) {
+      LOG.error("Failed to execute media change request: " + e.getMessage(), e);
     }
-    return true;
+    return false;
+  }
+
+  private boolean renameAsset(int gameId, PopperScreen screen, String oldName, String newName) {
+    Game game = gameService.getGame(gameId);
+    List<File> pinUPMedia = game.getPinUPMedia(screen);
+    for (File file : pinUPMedia) {
+      if (file.getName().equals(oldName)) {
+        File renamed = new File(file.getParentFile(), newName);
+        if (file.renameTo(renamed)) {
+          LOG.info("Renamed \"" + file.getAbsolutePath() + "\" to \"" + renamed.getAbsolutePath() + "\"");
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private boolean toFullscreenMedia(int gameId, PopperScreen screen) throws IOException {

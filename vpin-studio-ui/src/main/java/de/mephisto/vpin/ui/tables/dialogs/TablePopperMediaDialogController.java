@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
@@ -43,6 +44,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -101,6 +103,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button renameBtn;
 
   @FXML
   private Button folderBtn;
@@ -244,6 +249,45 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     }
   }
 
+  @FXML
+  private void onRename() {
+    GameMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      String name = selectedItem.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      String suffix = FilenameUtils.getExtension(name);
+      String s = WidgetFactory.showInputDialog(Studio.stage, "Rename", "Renaming of Table Asset \"" + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
+      if (!StringUtils.isEmpty(s) && FileUtils.isValidFilename(s)) {
+        if(s.equalsIgnoreCase(baseName)) {
+          return;
+        }
+
+        if (!s.endsWith(baseName)) {
+          s = s + "." + suffix;
+        }
+
+        if (!s.startsWith(game.getGameName())) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The asset name must start with \"" + game.getGameName() + "\".");
+          onRename();
+          return;
+        }
+
+        try {
+          client.getPinUPPopperService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+          onReload();
+        } catch (Exception e) {
+          LOG.error("Renaming table asset failed: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
+        }
+      }
+      else if (!FileUtils.isValidFilename(s)) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Renaming cancelled, invalid character found.");
+        onRename();
+      }
+    }
+  }
+
 
   @FXML
   private void onSearch() {
@@ -258,7 +302,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
       }
-    } else {
+    }
+    else {
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
       serverAssetsList.refresh();
@@ -309,7 +354,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           imageView.setUserData(tableAsset);
 
           serverAssetMediaPane.setCenter(imageView);
-        } else if (baseType.equals("audio")) {
+        }
+        else if (baseType.equals("audio")) {
           VBox vBox = new VBox();
           vBox.setAlignment(Pos.BASELINE_CENTER);
 
@@ -355,13 +401,15 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
               mediaView.getMediaPlayer().setCycleCount(1);
               mediaView.getMediaPlayer().play();
               fontIcon.setIconLiteral("bi-stop");
-            } else {
+            }
+            else {
               mediaView.getMediaPlayer().stop();
               fontIcon.setIconLiteral("bi-play");
             }
           });
 
-        } else if (baseType.equals("video")) {
+        }
+        else if (baseType.equals("video")) {
           Media media = new Media(assetUrl);
           MediaPlayer mediaPlayer = new MediaPlayer(media);
           mediaPlayer.setAutoPlay(true);
@@ -386,7 +434,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           mediaView.setFitHeight(MEDIA_SIZE);
           if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
             mediaView.setRotate(90);
-          } else {
+          }
+          else {
             mediaView.setRotate(0);
           }
 
@@ -413,9 +462,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
 
-      } else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+      }
+      else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         append = true;
-      } else {
+      }
+      else {
         return;
       }
     }
@@ -479,6 +530,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     downloadBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
     this.addToPlaylistBtn.setDisable(true);
     this.addToPlaylistBtn.setVisible(false);
 
@@ -545,6 +597,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         disposeTableMediaPreview();
 
         deleteBtn.setDisable(mediaItem == null);
+        renameBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
           Label label = new Label("No media selected");
@@ -570,7 +623,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           imageView.setUserData(mediaItem);
 
           mediaPane.setCenter(imageView);
-        } else if (baseType.equals("audio")) {
+        }
+        else if (baseType.equals("audio")) {
           VBox vBox = new VBox();
           vBox.setAlignment(Pos.BASELINE_CENTER);
 
@@ -616,13 +670,15 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
               mediaView.getMediaPlayer().setCycleCount(1);
               mediaView.getMediaPlayer().play();
               fontIcon.setIconLiteral("bi-stop");
-            } else {
+            }
+            else {
               mediaView.getMediaPlayer().stop();
               fontIcon.setIconLiteral("bi-play");
             }
           });
 
-        } else if (baseType.equals("video")) {
+        }
+        else if (baseType.equals("video")) {
           Media media = new Media(url);
           MediaPlayer mediaPlayer = new MediaPlayer(media);
           mediaPlayer.setAutoPlay(true);
@@ -646,7 +702,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           mediaView.setFitHeight(MEDIA_SIZE);
           if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
             mediaView.setRotate(90);
-          } else {
+          }
+          else {
             mediaView.setRotate(0);
           }
           mediaPane.setCenter(mediaView);
@@ -659,7 +716,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
-    } else {
+    }
+    else {
       borderPane.getStyleClass().add("green");
     }
 
@@ -685,7 +743,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (!borderPane.equals(lastSelected)) {
       if (hovered) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
-      } else {
+      }
+      else {
         borderPane.setStyle(null);
       }
     }
@@ -698,7 +757,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       MediaView mediaView = (MediaView) center;
       mediaView.getMediaPlayer().stop();
       mediaView.getMediaPlayer().dispose();
-    } else if (center instanceof VBox) {
+    }
+    else if (center instanceof VBox) {
       MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
       mediaView.getMediaPlayer().stop();
       mediaView.getMediaPlayer().dispose();
@@ -714,7 +774,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       MediaView mediaView = (MediaView) center;
       mediaView.getMediaPlayer().stop();
       mediaView.getMediaPlayer().dispose();
-    } else if (center instanceof VBox) {
+    }
+    else if (center instanceof VBox) {
       MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
       mediaView.getMediaPlayer().stop();
       mediaView.getMediaPlayer().dispose();
@@ -775,7 +836,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (StringUtils.isEmpty(this.searchField.getText())) {
       if (sanitizedTerms.isEmpty()) {
         this.searchField.setText(game.getGameDisplayName());
-      } else {
+      }
+      else {
         this.searchField.setText(String.join(" ", sanitizedTerms));
       }
     }
