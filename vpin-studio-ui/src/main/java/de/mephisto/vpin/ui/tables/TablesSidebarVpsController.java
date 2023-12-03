@@ -19,6 +19,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
 import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
 import de.mephisto.vpin.ui.util.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -280,6 +281,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
       }
+
+      Platform.runLater(() -> {
+        tablesCombo.show();
+        tablesCombo.hide();
+      });
     }
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());

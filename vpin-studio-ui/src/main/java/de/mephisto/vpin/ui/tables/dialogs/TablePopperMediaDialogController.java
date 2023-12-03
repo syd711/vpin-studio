@@ -258,7 +258,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       String suffix = FilenameUtils.getExtension(name);
       String s = WidgetFactory.showInputDialog(Studio.stage, "Rename", "Renaming of Table Asset \"" + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
       if (!StringUtils.isEmpty(s) && FileUtils.isValidFilename(s)) {
-        if(s.equalsIgnoreCase(baseName)) {
+        if (s.equalsIgnoreCase(baseName)) {
           return;
         }
 
@@ -281,7 +281,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
         }
       }
-      else if (!FileUtils.isValidFilename(s)) {
+      else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Renaming cancelled, invalid character found.");
         onRename();
       }
