@@ -188,6 +188,19 @@ public class VpsTable {
     return name;
   }
 
+  public String getDisplayName() {
+    String result = this.name;
+    if(this.manufacturer != null && this.manufacturer.length() >0) {
+      result = result + " | " + this.manufacturer;
+    }
+
+    if(this.year > 0) {
+      result = result + " (" + this.year + ")";
+    }
+
+    return result;
+  }
+
   public void setName(String name) {
     this.name = name;
   }

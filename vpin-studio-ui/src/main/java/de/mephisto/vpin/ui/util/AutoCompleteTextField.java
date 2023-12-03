@@ -119,6 +119,7 @@ public class AutoCompleteTextField {
       final String result = searchResult.get(i);
       Label entryLabel = new Label(result);
       CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+      item.setStyle("-fx-padding: 3px 3px 3px 3px;-fx-font-size: 14px;");
       item.setOnAction(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent actionEvent) {

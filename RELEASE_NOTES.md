@@ -7,6 +7,8 @@
 - Fixed restoring highscores from "The Addam's Family". (Why only this table? Because it's the only table I know there the ROM name is stored uppercase in the script and the actual ROM file is lower case :-/ )
 - Fixed "Open in System" button for the "ALT Color" sections header. The table's ALT color folder is now opened if available.
 - Removed .pal/.vni validator: I always thought both files were required, but only the .pal file is used during runtime, so I removed this validation.
+- Fixed error when loading pup packs with invalid screen values.
+- Fixed VPS table selection: Because the auto-completion did only show the table name, duplicates have been filtered. The auto-completition shows the manufacturer and the year of the table, allowing the selection to be unique now (e.g. "Mustang" or "Star Trek"). 
 
 ### Interaction Improvements
 

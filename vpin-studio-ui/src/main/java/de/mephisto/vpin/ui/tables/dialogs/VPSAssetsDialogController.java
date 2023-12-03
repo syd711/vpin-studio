@@ -147,7 +147,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getName().equalsIgnoreCase(value)).findFirst();
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
