@@ -11,6 +11,8 @@
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/am-rename-btn.png?raw=true" width="700" />
 
 - Added drop zones for the "Asset Manager" dialog: You can drop matching media files directly on the screens there now.
+- 
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/releases/2.3.0/am-drop.png?raw=true" width="300" />
 
 ### Bugfixes
 

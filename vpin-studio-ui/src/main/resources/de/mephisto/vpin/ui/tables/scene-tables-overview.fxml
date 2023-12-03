@@ -12,6 +12,7 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -78,18 +79,26 @@
                                         </VBox>
                                     </left>
                                     <right>
-                                        <VBox BorderPane.alignment="TOP_RIGHT">
-                                            <BorderPane.margin>
-                                                <Insets right="6.0" />
-                                            </BorderPane.margin>
-                                            <children>
+                              <HBox>
+                                 <children>
                                                 <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE">
                                                     <font>
                                                         <Font size="10.0" />
                                                     </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
+                                       </graphic>
                                                 </Hyperlink>
-                                            </children>
-                                        </VBox>
+                                    <Hyperlink onAction="#onDismiss" text="Dismiss All" textFill="WHITE">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove" iconSize="18" />
+                                       </graphic>
+                                    </Hyperlink>
+                                 </children>
+                              </HBox>
                                     </right>
                                 </BorderPane>
                             </center>
