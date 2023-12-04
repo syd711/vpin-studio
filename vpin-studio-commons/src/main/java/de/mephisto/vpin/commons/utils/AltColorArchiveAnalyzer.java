@@ -9,12 +9,17 @@ import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class AltSoundAnalyzer {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundAnalyzer.class);
+public class AltColorArchiveAnalyzer {
+  private final static Logger LOG = LoggerFactory.getLogger(AltColorArchiveAnalyzer.class);
+
+  public final static String PAL_SUFFIX = ".pal";
+  public final static String VNI_SUFFIX = ".vni";
+  public final static String PAC_SUFFIX = ".pac";
+  public final static String SERUM_SUFFIX = ".cRZ";
+
 
   public static String analyze(@NonNull File file) {
-    int audioCount = 0;
-    boolean altSoundFound = false;
+    boolean altColorFound = false;
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
@@ -27,15 +32,16 @@ public class AltSoundAnalyzer {
         }
         else {
           String name = zipEntry.getName();
-          if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
-            audioCount++;
-          }
-
-          if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
-            altSoundFound = true;
+          if (name.endsWith(PAC_SUFFIX) || name.endsWith(SERUM_SUFFIX) || name.endsWith(PAL_SUFFIX)) {
+            altColorFound = true;
           }
         }
         zis.closeEntry();
+
+        if(altColorFound) {
+          break;
+        }
+
         zipEntry = zis.getNextEntry();
       }
       fileInputStream.close();
@@ -46,12 +52,8 @@ public class AltSoundAnalyzer {
       return "Unzipping of " + file.getAbsolutePath() + " failed: " + e.getMessage();
     }
 
-    if (!altSoundFound) {
-      return "The selected archive does not contain an \"altsound.csv\" file.";
-    }
-
-    if (audioCount == 0) {
-      return "The selected archive does not contain any audio files.";
+    if (!altColorFound) {
+      return "The selected archive does not contain ALT Color files.";
     }
     return null;
   }

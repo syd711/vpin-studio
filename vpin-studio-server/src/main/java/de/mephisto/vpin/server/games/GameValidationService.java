@@ -1,17 +1,15 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
+import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -276,7 +274,7 @@ public class GameValidationService implements InitializingBean {
         break;
       }
       case serum: {
-        String name = game.getRom() + AltColorAnalyzer.SERUM_SUFFIX;
+        String name = game.getRom() + AltColorArchiveAnalyzer.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
