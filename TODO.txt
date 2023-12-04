@@ -4,3 +4,5 @@
 - pac validator
 - move assets project into popper client project
 - scan highscores only after scanning games
+- do not reset highscores for table deletions in game service
+- add proper progress bar for asset downloads
