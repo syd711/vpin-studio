@@ -278,14 +278,6 @@ public class GameValidationService implements InitializingBean {
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
-
-        File serumdll = new File(game.getEmulator().getMameFolder(), "Serum.dll");
-        File serum64dll = new File(game.getEmulator().getMameFolder(), "Serum64.dll");
-
-        if (isValidationEnabled(game, CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING) && !serumdll.exists() && !serum64dll.exists()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING));
-        }
-
         break;
       }
       default: {
