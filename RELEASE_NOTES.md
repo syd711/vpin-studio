@@ -33,4 +33,5 @@
 - Fixed occasional layout glitch in the table version dropdown menu of the VPS section.
 - Fixed drag and drop for the "PinUP Popper Media" section: You can drop matching media files directly on the screens there now (again).
 - Removed Serum ALT color validator: This is part of freezy now, so the validator is obsolete.
+- Fixed error when deleting tables which may have led to remaining data in Popper.
 

@@ -165,7 +165,7 @@ public class GameService implements InitializingBean {
       }
 
       if (descriptor.isDeleteHighscores()) {
-        resetGame(game.getId());
+        highscoreService.deleteScores(game.getId(), true);
       }
 
       if (descriptor.isDeleteTable()) {
@@ -246,8 +246,6 @@ public class GameService implements InitializingBean {
         if (!pinUPConnector.deleteGame(gameId)) {
           success = false;
         }
-
-        highscoreService.deleteScores(game.getId(), true);
 
         PopperScreen[] values = PopperScreen.values();
         for (PopperScreen originalScreenValue : values) {
