@@ -20,6 +20,10 @@
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/validation-error.png?raw=true" width="700" />
 
+- Added "Troubleshooting" text for the highscore section.
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/troubleshooting.png?raw=true" width="700" />
+
 
 ### Bugfixes
 
