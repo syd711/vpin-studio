@@ -561,13 +561,13 @@
     -fx-text-background-color: #6666FF;
 }
 .table-row-cell: odd {
-    -fx-border-style: solid solid transparent solid;
+    -fx-border-style: solid solid solid solid;
     -fx-border-width: 1;
     -fx-background-color: #93f9b911;
     -fx-border-color: #93f9b911;
 }
 .table-row-cell: even {
-    -fx-border-style: solid solid transparent solid;
+    -fx-border-style: solid solid solid solid;
     -fx-border-width: 1;
     -fx-background-color: #1dbbdd11;
     -fx-border-color: #1dbbdd11;

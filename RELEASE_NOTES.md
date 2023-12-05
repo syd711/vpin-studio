@@ -22,7 +22,7 @@
 
 - Added "Troubleshooting" text for the highscore section.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/troubleshooting.png?raw=true" width="700" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/troubleshooting.png?raw=true" width="600" />
 
 
 ### Bugfixes
@@ -38,4 +38,5 @@
 - Fixed drag and drop for the "PinUP Popper Media" section: You can drop matching media files directly on the screens there now (again).
 - Removed Serum ALT color validator: This is part of freezy now, so the validator is obsolete.
 - Fixed error when deleting tables which may have led to remaining data in Popper.
+- The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
 
