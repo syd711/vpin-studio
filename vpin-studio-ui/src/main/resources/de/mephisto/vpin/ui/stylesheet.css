@@ -563,14 +563,14 @@
 .table-row-cell: odd {
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1;
-    -fx-background-color: #93f9b911;
-    -fx-border-color: #93f9b911;
+    -fx-background-color: #303733;
+    -fx-border-color: #303733;
 }
 .table-row-cell: even {
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1;
-    -fx-background-color: #1dbbdd11;
-    -fx-border-color: #1dbbdd11;
+    -fx-background-color: #283335;
+    -fx-border-color: #283335;
 }
 
 .table-row-cell: selected {

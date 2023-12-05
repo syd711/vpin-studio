@@ -27,6 +27,8 @@
 
 ### Bugfixes
 
+Phew, here it comes...
+
 - Added missing 7z.dll file to the installation. Mostly 7zip is already installed on machines, but in case not, updates don't seem to work or the 7-zip installation is limited to another user? Hopefully this fixes the issue. The file will only be added for fresh installations.
 - Fixed missing highscore backup on highscore reset.
 - Fixed restoring highscores from "The Addam's Family". (Why only this table? Because it's the only table I know there the ROM name is stored uppercase in the script and the actual ROM file is lower case :-/ )
@@ -39,4 +41,5 @@
 - Removed Serum ALT color validator: This is part of freezy now, so the validator is obsolete.
 - Fixed error when deleting tables which may have led to remaining data in Popper.
 - The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
+- Fixed the layout of the update news dialog a bit ... as you can see.
 
