@@ -22,9 +22,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -34,7 +37,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +91,27 @@ public class LauncherController implements Initializable {
   @FXML
   private TableView<VPinConnection> tableView;
 
+  @FXML
+  private HBox installContainer;
+
+  @FXML
+  private Hyperlink helpBtn;
+
   private ObservableList<VPinConnection> data;
 
   private Stage stage;
   private PropertiesStore store;
+
+  @FXML
+  private void onHelp() {
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        Desktop.getDesktop().browse(new URI("https://github.com/syd711/vpin-studio/wiki/FAQ"));
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
+  }
 
   @FXML
   private void onInstall() {
@@ -233,6 +255,7 @@ public class LauncherController implements Initializable {
 
     this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
     this.installBtn.setDisable(client.getSystemService().getVersion() != null);
+    this.helpBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
 
     connectBtn.setDisable(true);
     tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));

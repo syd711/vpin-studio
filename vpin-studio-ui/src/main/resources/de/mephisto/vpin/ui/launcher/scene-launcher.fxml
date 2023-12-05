@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -102,14 +103,26 @@
                         </HBox>
                      </right>
                      <left>
-                        <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install Service" textFill="WHITE" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="bi-gear" iconSize="16" />
-                           </graphic>
-                        </Button>
+                        <HBox fx:id="installContainer" alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install Service" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="bi-gear" iconSize="16" />
+                                 </graphic>
+                              </Button>
+                              <Hyperlink fx:id="helpBtn" onAction="#onHelp" text="Help">
+                                 <HBox.margin>
+                                    <Insets top="2.0" />
+                                 </HBox.margin>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Hyperlink>
+                           </children>
+                        </HBox>
                      </left>
                   </BorderPane>
               </items>
