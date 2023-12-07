@@ -26,4 +26,5 @@ open module de.mephisto.vpin.commons {
   exports de.mephisto.vpin.commons.fx.widgets;
   exports de.mephisto.vpin.commons.fx.discord;
   exports de.mephisto.vpin.commons.utils;
+  exports de.mephisto.vpin.commons.utils.media;
 }

@@ -1,6 +1,9 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -22,9 +25,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -40,10 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -379,7 +375,10 @@ public class WidgetFactory {
 
   public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
     if (parent.getCenter() != null) {
-      disposeMediaBorderPane(parent);
+      Node node = parent.getCenter();
+      if(node instanceof AssetMediaPlayer) {
+        ((AssetMediaPlayer)node).disposeMedia();
+      }
     }
 
     if (ignored) {
@@ -449,113 +448,13 @@ public class WidgetFactory {
       parent.setCenter(imageView);
     }
     else if (baseType.equals("audio")) {
-      Media media = new Media(url);
-      MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(false);
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(true);
-      mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
-        mediaPlayer.stop();
-        mediaPlayer.dispose();
-
-        Label label = new Label("Media Error");
-        label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-        label.setUserData(mediaItem);
-        parent.setCenter(label);
-      });
-
-      mediaPlayer.setOnEndOfMedia(() -> {
-        VBox bottom = (VBox) parent.getBottom();
-        Button playButton = (Button) bottom.getChildren().get(0);
-        playButton.setVisible(true);
-        FontIcon icon = (FontIcon) playButton.getChildrenUnmodifiable().get(0);
-        icon.setIconLiteral("bi-play");
-      });
-
-      MediaView mediaView = new MediaView(mediaPlayer);
-      parent.setCenter(mediaView);
+      new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      Media media = new Media(url);
-      MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(baseType.equals("video"));
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(true);
-      mediaPlayer.setOnError(() -> {
-        LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-        mediaPlayer.stop();
-        mediaPlayer.dispose();
-
-        Label label = new Label("  Media available\n(but not playable)");
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-        label.setUserData(mediaItem);
-        parent.setCenter(label);
-      });
-
-      MediaView mediaView = new MediaView(mediaPlayer);
-      mediaView.setUserData(mediaItem);
-      mediaView.setPreserveRatio(true);
-
-      if (parent.getId().equals("screenPlayField")) {
-        mediaView.setFitWidth(250);
-        if (!portraitMode) {
-          mediaView.rotateProperty().set(90);
-          mediaView.setFitWidth(440);
-          mediaView.setX(0);
-          mediaView.setY(0);
-          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
-        }
-      }
-      else if (parent.getId().equals("screenLoading")) {
-        mediaView.setFitWidth(150);
-        if (!portraitMode) {
-          mediaView.rotateProperty().set(90);
-          mediaView.setFitWidth(70);
-          mediaView.setX(0);
-          mediaView.setY(0);
-        }
-      }
-      else {
-        mediaView.setFitWidth(parent.getPrefWidth() - 12);
-        mediaView.setFitHeight(parent.getPrefHeight() - 50);
-      }
-
-      parent.setCenter(mediaView);
+      new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
-    }
-  }
-
-  public static void disposeMediaBorderPane(BorderPane node) {
-    Node center = node.getCenter();
-    if (center != null) {
-      if (center instanceof MediaView) {
-        MediaView view = (MediaView) center;
-        if (view.getMediaPlayer() != null) {
-          String source = view.getMediaPlayer().getMedia().getSource();
-          view.getMediaPlayer().stop();
-          final ExecutorService executor = Executors.newFixedThreadPool(1);
-          final Future<?> future = executor.submit(() -> {
-            view.getMediaPlayer().dispose();
-          });
-          try {
-            future.get(500, TimeUnit.MILLISECONDS);
-          } catch (Exception e) {
-            LOG.error("Error disposing media view (" + source + "): " + e.getMessage());
-          }
-          executor.shutdownNow();
-        }
-        node.setCenter(null);
-      }
-      else if (center instanceof ImageView) {
-        ImageView view = (ImageView) center;
-        view.setImage(null);
-      }
-      else {
-        node.setCenter(null);
-      }
     }
   }
 

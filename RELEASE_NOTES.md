@@ -41,5 +41,6 @@ Phew, here it comes...
 - Removed Serum ALT color validator: This is part of freezy now, so the validator is obsolete.
 - Fixed error when deleting tables which may have led to remaining data in Popper.
 - The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
+- Improved error message when ALT sound is not checked in VPin MAME.
 - Fixed the layout of the update news dialog a bit ... as you can see.
 

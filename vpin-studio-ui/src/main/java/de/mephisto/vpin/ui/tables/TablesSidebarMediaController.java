@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -537,8 +538,8 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   private void disposeMediaPane(BorderPane parent) {
-    if (parent != null && parent.getCenter() != null) {
-      WidgetFactory.disposeMediaBorderPane(parent);
+    if (parent != null && parent.getCenter() != null && parent.getCenter() instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer) parent.getCenter()).disposeMedia();
     }
   }
 }

@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -29,7 +31,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,20 +41,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
@@ -63,8 +57,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -334,13 +326,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       String assetUrl = null;
       try {
         assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
-      } catch (InvalidAlgorithmParameterException e) {
-        throw new RuntimeException(e);
-      } catch (InvalidKeyException e) {
-        throw new RuntimeException(e);
-      } catch (BadPaddingException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalBlockSizeException e) {
+      } catch (Exception e) {
         throw new RuntimeException(e);
       }
 
@@ -358,90 +344,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           serverAssetMediaPane.setCenter(imageView);
         }
         else if (baseType.equals("audio")) {
-          VBox vBox = new VBox();
-          vBox.setAlignment(Pos.BASELINE_CENTER);
-
-          FontIcon fontIcon = new FontIcon();
-          fontIcon.setIconSize(48);
-          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          fontIcon.setIconLiteral("bi-play");
-
-          Button playBtn = new Button();
-          playBtn.setGraphic(fontIcon);
-          vBox.getChildren().add(playBtn);
-
-          Media media = new Media(assetUrl);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(false);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(false);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("Media Error");
-            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-            label.setUserData(tableAsset);
-            vBox.getChildren().add(label);
-            serverAssetMediaPane.setCenter(label);
-          });
-
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          vBox.getChildren().add(mediaView);
-          serverAssetMediaPane.setCenter(vBox);
-
-          mediaPlayer.setOnEndOfMedia(() -> {
-            fontIcon.setIconLiteral("bi-play");
-          });
-
-          playBtn.setOnAction(event -> {
-            String iconLiteral = fontIcon.getIconLiteral();
-            if (iconLiteral.equals("bi-play")) {
-              mediaView.getMediaPlayer().setMute(false);
-              mediaView.getMediaPlayer().setCycleCount(1);
-              mediaView.getMediaPlayer().play();
-              fontIcon.setIconLiteral("bi-stop");
-            }
-            else {
-              mediaView.getMediaPlayer().stop();
-              fontIcon.setIconLiteral("bi-play");
-            }
-          });
-
+          new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          Media media = new Media(assetUrl);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(true);
-          mediaPlayer.setStopTime(Duration.seconds(5));
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("  Media available\n(but not playable)");
-            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-            label.setUserData(tableAsset);
-            serverAssetMediaPane.setCenter(label);
-          });
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          mediaView.setUserData(tableAsset);
-          mediaView.setPreserveRatio(true);
-          mediaView.setFitWidth(MEDIA_SIZE);
-          mediaView.setFitHeight(MEDIA_SIZE);
-          if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
-            mediaView.setRotate(90);
-          }
-          else {
-            mediaView.setRotate(0);
-          }
-
-          serverAssetMediaPane.setCenter(mediaView);
+          boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
         }
       } catch (Exception e) {
         LOG.error("Preview failed for " + tableAsset);
@@ -592,6 +499,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
+        boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+
         if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
@@ -627,88 +536,10 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           mediaPane.setCenter(imageView);
         }
         else if (baseType.equals("audio")) {
-          VBox vBox = new VBox();
-          vBox.setAlignment(Pos.BASELINE_CENTER);
-
-          FontIcon fontIcon = new FontIcon();
-          fontIcon.setIconSize(48);
-          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          fontIcon.setIconLiteral("bi-play");
-
-          Button playBtn = new Button();
-          playBtn.setGraphic(fontIcon);
-          vBox.getChildren().add(playBtn);
-
-          Media media = new Media(url);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(false);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("Media Error");
-            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-            label.setUserData(mediaItem);
-            vBox.getChildren().add(label);
-            mediaPane.setCenter(label);
-          });
-
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          vBox.getChildren().add(mediaView);
-          mediaPane.setCenter(vBox);
-
-          mediaPlayer.setOnEndOfMedia(() -> {
-            fontIcon.setIconLiteral("bi-play");
-          });
-
-          playBtn.setOnAction(event -> {
-            String iconLiteral = fontIcon.getIconLiteral();
-            if (iconLiteral.equals("bi-play")) {
-              mediaView.getMediaPlayer().setMute(false);
-              mediaView.getMediaPlayer().setCycleCount(1);
-              mediaView.getMediaPlayer().play();
-              fontIcon.setIconLiteral("bi-stop");
-            }
-            else {
-              mediaView.getMediaPlayer().stop();
-              fontIcon.setIconLiteral("bi-play");
-            }
-          });
-
+          new AudioMediaPlayer(mediaPane, mediaItem, url);
         }
         else if (baseType.equals("video")) {
-          Media media = new Media(url);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(true);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("  Media available\n(but not playable)");
-            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-            label.setUserData(mediaItem);
-            mediaPane.setCenter(label);
-          });
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          mediaView.setUserData(mediaItem);
-          mediaView.setPreserveRatio(true);
-          mediaView.setFitWidth(MEDIA_SIZE);
-          mediaView.setFitHeight(MEDIA_SIZE);
-          if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
-            mediaView.setRotate(90);
-          }
-          else {
-            mediaView.setRotate(0);
-          }
-          mediaPane.setCenter(mediaView);
+          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, portraitMode, true);
         }
       }
     });
