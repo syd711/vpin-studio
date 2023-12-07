@@ -23,7 +23,6 @@ abstract public class AssetMediaPlayer extends BorderPane {
   protected final BorderPane parent;
 
   public AssetMediaPlayer(@NonNull BorderPane parent) {
-
     this.parent = parent;
   }
 
@@ -35,13 +34,7 @@ abstract public class AssetMediaPlayer extends BorderPane {
   }
 
   public void disposeMedia() {
-    if (parent.getCenter() != null) {
-      disposeMediaBorderPane(parent);
-    }
-  }
-
-  public void disposeMediaBorderPane(BorderPane node) {
-    Node center = node.getCenter();
+    Node center = this.getCenter();
     if (center != null) {
       if (center instanceof MediaView) {
         MediaView view = (MediaView) center;
@@ -59,14 +52,10 @@ abstract public class AssetMediaPlayer extends BorderPane {
           }
           executor.shutdownNow();
         }
-        node.setCenter(null);
       }
       else if (center instanceof ImageView) {
         ImageView view = (ImageView) center;
         view.setImage(null);
-      }
-      else {
-        node.setCenter(null);
       }
     }
   }

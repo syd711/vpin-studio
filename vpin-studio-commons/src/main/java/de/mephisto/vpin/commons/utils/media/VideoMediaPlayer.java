@@ -105,7 +105,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setFitHeight(parent.getPrefHeight() - 50);
     }
 
-    parent.setCenter(mediaView);
+    this.setCenter(mediaView);
+    parent.setCenter(this);
   }
 
   private void scalePlayfieldForSidebar(MediaView mediaView) {

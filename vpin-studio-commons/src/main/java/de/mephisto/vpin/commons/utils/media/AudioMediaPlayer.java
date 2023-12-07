@@ -45,6 +45,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     });
 
     MediaView mediaView = new MediaView(mediaPlayer);
-    parent.setCenter(mediaView);
+    this.setCenter(mediaView);
+    parent.setCenter(this);
   }
 }

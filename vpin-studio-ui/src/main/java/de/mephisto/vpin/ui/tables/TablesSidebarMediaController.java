@@ -538,8 +538,11 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   private void disposeMediaPane(BorderPane parent) {
-    if (parent != null && parent.getCenter() != null && parent.getCenter() instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer) parent.getCenter()).disposeMedia();
+    if (parent.getCenter() != null) {
+      Node node = parent.getCenter();
+      if (node instanceof AssetMediaPlayer) {
+        ((AssetMediaPlayer) node).disposeMedia();
+      }
     }
   }
 }

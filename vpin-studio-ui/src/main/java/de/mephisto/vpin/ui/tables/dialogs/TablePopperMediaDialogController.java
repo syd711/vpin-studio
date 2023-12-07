@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
@@ -586,34 +587,18 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   private void disposeServerAssetPreview() {
     Node center = serverAssetMediaPane.getCenter();
-    if (center instanceof MediaView) {
-      MediaView mediaView = (MediaView) center;
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
+    if (center instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer)center).disposeMedia();
     }
-    else if (center instanceof VBox) {
-      MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
-    }
-
     serverAssetMediaPane.setCenter(null);
   }
 
 
   private void disposeTableMediaPreview() {
     Node center = mediaPane.getCenter();
-    if (center instanceof MediaView) {
-      MediaView mediaView = (MediaView) center;
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
+    if (center instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer)center).disposeMedia();
     }
-    else if (center instanceof VBox) {
-      MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
-    }
-
     mediaPane.setCenter(null);
   }
 

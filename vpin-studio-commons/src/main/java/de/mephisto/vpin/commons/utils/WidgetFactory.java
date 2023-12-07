@@ -376,8 +376,8 @@ public class WidgetFactory {
   public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
-      if(node instanceof AssetMediaPlayer) {
-        ((AssetMediaPlayer)node).disposeMedia();
+      if (node instanceof AssetMediaPlayer) {
+        ((AssetMediaPlayer) node).disposeMedia();
       }
     }
 
