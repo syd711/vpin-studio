@@ -5,7 +5,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -24,7 +23,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   }
 
   public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable GameMediaItemRepresentation mediaItem, @NonNull String url) {
-    super(parent);
+    super(parent, url);
 
     VBox vBox = new VBox();
     vBox.setAlignment(Pos.BASELINE_CENTER);

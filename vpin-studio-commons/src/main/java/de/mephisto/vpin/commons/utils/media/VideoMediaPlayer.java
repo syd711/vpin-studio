@@ -15,8 +15,6 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
   public static final int MEDIA_SIZE = 280;
 
-  private final String url;
-
   private PopperScreen screen;
 
   private final String mimeType;
@@ -29,8 +27,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private int retryCounter = 0;
 
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType, boolean portraitMode) {
-    super(parent);
-    this.url = url;
+    super(parent, url);
     this.mimeType = mimeType;
     this.portraitMode = portraitMode;
     this.dialogRendering = true;
@@ -46,9 +43,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, @NonNull String mimeType, boolean portraitMode, boolean dialogRendering) {
-    super(parent);
+    super(parent, url);
     this.mediaItem = mediaItem;
-    this.url = url;
     this.mimeType = mimeType;
     this.portraitMode = portraitMode;
     this.dialogRendering = dialogRendering;
