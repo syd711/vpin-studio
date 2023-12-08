@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 abstract public class AssetMediaPlayer extends BorderPane {
   private final static Logger LOG = LoggerFactory.getLogger(AssetMediaPlayer.class);
 
+  protected int retryCounter = 0;
+
   @NonNull
   protected final BorderPane parent;
 
@@ -57,6 +59,9 @@ abstract public class AssetMediaPlayer extends BorderPane {
       } catch (Exception e) {
         LOG.error("Error disposing media view: " + e.getMessage());
       }
+    }
+    else {
+      LOG.error("No mediaplayer found for " + url);
     }
   }
 }

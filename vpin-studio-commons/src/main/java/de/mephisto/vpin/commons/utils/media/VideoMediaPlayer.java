@@ -24,8 +24,6 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private GameMediaItemRepresentation mediaItem;
 
-  private int retryCounter = 0;
-
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType, boolean portraitMode) {
     super(parent, url);
     this.mimeType = mimeType;
