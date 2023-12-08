@@ -33,7 +33,7 @@ public class VpxComponent implements ComponentFacade {
 
   @Override
   public List<GithubRelease> loadReleases() throws IOException {
-    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source"));
+    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", "linux", "sc-", "macos", "android"));
   }
 
   @NotNull

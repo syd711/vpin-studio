@@ -75,7 +75,7 @@ public class ComponentsResource {
                                                    @PathVariable("tag") String tag,
                                                    @PathVariable("artifact") String artifact) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, tag, true);
+    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, true);
     return toActionLog(log);
   }
 
@@ -91,7 +91,7 @@ public class ComponentsResource {
       rep.setTag(release.getTag());
       rep.setReleasesUrl(release.getReleasesUrl());
       rep.setUrl(release.getUrl());
-      rep.setArtifacts(release.getArtifacts().stream().map( artifact -> artifact.getName()).collect(Collectors.toList()));
+      rep.setArtifacts(release.getArtifacts().stream().map(artifact -> artifact.getName()).collect(Collectors.toList()));
       artifacts.add(rep);
     });
 

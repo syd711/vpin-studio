@@ -70,7 +70,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="error-title" text="- You miss some checks or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
+                              <Label styleClass="error-title" text="- You found a bug or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>

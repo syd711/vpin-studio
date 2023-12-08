@@ -78,14 +78,14 @@ public class ComponentService implements InitializingBean {
 
 
       ReleaseArtifactActionLog install = null;
-      List<GithubRelease> githubReleases = releaseCache.get(component.getType());
+      List<GithubRelease> githubReleases = getCached(component);
       Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
       GithubRelease githubRelease = githubReleases.get(0);
-      if(first.isPresent()) {
+      if (first.isPresent()) {
         githubRelease = first.get();
       }
 
-      if(githubRelease != null) {
+      if (githubRelease != null) {
         ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
         ComponentFacade componentFacade = getComponentFacade(type);
         File targetFolder = componentFacade.getTargetFolder(emulator);
@@ -143,7 +143,7 @@ public class ComponentService implements InitializingBean {
   @NonNull
   public ReleaseArtifactActionLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean simulate) {
     Component component = getComponent(type);
-    List<GithubRelease> githubReleases = releaseCache.get(component.getType());
+    List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
     if (first.isPresent()) {
       ReleaseArtifactActionLog install = null;
@@ -177,7 +177,7 @@ public class ComponentService implements InitializingBean {
     try {
       ComponentFacade componentFacade = getComponentFacade(component.getType());
       List<GithubRelease> githubReleases = componentFacade.loadReleases();
-      if(!githubReleases.isEmpty()) {
+      if (!githubReleases.isEmpty()) {
         component.setLatestReleaseVersion(githubReleases.get(0).getTag());
       }
       componentRepository.saveAndFlush(component);
@@ -193,6 +193,20 @@ public class ComponentService implements InitializingBean {
       loadReleases(component);
     }
     return true;
+  }
+
+  public List<GithubRelease> getCached(Component component) {
+    if (this.releaseCache.containsKey(component.getType())) {
+      List<GithubRelease> releases = this.releaseCache.get(component.getType());
+      if (releases.isEmpty()) {
+        loadReleases(component);
+      }
+    }
+    else {
+      loadReleases(component);
+    }
+
+    return this.releaseCache.get(component.getType());
   }
 
   public ComponentFacade getComponentFacade(ComponentType type) {

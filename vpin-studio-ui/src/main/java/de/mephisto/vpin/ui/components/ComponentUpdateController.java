@@ -24,11 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -82,7 +78,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @FXML
   private void onInstallSimulate() {
-//    run(true);
+    run(true, Collections.emptyList());
   }
 
   @FXML
@@ -111,18 +107,13 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   private void runInstall() {
     ReleaseArtifact artifact = artifactCombo.getValue();
-    List<String> exclusions = component.getExclusions();
-    if (!exclusions.isEmpty()) {
-//      sadfsa
-    }
-
-
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact.name + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//      run(false);
+      run(false, Collections.emptyList());
     }
   }
 
+  //TODO exclusion dialog not finished
   private void run(boolean simulate, List<String> exclusions) {
     textArea.setText("");
     Platform.runLater(() -> {

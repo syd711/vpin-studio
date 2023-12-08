@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,12 +82,14 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
       progressResultModel.getResults().add(install);
     } catch (Exception e) {
       LOG.error("Failed to run installation: " + e.getMessage(), e);
-      if (simulate) {
-        WidgetFactory.showAlert(Studio.stage, "Component Installation Simulation Failed", "Failed simulate installation update for  " + next + ": " + e.getMessage());
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Component Installation Failed", "Failed install update for  " + next + ": " + e.getMessage());
-      }
+      Platform.runLater(() -> {
+        if (simulate) {
+          WidgetFactory.showAlert(Studio.stage, "Component Installation Simulation Failed", "Failed to simulate installation update for " + next + ": " + e.getMessage());
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Component Installation Failed", "Failed install update for " + next + ": " + e.getMessage());
+        }
+      });
     }
   }
 
