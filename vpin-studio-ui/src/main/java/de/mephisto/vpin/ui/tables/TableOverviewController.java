@@ -389,7 +389,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismissAll() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    DismissalUtil.dismissValidations(game);
+    Dialogs.openDismissAllDialog(game);
   }
 
   public void reload(String rom) {
@@ -995,8 +995,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     scanBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
+    validationError.setVisible(c.getList().size() != 1);
 
-    vpsBtn.setDisable(c.getList().isEmpty() || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
+    vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());

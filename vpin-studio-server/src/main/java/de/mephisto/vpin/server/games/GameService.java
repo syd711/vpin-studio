@@ -465,11 +465,19 @@ public class GameService implements InitializingBean {
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
-    game.setValidationState(gameValidator.validate(game));
+    List<ValidationState> validate = gameValidator.validate(game, true);
+    if(validate.isEmpty()) {
+      validate.add(GameValidationStateFactory.empty());
+    }
+    game.setValidationState(validate.get(0));
   }
 
   public List<ValidationState> getRomValidations(Game game) {
     return gameValidator.validateRom(game);
+  }
+
+  public List<ValidationState> validate(Game game) {
+    return gameValidator.validate(game, false);
   }
 
   public Game save(Game game) throws Exception {

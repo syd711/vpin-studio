@@ -84,7 +84,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
                                                    </graphic>
                                                             </Hyperlink>
-                                                <Hyperlink onAction="#onDismissAll" text="Dismiss All" textFill="WHITE">
+                                                <Hyperlink onAction="#onDismissAll" text="Dismiss All ..." textFill="WHITE">
                                                    <font>
                                                       <Font size="10.0" />
                                                    </font>

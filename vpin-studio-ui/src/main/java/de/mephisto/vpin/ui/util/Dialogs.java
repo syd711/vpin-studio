@@ -84,6 +84,14 @@ public class Dialogs {
     return true;
   }
 
+  public static void openDismissAllDialog(GameRepresentation gameRepresentation) {
+    FXMLLoader fxmlLoader = new FXMLLoader(DismissAllController.class.getResource("dialog-dismiss-all.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Dismiss Validation Errors");
+    DismissAllController controller = (DismissAllController) stage.getUserData();
+    controller.setGame(gameRepresentation);
+    stage.showAndWait();
+  }
+
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
     String title = "Add New Player";
     if (selection != null) {

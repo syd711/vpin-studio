@@ -72,7 +72,6 @@ public class GamesResource {
     return game;
   }
 
-
   @GetMapping("/validations/rom/{id}")
   public List<ValidationState> getRomValidations(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -80,6 +79,15 @@ public class GamesResource {
       return Collections.emptyList();
     }
     return gameService.getRomValidations(game);
+  }
+
+  @GetMapping("/validations/{id}")
+  public List<ValidationState> getAllValidations(@PathVariable("id") int id) {
+    Game game = gameService.getGame(id);
+    if (game == null) {
+      return Collections.emptyList();
+    }
+    return gameService.validate(game);
   }
 
   @GetMapping("/scores/{id}")
