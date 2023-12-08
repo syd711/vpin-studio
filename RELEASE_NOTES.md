@@ -4,6 +4,7 @@
 
 - Improved design of table selection in the table overview. This way, it should be easier to find the selected table. 
 - Added "zip" file support for VPX uploads: If you downloaded zipped VPX files, you don't have to extract the file before uploading it anymore.
+- Add
 - Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-open-folder.png?raw=true" width="700" />
@@ -16,7 +17,7 @@
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-drop.png?raw=true" width="300" />
 
-- Added "Dismiss All" button for table validations.
+- Added "Dismiss All" button for table validations: You can now bulk select errors to dismiss them all at once.
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/validation-error.png?raw=true" width="700" />
 
@@ -42,5 +43,6 @@ Phew, here it comes...
 - Fixed error when deleting tables which may have led to remaining data in Popper.
 - The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
 - Improved error message when ALT sound is not checked in VPin MAME.
+- Fixed some button states in the table overview that should not be enabled for multi-selections.
 - Fixed the layout of the update news dialog a bit ... as you can see.
 
