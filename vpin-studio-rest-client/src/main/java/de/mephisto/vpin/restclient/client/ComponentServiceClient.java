@@ -32,27 +32,27 @@ public class ComponentServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "components/setversion/" + type.name() + "/" + version, new HashMap<>(), Boolean.class);
   }
 
-  public ComponentActionLogRepresentation install(ComponentType type, String artifactName) throws Exception {
+  public ComponentActionLogRepresentation install(ComponentType type, String tag, String artifactName) throws Exception {
     try {
-      return getRestClient().post(API + "components/install/" + type.name() + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
+      return getRestClient().post(API + "components/install/" + type.name() + "/" + tag + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update installation: " + e.getMessage(), e);
       throw new Exception("Installation failed");
     }
   }
 
-  public ComponentActionLogRepresentation check(ComponentType type, String artifactName, boolean forceDownload) throws Exception {
+  public ComponentActionLogRepresentation check(ComponentType type, String tag, String artifactName, boolean forceDownload) throws Exception {
     try {
-      return getRestClient().post(API + "components/check/" + type.name() + "/" + artifactName + "/" + forceDownload, new HashMap<>(), ComponentActionLogRepresentation.class);
+      return getRestClient().post(API + "components/check/" + type.name() + "/" + tag + "/" + artifactName + "/" + forceDownload, new HashMap<>(), ComponentActionLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update diff: " + e.getMessage(), e);
       throw new Exception("Diff failed");
     }
   }
 
-  public ComponentActionLogRepresentation simulate(ComponentType type, String artifactName) throws Exception {
+  public ComponentActionLogRepresentation simulate(ComponentType type, String tag, String artifactName) throws Exception {
     try {
-      return getRestClient().post(API + "components/simulate/" + type.name() + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
+      return getRestClient().post(API + "components/simulate/" + type.name() + "/" + tag + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update installation: " + e.getMessage(), e);
       throw new Exception("Installation failed");

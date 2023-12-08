@@ -70,7 +70,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="error-title" text="- You miss some checks or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
+                              <Label styleClass="error-title" text="- You found a bug or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -121,7 +121,6 @@
                               <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
                               <Tab fx:id="freezyTab" closable="false" text="Freezy" />
                               <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
-                              <Tab fx:id="serumTab" closable="false" text="Serum" />
                           </tabs>
                       </TabPane>
                </children>

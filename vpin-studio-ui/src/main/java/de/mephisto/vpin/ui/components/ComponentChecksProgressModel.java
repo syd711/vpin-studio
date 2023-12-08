@@ -64,7 +64,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
         return;
       }
 
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, "-latest-", forceDownload);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, "-latest-", "-latest-", forceDownload);
       progressResultModel.getResults().add(check.getStatus());
       if (!StringUtils.isEmpty(check.getStatus())) {
         LOG.error("Failed to check component " + next + ": " + check.getStatus());

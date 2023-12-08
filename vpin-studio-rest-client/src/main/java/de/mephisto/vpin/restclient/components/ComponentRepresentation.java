@@ -7,7 +7,7 @@ import java.util.List;
 public class ComponentRepresentation {
   private ComponentType type;
 
-  private List<String> artifacts = new ArrayList<>();
+  private List<GithubReleaseRepresentation> releases = new ArrayList<>();
 
   private Date lastCheck;
 
@@ -17,16 +17,26 @@ public class ComponentRepresentation {
 
   private String latestReleaseVersion;
 
-  private String url;
-
   private String targetFolder;
 
-  public List<String> getArtifacts() {
-    return artifacts;
+  private String url;
+
+  private List<String> exclusions = new ArrayList<>();
+
+  public List<String> getExclusions() {
+    return exclusions;
   }
 
-  public void setArtifacts(List<String> artifacts) {
-    this.artifacts = artifacts;
+  public void setExclusions(List<String> exclusions) {
+    this.exclusions = exclusions;
+  }
+
+  public List<GithubReleaseRepresentation> getReleases() {
+    return releases;
+  }
+
+  public void setReleases(List<GithubReleaseRepresentation> releases) {
+    this.releases = releases;
   }
 
   public String getLatestReleaseVersion() {

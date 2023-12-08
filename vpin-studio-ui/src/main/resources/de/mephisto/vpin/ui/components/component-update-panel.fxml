@@ -43,12 +43,12 @@
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="artifactCombo" />
-                        <Button mnemonicParsing="false" onAction="#onFetch" text="Fetch Latest Artifacts" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onFetch" text="Refresh" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-sync-outline" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="Checks the installation against the selected version." wrapText="true" />

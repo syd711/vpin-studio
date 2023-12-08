@@ -58,9 +58,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab flexDMDTab;
 
   @FXML
-  private Tab serumTab;
-
-  @FXML
   private TabPane tabPane;
 
   @FXML
@@ -158,7 +155,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(vpxTab, "tab-vpx.fxml");
     loadTab(b2sTab, "tab-b2s.fxml");
     loadTab(mameTab, "tab-mame.fxml");
-    loadTab(serumTab, "tab-serum.fxml");
     loadTab(flexDMDTab, "tab-flexdmd.fxml");
     loadTab(freezyTab, "tab-freezy.fxml");
 

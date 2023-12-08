@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.dialogs.DialogExclusionList">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <center>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+         <top>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <top>
+                  <VBox BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets top="12.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <Label styleClass="preference-description" text="The selected files are excluded from installation by default." />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="You can include them again by selecting them here. " />
+                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="A backup will from the exsting file will be created." />
+                     </children>
+                  </VBox>
+               </top>
+            </BorderPane>
+         </top>
+         <bottom>
+            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+               <children>
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="installBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="Install Update">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </HBox>
+         </bottom>
+         <center>
+            <VBox fx:id="exclusionList" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="preference-description" text="Files to exclude:">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

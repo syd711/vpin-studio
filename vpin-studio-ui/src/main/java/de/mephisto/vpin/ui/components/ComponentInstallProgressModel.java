@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,11 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   private final boolean simulate;
   private final String artifactName;
   private final List<ComponentType> components;
+  private final String releaseTag;
 
-  public ComponentInstallProgressModel(ComponentType type, boolean simulate, String artifactName) {
+  public ComponentInstallProgressModel(ComponentType type, boolean simulate, String releaseTag, String artifactName) {
     super("");
+    this.releaseTag = releaseTag;
     if(simulate) {
       super.setTitle("Installation Simulator for " + artifactName);
     }
@@ -71,20 +74,22 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
     try {
       ComponentActionLogRepresentation install = null;
       if (simulate) {
-        install = client.getComponentService().simulate(next, artifactName);
+        install = client.getComponentService().simulate(next, releaseTag, artifactName);
       }
       else {
-        install = client.getComponentService().install(next, artifactName);
+        install = client.getComponentService().install(next, releaseTag, artifactName);
       }
       progressResultModel.getResults().add(install);
     } catch (Exception e) {
       LOG.error("Failed to run installation: " + e.getMessage(), e);
-      if (simulate) {
-        WidgetFactory.showAlert(Studio.stage, "Component Installation Simulation Failed", "Failed simulate installation update for  " + next + ": " + e.getMessage());
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Component Installation Failed", "Failed install update for  " + next + ": " + e.getMessage());
-      }
+      Platform.runLater(() -> {
+        if (simulate) {
+          WidgetFactory.showAlert(Studio.stage, "Component Installation Simulation Failed", "Failed to simulate installation update for " + next + ": " + e.getMessage());
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Component Installation Failed", "Failed install update for " + next + ": " + e.getMessage());
+        }
+      });
     }
   }
 

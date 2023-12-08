@@ -29,8 +29,8 @@ public class BackglassComponent implements ComponentFacade {
   }
 
   @Override
-  public GithubRelease loadRelease() throws IOException {
-    return GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source"));
+  public List<GithubRelease> loadReleases() throws IOException {
+    return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source")));
   }
 
   @NonNull

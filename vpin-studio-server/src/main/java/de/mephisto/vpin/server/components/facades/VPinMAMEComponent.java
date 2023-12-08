@@ -28,8 +28,8 @@ public class VPinMAMEComponent implements ComponentFacade {
   }
 
   @Override
-  public GithubRelease loadRelease() throws IOException {
-    return GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
+  public List<GithubRelease> loadReleases() throws IOException {
+    return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx")));
   }
 
   @NotNull

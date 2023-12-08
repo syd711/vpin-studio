@@ -1,8 +1,20 @@
-## Maintenance Update 2.3.2
+## Release Notes
+
+### Added New "System Manager" Section
+
+Added main navigation item "System Manager". You can use the System Manager to check if your VPin software stack is up-to-date.
+The integrated installation simulator allows you to check if how on update would look like.
+The System Manager uses the latest Github releases from various projects and compares these against your local files.
+Note that there is always the possibility that the released artifacts of these projects may change in an unexpected way.
+
+
+<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/components/overview.png" width="800" />
+
 
 ### Interaction Improvements
 
 - Improved design of table selection in the table overview. This way, it should be easier to find the selected table. 
+- Added progress bar for audio playback.
 - Added "zip" file support for VPX uploads: If you downloaded zipped VPX files, you don't have to extract the file before uploading it anymore.
 - Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
 
@@ -44,4 +56,5 @@ Phew, here it comes...
 - Improved error message when ALT sound is not checked in VPin MAME.
 - Fixed some button states in the table overview that should not be enabled for multi-selections.
 - Fixed the layout of the update news dialog a bit ... as you can see.
+- Refactored large parts of the media playback to reduce "Media available but not playable" errors.
 

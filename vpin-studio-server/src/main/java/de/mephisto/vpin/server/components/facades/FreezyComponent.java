@@ -28,8 +28,8 @@ public class FreezyComponent implements ComponentFacade {
   }
 
   @Override
-  public GithubRelease loadRelease() throws IOException {
-    return GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source", ".msi"));
+  public List<GithubRelease> loadReleases() throws IOException {
+    return Arrays.asList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source", ".msi")));
   }
 
   @NotNull
