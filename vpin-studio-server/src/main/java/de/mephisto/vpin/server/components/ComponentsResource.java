@@ -5,6 +5,7 @@ import de.mephisto.githubloader.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,24 +51,31 @@ public class ComponentsResource {
     return componentService.setVersion(type, version);
   }
 
-  @PostMapping("/check/{type}/{artifact}/{forceDownload}")
-  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact, @PathVariable("forceDownload") boolean forceDownload) {
+  @PostMapping("/check/{type}/{tag}/{artifact}/{forceDownload}")
+  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type,
+                                                @PathVariable("tag") String tag,
+                                                @PathVariable("artifact") String artifact,
+                                                @PathVariable("forceDownload") boolean forceDownload) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, artifact, forceDownload);
+    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, tag, artifact, forceDownload);
     return toActionLog(log);
   }
 
-  @PostMapping("/install/{type}/{artifact}")
-  public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) throws Exception {
+  @PostMapping("/install/{type}/{tag}/{artifact}")
+  public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type,
+                                                  @PathVariable("tag") String tag,
+                                                  @PathVariable("artifact") String artifact) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, false);
+    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, false);
     return toActionLog(log);
   }
 
-  @PostMapping("/simulate/{type}/{artifact}")
-  public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type, @PathVariable("artifact") String artifact) throws Exception {
+  @PostMapping("/simulate/{type}/{tag}/{artifact}")
+  public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type,
+                                                   @PathVariable("tag") String tag,
+                                                   @PathVariable("artifact") String artifact) {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, true);
+    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, artifact, tag, true);
     return toActionLog(log);
   }
 
@@ -74,9 +83,22 @@ public class ComponentsResource {
     ComponentType componentType = component.getType();
 
     ComponentFacade componentFacade = componentService.getComponentFacade(componentType);
-    GithubRelease latestRelease = componentService.getLatestRelease(componentType);
+    List<GithubRelease> releases = componentService.getReleases(componentType);
+    List<GithubReleaseRepresentation> artifacts = new ArrayList<>();
+    releases.stream().forEach(release -> {
+      GithubReleaseRepresentation rep = new GithubReleaseRepresentation();
+      rep.setName(release.getName());
+      rep.setTag(release.getTag());
+      rep.setReleasesUrl(release.getReleasesUrl());
+      rep.setUrl(release.getUrl());
+      rep.setArtifacts(release.getArtifacts().stream().map( artifact -> artifact.getName()).collect(Collectors.toList()));
+      artifacts.add(rep);
+    });
+
 
     ComponentRepresentation representation = new ComponentRepresentation();
+    representation.setReleases(artifacts);
+    representation.setUrl(componentFacade.getReleasesUrl());
     representation.setType(componentType);
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
@@ -86,11 +108,6 @@ public class ComponentsResource {
     try {
       representation.setLastModified(componentFacade.getModificationDate(pinUPConnector.getDefaultGameEmulator()));
       representation.setTargetFolder(componentFacade.getTargetFolder(pinUPConnector.getDefaultGameEmulator()).getAbsolutePath());
-
-      if (latestRelease != null) {
-        representation.setUrl(latestRelease.getReleasesUrl());
-        representation.setArtifacts(latestRelease.getArtifacts().stream().map(a -> a.getName()).collect(Collectors.toList()));
-      }
     } catch (Exception e) {
       LOG.error("Error returning component data: " + e.getMessage(), e);
     }

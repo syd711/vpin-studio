@@ -19,10 +19,12 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentCheckProgressModel.class);
 
   private final Iterator<ComponentType> iterator;
+  private final String releaseTag;
   private final String releaseArtifact;
 
-  public ComponentCheckProgressModel(String title, ComponentType componentType, String releaseArtifact) {
+  public ComponentCheckProgressModel(String title, ComponentType componentType, String releaseTag, String releaseArtifact) {
     super(title);
+    this.releaseTag = releaseTag;
     this.releaseArtifact = releaseArtifact;
     this.iterator = Arrays.asList(componentType).iterator();
   }
@@ -55,7 +57,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, ComponentType next) {
     try {
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, releaseArtifact, true);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, releaseTag, releaseArtifact, true);
       progressResultModel.getResults().add(check);
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);

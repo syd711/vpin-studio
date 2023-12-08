@@ -14,6 +14,7 @@ Note that there is always the possibility that the released artifacts of these p
 ### Interaction Improvements
 
 - Improved design of table selection in the table overview. This way, it should be easier to find the selected table. 
+- Added progress bar for audio playback.
 - Added "zip" file support for VPX uploads: If you downloaded zipped VPX files, you don't have to extract the file before uploading it anymore.
 - Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
 

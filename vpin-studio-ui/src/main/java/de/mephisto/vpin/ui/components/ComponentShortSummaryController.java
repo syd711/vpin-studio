@@ -7,14 +7,21 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ComponentShortSummaryController implements Initializable, StudioEventListener {
+  private final static Logger LOG = LoggerFactory.getLogger(ComponentShortSummaryController.class);
 
   @FXML
   private Label titleLabel;
@@ -25,12 +32,30 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
   @FXML
   private Label latestVersionLabel;
 
+  @FXML
+  private Hyperlink link;
+
   private ComponentRepresentation component;
+
+  @FXML
+  private void onLink(ActionEvent event) {
+    Hyperlink link = (Hyperlink) event.getSource();
+    String linkText = link.getText();
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(linkText));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
 
   public void refresh(@NonNull ComponentRepresentation component) {
     this.component = component;
     latestVersionLabel.getStyleClass().remove("orange-label");
     latestVersionLabel.getStyleClass().remove("green-label");
+    link.setText(component.getUrl());
 
     if (component.isVersionDiff()) {
       latestVersionLabel.getStyleClass().add("orange-label");

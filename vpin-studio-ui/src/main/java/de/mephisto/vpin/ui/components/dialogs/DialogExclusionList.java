@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.components.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.AltColorAnalyzer;
+import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -107,7 +107,7 @@ public class DialogExclusionList implements Initializable, DialogController {
       this.cancelBtn.setDisable(true);
 
       Platform.runLater(() -> {
-        String analyze = AltColorAnalyzer.analyze(selection);
+        String analyze = AltColorArchiveAnalyzer.analyze(selection);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);

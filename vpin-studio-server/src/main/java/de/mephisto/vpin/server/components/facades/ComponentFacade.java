@@ -19,7 +19,7 @@ public interface ComponentFacade {
   @NonNull
   String getReleasesUrl();
 
-  GithubRelease loadRelease() throws IOException;
+  List<GithubRelease> loadReleases() throws IOException;
 
   @NonNull
   File getTargetFolder(@NonNull GameEmulator gameEmulator);

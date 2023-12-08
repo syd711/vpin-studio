@@ -22,9 +22,11 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   private final boolean simulate;
   private final String artifactName;
   private final List<ComponentType> components;
+  private final String releaseTag;
 
-  public ComponentInstallProgressModel(ComponentType type, boolean simulate, String artifactName) {
+  public ComponentInstallProgressModel(ComponentType type, boolean simulate, String releaseTag, String artifactName) {
     super("");
+    this.releaseTag = releaseTag;
     if(simulate) {
       super.setTitle("Installation Simulator for " + artifactName);
     }
@@ -71,10 +73,10 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
     try {
       ComponentActionLogRepresentation install = null;
       if (simulate) {
-        install = client.getComponentService().simulate(next, artifactName);
+        install = client.getComponentService().simulate(next, releaseTag, artifactName);
       }
       else {
-        install = client.getComponentService().install(next, artifactName);
+        install = client.getComponentService().install(next, releaseTag, artifactName);
       }
       progressResultModel.getResults().add(install);
     } catch (Exception e) {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -23,9 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -45,7 +48,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private TextArea textArea;
 
   @FXML
-  private ComboBox<String> artifactCombo;
+  private ComboBox<ReleaseArtifact> artifactCombo;
 
   private AbstractComponentTab componentTab;
   private ComponentType type;
@@ -53,7 +56,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @FXML
   private void onFetch() {
-    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-");
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-", "-latest-");
     ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
@@ -86,8 +89,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private void onCheck() {
     Platform.runLater(() -> {
       try {
-        String artifactName = artifactCombo.getValue();
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifactName);
+        ReleaseArtifact artifact = artifactCombo.getValue();
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifact.tag, artifact.name);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
@@ -107,14 +110,14 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   }
 
   private void runInstall() {
-    String artifactName = artifactCombo.getValue();
+    ReleaseArtifact artifact = artifactCombo.getValue();
     List<String> exclusions = component.getExclusions();
-    if(!exclusions.isEmpty()) {
+    if (!exclusions.isEmpty()) {
 //      sadfsa
     }
 
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifactName + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact.name + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 //      run(false);
     }
@@ -124,8 +127,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     textArea.setText("");
     Platform.runLater(() -> {
       try {
-        String artifactName = artifactCombo.getValue();
-        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, artifactName);
+        ReleaseArtifact artifact = artifactCombo.getValue();
+        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, artifact.tag, artifact.name);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
         ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
@@ -157,26 +160,42 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   public void refresh() {
     artifactCombo.getItems().clear();
-    artifactCombo.setItems(FXCollections.observableList(component.getArtifacts()));
 
-    artifactCombo.setDisable(component.getArtifacts().isEmpty());
-    checkBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
-    simBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null);
-    installBtn.setDisable(component.getArtifacts().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
-
-    if (component.getArtifacts().size() == 1) {
-      artifactCombo.setValue(component.getArtifacts().get(0));
+    List<ReleaseArtifact> releaseArtifacts = new ArrayList<>();
+    List<GithubReleaseRepresentation> releases = component.getReleases();
+    for (GithubReleaseRepresentation release : releases) {
+      List<String> artifactNames = release.getArtifacts();
+      for (String artifactName : artifactNames) {
+        releaseArtifacts.add(new ReleaseArtifact(release.getTag(), artifactName));
+      }
     }
 
-    String systemPreset = client.getSystemPreset();
-    if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
-      Optional<String> first = component.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
-      first.ifPresent(s -> artifactCombo.setValue(s));
+    artifactCombo.setItems(FXCollections.observableList(releaseArtifacts));
+
+    artifactCombo.setDisable(component.getReleases().isEmpty());
+    checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
+    simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
+    installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
+
+    if (!component.getReleases().isEmpty()) {
+      GithubReleaseRepresentation release = component.getReleases().get(0);
+      List<String> artifacts = release.getArtifacts();
+      if (!artifacts.isEmpty()) {
+        artifactCombo.setValue(new ReleaseArtifact(release.getTag(), artifacts.get(0)));
+      }
+
+      String systemPreset = client.getSystemPreset();
+      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+        Optional<String> first = release.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
+        first.ifPresent(s -> artifactCombo.setValue(new ReleaseArtifact(release.getTag(), first.get())));
+      }
+      else {
+        Optional<String> first = release.getArtifacts().stream().filter(r -> !r.contains("x64")).findFirst();
+        first.ifPresent(s -> artifactCombo.setValue(new ReleaseArtifact(release.getTag(), first.get())));
+      }
     }
-    else {
-      Optional<String> first = component.getArtifacts().stream().filter(r -> !r.contains("x64")).findFirst();
-      first.ifPresent(s -> artifactCombo.setValue(s));
-    }
+
+
   }
 
   @Override
@@ -196,6 +215,29 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         this.component = client.getComponentService().getComponent(type);
         refresh();
       });
+    }
+  }
+
+  class ReleaseArtifact {
+    private final String tag;
+    private final String name;
+
+    public ReleaseArtifact(String tag, String name) {
+      this.tag = tag;
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return name + " (Version " + tag + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof ReleaseArtifact)) {
+        return false;
+      }
+      return tag.equals(((ReleaseArtifact) obj).tag);
     }
   }
 }

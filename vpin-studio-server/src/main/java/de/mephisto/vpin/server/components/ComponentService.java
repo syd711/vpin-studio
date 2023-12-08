@@ -36,7 +36,7 @@ public class ComponentService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
-  private Map<ComponentType, GithubRelease> releases = new HashMap<>();
+  private Map<ComponentType, List<GithubRelease>> releaseCache = new HashMap<>();
 
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
@@ -51,8 +51,8 @@ public class ComponentService implements InitializingBean {
     return componentRepository.findByType(type).get();
   }
 
-  public GithubRelease getLatestRelease(ComponentType type) {
-    return releases.get(type);
+  public List<GithubRelease> getReleases(ComponentType type) {
+    return releaseCache.get(type);
   }
 
   public boolean setVersion(@NonNull ComponentType type, @NonNull String version) {
@@ -71,39 +71,44 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean forceDownload) {
+  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean forceDownload) {
     Component component = getComponent(type);
     if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
       loadReleases(component);
 
-      GithubRelease githubRelease = releases.get(component.getType());
+
       ReleaseArtifactActionLog install = null;
-      if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
-        throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
+      List<GithubRelease> githubReleases = releaseCache.get(component.getType());
+      Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
+      GithubRelease githubRelease = githubReleases.get(0);
+      if(first.isPresent()) {
+        githubRelease = first.get();
       }
 
-      ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-      ComponentFacade componentFacade = getComponentFacade(type);
-      File targetFolder = componentFacade.getTargetFolder(emulator);
+      if(githubRelease != null) {
+        ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
+        ComponentFacade componentFacade = getComponentFacade(type);
+        File targetFolder = componentFacade.getTargetFolder(emulator);
 
-      File folder = systemService.getComponentArchiveFolder(type);
-      File artifactArchive = new File(folder, releaseArtifact.getName());
-      if (artifactArchive.exists() && forceDownload) {
-        artifactArchive.delete();
-      }
+        File folder = systemService.getComponentArchiveFolder(type);
+        File artifactArchive = new File(folder, releaseArtifact.getName());
+        if (artifactArchive.exists() && forceDownload) {
+          artifactArchive.delete();
+        }
 
-      install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
-      boolean diff = install.isDiffering();
-      if (!diff) {
-        component.setInstalledVersion(githubRelease.getTag());
-        LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+        install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+        boolean diff = install.isDiffering();
+        if (!diff) {
+          component.setInstalledVersion(githubRelease.getTag());
+          LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+        }
+
+        component.setLastCheck(new Date());
+        componentRepository.saveAndFlush(component);
       }
       else {
-        component.setInstalledVersion("Outdated");
+        throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
       }
-
-      component.setLastCheck(new Date());
-      componentRepository.saveAndFlush(component);
 
       return install;
     }
@@ -136,42 +141,47 @@ public class ComponentService implements InitializingBean {
   }
 
   @NonNull
-  public ReleaseArtifactActionLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String artifact, boolean simulate) {
+  public ReleaseArtifactActionLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean simulate) {
     Component component = getComponent(type);
-    GithubRelease githubRelease = releases.get(component.getType());
-    ReleaseArtifactActionLog install = null;
-    if (githubRelease == null || githubRelease.getLatestArtifact() == null) {
-      throw new UnsupportedOperationException("Release or latest artifact for " + type.name() + " not found.");
+    List<GithubRelease> githubReleases = releaseCache.get(component.getType());
+    Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
+    if (first.isPresent()) {
+      ReleaseArtifactActionLog install = null;
+      GithubRelease githubRelease = first.get();
+      ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+      ComponentFacade componentFacade = getComponentFacade(type);
+      File targetFolder = componentFacade.getTargetFolder(emulator);
+      if (simulate) {
+        return releaseArtifact.simulateInstall(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
+      }
+
+      //we have a real installation from here on
+      install = releaseArtifact.install(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
+      if (install.getStatus() == null) {
+        //unzipping was successful
+        component.setInstalledVersion(githubRelease.getTag());
+        componentRepository.saveAndFlush(component);
+
+        //execute optional post processing
+        componentFacade.postProcess(emulator, releaseArtifact, install);
+      }
+
+      return install;
     }
-
-    ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
-    ComponentFacade componentFacade = getComponentFacade(type);
-    File targetFolder = componentFacade.getTargetFolder(emulator);
-    if (simulate) {
-      return releaseArtifact.simulateInstall(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
+    else {
+      throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
     }
-
-    //we have a real installation from here on
-    install = releaseArtifact.install(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
-    if (install.getStatus() == null) {
-      //unzipping was successful
-      component.setInstalledVersion(githubRelease.getTag());
-      componentRepository.saveAndFlush(component);
-
-      //execute optional post processing
-      componentFacade.postProcess(emulator, releaseArtifact, install);
-    }
-
-    return install;
   }
 
   private void loadReleases(Component component) {
     try {
       ComponentFacade componentFacade = getComponentFacade(component.getType());
-      GithubRelease githubRelease = componentFacade.loadRelease();
-      component.setLatestReleaseVersion(githubRelease.getTag());
+      List<GithubRelease> githubReleases = componentFacade.loadReleases();
+      if(!githubReleases.isEmpty()) {
+        component.setLatestReleaseVersion(githubReleases.get(0).getTag());
+      }
       componentRepository.saveAndFlush(component);
-      this.releases.put(component.getType(), githubRelease);
+      this.releaseCache.put(component.getType(), githubReleases);
     } catch (IOException e) {
       LOG.error("Failed to initialize release for " + component + ": " + e.getMessage(), e);
     }
@@ -202,9 +212,6 @@ public class ComponentService implements InitializingBean {
       case freezy: {
         return new FreezyComponent();
       }
-      case serum: {
-        return new SerumComponent();
-      }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + type);
       }
@@ -215,7 +222,7 @@ public class ComponentService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     ComponentType[] values = ComponentType.values();
     for (ComponentType value : values) {
-      this.releases.put(value, null);
+      this.releaseCache.put(value, new ArrayList<>());
       Optional<Component> byName = componentRepository.findByType(value);
       if (byName.isEmpty()) {
         Component component = new Component();
