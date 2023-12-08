@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils.media;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -24,6 +25,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private final boolean dialogRendering;
 
   private GameMediaItemRepresentation mediaItem;
+
+  private int retryCounter = 0;
 
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType, boolean portraitMode) {
     super(parent);
@@ -64,16 +67,28 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     String baseType = mimeType.split("/")[0];
 
     Media media = new Media(url);
-    MediaPlayer mediaPlayer = new MediaPlayer(media);
+    mediaPlayer = new MediaPlayer(media);
     mediaPlayer.setAutoPlay(baseType.equals("video"));
     mediaPlayer.setCycleCount(-1);
     mediaPlayer.setMute(true);
     mediaPlayer.setOnError(() -> {
       LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-      mediaPlayer.stop();
-      mediaPlayer.dispose();
 
-      parent.setCenter(getErrorLabel(mediaItem));
+      if(retryCounter < 5) {
+        retryCounter++;
+        Platform.runLater(() -> {
+          super.disposeMedia();
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+          }
+          render();
+        });
+      }
+      else {
+        parent.setCenter(getErrorLabel(mediaItem));
+      }
     });
 
     MediaView mediaView = new MediaView(mediaPlayer);

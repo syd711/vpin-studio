@@ -366,31 +366,6 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
-  @FXML
-  private void onPlayClick(ActionEvent e) {
-    Button source = (Button) e.getSource();
-    BorderPane borderPane = (BorderPane) source.getParent().getParent();
-    MediaView mediaView = (MediaView) borderPane.getCenter();
-
-    FontIcon icon = (FontIcon) source.getChildrenUnmodifiable().get(0);
-    String iconLiteral = icon.getIconLiteral();
-    if (iconLiteral.equals("bi-play")) {
-      mediaView.getMediaPlayer().setMute(false);
-      mediaView.getMediaPlayer().setCycleCount(1);
-      mediaView.getMediaPlayer().play();
-      icon.setIconLiteral("bi-stop");
-    }
-    else {
-      mediaView.getMediaPlayer().stop();
-      icon.setIconLiteral("bi-play");
-    }
-  }
-
-  @FXML
-  private void onMediaDrop() {
-
-  }
-
   public void setGame(Optional<GameRepresentation> game, boolean preview) {
     this.game = game;
     this.refreshView(game, preview);

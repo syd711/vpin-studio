@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,15 @@ abstract public class AssetMediaPlayer extends BorderPane {
   @NonNull
   protected final BorderPane parent;
 
+
+  protected MediaPlayer mediaPlayer;
+
   public AssetMediaPlayer(@NonNull BorderPane parent) {
     this.parent = parent;
+  }
+
+  public MediaPlayer getMediaPlayer() {
+    return mediaPlayer;
   }
 
   protected Label getErrorLabel(@Nullable GameMediaItemRepresentation mediaItem) {
@@ -39,18 +47,18 @@ abstract public class AssetMediaPlayer extends BorderPane {
       if (center instanceof MediaView) {
         MediaView view = (MediaView) center;
         if (view.getMediaPlayer() != null) {
-          String source = view.getMediaPlayer().getMedia().getSource();
-          view.getMediaPlayer().stop();
-          final ExecutorService executor = Executors.newFixedThreadPool(1);
-          final Future<?> future = executor.submit(() -> {
-            view.getMediaPlayer().dispose();
-          });
           try {
+            view.getMediaPlayer().stop();
+            final ExecutorService executor = Executors.newFixedThreadPool(1);
+            final Future<?> future = executor.submit(() -> {
+              view.getMediaPlayer().dispose();
+            });
+
             future.get(500, TimeUnit.MILLISECONDS);
+            executor.shutdownNow();
           } catch (Exception e) {
-            LOG.error("Error disposing media view (" + source + "): " + e.getMessage());
+            LOG.error("Error disposing media view: " + e.getMessage());
           }
-          executor.shutdownNow();
         }
       }
       else if (center instanceof ImageView) {

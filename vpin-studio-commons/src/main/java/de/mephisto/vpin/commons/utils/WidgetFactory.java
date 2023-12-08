@@ -413,12 +413,6 @@ public class WidgetFactory {
     if (!ignored && previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
     }
-
-    if (parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio")) {
-      VBox bottom = (VBox) parent.getBottom();
-      Button playButton = (Button) bottom.getChildren().get(0);
-      playButton.setVisible(!ignored && previewEnabled && mediaItem != null);
-    }
   }
 
   public static void addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
