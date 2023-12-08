@@ -4,7 +4,6 @@
 
 - Improved design of table selection in the table overview. This way, it should be easier to find the selected table. 
 - Added "zip" file support for VPX uploads: If you downloaded zipped VPX files, you don't have to extract the file before uploading it anymore.
-- Add
 - Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-open-folder.png?raw=true" width="700" />
