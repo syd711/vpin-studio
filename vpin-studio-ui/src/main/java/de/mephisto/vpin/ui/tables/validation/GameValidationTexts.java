@@ -117,7 +117,7 @@ public class GameValidationTexts {
       }
       case CODE_ALT_SOUND_NOT_ENABLED: {
         label = "ALT sound not enabled.";
-        text = "The table has an ALT sound package, but it's not enabled in VPin MAME.";
+        text = "The table has an ALT sound package, but \"Sound Mode\" is not checked in the \"VPin MAME\" settings.";
         break;
       }
       case CODE_ALT_SOUND_FILE_MISSING: {
@@ -157,11 +157,6 @@ public class GameValidationTexts {
       case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: {
         label = "Colorize DMD not enabled.";
         text = "The table contains an ALT Color file, but the DMD colorization is not enabled in the VPin Mame settings.";
-        break;
-      }
-      case CODE_ALT_COLOR_SERUM_INSTALLATION_FILES_MISSING: {
-        label = "Serum installation files missing.";
-        text = "The Serum ALT Color installation has missing files: " + state.getOptions().get(0);
         break;
       }
       case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: {

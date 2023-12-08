@@ -123,9 +123,9 @@ public class PupPack {
 
       Collection<File> txtFiles = org.apache.commons.io.FileUtils.listFiles(packFolder, new String[]{"txt"}, true);
       for (File txtFile : txtFiles) {
-        if(txtFile.length() > 0) {
+        if (txtFile.length() > 0) {
           String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
-          path = path.substring(path.indexOf(packFolder.getName()) + packFolder.getName().length() +1);
+          path = path.substring(path.indexOf(packFolder.getName()) + packFolder.getName().length() + 1);
           getTxtFiles().add(path);
         }
       }
@@ -137,10 +137,8 @@ public class PupPack {
       String[] optionsBat = packFolder.list((dir, name) -> name.endsWith(".bat"));
       if (optionsBat != null) {
         for (String optionBat : optionsBat) {
-          if (optionBat.toLowerCase().contains("option")) {
-            String name = FilenameUtils.getBaseName(optionBat);
-            getOptions().add(name);
-          }
+          String name = FilenameUtils.getBaseName(optionBat);
+          getOptions().add(name);
         }
 
         File optionsFolder = new File(packFolder, "PuP-Pack_Options");
@@ -154,7 +152,7 @@ public class PupPack {
               File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
 
               if (screensPup.exists() && triggersPup.exists() && triggersPup.canRead() && playlistsPup.exists()
-                  && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
+                && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
                 long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
                 if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
                   selectedOption = option;

@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
+import static de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer.*;
 
 public class AltColorUtil {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorUtil.class);

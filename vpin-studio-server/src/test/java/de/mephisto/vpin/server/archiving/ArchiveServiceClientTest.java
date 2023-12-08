@@ -60,10 +60,10 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     assertNull(msg.getError());
 
     assertTrue(vpaFile.exists());
-    assertTrue(ZipUtil.contains(vpaFile, "package-info.json"));
-    assertTrue(ZipUtil.contains(vpaFile, "table-details.json"));
-    assertTrue(ZipUtil.contains(vpaFile, FilenameUtils.getBaseName(tableName) + ".directb2s"));
-    assertTrue(ZipUtil.contains(vpaFile, tableName));
+    assertTrue(ZipUtil.contains(vpaFile, "package-info.json") != null);
+    assertTrue(ZipUtil.contains(vpaFile, "table-details.json") != null);
+    assertTrue(ZipUtil.contains(vpaFile, FilenameUtils.getBaseName(tableName) + ".directb2s") != null);
+    assertTrue(ZipUtil.contains(vpaFile, tableName) != null);
 
     archiveService.invalidateCache();
   }

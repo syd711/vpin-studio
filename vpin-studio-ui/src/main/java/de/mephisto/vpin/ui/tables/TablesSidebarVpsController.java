@@ -19,6 +19,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
 import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
 import de.mephisto.vpin.ui.util.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -206,7 +207,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getName().equalsIgnoreCase(value)).findFirst();
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
@@ -280,9 +281,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
       }
+
+      Platform.runLater(() -> {
+        tablesCombo.show();
+        tablesCombo.hide();
+      });
     }
 
-    autoCompleteNameField.setText(vpsTable.getName());
+    autoCompleteNameField.setText(vpsTable.getDisplayName());
     yearLabel.setText(String.valueOf(vpsTable.getYear()));
     manufacturerLabel.setText(vpsTable.getManufacturer());
     playersLabel.setText(String.valueOf(vpsTable.getPlayers()));
@@ -398,7 +404,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<VpsTable> tables = VPS.getInstance().getTables();
     refreshSheetData(tables);
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getName()).collect(Collectors.toSet()));
+    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {

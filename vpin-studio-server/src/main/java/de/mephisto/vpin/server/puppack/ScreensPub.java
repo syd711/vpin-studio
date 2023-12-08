@@ -65,7 +65,10 @@ public class ScreensPub {
     int id = screen.getCode();
     for (ScreenEntry entry : this.entries) {
       if (entry.getScreenNum() == id) {
-        return entry.getScreenMode();
+        ScreenMode screenMode = entry.getScreenMode();
+        if(screenMode != null) {
+          return screenMode;
+        }
       }
     }
     return ScreenMode.off;

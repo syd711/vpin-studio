@@ -125,6 +125,25 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "poppermedia/media/" + gameId + "/" + screen.name() + "/" + name);
   }
 
+
+  public boolean renameMedia(int gameId, PopperScreen screen, String name, String newName) throws Exception {
+    Map<String, Object> params = new HashMap<>();
+    params.put("oldName", name);
+    params.put("newName", newName);
+    return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), params, Boolean.class);
+  }
+
+  public boolean toFullScreen(int gameId, PopperScreen screen) throws Exception {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put("fullscreen", "true");
+      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
+    } catch (Exception e) {
+      LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public GameMediaRepresentation getGameMedia(int gameId) {
     return getRestClient().get(API + "poppermedia/" + gameId, GameMediaRepresentation.class);
   }
@@ -137,17 +156,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Popper media upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public boolean toFullScreen(int gameId, PopperScreen screen) throws Exception {
-    try {
-      Map<String, Object> values = new HashMap<>();
-      values.put("fullscreen", "true");
-      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
-    } catch (Exception e) {
-      LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
       throw e;
     }
   }

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.VpxArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -16,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +61,12 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button fileBtn;
+
+  @FXML
+  private Button cancelBtn;
 
   private File selection;
   private boolean result = false;
@@ -111,18 +120,42 @@ public class TableUploadController implements Initializable, DialogController {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip"));
 
     if (TableUploadController.lastFolderSelection != null) {
       fileChooser.setInitialDirectory(TableUploadController.lastFolderSelection);
     }
 
     this.selection = fileChooser.showOpenDialog(stage);
-    uploadBtn.setDisable(this.selection == null);
-
+    uploadBtn.setDisable(true);
     if (this.selection != null) {
       TableUploadController.lastFolderSelection = this.selection.getParentFile();
-      this.fileNameField.setText(this.selection.getAbsolutePath());
+
+      String suffix = FilenameUtils.getExtension(this.selection.getName());
+      if(suffix.equalsIgnoreCase("zip")) {
+
+        this.fileBtn.setDisable(true);
+        this.cancelBtn.setDisable(true);
+
+        Platform.runLater(() -> {
+          String analyze = VpxArchiveAnalyzer.analyze(selection);
+          this.fileNameField.setText(this.selection.getAbsolutePath());
+          this.fileNameField.setDisable(false);
+          this.fileBtn.setDisable(false);
+          this.cancelBtn.setDisable(false);
+
+          if (analyze != null) {
+            result = false;
+            WidgetFactory.showAlert(Studio.stage, analyze);
+            this.fileNameField.setText("");
+          }
+          this.uploadBtn.setDisable(analyze != null);
+        });
+      }
+      else {
+        this.uploadBtn.setDisable(false);
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+      }
     }
     else {
       this.fileNameField.setText("");

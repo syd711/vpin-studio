@@ -117,24 +117,20 @@
             </CheckBox>
             <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the version stored in PinUP Popper" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
-            <CheckBox fx:id="uiDismissalConfirm" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Hide validation dismissal confirmation dialogs." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#onHideReset" text="Restore Hidden Dialogs" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
-            </CheckBox>
-            <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, no additional confirmation dialog is shown on error dismissals." textFill="WHITE" />
-            <Button mnemonicParsing="false" onAction="#onHideReset" text="Restore Hidden Dialogs" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="24.0" top="12.0" />
-               </VBox.margin>
             </Button>
-            <Label layoutX="34.0" layoutY="708.0" styleClass="checkbox-description" text="Resets the &quot;Do not show again&quot; flags for all dialogs." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description" text="Resets the &quot;Do not show again&quot; flags for all dialogs." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.commons.utils.AltColorAnalyzer.*;
+import static de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer.*;
 
 /**
  *

@@ -2,10 +2,14 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScreenEntry {
+  private final static Logger LOG = LoggerFactory.getLogger(ScreenEntry.class);
 
   private CSVRecord record;
 
@@ -29,12 +33,18 @@ public class ScreenEntry {
     }
   }
 
+  @Nullable
   public ScreenMode getScreenMode() {
-    String screenMode = record.get(5);
-    if (StringUtils.isEmpty(screenMode)) {
-      return ScreenMode.off;
+    try {
+      String screenMode = record.get(5);
+      if (StringUtils.isEmpty(screenMode) || screenMode.equals("0")) {
+        return ScreenMode.off;
+      }
+      return ScreenMode.valueOf(screenMode);
+    } catch (Exception e) {
+      LOG.warn("Invalid screen mode: " + e.getMessage());
+      return null;
     }
-    return ScreenMode.valueOf(screenMode);
   }
 
   public String getPlayFile() {

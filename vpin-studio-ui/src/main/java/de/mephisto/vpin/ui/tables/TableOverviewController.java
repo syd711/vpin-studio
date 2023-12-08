@@ -386,6 +386,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     DismissalUtil.dismissValidation(game, validationState);
   }
 
+  @FXML
+  private void onDismissAll() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    DismissalUtil.dismissValidations(game);
+  }
+
   public void reload(String rom) {
     List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
     Platform.runLater(() -> {
@@ -717,8 +723,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
-      if (validationState != null && validationState.getCode() > 0) {
-        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
+      if (!value.getIgnoredValidations().contains(-1)) {
+        if (validationState != null && validationState.getCode() > 0) {
+          return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
+        }
       }
 
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon(getIconColor(value)));
@@ -919,7 +927,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tablesController.getTablesSideBarController().setGame(g);
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      validationError.setVisible(game.getValidationState().getCode() > 0);
+      validationError.setVisible(game.getValidationState().getCode() > 0 && !game.getIgnoredValidations().contains(-1));
       if (game.getValidationState().getCode() > 0) {
         LocalizedValidation validationMessage = GameValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());

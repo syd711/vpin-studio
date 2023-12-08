@@ -301,9 +301,19 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onRomUpload() {
-    boolean uploaded = Dialogs.openRomUploadDialog();
-    if (uploaded) {
-      tablesSidebarController.getTablesController().onReload();
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        boolean uploaded = Dialogs.openRomUploadDialog();
+        if (uploaded) {
+          tablesSidebarController.getTablesController().onReload();
+        }
+      }
+    }
+    else {
+      boolean uploaded = Dialogs.openRomUploadDialog();
+      if (uploaded) {
+        tablesSidebarController.getTablesController().onReload();
+      }
     }
   }
 

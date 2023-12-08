@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -11,6 +12,7 @@ import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.events.Event;
 
 import java.io.File;
 import java.util.Collections;
@@ -72,6 +74,7 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
         });
       }
       progressResultModel.addProcessed();
+      EventManager.getInstance().notifyTableChange(gameId, null);
     } catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);
     }

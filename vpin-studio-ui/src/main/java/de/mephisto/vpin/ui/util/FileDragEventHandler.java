@@ -17,11 +17,6 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   private final boolean singleSelectionOnly;
   private List<String> suffixes;
 
-  public FileDragEventHandler(Node node) {
-    this.node = node;
-    this.singleSelectionOnly = false;
-  }
-
   public FileDragEventHandler(Node node, boolean singleSelectionOnly, String... suffix) {
     this.node = node;
     this.singleSelectionOnly = singleSelectionOnly;
@@ -35,10 +30,12 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
       return;
     }
 
-    for (File file : files) {
-      String extension = FilenameUtils.getExtension(file.getName());
-      if(!suffixes.contains(extension)) {
-        return;
+    if(suffixes != null) {
+      for (File file : files) {
+        String extension = FilenameUtils.getExtension(file.getName());
+        if(!suffixes.contains(extension)) {
+          return;
+        }
       }
     }
 

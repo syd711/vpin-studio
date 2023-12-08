@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.AltSoundAnalyzer;
+import de.mephisto.vpin.commons.utils.AltSoundArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -105,7 +105,7 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      String analyze = AltSoundAnalyzer.analyze(selection);
+      String analyze = AltSoundArchiveAnalyzer.analyze(selection);
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);

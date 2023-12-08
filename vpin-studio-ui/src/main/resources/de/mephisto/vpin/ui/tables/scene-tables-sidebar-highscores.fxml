@@ -27,7 +27,39 @@
                       <children>
                   <VBox fx:id="statusPane">
                      <children>
-                        <Label fx:id="statusLabel" styleClass="default-text" text="STATUS" />
+                        <Label layoutX="10.0" layoutY="10.0" text="Failed to read highscore." textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label fx:id="statusLabel" styleClass="default-text" text="STATUS" wrapText="true" />
+                        <VBox styleClass="info-container">
+                           <children>
+                              <Label fx:id="statusLabel1" styleClass="default-title" text="Troubleshooting Highscore Resolving" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="statusLabel11" layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- Make sure that the table has been launched at least once." wrapText="true" />
+                              <Label fx:id="statusLabel111" layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Make sure that the ROM name is set in the &quot;Script Details&quot; section." wrapText="true" />
+                              <Label fx:id="statusLabel11112" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- If the table scan resolves the wrong or no ROM name," wrapText="true" />
+                              <Label fx:id="statusLabel111121" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="  set the correct one in section &quot;PinUP Popper Table Settings&quot; for field &quot;ROM Name&quot;." wrapText="true" />
+                              <Label fx:id="statusLabel11111" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- Note that not all solid state (SS) tables are supported." wrapText="true" />
+                              <Label fx:id="statusLabel111111" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="- For textfile based highscores, check if the correct value for &quot;Score .txt Filename&quot; is set" wrapText="true" />
+                              <Label fx:id="statusLabel1111111" layoutX="23.0" layoutY="136.0" styleClass="default-text" text="  in the &quot;Script Details&quot; section." wrapText="true" />
+                              <Label fx:id="statusLabel11111111" layoutX="23.0" layoutY="156.0" styleClass="default-text" text="- Compare the name of the textfile written in the &quot;\VisualPinball\User&quot; folder" wrapText="true" />
+                              <Label fx:id="statusLabel111111111" layoutX="23.0" layoutY="196.0" styleClass="default-text" text="  with the value of the &quot;Score .txt Filename&quot; field." wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets right="24.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
                      </children>
                   </VBox>
                   <VBox fx:id="dataPane">

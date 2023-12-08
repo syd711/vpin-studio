@@ -1,7 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -16,7 +20,9 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -26,7 +32,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -37,19 +42,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
@@ -59,8 +58,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +98,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button renameBtn;
 
   @FXML
   private Button folderBtn;
@@ -244,6 +244,45 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     }
   }
 
+  @FXML
+  private void onRename() {
+    GameMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      String name = selectedItem.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      String suffix = FilenameUtils.getExtension(name);
+      String s = WidgetFactory.showInputDialog(Studio.stage, "Rename", "Renaming of Table Asset \"" + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
+      if (!StringUtils.isEmpty(s) && FileUtils.isValidFilename(s)) {
+        if (s.equalsIgnoreCase(baseName)) {
+          return;
+        }
+
+        if (!s.endsWith(baseName)) {
+          s = s + "." + suffix;
+        }
+
+        if (!s.startsWith(game.getGameName())) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The asset name must start with \"" + game.getGameName() + "\".");
+          onRename();
+          return;
+        }
+
+        try {
+          client.getPinUPPopperService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+          onReload();
+        } catch (Exception e) {
+          LOG.error("Renaming table asset failed: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
+        }
+      }
+      else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Renaming cancelled, invalid character found.");
+        onRename();
+      }
+    }
+  }
+
 
   @FXML
   private void onSearch() {
@@ -258,7 +297,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
       }
-    } else {
+    }
+    else {
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
       serverAssetsList.refresh();
@@ -287,13 +327,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
       String assetUrl = null;
       try {
         assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
-      } catch (InvalidAlgorithmParameterException e) {
-        throw new RuntimeException(e);
-      } catch (InvalidKeyException e) {
-        throw new RuntimeException(e);
-      } catch (BadPaddingException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalBlockSizeException e) {
+      } catch (Exception e) {
         throw new RuntimeException(e);
       }
 
@@ -309,88 +343,13 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           imageView.setUserData(tableAsset);
 
           serverAssetMediaPane.setCenter(imageView);
-        } else if (baseType.equals("audio")) {
-          VBox vBox = new VBox();
-          vBox.setAlignment(Pos.BASELINE_CENTER);
-
-          FontIcon fontIcon = new FontIcon();
-          fontIcon.setIconSize(48);
-          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          fontIcon.setIconLiteral("bi-play");
-
-          Button playBtn = new Button();
-          playBtn.setGraphic(fontIcon);
-          vBox.getChildren().add(playBtn);
-
-          Media media = new Media(assetUrl);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(false);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(false);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("Media Error");
-            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-            label.setUserData(tableAsset);
-            vBox.getChildren().add(label);
-            serverAssetMediaPane.setCenter(label);
-          });
-
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          vBox.getChildren().add(mediaView);
-          serverAssetMediaPane.setCenter(vBox);
-
-          mediaPlayer.setOnEndOfMedia(() -> {
-            fontIcon.setIconLiteral("bi-play");
-          });
-
-          playBtn.setOnAction(event -> {
-            String iconLiteral = fontIcon.getIconLiteral();
-            if (iconLiteral.equals("bi-play")) {
-              mediaView.getMediaPlayer().setMute(false);
-              mediaView.getMediaPlayer().setCycleCount(1);
-              mediaView.getMediaPlayer().play();
-              fontIcon.setIconLiteral("bi-stop");
-            } else {
-              mediaView.getMediaPlayer().stop();
-              fontIcon.setIconLiteral("bi-play");
-            }
-          });
-
-        } else if (baseType.equals("video")) {
-          Media media = new Media(assetUrl);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(true);
-          mediaPlayer.setStopTime(Duration.seconds(5));
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("  Media available\n(but not playable)");
-            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-            label.setUserData(tableAsset);
-            serverAssetMediaPane.setCenter(label);
-          });
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          mediaView.setUserData(tableAsset);
-          mediaView.setPreserveRatio(true);
-          mediaView.setFitWidth(MEDIA_SIZE);
-          mediaView.setFitHeight(MEDIA_SIZE);
-          if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
-            mediaView.setRotate(90);
-          } else {
-            mediaView.setRotate(0);
-          }
-
-          serverAssetMediaPane.setCenter(mediaView);
+        }
+        else if (baseType.equals("audio")) {
+          new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+        }
+        else if (baseType.equals("video")) {
+          boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
         }
       } catch (Exception e) {
         LOG.error("Preview failed for " + tableAsset);
@@ -413,9 +372,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
 
-      } else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+      }
+      else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         append = true;
-      } else {
+      }
+      else {
         return;
       }
     }
@@ -479,6 +440,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     downloadBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
     this.addToPlaylistBtn.setDisable(true);
     this.addToPlaylistBtn.setVisible(false);
 
@@ -538,6 +500,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
+        boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+
         if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
@@ -545,6 +509,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
         disposeTableMediaPreview();
 
         deleteBtn.setDisable(mediaItem == null);
+        renameBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
           Label label = new Label("No media selected");
@@ -570,86 +535,12 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
           imageView.setUserData(mediaItem);
 
           mediaPane.setCenter(imageView);
-        } else if (baseType.equals("audio")) {
-          VBox vBox = new VBox();
-          vBox.setAlignment(Pos.BASELINE_CENTER);
-
-          FontIcon fontIcon = new FontIcon();
-          fontIcon.setIconSize(48);
-          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          fontIcon.setIconLiteral("bi-play");
-
-          Button playBtn = new Button();
-          playBtn.setGraphic(fontIcon);
-          vBox.getChildren().add(playBtn);
-
-          Media media = new Media(url);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(false);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError());
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("Media Error");
-            label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-            label.setUserData(mediaItem);
-            vBox.getChildren().add(label);
-            mediaPane.setCenter(label);
-          });
-
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          vBox.getChildren().add(mediaView);
-          mediaPane.setCenter(vBox);
-
-          mediaPlayer.setOnEndOfMedia(() -> {
-            fontIcon.setIconLiteral("bi-play");
-          });
-
-          playBtn.setOnAction(event -> {
-            String iconLiteral = fontIcon.getIconLiteral();
-            if (iconLiteral.equals("bi-play")) {
-              mediaView.getMediaPlayer().setMute(false);
-              mediaView.getMediaPlayer().setCycleCount(1);
-              mediaView.getMediaPlayer().play();
-              fontIcon.setIconLiteral("bi-stop");
-            } else {
-              mediaView.getMediaPlayer().stop();
-              fontIcon.setIconLiteral("bi-play");
-            }
-          });
-
-        } else if (baseType.equals("video")) {
-          Media media = new Media(url);
-          MediaPlayer mediaPlayer = new MediaPlayer(media);
-          mediaPlayer.setAutoPlay(true);
-          mediaPlayer.setCycleCount(-1);
-          mediaPlayer.setMute(true);
-          mediaPlayer.setOnError(() -> {
-            LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-
-            Label label = new Label("  Media available\n(but not playable)");
-            label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-            label.setUserData(mediaItem);
-            mediaPane.setCenter(label);
-          });
-
-          MediaView mediaView = new MediaView(mediaPlayer);
-          mediaView.setUserData(mediaItem);
-          mediaView.setPreserveRatio(true);
-          mediaView.setFitWidth(MEDIA_SIZE);
-          mediaView.setFitHeight(MEDIA_SIZE);
-          if (screen.equals(PopperScreen.Loading) || screen.equals(PopperScreen.PlayField)) {
-            mediaView.setRotate(90);
-          } else {
-            mediaView.setRotate(0);
-          }
-          mediaPane.setCenter(mediaView);
+        }
+        else if (baseType.equals("audio")) {
+          new AudioMediaPlayer(mediaPane, mediaItem, url);
+        }
+        else if (baseType.equals("video")) {
+          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, portraitMode, true);
         }
       }
     });
@@ -659,7 +550,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
-    } else {
+    }
+    else {
       borderPane.getStyleClass().add("green");
     }
 
@@ -685,7 +577,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (!borderPane.equals(lastSelected)) {
       if (hovered) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
-      } else {
+      }
+      else {
         borderPane.setStyle(null);
       }
     }
@@ -694,32 +587,18 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   private void disposeServerAssetPreview() {
     Node center = serverAssetMediaPane.getCenter();
-    if (center instanceof MediaView) {
-      MediaView mediaView = (MediaView) center;
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
-    } else if (center instanceof VBox) {
-      MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
+    if (center instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer)center).disposeMedia();
     }
-
     serverAssetMediaPane.setCenter(null);
   }
 
 
   private void disposeTableMediaPreview() {
     Node center = mediaPane.getCenter();
-    if (center instanceof MediaView) {
-      MediaView mediaView = (MediaView) center;
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
-    } else if (center instanceof VBox) {
-      MediaView mediaView = (MediaView) ((VBox) center).getChildren().get(1);
-      mediaView.getMediaPlayer().stop();
-      mediaView.getMediaPlayer().dispose();
+    if (center instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer)center).disposeMedia();
     }
-
     mediaPane.setCenter(null);
   }
 
@@ -775,13 +654,52 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (StringUtils.isEmpty(this.searchField.getText())) {
       if (sanitizedTerms.isEmpty()) {
         this.searchField.setText(game.getGameDisplayName());
-      } else {
+      }
+      else {
         this.searchField.setText(String.join(" ", sanitizedTerms));
       }
     }
 
     refreshTableMediaView();
     onSearch();
+
+
+    screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio, false, "mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Audio, "mp3"));
+
+    screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch, false, "mp3"));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.AudioLaunch, "mp3"));
+
+    screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper, false, "mp4", "png", "jpg"));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Topper, "mp4", "png", "jpg"));
+
+    screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading, false, "mp4"));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Loading, "mp4"));
+
+    screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField, false, "mp4"));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.PlayField, "mp4"));
+
+    screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.BackGlass, "mp4", "png", "jpg"));
+
+    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameInfo, "png", "jpg"));
+
+    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameHelp, "png", "jpg"));
+
+    screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Menu, "mp4", "png", "jpg"));
+
+    screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD, false, "mp4", "png", "jpg"));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.DMD, "mp4", "png", "jpg"));
+
+    screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Other2, "mp4", "png", "jpg"));
+
+    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Wheel, "png", "apng"));
+
   }
 
   private void refreshTableView() {
@@ -801,7 +719,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   }
 
 
-  private void refreshTableMediaView() {
+  public void refreshTableMediaView() {
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
     if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
@@ -832,5 +750,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     Platform.runLater(() -> {
       refreshTableMediaView();
     });
+  }
+
+  public GameRepresentation getGame() {
+    return game;
   }
 }

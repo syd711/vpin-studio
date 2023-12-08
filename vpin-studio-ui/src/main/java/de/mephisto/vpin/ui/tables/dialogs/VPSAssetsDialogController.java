@@ -80,7 +80,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     this.game = game;
 
     List<VpsTable> tables = VPS.getInstance().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getName()).collect(Collectors.toSet()));
+    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
@@ -124,7 +124,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     TablesSidebarVpsController.addSection(dataRoot, "POV", vpsTable.getPovFiles());
 
 
-    autoCompleteNameField.setText(vpsTable.getName());
+    autoCompleteNameField.setText(vpsTable.getDisplayName());
 
     if(dataRoot.getChildren().isEmpty()) {
       Label emptyLabel = WidgetFactory.createDefaultLabel("No additional assets found.");
@@ -147,7 +147,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getName().equalsIgnoreCase(value)).findFirst();
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
