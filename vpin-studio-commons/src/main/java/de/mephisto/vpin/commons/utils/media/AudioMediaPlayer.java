@@ -6,12 +6,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -69,7 +67,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     mediaPlayer.setOnError(() -> {
       LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
 
-      if(retryCounter < 5) {
+      if(retryCounter < 1) {
         retryCounter++;
         Platform.runLater(() -> {
           super.disposeMedia();

@@ -363,7 +363,7 @@
                             <outputDirectory>${basedir}/../Output/VPin-Studio/win32/java</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/../jdk-11.0.17+8-jre</directory>
+                                    <directory>${basedir}/../java-runtime</directory>
                                     <excludes>
                                         <exclude>**/*.zip</exclude>
                                     </excludes>
