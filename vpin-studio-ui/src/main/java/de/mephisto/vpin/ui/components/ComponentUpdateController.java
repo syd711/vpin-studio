@@ -12,7 +12,10 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +31,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentUpdateController implements Initializable, StudioEventListener {
+public class ComponentUpdateController implements Initializable, StudioEventListener, ChangeListener<String> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
   @FXML
@@ -44,7 +47,10 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private TextArea textArea;
 
   @FXML
-  private ComboBox<ReleaseArtifact> artifactCombo;
+  private ComboBox<String> artifactCombo;
+
+  @FXML
+  private ComboBox<String> releasesCombo;
 
   private AbstractComponentTab componentTab;
   private ComponentType type;
@@ -85,8 +91,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private void onCheck() {
     Platform.runLater(() -> {
       try {
-        ReleaseArtifact artifact = artifactCombo.getValue();
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, artifact.tag, artifact.name);
+        String release = releasesCombo.getValue();
+        String artifact = artifactCombo.getValue();
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release, artifact);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
@@ -106,8 +113,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   }
 
   private void runInstall() {
-    ReleaseArtifact artifact = artifactCombo.getValue();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact.name + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    String artifact = artifactCombo.getValue();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       run(false, Collections.emptyList());
     }
@@ -118,8 +125,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     textArea.setText("");
     Platform.runLater(() -> {
       try {
-        ReleaseArtifact artifact = artifactCombo.getValue();
-        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, artifact.tag, artifact.name);
+        String release = releasesCombo.getValue();
+        String artifact = artifactCombo.getValue();
+        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release, artifact);
         ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
 
         ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
@@ -146,47 +154,56 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       simBtn.setDisable(t1 == null);
     });
 
-    refresh();
+    refresh(null, null);
   }
 
-  public void refresh() {
-    artifactCombo.getItems().clear();
+  public void refresh(@Nullable String releaseTag, @Nullable String artifactId) {
+    List<String> releases = new ArrayList<>();
+    List<String> releaseArtifacts = new ArrayList<>();
 
-    List<ReleaseArtifact> releaseArtifacts = new ArrayList<>();
-    List<GithubReleaseRepresentation> releases = component.getReleases();
-    for (GithubReleaseRepresentation release : releases) {
-      List<String> artifactNames = release.getArtifacts();
-      for (String artifactName : artifactNames) {
-        releaseArtifacts.add(new ReleaseArtifact(release.getTag(), artifactName));
-      }
+    for (GithubReleaseRepresentation release : component.getReleases()) {
+      releases.add(release.getTag());
     }
 
-    artifactCombo.setItems(FXCollections.observableList(releaseArtifacts));
+    releasesCombo.setItems(FXCollections.observableList(releases));
+    releasesCombo.setDisable(releases.isEmpty());
 
-    artifactCombo.setDisable(component.getReleases().isEmpty());
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
 
     if (!component.getReleases().isEmpty()) {
       GithubReleaseRepresentation release = component.getReleases().get(0);
+      if (releaseTag != null) {
+        releasesCombo.setValue(releaseTag);
+      }
+      else {
+        releasesCombo.setValue(release.getTag());
+      }
+
+      release = component.getReleases().stream().filter(r -> r.getTag().equals(releasesCombo.getValue())).findFirst().get();
       List<String> artifacts = release.getArtifacts();
-      if (!artifacts.isEmpty()) {
-        artifactCombo.setValue(new ReleaseArtifact(release.getTag(), artifacts.get(0)));
+      artifactCombo.setItems(FXCollections.observableList(releaseArtifacts));
+      if (artifactId != null) {
+        artifactCombo.setValue(artifactId);
+      }
+      else {
+        artifactCombo.setValue(artifacts.get(0));
       }
 
       String systemPreset = client.getSystemPreset();
       if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
         Optional<String> first = release.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
-        first.ifPresent(s -> artifactCombo.setValue(new ReleaseArtifact(release.getTag(), first.get())));
+        first.ifPresent(s -> artifactCombo.setValue(first.get()));
       }
       else {
         Optional<String> first = release.getArtifacts().stream().filter(r -> !r.contains("x64")).findFirst();
-        first.ifPresent(s -> artifactCombo.setValue(new ReleaseArtifact(release.getTag(), first.get())));
+        first.ifPresent(s -> artifactCombo.setValue(first.get()));
       }
+
+
+      artifactCombo.setDisable(releases.isEmpty());
     }
-
-
   }
 
   @Override
@@ -196,7 +213,10 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     simBtn.setDisable(true);
     installBtn.setDisable(true);
     artifactCombo.setDisable(true);
+    releasesCombo.setDisable(true);
     checkBtn.setDisable(true);
+
+    releasesCombo.valueProperty().addListener(this);
   }
 
   @Override
@@ -204,31 +224,15 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     if (type.equals(this.type)) {
       Platform.runLater(() -> {
         this.component = client.getComponentService().getComponent(type);
-        refresh();
+        refresh(releasesCombo.getValue(), artifactCombo.getValue());
       });
     }
   }
 
-  class ReleaseArtifact {
-    private final String tag;
-    private final String name;
-
-    public ReleaseArtifact(String tag, String name) {
-      this.tag = tag;
-      this.name = name;
-    }
-
-    @Override
-    public String toString() {
-      return name + " (Version " + tag + ")";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof ReleaseArtifact)) {
-        return false;
-      }
-      return tag.equals(((ReleaseArtifact) obj).tag);
-    }
+  @Override
+  public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    this.releasesCombo.valueProperty().removeListener(this);
+    refresh(newValue, null);
+    this.releasesCombo.valueProperty().addListener(this);
   }
 }

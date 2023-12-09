@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -60,6 +61,11 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
+                              <Label layoutX="10.0" layoutY="42.0" styleClass="error-title" text="- This system manager is for PinUP Baller installer based installations." textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
                               <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="- Read the instruction boxes carefully." textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
@@ -70,19 +76,28 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="error-title" text="- You found a bug or have ideas for improvements? Drop a message on Discord:   " textFill="WHITE">
+                              <Label styleClass="error-title" text="- You found a bug or have ideas for improvements? Drop a message on Discord or GitHub:   " textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="https://discord.gg/69YqHYd3wD" textFill="WHITE">
-                                 <padding>
-                                    <Insets bottom="2.0" />
-                                 </padding>
+                              <HBox spacing="12.0">
                                  <VBox.margin>
                                     <Insets left="9.0" />
                                  </VBox.margin>
-                              </Hyperlink>
+                                 <children>
+                                    <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="https://discord.gg/69YqHYd3wD" textFill="WHITE">
+                                       <padding>
+                                          <Insets bottom="2.0" />
+                                       </padding>
+                                    </Hyperlink>
+                                    <Hyperlink layoutX="10.0" layoutY="10.0" onAction="#onHyperlink" styleClass="error-title" text="https://github.com/syd711/vpin-studio/issues" textFill="WHITE">
+                                       <padding>
+                                          <Insets bottom="2.0" />
+                                       </padding>
+                                    </Hyperlink>
+                                 </children>
+                              </HBox>
                            </children>
                            <BorderPane.margin>
                               <Insets />

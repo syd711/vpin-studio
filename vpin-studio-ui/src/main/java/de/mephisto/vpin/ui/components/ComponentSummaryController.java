@@ -6,6 +6,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
@@ -16,12 +17,14 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.net.URI;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentSummaryController {
+public class ComponentSummaryController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentSummaryController.class);
 
   @FXML
@@ -29,6 +32,9 @@ public class ComponentSummaryController {
 
   @FXML
   private Button resetVersionBtn;
+
+  @FXML
+  private Button ignoreBtn;
 
   @FXML
   private Label installedVersionLabel;
@@ -90,6 +96,19 @@ public class ComponentSummaryController {
     }
   }
 
+  @FXML
+  public void onVersionIgnore() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore Version", "Ignore version \"" + latestVersionLabel.getText() + "\"?", "The previous version will be used as \"Latest Relase\" instead.", "Ignore Version");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      try {
+        client.getComponentService().ignoreVersion(component.getType(), component.getLatestReleaseVersion());
+        EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to ignore version: " + e.getMessage());
+      }
+    }
+  }
+
   protected void refreshComponent(ComponentRepresentation component) {
     this.component = component;
 
@@ -109,17 +128,21 @@ public class ComponentSummaryController {
       if (component.isVersionDiff()) {
         latestVersionLabel.getStyleClass().add("orange-label");
       }
-      else if (component.getInstalledVersion() != null) {
-        latestVersionLabel.getStyleClass().add("green-label");
-      }
 
       installedVersionLabel.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
       latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
+      ignoreBtn.setVisible(component.getLatestReleaseVersion() != null && !component.getLatestReleaseVersion().equals("?") && component.getReleases().size() > 1);
+
       lastCheckLabel.setText(component.getLastCheck() != null ? DateFormat.getDateTimeInstance().format(component.getLastCheck()) : "?");
       lastModifiedLabel.setText(component.getLastModified() != null ? DateFormat.getDateTimeInstance().format(component.getLastModified()) : "?");
       folderLabel.setText(component.getTargetFolder() != null ? component.getTargetFolder() : "?");
 
       githubLink.setText(component.getUrl());
     }
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    this.ignoreBtn.setVisible(false);
   }
 }

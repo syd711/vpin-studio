@@ -29,9 +29,6 @@ public class TabOverviewController implements Initializable {
   private ComboBox<String> presetCombo;
 
   @FXML
-  private Button refreshBtn;
-
-  @FXML
   private Pane componentList;
 
   @FXML

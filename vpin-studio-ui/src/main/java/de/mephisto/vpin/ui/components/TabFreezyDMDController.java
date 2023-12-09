@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,11 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class TabFreezyDMDController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabFreezyDMDController.class);
 
+  @FXML
+  private Button flexDMDBtn;
+
+  @FXML
+  private Button dmdDeviceBtn;
 
   @FXML
   private void onFolder() {
@@ -90,6 +96,8 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
+    flexDMDBtn.setDisable(!client.getSystemService().isLocal());
+    dmdDeviceBtn.setDisable(!client.getSystemService().isLocal());
     refreshCustomValues();
   }
 }

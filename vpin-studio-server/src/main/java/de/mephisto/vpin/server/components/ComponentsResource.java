@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,11 @@ public class ComponentsResource {
     return componentService.setVersion(type, version);
   }
 
+  @PutMapping("/ignoreversion/{type}/{version}")
+  public boolean ignoreVersion(@PathVariable("type") ComponentType type, @PathVariable("version") String version) {
+    return componentService.ignoreVersion(type, version);
+  }
+
   @PostMapping("/check/{type}/{tag}/{artifact}/{forceDownload}")
   public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type,
                                                 @PathVariable("tag") String tag,
@@ -84,6 +90,10 @@ public class ComponentsResource {
 
     ComponentFacade componentFacade = componentService.getComponentFacade(componentType);
     List<GithubRelease> releases = componentService.getReleases(componentType);
+    if (!StringUtils.isEmpty(component.getIgnoredVersions())) {
+      releases = releases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
+    }
+
     List<GithubReleaseRepresentation> artifacts = new ArrayList<>();
     releases.stream().forEach(release -> {
       GithubReleaseRepresentation rep = new GithubReleaseRepresentation();

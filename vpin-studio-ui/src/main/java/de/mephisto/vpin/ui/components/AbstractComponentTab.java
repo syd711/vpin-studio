@@ -181,7 +181,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   @Override
   public void preferencesChanged(String key, Object value) {
     if(key.equals(PreferenceNames.SYSTEM_PRESET)) {
-      componentUpdateController.refresh();
+      componentUpdateController.refresh(null, null);
     }
   }
 

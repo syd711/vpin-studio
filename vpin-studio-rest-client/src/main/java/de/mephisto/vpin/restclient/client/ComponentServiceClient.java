@@ -32,6 +32,10 @@ public class ComponentServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "components/setversion/" + type.name() + "/" + version, new HashMap<>(), Boolean.class);
   }
 
+  public boolean ignoreVersion(ComponentType type, String version) throws Exception {
+    return getRestClient().put(API + "components/ignoreversion/" + type.name() + "/" + version, new HashMap<>(), Boolean.class);
+  }
+
   public ComponentActionLogRepresentation install(ComponentType type, String tag, String artifactName) throws Exception {
     try {
       return getRestClient().post(API + "components/install/" + type.name() + "/" + tag + "/" + artifactName, new HashMap<>(), ComponentActionLogRepresentation.class);

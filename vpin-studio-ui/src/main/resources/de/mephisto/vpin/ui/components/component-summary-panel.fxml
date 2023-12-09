@@ -38,7 +38,7 @@
          <children>
             <Label styleClass="default-text" text="Installed Version:" />
             <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Released Version:" GridPane.rowIndex="1" />
-            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <children>
                   <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE">
                      <font>
@@ -46,6 +46,17 @@
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="ignoreBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVersionIgnore" text="Ignore Version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-remove" iconSize="16" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
@@ -63,7 +74,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-outline" iconSize="16" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo-variant" iconSize="16" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
@@ -91,7 +102,7 @@
             </Label>
          </children>
       </GridPane>
-      <Label text="(Note that the latest released version must not be the newest.)" textFill="WHITE">
+      <Label text="(Note that the latest release must not be the the one from the latest major release.)" textFill="WHITE">
          <font>
             <Font name="System Italic" size="14.0" />
          </font>

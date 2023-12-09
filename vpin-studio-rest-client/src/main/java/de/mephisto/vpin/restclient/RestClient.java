@@ -128,27 +128,33 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public <T> T post(String path, Object model, Class<T> entityType) throws Exception {
-    LOG.info("HTTP POST " + path);
+    long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity entity = new HttpEntity<>(model, headers);
-    return exchange(path, HttpMethod.POST, entity, entityType);
+    T exchange = exchange(path, HttpMethod.POST, entity, entityType);
+    LOG.info("HTTP POST " + path + " (" + (System.currentTimeMillis()-start) + "ms)");
+    return exchange;
   }
 
   public Boolean put(String url, Map<String, Object> model) throws Exception {
-    LOG.info("HTTP PUT " + url + " " + model);
+    long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);
-    return exchange(url, HttpMethod.PUT, entity, Boolean.class);
+    Boolean exchange = exchange(url, HttpMethod.PUT, entity, Boolean.class);
+    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis()-start) + "ms)");
+    return exchange;
   }
 
   public <T> T put(String url, Map<String, Object> model, Class<T> entityType) throws Exception {
-    LOG.info("HTTP PUT " + url + " " + model);
+    long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);
-    return exchange(url, HttpMethod.PUT, entity, entityType);
+    T exchange = exchange(url, HttpMethod.PUT, entity, entityType);
+    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis()-start) + "ms)");
+    return exchange;
   }
 
   public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) throws Exception {

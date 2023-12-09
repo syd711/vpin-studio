@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ComponentService implements InitializingBean {
@@ -66,6 +67,26 @@ public class ComponentService implements InitializingBean {
       componentRepository.saveAndFlush(component);
       getComponent(type).setInstalledVersion(version);
       LOG.info("Applied version " + version + " for " + type.name());
+      return true;
+    }
+    return false;
+  }
+
+  public boolean ignoreVersion(@NonNull ComponentType type, @NonNull String version) {
+    Optional<Component> byType = componentRepository.findByType(type);
+    if (byType.isPresent()) {
+      Component component = byType.get();
+      String ignored = component.getIgnoredVersions();
+      List<String> values = new ArrayList<>();
+      if (ignored != null) {
+        values.addAll(Arrays.asList(ignored.split(",")));
+      }
+      values.add(version);
+      List<String> listWithoutDuplicates = new ArrayList<>(new HashSet<>(values));
+      component.setIgnoredVersions(String.join(",", listWithoutDuplicates));
+      componentRepository.saveAndFlush(component);
+      LOG.info("Ignored version " + version + " for " + type.name());
+      loadReleases(component);
       return true;
     }
     return false;
@@ -177,6 +198,9 @@ public class ComponentService implements InitializingBean {
     try {
       ComponentFacade componentFacade = getComponentFacade(component.getType());
       List<GithubRelease> githubReleases = componentFacade.loadReleases();
+      if (!StringUtils.isEmpty(component.getIgnoredVersions())) {
+        githubReleases = githubReleases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
+      }
       if (!githubReleases.isEmpty()) {
         component.setLatestReleaseVersion(githubReleases.get(0).getTag());
       }

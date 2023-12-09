@@ -20,6 +20,8 @@ public class Component {
 
   private String installedVersion;
 
+  private String ignoredVersions;
+
   private String latestReleaseVersion;
 
   public String getLatestReleaseVersion() {
@@ -52,6 +54,14 @@ public class Component {
 
   public void setLastCheck(Date lastCheck) {
     this.lastCheck = lastCheck;
+  }
+
+  public String getIgnoredVersions() {
+    return ignoredVersions;
+  }
+
+  public void setIgnoredVersions(String ignoredVersions) {
+    this.ignoredVersions = ignoredVersions;
   }
 
   @Override
