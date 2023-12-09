@@ -151,12 +151,12 @@ public class GameValidationTexts {
       }
       case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: {
         label = "External DMD not enabled.";
-        text = "The table contains an ALT Color file, but the external DMD is not enabled in the VPin Mame settings.";
+        text = "The table contains an ALT Color file, but the external DMD is not enabled in the VPin MAME settings.";
         break;
       }
       case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: {
         label = "Colorize DMD not enabled.";
-        text = "The table contains an ALT Color file, but the DMD colorization is not enabled in the VPin Mame settings.";
+        text = "The table contains an ALT Color file, but the DMD colorization is not enabled in the VPin MAME settings.";
         break;
       }
       case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: {
