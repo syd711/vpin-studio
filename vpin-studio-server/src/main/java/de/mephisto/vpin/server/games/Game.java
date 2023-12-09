@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -38,7 +39,7 @@ public class Game {
   private List<Integer> ignoredValidations;
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
-  private boolean altColorAvailable;
+  private AltColorTypes altColorType;
 
   private String assets;
   private PupPack pupPack;
@@ -387,12 +388,12 @@ public class Game {
     return null;
   }
 
-  public boolean isAltColorAvailable() {
-    return altColorAvailable;
+  public AltColorTypes getAltColorType() {
+    return altColorType;
   }
 
-  public void setAltColorAvailable(boolean altColorAvailable) {
-    this.altColorAvailable = altColorAvailable;
+  public void setAltColorType(AltColorTypes altColorType) {
+    this.altColorType = altColorType;
   }
 
   public void setAltSoundAvailable(boolean altSoundAvailable) {

@@ -458,7 +458,7 @@ public class GameService implements InitializingBean {
     game.setPupPack(pupPackService.getPupPack(game));
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
-    game.setAltColorAvailable(altColorService.isAltColorAvailable(game));
+    game.setAltColorType(altColorService.getAltColorType(game));
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);

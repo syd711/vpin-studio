@@ -287,7 +287,7 @@ public class GameValidationService implements InitializingBean {
   }
 
   public List<ValidationState> validateAltColor(Game game) {
-    if (!game.isAltColorAvailable()) {
+    if (game.getAltColorType() == null || game.getAltColorType().equals(AltColorTypes.mame)) {
       return Collections.emptyList();
     }
     List<ValidationState> result = new ArrayList<>();

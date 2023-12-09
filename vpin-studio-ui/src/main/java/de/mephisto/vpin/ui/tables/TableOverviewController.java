@@ -705,8 +705,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnAltColor.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (value.isAltColorAvailable()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
+      if (value.getAltColorType() != null) {
+        return new SimpleObjectProperty(value.getAltColorType().name());
       }
       return new SimpleStringProperty("");
     });
@@ -794,7 +794,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             return true;
           }
           else if (column.equals(columnAltColor)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltColorAvailable));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getAltColorType())));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

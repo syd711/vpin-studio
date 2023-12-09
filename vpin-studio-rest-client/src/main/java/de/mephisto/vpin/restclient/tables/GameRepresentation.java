@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.tables;
 
+import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.popper.EmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
@@ -46,7 +47,7 @@ public class GameRepresentation {
   private String assets;
   private boolean defaultBackgroundAvailable;
   private boolean altSoundAvailable;
-  private boolean altColorAvailable;
+  private AltColorTypes altColorType;
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
@@ -100,12 +101,12 @@ public class GameRepresentation {
     this.gameName = gameName;
   }
 
-  public boolean isAltColorAvailable() {
-    return altColorAvailable;
+  public AltColorTypes getAltColorType() {
+    return altColorType;
   }
 
-  public void setAltColorAvailable(boolean altColorAvailable) {
-    this.altColorAvailable = altColorAvailable;
+  public void setAltColorType(AltColorTypes altColorType) {
+    this.altColorType = altColorType;
   }
 
   public String getExtTableId() {

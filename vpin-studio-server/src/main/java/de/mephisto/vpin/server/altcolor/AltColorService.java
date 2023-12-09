@@ -30,9 +30,12 @@ import static de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer.*;
 public class AltColorService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorService.class);
 
-  public boolean isAltColorAvailable(@NonNull Game game) {
+  public AltColorTypes getAltColorType(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
-    return altColor != null && !altColor.getFiles().isEmpty();
+    if(altColor != null) {
+      return altColor.getAltColorType();
+    }
+    return null;
   }
 
   public boolean delete(@NonNull Game game) {

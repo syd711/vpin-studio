@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -146,7 +147,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      boolean altColorAvailable = game.isAltColorAvailable();
+      boolean altColorAvailable = game.getAltColorType() != null && !game.getAltColorType().equals(AltColorTypes.mame);
 
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);

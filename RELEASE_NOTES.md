@@ -36,6 +36,10 @@ Note that there is always the possibility that the released artifacts of these p
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/troubleshooting.png?raw=true" width="600" />
 
+- Changed "ALT Sound" column from checkbox icon to text, so that the type can be seen immediately.
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/alt-sound-list.png?raw=true" width="600" />
+
 
 ### Bugfixes
 
@@ -56,5 +60,5 @@ Phew, here it comes...
 - Improved error message when ALT sound is not checked in VPin MAME.
 - Fixed some button states in the table overview that should not be enabled for multi-selections.
 - Fixed the layout of the update news dialog a bit ... as you can see.
-- Refactored large parts of the media playback to reduce "Media available but not playable" errors.
+- Refactored large parts of the media playback to reduce "Media available but not playable" errors (hopefully).
 
