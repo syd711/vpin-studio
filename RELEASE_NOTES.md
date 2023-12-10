@@ -1,5 +1,7 @@
 ## Release Notes
 
+### Not interested in these details? Please read at least the bottom section "Runtime Update"!
+
 ### Added New "System Manager" Section
 
 Added main navigation item "System Manager". You can use the System Manager to check if your VPin software stack is up-to-date.
@@ -59,6 +61,15 @@ Phew, here it comes...
 - The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
 - Improved error message when ALT sound is not checked in VPin MAME.
 - Fixed some button states in the table overview that should not be enabled for multi-selections.
-- Refactored large parts of the media playback to reduce "Media available but not playable" errors (hopefully).
+- Refactored large parts of the media playback to reduce "Media available (but not playable)" errors.
 - Fixed the layout of the update news dialog a bit ... as you can see.
 
+
+### Runtime Update
+
+TLTR: Execute the "update-runtime.bat" in the "./resources" folder of the installation.
+
+I assume most of you ran into the video playback problem "Media available (but not playable)".
+Not all videos can be played because of encoding issues, but to reduce these errors I added
+this .bat file which updates the Java runtime of the VPin Studio.
+The new runtime will reduce the amount of these videos errors. They still may happen, but way less frequently. 
