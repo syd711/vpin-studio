@@ -72,7 +72,7 @@ This migration should happen automatically and your settings are kept, so please
 
 ### Runtime Update
 
-TLTR: Execute the "update-runtime.bat" in the "./resources" folder of the installation.
+TLTR: Kill the server process, close the Studio and execute the "update-runtime.bat" in the "./resources" folder of the installation.
 
 I assume most of you ran into the video playback problem "Media available (but not playable)".
 Not all videos can be played because of encoding issues, but to reduce these errors I added
