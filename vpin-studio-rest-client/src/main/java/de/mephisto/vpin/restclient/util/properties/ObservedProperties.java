@@ -41,17 +41,17 @@ public class ObservedProperties {
   }
 
   public int getProperty(String s, int defaultValue) {
-    String value = this.properties.getProperty(s);
-    if (!StringUtils.isEmpty(value)) {
-      return Integer.parseInt(value);
+    Object o = this.properties.get(s);
+    if (o != null && !StringUtils.isEmpty(String.valueOf(o))) {
+      return Integer.parseInt(String.valueOf(o));
     }
     return defaultValue;
   }
 
   public boolean getProperty(String s, boolean defaultValue) {
-    String value = this.properties.getProperty(s);
-    if (!StringUtils.isEmpty(value)) {
-      return Boolean.parseBoolean(value);
+    Object o = this.properties.get(s);
+    if (o != null && !StringUtils.isEmpty(String.valueOf(o))) {
+      return Boolean.parseBoolean(String.valueOf(o));
     }
     return defaultValue;
   }

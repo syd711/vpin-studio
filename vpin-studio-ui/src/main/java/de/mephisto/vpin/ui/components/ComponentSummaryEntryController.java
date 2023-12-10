@@ -1,9 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -12,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.WeakHashMap;
 
 public class ComponentSummaryEntryController implements Initializable {
 
@@ -37,7 +33,7 @@ public class ComponentSummaryEntryController implements Initializable {
     titleLabel.setText(key);
     valueLabel.setText(entry.getValue());
     description.setVisible(!StringUtils.isEmpty(entry.getDescription()));
-    description.setText(entry.getDescription());
+    description.setText("(" + entry.getDescription() + ")");
 
     if (!entry.isValid()) {
       String color = "#FF3333";
@@ -52,7 +48,7 @@ public class ComponentSummaryEntryController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     description.visibleProperty().addListener((observableValue, aBoolean, t1) -> {
-      if(!t1) {
+      if (!t1) {
         root.setPrefHeight(28);
         root.setMinHeight(28);
       }

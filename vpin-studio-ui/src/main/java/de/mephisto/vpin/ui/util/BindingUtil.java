@@ -118,9 +118,9 @@ public class BindingUtil {
   }
 
   public static void bindFontLabel(Label label, ObservedProperties properties, String key) {
-    String name = properties.getProperty(key + ".font.name", "Arial");
-    int size = properties.getProperty(key + ".font.size", 72);
-    String style = properties.getProperty(key + ".font.style", FontPosture.REGULAR.name());
+    String name = properties.getProperty(key + "FontName", "Arial");
+    int size = properties.getProperty(key + "FontSize", 72);
+    String style = properties.getProperty(key + "FontStyle", FontPosture.REGULAR.name());
 
     String text = name + ", " + style + ", " + size + "px";
     Font font = Font.font(name, FontPosture.findByName(style), 14);
@@ -130,9 +130,9 @@ public class BindingUtil {
   }
 
   public static void bindFontSelector(ObservedProperties properties, String key, Label label) {
-    String name = properties.getProperty(key + ".font.name", "Arial");
-    int size = properties.getProperty(key + ".font.size", 72);
-    String style = properties.getProperty(key + ".font.style", FontPosture.REGULAR.name());
+    String name = properties.getProperty(key + "FontName", "Arial");
+    int size = properties.getProperty(key + "FontSize", 72);
+    String style = properties.getProperty(key + "FontStyle", FontPosture.REGULAR.name());
 
     Font font = Font.font(name, FontPosture.findByName(style), size);
 
@@ -146,9 +146,9 @@ public class BindingUtil {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          properties.set(key + ".font.name", result.getFamily());
-          properties.set(key + ".font.size", String.valueOf((int) result.getSize()));
-          properties.set(key + ".font.style", result.getStyle());
+          properties.set(key + "FontName", result.getFamily());
+          properties.set(key + "FontSize", String.valueOf((int) result.getSize()));
+          properties.set(key + "FontStyle", result.getStyle());
 
           Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
           label.setFont(labelFont);

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -11,7 +13,6 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @Service
 public class CardService implements InitializingBean, HighscoreChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
+  private final static String CARD_CONFIG_FILENAME = "card-generator.properties";
 
   @Autowired
   private HighscoreService highscoreService;
@@ -61,11 +63,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        Config.getCardGeneratorConfig().reload();
+        CardSettings cardSettings = CardSettings.fromJson(preferencesService.getPreferences().getHighscoreCardSettings());
 
         //sample card are always generated
         if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings, game, summary).draw();
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
@@ -74,9 +76,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         }
 
         //otherwise check if the card rendering is enabled
-        String screenName = Config.getCardGeneratorConfig().getString("popper.screen", null);
+        String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings, game, summary).draw();
           if (bufferedImage != null) {
             File highscoreCard = getCardFile(game, screenName);
             ImageUtil.write(bufferedImage, highscoreCard);
@@ -124,5 +126,49 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   @Override
   public void afterPropertiesSet() throws Exception {
     this.highscoreService.addHighscoreChangeListener(this);
+
+    try {
+      File cardSettings = new File(SystemService.RESOURCES, CARD_CONFIG_FILENAME);
+      if (cardSettings.exists()) {
+        PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, CARD_CONFIG_FILENAME);
+        CardSettings settings = new CardSettings();
+        settings.setCardAlphacompositeBlack(store.getInt("card.alphacomposite.black"));
+        settings.setCardAlphacompositeWhite(store.getInt("card.alphacomposite.white"));
+        settings.setCardBackground(store.getString("card.background"));
+        settings.setCardBlur(store.getInt("card.blur"));
+        settings.setCardFontColor(store.getString("card.font.color"));
+        settings.setCardGrayScale(store.getBoolean("card.grayScale"));
+        settings.setCardBorderWidth(store.getInt("card.border.width", 1));
+        settings.setCardRatio(store.getString("card.ratio", "RATIO_16x9"));
+        settings.setCardPadding(store.getInt("card.padding", 10));
+        settings.setCardHighscoresRowPaddingLeft(store.getInt("card.highscores.row.padding.left", 32));
+        settings.setCardHighscoresRowSeparator(store.getInt("card.highscores.row.separator", 5));
+        settings.setCardScaling(store.getInt("card.scaling"));
+        settings.setCardRawHighscore(store.getBoolean("card.rawHighscore"));
+        settings.setCardSampleTable(store.getInt("card.sampleTable"));
+        settings.setCardScoreFontName(store.getString("card.score.font.name"));
+        settings.setCardScoreFontSize(store.getInt("card.score.font.size"));
+        settings.setCardScoreFontStyle(store.getString("card.score.font.style"));
+        settings.setCardTableFontName(store.getString("card.table.font.name"));
+        settings.setCardTableFontSize(store.getInt("card.table.font.size"));
+        settings.setCardTableFontStyle(store.getString("card.table.font.style"));
+        settings.setCardTitleFontName(store.getString("card.title.font.name"));
+        settings.setCardTitleFontSize(store.getInt("card.title.font.size"));
+        settings.setCardTableFontStyle(store.getString("card.title.font.style"));
+        settings.setCardTitleText(store.getString("card.title.text"));
+        settings.setCardUseDirectB2S(store.getBoolean("card.useDirectB2S"));
+        settings.setPopperScreen(store.getString("popper.screen"));
+
+        String json = settings.toJson();
+        preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, json);
+
+        LOG.info("Finished highscore card settings migration");
+        if(cardSettings.delete()) {
+          LOG.info("Deleted " + cardSettings.getAbsolutePath());
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to migrate highscore card preferences: " + e.getMessage(), e);
+    }
   }
 }

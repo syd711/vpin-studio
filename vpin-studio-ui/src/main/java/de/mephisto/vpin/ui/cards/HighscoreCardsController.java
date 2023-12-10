@@ -2,6 +2,7 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
@@ -139,8 +140,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      properties = Studio.client.getProperties("card-generator");
-      ignoreList.addAll(Arrays.asList("popper.screen"));
+      properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+      ignoreList.addAll(Arrays.asList("popperScreen"));
       properties.addObservedPropertyChangeListener(this);
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -215,8 +216,8 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() {
-    ObservedProperties properties = Studio.client.getProperties("card-generator");
-    String targetScreen = properties.getProperty("popper.screen", null);
+    ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    String targetScreen = properties.getProperty("popperScreen", null);
     if (StringUtils.isEmpty(targetScreen)) {
       WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
@@ -242,17 +243,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onFontTitleSelect() {
-    BindingUtil.bindFontSelector(properties, "card.title", titleFontLabel);
+    BindingUtil.bindFontSelector(properties, "cardTitle", titleFontLabel);
   }
 
   @FXML
   private void onFontTableSelect() {
-    BindingUtil.bindFontSelector(properties, "card.table", tableFontLabel);
+    BindingUtil.bindFontSelector(properties, "cardTable", tableFontLabel);
   }
 
   @FXML
   private void onFontScoreSelect() {
-    BindingUtil.bindFontSelector(properties, "card.score", scoreFontLabel);
+    BindingUtil.bindFontSelector(properties, "cardScore", scoreFontLabel);
   }
 
   @FXML
@@ -277,37 +278,37 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
 
     try {
-      BindingUtil.bindFontLabel(titleFontLabel, properties, "card.title");
-      BindingUtil.bindFontLabel(tableFontLabel, properties, "card.table");
-      BindingUtil.bindFontLabel(scoreFontLabel, properties, "card.score");
+      BindingUtil.bindFontLabel(titleFontLabel, properties, "cardTitle");
+      BindingUtil.bindFontLabel(tableFontLabel, properties, "cardTable");
+      BindingUtil.bindFontLabel(scoreFontLabel, properties, "cardScore");
 
-      BindingUtil.bindColorPicker(fontColorSelector, properties, "card.font.color");
-      BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "card.sampleTable");
+      BindingUtil.bindColorPicker(fontColorSelector, properties, "cardFontColor");
+      BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "cardSampleTable");
 
-      BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "card.useDirectB2S");
-      BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "card.grayScale");
+      BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "cardUseDirectB2S");
+      BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "cardGrayScale");
 
       imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
       backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
       backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
 
-      BindingUtil.bindComboBox(backgroundImageCombo, properties, "card.background");
-      String backgroundName = properties.getProperty("card.background", null);
+      BindingUtil.bindComboBox(backgroundImageCombo, properties, "cardBackground");
+      String backgroundName = properties.getProperty("cardBackground", null);
       if (StringUtils.isEmpty(backgroundName)) {
         backgroundImageCombo.setValue(imageList.get(0));
       }
 
-      BindingUtil.bindTextField(titleText, properties, "card.title.text", "Highscores");
-      BindingUtil.bindSlider(brightenSlider, properties, "card.alphacomposite.white");
-      BindingUtil.bindSlider(darkenSlider, properties, "card.alphacomposite.black");
-      BindingUtil.bindSlider(blurSlider, properties, "card.blur");
-      BindingUtil.bindSlider(borderSlider, properties, "card.border.width");
-      BindingUtil.bindSpinner(marginTopSpinner, properties, "card.padding");
-      BindingUtil.bindSpinner(wheelImageSpinner, properties, "card.highscores.row.padding.left");
-      BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "card.highscores.row.separator");
+      BindingUtil.bindTextField(titleText, properties, "cardTitleText", "Highscores");
+      BindingUtil.bindSlider(brightenSlider, properties, "cardAlphacompositeWhite");
+      BindingUtil.bindSlider(darkenSlider, properties, "cardAlphacompositeBlack");
+      BindingUtil.bindSlider(blurSlider, properties, "cardBlur");
+      BindingUtil.bindSlider(borderSlider, properties, "cardBorderWidth");
+      BindingUtil.bindSpinner(marginTopSpinner, properties, "cardPadding");
+      BindingUtil.bindSpinner(wheelImageSpinner, properties, "cardHighscoresRowPaddingLeft");
+      BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "cardHighscoresRowseparator");
 
-      BindingUtil.bindCheckbox(renderRawHighscore, properties, "card.rawHighscore");
+      BindingUtil.bindCheckbox(renderRawHighscore, properties, "cardRawHighscore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);

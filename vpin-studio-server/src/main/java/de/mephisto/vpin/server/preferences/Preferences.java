@@ -62,6 +62,8 @@ public class Preferences {
   @Column(length = 1024)
   private String highscoreAllowList;
 
+  private String highscoreCardSettings;
+
   @Column(length = 1024)
   private String uiSettings;
 
@@ -90,6 +92,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getHighscoreCardSettings() {
+    return highscoreCardSettings;
+  }
+
+  public void setHighscoreCardSettings(String highscoreCardSettings) {
+    this.highscoreCardSettings = highscoreCardSettings;
+  }
 
   public String getOverlayPageUrl() {
     return overlayPageUrl;

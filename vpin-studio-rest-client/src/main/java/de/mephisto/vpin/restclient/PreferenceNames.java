@@ -13,6 +13,7 @@ public interface PreferenceNames {
   String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
   String HIGHSCORE_ALLOW_LIST = "highscoreAllowList";
+  String HIGHSCORE_CARD_SETTINGS = "highscoreCardSettings";
 
   String IDLE_TIMEOUT = "idleTimeout";
   String AVATAR = "avatar";

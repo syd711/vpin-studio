@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -9,7 +10,6 @@ import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,48 +26,77 @@ import java.util.List;
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
-  private final int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
-  private final int WHEEL_PADDING = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
+  private final int ROW_SEPARATOR;
+  private final int WHEEL_PADDING;
 
-  private final String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text", "Highscores");
+  private String TITLE_TEXT = "Highscores";
 
-  private final String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
-  private final int SCORE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.score.font.style"));
-  private final int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size", 90);
+  private final String SCORE_FONT_NAME;
+  private final int SCORE_FONT_STYLE;
+  private final int SCORE_FONT_SIZE;
 
-  private final String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name", "Arial");
-  private final int TITLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.title.font.style"));
-  private final int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size", 120);
+  private final String TITLE_FONT_NAME;
+  private final int TITLE_FONT_STYLE;
+  private final int TITLE_FONT_SIZE;
 
-  private final String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
-  private final int TABLE_FONT_STYLE = ImageUtil.convertFontPosture(Config.getCardGeneratorConfig().getString("card.table.font.style"));
-  private final int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size", 72);
+  private final String TABLE_FONT_NAME;
+  private final int TABLE_FONT_STYLE;
+  private final int TABLE_FONT_SIZE;
 
-  private final String FONT_COLOR = Config.getCardGeneratorConfig().getString("card.font.color", "#FFFFFF");
+  private final String FONT_COLOR;
 
-  private final int PADDING = Config.getCardGeneratorConfig().getInt("card.padding");
+  private final int PADDING;
 
-  private final boolean RAW_HIGHSCORE = Config.getCardGeneratorConfig().getBoolean("card.rawHighscore");
-  private final boolean USE_DIRECTB2S = Config.getCardGeneratorConfig().getBoolean("card.useDirectB2S");
-  private final boolean GRAY_SCALE = Config.getCardGeneratorConfig().getBoolean("card.grayScale");
+  private final boolean RAW_HIGHSCORE;
+  private final boolean USE_DIRECTB2S;
+  private final boolean GRAY_SCALE;
 
-  private final int BLUR_PIXELS = Config.getCardGeneratorConfig().getInt("card.blur");
+  private final int BLUR_PIXELS;
 
   private final DefaultPictureService directB2SService;
   private final ScoreSummary summary;
+  private final CardSettings cardSettings;
   private final Game game;
 
-  public CardGraphics(DefaultPictureService directB2SService, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, CardSettings cardSettings, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
+    this.cardSettings = cardSettings;
     this.game = game;
     this.summary = summary;
+
+    ROW_SEPARATOR = cardSettings.getCardHighscoresRowSeparator();
+    WHEEL_PADDING = cardSettings.getCardHighscoresRowPaddingLeft();
+
+    TITLE_TEXT = cardSettings.getCardTitleText();
+
+    SCORE_FONT_NAME = cardSettings.getCardScoreFontName();
+    SCORE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardScoreFontStyle());
+    SCORE_FONT_SIZE = cardSettings.getCardScoreFontSize();
+
+    TITLE_FONT_NAME = cardSettings.getCardTitleFontName();
+    TITLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTitleFontStyle());
+    TITLE_FONT_SIZE = cardSettings.getCardTitleFontSize();
+
+    TABLE_FONT_NAME = cardSettings.getCardTableFontName();
+    TABLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTableFontStyle());
+    TABLE_FONT_SIZE = cardSettings.getCardTableFontSize();
+
+    FONT_COLOR = cardSettings.getCardFontColor();
+
+    PADDING = cardSettings.getCardPadding();
+
+    RAW_HIGHSCORE = cardSettings.isCardRawHighscore();
+    USE_DIRECTB2S = cardSettings.isCardUseDirectB2S();
+    GRAY_SCALE = cardSettings.isCardGrayScale();
+
+    BLUR_PIXELS = cardSettings.getCardBlur();
   }
 
   public BufferedImage draw() throws Exception {
     File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
-    File sourceImage = new File(backgroundsFolder, Config.getCardGeneratorConfig().get("card.background") + ".jpg");
+    File sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".jpg");
     if (!sourceImage.exists()) {
-      sourceImage = new File(backgroundsFolder, Config.getCardGeneratorConfig().get("card.background") + ".png");
+      sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".png");
     }
     if (!sourceImage.exists()) {
       File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));
@@ -77,7 +106,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -105,12 +134,12 @@ public class CardGraphics {
       backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
     }
 
-    float alphaWhite = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.white");
-    float alphaBlack = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.black");
+    float alphaWhite = cardSettings.getCardAlphacompositeWhite();
+    float alphaBlack = cardSettings.getCardAlphacompositeBlack();
     ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
     renderCardData(backgroundImage, game);
 
-    int borderWidth = Config.getCardGeneratorConfig().getInt("card.border.width");
+    int borderWidth = cardSettings.getCardBorderWidth();
     ImageUtil.drawBorder(backgroundImage, borderWidth);
 
     return backgroundImage;

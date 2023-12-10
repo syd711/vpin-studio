@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -26,10 +27,10 @@ public class CardGenerationPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    ObservedProperties properties = Studio.client.getProperties("card-generator");
+    ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", "Other2", "GameInfo", "GameHelp")));
-    BindingUtil.bindComboBox(popperScreenCombo, properties, "popper.screen");
+    BindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
     popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
 
     onScreenChange();

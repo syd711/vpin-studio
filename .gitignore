@@ -63,7 +63,6 @@ hs_err_pid*
 /target/
 /dependency-reduced-pom.xml
 /resources/system.properties
-/resources/card-generator.properties
 /resources/*.db-journal
 /resources/*.sqbpro
 /resources/b2s/*.png

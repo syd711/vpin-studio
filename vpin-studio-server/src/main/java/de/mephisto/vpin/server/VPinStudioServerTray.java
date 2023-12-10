@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.server.resources.ResourceLoader;
-import de.mephisto.vpin.server.util.Config;
 import de.mephisto.vpin.server.util.SystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ public class VPinStudioServerTray {
     MenuItem restartItem = new MenuItem("Restart");
     restartItem.addActionListener(e -> {
       try {
-        Config.reloadAll();
         restartItem.setEnabled(false);
         new VPinStudioServerStateManager().restart();
       } catch (Exception ex) {
