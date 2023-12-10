@@ -63,6 +63,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Extract Runtime
+        run: |
+          unzip -o java-runtime.zip -d ${{ github.workspace }}/java-runtime
+
+      - name: List files in the runtime folder
+        run: |
+          ls ${{ github.workspace }}/java-runtime/
+
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}                    
