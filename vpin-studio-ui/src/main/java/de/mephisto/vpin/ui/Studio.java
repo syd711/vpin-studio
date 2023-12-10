@@ -49,6 +49,8 @@ public class Studio extends Application {
     Studio.stage = stage;
     Locale.setDefault(Locale.ENGLISH);
 
+    StudioUpdatePreProcessing.execute();
+
     Studio.errorHandler = e -> {
       client.setErrorHandler(null);
       Platform.runLater(() -> {

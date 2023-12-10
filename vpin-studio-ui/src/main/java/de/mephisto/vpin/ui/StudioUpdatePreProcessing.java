@@ -10,7 +10,7 @@ import java.util.List;
 
 public class StudioUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(StudioUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("runtime-update.bat", "maintenance.jpg");
+  private final static List<String> resources = Arrays.asList("update-runtime.bat");
 
   public static void execute() {
     new Thread(() -> {
