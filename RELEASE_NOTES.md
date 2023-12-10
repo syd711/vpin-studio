@@ -64,6 +64,11 @@ Phew, here it comes...
 - Refactored large parts of the media playback to reduce "Media available (but not playable)" errors.
 - Fixed the layout of the update news dialog a bit ... as you can see.
 
+### Miscellaneous
+
+The card generator preferences have been migrated into the database.
+This migration should happen automatically and your settings are kept, so please let me know if any issues occuring.
+
 
 ### Runtime Update
 
