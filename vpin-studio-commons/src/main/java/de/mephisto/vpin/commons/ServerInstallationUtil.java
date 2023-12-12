@@ -16,7 +16,7 @@ public class ServerInstallationUtil {
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
   public static File BAT = new File("vpin-studio-server.bat");
 
-  public static boolean install() {
+  public static boolean install() throws IOException {
     try {
       File root = new File("./");
       String script = "cd /D " + root.getAbsolutePath() +
@@ -26,8 +26,8 @@ public class ServerInstallationUtil {
       return getAutostartFile().exists();
     } catch (IOException e) {
       LOG.error("Failed to install autostart file \"" + getAutostartFile().getAbsolutePath() + "\": " + e.getMessage(), e);
+      throw e;
     }
-    return false;
   }
 
   public static boolean isInstalled() {

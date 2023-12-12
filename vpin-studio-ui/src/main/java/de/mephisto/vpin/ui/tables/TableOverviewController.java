@@ -752,6 +752,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           break;
         }
       }
+      box.setStyle("-fx-padding: 3 0 0 0;");
       return new SimpleObjectProperty(box);
     });
 
