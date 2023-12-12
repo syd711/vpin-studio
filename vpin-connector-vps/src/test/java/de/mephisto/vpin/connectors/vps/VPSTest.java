@@ -12,6 +12,24 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VPSTest {
 
   @Test
+  public void testDiff() {
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+    assertNotNull(vpsNew);
+    assertNotNull(vpsOld);
+    assertFalse(vpsNew.getTables().isEmpty());
+    assertFalse(vpsOld.getTables().isEmpty());
+
+    List<VpsTable> diff = vpsNew.diff(vpsOld);
+    System.out.println(diff.size());
+    assertFalse(diff.isEmpty());
+    for (VpsTable vpsTable : diff) {
+      System.out.println(vpsTable);
+    }
+
+  }
+
+  @Test
   public void testTableLoading() {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
