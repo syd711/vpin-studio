@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
@@ -33,6 +34,8 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class DiscordBotPreferencesController implements Initializable {
+  private final Debouncer debouncer = new Debouncer();
+
   @FXML
   private Label botTokenLabel;
 
@@ -59,6 +62,15 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @FXML
   private CheckBox dynamicSubscriptions;
+
+  @FXML
+  private ComboBox<DiscordChannel> vpsChannelCombo;
+
+  @FXML
+  private CheckBox vpsFilterCheckbox;
+
+  @FXML
+  private Spinner<Integer> vpsRefreshSpinner;
 
   @FXML
   private Button selectUsersBtn;
@@ -135,6 +147,9 @@ public class DiscordBotPreferencesController implements Initializable {
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
     categoryCombo.setDisable(true);
+    vpsChannelCombo.setDisable(true);
+    vpsFilterCheckbox.setDisable(true);
+    vpsRefreshSpinner.setDisable(true);
     resetBtn.setDisable(true);
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
@@ -181,6 +196,15 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
+    vpsChannelCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_VPS_CHANNEL_ID, newValue.getId());
+      }
+      else {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_VPS_CHANNEL_ID, "");
+      }
+    });
+
     categoryCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, newValue.getId());
@@ -197,6 +221,25 @@ public class DiscordBotPreferencesController implements Initializable {
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, t1);
       }
+    });
+
+    PreferenceEntryRepresentation vpsFilterEnabledPreference = client.getPreference(PreferenceNames.DISCORD_VPS_TABLE_FILTER_ENABLED);
+    vpsFilterCheckbox.setSelected(vpsFilterEnabledPreference.getBooleanValue());
+    vpsFilterCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_VPS_TABLE_FILTER_ENABLED, t1);
+      }
+    });
+
+    PreferenceEntryRepresentation vpsRefreshInterval = client.getPreference(PreferenceNames.DISCORD_VPS_REFRESH_INTERVAL_MIN);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 1440, 10);
+    factory.setValue(vpsRefreshInterval.getIntValue());
+    vpsRefreshSpinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("vpsRefreshSpinner", () -> {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_VPS_REFRESH_INTERVAL_MIN, t1);
+      }, 300);
     });
 
     refreshAllowList();
@@ -228,7 +271,10 @@ public class DiscordBotPreferencesController implements Initializable {
     client.clearDiscordCache();
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
-    PreferenceEntryRepresentation channelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+    PreferenceEntryRepresentation defaultChannelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+    PreferenceEntryRepresentation vpsChannelPreference = client.getPreference(PreferenceNames.DISCORD_VPS_CHANNEL_ID);
+    PreferenceEntryRepresentation vpsRefreshIntervalPreference = client.getPreference(PreferenceNames.DISCORD_VPS_REFRESH_INTERVAL_MIN);
+    PreferenceEntryRepresentation vpsFilterPreference = client.getPreference(PreferenceNames.DISCORD_VPS_TABLE_FILTER_ENABLED);
     PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
 
     botNameLabel.setText("-");
@@ -251,18 +297,34 @@ public class DiscordBotPreferencesController implements Initializable {
       if (discordServer != null) {
         channelCombo.setDisable(false);
         categoryCombo.setDisable(false);
+        vpsRefreshSpinner.setDisable(false);
+        vpsChannelCombo.setDisable(false);
+        vpsFilterCheckbox.setDisable(false);
 
         serverCombo.setValue(discordServer);
 
         List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
         channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
-        long channelId = channelPreference.getLongValue();
-        if (channelId > 0) {
-          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == channelId).findFirst();
+        vpsChannelCombo.setItems(FXCollections.observableArrayList(discordChannels));
+
+        long defaultChannelId = defaultChannelPreference.getLongValue();
+        if (defaultChannelId > 0) {
+          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == defaultChannelId).findFirst();
           if (first.isPresent()) {
             DiscordChannel selectedValue = channelCombo.getValue();
             if (selectedValue == null || !selectedValue.equals(first.get())) {
               channelCombo.setValue(first.get());
+            }
+          }
+        }
+
+        long vpsChannelId = vpsChannelPreference.getLongValue();
+        if (vpsChannelId > 0) {
+          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == vpsChannelId).findFirst();
+          if (first.isPresent()) {
+            DiscordChannel selectedValue = vpsChannelCombo.getValue();
+            if (selectedValue == null || !selectedValue.equals(first.get())) {
+              vpsChannelCombo.setValue(first.get());
             }
           }
         }
