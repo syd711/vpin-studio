@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,13 +226,22 @@ public class VPS {
     this.tables = loadTables(null);
   }
 
-  public List<VpsTable> diff(VPS old) {
-    List<VpsTable> diff = new ArrayList<>();
+  public List<VpsTableDiff> diff(VPS old) {
+    return diff(old, Collections.emptyList());
+  }
 
-    for (VpsTable table : this.tables) {
+  public List<VpsTableDiff> diff(VPS old, List<String> filteredTableIds) {
+    List<VpsTableDiff> diff = new ArrayList<>();
+    List<VpsTable> selectedTables = this.tables;
+    if(!filteredTableIds.isEmpty()) {
+      selectedTables = this.tables.stream().filter(t -> filteredTableIds.contains(t.getId())).collect(Collectors.toList());
+    }
+
+    for (VpsTable table : selectedTables) {
       VpsTable oldTable = old.getTableById(table.getId());
       if (oldTable != null && table.getUpdatedAt() != oldTable.getUpdatedAt()) {
-        diff.add(table);
+        VpsTableDiff tableDiff = new VpsTableDiff(table, oldTable);
+        diff.add(tableDiff);
       }
     }
 

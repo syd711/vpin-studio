@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -20,11 +21,11 @@ public class VPSTest {
     assertFalse(vpsNew.getTables().isEmpty());
     assertFalse(vpsOld.getTables().isEmpty());
 
-    List<VpsTable> diff = vpsNew.diff(vpsOld);
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
-    for (VpsTable vpsTable : diff) {
-      System.out.println(vpsTable);
+    for (VpsTableDiff vpsTable : diff) {
+      System.out.println(vpsTable.toString());
     }
 
   }

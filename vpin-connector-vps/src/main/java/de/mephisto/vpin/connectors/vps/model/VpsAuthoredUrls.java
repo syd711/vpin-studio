@@ -40,4 +40,27 @@ public class VpsAuthoredUrls {
   public void setUrls(List<VpsUrl> urls) {
     this.urls = urls;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof VpsAuthoredUrls)) return false;
+
+    VpsAuthoredUrls that = (VpsAuthoredUrls) o;
+    if(!String.valueOf(version).equals(String.valueOf(that.version))) return false;
+    if(urls == null && that.urls != null) return false;
+    if(urls != null && that.urls == null) return false;
+    if (updatedAt != that.updatedAt) return false;
+    if (urls != null && that.urls != null && !urls.equals(that.urls)) return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = urls.hashCode();
+    result = 31 * result + authors.hashCode();
+    result = 31 * result + version.hashCode();
+    result = 31 * result + (int) (updatedAt ^ (updatedAt >>> 32));
+    return result;
+  }
 }
