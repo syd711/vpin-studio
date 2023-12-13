@@ -29,11 +29,17 @@ public class VPS {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
+  private List<VpsChangeListener> listeners = new ArrayList<>();
+
   private final List<String> versionIndicators = Arrays.asList("vpw", "bigus", "salas", "tasty", "thalamus", "VPinWorkshop", "Paulie");
 
   private List<VpsTable> tables;
 
   private static VPS instance;
+
+  public void addChangeListener(VpsChangeListener listener) {
+    this.listeners.add(listener);
+  }
 
   public static VPS loadInstance(InputStream in) {
     VPS instance = new VPS();
@@ -183,7 +189,8 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public void download() throws Exception {
+  public List<VpsTableDiff> download() throws Exception {
+    List<VpsTableDiff> diff = new ArrayList<>();
     try {
       LOG.info("Downloading " + VPS.URL);
       java.net.URL url = new URL(VPS.URL);
@@ -208,14 +215,28 @@ public class VPS {
       }
       if (!tmp.renameTo(getVpsDbFile())) {
         LOG.error("Failed to rename vpsdb.json");
-        return;
+        return diff;
       }
 
       LOG.info("Written " + getVpsDbFile().getAbsolutePath());
+
+
+      VPS newInstance = loadInstance(null);
+      diff.addAll(newInstance.diff(this));
+      VPS.instance = newInstance;
+
+      if (!diff.isEmpty()) {
+        new Thread(() -> {
+          for (VpsChangeListener listener : listeners) {
+            listener.vpsSheetChanged(diff);
+          }
+        }).start();
+      }
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());
       throw e;
     }
+    return diff;
   }
 
   public Date getChangeDate() {
@@ -233,7 +254,7 @@ public class VPS {
   public List<VpsTableDiff> diff(VPS old, List<String> filteredTableIds) {
     List<VpsTableDiff> diff = new ArrayList<>();
     List<VpsTable> selectedTables = this.tables;
-    if(!filteredTableIds.isEmpty()) {
+    if (!filteredTableIds.isEmpty()) {
       selectedTables = this.tables.stream().filter(t -> filteredTableIds.contains(t.getId())).collect(Collectors.toList());
     }
 

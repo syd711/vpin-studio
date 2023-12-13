@@ -8,6 +8,15 @@ public class VpsAuthoredUrls {
   private List<String> authors;
   private String version;
   private long updatedAt;
+  private String id;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public List<String> getAuthors() {
     return authors;

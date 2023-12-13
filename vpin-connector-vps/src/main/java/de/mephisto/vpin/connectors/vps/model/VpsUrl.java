@@ -1,7 +1,5 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.util.List;
-
 public class VpsUrl {
   private String url;
   private boolean broken;

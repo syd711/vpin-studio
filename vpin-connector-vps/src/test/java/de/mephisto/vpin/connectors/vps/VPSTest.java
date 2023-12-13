@@ -24,10 +24,28 @@ public class VPSTest {
     List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
-    for (VpsTableDiff vpsTable : diff) {
-      System.out.println(vpsTable.toString());
+    for (VpsTableDiff diffEntry : diff) {
+      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
     }
+  }
 
+  @Test
+  public void testDiff2() {
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+    assertNotNull(vpsNew);
+    assertNotNull(vpsOld);
+    assertFalse(vpsNew.getTables().isEmpty());
+    assertFalse(vpsOld.getTables().isEmpty());
+
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
+    System.out.println(diff.size());
+    assertFalse(diff.isEmpty());
+    for (VpsTableDiff diffEntry : diff) {
+      if(diffEntry.getId().equals("DY3wUlic")) {
+        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+      }
+    }
   }
 
   @Test
