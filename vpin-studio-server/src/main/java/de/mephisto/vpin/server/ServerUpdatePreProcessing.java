@@ -19,20 +19,9 @@ public class ServerUpdatePreProcessing {
   private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg");
 
   public static void execute() {
-    runVPSCheck();
     runResourcesCheck();
     synchronizeNVRams();
     LOG.info("Finished resource updates check.");
-  }
-
-  private static void runVPSCheck() {
-    new Thread(() -> {
-      try {
-        VPS.getInstance().download();
-      } catch (Exception e) {
-        LOG.error("Failed to update VPS sheet: " + e.getMessage(), e);
-      }
-    }).start();
   }
 
   private static void runResourcesCheck() {

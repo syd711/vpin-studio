@@ -1,9 +1,9 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class VpsTableDiff {
   private final VpsTable oldTable;
@@ -20,6 +20,14 @@ public class VpsTableDiff {
 
   public String getImgUrl() {
     return this.oldTable.getTableFiles().get(0).getImgUrl();
+  }
+
+  public String getGameLink() {
+    return "https://virtual-pinball-spreadsheet.web.app/game/" + this.getId();
+  }
+
+  public Date getLastModified() {
+    return new Date(newTable.getUpdatedAt());
   }
 
   public List<VpsDiffTypes> getDifferences() {
@@ -110,6 +118,10 @@ public class VpsTableDiff {
       }
     }
     return false;
+  }
+
+  public String getTitle() {
+    return newTable.getDisplayName();
   }
 
   @Override

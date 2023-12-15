@@ -189,7 +189,7 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public List<VpsTableDiff> download() throws Exception {
+  public List<VpsTableDiff> download() {
     List<VpsTableDiff> diff = new ArrayList<>();
     try {
       LOG.info("Downloading " + VPS.URL);
@@ -223,6 +223,7 @@ public class VPS {
 
       VPS newInstance = loadInstance(null);
       diff.addAll(newInstance.diff(this));
+      LOG.info("VPS updated with " + diff.size() + " updates.");
       VPS.instance = newInstance;
 
       if (!diff.isEmpty()) {
@@ -234,7 +235,6 @@ public class VPS {
       }
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());
-      throw e;
     }
     return diff;
   }

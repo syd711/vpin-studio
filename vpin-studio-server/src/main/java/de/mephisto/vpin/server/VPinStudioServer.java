@@ -21,6 +21,7 @@ public class VPinStudioServer extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
     ServerUpdatePreProcessing.execute();
+
     SpringApplicationBuilder builder = new SpringApplicationBuilder(VPinStudioServer.class);
     builder.headless(false);
     builder.run(args);

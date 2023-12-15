@@ -187,7 +187,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Filter My Tables:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Filter For My Tables:" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
