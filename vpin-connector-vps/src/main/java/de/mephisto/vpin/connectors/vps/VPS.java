@@ -227,6 +227,7 @@ public class VPS {
       VPS.instance = newInstance;
 
       if (!diff.isEmpty()) {
+        LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
         new Thread(() -> {
           for (VpsChangeListener listener : listeners) {
             listener.vpsSheetChanged(diff);

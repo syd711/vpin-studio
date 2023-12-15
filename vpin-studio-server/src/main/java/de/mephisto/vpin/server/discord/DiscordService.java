@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsChangeListener;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
@@ -749,6 +750,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Override
   public void vpsSheetChanged(List<VpsTableDiff> diff) {
     if (!diff.isEmpty()) {
+      LOG.info("Discord bot is emitting VPS table diff for " + diff.size() + " changes.");
+
       String serverId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       String vpsChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_VPS_CHANNEL_ID);
       boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_VPS_TABLE_FILTER_ENABLED);
@@ -772,17 +775,26 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (filtered.size() > 10) {
           Map<String, String> entries = new HashMap<>();
           for (VpsTableDiff tableDiff : filtered) {
-            String value = String.join(", ", tableDiff.getDifferences().stream().map(d -> d.toString()).collect(Collectors.toList()));
+            List<VpsDiffTypes> differences = tableDiff.getDifferences();
+            if (differences.isEmpty()) {
+              continue;
+            }
+
+            String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
             entries.put(tableDiff.getTitle(), value);
           }
           discordClient.sendVpsUpdateCompact(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries);
         }
         else {
           for (VpsTableDiff tableDiff : filtered) {
-            String value = String.join("\n- ", tableDiff.getDifferences().stream().map(d -> d.toString()).collect(Collectors.toList()));
+            List<VpsDiffTypes> differences = tableDiff.getDifferences();
+            if (differences.isEmpty()) {
+              continue;
+            }
+            String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
             Map<String, String> entries = new HashMap<>();
 
-            entries.put("Change Log:",  value);
+            entries.put("Change Log:", value);
             discordClient.sendVpsUpdateFull(Long.parseLong(serverId), Long.parseLong(vpsChannelId),
               "VPS Update for \"" + tableDiff.getTitle() + "\"",
               tableDiff.getLastModified(), tableDiff.getImgUrl(), tableDiff.getGameLink(), entries);

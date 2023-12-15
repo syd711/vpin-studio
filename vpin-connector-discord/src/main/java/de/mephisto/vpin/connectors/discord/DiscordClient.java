@@ -461,7 +461,7 @@ public class DiscordClient {
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(title);
-        embed.setDescription("**The following tables have updates**");
+        embed.setDescription("**The following tables have updates:**");
 
         Set<Map.Entry<String, String>> entries = values.entrySet();
         for (Map.Entry<String, String> entry : entries) {

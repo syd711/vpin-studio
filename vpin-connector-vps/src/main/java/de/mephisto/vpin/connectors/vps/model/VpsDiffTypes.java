@@ -35,25 +35,25 @@ public enum VpsDiffTypes {
         return "ROM";
       }
       case sound: {
-        return "sound";
+        return "Sound";
       }
       case pupPack: {
         return "PUP pack";
       }
       case wheel: {
-        return "wheel icon";
+        return "Wheel Icon";
       }
       case tables: {
-        return "Ve";
+        return "table added";
       }
       case tableNew: {
-        return "new table";
+        return "new table variant added";
       }
       case tableNewVersion: {
-        return "new table version";
+        return "table version updated";
       }
       case topper: {
-        return "topper";
+        return "Topper";
       }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + this);
