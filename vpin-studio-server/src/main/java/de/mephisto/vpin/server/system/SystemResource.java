@@ -118,7 +118,11 @@ public class SystemResource {
 
   @GetMapping("/autostart/install")
   public boolean installService() {
-    return ServerInstallationUtil.install();
+    try {
+      return ServerInstallationUtil.install();
+    } catch (IOException e) {
+      return false;
+    }
   }
 
   @GetMapping("/autostart/uninstall")

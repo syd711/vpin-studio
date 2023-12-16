@@ -8,8 +8,17 @@ import java.util.Objects;
 public class VpsTableFile extends VpsAuthoredUrls {
   private String id;
   private String comment;
+  private String imgUrl;
   private List<String> features;
   private String tableFormat;
+
+  public String getImgUrl() {
+    return imgUrl;
+  }
+
+  public void setImgUrl(String imgUrl) {
+    this.imgUrl = imgUrl;
+  }
 
   public String getTableFormat() {
     return tableFormat;

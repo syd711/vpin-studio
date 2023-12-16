@@ -1,33 +1,50 @@
 package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.VpsChangeListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.jobs.JobQueue;
+import de.mephisto.vpin.server.jobs.JobService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class VpsService implements ApplicationContextAware {
+public class VpsService implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, VpsChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
 
   private ApplicationContext applicationContext;
 
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
+  private JobService jobService;
 
   public VpsService() {
   }
@@ -154,5 +171,35 @@ public class VpsService implements ApplicationContextAware {
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
+  }
+
+  @Override
+  public void onApplicationEvent(ContextRefreshedEvent event) {
+    new VpsUpdateThread(preferencesService).start();
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    VPS.getInstance().addChangeListener(this);
+  }
+
+  @Override
+  public void vpsSheetChanged(List<VpsTableDiff> diff) {
+    LOG.info("Updating VPS diff messages queue for " + diff.size() + " updates.");
+    GameService gameService = applicationContext.getBean(GameService.class);
+    List<Game> knownGames = gameService.getKnownGames();
+
+    for (VpsTableDiff tableDiff : diff) {
+      Optional<Game> first = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).findFirst();
+      if (first.isPresent()) {
+        Game game = first.get();
+        String title = "Table \"" + game.getGameDisplayName() + "\" got updated\n";
+        String value = String.join("", tableDiff.getDifferences().stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
+        JobExecutionResult message = JobExecutionResultFactory.ok(title + value, game.getId());
+        message.setImgUrl(tableDiff.getImgUrl());
+        message.setExternalUrl(tableDiff.getGameLink());
+        jobService.addResult(message);
+      }
+    }
   }
 }

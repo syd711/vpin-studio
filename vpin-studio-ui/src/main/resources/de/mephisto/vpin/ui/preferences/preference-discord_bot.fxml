@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -100,15 +101,20 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Channels">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
             <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="Once your Discord bot is active, you can specify a default server and text channel where highscore updates will be posted." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="All these fields are OPTIONAL. If you only want to join another players server, setting up the bot token is sufficient." textFill="WHITE" />
             <GridPane vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="206.6" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="200.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="763.7999267578125" minWidth="10.0" prefWidth="263.7999023437499" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1123.2000793457032" minWidth="10.0" prefWidth="454.20009765625" />
               </columnConstraints>
@@ -153,9 +159,73 @@
                   <Insets top="6.0" />
                </VBox.margin>
             </GridPane>
+            <Label layoutX="34.0" layoutY="705.0" styleClass="preference-subtitle" text="VPS Channel">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description" text="Now that you have a Discord bot, you can use it to receive notifications if new assets have been published for your tables" textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="620.0" styleClass="preference-description" text="on the &quot;Virtual Pinball Spreadsheet&quot; website. Note that updates will be checked when the server starts and for the selected intervals." textFill="WHITE" />
+            <GridPane vgap="3.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="368.199951171875" minWidth="10.0" prefWidth="121.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="540.1999435424805" minWidth="10.0" prefWidth="525.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label prefHeight="20.0" styleClass="preference-label" text="VPS Updates Channel:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="20.0" styleClass="preference-label" text="Filter For My Tables:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="vpsFilterCheckbox" mnemonicParsing="false" text="Only send notifications for my tables." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="Refresh Interval:" textFill="WHITE" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="vpsChannelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
+                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Spinner fx:id="vpsRefreshSpinner" prefHeight="26.0" prefWidth="102.0" />
+                        <Label prefHeight="20.0" styleClass="preference-label" text=" min." textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </GridPane>
+            <Label layoutX="34.0" layoutY="331.0" styleClass="preference-subtitle" text="Subscription">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
             <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="With dynamic subscriptions, a new text channel will be created under the &quot;Subscriptions Category&quot; when the first highscore is created." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="If you only wish to have subscriptions for specific tables, you can configure these in the &quot;Competitions&quot; section." textFill="WHITE" />
@@ -167,7 +237,6 @@
                <rowConstraints>
                   <RowConstraints />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Label prefHeight="20.0" styleClass="preference-label" text="Dynamic Subscriptions:" textFill="WHITE" GridPane.rowIndex="1">
@@ -175,7 +244,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <CheckBox fx:id="dynamicSubscriptions" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -183,9 +251,14 @@
                   </CheckBox>
                </children>
             </GridPane>
+            <Label layoutX="34.0" layoutY="575.0" styleClass="preference-subtitle" text="Bot Commands">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Label>
             <Label styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="You can disable them entirely or configure an allow list." textFill="WHITE" />

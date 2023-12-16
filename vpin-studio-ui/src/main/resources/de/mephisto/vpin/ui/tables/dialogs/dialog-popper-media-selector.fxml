@@ -339,7 +339,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="12" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="PinUP Popper Setup" />

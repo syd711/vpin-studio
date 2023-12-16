@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -10,6 +11,42 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VPSTest {
+
+  @Test
+  public void testDiff() {
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+    assertNotNull(vpsNew);
+    assertNotNull(vpsOld);
+    assertFalse(vpsNew.getTables().isEmpty());
+    assertFalse(vpsOld.getTables().isEmpty());
+
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
+    System.out.println(diff.size());
+    assertFalse(diff.isEmpty());
+    for (VpsTableDiff diffEntry : diff) {
+      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+    }
+  }
+
+  @Test
+  public void testDiff2() {
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+    assertNotNull(vpsNew);
+    assertNotNull(vpsOld);
+    assertFalse(vpsNew.getTables().isEmpty());
+    assertFalse(vpsOld.getTables().isEmpty());
+
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
+    System.out.println(diff.size());
+    assertFalse(diff.isEmpty());
+    for (VpsTableDiff diffEntry : diff) {
+      if(diffEntry.getId().equals("DY3wUlic")) {
+        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+      }
+    }
+  }
 
   @Test
   public void testTableLoading() {

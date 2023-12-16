@@ -1,80 +1,23 @@
 ## Release Notes
 
-### Not interested in these details? Please read at least the bottom section "Runtime Update"!
+### Updates
 
-### Added New "System Manager" Section
+#### VPS Change Listener
 
-Added main navigation item "System Manager". You can use the System Manager to check if your VPin software stack is up-to-date.
-The integrated installation simulator allows you to check if and how an update would look like.
-The System Manager uses the latest Github releases from various VPin projects and compares these against your local files.
-Note that there is always the possibility that the released artifacts of these projects may change in an unexpected way.
+Added VPS change listener that can be connected with your Discord bot.
+If you have a Discord bot, you can select which channel should receive notifications about VPS updates.
 
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/vps-bot-settings.png?raw=true" width="600" />
 
-<img src="https://github.com/syd711/vpin-studio/raw/main/documentation/components/overview.png" width="800" />
+The same information is always available within the Studio, but there the list is always(!) filtered by the games that 
+have a matching VPS id.
 
-
-### Interaction Improvements
-
-- Improved design of table selection in the table overview. This way, it should be easier to find the selected table/row. 
-- Added progress bar for audio playback.
-- Added "zip" file support for VPX uploads: If you downloaded zipped VPX files, you don't have to extract the file before uploading it anymore.
-- Added "Open Folder" button for the screen asset list in the "Asset Manager" dialog. It comes in handy from time to time.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-open-folder.png?raw=true" width="700" />
-
-- Added "Rename" button for the screen asset list in the "Asset Manager" dialog.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-rename-btn.png?raw=true" width="700" />
-
-- Added drop zones for the "Asset Manager" dialog: You can drop matching media files directly on the screens there now.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/am-drop.png?raw=true" width="300" />
-
-- Added "Dismiss All" button for table validations: You can now bulk select errors to dismiss them all at once.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/validation-error.png?raw=true" width="700" />
-
-- Added "Troubleshooting" text for the highscore section.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/troubleshooting.png?raw=true" width="600" />
-
-- Changed "ALT Color" column from checkbox icon to text, so that the type can be seen immediately.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/alt-color-list.png?raw=true" width="600" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/vps-notifications.png?raw=true" width="600" />
 
 
 ### Bugfixes
 
-Phew, here it comes...
-
-- Added missing 7z.dll file to the installation. Mostly 7zip is already installed on machines. But in case not, VPin Studio updates don't seem to work or with the integrated 7zip because of this missing dll. Hopefully this fixes the issue. The file will only be added for fresh installations.
-- Fixed missing highscore backup on highscore reset.
-- Fixed restoring highscores from "The Addam's Family". (Why only this table? Because it's the only table I know there the ROM name is stored uppercase in the script and the actual ROM file is lower case :-/ )
-- Fixed "Open in System" button for the "ALT Color" sections header. The table's ALT color folder is now opened if available.
-- Fixed error when loading pup packs with invalid screen values.
-- Fixed VPS table selection: Because the auto-completion did only show the table name, duplicates have been filtered. This way, it was not possible to select the correct table. The auto-completion shows the manufacturer and the year of the table now, allowing the selection to be unique now (e.g. "Mustang" or "Star Trek").
-- Fixed occasional layout glitch in the table version dropdown menu of the VPS section.
-- Added "PinUP Popper/VPX Running" check for ROM uploads, because these processes may block the file writing.
-- Fixed drag and drop for the "PinUP Popper Media" section: You can drop matching media files directly on the screens there now (again).
-- Removed Serum ALT color validator: This is part of freezy now, so the validator is obsolete.
-- Fixed error when deleting tables which may have led to remaining data in Popper.
-- The "Option" dropdown in the "Pup Pack" section shows all available .bat files of the pup pack now.
-- Improved error message when ALT sound is not checked in VPin MAME.
-- Fixed some button states in the table overview that should not be enabled for multi-selections.
-- Refactored large parts of the media playback to reduce "Media available (but not playable)" errors.
-- Fixed the layout of the update news dialog a bit ... as you can see.
-
-### Miscellaneous
-
-The card generator preferences have been migrated into the database.
-This migration should happen automatically and your settings are kept, so please let me know if any issues occuring.
-
-
-### Runtime Update
-
-TLTR: Kill the server process, close the Studio and execute the "update-runtime.bat" in the "./resources" folder of the installation.
-
-I assume most of you ran into the video playback problem "Media available (but not playable)".
-Not all videos can be played because of encoding issues, but to reduce these errors I added
-this .bat file which updates the Java runtime of the VPin Studio.
-The new runtime will reduce the amount of these videos errors. They still may happen, but way less frequently. 
+- Fixed update info dialog: unfortunately, this was only shown once. It will be shown again now if the automatic updater is used.
+- Fixed offset of table rows: I had to change the selected row styling for this again.
+- Improved exception handling for failed updates.
+- Fixed issue that the VPS sheet has been downloaded, but the data has not been refreshed (until next start).

@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -135,6 +138,8 @@ public class UpdateDialogController implements Initializable, DialogController {
   }
 
   private void startClientUpdate(String newVersion) {
+    resetDoNotShowAgain();
+
     clientService = new Service() {
       @Override
       protected Task createTask() {
@@ -172,6 +177,17 @@ public class UpdateDialogController implements Initializable, DialogController {
       }
     };
     clientService.start();
+  }
+
+  private void resetDoNotShowAgain() {
+    try {
+      PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
+      List<String> csvValue = doNotShowAgainPref.getCSVValue();
+      csvValue.remove(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO);
+      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
+    } catch (Exception e) {
+      LOG.error("Failed to reset update info: " + e.getMessage(), e);
+    }
   }
 
   @Override

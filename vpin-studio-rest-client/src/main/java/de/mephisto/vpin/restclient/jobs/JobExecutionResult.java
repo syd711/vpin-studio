@@ -9,9 +9,27 @@ public class JobExecutionResult {
   private int gameId;
   private String error;
   private String message;
+  private String imgUrl;
+  private String externalUrl;
 
   public JobExecutionResult() {
     this.uuid = UUID.randomUUID().toString();
+  }
+
+  public String getExternalUrl() {
+    return externalUrl;
+  }
+
+  public void setExternalUrl(String externalUrl) {
+    this.externalUrl = externalUrl;
+  }
+
+  public String getImgUrl() {
+    return imgUrl;
+  }
+
+  public void setImgUrl(String imgUrl) {
+    this.imgUrl = imgUrl;
   }
 
   public String getMessage() {

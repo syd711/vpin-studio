@@ -40,6 +40,9 @@ public interface PreferenceNames {
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
+  String DISCORD_VPS_CHANNEL_ID = "discordVpsChannelId";
+  String DISCORD_VPS_TABLE_FILTER_ENABLED = "discordVpsTableFilterEnabled";
+  String DISCORD_VPS_REFRESH_INTERVAL_MIN = "discordVpsRefreshIntervalMin";
 
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
