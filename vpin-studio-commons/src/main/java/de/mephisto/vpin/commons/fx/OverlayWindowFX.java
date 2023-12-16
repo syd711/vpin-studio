@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -11,11 +12,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
@@ -41,6 +45,7 @@ public class OverlayWindowFX extends Application {
 
   private static OverlayWindowFX INSTANCE = null;
   private Stage maintenanceStage;
+  private Stage highscoreCardStage;
 
   public static OverlayWindowFX getInstance() {
     return INSTANCE;
@@ -148,6 +153,60 @@ public class OverlayWindowFX extends Application {
       maintenanceStage.setFullScreen(true);
       maintenanceStage.show();
     }
+  }
+
+  public void showHighscoreCard(CardSettings cardSettings, File file) {
+    try {
+      int notificationTime = cardSettings.getNotificationTime();
+      if (notificationTime > 0) {
+        if (highscoreCardStage != null) {
+          showHighscoreCard(notificationTime);
+          return;
+        }
+
+        BorderPane root = new BorderPane();
+        Screen screen = Screen.getPrimary();
+        final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+        scene.setFill(Color.TRANSPARENT);
+
+        highscoreCardStage = new Stage();
+        highscoreCardStage.setScene(scene);
+        highscoreCardStage.initStyle(StageStyle.TRANSPARENT);
+        highscoreCardStage.setAlwaysOnTop(true);
+        highscoreCardStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
+
+        try {
+          String resource = "scene-highscore-card.fxml";
+          FXMLLoader loader = new FXMLLoader(HighscoreCardController.class.getResource(resource));
+          Parent widgetRoot = loader.load();
+          HighscoreCardController controller = loader.getController();
+          controller.setImage(highscoreCardStage, file);
+          root.setCenter(widgetRoot);
+        } catch (IOException e) {
+          LOG.error("Failed to init dashboard: " + e.getMessage(), e);
+        }
+
+        showHighscoreCard(notificationTime);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open highscore card notification: " + e.getMessage());
+    }
+  }
+
+  private void showHighscoreCard(int notificationTime) {
+    highscoreCardStage.show();
+    new Thread(() -> {
+      try {
+        Thread.sleep(notificationTime * 1000);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+      finally {
+        Platform.runLater(() -> {
+          highscoreCardStage.hide();
+        });
+      }
+    }).start();
   }
 
   @Override

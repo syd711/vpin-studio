@@ -107,14 +107,19 @@ public class BindingUtil {
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(preference, t1));
   }
 
-  public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property) {
+
+  public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property, int min, int max) {
     int value = properties.getProperty(property, 0);
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 2000, value);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, value);
     spinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       properties.set(property, String.valueOf(value1));
-    }, 1000));
+    }, 500));
+  }
+
+  public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property) {
+    bindSpinner(spinner, properties, property, 0, 2000);
   }
 
   public static void bindFontLabel(Label label, ObservedProperties properties, String key) {
