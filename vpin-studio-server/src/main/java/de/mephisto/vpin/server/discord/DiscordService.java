@@ -786,7 +786,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
             }
 
             String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
-            entries.put(tableDiff.getDisplayName() + " [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]", value);
+            entries.put(tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]", value);
 
             if (counter > MAX_VPS_ENTRIES) {
               discordClient.sendVpsUpdateSummary(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries, filterEnabled);

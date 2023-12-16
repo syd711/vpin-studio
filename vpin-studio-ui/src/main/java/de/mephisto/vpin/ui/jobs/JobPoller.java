@@ -37,7 +37,7 @@ public class JobPoller {
   private final Service service;
 
   public static void destroy() {
-    if(instance != null) {
+    if (instance != null) {
       instance.service.cancel();
       instance = null;
     }
@@ -75,7 +75,7 @@ public class JobPoller {
             while (poll) {
               jobs = new ArrayList<>(getActiveJobs());
               refreshJobsUI(jobs);
-              refreshMessagesUI();
+              refreshMessagesUI(false);
               Thread.sleep(2000);
               poll = !jobs.isEmpty();
               LOG.info("JobPoller is waiting for " + jobs.size() + " running jobs.");
@@ -92,6 +92,8 @@ public class JobPoller {
       service.reset();
       LOG.info("JobPoller has been resetted after success.");
     });
+
+    setPolling();
   }
 
   public static JobPoller getInstance() {
@@ -146,13 +148,14 @@ public class JobPoller {
     });
   }
 
-  public void refreshMessagesUI() {
+  public void refreshMessagesUI(boolean reopen) {
     Platform.runLater(() -> {
+      boolean showing = messagesMenu.isShowing();
       List<JobExecutionResult> messages = new ArrayList<>(getResults());
       messagesMenu.setDisable(messages.isEmpty());
       messagesMenu.getItems().removeAll(messagesMenu.getItems());
 
-      if(!messages.isEmpty()) {
+      if (!messages.isEmpty()) {
         VBox vbox = new VBox();
         vbox.setStyle("-fx-padding: 6 6 6 6;");
         Button dismissBtn = new Button("Dismiss All");
@@ -160,7 +163,7 @@ public class JobPoller {
           @Override
           public void handle(ActionEvent event) {
             Studio.client.getJobsService().dismissAll();
-            JobPoller.getInstance().refreshMessagesUI();
+            JobPoller.getInstance().refreshMessagesUI(true);
           }
         });
         vbox.getChildren().add(dismissBtn);
@@ -176,6 +179,10 @@ public class JobPoller {
           item.setContent(c);
           item.setUserData(message);
           messagesMenu.getItems().add(item);
+        }
+
+        if (reopen || showing) {
+          messagesMenu.show();
         }
       }
     });
