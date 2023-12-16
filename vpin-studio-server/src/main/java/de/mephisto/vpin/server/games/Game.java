@@ -255,7 +255,11 @@ public class Game {
   @Nullable
   public File getAlternateHighscoreTextFile() {
     if (!StringUtils.isEmpty(this.getTableName())) {
-      return new File(emulator.getUserFolder(), this.getTableName() + ".txt");
+      String name = this.getTableName();
+      if (!name.endsWith(".txt")) {
+        name = name + ".txt";
+      }
+      return new File(emulator.getUserFolder(), name);
     }
     return null;
   }

@@ -318,7 +318,8 @@ public class GameService implements InitializingBean {
     List<Score> allHighscoreVersions = new ArrayList<>();
     if (!filterEnabled || allowList.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
-    } else {
+    }
+    else {
       for (String initials : allowList) {
         allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(initials));
       }
@@ -360,13 +361,15 @@ public class GameService implements InitializingBean {
         highscoreService.scanScore(game);
 
         return getGame(gameId);
-      } else {
+      }
+      else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
     } catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
-      } else {
+      }
+      else {
         LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
       }
     }
@@ -420,16 +423,22 @@ public class GameService implements InitializingBean {
       }
 
       //always prefer PinUP Popper ROM name over the scanned value
-      String rom = scanResult.getRom();
-      if (!StringUtils.isEmpty(rom)) {
-        TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+      String scannedRomName = scanResult.getRom();
+      String scannedTableName = scanResult.getTableName();
+
+      if (!StringUtils.isEmpty(scannedRomName)) {
         if (!StringUtils.isEmpty(tableDetails.getRomName())) {
-          rom = tableDetails.getRomName();
+          scannedRomName = tableDetails.getRomName();
         }
       }
 
-      gameDetails.setRomName(rom);
-      gameDetails.setTableName(scanResult.getTableName());
+      if (StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+        scannedTableName = tableDetails.getRomAlt();
+      }
+
+      gameDetails.setRomName(scannedRomName);
+      gameDetails.setTableName(scannedTableName);
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetails.setPupId(game.getId());
@@ -446,7 +455,8 @@ public class GameService implements InitializingBean {
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());
-    } else {
+    }
+    else {
       game.setRom(gameDetails.getRomName());
     }
 
@@ -466,7 +476,7 @@ public class GameService implements InitializingBean {
 
     //run validations at the end!!!
     List<ValidationState> validate = gameValidator.validate(game, true);
-    if(validate.isEmpty()) {
+    if (validate.isEmpty()) {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
