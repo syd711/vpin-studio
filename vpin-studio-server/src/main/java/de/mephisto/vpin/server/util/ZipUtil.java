@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.util;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -50,7 +51,7 @@ public class ZipUtil {
     }
   }
 
-  public static boolean unzipFile(File archiveFile, File targetFile, String name) {
+  public static boolean unzipTargetFile(File archiveFile, File targetFile, String name) {
     boolean written = false;
     File destinationDir = targetFile.getParentFile();
     try {
@@ -61,9 +62,7 @@ public class ZipUtil {
       while (zipEntry != null) {
         File newFile = new File(destinationDir, zipEntry.getName());
         if (zipEntry.isDirectory()) {
-          if (!newFile.isDirectory() && !newFile.mkdirs()) {
-            throw new IOException("Failed to create directory " + newFile);
-          }
+          //not directory creation here!
         }
         else {
           // fix for Windows-created archives
@@ -72,7 +71,7 @@ public class ZipUtil {
             throw new IOException("Failed to create directory " + parent);
           }
 
-          if (zipEntry.getName().equals(name)) {
+          if (zipEntry.getName().endsWith(name)) {
             FileOutputStream fos = new FileOutputStream(targetFile);
             int len;
             while ((len = zis.read(buffer)) > 0) {
@@ -241,6 +240,9 @@ public class ZipUtil {
           String name = zipEntry.getName();
           if (name.endsWith(suffix)) {
             fileFound = name;
+            while (fileFound.contains("/")) {
+              fileFound = fileFound.substring(fileFound.indexOf("/") + 1);
+            }
           }
         }
         zis.closeEntry();

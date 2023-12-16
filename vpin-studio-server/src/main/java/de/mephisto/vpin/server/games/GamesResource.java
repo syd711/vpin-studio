@@ -180,7 +180,7 @@ public class GamesResource {
           String name = ZipUtil.contains(tempFile, ".vpx");
           File originalFile = new File(gameEmulator.getTablesFolder(), name);
           uploadFile = FileUtils.uniqueFile(originalFile);
-          ZipUtil.unzipFile(tempFile, uploadFile, name);
+          ZipUtil.unzipTargetFile(tempFile, uploadFile, name);
         } catch (Exception e) {
           LOG.error("Upload of zip vpx file failed: " + e.getMessage(), e);
           throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of zipped VPX file failed: " + e.getMessage());

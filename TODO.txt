@@ -2,5 +2,3 @@
 - fix duplicate message emitting
 - move assets project into popper client project
 - scan highscores only after scanning games
-- fix zip upload
-- fix ROM saving
