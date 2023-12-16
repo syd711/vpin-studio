@@ -434,10 +434,10 @@ public class TableDataController implements Initializable, DialogController {
     custom3.setText(tableDetails.getCustom3());
     custom3.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
 
-    extrasTab.setDisable(tableDetails.getSqlVersion() < 64);
+    extrasTab.setDisable(!tableDetails.isPopper15());
 
     statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES));
-    if (tableDetails.getSqlVersion() >= 64) {
+    if (tableDetails.isPopper15()) {
       statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES_15));
     }
 

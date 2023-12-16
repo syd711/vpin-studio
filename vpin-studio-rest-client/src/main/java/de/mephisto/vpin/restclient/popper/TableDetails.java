@@ -65,6 +65,10 @@ public class TableDetails {
     this.mod = mod;
   }
 
+  public boolean isPopper15() {
+    return sqlVersion >= 64;
+  }
+
   public int getSqlVersion() {
     return sqlVersion;
   }

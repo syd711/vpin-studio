@@ -263,7 +263,7 @@ public class TablesSidebarPopperController implements Initializable {
       GameRepresentation game = g.get();
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
-      extrasPanel.setVisible(tableDetails.getSqlVersion() >= 64);
+      extrasPanel.setVisible(tableDetails.isPopper15());
 
       labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
       if (tableDetails.getNumberPlays() != null) {
@@ -310,7 +310,7 @@ public class TablesSidebarPopperController implements Initializable {
       }
 
       //extras
-      if (tableDetails.getSqlVersion() >= 64) {
+      if (tableDetails.isPopper15()) {
         custom4.setText(StringUtils.isEmpty(tableDetails.getCustom4()) ? "-" : tableDetails.getCustom4());
         custom5.setText(StringUtils.isEmpty(tableDetails.getCustom5()) ? "-" : tableDetails.getCustom5());
         altRomName.setText(StringUtils.isEmpty(tableDetails.getRomAlt()) ? "-" : tableDetails.getRomAlt());

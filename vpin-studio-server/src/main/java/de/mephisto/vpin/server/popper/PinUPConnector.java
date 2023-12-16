@@ -306,7 +306,7 @@ public class PinUPConnector implements InitializingBean {
       if (manifest != null) {
         loadStats(connect, manifest, id);
 
-        if (manifest.getSqlVersion() >= 64) {
+        if (manifest.isPopper15()) {
           loadGameExtras(connect, manifest, id);
         }
       }
