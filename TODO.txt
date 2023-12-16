@@ -1,4 +1,3 @@
 - add screen checkboxes to media manager
 - fix duplicate message emitting
-- move assets project into popper client project
 - scan highscores only after scanning games

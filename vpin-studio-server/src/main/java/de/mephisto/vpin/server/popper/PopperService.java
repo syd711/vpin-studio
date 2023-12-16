@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -255,6 +254,20 @@ public class PopperService implements InitializingBean {
     String gameFilename = game.getGameFileName();
     if (!gameFilename.endsWith(".vpx")) {
       gameFilename = gameFilename + ".vpx";
+    }
+
+    try {
+      if (!String.valueOf(game.getRom()).equals(String.valueOf(updatedTableDetails.getRomName())) && !StringUtils.isEmpty(updatedTableDetails.getRomName())) {
+        game.setRom(updatedTableDetails.getRomName());
+        gameService.save(game);
+      }
+
+      if (!String.valueOf(game.getTableName()).equals(String.valueOf(updatedTableDetails.getRomAlt())) && !StringUtils.isEmpty(updatedTableDetails.getRomAlt())) {
+        game.setTableName(updatedTableDetails.getRomAlt());
+        gameService.save(game);
+      }
+    } catch (Exception e) {
+      LOG.error("Error updating table for table details: " + e.getMessage());
     }
 
     if (!updatedTableDetails.getGameFileName().equals(gameFilename)) {
