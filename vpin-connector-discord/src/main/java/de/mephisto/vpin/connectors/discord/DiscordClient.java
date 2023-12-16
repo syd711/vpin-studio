@@ -454,14 +454,19 @@ public class DiscordClient {
     }
   }
 
-  public long sendVpsUpdateCompact(long serverId, long channelId, String title, Map<String, String> values) {
+  public long sendVpsUpdateSummary(long serverId, long channelId, String title, Map<String, String> values, boolean filtered) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(title);
-        embed.setDescription("**The following tables have updates:**");
+        if(filtered) {
+          embed.setDescription("**Your tables received updates:**");
+        }
+        else {
+          embed.setDescription("**The following tables have updates:**");
+        }
 
         Set<Map.Entry<String, String>> entries = values.entrySet();
         for (Map.Entry<String, String> entry : entries) {

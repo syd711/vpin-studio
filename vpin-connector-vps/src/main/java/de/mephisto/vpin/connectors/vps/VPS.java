@@ -263,10 +263,13 @@ public class VPS {
       VpsTable oldTable = old.getTableById(table.getId());
       if (oldTable != null && table.getUpdatedAt() != oldTable.getUpdatedAt()) {
         VpsTableDiff tableDiff = new VpsTableDiff(table, oldTable);
-        diff.add(tableDiff);
+        if(!tableDiff.getDifferences().isEmpty()) {
+          diff.add(tableDiff);
+        }
       }
     }
 
+    Collections.sort(diff, Comparator.comparing(VpsTableDiff::getDisplayName));
     return diff;
   }
 }

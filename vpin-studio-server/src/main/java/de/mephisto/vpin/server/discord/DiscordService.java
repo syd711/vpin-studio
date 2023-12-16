@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,7 @@ import static de.mephisto.vpin.connectors.discord.Permissions.*;
 @Service
 public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, VpsChangeListener, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
+  public static final int MAX_VPS_ENTRIES = 50;
 
   private DiscordClient discordClient;
 
@@ -773,17 +775,29 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         }
 
         if (filtered.size() > 10) {
+          int counter = 0;
           Map<String, String> entries = new HashMap<>();
           for (VpsTableDiff tableDiff : filtered) {
+            counter++;
+
             List<VpsDiffTypes> differences = tableDiff.getDifferences();
             if (differences.isEmpty()) {
               continue;
             }
 
             String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
-            entries.put(tableDiff.getTitle(), value);
+            entries.put(tableDiff.getDisplayName() + " [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]", value);
+
+            if (counter > MAX_VPS_ENTRIES) {
+              discordClient.sendVpsUpdateSummary(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries, filterEnabled);
+              counter = 0;
+              entries.clear();
+            }
           }
-          discordClient.sendVpsUpdateCompact(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries);
+
+          if (!entries.isEmpty()) {
+            discordClient.sendVpsUpdateSummary(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries, filterEnabled);
+          }
         }
         else {
           for (VpsTableDiff tableDiff : filtered) {
@@ -796,7 +810,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
             entries.put("Change Log:", value);
             discordClient.sendVpsUpdateFull(Long.parseLong(serverId), Long.parseLong(vpsChannelId),
-              "VPS Update for \"" + tableDiff.getTitle() + "\"",
+              "VPS Update for \"" + tableDiff.getDisplayName() + "\"",
               tableDiff.getLastModified(), tableDiff.getImgUrl(), tableDiff.getGameLink(), entries);
           }
         }

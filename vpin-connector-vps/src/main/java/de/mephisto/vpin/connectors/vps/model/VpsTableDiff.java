@@ -8,6 +8,7 @@ import java.util.Optional;
 public class VpsTableDiff {
   private final VpsTable oldTable;
   private final VpsTable newTable;
+  private List<VpsDiffTypes> differences;
 
   public VpsTableDiff(VpsTable newTable, VpsTable oldTable) {
     this.oldTable = oldTable;
@@ -31,52 +32,56 @@ public class VpsTableDiff {
   }
 
   public List<VpsDiffTypes> getDifferences() {
-    List<VpsDiffTypes> result = new ArrayList<>();
-    if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
-      result.add(VpsDiffTypes.altSound);
-    }
+    if(differences == null) {
+      differences = new ArrayList<>();
 
-    if (diffUrls(oldTable.getAltColorFiles(), newTable.getAltColorFiles())) {
-      result.add(VpsDiffTypes.altColor);
-    }
+      if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
+        differences.add(VpsDiffTypes.altSound);
+      }
 
-    if (diffUrls(oldTable.getPovFiles(), newTable.getPovFiles())) {
-      result.add(VpsDiffTypes.pov);
-    }
+      if (diffUrls(oldTable.getAltColorFiles(), newTable.getAltColorFiles())) {
+        differences.add(VpsDiffTypes.altColor);
+      }
 
-    if (diffUrls(oldTable.getRomFiles(), newTable.getRomFiles())) {
-      result.add(VpsDiffTypes.rom);
-    }
+      if (diffUrls(oldTable.getPovFiles(), newTable.getPovFiles())) {
+        differences.add(VpsDiffTypes.pov);
+      }
 
-    if (diffUrls(oldTable.getTopperFiles(), newTable.getTopperFiles())) {
-      result.add(VpsDiffTypes.topper);
-    }
+      if (diffUrls(oldTable.getRomFiles(), newTable.getRomFiles())) {
+        differences.add(VpsDiffTypes.rom);
+      }
 
-    if (diffUrls(oldTable.getSoundFiles(), newTable.getSoundFiles())) {
-      result.add(VpsDiffTypes.sound);
-    }
+      if (diffUrls(oldTable.getTopperFiles(), newTable.getTopperFiles())) {
+        differences.add(VpsDiffTypes.topper);
+      }
 
-    if (diffUrls(oldTable.getPupPackFiles(), newTable.getPupPackFiles())) {
-      result.add(VpsDiffTypes.pupPack);
-    }
+      if (diffUrls(oldTable.getSoundFiles(), newTable.getSoundFiles())) {
+        differences.add(VpsDiffTypes.sound);
+      }
 
-    if (diffUrls(oldTable.getWheelArtFiles(), newTable.getWheelArtFiles())) {
-      result.add(VpsDiffTypes.wheel);
-    }
+      if (diffUrls(oldTable.getPupPackFiles(), newTable.getPupPackFiles())) {
+        differences.add(VpsDiffTypes.pupPack);
+      }
 
-    if (diffUrls(oldTable.getB2sFiles(), newTable.getB2sFiles())) {
-      result.add(VpsDiffTypes.b2s);
-    }
+      if (diffUrls(oldTable.getWheelArtFiles(), newTable.getWheelArtFiles())) {
+        differences.add(VpsDiffTypes.wheel);
+      }
 
-    VpsDiffTypes diffTypes = diffTables(oldTable.getTableFiles(), newTable.getTableFiles());
-    if (diffTypes != null) {
-      result.add(diffTypes);
-    }
+      if (diffUrls(oldTable.getB2sFiles(), newTable.getB2sFiles())) {
+        differences.add(VpsDiffTypes.b2s);
+      }
+
+      VpsDiffTypes diffTypes = diffTables(oldTable.getTableFiles(), newTable.getTableFiles());
+      if (diffTypes != null) {
+        differences.add(diffTypes);
+      }
 
 //    if (!newTable.getFeatures().stream().filter(item -> !oldTable.getFeatures().contains(item)).collect(Collectors.toList()).isEmpty()) {
-//      result.add(VpsDiffTypes.feature);
+//      differences.add(VpsDiffTypes.feature);
 //    }
-    return result;
+    }
+
+    return differences;
   }
 
   private VpsDiffTypes diffTables(List<VpsTableFile> oldFiles, List<VpsTableFile> newFiles) {
@@ -101,16 +106,17 @@ public class VpsTableDiff {
   }
 
   private boolean diffUrls(List<? extends VpsAuthoredUrls> oldUrls, List<? extends VpsAuthoredUrls> newUrls) {
-    if (newUrls != null && oldUrls == null && !newUrls.isEmpty()) {
-      return true;
+    if ((newUrls == null || newUrls.isEmpty()) && (oldUrls == null || oldUrls.isEmpty())) {
+      return false;
     }
 
-    if (newUrls != null) {
+    if (newUrls != null && oldUrls != null) {
       for (VpsAuthoredUrls newUrl : newUrls) {
         if (!oldUrls.contains(newUrl)) {
           return true;
         }
       }
+
       for (VpsAuthoredUrls oldUrl : oldUrls) {
         if (!newUrls.contains(oldUrl)) {
           return true;
@@ -120,7 +126,7 @@ public class VpsTableDiff {
     return false;
   }
 
-  public String getTitle() {
+  public String getDisplayName() {
     return newTable.getDisplayName();
   }
 
