@@ -7,7 +7,7 @@
 Added VPS change listener that can be connected with your Discord bot.
 If you have a Discord bot, you can select which channel should receive notifications about VPS updates.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/vps-bot-settings.png?raw=true" width="600" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/vps-bot-settings.png?raw=true" width="700" />
 
 The same information is always available within the Studio, but there the list is always(!) filtered by the games that 
 have a matching VPS id.
