@@ -22,4 +22,5 @@ have a matching VPS id.
 - Improved exception handling for failed updates.
 - Fixed issue that the VPS sheet has been downloaded, but the data has not been refreshed (until next start).
 - Added "Alternative ROM Name" of Popper (1.5) as fallback for highscore text files. So if you want to keep your (manually adapted!) ROM name or highscore filename persisted (so that it survives a re-scan), use the table settings dialog and enter the two values there. (Yes, this could be done automatically, but I would have to kill all Popper processes for this, which I want to avoid.) 
+- Fixed updating of ROM name and Alt. ROM name in the table settings dialog: When set, the "Script Details" section values are updated now too.
 - Fixed error in uploading zipped VPX files when VPX files where in subfolders within the zip archive.

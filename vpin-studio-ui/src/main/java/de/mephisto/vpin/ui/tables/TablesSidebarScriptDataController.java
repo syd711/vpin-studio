@@ -468,8 +468,13 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
       labelTableName.setText(!StringUtils.isEmpty(game.getTableName()) ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
+      labelHSFilename.setStyle("");
       if (!StringUtils.isEmpty(game.getHsFileName())) {
         labelHSFilename.setText(game.getHsFileName());
+      }
+      else if (!StringUtils.isEmpty(game.getTableName())) {
+        labelHSFilename.setStyle("-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;");
+        labelHSFilename.setText(game.getTableName() + ".txt");
       }
       else {
         labelHSFilename.setText("-");
