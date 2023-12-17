@@ -3,8 +3,10 @@ package de.mephisto.vpin.commons.fx;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -22,6 +24,9 @@ public class HighscoreCardController implements Initializable {
   @FXML
   private ImageView imageView;
 
+  @FXML
+  private StackPane root;
+
   // Add a public no-args constructor
   public HighscoreCardController() {
   }
@@ -33,7 +38,6 @@ public class HighscoreCardController implements Initializable {
 
   public void setImage(Stage highscoreCardStage, File file) {
     try {
-
       Screen screen = Screen.getPrimary();
       Rectangle2D bounds = screen.getVisualBounds();
 
@@ -41,16 +45,21 @@ public class HighscoreCardController implements Initializable {
       Image image = new Image(fileInputStream);
       fileInputStream.close();
 
-      highscoreCardStage.setX(bounds.getMinX() / 2);
-      highscoreCardStage.setY(bounds.getMinY() / 2);
+
+      int targetX = (int) (bounds.getHeight() / 2 - image.getWidth() / 2);
+
+      highscoreCardStage.setX(bounds.getMinX() / 2 + image.getWidth() / 2);
+      highscoreCardStage.setY(targetX);
       highscoreCardStage.setHeight(image.getWidth() + 12);
       highscoreCardStage.setWidth(image.getWidth() + 12);
 
       imageView.setImage(image);
-
-
     } catch (IOException e) {
       LOG.error("Failed to show card: " + e.getMessage(), e);
     }
+  }
+
+  public Node getRoot() {
+    return root;
   }
 }

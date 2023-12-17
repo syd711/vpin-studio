@@ -1,11 +1,15 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -46,6 +50,7 @@ public class OverlayWindowFX extends Application {
   private static OverlayWindowFX INSTANCE = null;
   private Stage maintenanceStage;
   private Stage highscoreCardStage;
+  private HighscoreCardController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
     return INSTANCE;
@@ -160,6 +165,7 @@ public class OverlayWindowFX extends Application {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {
         if (highscoreCardStage != null) {
+          highscoreCardController.setImage(highscoreCardStage, file);
           showHighscoreCard(notificationTime);
           return;
         }
@@ -173,14 +179,13 @@ public class OverlayWindowFX extends Application {
         highscoreCardStage.setScene(scene);
         highscoreCardStage.initStyle(StageStyle.TRANSPARENT);
         highscoreCardStage.setAlwaysOnTop(true);
-        highscoreCardStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
         try {
           String resource = "scene-highscore-card.fxml";
           FXMLLoader loader = new FXMLLoader(HighscoreCardController.class.getResource(resource));
           Parent widgetRoot = loader.load();
-          HighscoreCardController controller = loader.getController();
-          controller.setImage(highscoreCardStage, file);
+          highscoreCardController = loader.getController();
+          highscoreCardController.setImage(highscoreCardStage, file);
           root.setCenter(widgetRoot);
         } catch (IOException e) {
           LOG.error("Failed to init dashboard: " + e.getMessage(), e);
@@ -194,16 +199,19 @@ public class OverlayWindowFX extends Application {
   }
 
   private void showHighscoreCard(int notificationTime) {
+
     highscoreCardStage.show();
+    TransitionUtil.createInFader(highscoreCardController.getRoot(), 500).play();
     new Thread(() -> {
       try {
         Thread.sleep(notificationTime * 1000);
       } catch (InterruptedException e) {
         //ignore
-      }
-      finally {
+      } finally {
         Platform.runLater(() -> {
-          highscoreCardStage.hide();
+          FadeTransition outFader = TransitionUtil.createOutFader(highscoreCardController.getRoot(), 500);
+          outFader.setOnFinished(event -> highscoreCardStage.hide());
+          outFader.play();
         });
       }
     }).start();
