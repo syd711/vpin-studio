@@ -1,15 +1,21 @@
 package de.mephisto.vpin.server.listeners;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -63,6 +69,26 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       }
     } catch (Exception e) {
       LOG.info("Failed to refresh game: " + e.getMessage(), e);
+    }
+
+    try {
+      PreferenceEntryRepresentation preference = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+      String value = preference.getValue();
+      CardSettings cardSettings = CardSettings.fromJson(value);
+
+      String popperScreen = cardSettings.getPopperScreen();
+      if (popperScreen != null && popperScreen.length() > 0) {
+        PopperScreen screen = PopperScreen.valueOf(popperScreen);
+        GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+        if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+          Platform.runLater(() -> {
+            LOG.info("Showing highscore card " + defaultMediaItem.getFile().getAbsolutePath());
+            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, defaultMediaItem.getFile());
+          });
+        }
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 

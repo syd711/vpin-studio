@@ -1,7 +1,6 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
 import javafx.animation.*;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;

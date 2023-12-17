@@ -59,6 +59,7 @@ public class CardSettings {
   private String cardTitleText = "Highscores";
   private boolean cardUseDirectB2S = true;
   private String popperScreen = "Other2";
+  private int notificationTime = 0;
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,6 +70,14 @@ public class CardSettings {
 
   public static CardSettings fromJson(String json) throws JsonProcessingException {
     return objectMapper.readValue(json, CardSettings.class);
+  }
+
+  public int getNotificationTime() {
+    return notificationTime;
+  }
+
+  public void setNotificationTime(int notificationTime) {
+    this.notificationTime = notificationTime;
   }
 
   public int getCardBorderWidth() {
