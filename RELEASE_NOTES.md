@@ -16,10 +16,10 @@ have a matching VPS id.
 
 #### Highscore Card Pop-Up
 
-You can let you show the highscore card of a table when it is started. Set a value > 0 in the highscore card settings for 
+You can let you show the highscore card of a table when it is started. Set the duration value > 0 in the highscore card settings for 
 the "Highscore Card Notifications" setting.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/card-pupup.png?raw=true" width="600" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/highscores/card-popup.png?raw=true" width="600" />
 
 
 ### Bugfixes
