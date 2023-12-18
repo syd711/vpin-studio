@@ -16,7 +16,7 @@
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="TABLE MANAGEMENT" textFill="WHITE" />
+            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Repositories" />
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="Table repositories are servers that serve Visual Pinball archive files." textFill="WHITE">
                <VBox.margin>

@@ -136,23 +136,23 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
    * Ensures that the VPin Studio Logo is available for PinUP Popper in the T-Arc.
    */
   private void initVPinTableManagerIcon() {
-    File pcWheelFolder = new File(this.getPinUPSystemFolder(), "POPMedia/PC Games/Wheel/");
-    if (pcWheelFolder.exists()) {
-      File wheelIcon = new File(pcWheelFolder, UIDefaults.MANAGER_TITLE + ".png");
-      if (!wheelIcon.exists()) {
-        try {
-          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
-          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
-          resourceAsStream.close();
-          LOG.info("Copied VPin Table Manager icon.");
-
-          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
-          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
-        } catch (Exception e) {
-          LOG.info("Failed to copy VPin Manager wheel icon: " + e.getMessage(), e);
-        }
-      }
-    }
+//    File pcWheelFolder = new File(this.getPinUPSystemFolder(), "POPMedia/PC Games/Wheel/");
+//    if (pcWheelFolder.exists()) {
+//      File wheelIcon = new File(pcWheelFolder, UIDefaults.MANAGER_TITLE + ".png");
+//      if (!wheelIcon.exists()) {
+//        try {
+//          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
+//          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
+//          resourceAsStream.close();
+//          LOG.info("Copied VPin Table Manager icon.");
+//
+//          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
+//          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
+//        } catch (Exception e) {
+//          LOG.info("Failed to copy VPin Manager wheel icon: " + e.getMessage(), e);
+//        }
+//      }
+//    }
   }
 
   private void logSystemInfo() {

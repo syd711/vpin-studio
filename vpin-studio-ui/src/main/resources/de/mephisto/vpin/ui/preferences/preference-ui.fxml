@@ -18,7 +18,7 @@
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Name" />
             <Label styleClass="preference-description" text="Set the name that should be shown for this VPin connection." textFill="WHITE">
                <VBox.margin>

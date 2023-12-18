@@ -24,20 +24,10 @@ public class ServiceInfoPreferencesController implements Initializable {
   private Label versionLabel;
 
   @FXML
-  private TextArea logTextArea;
-
-
-  @FXML
   private CheckBox serviceStartupCheckbox;
 
   @FXML
   private Spinner<Integer> idleSpinner;
-
-  @FXML
-  private void onReload() {
-    String logs = client.getSystemService().logs();
-    logTextArea.setText(logs);
-  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -63,7 +53,5 @@ public class ServiceInfoPreferencesController implements Initializable {
       int value1 = Integer.parseInt(String.valueOf(t1));
       client.getPreferenceService().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
     }, 1000));
-
-    onReload();
   }
 }

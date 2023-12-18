@@ -24,3 +24,4 @@ have a matching VPS id.
 - Added "Alternative ROM Name" of Popper (1.5) as fallback for highscore text files. So if you want to keep your (manually adapted!) ROM name or highscore filename persisted (so that it survives a re-scan), use the table settings dialog and enter the two values there. (Yes, this could be done automatically, but I would have to kill all Popper processes for this, which I want to avoid.) 
 - Fixed updating of "ROM Name" and "Alt. ROM Name" in the table settings dialog: When these values change, the values are updated in the "Script Details" section too now.
 - Fixed error in uploading zipped VPX files when VPX files where in sub-folders within the zip archive.
+- Fixed "POPMedia" lookup: Instead of simply assuming it under the "PinUPSystem" folder, the "POPMedia" folder is now read from the Popper database where the correct value is stored in the emulator configuration.  

@@ -160,14 +160,6 @@ public class InstallationDialogController implements Initializable, DialogContro
       return;
     }
 
-    File[] popMedia = pinUPSystemInstallationFolder.listFiles((dir, name) -> name.equals("POPMedia"));
-
-    if (popMedia == null || popMedia.length == 0) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("The PinUP Popper installation folder is invalid,\nrequired subfolders have not been found.");
-      return;
-    }
-
     if (autostartFolder == null || !autostartFolder.exists()) {
       validationError.setVisible(true);
       validationErrorLabel.setText("The autostart folder is invalid.\nSelect the Windows autostart folder.");
