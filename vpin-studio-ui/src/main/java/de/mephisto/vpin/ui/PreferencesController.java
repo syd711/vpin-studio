@@ -122,6 +122,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onAccount(ActionEvent event) throws IOException {
+    load("preference-account.fxml", event);
+  }
+
+  @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
     load("preference-validators_pinuppopper.fxml", event);
   }
