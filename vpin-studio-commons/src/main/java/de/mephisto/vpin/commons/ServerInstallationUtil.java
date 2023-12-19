@@ -20,7 +20,7 @@ public class ServerInstallationUtil {
     try {
       File root = new File("./");
       String script = "cd /D " + root.getAbsolutePath() +
-          "\nserver.bat";
+        "\nserver.bat";
       FileUtils.writeStringToFile(getAutostartFile(), script, StandardCharsets.UTF_8);
       LOG.info("Written autostart file " + getAutostartFile().getAbsolutePath());
       return getAutostartFile().exists();
@@ -63,6 +63,24 @@ public class ServerInstallationUtil {
     String userName = System.getProperty("user.name");
 
     String formattedPath = String.format(path, userName);
-    return new File(formattedPath);
+    File autostartFolder = new File(formattedPath);
+    if (autostartFolder.exists()) {
+      return autostartFolder;
+    }
+
+    userName = System.getenv("USERNAME");
+    formattedPath = String.format(path, userName);
+    autostartFolder = new File(formattedPath);
+    if (autostartFolder.exists()) {
+      return autostartFolder;
+    }
+
+    String path2 = System.getenv("APPDATA") + "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
+    autostartFolder = new File(path2);
+    if (autostartFolder.exists()) {
+      return autostartFolder;
+    }
+
+    return new File(System.getProperty("user.home"));
   }
 }
