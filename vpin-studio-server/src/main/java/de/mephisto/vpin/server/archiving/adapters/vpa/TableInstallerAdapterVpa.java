@@ -128,60 +128,61 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private void unzipArchive() {
-    try {
-      ZipFile zf = new ZipFile(archiveFile);
-      int totalCount = zf.size();
-      zf.close();
-
-      byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(archiveFile);
-      ZipInputStream zis = new ZipInputStream(fileInputStream);
-      ZipEntry zipEntry = zis.getNextEntry();
-      int currentCount = 0;
-      while (zipEntry != null) {
-        currentCount++;
-
-        File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
-        if (isExcluded(newFile)) {
-          zis.closeEntry();
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        LOG.info("Writing " + newFile.getAbsolutePath());
-        if (zipEntry.isDirectory()) {
-          if (!newFile.isDirectory() && !newFile.mkdirs()) {
-            throw new IOException("Failed to create directory " + newFile);
-          }
-        }
-        else {
-          // fix for Windows-created archives
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
-          }
-
-          // write file content
-          status = "Extracting " + newFile;
-          FileOutputStream fos = new FileOutputStream(newFile);
-          int len;
-          while ((len = zis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len);
-          }
-          fos.close();
-        }
-
-        progress = currentCount * 100 / totalCount;
-
-        zis.closeEntry();
-        zipEntry = zis.getNextEntry();
-      }
-      fileInputStream.close();
-      zis.closeEntry();
-      zis.close();
-    } catch (Exception e) {
-      LOG.error("Table installation of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-    }
+    //TODO fix POPMedia folder lookup
+//    try {
+//      ZipFile zf = new ZipFile(archiveFile);
+//      int totalCount = zf.size();
+//      zf.close();
+//
+//      byte[] buffer = new byte[1024];
+//      FileInputStream fileInputStream = new FileInputStream(archiveFile);
+//      ZipInputStream zis = new ZipInputStream(fileInputStream);
+//      ZipEntry zipEntry = zis.getNextEntry();
+//      int currentCount = 0;
+//      while (zipEntry != null) {
+//        currentCount++;
+//
+//        File newFile = newFile(getDestDirForEntry(zipEntry), zipEntry);
+//        if (isExcluded(newFile)) {
+//          zis.closeEntry();
+//          zipEntry = zis.getNextEntry();
+//          continue;
+//        }
+//
+//        LOG.info("Writing " + newFile.getAbsolutePath());
+//        if (zipEntry.isDirectory()) {
+//          if (!newFile.isDirectory() && !newFile.mkdirs()) {
+//            throw new IOException("Failed to create directory " + newFile);
+//          }
+//        }
+//        else {
+//          // fix for Windows-created archives
+//          File parent = newFile.getParentFile();
+//          if (!parent.isDirectory() && !parent.mkdirs()) {
+//            throw new IOException("Failed to create directory " + parent);
+//          }
+//
+//          // write file content
+//          status = "Extracting " + newFile;
+//          FileOutputStream fos = new FileOutputStream(newFile);
+//          int len;
+//          while ((len = zis.read(buffer)) > 0) {
+//            fos.write(buffer, 0, len);
+//          }
+//          fos.close();
+//        }
+//
+//        progress = currentCount * 100 / totalCount;
+//
+//        zis.closeEntry();
+//        zipEntry = zis.getNextEntry();
+//      }
+//      fileInputStream.close();
+//      zis.closeEntry();
+//      zis.close();
+//    } catch (Exception e) {
+//      LOG.error("Table installation of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+//    }
   }
 
   private boolean isExcluded(File newFile) {
