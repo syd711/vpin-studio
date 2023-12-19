@@ -35,3 +35,4 @@ the "Highscore Card Notifications" setting.
 - Improved lookup of auto-start folder for fresh installations.
 - Filtered debug log files from list of possible highscore filenames.
 - Removed confirmation dialog for the auto-fill action in the VPS section.
+- Fixed a bunch of PUP pack upload issues.
