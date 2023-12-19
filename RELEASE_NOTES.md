@@ -36,3 +36,4 @@ the "Highscore Card Notifications" setting.
 - Filtered debug log files from list of possible highscore filenames.
 - Removed confirmation dialog for the auto-fill action in the VPS section.
 - Fixed a bunch of PUP pack upload issues.
+- Fixed some preferences headlines and removed useless log textarea from section "Service". 
