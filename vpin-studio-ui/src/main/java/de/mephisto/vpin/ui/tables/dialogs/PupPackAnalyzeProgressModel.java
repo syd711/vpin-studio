@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -15,12 +16,14 @@ public class PupPackAnalyzeProgressModel extends ProgressModel<File> {
 
   private final Iterator<File> iterator;
   private final String rom;
+  private final String tableName;
   private final File file;
   private PupPackAnalyzer analyzer;
 
-  public PupPackAnalyzeProgressModel(String rom, String title, File file) {
+  public PupPackAnalyzeProgressModel(String rom, String tableName, String title, File file) {
     super(title);
     this.rom = rom;
+    this.tableName = tableName;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
@@ -55,7 +58,7 @@ public class PupPackAnalyzeProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       analyzer = new PupPackAnalyzer();
-      analyzer.analyze(next, rom, progressResultModel);
+      analyzer.analyze(next, Arrays.asList(rom, tableName), progressResultModel);
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);

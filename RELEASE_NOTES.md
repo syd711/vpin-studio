@@ -33,3 +33,5 @@ the "Highscore Card Notifications" setting.
 - Fixed error in uploading zipped VPX files when VPX files where in sub-folders within the zip archive.
 - Fixed "POPMedia" lookup: Instead of simply assuming it under the "PinUPSystem" folder, the "POPMedia" folder is now read from the Popper database where the correct value is stored in the emulator configuration.
 - Improved lookup of auto-start folder for fresh installations.
+- Filtered debug log files from list of possible highscore filenames.
+- Removed confirmation dialog for the auto-fill action in the VPS section.

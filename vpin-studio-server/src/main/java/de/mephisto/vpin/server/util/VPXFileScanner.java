@@ -165,7 +165,7 @@ public class VPXFileScanner {
         if (hsFileName.equals(".txt")) {
           return;
         }
-        if (hsFileName.endsWith("LUT.txt")) {
+        if (hsFileName.endsWith("LUT.txt") ||  hsFileName.toLowerCase().contains("debug") || hsFileName.contains("/")) {
           return;
         }
 

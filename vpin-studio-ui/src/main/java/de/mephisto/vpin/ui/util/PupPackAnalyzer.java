@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -14,7 +16,7 @@ public class PupPackAnalyzer {
 
   private boolean canceled = false;
 
-  public String analyze(File archiveFile, String rom, ProgressResultModel progressResultModel) {
+  public String analyze(File archiveFile, List<String> romNames, ProgressResultModel progressResultModel) {
     boolean foundFolderMatchingRom = false;
     boolean screensPupFound = false;
     try {
@@ -43,9 +45,12 @@ public class PupPackAnalyzer {
               folderName = segments[segments.length - 1];
             }
 
-            if (folderName.equals(rom)) {
-              foundFolderMatchingRom = true;
-              LOG.info("Found matching ROM \"" + rom + "\" in pup pack archive.");
+            for (String romName : romNames) {
+              if (!StringUtils.isEmpty(romName) && folderName.equals(romName)) {
+                foundFolderMatchingRom = true;
+                LOG.info("Found matching ROM \"" + romName + "\" in pup pack archive.");
+                break;
+              }
             }
           }
         }
@@ -74,7 +79,7 @@ public class PupPackAnalyzer {
     }
 
     if (!foundFolderMatchingRom) {
-      progressResultModel.getResults().add("Selected PUP pack is not applicable for ROM \"" + rom + "\".");
+      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ",  romNames) + "\".");
     }
 
     return null;

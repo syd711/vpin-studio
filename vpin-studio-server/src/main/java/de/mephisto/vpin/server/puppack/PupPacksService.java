@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
-import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -52,13 +52,6 @@ public class PupPacksService implements InitializingBean {
     return null;
   }
 
-  private PupPack getPupPack(@NonNull String rom) {
-    if (!StringUtils.isEmpty(rom) && pupPackFolders.containsKey(rom.toLowerCase())) {
-      return pupPackFolders.get(rom.toLowerCase());
-    }
-    return null;
-  }
-
   private void refresh() {
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
@@ -86,14 +79,7 @@ public class PupPacksService implements InitializingBean {
 
     pupPack.load();
 
-    if (!pupPack.getScreensPup().exists() && !pupPack.getOptions().isEmpty()) {
-      LOG.info("No config files found for pup pack \"" + packFolder.getName() + "\", executing first option.");
-      String s = pupPack.getOptions().get(0);
-      pupPack.executeOption(s);
-    }
-
-    if ((pupPack.getScreensPup().exists() && pupPack.getTriggersPup().exists()) ||
-        (OrbitalPins.isOrbitalPin(packFolder.getName()) && !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty())) {
+    if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || !FileUtils.listFiles(packFolder, new String[]{"mp4"}, true).isEmpty())) {
       pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
     }
   }
@@ -151,19 +137,19 @@ public class PupPacksService implements InitializingBean {
   }
 
   public JobExecutionResult installPupPack(Game game, File out) {
-    File pupPackFolder = game.getPupPackFolder();
-    if (pupPackFolder == null) {
-      return JobExecutionResultFactory.error("Missing ROM name for game.");
+    File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    if (!pupVideosFolder.exists()) {
+      return JobExecutionResultFactory.error("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
     }
 
-    LOG.info("Extracting archive to " + pupPackFolder.getAbsolutePath());
-    if (!pupPackFolder.exists()) {
-      if (!pupPackFolder.mkdirs()) {
-        return JobExecutionResultFactory.error("Failed to create PUP pack directory " + pupPackFolder.getAbsolutePath());
+    LOG.info("Extracting PUP pack to " + pupVideosFolder.getAbsolutePath());
+    if (!pupVideosFolder.exists()) {
+      if (!pupVideosFolder.mkdirs()) {
+        return JobExecutionResultFactory.error("Failed to create PUP pack directory " + pupVideosFolder.getAbsolutePath());
       }
     }
 
-    PupPackInstallerJob job = new PupPackInstallerJob(this, out, pupPackFolder, game);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, out, pupVideosFolder, game);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
     jobDescriptor.setTitle("Installing PUP pack for \"" + game.getGameDisplayName() + "\"");

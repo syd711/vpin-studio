@@ -97,7 +97,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), "PUP Pack Analysis", this.selection));
+    ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getTableName(), "PUP Pack Analysis", this.selection));
 
     if (!resultModel.getResults().isEmpty()) {
       result = false;

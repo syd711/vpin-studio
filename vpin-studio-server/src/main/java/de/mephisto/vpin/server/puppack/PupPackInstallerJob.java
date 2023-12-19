@@ -13,25 +13,34 @@ public class PupPackInstallerJob implements Job {
 
   private final PupPacksService pupPacksService;
   private final File out;
-  private final File pupPackFolder;
+  private final File pupVideosFolder;
   private final Game game;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File out, @NonNull File pupPackFolder, @NonNull Game game) {
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File out, @NonNull File pupVideosFolder, @NonNull Game game) {
     this.pupPacksService = pupPacksService;
     this.out = out;
-    this.pupPackFolder = pupPackFolder;
+    this.pupVideosFolder = pupVideosFolder;
     this.game = game;
   }
 
   @Override
   public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unzip(out, pupPackFolder, game.getRom());
+    JobExecutionResult unzip = PupPackUtil.unzip(out, pupVideosFolder, game.getRom(), game.getTableName());
     if (!out.delete() && unzip.getError() == null) {
       return JobExecutionResultFactory.error("Failed to delete temporary file.");
     }
 
     if (StringUtils.isEmpty(unzip.getError())) {
-      pupPacksService.loadPupPack(pupPackFolder);
+      File target = new File(pupVideosFolder, game.getRom());
+      if (!target.exists() && !StringUtils.isEmpty(game.getTableName())) {
+        target = new File(pupVideosFolder, game.getTableName());
+      }
+
+      if(!target.exists()) {
+        return JobExecutionResultFactory.error("Extracting PUP pack failed. Folder not found: " + target.getAbsolutePath());
+      }
+
+      pupPacksService.loadPupPack(target);
     }
     return unzip;
   }

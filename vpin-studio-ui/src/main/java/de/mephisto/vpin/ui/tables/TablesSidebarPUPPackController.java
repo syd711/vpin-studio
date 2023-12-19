@@ -2,20 +2,20 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
+import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -138,8 +138,6 @@ public class TablesSidebarPUPPackController implements Initializable {
         JobExecutionResult jobExecutionResult = null;
         try {
           jobExecutionResult = Studio.client.getPupPackService().option(game.get().getId(), option);
-          refreshView(game);
-
           if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
             WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", jobExecutionResult.getError());
           }
@@ -150,6 +148,9 @@ public class TablesSidebarPUPPackController implements Initializable {
         } catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
+        }
+        finally {
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         }
       }
     }
@@ -239,7 +240,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     emptyDataBox.setVisible(true);
 
     openBtn.setText("View");
-    if(Studio.client.getSystemService().isLocal()) {
+    if (Studio.client.getSystemService().isLocal()) {
       openBtn.setText("Edit");
     }
 
