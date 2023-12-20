@@ -374,7 +374,9 @@ public class TablesSidebarController implements Initializable {
     povBtn.setVisible(client.getSystemService().isLocal());
     pupBackBtn.setVisible(client.getSystemService().isLocal());
     dmdBtn.setVisible(client.getSystemService().isLocal());
+  }
 
+  private void loadSidePanels() {
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
       Parent tablesRoot = loader.load();
@@ -603,6 +605,7 @@ public class TablesSidebarController implements Initializable {
 
   public void setTablesController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
+    loadSidePanels();
   }
 
   public TableOverviewController getTablesController() {

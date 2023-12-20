@@ -22,7 +22,7 @@ public class VPXUtilTest {
   }
 
   @Test
-  public void testInfo() {
+  public void testInfo() throws Exception {
     for (String tableName : TABLE_NAMES) {
       File table = new File("../testsystem/vPinball/VisualPinball/Tables/" + tableName);
       Map<String, String> data = VPXUtil.readTableInfo(table);
