@@ -6,6 +6,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -15,7 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ManiaAccountPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountPreferencesController.class);
@@ -59,6 +64,19 @@ public class ManiaAccountPreferencesController implements Initializable {
     Dialogs.openManiaAccountDialog("VPin Mania Account Registration", null);
     account = Studio.client.getManiaService().getAccount();
     refreshView();
+  }
+
+
+  @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete your VPin-Mania account?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      try {
+        client.getManiaService().deleteAccount();
+      } catch (Exception e) {
+        WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
+      }
+    }
   }
 
 

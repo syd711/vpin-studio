@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+
 /*********************************************************************************************************************
  * VPin Mania
  ********************************************************************************************************************/
@@ -22,6 +24,15 @@ public class ManiaServiceClient extends VPinStudioClientService {
   public ManiaAccountRepresentation saveAccount(ManiaAccountRepresentation account) throws Exception {
     try {
       return getRestClient().post(API + "mania/account/save", account, ManiaAccountRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save account: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean deleteAccount() {
+    try {
+      return getRestClient().delete(API + "mania/account", new HashMap<>());
     } catch (Exception e) {
       LOG.error("Failed to save account: " + e.getMessage(), e);
       throw e;

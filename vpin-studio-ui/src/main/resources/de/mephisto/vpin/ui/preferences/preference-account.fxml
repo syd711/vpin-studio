@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ManiaAccountPreferencesController">
    <top>
@@ -74,7 +75,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox prefHeight="30.0" prefWidth="569.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox prefHeight="30.0" prefWidth="569.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <Button mnemonicParsing="false" onAction="#onNameEdit" text="Edit Account Data">
                                  <font>
@@ -83,6 +84,17 @@
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" iconSize="16" />
+                                 </graphic>
+                              </Button>
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete Account" textFill="#ff3333">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="16" />
+                                 </graphic>
                               </Button>
                            </children></HBox>
                         <TextField fx:id="displayNameText" editable="false" prefWidth="200.0" GridPane.columnIndex="1">
@@ -104,6 +116,9 @@
                                  <HBox.margin>
                                     <Insets left="6.0" />
                                  </HBox.margin>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                 </graphic>
                               </Button>
                            </children>
                         </HBox>

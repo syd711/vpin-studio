@@ -52,6 +52,11 @@
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-mania-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-assets</artifactId>
             <version>1.0.0</version>
         </dependency>

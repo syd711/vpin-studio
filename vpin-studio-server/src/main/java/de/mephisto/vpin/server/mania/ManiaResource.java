@@ -25,6 +25,11 @@ public class ManiaResource {
     return toAccountRepresentation(vPinManiaService.save(account));
   }
 
+  @DeleteMapping("/account")
+  public boolean deleteAccount() {
+    return vPinManiaService.deleteAccount();
+  }
+
   @Nullable
   private ManiaAccountRepresentation toAccountRepresentation(@Nullable ManiaAccount account) {
     if (account != null) {
