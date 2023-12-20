@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -27,6 +28,7 @@ import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotAllowListDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
+import de.mephisto.vpin.ui.preferences.ManiaAccountDialogController;
 import de.mephisto.vpin.ui.preferences.PINemHiUIPreferenceController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -338,6 +340,14 @@ public class Dialogs {
     Stage stage = createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", "Bot Allow-List");
     DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
     controller.setPreferencesController(preferencesController);
+    stage.showAndWait();
+  }
+
+
+  public static void openManiaAccountDialog(String title, ManiaAccountRepresentation accountRepresentation) {
+    Stage stage = createStudioDialogStage(ManiaAccountDialogController.class, "preference-account-dialog.fxml", title);
+    ManiaAccountDialogController controller = (ManiaAccountDialogController) stage.getUserData();
+    controller.setAccount(accountRepresentation);
     stage.showAndWait();
   }
 

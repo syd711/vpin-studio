@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.AccountPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ManiaAccountPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -26,7 +26,7 @@
                <children>
                   <Label styleClass="preference-description" text="Your cabinet is not registered on vpin-mania.net. " textFill="WHITE" />
                   <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Register your cabinet to participate in tournaments." textFill="WHITE" />
-                  <Button mnemonicParsing="false" text="Register Cabinet" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onRegister" text="Register Cabinet" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -56,6 +56,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label styleClass="preference-label" text="Display Name:" textFill="WHITE">
@@ -68,23 +69,33 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Cabinet ID:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Cabinet ID:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox prefHeight="30.0" prefWidth="569.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="displayNameText" disable="true" editable="false" prefWidth="200.0" GridPane.columnIndex="1">
+                        <HBox prefHeight="30.0" prefWidth="569.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onNameEdit" text="Edit Account Data">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Button>
+                           </children></HBox>
+                        <TextField fx:id="displayNameText" editable="false" prefWidth="200.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField fx:id="cabinetIdText" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id="cabinetIdText" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <children>
                               <Button mnemonicParsing="false" onAction="#onCopy" text="Copy">
                                  <font>
@@ -96,16 +107,19 @@
                               </Button>
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="535.0" layoutY="44.0" GridPane.columnIndex="2">
+                        <HBox alignment="CENTER_LEFT" layoutX="535.0" layoutY="44.0" GridPane.columnIndex="2" />
+                        <Label layoutX="9.0" layoutY="12.0" styleClass="preference-label" text="Your Initials:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onNameEdit" text="Edit">
+                              <TextField fx:id="initialsText" editable="false" prefHeight="30.0" prefWidth="114.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                                 <HBox.margin>
-                                    <Insets left="6.0" />
-                                 </HBox.margin>
-                              </Button>
+                              </TextField>
                            </children>
                         </HBox>
                      </children>

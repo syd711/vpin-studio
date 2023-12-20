@@ -55,6 +55,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final DMDServiceClient dmdServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final MameServiceClient mameServiceClient;
+  private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
@@ -84,6 +85,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
+    this.maniaServiceClient = new ManiaServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
@@ -107,6 +109,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public ManiaServiceClient getManiaService() {
+    return maniaServiceClient;
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
