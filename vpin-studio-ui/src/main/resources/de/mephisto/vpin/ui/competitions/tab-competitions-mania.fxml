@@ -6,44 +6,39 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitMenuButton?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsDiscordController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsManiaController">
     <center>
 
         <BorderPane BorderPane.alignment="CENTER">
             <center>
                 <StackPane fx:id="tableStack">
-                    <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                            <columns>
-                                <TableColumn fx:id="columnTable" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                <TableColumn fx:id="columnName" prefWidth="232.80005192756653" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Status" />
-                        <TableColumn fx:id="columnServer" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Server" />
-                        <TableColumn fx:id="columnChannel" prefWidth="192.0" style="-fx-alignment: CENTER;" text="Channel" />
-                                <TableColumn fx:id="columnStartDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                <TableColumn fx:id="columnEndDate" prefWidth="160.0" style="-fx-alignment: CENTER;" text="End Date" />
-                        <TableColumn fx:id="columnWinner" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Winner" />
-                        <TableColumn fx:id="columnCompetitionOwner" prefWidth="156.0" style="-fx-alignment: CENTER;" text="Competition Owner" />
-                            </columns>
-                        </TableView>
-                    </children>
+               <children>
+                  <TreeTableView>
+                    <columns>
+                      <TreeTableColumn fx:id="columnName" prefWidth="200.0" text="Name" />
+                      <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
+                        <TreeTableColumn prefWidth="160.0" text="Start" />
+                        <TreeTableColumn prefWidth="160.0" text="End" />
+                        <TreeTableColumn prefWidth="75.0" text="Column X" />
+                    </columns>
+                  </TreeTableView>
+               </children>
                 </StackPane>
             </center>
             <top>
-                <ToolBar BorderPane.alignment="CENTER">
+                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
+                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Tournament Search...">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -57,17 +52,6 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                             </graphic>
                         </Button>
-                  <Button fx:id="clearCacheBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Clears cached Discord data" />
-                     </tooltip>
-                  </Button>
                   <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onCompetitionValidate" text="Synchronize" textFill="WHITE">
                      <items>
                         <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onCompetitionValidateAll" text="Synchronize All" />
@@ -80,7 +64,7 @@
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Create" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -147,7 +131,7 @@
                                         <Insets bottom="3.0" left="12.0" top="3.0" />
                                     </BorderPane.margin>
                                     <children>
-                                        <Label fx:id="validationErrorLabel" text="Loading Competitions.." textFill="WHITE">
+                                        <Label fx:id="validationErrorLabel" text="Loading Tournamets.." textFill="WHITE">
                                             <font>
                                                 <Font name="System Bold" size="14.0" />
                                             </font>

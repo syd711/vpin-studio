@@ -32,7 +32,7 @@ public class AccountClient extends VPinManiaClientService{
     return getRestClient().get(API + "account/get/" + uuid, ManiaAccountRepresentation.class);
   }
 
-  public boolean deleteAccount(String uuid) {
-    return getRestClient().delete(API + "account/delete" + uuid);
+  public boolean deleteAccount() {
+    return getRestClient().delete(API + "account/delete");
   }
 }

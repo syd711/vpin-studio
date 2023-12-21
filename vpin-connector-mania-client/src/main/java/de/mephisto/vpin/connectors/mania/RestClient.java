@@ -36,6 +36,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   private RestClient(String scheme, String host, int port, String context, String cabinetId) {
+    this.cabinetId = cabinetId;
     baseUrl = scheme + "://" + host + ":" + port + "/";
     if (context != null) {
       baseUrl += context;

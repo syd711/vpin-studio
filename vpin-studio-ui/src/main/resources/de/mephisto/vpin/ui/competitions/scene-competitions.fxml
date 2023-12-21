@@ -40,6 +40,14 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
                             </graphic>
                         </Tab>
+                  <Tab fx:id="maniaTab" text="VPin-Mania Tournamets">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
+                     </graphic>
+                  </Tab>
                   <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
