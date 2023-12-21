@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mania;
 
+import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -10,11 +11,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class ManiaService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
-
-  private String cabinetId;
 
   private VPinManiaClient maniaClient;
 
@@ -27,31 +28,36 @@ public class ManiaService implements InitializingBean {
 
   @Nullable
   public ManiaAccountRepresentation getAccount() {
-    return maniaClient.getAccountClient().getAccount(this.cabinetId);
+    return maniaClient.getAccountClient().getAccount();
   }
 
   public ManiaAccountRepresentation save(ManiaAccountRepresentation account) throws Exception {
     ManiaAccountRepresentation existingAccount = getAccount();
 
-    if(existingAccount != null) {
+    if (existingAccount != null) {
       maniaClient.getAccountClient().update(account);
     }
     else {
-      account.setCabinetId(this.cabinetId);
+      account.setUuid(UUID.randomUUID().toString());
       maniaClient.getAccountClient().register(account);
     }
 
     return getAccount();
   }
 
+  public boolean deleteAccount() {
+    return maniaClient.getAccountClient().deleteAccount();
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
-    this.cabinetId = SystemUtil.getBoardSerialNumber();
+    String cabinetId = SystemUtil.getBoardSerialNumber();
     maniaClient = new VPinManiaClient(maniaHost, maniaContext, cabinetId);
     LOG.info("VPin Mania client created for host " + maniaHost);
   }
 
-  public boolean deleteAccount() {
-    return false;
+  @VisibleForTesting
+  public void setCabinetId(String id) {
+    maniaClient.setCabinetId(id);
   }
 }

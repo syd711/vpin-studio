@@ -37,8 +37,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   private RestClient(String scheme, String host, int port, String context, String cabinetId) {
     this.cabinetId = cabinetId;
-    baseUrl = scheme + "://" + host + ":" + port + "/";
-    if (context != null) {
+    if (host.startsWith("http")) {
+      baseUrl = host + "/";
+    }
+    else {
+      baseUrl = scheme + "://" + host + ":" + port + "/";
+    }
+
+    if (context != null && !context.trim().isEmpty()) {
       baseUrl += context;
     }
     SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
@@ -134,4 +140,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return response.getBody();
   }
 
+  public void setCabinetId(String id) {
+    this.cabinetId = id;
+  }
 }

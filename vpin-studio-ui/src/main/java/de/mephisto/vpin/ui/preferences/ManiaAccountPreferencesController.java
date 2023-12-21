@@ -55,17 +55,14 @@ public class ManiaAccountPreferencesController implements Initializable {
   @FXML
   private void onNameEdit() {
     Dialogs.openManiaAccountDialog("VPin Mania Account Registration", this.account);
-    account = Studio.client.getManiaService().getAccount();
     refreshView();
   }
 
   @FXML
   private void onRegister() {
     Dialogs.openManiaAccountDialog("VPin Mania Account Registration", null);
-    account = Studio.client.getManiaService().getAccount();
     refreshView();
   }
-
 
   @FXML
   private void onDelete() {
@@ -76,6 +73,7 @@ public class ManiaAccountPreferencesController implements Initializable {
       } catch (Exception e) {
         WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
       }
+      refreshView();
     }
   }
 

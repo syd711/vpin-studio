@@ -23,13 +23,13 @@
             <center>
                 <StackPane fx:id="tableStack">
                <children>
-                  <TreeTableView>
+                  <TreeTableView style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TreeTableColumn fx:id="columnName" prefWidth="200.0" text="Name" />
                       <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
                         <TreeTableColumn prefWidth="160.0" text="Start" />
                         <TreeTableColumn prefWidth="160.0" text="End" />
-                        <TreeTableColumn prefWidth="75.0" text="Column X" />
+                        <TreeTableColumn prefWidth="75.0" text="Owner" />
                     </columns>
                   </TreeTableView>
                </children>

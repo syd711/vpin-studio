@@ -23,4 +23,8 @@ public class VPinManiaClient {
   public RestClient getRestClient() {
     return restClient;
   }
+
+  public void setCabinetId(String id) {
+    restClient.setCabinetId(id);
+  }
 }

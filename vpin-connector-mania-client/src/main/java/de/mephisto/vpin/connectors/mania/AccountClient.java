@@ -19,6 +19,7 @@ public class AccountClient extends VPinManiaClientService{
       throw e;
     }
   }
+
   public ManiaAccountRepresentation register(ManiaAccountRepresentation account) throws Exception {
     try {
       return getRestClient().post(API + "account/register", account, ManiaAccountRepresentation.class);
@@ -28,8 +29,8 @@ public class AccountClient extends VPinManiaClientService{
     }
   }
 
-  public ManiaAccountRepresentation getAccount(String uuid) {
-    return getRestClient().get(API + "account/get/" + uuid, ManiaAccountRepresentation.class);
+  public ManiaAccountRepresentation getAccount() {
+    return getRestClient().get(API + "account", ManiaAccountRepresentation.class);
   }
 
   public boolean deleteAccount() {

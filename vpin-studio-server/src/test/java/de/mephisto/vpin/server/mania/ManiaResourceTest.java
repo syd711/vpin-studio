@@ -1,18 +1,27 @@
-package de.mephisto.vpin.connectors.mania;
+package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
+import de.mephisto.vpin.server.AbstractVPinServerTest;
+import de.mephisto.vpin.server.popper.PopperResource;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class VPinManiaClientTest {
+@SpringBootTest
+public class ManiaResourceTest extends AbstractVPinServerTest {
 
   private final static String cabinetId = "test-client";
   private final static String uuid = "1234567890";
 
-//  @Test
+  @Autowired
+  protected ManiaService maniaService;
+
+  @Test
   public void testAccounts() throws Exception {
-    VPinManiaClient client = new VPinManiaClient("localhost", "vpin-mania/public/", cabinetId);
+    super.setupSystem();
+    maniaService.setCabinetId(cabinetId);
 
     ManiaAccountRepresentation account = new ManiaAccountRepresentation();
     account.setInitials("AAA");
@@ -20,18 +29,15 @@ public class VPinManiaClientTest {
     account.setDisplayName("Mephisto");
     account.setUuid(uuid);
 
-    boolean b = client.getAccountClient().deleteAccount();
+    boolean b = maniaService.deleteAccount();
     assertTrue(b);
 
-    ManiaAccountRepresentation writtenAccount = client.getAccountClient().register(account);
+    ManiaAccountRepresentation writtenAccount = maniaService.save(account);
     assertNotNull(writtenAccount);
 
     account.setInitials("BBB");
-    writtenAccount = client.getAccountClient().update(account);
+    writtenAccount = maniaService.save(account);
     assertNotNull(writtenAccount);
     assertEquals(writtenAccount.getInitials(), "BBB");
-
-    writtenAccount = client.getAccountClient().getAccount();
-    assertNotNull(writtenAccount);
   }
 }

@@ -122,8 +122,10 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public Boolean delete(String path, Map<String, Object> values) {
+    long start = System.currentTimeMillis();
     String url = baseUrl + path;
     restTemplate.delete(url, values);
+    LOG.info("HTTP DELETE " + path + " (" + (System.currentTimeMillis()-start) + "ms)");
     return true;
   }
 

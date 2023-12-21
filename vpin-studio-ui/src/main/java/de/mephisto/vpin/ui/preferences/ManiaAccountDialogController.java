@@ -23,9 +23,6 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountDialogController.class);
 
   @FXML
-  private Button cancelBtn;
-
-  @FXML
   private Button okBtn;
 
   @FXML
@@ -33,17 +30,20 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
 
   @FXML
   private TextField displayNameText;
+  private ManiaAccountRepresentation account;
 
   @FXML
   private void onCreate(ActionEvent e) {
-    ManiaAccountRepresentation accountRepresentation = new ManiaAccountRepresentation();
-    accountRepresentation.setDisplayName(displayNameText.getText());
-    accountRepresentation.setInitials(displayNameText.getText());
+    if (this.account == null) {
+      this.account = new ManiaAccountRepresentation();
+    }
+    account.setDisplayName(displayNameText.getText());
+    account.setInitials(initialsText.getText());
 
     try {
-      Studio.client.getManiaService().saveAccount(accountRepresentation);
+      Studio.client.getManiaService().saveAccount(this.account);
     } catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create account: " + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save account: " + ex.getMessage());
     } finally {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       stage.close();
@@ -55,7 +55,6 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
-
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -97,7 +96,9 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
   }
 
   public void setAccount(ManiaAccountRepresentation accountRepresentation) {
-    if(accountRepresentation != null) {
+    this.account = accountRepresentation;
+    if (accountRepresentation != null) {
+      okBtn.setText("Save");
       displayNameText.setText(accountRepresentation.getDisplayName());
       initialsText.setText(accountRepresentation.getInitials());
     }
