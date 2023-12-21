@@ -136,9 +136,13 @@ public class VPXService {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
-        Map<String, String> values = VPXUtil.readTableInfo(gameFile);
-        if(values != null) {
-          return new TableInfo(values);
+        try {
+          Map<String, String> values = VPXUtil.readTableInfo(gameFile);
+          if(values != null) {
+            return new TableInfo(values);
+          }
+        } catch (Exception e) {
+          LOG.error("Failed to read table info: " + e.getMessage());
         }
       }
     }

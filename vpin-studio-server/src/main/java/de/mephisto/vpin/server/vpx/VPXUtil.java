@@ -17,21 +17,25 @@ public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
 
   public static String readScript(@NonNull File file) {
-    byte[] content = readBytes(file);
+    try {
+      byte[] content = readBytes(file);
 
-    int index = 0;
-    List<Integer> indexes = new ArrayList<>();
-    for (byte b : content) {
-      if (b == 4) {
-        indexes.add(index);
+      int index = 0;
+      List<Integer> indexes = new ArrayList<>();
+      for (byte b : content) {
+        if (b == 4) {
+          indexes.add(index);
+        }
+        index++;
       }
-      index++;
+      byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size() - 2) + 12, indexes.get(indexes.size() - 1));
+      return new String(scriptData);
+    } catch (Exception e) {
+      return String.valueOf(e.getMessage());
     }
-    byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size() - 2) + 12, indexes.get(indexes.size() - 1));
-    return new String(scriptData);
   }
 
-  public static Map<String, String> readTableInfo(@NonNull File file) {
+  public static Map<String, String> readTableInfo(@NonNull File file) throws Exception {
     Map<String, String> result = new HashMap<>();
     POIFSFileSystem fs = null;
     try {
@@ -59,8 +63,8 @@ public class VPXUtil {
         result.put(infoEntry, new String(primitive));
       }
     } catch (Exception e) {
-      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage(), e);
-      return null;
+      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
     } finally {
       try {
         if (fs != null) {
@@ -74,7 +78,7 @@ public class VPXUtil {
     return result;
   }
 
-  public static byte[] readBytes(@NonNull File file) {
+  public static byte[] readBytes(@NonNull File file) throws Exception {
     byte[] content = new byte[0];
     POIFSFileSystem fs = null;
     try {
@@ -90,8 +94,8 @@ public class VPXUtil {
       documentInputStream.close();
 
     } catch (Exception e) {
-      LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return null;
+      LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
+      throw new Exception("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
     } finally {
       try {
         if (fs != null) {
@@ -134,7 +138,6 @@ public class VPXUtil {
       fs.writeFilesystem();
     } catch (Exception e) {
       LOG.error("Writing script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      throw e;
     } finally {
       try {
         if (fs != null) {
