@@ -65,7 +65,7 @@ public class VPXFileScanner {
       result.setRom(result.getTableName());
     }
 
-    if (StringUtils.isEmpty(result.getRom())) {
+    if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
       LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
       runDeepScan(gameFile, result);
     }

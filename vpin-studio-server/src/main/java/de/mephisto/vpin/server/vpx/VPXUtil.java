@@ -63,7 +63,7 @@ public class VPXUtil {
         result.put(infoEntry, new String(primitive));
       }
     } catch (Exception e) {
-      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage(), e);
+      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
       throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
     } finally {
       try {
@@ -94,7 +94,7 @@ public class VPXUtil {
       documentInputStream.close();
 
     } catch (Exception e) {
-      LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
       throw new Exception("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
     } finally {
       try {
