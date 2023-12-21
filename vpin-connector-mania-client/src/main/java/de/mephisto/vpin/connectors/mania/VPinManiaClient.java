@@ -9,15 +9,21 @@ public class VPinManiaClient {
   private final RestClient restClient;
 
   private final AccountClient accountClient;
+  private final TournamentClient tournamentClient;
 
   public VPinManiaClient(String host, String context, String cabinetId) {
     restClient = RestClient.createInstance(host, context, cabinetId);
 
     this.accountClient = new AccountClient(this);
+    this.tournamentClient = new TournamentClient(this);
   }
 
   public AccountClient getAccountClient() {
     return accountClient;
+  }
+
+  public TournamentClient getTournamentClient() {
+    return tournamentClient;
   }
 
   public RestClient getRestClient() {

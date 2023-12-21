@@ -8,8 +8,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -56,28 +54,25 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsManiaController.class);
 
   @FXML
-  private TableView<CompetitionRepresentation> tableView;
+  private TreeTableView<CompetitionRepresentation> treeTableView;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnName;
+  private TreeTableColumn<CompetitionRepresentation, String> columnName;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnTable;
+  private TreeTableColumn<CompetitionRepresentation, String> columnTable;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnStatus;
+  private TreeTableColumn<CompetitionRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnCompetitionOwner;
+  private TreeTableColumn<CompetitionRepresentation, String> columnOwner;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnStartDate;
+  private TreeTableColumn<CompetitionRepresentation, String> columnStartDate;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnEndDate;
-
-  @FXML
-  private TableColumn<CompetitionRepresentation, String> columnWinner;
+  private TreeTableColumn<CompetitionRepresentation, String> columnEndDate;
 
   @FXML
   private Button editBtn;
@@ -142,7 +137,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onCompetitionValidate() {
-    CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selectedItem = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Competition", "This will re-check your local highscores against the Discord server data.");
       if (result.get().equals(ButtonType.OK)) {
@@ -156,7 +151,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize "+ competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
       Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
       this.onReload();
@@ -185,16 +180,17 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   @FXML
   private void onDuplicate() {
     client.getDiscordService().clearCache();
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      CompetitionRepresentation clone = selection.cloneCompetition();
+    CompetitionRepresentation selectedItem = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
+    if (selectedItem != null) {
+      CompetitionRepresentation clone = selectedItem.cloneCompetition();
       CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
           ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
           Platform.runLater(() -> {
             onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+            //TODO
+//            treeTableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
           });
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -211,7 +207,8 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       try {
         ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
         onReload();
-        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        //TODO
+//        treeTableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -224,14 +221,15 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   @FXML
   private void onEdit() {
     client.getDiscordService().clearCache();
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
+    CompetitionRepresentation selectedItem = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
+    if (selectedItem != null) {
+      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selectedItem);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
-          tableView.getSelectionModel().select(newCmp);
+          //TODO
+//          tableView.getSelectionModel().select(newCmp);
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -244,14 +242,14 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onDelete() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selection = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
     if (selection != null) {
       boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus(selection.getDiscordServerId()).getBotId()));
 
       String help = null;
       String help2 = null;
       String remainingDayMsg = selection.remainingDays() == 1 ? "The competition is active for another day." :
-          "The competition is still active for another " + selection.remainingDays() + " days.";
+        "The competition is still active for another " + selection.remainingDays() + " days.";
 
       if (isOwner && selection.isActive()) {
         help = remainingDayMsg;
@@ -263,9 +261,9 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
-          help, help2);
+        help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        tableView.getSelectionModel().clearSelection();
+        treeTableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
@@ -275,7 +273,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onFinish() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selection = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
     if (selection != null && selection.isActive()) {
       String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
       String helpText2 = "Finishing the competition will set the current leader as winner.";
@@ -292,7 +290,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   public void onReload() {
     client.clearWheelCache();
 
-    tableView.setVisible(false);
+    treeTableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
@@ -308,21 +306,21 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
 
-      tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
-      tableView.setVisible(true);
+      treeTableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a \"VPin Mania\" account and join tournaments."));
+      treeTableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
       if (competitionWidget != null) {
         competitionWidget.setVisible(false);
       }
 
-      tableView.setItems(FXCollections.emptyObservableList());
-      tableView.refresh();
+      treeTableView.setRoot(null);
+      treeTableView.refresh();
       return;
     }
 
     new Thread(() -> {
-      CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+      CompetitionRepresentation selection = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
       competitions = client.getCompetitionService().getDiscordCompetitions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
@@ -359,20 +357,21 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    NavigationController.setBreadCrumb(Arrays.asList("T"));
+    treeTableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+//    treeTableView.setShowRoot(false);
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       loadingOverlay = loader.load();
       loaderController = loader.getController();
-      loaderController.setLoadingMessage("Loading Competitions...");
+      loaderController.setLoadingMessage("Loading Tournaments...");
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
     columnName.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue().getValue();
       Label label = new Label(value.getName());
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
@@ -380,7 +379,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
 
     columnTable.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue().getValue();
       GameRepresentation game = client.getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
       if (game != null) {
@@ -403,8 +402,8 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       return new SimpleObjectProperty(hBox);
     });
 
-    columnCompetitionOwner.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+    columnOwner.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue().getValue();
 
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
@@ -444,37 +443,23 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
     });
 
     columnStartDate.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue().getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue().getValue();
       Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
-    columnWinner.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      String winner = "-";
-
-      if (!StringUtils.isEmpty(value.getWinnerInitials())) {
-        winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayerService().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
-        if (player != null) {
-          winner = player.getName();
-        }
-      }
-      return new SimpleObjectProperty(winner);
-    });
-
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-        "Create a new competition by pressing the '+' button."));
-    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      refreshView(Optional.ofNullable(newSelection));
+    treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+      "Create a new competition by pressing the '+' button."));
+    treeTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+//      refreshView(Optional.ofNullable(newSelection));
     });
 
     try {
@@ -488,8 +473,8 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 
-    tableView.setRowFactory(tv -> {
-      TableRow<CompetitionRepresentation> row = new TableRow<>();
+    treeTableView.setRowFactory(tv -> {
+      TreeTableRow<CompetitionRepresentation> row = new TreeTableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty()) && !editBtn.isDisabled()) {
           onEdit();
@@ -589,8 +574,6 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @Override
   public void onViewActivated() {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {
       refreshView(Optional.empty());
     }
@@ -601,7 +584,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   }
 
   public Optional<CompetitionRepresentation> getSelection() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selection = treeTableView.getSelectionModel().getSelectedItem().getValue();
     if (selection != null) {
       return Optional.of(selection);
     }
