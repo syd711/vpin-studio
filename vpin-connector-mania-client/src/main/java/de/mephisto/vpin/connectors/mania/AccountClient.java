@@ -11,16 +11,28 @@ public class AccountClient extends VPinManiaClientService{
     super(client);
   }
 
-  public ManiaAccountRepresentation save(ManiaAccountRepresentation account) throws Exception {
+  public ManiaAccountRepresentation update(ManiaAccountRepresentation account) throws Exception {
     try {
-      return getRestClient().post(API + "account/save", account, ManiaAccountRepresentation.class);
+      return getRestClient().post(API + "account/update", account, ManiaAccountRepresentation.class);
     } catch (Exception e) {
-      LOG.error("Failed to save account: " + e.getMessage(), e);
+      LOG.error("Failed to upate account: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+  public ManiaAccountRepresentation register(ManiaAccountRepresentation account) throws Exception {
+    try {
+      return getRestClient().post(API + "account/register", account, ManiaAccountRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Failed to register account: " + e.getMessage(), e);
       throw e;
     }
   }
 
-  public ManiaAccountRepresentation getAccount(String cabinetId) {
-    return getRestClient().get(API + "account/get/" + cabinetId, ManiaAccountRepresentation.class);
+  public ManiaAccountRepresentation getAccount(String uuid) {
+    return getRestClient().get(API + "account/get/" + uuid, ManiaAccountRepresentation.class);
+  }
+
+  public boolean deleteAccount(String uuid) {
+    return getRestClient().delete(API + "account/delete" + uuid);
   }
 }

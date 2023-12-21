@@ -10,8 +10,8 @@ public class VPinManiaClient {
 
   private final AccountClient accountClient;
 
-  public VPinManiaClient(String host, String context) {
-    restClient = RestClient.createInstance(host, context);
+  public VPinManiaClient(String host, String context, String cabinetId) {
+    restClient = RestClient.createInstance(host, context, cabinetId);
 
     this.accountClient = new AccountClient(this);
   }

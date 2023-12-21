@@ -4,18 +4,22 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
  *
  */
-public class RestClient {
+public class RestClient implements ClientHttpRequestInterceptor {
   private final static Logger LOG = LoggerFactory.getLogger(RestClient.class);
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
@@ -24,13 +28,14 @@ public class RestClient {
   public static final int TIMEOUT = 15000;
 
   private String baseUrl;
+  private String cabinetId;
   private RestTemplate restTemplate;
 
-  public static RestClient createInstance(String host, String context) {
-    return new RestClient(SCHEME, host, PORT, context);
+  public static RestClient createInstance(String host, String context, String cabinetId) {
+    return new RestClient(SCHEME, host, PORT, context, cabinetId);
   }
 
-  private RestClient(String scheme, String host, int port, String context) {
+  private RestClient(String scheme, String host, int port, String context, String cabinetId) {
     baseUrl = scheme + "://" + host + ":" + port + "/";
     if (context != null) {
       baseUrl += context;
@@ -39,6 +44,8 @@ public class RestClient {
     httpRequestFactory.setConnectTimeout(TIMEOUT);
     httpRequestFactory.setReadTimeout(TIMEOUT);
     restTemplate = new RestTemplate(httpRequestFactory);
+    restTemplate.setInterceptors(Collections.singletonList(this));
+
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -50,6 +57,14 @@ public class RestClient {
     converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
     messageConverters.add(converter);
     restTemplate.setMessageConverters(messageConverters);
+  }
+
+  @Override
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+                                      ClientHttpRequestExecution execution) throws IOException {
+    HttpHeaders headers = request.getHeaders();
+    headers.add("VPin-Token", cabinetId);
+    return execution.execute(request, body);
   }
 
   public <T> T get(String path, Class<T> entityType) {

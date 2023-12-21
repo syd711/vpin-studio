@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
-import de.mephisto.vpin.server.players.Player;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,29 +15,16 @@ public class ManiaResource {
 
   @GetMapping("/account")
   public ManiaAccountRepresentation getAccount() {
-    return toAccountRepresentation(vPinManiaService.getAccount());
+    return vPinManiaService.getAccount();
   }
 
   @PostMapping("/account/save")
-  public ManiaAccountRepresentation save(@RequestBody ManiaAccount account) {
-    return toAccountRepresentation(vPinManiaService.save(account));
+  public ManiaAccountRepresentation save(@RequestBody ManiaAccountRepresentation account) throws Exception {
+    return vPinManiaService.save(account);
   }
 
   @DeleteMapping("/account")
   public boolean deleteAccount() {
     return vPinManiaService.deleteAccount();
   }
-
-  @Nullable
-  private ManiaAccountRepresentation toAccountRepresentation(@Nullable ManiaAccount account) {
-    if (account != null) {
-      ManiaAccountRepresentation accountRepresentation = new ManiaAccountRepresentation();
-      accountRepresentation.setCabinetId(account.getCabinetId());
-      accountRepresentation.setDisplayName(account.getDisplayName());
-      accountRepresentation.setInitials(account.getInitials());
-      return accountRepresentation;
-    }
-    return null;
-  }
-
 }
