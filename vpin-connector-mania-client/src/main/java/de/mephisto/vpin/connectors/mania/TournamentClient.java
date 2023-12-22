@@ -1,10 +1,14 @@
 package de.mephisto.vpin.connectors.mania;
 
+import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.mania.ManiaTournamentRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class TournamentClient extends VPinManiaClientService {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentClient.class);
@@ -45,6 +49,15 @@ public class TournamentClient extends VPinManiaClientService {
     } catch (HttpClientErrorException e) {
       LOG.error("Tournament deletion failed: " + e.getMessage());
       throw new ResponseStatusException(e.getStatusCode(), "Tournament deletion failed: " + e.getMessage());
+    }
+  }
+
+  public List<ManiaTournamentRepresentation> findTournaments(String test) {
+    try {
+       return Arrays.asList(getRestClient().get(API + "tournament/find/" + test, ManiaTournamentRepresentation[].class));
+    } catch (HttpClientErrorException e) {
+      LOG.error("Tournament search failed: " + e.getMessage());
+      throw new ResponseStatusException(e.getStatusCode(), "Tournament search failed: " + e.getMessage());
     }
   }
 }

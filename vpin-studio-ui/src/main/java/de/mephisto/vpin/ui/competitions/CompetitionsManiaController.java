@@ -160,21 +160,21 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onCompetitionCreate() {
-    client.getDiscordService().clearCache();
-    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
-    if (c != null) {
-      try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
-        Platform.runLater(() -> {
-          Platform.runLater(() -> {
-            onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-          });
-        });
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-    }
+//    client.getDiscordService().clearCache();
+//    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
+//    if (c != null) {
+//      try {
+//        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
+//        Platform.runLater(() -> {
+//          Platform.runLater(() -> {
+//            onReload();
+//            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+//          });
+//        });
+//      } catch (Exception e) {
+//        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+//      }
+//    }
   }
 
   @FXML
@@ -325,32 +325,32 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
-      Platform.runLater(() -> {
-        competitionWidget.setVisible(true);
-        if (competitions.isEmpty()) {
-          competitionWidget.setTop(null);
-        }
-        else {
-          if (competitionWidget.getTop() == null) {
-            competitionWidget.setTop(competitionWidgetRoot);
-          }
-        }
-
-        tableView.setItems(data);
-        tableView.refresh();
-        if (selection != null) {
-          tableView.getSelectionModel().select(selection);
-        }
-        else if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-        else {
-          refreshView(Optional.empty());
-        }
-
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
-      });
+//      Platform.runLater(() -> {
+//        competitionWidget.setVisible(true);
+//        if (competitions.isEmpty()) {
+//          competitionWidget.setTop(null);
+//        }
+//        else {
+//          if (competitionWidget.getTop() == null) {
+//            competitionWidget.setTop(competitionWidgetRoot);
+//          }
+//        }
+//
+//        tableView.setItems(data);
+//        tableView.refresh();
+//        if (selection != null) {
+//          tableView.getSelectionModel().select(selection);
+//        }
+//        else if (!data.isEmpty()) {
+//          tableView.getSelectionModel().select(0);
+//        }
+//        else {
+//          refreshView(Optional.empty());
+//        }
+//
+//        tableStack.getChildren().remove(loadingOverlay);
+//        tableView.setVisible(true);
+//      });
     }).start();
 
   }
@@ -424,23 +424,23 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
       return new SimpleObjectProperty(hBox);
     });
 
-    columnStatus.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      String status = "FINISHED";
-      if (value.getValidationState().getCode() > 0) {
-        status = "INVALID";
-      }
-      else if (value.isActive()) {
-        status = "ACTIVE";
-      }
-      else if (value.isPlanned()) {
-        status = "PLANNED";
-      }
-
-      Label label = new Label(status);
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
-    });
+//    columnStatus.setCellValueFactory(cellData -> {
+//      CompetitionRepresentation value = cellData.getValue().getValue();
+//      String status = "FINISHED";
+//      if (value.getValidationState().getCode() > 0) {
+//        status = "INVALID";
+//      }
+//      else if (value.isActive()) {
+//        status = "ACTIVE";
+//      }
+//      else if (value.isPlanned()) {
+//        status = "PLANNED";
+//      }
+//
+//      Label label = new Label(status);
+//      label.setStyle(getLabelCss(value));
+//      return new SimpleObjectProperty(label);
+//    });
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue().getValue();
@@ -490,11 +490,11 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   private void bindSearchField() {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-      refreshView(Optional.empty());
-
-      filterCompetitions(this.competitions);
-      tableView.setItems(data);
+//      tableView.getSelectionModel().clearSelection();
+//      refreshView(Optional.empty());
+//
+//      filterCompetitions(this.competitions);
+//      tableView.setItems(data);
     });
   }
 

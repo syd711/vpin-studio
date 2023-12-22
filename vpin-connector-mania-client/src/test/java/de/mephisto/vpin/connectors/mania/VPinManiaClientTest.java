@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.mania.ManiaTournamentRepresentation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,5 +70,17 @@ public class VPinManiaClientTest {
 
     written = client.getTournamentClient().getTournament(tournamentUuid);
     assertNotNull(written);
+
+    List<ManiaTournamentRepresentation> test = client.getTournamentClient().findTournaments("test");
+    assertFalse(test.isEmpty());
+
+    ManiaTournamentRepresentation t = test.get(0);
+    assertNotNull(t.getDisplayName());
+    assertNotNull(t.getEndDate());
+    assertNotNull(t.getStartDate());
+    assertNotNull(t.getTournamentRuleSet());
+    assertNotNull(t.getTournamentMode());
+    assertNotNull(t.getUuid());
+    assertNotNull(t.getOwnerUuid());
   }
 }
