@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
@@ -10,7 +11,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;

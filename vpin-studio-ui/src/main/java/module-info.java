@@ -30,6 +30,7 @@ module de.mephisto.vpin.ui {
 
   requires de.mephisto.vpin.connectors.discord;
   requires de.mephisto.vpin.connectors.vps;
+  requires de.mephisto.vpin.connectors.mania;
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
   requires de.mephisto.vpin.connectors.assets;

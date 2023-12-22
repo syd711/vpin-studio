@@ -36,6 +36,13 @@ jobs:
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -54,6 +61,10 @@ jobs:
       - name: Run maven build for popper client
         working-directory: ./vpin-studio-popper-client
         run: mvn clean install
+
+      - name: Run maven build for vpin mania rest client
+        working-directory: ./vpin-mania-rest-client
+        run: mvn clean install -DskipTests
 
       - name: Cache local Maven repository
         uses: actions/cache@v2

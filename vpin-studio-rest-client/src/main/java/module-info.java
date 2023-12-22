@@ -7,6 +7,7 @@ open module de.mephisto.vpin.restclient {
   requires org.apache.commons.io;
 
   requires de.mephisto.vpin.connectors.assets;
+  requires de.mephisto.vpin.connectors.mania;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;
@@ -37,5 +38,4 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.dmd;
   exports de.mephisto.vpin.restclient.components;
   exports de.mephisto.vpin.restclient.cards;
-  exports de.mephisto.vpin.restclient.mania;
 }

@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.mania;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;

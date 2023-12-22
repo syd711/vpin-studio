@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;

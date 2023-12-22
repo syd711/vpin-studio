@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

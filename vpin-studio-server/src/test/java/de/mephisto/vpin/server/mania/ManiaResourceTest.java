@@ -1,8 +1,7 @@
 package de.mephisto.vpin.server.mania;
 
-import de.mephisto.vpin.restclient.mania.ManiaAccountRepresentation;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.popper.PopperResource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
