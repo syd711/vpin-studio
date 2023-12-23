@@ -1,5 +1,9 @@
 ## Release Notes
 
+### Changes
+
+- Moved "Analytics" section into "Tables" section tab "Table Statistics". The view doesn't have to be this prominent, that's why it has been moved.
+- Added copy buttons for VPS table URLs (needed later on).
 
 ### Bugfixes
 

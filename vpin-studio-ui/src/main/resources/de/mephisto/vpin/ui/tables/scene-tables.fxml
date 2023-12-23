@@ -26,15 +26,23 @@
                                       <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                   </content>
                                   <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="12" text="" />
+                                      <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="16" text="" />
                                   </graphic>
                               </Tab>
+                        <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
+                           <content>
+                              <BorderPane />
+                           </content>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="16" text="" />
+                           </graphic>
+                        </Tab>
                               <Tab fx:id="tableRepositoryTab" text="Table Repository">
                                   <content>
                                       <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                   </content>
                                   <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" />
+                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="16" />
                                   </graphic>
                               </Tab>
                           </tabs>

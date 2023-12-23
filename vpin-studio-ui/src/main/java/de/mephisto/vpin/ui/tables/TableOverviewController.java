@@ -194,7 +194,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
-          desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + selectedItems.getExtTableId() + "/"));
+          desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
         } catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }

@@ -70,6 +70,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.editors to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.editors.dialogs;
   opens de.mephisto.vpin.ui.tables.editors.dialogs to javafx.fxml;
-  exports de.mephisto.vpin.ui.alx;
-  opens de.mephisto.vpin.ui.alx to javafx.fxml;
+  exports de.mephisto.vpin.ui.tables.alx;
+  opens de.mephisto.vpin.ui.tables.alx to javafx.fxml;
 }

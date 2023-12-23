@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.alx;
+package de.mephisto.vpin.ui.tables.alx;
 
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;

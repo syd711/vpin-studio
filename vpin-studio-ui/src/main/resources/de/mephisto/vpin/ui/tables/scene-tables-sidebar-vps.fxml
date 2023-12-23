@@ -12,6 +12,7 @@
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -150,13 +151,24 @@
                                        </font>
                                     </Label>
                                     <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <HBox GridPane.columnIndex="1">
+                                    <HBox spacing="6.0" GridPane.columnIndex="1">
                                        <children>
                                           <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="Enter Table Name...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
+                                          <Button fx:id="copyTableBtn" layoutX="406.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCopyTable">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Copy VPS Table URL" />
+                                             </tooltip>
+                                          </Button>
                                           <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
@@ -165,7 +177,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <HBox.margin>
-                                                <Insets left="4.0" top="1.0" />
+                                                <Insets />
                                              </HBox.margin>
                                           </Button>
                                        </children>
@@ -175,18 +187,29 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <HBox GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <children>
                                           <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
+                                          <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Copy VPS Table Version URL" />
+                                             </tooltip>
+                                          </Button>
                                           <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                              <HBox.margin>
-                                                <Insets left="4.0" />
+                                                <Insets />
                                              </HBox.margin>
                                           </Button>
                                        </children>
@@ -209,7 +232,7 @@
                                           <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                        </graphic>
                                        <GridPane.margin>
-                                          <Insets right="47.0" />
+                                          <Insets right="90.0" />
                                        </GridPane.margin>
                                     </Label>
                                  </children>

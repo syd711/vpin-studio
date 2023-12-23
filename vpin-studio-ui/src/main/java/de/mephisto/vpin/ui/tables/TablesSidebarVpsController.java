@@ -24,18 +24,26 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.text.Position;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -88,6 +96,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openBtn;
 
   @FXML
+  private Button copyTableBtn;
+
+  @FXML
+  private Button copyTableVersionBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -121,6 +135,36 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   @FXML
+  private void onCopyTable() {
+    if (!this.game.isEmpty()) {
+      Clipboard clipboard = Clipboard.getSystemClipboard();
+      ClipboardContent content = new ClipboardContent();
+      String vpsTableUrl = VPS.getVpsTableUrl(this.game.get().getExtTableId());
+      content.putString(vpsTableUrl);
+      clipboard.setContent(content);
+
+//      Notifications.create()
+//        .darkStyle()
+//        .position(Pos.BOTTOM_LEFT)
+//        .title("Copied VPS Table URL " + vpsTableUrl)
+////        .graphic(new Rectangle(600, 400, Color.GREEN))
+//        .hideAfter(Duration.seconds(3))
+//        .show();
+    }
+  }
+
+  @FXML
+  private void onCopyTableVersion() {
+    if (!this.game.isEmpty()) {
+      Clipboard clipboard = Clipboard.getSystemClipboard();
+      ClipboardContent content = new ClipboardContent();
+      content.putString(VPS.getVpsTableUrl(this.game.get().getExtTableId(), this.game.get().getExtTableVersionId()));
+      clipboard.setContent(content);
+    }
+  }
+
+
+  @FXML
   private void onAutoFill() {
     Dialogs.createProgressDialog(new TableVpsDataAutoFillProgressModel(Arrays.asList(this.game.get()), true));
     EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -151,7 +195,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
-        desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + game.get().getExtTableId() + "/"));
+        desktop.browse(new URI(VPS.getVpsTableUrl(game.get().getExtTableId())));
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
         ipdbLink.setDisable(true);
@@ -228,6 +272,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openBtn.setDisable(true);
+    copyTableBtn.setDisable(true);
+    copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(g.isEmpty());
 
     if (g.isPresent()) {
@@ -247,6 +293,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       }
 
       openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
 
       if (!StringUtils.isEmpty(game.getExtTableId())) {
         VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());
@@ -395,6 +442,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
     openTableBtn.setDisable(true);
+    copyTableBtn.setDisable(true);
+    copyTableVersionBtn.setDisable(true);
 
     filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
 
@@ -405,6 +454,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+      copyTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
       featureBox.getChildren().removeAll(featureBox.getChildren());
       if (newValue != null) {
         List<String> features = newValue.getFeatures();

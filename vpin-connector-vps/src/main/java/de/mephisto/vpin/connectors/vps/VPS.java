@@ -52,6 +52,18 @@ public class VPS {
     return null;
   }
 
+  public static String getVpsTableUrl(String tableId, String versionId) {
+    String url = "https://virtual-pinball-spreadsheet.web.app/game/" + tableId;
+    if (versionId != null) {
+      url += "#" + versionId;
+    }
+    return url;
+  }
+
+  public static String getVpsTableUrl(String tableId) {
+    return "https://virtual-pinball-spreadsheet.web.app/game/" + tableId;
+  }
+
   public static VPS getInstance() {
     if (instance == null) {
       instance = new VPS();
@@ -263,7 +275,7 @@ public class VPS {
       VpsTable oldTable = old.getTableById(table.getId());
       if (oldTable != null && table.getUpdatedAt() != oldTable.getUpdatedAt()) {
         VpsTableDiff tableDiff = new VpsTableDiff(table, oldTable);
-        if(!tableDiff.getDifferences().isEmpty()) {
+        if (!tableDiff.getDifferences().isEmpty()) {
           diff.add(tableDiff);
         }
       }

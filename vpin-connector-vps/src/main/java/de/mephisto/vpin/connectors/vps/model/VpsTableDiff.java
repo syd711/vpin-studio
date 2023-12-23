@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import de.mephisto.vpin.connectors.vps.VPS;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +26,7 @@ public class VpsTableDiff {
   }
 
   public String getGameLink() {
-    return "https://virtual-pinball-spreadsheet.web.app/game/" + this.getId();
+    return VPS.getVpsTableUrl(this.getId());
   }
 
   public Date getLastModified() {

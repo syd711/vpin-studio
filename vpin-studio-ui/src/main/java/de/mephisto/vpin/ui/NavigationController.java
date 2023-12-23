@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.alx.AlxController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
@@ -113,11 +112,6 @@ public class NavigationController implements Initializable, StudioEventListener 
   @FXML
   private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
-  }
-
-  @FXML
-  private void onAlxClick(MouseEvent event) throws IOException {
-    loadScreen(event, AlxController.class, "scene-alx.fxml");
   }
 
   @FXML
