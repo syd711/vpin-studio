@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
-import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,13 +81,13 @@ public class VPS {
     return tables;
   }
 
-  public VpsTableFile findVersion(VpsTable table, String tableFileName, String tableName, String version) {
-    List<VpsTableFile> tableFiles = table.getTableFiles();
+  public VpsTableVersion findVersion(VpsTable table, String tableFileName, String tableName, String version) {
+    List<VpsTableVersion> tableFiles = table.getTableFiles();
     if (tableFiles.size() == 1) {
       return tableFiles.get(0);
     }
 
-    for (VpsTableFile tableFile : tableFiles) {
+    for (VpsTableVersion tableFile : tableFiles) {
       if (version != null && tableFile.toString().toLowerCase().contains(version.toLowerCase())) {
         return tableFile;
       }

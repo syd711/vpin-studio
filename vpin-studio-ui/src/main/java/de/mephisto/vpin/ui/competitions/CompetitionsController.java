@@ -145,12 +145,18 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
     }
     else if (t1.intValue() == 2) {
-      if (tableSubscriptionsController != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "VPin Mania Tournaments"));
-        Optional<CompetitionRepresentation> selection = maniaController.getSelection();
-        updateSelection(selection);
-        maniaController.onReload();
-      }
+//      if (tableSubscriptionsController != null) {
+//        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "VPin Mania Tournaments"));
+//        Optional<CompetitionsManiaController.TournamentTreeModel> selection = maniaController.getSelection();
+//        if(selection.isPresent()) {
+//          updateSelection(Optional.of(selection.get().getCompetitionRepresentation()));
+//        }
+//        else {
+//          updateSelection(Optional.empty());
+//        }
+//
+//        maniaController.onReload();
+//      }
     }
     else if (t1.intValue() == 3) {
       if (tableSubscriptionsController != null) {

@@ -76,7 +76,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Label updatedLabel;
 
   @FXML
-  private ComboBox<VpsTableFile> tablesCombo;
+  private ComboBox<VpsTableVersion> tablesCombo;
 
   @FXML
   private HBox featureBox;
@@ -165,7 +165,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
-        VpsTableFile value = this.tablesCombo.getValue();
+        VpsTableVersion value = this.tablesCombo.getValue();
         VpsUrl vpsUrl = value.getUrls().get(0);
         desktop.browse(new URI(vpsUrl.getUrl()));
       } catch (Exception e) {
@@ -253,7 +253,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (tableById != null) {
           refreshTableView(tableById);
           if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-            VpsTableFile version = tableById.getVersion(game.getExtTableVersionId());
+            VpsTableVersion version = tableById.getVersion(game.getExtTableVersionId());
             if (version != null) {
               tablesCombo.setValue(version);
             }
@@ -264,13 +264,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   private void refreshTableView(VpsTable vpsTable) {
-    List<VpsTableFile> tableFiles = vpsTable.getTableFilesForFormat(VpsFeatures.VPX);
+    List<VpsTableVersion> tableFiles = vpsTable.getTableFilesForFormat(VpsFeatures.VPX);
     if (tableFiles != null && !tableFiles.isEmpty()) {
       tablesCombo.setItems(FXCollections.observableList(tableFiles));
       String extTableVersionId = game.get().getExtTableVersionId();
 
       if (!StringUtils.isEmpty(extTableVersionId)) {
-        for (VpsTableFile tableFile : tableFiles) {
+        for (VpsTableVersion tableFile : tableFiles) {
           if (tableFile.getId().equals(extTableVersionId)) {
             tablesCombo.setValue(tableFile);
             break;

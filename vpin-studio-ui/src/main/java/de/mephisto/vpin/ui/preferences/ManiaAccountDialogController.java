@@ -19,6 +19,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.mephisto.vpin.ui.Studio.maniaClient;
+
 public class ManiaAccountDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountDialogController.class);
 
@@ -41,7 +43,13 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
     account.setInitials(initialsText.getText());
 
     try {
-      Studio.client.getManiaService().saveAccount(this.account);
+      ManiaAccountRepresentation existingAccount = maniaClient.getAccountClient().getAccount();
+      if(existingAccount == null) {
+        maniaClient.getAccountClient().register(this.account);
+      }
+      else {
+        maniaClient.getAccountClient().update(this.account);
+      }
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save account: " + ex.getMessage());
     } finally {

@@ -19,8 +19,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class ManiaAccountPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountPreferencesController.class);
@@ -69,7 +68,7 @@ public class ManiaAccountPreferencesController implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete your VPin-Mania account?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
-        client.getManiaService().deleteAccount();
+        maniaClient.getAccountClient().deleteAccount();
       } catch (Exception e) {
         WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
       }
@@ -87,7 +86,7 @@ public class ManiaAccountPreferencesController implements Initializable {
   }
 
   private void refreshView() {
-    account = Studio.client.getManiaService().getAccount();
+    account = maniaClient.getAccountClient().getAccount();
     accountPanel.setVisible(account != null);
     registrationPanel.setVisible(account == null);
 

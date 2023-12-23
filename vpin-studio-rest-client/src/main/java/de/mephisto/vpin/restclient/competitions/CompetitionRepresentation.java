@@ -288,14 +288,14 @@ public class CompetitionRepresentation {
     return (int) Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
   }
 
+  public boolean isFinished() {
+    return !StringUtils.isEmpty(this.getWinnerInitials());
+  }
+
   public boolean isOverlappingWith(Date startSelection, Date endSelection) {
     boolean startOverlap = getStartDate().before(endSelection);
     boolean endOverlap = startSelection.before(this.getEndDate());
     return startOverlap && endOverlap;
-  }
-
-  public boolean isFinished() {
-    return !StringUtils.isEmpty(this.getWinnerInitials());
   }
 
   @Override

@@ -381,5 +381,4 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public void clearWheelCache() {
     getImageCache().clearWheelCache();
   }
-
 }

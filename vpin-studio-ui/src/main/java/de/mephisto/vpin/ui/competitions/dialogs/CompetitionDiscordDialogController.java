@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -428,8 +428,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       vpsLinkField.setText("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/");
 
       if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-        List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
-        Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+        List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
+        Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
         if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
           downloadLinkField.setText(tableVersion.get().getUrls().get(0).getUrl());
         }

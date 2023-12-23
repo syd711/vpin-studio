@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -48,6 +49,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private CompetitionValidator campaignValidationService;
+
+  @Autowired
+  private ManiaService maniaService;
 
   private final List<CompetitionChangeListener> listeners = new ArrayList<>();
 
@@ -91,6 +95,13 @@ public class CompetitionService implements InitializingBean {
         .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
         .stream().map(c -> campaignValidationService.validate(c))
         .collect(Collectors.toList());
+  }
+
+  public List<Competition> getManiaCompetitions() {
+    return competitionsRepository
+      .findByTypeOrderByEndDateDesc(CompetitionType.MANIA.name())
+      .stream().map(c -> campaignValidationService.validate(c))
+      .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions() {

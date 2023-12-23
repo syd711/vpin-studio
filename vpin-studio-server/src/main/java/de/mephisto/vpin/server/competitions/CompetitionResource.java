@@ -29,6 +29,11 @@ public class CompetitionResource {
     return competitionService.getDiscordCompetitions();
   }
 
+  @GetMapping("/mania")
+  public List<Competition> getManiaCompetitions() {
+    return competitionService.getManiaCompetitions();
+  }
+
   @GetMapping("/subscriptions")
   public List<Competition> getSubscriptions() {
     return competitionService.getSubscriptions();

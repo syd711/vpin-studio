@@ -84,15 +84,15 @@ public class VpsTableDiff {
     return differences;
   }
 
-  private VpsDiffTypes diffTables(List<VpsTableFile> oldFiles, List<VpsTableFile> newFiles) {
+  private VpsDiffTypes diffTables(List<VpsTableVersion> oldFiles, List<VpsTableVersion> newFiles) {
     if (oldFiles != null && newFiles == null) {
       return VpsDiffTypes.tables;
     }
 
-    for (VpsTableFile newTable : newFiles) {
-      Optional<VpsTableFile> first = oldFiles.stream().filter(t -> t.getId().equals(newTable.getId())).findFirst();
+    for (VpsTableVersion newTable : newFiles) {
+      Optional<VpsTableVersion> first = oldFiles.stream().filter(t -> t.getId().equals(newTable.getId())).findFirst();
       if (first.isPresent()) {
-        VpsTableFile vpsTableFile = first.get();
+        VpsTableVersion vpsTableFile = first.get();
         if (!String.valueOf(vpsTableFile.getVersion()).equals(newTable.getVersion())) {
           return VpsDiffTypes.tableNewVersion;
         }

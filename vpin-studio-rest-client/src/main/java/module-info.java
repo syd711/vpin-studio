@@ -8,6 +8,7 @@ open module de.mephisto.vpin.restclient {
 
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.mania;
+  requires de.mephisto.vpin.connectors.vps;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;

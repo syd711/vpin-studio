@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mania;
 
+import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +14,8 @@ public class ManiaResource {
   @Autowired
   private ManiaService vPinManiaService;
 
-  @GetMapping("/account")
-  public ManiaAccountRepresentation getAccount() {
-    return vPinManiaService.getAccount();
-  }
-
-  @PostMapping("/account/save")
-  public ManiaAccountRepresentation save(@RequestBody ManiaAccountRepresentation account) throws Exception {
-    return vPinManiaService.save(account);
-  }
-
-  @DeleteMapping("/account")
-  public boolean deleteAccount() {
-    return vPinManiaService.deleteAccount();
+  @GetMapping("/config")
+  public ManiaServiceConfig getConfig() {
+    return vPinManiaService.getConfig();
   }
 }

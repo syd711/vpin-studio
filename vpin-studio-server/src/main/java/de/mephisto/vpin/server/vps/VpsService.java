@@ -4,13 +4,12 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsChangeListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
-import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -66,7 +65,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           tableVersion = tableInfo.getTableVersion();
         }
 
-        VpsTableFile version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
+        VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
         if (version != null) {
           if (StringUtils.isEmpty(game.getExtTableVersionId()) || overwrite) {
             saveExternalTableVersionId(game, version.getId());
@@ -94,7 +93,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       return;
     }
 
-    VpsTableFile tableVersion = getVpsVersion(game);
+    VpsTableVersion tableVersion = getVpsVersion(game);
     if (tableVersion == null) {
       return;
     }
@@ -130,7 +129,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
     game.setUpdateAvailable(true);
   }
 
-  private VpsTableFile getVpsVersion(@NonNull Game game) {
+  private VpsTableVersion getVpsVersion(@NonNull Game game) {
     if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
       return null;
     }
@@ -140,7 +139,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       return null;
     }
 
-    VpsTableFile tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+    VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
       return null;
     }
@@ -148,7 +147,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   public String getTableVersion(Game game) {
-    VpsTableFile vpsVersion = getVpsVersion(game);
+    VpsTableVersion vpsVersion = getVpsVersion(game);
     if (vpsVersion != null) {
       return vpsVersion.getVersion();
     }

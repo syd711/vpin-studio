@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class VpsTableFile extends VpsAuthoredUrls {
+public class VpsTableVersion extends VpsAuthoredUrls {
   private String id;
   private String comment;
   private String imgUrl;
@@ -83,9 +83,9 @@ public class VpsTableFile extends VpsAuthoredUrls {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VpsTableFile)) return false;
+    if (!(o instanceof VpsTableVersion)) return false;
 
-    VpsTableFile that = (VpsTableFile) o;
+    VpsTableVersion that = (VpsTableVersion) o;
 
     return Objects.equals(id, that.id);
   }
