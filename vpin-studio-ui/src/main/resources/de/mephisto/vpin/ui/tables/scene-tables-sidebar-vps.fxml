@@ -158,17 +158,6 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="copyTableBtn" layoutX="406.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCopyTable">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
-                                             </graphic>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Copy VPS Table URL" />
-                                             </tooltip>
-                                          </Button>
                                           <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
@@ -180,6 +169,17 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Button>
+                                          <Button fx:id="copyTableBtn" layoutX="406.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCopyTable">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Copy VPS Table URL" />
+                                             </tooltip>
+                                          </Button>
                                        </children>
                                     </HBox>
                                     <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
@@ -190,17 +190,6 @@
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <children>
                                           <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
-                                          <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
-                                             </graphic>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Copy VPS Table Version URL" />
-                                             </tooltip>
-                                          </Button>
                                           <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
@@ -211,6 +200,17 @@
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Copy VPS Table Version URL" />
+                                             </tooltip>
                                           </Button>
                                        </children>
                                     </HBox>
