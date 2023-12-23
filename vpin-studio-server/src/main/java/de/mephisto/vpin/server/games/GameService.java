@@ -512,6 +512,11 @@ public class GameService implements InitializingBean {
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     gameDetails.setExtTableId(game.getExtTableId());
     gameDetails.setExtTableVersionId(game.getExtTableVersionId());
+
+    if(game.getUpdates() != null) {
+      gameDetails.setUpdates(String.join(",", game.getUpdates()));
+    }
+
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());

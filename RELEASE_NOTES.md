@@ -4,10 +4,11 @@
 
 - Moved "Analytics" section into "Tables" section tab "Table Statistics". The view doesn't have to be this prominent, that's why it has been moved.
 - Added copy buttons for VPS table URLs (needed later on).
-- Colorized version update icons.
-- Replaced transient VPS table update notification with a persisted state. The update indicator for this is a new column in the table overview. If you are not interested in these updates, you can hide the column in the UI preferences.
+- Replaced update indicator icons with a colorized version.
+- Uploaded tables are now immediately mapped against VPS.
+- Replaced transient VPS table update notification with a persisted state. The update indicator for this is a new column in the table overview. If you are not interested in these updates, you can hide the column in the UI preferences. The update indicator can be resetted from the toolbar button.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/update-column.png?raw=true" width="600" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/update-colum.png?raw=true" width="600" />
 
 
 

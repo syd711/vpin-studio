@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -53,7 +52,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -171,6 +169,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button vpsBtn;
 
   @FXML
+  private Button vpsResetBtn;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
@@ -206,6 +207,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
+    }
+  }
+
+  @FXML
+  private void onVpsReset() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    try {
+      List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList());
+      for (GameRepresentation gameRepresentation : collect) {
+        gameRepresentation.setUpdates(Collections.emptyList());
+        client.getGameService().saveGame(gameRepresentation);
+        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
     }
   }
 
@@ -540,6 +556,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
     this.vpsBtn.setDisable(true);
+    this.vpsResetBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -705,7 +722,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           label.setGraphic(updateIcon);
 
           List<String> collect = value.getUpdates().stream().map(update -> "- " + VpsDiffTypes.valueOf(update)).collect(Collectors.toList());
-          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect);
+          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect) + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
           Tooltip tt = new Tooltip(tooltip);
           tt.setWrapText(true);
           tt.setMaxWidth(400);
@@ -814,6 +831,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           else if (column.equals(columnB2S)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnVPS)) {
+            Collections.sort(tableView.getItems(), (o1, o2) -> {
+              if (o1.getUpdates() == null || o1.getUpdates().isEmpty()) {
+                return -1;
+              }
+              return 1;
+            });
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -1031,6 +1060,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validationError.setVisible(c.getList().size() != 1);
 
     vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
+    vpsResetBtn.setDisable(c.getList().stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());
@@ -1114,6 +1144,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsBtn.setGraphic(view);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setFitWidth(18);
+    view2.setFitHeight(18);
+    vpsResetBtn.setGraphic(view2);
 
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
