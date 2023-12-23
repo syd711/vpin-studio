@@ -72,11 +72,20 @@ public class WidgetFactory {
     return fontIcon;
   }
 
-  public static FontIcon createUpdateIcon() {
+  public static FontIcon createUpdateStar() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(14);
     fontIcon.setIconColor(Paint.valueOf("#FF9933"));
     fontIcon.setIconLiteral("mdi2f-flare");
+    return fontIcon;
+  }
+
+
+  public static FontIcon createUpdateIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     return fontIcon;
   }
 

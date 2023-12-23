@@ -1,9 +1,11 @@
 package de.mephisto.vpin.restclient.tables;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.popper.EmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +54,15 @@ public class GameRepresentation {
   private String extTableVersionId;
   private String extVersion;
   private int emulatorId;
+  private List<String> updates;
+
+  public List<String> getUpdates() {
+    return updates;
+  }
+
+  public void setUpdates(List<String> updates) {
+    this.updates = updates;
+  }
 
   public String getExtVersion() {
     return extVersion;

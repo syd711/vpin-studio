@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -33,10 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -469,6 +468,18 @@ public class GameService implements InitializingBean {
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
+
+    //VPS Stuff
+    String updates = gameDetails.getUpdates();
+    if(updates != null) {
+      String[] split = updates.split(",");
+      List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
+      game.setUpdates(collect);
+    }
+    else {
+      game.setUpdates(Collections.emptyList());
+    }
+
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);

@@ -240,11 +240,9 @@ public class VPS {
 
       if (!diff.isEmpty()) {
         LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
-        new Thread(() -> {
-          for (VpsChangeListener listener : listeners) {
-            listener.vpsSheetChanged(diff);
-          }
-        }).start();
+        for (VpsChangeListener listener : listeners) {
+          listener.vpsSheetChanged(diff);
+        }
       }
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());

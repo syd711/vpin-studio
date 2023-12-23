@@ -5,12 +5,11 @@ import de.mephisto.vpin.connectors.vps.VpsChangeListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameDetails;
+import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -28,7 +27,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +43,9 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   @Autowired
   private JobService jobService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
 
   public VpsService() {
   }
@@ -190,15 +191,19 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
     List<Game> knownGames = gameService.getKnownGames();
 
     for (VpsTableDiff tableDiff : diff) {
-      Optional<Game> first = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).findFirst();
-      if (first.isPresent()) {
-        Game game = first.get();
-        String title = "Table \"" + game.getGameDisplayName() + "\" got updated\n";
-        String value = String.join("", tableDiff.getDifferences().stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
-        JobExecutionResult message = JobExecutionResultFactory.ok(title + value, game.getId());
-        message.setImgUrl(tableDiff.getImgUrl());
-        message.setExternalUrl(tableDiff.getGameLink());
-        jobService.addResult(message);
+      try {
+        List<Game> collect = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
+        for (Game game : collect) {
+          LOG.info("Updating update list for \"" + game.getGameDisplayName() + "\"");
+          GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+          if (gameDetails != null) {
+            String value = tableDiff.getDifferences().stream().map(Enum::name).collect(Collectors.joining(","));
+            gameDetails.setUpdates(value);
+            gameDetailsRepository.saveAndFlush(gameDetails);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
       }
     }
   }

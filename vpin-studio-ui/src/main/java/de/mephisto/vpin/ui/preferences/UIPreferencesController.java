@@ -45,6 +45,9 @@ public class UIPreferencesController implements Initializable {
   @FXML
   private CheckBox uiShowVersion;
 
+  @FXML
+  private CheckBox uiHideVPSUpdates;
+
   private Tile avatar;
 
   @FXML
@@ -89,6 +92,19 @@ public class UIPreferencesController implements Initializable {
       }
       else if (!values.contains(PreferenceNames.UI_HIDE_VERSIONS)) {
         values.add(PreferenceNames.UI_HIDE_VERSIONS);
+      }
+      PreferencesController.markDirty();
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+    });
+
+
+    uiHideVPSUpdates.setSelected(values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
+    uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (!t1) {
+        values.remove(PreferenceNames.UI_HIDE_VPS_UPDATES);
+      }
+      else if (!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES)) {
+        values.add(PreferenceNames.UI_HIDE_VPS_UPDATES);
       }
       PreferencesController.markDirty();
       client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));

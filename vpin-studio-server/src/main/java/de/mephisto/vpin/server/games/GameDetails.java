@@ -32,6 +32,9 @@ public class GameDetails {
   @Column(length = 4096)
   public String assets;
 
+  @Column(length = 1024)
+  public String updates;
+
   private String romName;
 
   private String tableName;
@@ -47,6 +50,14 @@ public class GameDetails {
   private int pupId;
 
   private int nvOffset;
+
+  public String getUpdates() {
+    return updates;
+  }
+
+  public void setUpdates(String updates) {
+    this.updates = updates;
+  }
 
   public String getExtTableId() {
     return extTableId;

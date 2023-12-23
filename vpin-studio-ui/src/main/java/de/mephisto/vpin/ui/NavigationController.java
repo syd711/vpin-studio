@@ -47,7 +47,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class NavigationController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
-  private final static FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+  private final static FontIcon updateIcon = WidgetFactory.createUpdateStar();
 
   @FXML
   private BorderPane avatarPane;

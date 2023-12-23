@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -51,6 +53,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -64,6 +67,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -78,6 +82,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnVersion;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnVPS;
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnRom;
@@ -516,6 +523,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
     List<String> values = preference.getCSVValue();
     this.showVersionUpdates = !values.contains(PreferenceNames.UI_HIDE_VERSIONS);
+    this.columnVPS.setVisible(!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
 
     refreshPlaylists();
 
@@ -631,13 +639,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
-        FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
           "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
-        Tooltip.install(icon, tt);
-        label.setGraphic(icon);
+        label.setTooltip(tt);
+        label.setGraphic(updateIcon);
       }
       return new SimpleObjectProperty(label);
     });
@@ -683,6 +691,30 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnVPS.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      try {
+        if (!value.getUpdates().isEmpty()) {
+          FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+
+          Label label = new Label();
+          label.setGraphic(updateIcon);
+
+          List<String> collect = value.getUpdates().stream().map(update -> "- " + VpsDiffTypes.valueOf(update)).collect(Collectors.toList());
+          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect);
+          Tooltip tt = new Tooltip(tooltip);
+          tt.setWrapText(true);
+          tt.setMaxWidth(400);
+          label.setTooltip(tt);
+
+          return new SimpleObjectProperty(label);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to render VPS update: " + e.getMessage());
       }
       return new SimpleStringProperty("");
     });

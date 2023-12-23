@@ -26,6 +26,7 @@ public interface PreferenceNames {
 
   String UI_SETTINGS = "uiSettings";
   String UI_HIDE_VERSIONS = "hideVersions";
+  String UI_HIDE_VPS_UPDATES = "uiHideVPSUpdates";
 
   String UI_DO_NOT_SHOW_AGAINS = "doNotShowAgains";
   String UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING = "componentsWarning";

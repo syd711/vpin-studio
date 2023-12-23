@@ -124,7 +124,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
         tablesSideBarController.setVisible(true);
         repositorySideBarController.setVisible(false);
         tableOverviewController.initSelection();
-        root.setRight(sidePanelRoot);
+        if(sidePanelRoot != null) {
+          root.setRight(sidePanelRoot);
+        }
 
       }
       else if (t1.intValue() == 1) {
@@ -141,7 +143,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
         tablesSideBarController.setVisible(false);
         repositorySideBarController.setVisible(true);
         repositoryController.initSelection();
-        root.setRight(sidePanelRoot);
+        if(sidePanelRoot != null) {
+          root.setRight(sidePanelRoot);
+        }
       }
     });
   }
