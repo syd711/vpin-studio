@@ -573,19 +573,42 @@
     -fx-background-color: #6666FFAA;
 }
 
-.custom-cell > .check-box {
-    -fx-text-background-color: #FFFFFF;
-}
-.custom-cell > .check-box:selected {
-    -fx-text-background-color: #FFFFFF;
-}
 
-.custom-cell > .check-box:selected .mark {
-    -fx-text-background-color: #111111;
-}
+/**
+ * TreeTable View
+ */
 
-.custom-cell > .check-box .box {
-    -fx-background-color: #FFFFFFEE;
+.tree-table-view {
+    -fx-font-size : 14px;
+    -fx-text-fill: white;
+    -fx-text-background-color: #FFFFFF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+}
+.tree-table-row-cell {
+    -fx-cell-size: 40px;
+    -fx-border-width: 1;
+}
+.tree-table-view .table-cell{
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+}
+.tree-table-row-cell: hover {
+    -fx-border-width: 1;
+    -fx-background-color: #33333311;
+    -fx-text-background-color: #6666FF;
+}
+.tree-table-row-cell: odd{
+    -fx-background-color: #93f9b911;
+}
+.tree-table-row-cell: even{
+    -fx-background-color: #1dbbdd11;
+}
+.tree-table-row-cell: selected {
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
 }
 
 /**
