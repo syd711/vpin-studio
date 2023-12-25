@@ -2,13 +2,12 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ public class TabOverviewController implements Initializable {
   @FXML
   private void onVersionRefresh() {
     ComponentChecksProgressModel model = new ComponentChecksProgressModel(true);
-    Dialogs.createProgressDialog(model);
+    ProgressDialog.createProgressDialog(model);
   }
 
   @Override

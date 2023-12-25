@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
@@ -320,7 +319,7 @@ public class TablesSidebarMediaController implements Initializable {
       String screen = id.substring(id.lastIndexOf("_") + 1);
       PopperScreen popperScreen = PopperScreen.valueOf(screen);
 
-      Dialogs.openPopperMediaAdminDialog(game.get(), popperScreen);
+      TableDialogs.openPopperMediaAdminDialog(game.get(), popperScreen);
     }
   }
 
@@ -358,7 +357,7 @@ public class TablesSidebarMediaController implements Initializable {
     GameRepresentation gameRepresentation = game.get();
     GameMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(PopperScreen.valueOf(screen));
     if (defaultMediaItem != null) {
-      Dialogs.openMediaDialog(Studio.client, gameRepresentation, defaultMediaItem);
+      TableDialogs.openMediaDialog(Studio.client, gameRepresentation, defaultMediaItem);
     }
   }
 

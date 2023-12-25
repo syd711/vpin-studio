@@ -13,7 +13,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -112,7 +111,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   @FXML
   private void onCompetitionCreate() {
-    CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, null);
+    CompetitionRepresentation c = CompetitionDialogs.openOfflineCompetitionDialog(this.competitions, null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
@@ -130,7 +129,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, clone);
+      CompetitionRepresentation c = CompetitionDialogs.openOfflineCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
@@ -147,7 +146,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
   private void onEdit() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openOfflineCompetitionDialog(this.competitions, selection);
+      CompetitionRepresentation c = CompetitionDialogs.openOfflineCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);

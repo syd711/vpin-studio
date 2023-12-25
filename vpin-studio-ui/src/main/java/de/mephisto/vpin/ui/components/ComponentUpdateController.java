@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -59,7 +60,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   @FXML
   private void onFetch() {
     ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-", "-latest-");
-    ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
+    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
       textArea.setText(log.toString());
@@ -94,7 +95,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         String release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
         ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release, artifact);
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
           ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
@@ -128,7 +129,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         String release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
         ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release, artifact);
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(model);
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
         textArea.setText(log.toString());

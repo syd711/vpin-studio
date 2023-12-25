@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -64,7 +64,7 @@ public class AltSoundUploadController implements Initializable, DialogController
 
       Platform.runLater(() -> {
         AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(tablesSidebarController, this.game.getId(), "ALT Sound Upload", selection, "altsound");
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
       });
     }
   }

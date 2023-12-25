@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -166,18 +167,18 @@ public class RepositoryController implements Initializable, StudioEventListener 
 
       if (client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          Dialogs.openTableInstallationDialog(tablesController, selectedItems);
+          TableDialogs.openTableInstallationDialog(tablesController, selectedItems);
         }
       }
       else {
-        Dialogs.openTableInstallationDialog(tablesController, selectedItems);
+        TableDialogs.openTableInstallationDialog(tablesController, selectedItems);
       }
     }
   }
 
   @FXML
   private void onArchiveAdd() {
-    boolean uploaded = Dialogs.openArchiveUploadDialog();
+    boolean uploaded = TableDialogs.openArchiveUploadDialog();
     if (uploaded) {
       doReload();
     }
@@ -196,10 +197,10 @@ public class RepositoryController implements Initializable, StudioEventListener 
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
-        Dialogs.openVpaArchiveBundleDialog(selectedItems);
+        TableDialogs.openVpaArchiveBundleDialog(selectedItems);
       }
       else {
-        Dialogs.openVpbmArchiveBundleDialog(selectedItems);
+        TableDialogs.openVpbmArchiveBundleDialog(selectedItems);
       }
     }
   }
@@ -208,7 +209,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
   private void onToRepositoryCopy() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Dialogs.openCopyArchiveToRepositoryDialog(selectedItems);
+      TableDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
     }
   }
 

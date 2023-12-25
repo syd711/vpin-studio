@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -63,7 +63,7 @@ public class DMDUploadController implements Initializable, DialogController {
 
       Platform.runLater(() -> {
         DMDUploadProgressModel model = new DMDUploadProgressModel(tablesSidebarController, this.game.getId(), "DMD Bundle Upload", selection, "dmd");
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
       });
     }
   }
@@ -97,7 +97,7 @@ public class DMDUploadController implements Initializable, DialogController {
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = Dialogs.createProgressDialog(new DMDAnalyzeProgressModel("DMD Bundle Analysis", this.selection));
+    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new DMDAnalyzeProgressModel("DMD Bundle Analysis", this.selection));
 
     if (!resultModel.getResults().isEmpty()) {
       result = false;

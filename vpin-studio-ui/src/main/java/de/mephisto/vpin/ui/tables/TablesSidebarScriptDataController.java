@@ -11,10 +11,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -242,7 +239,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       GameRepresentation g = this.game.get();
       String rom = g.getRom();
       String alias = g.getRomAlias();
-      Dialogs.openAliasMappingDialog(g, alias, rom);
+      TableDialogs.openAliasMappingDialog(g, alias, rom);
     }
   }
 
@@ -273,7 +270,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (this.game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan all " + client.getGameService().getGamesCached().size() + " tables?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", client.getGameService().getGamesCached()));
+        ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", client.getGameService().getGamesCached()));
         EventManager.getInstance().notifyTablesChanged();
       }
     }
@@ -282,7 +279,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onScan() {
     if (this.game.isPresent()) {
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
@@ -303,14 +300,14 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void onRomUpload() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        boolean uploaded = Dialogs.openRomUploadDialog();
+        boolean uploaded = TableDialogs.openRomUploadDialog();
         if (uploaded) {
           tablesSidebarController.getTablesController().onReload();
         }
       }
     }
     else {
-      boolean uploaded = Dialogs.openRomUploadDialog();
+      boolean uploaded = TableDialogs.openRomUploadDialog();
       if (uploaded) {
         tablesSidebarController.getTablesController().onReload();
       }
@@ -379,7 +376,7 @@ public class TablesSidebarScriptDataController implements Initializable {
         "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
         if (!resultModel.getResults().isEmpty()) {
           File file = (File) resultModel.getResults().get(0);
           try {

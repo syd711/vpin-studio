@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables.drophandler;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
@@ -42,7 +42,7 @@ public class DirectB2SFileDropEventHandler implements EventHandler<DragEvent> {
             "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }
       else {
-        Dialogs.openDirectB2SUploadDialog(game, filtered.get(0));
+        TableDialogs.openDirectB2SUploadDialog(game, filtered.get(0));
       }
     });
   }

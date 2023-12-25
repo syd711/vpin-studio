@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -213,7 +213,7 @@ public class TablesSidebarPovController implements Initializable {
   @FXML
   private void onPOVUpload() {
     if (game.isPresent()) {
-      Dialogs.openPovUploadDialog(tablesSidebarController, game.get());
+      TableDialogs.openPovUploadDialog(tablesSidebarController, game.get());
     }
   }
 
@@ -247,7 +247,7 @@ public class TablesSidebarPovController implements Initializable {
         }
       }
 
-      ProgressResultModel resultModel = Dialogs.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
+      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
       if (!resultModel.getResults().isEmpty()) {
         EventManager.getInstance().notifyTableChange(g.getId(), null);
       }

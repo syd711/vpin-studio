@@ -10,9 +10,10 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.BindingUtil;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -207,7 +208,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private void onDefaultPictureUpload() {
     GameRepresentation game = tableCombo.getValue();
-    boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(game);
+    boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
     if (uploaded) {
       refreshRawPreview(Optional.of(game));
       onGenerateClick();
@@ -222,7 +223,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
-      Dialogs.createProgressDialog(new HighscoreGeneratorProgressModel(Studio.client, "Generating Highscore Cards"));
+      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(Studio.client, "Generating Highscore Cards"));
     }
   }
 

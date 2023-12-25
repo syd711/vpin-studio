@@ -9,11 +9,10 @@ import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -133,7 +132,7 @@ public class AltSound2EditorController implements Initializable {
   private void onSampleTypes() {
     String value = this.typeFilterCombo.getValue();
     if (value != null) {
-      Dialogs.openAltSound2SampleTypeDialog(altSound, AltSound2SampleType.valueOf(value.toLowerCase()));
+      TableDialogs.openAltSound2SampleTypeDialog(altSound, AltSound2SampleType.valueOf(value.toLowerCase()));
       this.refreshProfiles();
       this.refresh();
     }
@@ -202,13 +201,13 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private void onProfileEdit() {
-    Dialogs.openAltSound2ProfileEditor(altSound, this.profilesCombo.getValue());
+    TableDialogs.openAltSound2ProfileEditor(altSound, this.profilesCombo.getValue());
     refresh();
   }
 
   @FXML
   private void onProfileAdd() {
-    AltSound2DuckingProfile profile = Dialogs.openAltSound2ProfileEditor(altSound, null);
+    AltSound2DuckingProfile profile = TableDialogs.openAltSound2ProfileEditor(altSound, null);
     if (profile != null) {
       altSound.addProfile(profile);
       refreshProfiles();

@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -159,7 +159,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onScanAll() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getGamesCached().size() + " tables?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
+      ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }
@@ -195,7 +195,7 @@ public class TablesSidebarHighscoresController implements Initializable {
           "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
           "You can enter the values for this manually in the \"Script Details\" section.");
       } else {
-        Dialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
+        TableDialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
       }
     }
   }

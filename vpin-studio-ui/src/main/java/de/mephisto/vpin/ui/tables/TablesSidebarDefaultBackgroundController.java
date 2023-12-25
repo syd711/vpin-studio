@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -65,7 +64,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   public void onDefaultBackgroundUpload() {
     if (this.game.isPresent()) {
-      boolean uploaded = Dialogs.openDefaultBackgroundUploadDialog(this.game.get());
+      boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(this.game.get());
       if (uploaded) {
         EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
       }

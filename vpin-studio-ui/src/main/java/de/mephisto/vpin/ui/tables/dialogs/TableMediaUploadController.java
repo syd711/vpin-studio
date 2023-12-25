@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -73,7 +73,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(this.game.getId(),
             "Popper Media Upload", selection, "popperMedia", screenCombo.getValue());
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
       });
     }
   }

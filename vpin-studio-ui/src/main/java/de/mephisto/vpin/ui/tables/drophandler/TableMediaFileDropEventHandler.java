@@ -7,7 +7,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
@@ -62,7 +62,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       else {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
           "Popper Media Upload", filtered, "popperMedia", screen);
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
 
         if (dialogController != null) {
           dialogController.refreshTableMediaView();

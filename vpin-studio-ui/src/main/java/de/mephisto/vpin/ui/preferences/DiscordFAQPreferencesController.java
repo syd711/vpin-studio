@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
@@ -12,17 +11,17 @@ public class DiscordFAQPreferencesController implements Initializable {
 
   @FXML
   private void onBotTutorial() {
-    Dialogs.openBotTutorial();
+    PreferencesDialogs.openBotTutorial();
   }
 
   @FXML
   private void onBotServerIdTutorial() {
-    Dialogs.openBotServerIdTutorial();
+    PreferencesDialogs.openBotServerIdTutorial();
   }
 
   @FXML
   private void onBotTokenTutorial() {
-    Dialogs.openBotTokenTutorial();
+    PreferencesDialogs.openBotTokenTutorial();
   }
 
 

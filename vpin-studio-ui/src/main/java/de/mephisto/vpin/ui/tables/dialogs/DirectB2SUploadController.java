@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,7 +55,7 @@ public class DirectB2SUploadController implements Initializable, DialogControlle
       try {
         uploadTypeGeneratorSelectedLast = false;
         DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(this.game.getId(), "DirectB2S Upload", selection, "table");
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Uploading directb2s failed.", "Please check the log file for details.", "Error: " + e.getMessage());

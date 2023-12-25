@@ -20,10 +20,7 @@ import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -192,7 +189,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
-    Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
+    TableDialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
   }
 
   @FXML
@@ -231,18 +228,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          Dialogs.openTableDataDialog(selectedItems);
+          TableDialogs.openTableDataDialog(selectedItems);
         }
         return;
       }
-      Dialogs.openTableDataDialog(selectedItems);
+      TableDialogs.openTableDataDialog(selectedItems);
     }
   }
 
   @FXML
   private void onBackup() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    Dialogs.openTablesBackupDialog(selectedItems);
+    TableDialogs.openTablesBackupDialog(selectedItems);
   }
 
   @FXML
@@ -295,7 +292,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void openUploadDialog() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    boolean updated = Dialogs.openTableUploadDialog(game);
+    boolean updated = TableDialogs.openTableUploadDialog(game);
     if (updated) {
       onReload();
 
@@ -329,7 +326,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      boolean b = Dialogs.openTableDeleteDialog(selectedGames, this.games);
+      boolean b = TableDialogs.openTableDeleteDialog(selectedGames, this.games);
       if (b) {
         this.onReload();
       }
@@ -356,7 +353,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
       "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
       this.onReload();
     }
   }
@@ -368,7 +365,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.clearCache();
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
       this.onReload();
     }
   }
@@ -377,11 +374,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onImport() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        Dialogs.openTableImportDialog();
+        TableDialogs.openTableImportDialog();
       }
     }
     else {
-      Dialogs.openTableImportDialog();
+      TableDialogs.openTableImportDialog();
     }
   }
 
@@ -412,7 +409,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismissAll() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Dialogs.openDismissAllDialog(game);
+    TableDialogs.openDismissAllDialog(game);
   }
 
   public void reload(String rom) {
@@ -568,7 +565,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (!unknownGameIds.isEmpty()) {
           reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload-alert"));
-          ProgressResultModel progressDialog = Dialogs.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
           if (!progressDialog.isCancelled()) {
             reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload"));
           }

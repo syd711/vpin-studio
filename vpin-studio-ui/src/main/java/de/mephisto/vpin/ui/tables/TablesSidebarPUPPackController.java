@@ -226,7 +226,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      Dialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 

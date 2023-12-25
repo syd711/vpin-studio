@@ -8,7 +8,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -180,7 +180,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     if (!initialized) {
       ComponentChecksProgressModel model = new ComponentChecksProgressModel(false);
-      Dialogs.createProgressDialog(model);
+      ProgressDialog.createProgressDialog(model);
       initialized = true;
     }
   }
