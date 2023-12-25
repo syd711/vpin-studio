@@ -45,6 +45,16 @@
                         </Label>
                      </children>
                   </VBox>
+                  <VBox alignment="CENTER" layoutX="28.0" layoutY="274.0" onMousePressed="#onTournamentsClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="28" />
+                        <Label text="Tournaments" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
                   <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-outline" iconSize="28" />

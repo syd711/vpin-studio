@@ -17,35 +17,19 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tournaments.TournamentsController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
                 <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
-                            </graphic>
-                        </Tab>
-                        <Tab fx:id="onlineTab" text="Discord Competitions">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
-                            </graphic>
-                        </Tab>
-                  <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
+                  <Tab fx:id="maniaTab" text="VPin-Mania Tournaments">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                      </content>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
                      </graphic>
                   </Tab>
                     </tabs>

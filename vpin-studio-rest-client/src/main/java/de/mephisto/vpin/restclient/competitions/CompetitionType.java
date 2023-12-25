@@ -1,5 +1,5 @@
 package de.mephisto.vpin.restclient.competitions;
 
 public enum CompetitionType {
-  OFFLINE, DISCORD, SUBSCRIPTION, MANIA
+  OFFLINE, DISCORD, SUBSCRIPTION
 }

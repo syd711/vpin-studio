@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.mania;
+package de.mephisto.vpin.server.tournaments;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ManiaService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
+public class TournamentsService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
   private VPinManiaClient maniaClient;
 

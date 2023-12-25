@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsManiaController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tournaments.TournamentsManiaController">
     <center>
 
         <BorderPane BorderPane.alignment="CENTER">
@@ -53,9 +53,9 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
                             </graphic>
                         </Button>
-                  <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onCompetitionValidate" text="Synchronize" textFill="WHITE">
+                  <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Synchronize" textFill="WHITE">
                      <items>
-                        <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onCompetitionValidateAll" text="Synchronize All" />
+                        <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Synchronize All" />
                      </items>
                      <font>
                         <Font size="14.0" />
@@ -65,7 +65,7 @@
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Create" textFill="WHITE">
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Create" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>

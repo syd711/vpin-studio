@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -53,13 +54,13 @@ public class ManiaAccountPreferencesController implements Initializable {
 
   @FXML
   private void onNameEdit() {
-    Dialogs.openManiaAccountDialog("VPin Mania Account Registration", this.account);
+    TournamentDialogs.openManiaAccountDialog("VPin Mania Account Registration", this.account);
     refreshView();
   }
 
   @FXML
   private void onRegister() {
-    Dialogs.openManiaAccountDialog("VPin Mania Account Registration", null);
+    TournamentDialogs.openManiaAccountDialog("VPin Mania Account Registration", null);
     refreshView();
   }
 

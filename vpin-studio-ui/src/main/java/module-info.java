@@ -47,6 +47,8 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
+  exports de.mephisto.vpin.ui.tournaments;
+  opens de.mephisto.vpin.ui.tournaments to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;
@@ -73,4 +75,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.editors.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.alx;
   opens de.mephisto.vpin.ui.tables.alx to javafx.fxml;
+  exports de.mephisto.vpin.ui.tournaments.dialogs;
+  opens de.mephisto.vpin.ui.tournaments.dialogs to javafx.fxml;
 }

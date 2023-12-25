@@ -21,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.dialogs.CompetitionManiaDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tournaments.dialogs.TournamentManiaDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -50,55 +50,66 @@
             <Insets />
          </BorderPane.margin>
          <children>
-            <VBox>
-               <children>
-                  <Label text="Tournament Name" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT">
-                     <children>
-                        <TextField fx:id="nameField" prefWidth="450.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets top="6.0" />
-                           </HBox.margin>
-                        </TextField>
-                     </children>
-                  </HBox>
-                  <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament (Your tournament is not searchable)" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label layoutX="10.0" layoutY="10.0" text="iscored.info Game Room URL" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <HBox>
-                     <children>
-                        <TextField fx:id="iscoredUrlField" prefWidth="450.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                     </children>
-                  </HBox>
-               </children>
+            <BorderPane>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
-            </VBox>
+               <center>
+                  <VBox>
+                     <children>
+                        <Label text="Tournament Name" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <TextField fx:id="nameField" prefWidth="450.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets top="6.0" />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament (Your tournament is not searchable)" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="10.0" text="iscored.info Game Room URL" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox>
+                           <children>
+                              <TextField fx:id="iscoredUrlField" prefWidth="450.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </center>
+               <left>
+                  <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                     <padding>
+                        <Insets right="12.0" />
+                     </padding>
+                  </BorderPane>
+               </left>
+            </BorderPane>
             <BorderPane>
                <center>
                   <VBox fx:id="mainColumn" prefWidth="440.0">
@@ -121,7 +132,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="117.0" text="Apply Table Badge" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -167,7 +178,7 @@
                <left>
                   <VBox prefWidth="440.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="24.0" />
+                        <Insets bottom="12.0" left="162.0" right="24.0" />
                      </BorderPane.margin>
                      <children>
                         <Label text="Duration" textFill="WHITE">
@@ -233,7 +244,7 @@
             </BorderPane>
             <VBox>
                <children>
-                  <Label text="Tables" textFill="WHITE">
+                  <Label text="Competed Tables" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -245,7 +256,7 @@
                      <top>
                         <ToolBar BorderPane.alignment="CENTER">
                           <items>
-                              <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                              <Button fx:id="addTableBtn" mnemonicParsing="false" onAction="#onTableAdd" text="Add" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -254,7 +265,7 @@
                                  </graphic>
                               </Button>
                               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                              <Button fx:id="deleteTableBtn" mnemonicParsing="false" onAction="#onTableRemove" text="Delete" textFill="#ff3333">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -269,9 +280,9 @@
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                           <columns>
                               <TableColumn prefWidth="75.0" text="Status" />
+                            <TableColumn prefWidth="287.2000732421875" text="Your Table" />
                             <TableColumn minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
                               <TableColumn prefWidth="324.7999572753906" text="Table Version" />
-                            <TableColumn prefWidth="287.2000732421875" text="Your Table" />
                           </columns>
                         </TableView>
                      </center>
@@ -293,7 +304,7 @@
                   </Label>
                </bottom>
                <padding>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                  <Insets bottom="6.0" left="12.0" right="6.0" top="6.0" />
                </padding>
                <VBox.margin>
                   <Insets top="12.0" />

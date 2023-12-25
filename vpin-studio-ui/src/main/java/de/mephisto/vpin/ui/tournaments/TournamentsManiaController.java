@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.competitions;
+package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -8,7 +8,6 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -16,10 +15,6 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -45,13 +40,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class CompetitionsManiaController implements Initializable, StudioFXController {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionsManiaController.class);
+public class TournamentsManiaController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(TournamentsManiaController.class);
 
   @FXML
   private TreeTableView<TournamentTreeModel> treeTableView;
@@ -118,17 +112,17 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   private Parent loadingOverlay;
   private ObservableList<TournamentTreeModel> data;
-  private CompetitionsController competitionsController;
+  private TournamentsController tournamentsController;
   private WaitOverlayController loaderController;
   private ManiaAccountRepresentation maniaAccount;
 
 
   // Add a public no-args constructor
-  public CompetitionsManiaController() {
+  public TournamentsManiaController() {
   }
 
   @FXML
-  private void onCompetitionValidate() {
+  private void onValidate() {
     if (treeTableView.getSelectionModel().getSelectedItem() != null) {
       TournamentTreeModel selectedItem = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
       if (selectedItem != null) {
@@ -143,7 +137,7 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   }
 
   @FXML
-  private void onCompetitionValidateAll() {
+  private void onValidateAll() {
 //    List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
 //    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
 //    if (result.get().equals(ButtonType.OK)) {
@@ -153,22 +147,21 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
   }
 
   @FXML
-  private void onCompetitionCreate() {
-//    client.getDiscordService().clearCache();
-//    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
-//    if (c != null) {
-//      try {
-//        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
-//        Platform.runLater(() -> {
-//          Platform.runLater(() -> {
-//            onReload();
-//            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-//          });
-//        });
-//      } catch (Exception e) {
-//        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-//      }
-//    }
+  private void onCreate() {
+    ManiaTournamentRepresentation t = TournamentDialogs.openTournamentDialog("Create Tournament", null);
+    if (t != null) {
+      try {
+//          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(t);
+        onReload();
+        //TODO
+//          tableView.getSelectionModel().select(newCmp);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+      }
+    }
+    else {
+      onReload();
+    }
   }
 
   @FXML
@@ -214,24 +207,24 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onEdit() {
-    client.getDiscordService().clearCache();
-//    CompetitionRepresentation selectedItem = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
-//    if (selectedItem != null) {
-//      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selectedItem);
-//      if (c != null) {
-//        try {
-//          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
-//          onReload();
-//          //TODO
-////          tableView.getSelectionModel().select(newCmp);
-//        } catch (Exception e) {
-//          WidgetFactory.showAlert(Studio.stage, e.getMessage());
-//        }
-//      }
-//      else {
-//        onReload();
-//      }
-//    }
+    Optional<TournamentTreeModel> selection = getSelection();
+    if (selection.isPresent()) {
+      TournamentTreeModel tournamentTreeModel = selection.get();
+      ManiaTournamentRepresentation t = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
+      if (t != null) {
+        try {
+//          CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(t);
+          onReload();
+          //TODO
+//          tableView.getSelectionModel().select(newCmp);
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, e.getMessage());
+        }
+      }
+      else {
+        onReload();
+      }
+    }
   }
 
   @FXML
@@ -503,13 +496,13 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @Override
   public void onViewActivated() {
-    if (this.competitionsController != null) {
+    if (this.tournamentsController != null) {
       refreshView(Optional.empty());
     }
   }
 
-  public void setCompetitionsController(CompetitionsController competitionsController) {
-    this.competitionsController = competitionsController;
+  public void setTournamentsController(TournamentsController tournamentsController) {
+    this.tournamentsController = tournamentsController;
   }
 
   public Optional<TournamentTreeModel> getSelection() {

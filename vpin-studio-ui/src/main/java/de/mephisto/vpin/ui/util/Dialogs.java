@@ -35,13 +35,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
-  public static void openManiaAccountDialog(String title, ManiaAccountRepresentation accountRepresentation) {
-    Stage stage = createStudioDialogStage(ManiaAccountDialogController.class, "preference-account-dialog.fxml", title);
-    ManiaAccountDialogController controller = (ManiaAccountDialogController) stage.getUserData();
-    controller.setAccount(accountRepresentation);
-    stage.showAndWait();
-  }
-
   public static void openUpdateInfoDialog(String version, boolean force) {
     PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
     List<String> csvValue = doNotShowAgainPref.getCSVValue();

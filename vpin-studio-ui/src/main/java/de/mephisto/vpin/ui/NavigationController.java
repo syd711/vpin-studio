@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tournaments.TournamentsController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -112,6 +113,11 @@ public class NavigationController implements Initializable, StudioEventListener 
   @FXML
   private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
+  }
+
+  @FXML
+  private void onTournamentsClick(MouseEvent event) throws IOException {
+    loadScreen(event, TournamentsController.class, "scene-tournaments.fxml");
   }
 
   @FXML

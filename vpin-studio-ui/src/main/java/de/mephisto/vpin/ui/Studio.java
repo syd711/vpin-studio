@@ -119,7 +119,7 @@ public class Studio extends Application {
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
 
-      ManiaServiceConfig config = Studio.client.getManiaService().getConfig();
+      ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
       Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
       OverlayWindowFX.client = Studio.client;
 

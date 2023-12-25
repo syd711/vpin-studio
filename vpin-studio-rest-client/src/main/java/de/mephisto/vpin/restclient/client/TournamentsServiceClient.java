@@ -5,16 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*********************************************************************************************************************
- * VPin Mania
+ * Tournamens
  ********************************************************************************************************************/
-public class ManiaServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaServiceClient.class);
+public class TournamentsServiceClient extends VPinStudioClientService {
+  private final static Logger LOG = LoggerFactory.getLogger(TournamentsServiceClient.class);
 
-  ManiaServiceClient(VPinStudioClient client) {
+  TournamentsServiceClient(VPinStudioClient client) {
     super(client);
   }
 
   public ManiaServiceConfig getConfig() {
-    return getRestClient().get(API + "mania/config", ManiaServiceConfig.class);
+    return getRestClient().get(API + "tournaments/config", ManiaServiceConfig.class);
   }
 }

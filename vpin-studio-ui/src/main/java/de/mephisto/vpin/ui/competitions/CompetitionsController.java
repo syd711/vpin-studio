@@ -50,9 +50,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Tab onlineTab;
 
   @FXML
-  private Tab maniaTab;
-
-  @FXML
   private Tab tableSubscriptionsTab;
 
   @FXML
@@ -97,7 +94,6 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
-  private CompetitionsManiaController maniaController;
   private TableSubscriptionsController tableSubscriptionsController;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
@@ -145,20 +141,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
     }
     else if (t1.intValue() == 2) {
-//      if (tableSubscriptionsController != null) {
-//        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "VPin Mania Tournaments"));
-//        Optional<CompetitionsManiaController.TournamentTreeModel> selection = maniaController.getSelection();
-//        if(selection.isPresent()) {
-//          updateSelection(Optional.of(selection.get().getCompetitionRepresentation()));
-//        }
-//        else {
-//          updateSelection(Optional.empty());
-//        }
-//
-//        maniaController.onReload();
-//      }
-    }
-    else if (t1.intValue() == 3) {
       if (tableSubscriptionsController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
@@ -304,13 +286,6 @@ public class CompetitionsController implements Initializable, StudioFXController
           metaDataPane.setExpanded(false);
           break;
         }
-        case MANIA: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
-          metaDataPane.setExpanded(false);
-          break;
-        }
         case OFFLINE: {
           competitionMembersPane.setDisable(true);
           competitionMembersPane.setExpanded(false);
@@ -344,14 +319,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
     }
     else if (index == 2) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "VPin Mania Tournaments", competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "VPin Mania Tournaments"));
-      }
-    }
-    else if (index == 3) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -412,16 +379,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
       onlineTab.setContent(parent);
-    } catch (IOException e) {
-      LOG.error("failed to load online: " + e.getMessage(), e);
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-mania.fxml"));
-      Parent parent = loader.load();
-      maniaController = loader.getController();
-      maniaController.setCompetitionsController(this);
-      maniaTab.setContent(parent);
     } catch (IOException e) {
       LOG.error("failed to load online: " + e.getMessage(), e);
     }
