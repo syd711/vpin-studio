@@ -17,6 +17,8 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -86,6 +88,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private ScoreFilter scoreFilter;
+
+  @Autowired
+  private PlayerService playerService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -308,19 +313,16 @@ public class GameService implements InitializingBean {
     ScoreSummary summary = new ScoreSummary(scores, null);
 
     boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-    String allowListString = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST);
-    List<String> allowList = new ArrayList<>();
-    if (!StringUtils.isEmpty(allowListString)) {
-      allowList = Arrays.stream(allowListString.split(",")).collect(Collectors.toList());
-    }
-
+    List<Player> buildInPlayers = playerService.getBuildInPlayers();
     List<Score> allHighscoreVersions = new ArrayList<>();
-    if (!filterEnabled || allowList.isEmpty()) {
+
+    if (!filterEnabled || buildInPlayers.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
     }
     else {
-      for (String initials : allowList) {
-        allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(initials));
+
+      for (Player buildInPlayer : buildInPlayers) {
+        allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(buildInPlayer.getInitials()));
       }
     }
 

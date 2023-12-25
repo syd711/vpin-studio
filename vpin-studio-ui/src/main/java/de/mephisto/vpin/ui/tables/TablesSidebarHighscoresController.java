@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,6 +104,10 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private VBox dataPane;
 
+  @FXML
+  private Button vpSaveEditBtn;
+
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -114,6 +120,18 @@ public class TablesSidebarHighscoresController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
+  }
+
+  @FXML
+  public void onVPSaveEdit() {
+    try {
+      ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
+      builder.directory(new File("resources"));
+      builder.start();
+    } catch (IOException e) {
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
+    }
   }
 
   @FXML

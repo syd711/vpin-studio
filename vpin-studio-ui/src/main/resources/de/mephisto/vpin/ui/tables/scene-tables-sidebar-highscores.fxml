@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -241,7 +242,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
                </graphic>
             </SplitMenuButton>
-                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                 <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" />
@@ -250,7 +251,7 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
-            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-down-outline" />
@@ -267,7 +268,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                 <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" text="Reset" textFill="#ff3333">
                     <graphic>
                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
@@ -276,6 +277,18 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
+            <Separator layoutX="375.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+            <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="VPSaveEdit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open the table script for the selected table." />
+               </tooltip>
+            </Button>
             </items>
         </ToolBar>
     </top>

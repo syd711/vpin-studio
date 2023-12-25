@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -21,8 +22,10 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private PlayerService playerService;
+
   private boolean highscoreFilterEnabled;
-  private List<String> allowList;
 
   public boolean isScoreFiltered(@NonNull Score score) {
     if (StringUtils.isEmpty(score.getPlayerInitials())) {
@@ -34,8 +37,8 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
       return true;
     }
 
-    if (highscoreFilterEnabled) {
-      if (!allowList.contains(score.getPlayerInitials())) {
+    if (highscoreFilterEnabled && !playerService.getBuildInPlayers().isEmpty()) {
+      if (playerService.getPlayerForInitials(-1, score.getPlayerInitials()) == null) {
         LOG.info("Filtered highscore update \"" + score + "\": player initials '" + score.getPlayerInitials() + "' are not on the allow list");
         return true;
       }
@@ -44,16 +47,9 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-
-    refreshScoreFilterSettings();
-  }
-
-  @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (!StringUtils.isEmpty(propertyName)) {
-      if (propertyName.equals(PreferenceNames.HIGHSCORE_ALLOW_LIST) || propertyName.equals(PreferenceNames.HIGHSCORE_FILTER_ENABLED)) {
+      if (propertyName.equals(PreferenceNames.HIGHSCORE_FILTER_ENABLED)) {
         refreshScoreFilterSettings();
       }
     }
@@ -61,7 +57,12 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
 
   private void refreshScoreFilterSettings() {
     highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-    allowList = Arrays.asList(((String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST, "")).split(","));
-    LOG.info("Loaded allow list settings: " + allowList.size() + " entries found: " + String.join(", ", allowList));
+    LOG.info("Highscore Filter Toggle: " + highscoreFilterEnabled);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    refreshScoreFilterSettings();
   }
 }

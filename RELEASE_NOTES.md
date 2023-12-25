@@ -1,5 +1,10 @@
 ## Release Notes
 
+### Breaking Change
+
+The preferences for filtering highscores by initials is gone and has been replaced by the build-in players.
+So if you only want to see updates for your highscore, create a build-in player with your initials.
+
 ### Changes
 
 - Moved "Analytics" section into "Tables" section tab "Table Statistics". The view doesn't have to be this prominent, that's why it has been moved.

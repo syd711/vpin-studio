@@ -6,6 +6,7 @@ public class RankedPlayer {
   private int third;
   private int competitionsWon;
   private String name;
+  private String domain;
   private String initials;
   private int rank;
   private String avatarUuid;
@@ -22,6 +23,14 @@ public class RankedPlayer {
     else if(id == 2) {
       third++;
     }
+  }
+
+  public String getDomain() {
+    return domain;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
   public int getPoints() {

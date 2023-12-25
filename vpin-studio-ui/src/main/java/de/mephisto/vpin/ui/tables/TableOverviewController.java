@@ -1145,7 +1145,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view.setFitHeight(18);
     vpsBtn.setGraphic(view);
 
-    Image image2 = new Image(Studio.class.getResourceAsStream("vps.png"));
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
     ImageView view2 = new ImageView(image2);
     view2.setFitWidth(18);
     view2.setFitHeight(18);
