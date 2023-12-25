@@ -11,6 +11,7 @@ So if you only want to see updates for your highscore, create a build-in player 
 - Added copy buttons for VPS table URLs (needed later on).
 - Replaced update indicator icons with a colorized version.
 - Uploaded tables are now immediately mapped against VPS.
+- The VPSSaveEdit tool button is now also available in the "Highscores" section. 
 - Replaced transient VPS table update notification with a persisted state. The update indicator for this is a new column in the table overview. If you are not interested in these updates, you can hide the column in the UI preferences. The update indicator can be resetted from the toolbar button.
 
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/update-colum.png?raw=true" width="600" />
