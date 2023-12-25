@@ -14,52 +14,60 @@
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-            <StackPane fx:id="editorRootStack" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <children>
-                      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
-                          <tabs>
-                              <Tab fx:id="tablesTab" closable="false" text=" Tables">
-                                  <content>
-                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                                  </content>
-                                  <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="12" text="" />
-                                  </graphic>
-                              </Tab>
-                              <Tab fx:id="tableRepositoryTab" text="Table Repository">
-                                  <content>
-                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                                  </content>
-                                  <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" />
-                                  </graphic>
-                              </Tab>
-                          </tabs>
-                      </TabPane>
-               </children>
-            </StackPane>
+                <StackPane fx:id="editorRootStack" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                    </BorderPane.margin>
+                    <children>
+                        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+                                <Tab fx:id="tablesTab" closable="false" text=" Tables">
+                                    <content>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="16" />
+                                    </graphic>
+                                </Tab>
+                                <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="16" text="" />
+                                    </graphic>
+                                </Tab>
+                                <Tab fx:id="tableRepositoryTab" text=" Table Repository">
+                                    <content>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="16" />
+                                    </graphic>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </children>
+                </StackPane>
             </center>
             <BorderPane.margin>
                 <Insets right="12.0" />
             </BorderPane.margin>
         </BorderPane>
     </center>
-   <right>
-      <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
-         <children>
-              <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
-              <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
-         </children>
-         <padding>
-            <Insets bottom="7.0" right="7.0" />
-         </padding>
-      </VBox>
-   </right>
-   <stylesheets>
-      <URL value="@../stylesheet.css" />
-      <URL value="@../richtext.css" />
-   </stylesheets>
+    <right>
+        <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
+            <children>
+                <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
+                <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
+            </children>
+            <padding>
+                <Insets bottom="7.0" right="7.0" />
+            </padding>
+        </VBox>
+    </right>
+    <stylesheets>
+        <URL value="@../stylesheet.css" />
+        <URL value="@../richtext.css" />
+    </stylesheets>
 </BorderPane>

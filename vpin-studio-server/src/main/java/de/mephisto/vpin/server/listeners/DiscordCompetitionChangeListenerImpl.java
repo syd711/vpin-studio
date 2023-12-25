@@ -94,7 +94,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           String imageMessage = description;
           if (!StringUtils.isEmpty(game.getExtTableId())) {
             VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
-            imageMessage += "\n\nVirtual Pinball Spreadsheet:\nhttps://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/";
+            imageMessage += "\n\nVirtual Pinball Spreadsheet:\n" + VPS.getVpsTableUrl(game.getExtTableId());
 
             if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
               List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();

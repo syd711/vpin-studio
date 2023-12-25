@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -196,13 +197,13 @@ public class TablesSidebarPopperController implements Initializable {
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        Dialogs.openTableDataDialog(this.game.get());
+        TableDialogs.openTableDataDialog(this.game.get());
         this.refreshView(this.game);
       }
       return;
     }
 
-    Dialogs.openTableDataDialog(this.game.get());
+    TableDialogs.openTableDataDialog(this.game.get());
     this.refreshView(this.game);
   }
 
@@ -233,7 +234,7 @@ public class TablesSidebarPopperController implements Initializable {
       if (!result.isApplied()) {
         try {
           boolean checked = result.isChecked();
-          Dialogs.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
+          ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
           EventManager.getInstance().notifyTablesChanged();
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());

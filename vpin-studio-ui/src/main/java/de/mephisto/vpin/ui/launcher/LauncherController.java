@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -238,7 +239,7 @@ public class LauncherController implements Initializable {
         LOG.info("Found server startup, running on version " + client.getSystemService().getVersion() + ", starting table scan.");
         Platform.runLater(() -> {
           stage.close();
-          Dialogs.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
+          ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
           Studio.loadStudio(WidgetFactory.createStage(), client);
         });
       }).start();

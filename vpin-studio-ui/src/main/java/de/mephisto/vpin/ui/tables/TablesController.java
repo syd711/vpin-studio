@@ -10,14 +10,17 @@ import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.alx.AlxController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,13 +38,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private RepositoryController repositoryController;
 
   @FXML
-  private Parent root;
+  private BorderPane root;
 
   @FXML
   private TabPane tabPane;
 
   @FXML
   private Tab tablesTab;
+
+  @FXML
+  private Tab tablesStatisticsTab;
 
   @FXML
   private Tab tableRepositoryTab;
@@ -53,7 +59,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
 
   @FXML
+  private AlxController alxController; //fxml magic! Not unused
+
+  @FXML
   private StackPane editorRootStack;
+
+  private Node sidePanelRoot;
 
   @Override
   public void onViewActivated() {
@@ -74,6 +85,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableOverviewController.setRootController(this);
       tablesSideBarController.setTablesController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
+    } catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxController.class.getResource("scene-alx.fxml"));
+      Parent repositoryRoot = loader.load();
+      alxController = loader.getController();
+      tablesStatisticsTab.setContent(repositoryRoot);
     } catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
@@ -104,12 +124,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
         tablesSideBarController.setVisible(true);
         repositorySideBarController.setVisible(false);
         tableOverviewController.initSelection();
+        if(sidePanelRoot != null) {
+          root.setRight(sidePanelRoot);
+        }
+
+      }
+      else if (t1.intValue() == 1) {
+        NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
+        tablesSideBarController.setVisible(false);
+        repositorySideBarController.setVisible(false);
+        if(sidePanelRoot == null) {
+          sidePanelRoot = root.getRight();
+        }
+        root.setRight(null);
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
         tablesSideBarController.setVisible(false);
         repositorySideBarController.setVisible(true);
         repositoryController.initSelection();
+        if(sidePanelRoot != null) {
+          root.setRight(sidePanelRoot);
+        }
       }
     });
   }
@@ -150,9 +186,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
       });
     }
     else if (jobType.equals(JobType.POV_INSTALL)
-        || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-        || jobType.equals(JobType.DIRECTB2S_INSTALL)
-        || jobType.equals(JobType.TABLE_IMPORT)) {
+      || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
+      || jobType.equals(JobType.DIRECTB2S_INSTALL)
+      || jobType.equals(JobType.TABLE_IMPORT)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);

@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -52,11 +52,11 @@ public class TableRepositoriesPreferencesController implements Initializable {
       ArchiveSourceType archiveSourceType = ArchiveSourceType.valueOf(selectedItem.getType());
       switch (archiveSourceType) {
         case File: {
-          sourceRepresentation = Dialogs.openArchiveSourceFileDialog(selectedItem);
+          sourceRepresentation = TableDialogs.openArchiveSourceFileDialog(selectedItem);
           break;
         }
         default: {
-          sourceRepresentation = Dialogs.openArchiveSourceHttpDialog(selectedItem);
+          sourceRepresentation = TableDialogs.openArchiveSourceHttpDialog(selectedItem);
           break;
         }
       }
@@ -74,7 +74,7 @@ public class TableRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onHttpAdd() {
-    ArchiveSourceRepresentation sourceRepresentation = Dialogs.openArchiveSourceHttpDialog(null);
+    ArchiveSourceRepresentation sourceRepresentation = TableDialogs.openArchiveSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
         client.getArchiveService().saveArchiveSource(sourceRepresentation);

@@ -44,13 +44,13 @@ public enum VpsDiffTypes {
         return "Wheel Icon";
       }
       case tables: {
-        return "table added";
+        return "Table added";
       }
       case tableNew: {
-        return "new table variant added";
+        return "New table variant added";
       }
       case tableNewVersion: {
-        return "table version updated";
+        return "Table version updated";
       }
       case topper: {
         return "Topper";

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.alx.AlxController">
+<BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxController">
    <center>
       <ScrollPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -84,6 +84,6 @@
       </ScrollPane>
    </center>
    <padding>
-      <Insets right="6.0" />
+      <Insets left="12.0" top="12.0" />
    </padding>
 </BorderPane>

@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.restclient.util.ini.IniSettingsChangeListener;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -327,7 +326,7 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
   @FXML
   private void onUIEdit() {
-    Dialogs.openPINemHiUIDialog(settings);
+    PreferencesDialogs.openPINemHiUIDialog(settings);
   }
 
   @FXML

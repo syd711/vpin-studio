@@ -144,12 +144,12 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onCompetitionValidateAll() {
-    List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
-    if (result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
-      this.onReload();
-    }
+//    List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
+//    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
+//    if (result.get().equals(ButtonType.OK)) {
+//      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
+//      this.onReload();
+//    }
   }
 
   @FXML
@@ -195,21 +195,21 @@ public class CompetitionsManiaController implements Initializable, StudioFXContr
 
   @FXML
   private void onJoin() {
-    client.clearDiscordCache();
-    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
-    if (c != null) {
-      try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
-        onReload();
-        //TODO
-//        treeTableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-    }
-    else {
-      onReload();
-    }
+//    client.clearDiscordCache();
+//    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
+//    if (c != null) {
+//      try {
+//        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
+//        onReload();
+//        //TODO
+////        treeTableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+//      } catch (Exception e) {
+//        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+//      }
+//    }
+//    else {
+//      onReload();
+//    }
   }
 
   @FXML

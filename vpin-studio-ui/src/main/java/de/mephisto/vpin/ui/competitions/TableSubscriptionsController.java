@@ -19,8 +19,8 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -45,7 +45,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -141,7 +140,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     List<CompetitionRepresentation> subscriptions = client.getCompetitionService().getSubscriptions();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + subscriptions.size() + " Subscription(s)?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Table Subscriptions", subscriptions));
+      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Table Subscriptions", subscriptions));
       this.onReload();
     }
   }
@@ -155,11 +154,11 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       return;
     }
 
-    CompetitionRepresentation c = Dialogs.openSubscriptionDialog(this.competitions, null);
+    CompetitionRepresentation c = CompetitionDialogs.openSubscriptionDialog(this.competitions, null);
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
         Platform.runLater(() -> {
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
@@ -175,7 +174,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   @FXML
   private void onJoin() {
     client.clearDiscordCache();
-    CompetitionRepresentation c = Dialogs.openJoinSubscriptionDialog(this.competitions);
+    CompetitionRepresentation c = CompetitionDialogs.openJoinSubscriptionDialog(this.competitions);
     if (c != null) {
       try {
         CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);

@@ -67,9 +67,6 @@ public class Preferences {
   @Column(length = 1024)
   private String highscoreTitles;
 
-  @Column(length = 1024)
-  private String highscoreAllowList;
-
   private String highscoreCardSettings;
 
   @Column(length = 1024)
@@ -171,14 +168,6 @@ public class Preferences {
 
   public void setOverlayDesign(String overlayDesign) {
     this.overlayDesign = overlayDesign;
-  }
-
-  public String getHighscoreAllowList() {
-    return highscoreAllowList;
-  }
-
-  public void setHighscoreAllowList(String highscoreAllowList) {
-    this.highscoreAllowList = highscoreAllowList;
   }
 
   public boolean getHighscoreFilterEnabled() {

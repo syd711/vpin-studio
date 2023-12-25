@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import de.mephisto.vpin.server.util.ZipUtil;
+import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,9 @@ public class GamesResource {
 
   @Autowired
   private PopperService popperService;
+
+  @Autowired
+  private VpsService vpsService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -204,6 +208,7 @@ public class GamesResource {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
                 popperService.autofillTableDetails(game, false);
+                vpsService.autofill(game, true);
               }
             }
             return true;
@@ -221,6 +226,7 @@ public class GamesResource {
             Game game = gameService.scanGame(gameId);
             if (game != null) {
               popperService.autofillTableDetails(game, false);
+              vpsService.autofill(game, true);
             }
             break;
           }
@@ -240,6 +246,7 @@ public class GamesResource {
               popperService.saveTableDetails(tableDetails, importedGameId);
               if (importedGame != null) {
                 popperService.autofillTableDetails(importedGame, false);
+                vpsService.autofill(importedGame, true);
               }
 
               //clone popper media

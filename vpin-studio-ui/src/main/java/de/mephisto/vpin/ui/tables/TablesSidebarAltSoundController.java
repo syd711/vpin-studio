@@ -10,7 +10,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.AltSoundFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -100,7 +99,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openAltSoundUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openAltSoundUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 

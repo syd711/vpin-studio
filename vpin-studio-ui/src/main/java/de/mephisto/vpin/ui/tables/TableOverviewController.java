@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -19,10 +20,7 @@ import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -64,6 +62,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -78,6 +77,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnVersion;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnVPS;
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnRom;
@@ -164,6 +166,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button vpsBtn;
 
   @FXML
+  private Button vpsResetBtn;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
@@ -184,7 +189,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
-    Dialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
+    TableDialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
   }
 
   @FXML
@@ -194,11 +199,26 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
-          desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + selectedItems.getExtTableId() + "/"));
+          desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
         } catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
+    }
+  }
+
+  @FXML
+  private void onVpsReset() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    try {
+      List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList());
+      for (GameRepresentation gameRepresentation : collect) {
+        gameRepresentation.setUpdates(Collections.emptyList());
+        client.getGameService().saveGame(gameRepresentation);
+        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
     }
   }
 
@@ -208,18 +228,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          Dialogs.openTableDataDialog(selectedItems);
+          TableDialogs.openTableDataDialog(selectedItems);
         }
         return;
       }
-      Dialogs.openTableDataDialog(selectedItems);
+      TableDialogs.openTableDataDialog(selectedItems);
     }
   }
 
   @FXML
   private void onBackup() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    Dialogs.openTablesBackupDialog(selectedItems);
+    TableDialogs.openTablesBackupDialog(selectedItems);
   }
 
   @FXML
@@ -272,7 +292,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void openUploadDialog() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    boolean updated = Dialogs.openTableUploadDialog(game);
+    boolean updated = TableDialogs.openTableUploadDialog(game);
     if (updated) {
       onReload();
 
@@ -306,7 +326,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      boolean b = Dialogs.openTableDeleteDialog(selectedGames, this.games);
+      boolean b = TableDialogs.openTableDeleteDialog(selectedGames, this.games);
       if (b) {
         this.onReload();
       }
@@ -333,7 +353,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
       "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
       this.onReload();
     }
   }
@@ -345,7 +365,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.clearCache();
-      Dialogs.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
       this.onReload();
     }
   }
@@ -354,11 +374,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onImport() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        Dialogs.openTableImportDialog();
+        TableDialogs.openTableImportDialog();
       }
     }
     else {
-      Dialogs.openTableImportDialog();
+      TableDialogs.openTableImportDialog();
     }
   }
 
@@ -389,7 +409,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismissAll() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Dialogs.openDismissAllDialog(game);
+    TableDialogs.openDismissAllDialog(game);
   }
 
   public void reload(String rom) {
@@ -516,6 +536,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
     List<String> values = preference.getCSVValue();
     this.showVersionUpdates = !values.contains(PreferenceNames.UI_HIDE_VERSIONS);
+    this.columnVPS.setVisible(!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
 
     refreshPlaylists();
 
@@ -532,6 +553,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
     this.vpsBtn.setDisable(true);
+    this.vpsResetBtn.setDisable(true);
 
     tableView.setVisible(false);
     tableStack.getChildren().add(tablesLoadingOverlay);
@@ -543,7 +565,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (!unknownGameIds.isEmpty()) {
           reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload-alert"));
-          ProgressResultModel progressDialog = Dialogs.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
           if (!progressDialog.isCancelled()) {
             reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload"));
           }
@@ -631,13 +653,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Label label = new Label(value.getVersion());
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
-        FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-up");
+        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
           "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
-        Tooltip.install(icon, tt);
-        label.setGraphic(icon);
+        label.setTooltip(tt);
+        label.setGraphic(updateIcon);
       }
       return new SimpleObjectProperty(label);
     });
@@ -683,6 +705,30 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
+      }
+      return new SimpleStringProperty("");
+    });
+
+    columnVPS.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      try {
+        if (!value.getUpdates().isEmpty()) {
+          FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+
+          Label label = new Label();
+          label.setGraphic(updateIcon);
+
+          List<String> collect = value.getUpdates().stream().map(update -> "- " + VpsDiffTypes.valueOf(update)).collect(Collectors.toList());
+          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect) + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
+          Tooltip tt = new Tooltip(tooltip);
+          tt.setWrapText(true);
+          tt.setMaxWidth(400);
+          label.setTooltip(tt);
+
+          return new SimpleObjectProperty(label);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to render VPS update: " + e.getMessage());
       }
       return new SimpleStringProperty("");
     });
@@ -782,6 +828,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           else if (column.equals(columnB2S)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnVPS)) {
+            Collections.sort(tableView.getItems(), (o1, o2) -> {
+              if (o1.getUpdates() == null || o1.getUpdates().isEmpty()) {
+                return -1;
+              }
+              return 1;
+            });
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -999,6 +1057,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validationError.setVisible(c.getList().size() != 1);
 
     vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
+    vpsResetBtn.setDisable(c.getList().stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());
@@ -1082,6 +1141,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsBtn.setGraphic(view);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setFitWidth(18);
+    view2.setFitHeight(18);
+    vpsResetBtn.setGraphic(view2);
 
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);

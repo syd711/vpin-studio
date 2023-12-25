@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,6 +104,10 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private VBox dataPane;
 
+  @FXML
+  private Button vpSaveEditBtn;
+
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -114,6 +120,18 @@ public class TablesSidebarHighscoresController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
+  }
+
+  @FXML
+  public void onVPSaveEdit() {
+    try {
+      ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
+      builder.directory(new File("resources"));
+      builder.start();
+    } catch (IOException e) {
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
+    }
   }
 
   @FXML
@@ -141,7 +159,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onScanAll() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getGamesCached().size() + " tables?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
+      ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }
@@ -177,7 +195,7 @@ public class TablesSidebarHighscoresController implements Initializable {
           "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
           "You can enter the values for this manually in the \"Script Details\" section.");
       } else {
-        Dialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
+        TableDialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
       }
     }
   }

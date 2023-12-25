@@ -12,7 +12,6 @@ public interface PreferenceNames {
 
   String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
-  String HIGHSCORE_ALLOW_LIST = "highscoreAllowList";
   String HIGHSCORE_CARD_SETTINGS = "highscoreCardSettings";
 
   String IDLE_TIMEOUT = "idleTimeout";
@@ -26,6 +25,7 @@ public interface PreferenceNames {
 
   String UI_SETTINGS = "uiSettings";
   String UI_HIDE_VERSIONS = "hideVersions";
+  String UI_HIDE_VPS_UPDATES = "uiHideVPSUpdates";
 
   String UI_DO_NOT_SHOW_AGAINS = "doNotShowAgains";
   String UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING = "componentsWarning";

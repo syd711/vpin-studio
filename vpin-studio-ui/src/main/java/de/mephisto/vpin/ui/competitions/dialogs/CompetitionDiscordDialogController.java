@@ -425,7 +425,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
-      vpsLinkField.setText("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/");
+      vpsLinkField.setText(VPS.getVpsTableUrl(game.getExtTableId()));
 
       if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
         List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();

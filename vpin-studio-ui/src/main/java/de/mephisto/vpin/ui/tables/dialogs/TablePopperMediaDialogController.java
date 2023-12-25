@@ -20,9 +20,10 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -41,8 +42,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -159,7 +158,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private void onVPSAssets() {
-    Dialogs.openVPSAssetsDialog(game);
+    TableDialogs.openVPSAssetsDialog(game);
   }
 
   @FXML
@@ -212,7 +211,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    Dialogs.openMediaUploadDialog(stage, game, screen);
+    TableDialogs.openMediaUploadDialog(stage, game, screen);
     refreshTableMediaView();
   }
 
@@ -382,7 +381,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     }
 
     if (tableAsset != null) {
-      Dialogs.createProgressDialog(stage, new TableAssetDownloadProgressModel(screen, game, tableAsset, append));
+      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(screen, game, tableAsset, append));
       refreshTableMediaView();
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }

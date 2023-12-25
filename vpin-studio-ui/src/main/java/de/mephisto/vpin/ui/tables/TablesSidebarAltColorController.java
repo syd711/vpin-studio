@@ -1,9 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
-import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.tables.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
@@ -13,7 +10,6 @@ import de.mephisto.vpin.ui.tables.drophandler.AltColorFileDropEventHandler;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,15 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarAltColorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltColorController.class);
@@ -86,7 +78,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
     }
   }
 

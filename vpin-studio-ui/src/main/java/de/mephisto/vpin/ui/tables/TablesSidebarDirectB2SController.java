@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.collections.FXCollections;
@@ -166,7 +165,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      Dialogs.openDirectB2SUploadDialog(game.get(), null);
+      TableDialogs.openDirectB2SUploadDialog(game.get(), null);
     }
   }
 

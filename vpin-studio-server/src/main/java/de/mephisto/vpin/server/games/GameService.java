@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -15,6 +17,8 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -33,10 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +88,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private ScoreFilter scoreFilter;
+
+  @Autowired
+  private PlayerService playerService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -309,19 +313,16 @@ public class GameService implements InitializingBean {
     ScoreSummary summary = new ScoreSummary(scores, null);
 
     boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-    String allowListString = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_ALLOW_LIST);
-    List<String> allowList = new ArrayList<>();
-    if (!StringUtils.isEmpty(allowListString)) {
-      allowList = Arrays.stream(allowListString.split(",")).collect(Collectors.toList());
-    }
-
+    List<Player> buildInPlayers = playerService.getBuildInPlayers();
     List<Score> allHighscoreVersions = new ArrayList<>();
-    if (!filterEnabled || allowList.isEmpty()) {
+
+    if (!filterEnabled || buildInPlayers.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
     }
     else {
-      for (String initials : allowList) {
-        allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(initials));
+
+      for (Player buildInPlayer : buildInPlayers) {
+        allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(buildInPlayer.getInitials()));
       }
     }
 
@@ -469,6 +470,18 @@ public class GameService implements InitializingBean {
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
+
+    //VPS Stuff
+    String updates = gameDetails.getUpdates();
+    if(updates != null) {
+      String[] split = updates.split(",");
+      List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
+      game.setUpdates(collect);
+    }
+    else {
+      game.setUpdates(Collections.emptyList());
+    }
+
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
@@ -501,6 +514,11 @@ public class GameService implements InitializingBean {
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     gameDetails.setExtTableId(game.getExtTableId());
     gameDetails.setExtTableVersionId(game.getExtTableVersionId());
+
+    if(game.getUpdates() != null) {
+      gameDetails.setUpdates(String.join(",", game.getUpdates()));
+    }
+
     gameDetailsRepository.saveAndFlush(gameDetails);
 
     Game original = getGame(game.getId());

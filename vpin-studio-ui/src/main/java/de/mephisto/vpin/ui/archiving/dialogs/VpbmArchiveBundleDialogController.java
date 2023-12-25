@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -74,7 +74,7 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
         stage.close();
       });
 
-      Dialogs.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
+      ProgressDialog.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
 
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);

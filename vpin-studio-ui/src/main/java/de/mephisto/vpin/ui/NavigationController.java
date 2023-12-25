@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.alx.AlxController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
@@ -48,7 +47,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class NavigationController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
-  private final static FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+  private final static FontIcon updateIcon = WidgetFactory.createUpdateStar();
 
   @FXML
   private BorderPane avatarPane;
@@ -113,11 +112,6 @@ public class NavigationController implements Initializable, StudioEventListener 
   @FXML
   private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
-  }
-
-  @FXML
-  private void onAlxClick(MouseEvent event) throws IOException {
-    loadScreen(event, AlxController.class, "scene-alx.fxml");
   }
 
   @FXML

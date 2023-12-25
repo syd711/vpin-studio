@@ -20,8 +20,8 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -167,7 +167,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize "+ competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
-      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
+      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
       this.onReload();
     }
   }
@@ -175,10 +175,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   @FXML
   private void onCompetitionCreate() {
     client.getDiscordService().clearCache();
-    CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, null);
+    CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
         Platform.runLater(() -> {
           Platform.runLater(() -> {
             onReload();
@@ -197,10 +197,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       CompetitionRepresentation clone = selection.cloneCompetition();
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, clone);
+      CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
           Platform.runLater(() -> {
             onReload();
             tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
@@ -224,10 +224,10 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   @FXML
   private void onJoin() {
     client.clearDiscordCache();
-    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
+    CompetitionRepresentation c = CompetitionDialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
         onReload();
         tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
       } catch (Exception e) {
@@ -244,7 +244,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     client.getDiscordService().clearCache();
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      CompetitionRepresentation c = Dialogs.openDiscordCompetitionDialog(this.competitions, selection);
+      CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, selection);
       if (c != null) {
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);

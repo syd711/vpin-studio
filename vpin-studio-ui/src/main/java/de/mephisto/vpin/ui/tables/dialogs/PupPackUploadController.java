@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -63,7 +63,7 @@ public class PupPackUploadController implements Initializable, DialogController 
 
       Platform.runLater(() -> {
         PupPackUploadProgressModel model = new PupPackUploadProgressModel(tablesSidebarController, this.game.getId(), "PUP Pack Upload", selection, "puppack");
-        Dialogs.createProgressDialog(model);
+        ProgressDialog.createProgressDialog(model);
       });
     }
   }
@@ -97,7 +97,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = Dialogs.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getTableName(), "PUP Pack Analysis", this.selection));
+    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getTableName(), "PUP Pack Analysis", this.selection));
 
     if (!resultModel.getResults().isEmpty()) {
       result = false;

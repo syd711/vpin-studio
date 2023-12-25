@@ -56,7 +56,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE) && !StringUtils.isEmpty(game.getExtTableId())) {
       try {
-        desktop.browse(new URI("https://virtual-pinball-spreadsheet.web.app/game/" + game.getExtTableId() + "/"));
+        desktop.browse(new URI(VPS.getVpsTableUrl(game.getExtTableId())));
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
@@ -126,7 +126,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());
 
-    if(dataRoot.getChildren().isEmpty()) {
+    if (dataRoot.getChildren().isEmpty()) {
       Label emptyLabel = WidgetFactory.createDefaultLabel("No additional assets found.");
       dataRoot.getChildren().add(emptyLabel);
     }
