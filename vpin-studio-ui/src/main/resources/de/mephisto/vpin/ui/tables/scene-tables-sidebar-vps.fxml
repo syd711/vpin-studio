@@ -42,7 +42,7 @@
                               </Label>
                               <GridPane>
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.2000732421875" minWidth="10.0" prefWidth="130.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.2000732421875" minWidth="10.0" prefWidth="100.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.7999496459961" minWidth="10.0" prefWidth="438.0000305175781" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -82,8 +82,8 @@
                               </Label>
                               <GridPane>
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="130.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="433.5999267578125" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="282.199951171875" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="440.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="1.6000488281249545" prefWidth="8.000073242187455" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -93,8 +93,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <VBox.margin>
                                     <Insets top="6.0" />
@@ -182,14 +181,17 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Your Table Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="168.0" text="Table Version:" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
+                                       <padding>
+                                          <Insets top="3.0" />
+                                       </padding>
                                     </Label>
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <children>
-                                          <ComboBox fx:id="tablesCombo" prefWidth="487.0" />
+                                          <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
                                           <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
@@ -200,6 +202,9 @@
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
+                                             <tooltip>
+                                                <Tooltip text="Download Table" />
+                                             </tooltip>
                                           </Button>
                                           <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
                                              <graphic>
@@ -213,19 +218,6 @@
                                              </tooltip>
                                           </Button>
                                        </children>
-                                    </HBox>
-                                    <Label layoutX="10.0" layoutY="198.0" text="Features:" textFill="WHITE" GridPane.rowIndex="7">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox fx:id="featureBox" alignment="BASELINE_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       <GridPane.margin>
-                                          <Insets top="6.0" />
-                                       </GridPane.margin>
                                     </HBox>
                                     <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
                                        <graphic>

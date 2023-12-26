@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +18,7 @@ public class VpsTable {
   private List<VpsAuthoredUrls> soundFiles;
   private List<VpsAuthoredUrls> romFiles;
   private List<VpsAuthoredUrls> pupPackFiles;
-  private List<VpsTableFile> tableFiles;
+  private List<VpsTableVersion> tableFiles;
   private List<VpsAuthoredUrls> topperFiles;
   private List<VpsAuthoredUrls> wheelArtFiles;
   private List<VpsBackglassFile> b2sFiles;
@@ -124,15 +126,17 @@ public class VpsTable {
     this.topperFiles = topperFiles;
   }
 
-  public List<VpsTableFile> getTableFiles() {
+  public List<VpsTableVersion> getTableFiles() {
     return tableFiles;
   }
 
-  public List<VpsTableFile> getTableFilesForFormat(String tableFormat) {
+  public List<VpsTableVersion> getTableFilesForFormat(String tableFormat) {
     return tableFiles.stream().filter(t -> t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty())).collect(Collectors.toList());
   }
 
-  public void setTableFiles(List<VpsTableFile> tableFiles) {
+  public void setTableFiles(List<VpsTableVersion> tableFiles) {
+    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getUpdatedAt()));
+    Collections.reverse(tableFiles);
     this.tableFiles = tableFiles;
   }
 
@@ -226,9 +230,9 @@ public class VpsTable {
     return this.getName();
   }
 
-  public VpsTableFile getVersion(String extTableVersionId) {
+  public VpsTableVersion getVersion(String extTableVersionId) {
     if (this.tableFiles != null) {
-      for (VpsTableFile tableFile : this.tableFiles) {
+      for (VpsTableVersion tableFile : this.tableFiles) {
         if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
           return tableFile;
         }

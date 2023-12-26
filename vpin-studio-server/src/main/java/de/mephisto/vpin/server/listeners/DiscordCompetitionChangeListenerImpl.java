@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.listeners;
 import de.mephisto.vpin.connectors.discord.DiscordMember;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -97,8 +97,8 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
             imageMessage += "\n\nVirtual Pinball Spreadsheet:\n" + VPS.getVpsTableUrl(game.getExtTableId());
 
             if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-              List<VpsTableFile> tableFiles = vpsTable.getTableFiles();
-              Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+              List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
+              Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
               if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
                 imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().get(0).getUrl();
               }

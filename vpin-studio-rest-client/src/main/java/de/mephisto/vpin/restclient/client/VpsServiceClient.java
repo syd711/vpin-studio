@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class VpsServiceClient extends VPinStudioClientService {
     }
   }
 
-  public void saveVersion(int gameId, String vpsId) {
+  public void saveVersion(int gameId, @Nullable String vpsId) {
     try {
       getRestClient().put(API + "vps/version/" + gameId + "/" + vpsId, new HashMap<>());
     } catch (Exception e) {

@@ -22,3 +22,6 @@ So if you only want to see updates for your highscore, create a build-in player 
 
 - Fixed drag and drop of media assets ...again.
 - Fixed empty table view when a broken VPX file was scanned.
+- Virtual Pinball Spreadsheet: Table version are sorted by date now.
+- Virtual Pinball Spreadsheet: Added empty version entry for older tables that are not listed in the VPS.
+- Virtual Pinball Spreadsheet: Re-implemented version combo-box with a more appealing design.

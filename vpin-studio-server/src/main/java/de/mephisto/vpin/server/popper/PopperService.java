@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableFile;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -203,10 +203,10 @@ public class PopperService implements InitializingBean {
         }
 
         if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-          List<VpsTableFile> tableFiles = tableData.getTableFiles();
-          Optional<VpsTableFile> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
+          List<VpsTableVersion> tableFiles = tableData.getTableFiles();
+          Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
           if (tableVersion.isPresent()) {
-            VpsTableFile version = tableVersion.get();
+            VpsTableVersion version = tableVersion.get();
             if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(version.getVersion())) {
               tableDetails.setGameVersion(version.getVersion());
             }

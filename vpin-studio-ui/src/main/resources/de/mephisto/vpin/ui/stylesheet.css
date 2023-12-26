@@ -445,6 +445,11 @@
     -fx-background-color: #333366;
 }
 
+.combo-box-popup .list-view .list-cell:filled:hover{
+    -fx-background-color: #333366;
+    -fx-text-fill: white;
+}
+
 .text-input {
   -fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
     linear-gradient(from 0px 0px to 0px 5px, derive(#FFFFFF, -9%), #FFFFFF);
@@ -867,6 +872,12 @@
 .default-text {
     -fx-text-fill: #FFFFFF;
     -fx-font-size : 14px;
+}
+
+.default-headline {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
 }
 
 .default-title {
