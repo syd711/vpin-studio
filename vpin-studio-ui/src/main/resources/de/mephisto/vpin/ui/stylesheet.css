@@ -593,10 +593,8 @@
 }
 .tree-table-row-cell {
     -fx-cell-size: 40px;
-    -fx-border-width: 1;
 }
 .tree-table-view .table-cell{
-    -fx-border-width: 1;
     -fx-border-color: transparent;
 }
 .tree-table-row-cell: hover {

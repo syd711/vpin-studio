@@ -124,22 +124,25 @@
                         </Label>
                         <GridPane vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="542.4000488281251" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="120.0" prefWidth="120.0" />
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="542.4000488281251" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="542.4000488281251" />
                           </columnConstraints>
                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label layoutX="10.0" layoutY="117.0" text="Apply Table Badge" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="117.0" text="Table Badge:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
+                                 <padding>
+                                    <Insets top="3.0" />
+                                 </padding>
                               </Label>
-                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                              <HBox GridPane.columnIndex="1" GridPane.valignment="TOP">
                                  <children>
-                                    <ComboBox fx:id="competitionIconCombo" prefWidth="310.0" />
+                                    <ComboBox fx:id="tournamentBadgeCombo" prefWidth="310.0" />
                                     <Label layoutX="226.0" layoutY="16.0" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -158,11 +161,14 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="The tournament badge will be added to the wheel icon. After the tournament is finished, the original icon will be restored." wrapText="true" />
                                  </tooltip>
                                  <GridPane.margin>
                                     <Insets left="6.0" />
                                  </GridPane.margin>
+                                 <padding>
+                                    <Insets top="3.0" />
+                                 </padding>
                               </Label>
                            </children>
                            <VBox.margin>
@@ -279,10 +285,10 @@
                      <center>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                           <columns>
-                              <TableColumn prefWidth="75.0" text="Status" />
-                            <TableColumn prefWidth="287.2000732421875" text="Your Table" />
-                            <TableColumn minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
-                              <TableColumn prefWidth="324.7999572753906" text="Table Version" />
+                              <TableColumn fx:id="statusColumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
+                            <TableColumn fx:id="tableColumn" prefWidth="350.0" text="Your Table" />
+                            <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
+                              <TableColumn fx:id="vpsTableVersionColumn" prefWidth="324.7999572753906" text="Table Version" />
                           </columns>
                         </TableView>
                      </center>

@@ -5,11 +5,11 @@ import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.preferences.ManiaAccountDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentManiaDialogController;
-import de.mephisto.vpin.ui.tournaments.dialogs.VPSTableSelectorDialogController;
+import de.mephisto.vpin.ui.vps.VPSTableSelectorDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.vps.VpsSelection;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class TournamentDialogs {
 
@@ -20,7 +20,7 @@ public class TournamentDialogs {
     stage.showAndWait();
   }
 
-  public static ManiaTournamentRepresentation openTournamentDialog(String title, ManiaTournamentRepresentation tournamentRepresentation) {
+  public static ManiaTournamentRepresentation openTournamentDialog(@NonNull String title, @NonNull ManiaTournamentRepresentation tournamentRepresentation) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentManiaDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentManiaDialogController controller = (TournamentManiaDialogController) stage.getUserData();
     controller.setTournament(tournamentRepresentation);
@@ -29,10 +29,9 @@ public class TournamentDialogs {
     return controller.getTournament();
   }
 
-  public static List<VpsTableVersion> openTableSelectionDialog(Stage parent, String title, ManiaTournamentRepresentation tournamentRepresentation) {
-    Stage stage = Dialogs.createStudioDialogStage(parent, VPSTableSelectorDialogController.class, "dialog-vps-table-selector.fxml", title);
+  public static VpsSelection openTableSelectionDialog(Stage parent) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, VPSTableSelectorDialogController.class, "dialog-vps-table-selector.fxml", "Virtual Pinball Spreadsheet - Table Selection");
     VPSTableSelectorDialogController controller = (VPSTableSelectorDialogController) stage.getUserData();
-    controller.setTournament(tournamentRepresentation);
     stage.showAndWait();
 
     return controller.getSelection();
