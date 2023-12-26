@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -133,6 +135,8 @@ public class VpsTable {
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
+    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getUpdatedAt()));
+    Collections.reverse(tableFiles);
     this.tableFiles = tableFiles;
   }
 
