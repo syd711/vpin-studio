@@ -241,13 +241,15 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void onChange(String value) {
+    this.tableVersionsCombo.valueProperty().removeListener(this);
     List<VpsTable> tables = VPS.getInstance().getTables();
     Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
-      refreshTableView(vpsTable);
       client.getVpsService().saveTable(this.game.get().getId(), vpsTable.getId());
     }
+    this.tableVersionsCombo.valueProperty().addListener(this);
+    EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
   }
 
 
@@ -431,6 +433,25 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   @Override
+  public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
+    openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    copyTableVersionBtn.setDisable(newValue == null);
+    if (newValue != null) {
+      copyTableVersionBtn.setDisable(false);
+      String existingValueId = this.game.get().getExtTableVersionId();
+      String newValueId = newValue.getId();
+      if (existingValueId == null || !existingValueId.equals(newValueId)) {
+        client.getVpsService().saveVersion(this.game.get().getId(), newValueId);
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+      }
+    }
+    else {
+      client.getVpsService().saveVersion(this.game.get().getId(), null);
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
+  }
+
+  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
@@ -449,24 +470,5 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     refreshSheetData(tables);
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
-  }
-
-  @Override
-  public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
-    openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
-    copyTableVersionBtn.setDisable(newValue == null);
-    if (newValue != null) {
-      copyTableVersionBtn.setDisable(false);
-      String existingValueId = this.game.get().getExtTableVersionId();
-      String newValueId = newValue.getId();
-      if (existingValueId == null || !existingValueId.equals(newValueId)) {
-        client.getVpsService().saveVersion(this.game.get().getId(), newValueId);
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-      }
-    }
-    else {
-      client.getVpsService().saveVersion(this.game.get().getId(), null);
-      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-    }
   }
 }

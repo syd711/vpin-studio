@@ -170,6 +170,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   public boolean saveExternalTableId(Game game, String vpsId) throws Exception {
     game.setExtTableId(vpsId);
+    game.setExtTableVersionId(null);
     (applicationContext.getBean(GameService.class)).save(game);
     return true;
   }
