@@ -219,7 +219,7 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
     this.tournament = selectedTournament;
     this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(ManiaTournamentVisibility.privateTournament));
 
-    boolean isOwner = true; //TODO selectedTournament.getOwner().equals(botId);
+    boolean isOwner = selectedTournament.getCabinetId() == null || selectedTournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId());
     boolean editable = isOwner && !selectedTournament.isActive();
     if (tournament.getUuid() == null) {
       editable = true;
@@ -318,11 +318,6 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
     tournamentBadgeCombo.setItems(imageList);
     tournamentBadgeCombo.setCellFactory(c -> new TournamentImageCell(client));
     tournamentBadgeCombo.setButtonCell(new TournamentImageCell(client));
-    tournamentBadgeCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      tournament.setBadge(t1);
-      validate();
-    });
-
     this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
 
 
