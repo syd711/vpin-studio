@@ -25,12 +25,12 @@
                <children>
                   <TreeTableView fx:id="treeTableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
-                      <TreeTableColumn fx:id="columnName" prefWidth="200.0" text="Name" />
-                        <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" text="Status" />
+                      <TreeTableColumn fx:id="columnName" prefWidth="330.0" text="Name" />
+                        <TreeTableColumn fx:id="columnDate" prefWidth="320.0" style="-fx-alignment: CENTER;" text="Start /End" />
+                        <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
                       <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
-                        <TreeTableColumn fx:id="columnStartDate" prefWidth="160.0" text="Start" />
-                        <TreeTableColumn fx:id="columnEndDate" prefWidth="160.0" text="End" />
-                        <TreeTableColumn fx:id="columnOwner" prefWidth="75.0" text="Owner" />
+                        <TreeTableColumn fx:id="columnVPSTable" prefWidth="200.0" text="Table Data" />
+                        <TreeTableColumn fx:id="columnVPSVersion" prefWidth="250.0" text="Table Version" />
                     </columns>
                   </TreeTableView>
                </children>
@@ -99,6 +99,15 @@
                             </graphic>
                         </Button>
                         <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="downloadBtn" layoutX="870.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="514.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
@@ -107,7 +116,6 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
                             </graphic>
                         </Button>
-                  <Separator layoutX="514.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                             <font>
                                 <Font size="14.0" />

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tournaments;
+package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;

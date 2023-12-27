@@ -41,21 +41,21 @@ public class ManiaAccountDialogController implements Initializable, DialogContro
     }
     account.setDisplayName(displayNameText.getText());
     account.setInitials(initialsText.getText());
-
-    try {
-      ManiaAccountRepresentation existingAccount = maniaClient.getAccountClient().getAccount();
-      if(existingAccount == null) {
-        maniaClient.getAccountClient().register(this.account);
-      }
-      else {
-        maniaClient.getAccountClient().update(this.account);
-      }
-    } catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save account: " + ex.getMessage());
-    } finally {
-      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      stage.close();
-    }
+//
+//    try {
+//      ManiaAccountRepresentation existingAccount = maniaClient.getAccountClient().getAccount();
+//      if(existingAccount == null) {
+//        maniaClient.getAccountClient().register(this.account);
+//      }
+//      else {
+//        maniaClient.getAccountClient().update(this.account);
+//      }
+//    } catch (Exception ex) {
+//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save account: " + ex.getMessage());
+//    } finally {
+//      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+//      stage.close();
+//    }
   }
 
   @FXML

@@ -15,9 +15,15 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.vps.VpsTableContainer;
+import de.mephisto.vpin.ui.vps.VpsVersionContainer;
+import de.mephisto.vpin.ui.tournaments.view.DateCellContainer;
+import de.mephisto.vpin.ui.tournaments.view.TournamentCellContainer;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,6 +35,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,15 +49,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -69,13 +81,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private TreeTableColumn<TournamentTreeModel, String> columnStatus;
 
   @FXML
-  private TreeTableColumn<TournamentTreeModel, String> columnOwner;
+  private TreeTableColumn<TournamentTreeModel, String> columnDate;
 
   @FXML
-  private TreeTableColumn<TournamentTreeModel, String> columnStartDate;
+  private TreeTableColumn<TournamentTreeModel, String> columnVPSTable;
 
   @FXML
-  private TreeTableColumn<TournamentTreeModel, String> columnEndDate;
+  private TreeTableColumn<TournamentTreeModel, String> columnVPSVersion;
 
   @FXML
   private Button editBtn;
@@ -94,6 +106,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private Button reloadBtn;
+
+  @FXML
+  private Button downloadBtn;
 
   @FXML
   private SplitMenuButton validateBtn;
@@ -163,16 +178,46 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     t.setVisibility(ManiaTournamentVisibility.publicTournament);
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     t.setEndDate(end);
+    t.setStartDate(DateUtil.today());
 
     t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
     try {
       if (t != null) {
-        ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, this.getTournamentBadge()));
+        File f = new File("E:\\Development\\workspace\\vpin-studio\\resources\\competition-badges\\mania.png");
+        ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, f));
         onReload();
         treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
       }
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
+    }
+  }
+
+  @FXML
+  private void onDownload() {
+    Optional<TournamentTreeModel> selection = getSelection();
+    if (selection.isPresent()) {
+      TournamentTreeModel tournamentTreeModel = selection.get();
+      String url = null;
+      if (tournamentTreeModel.getVpsTableVersion() != null) {
+        url = tournamentTreeModel.getVpsTableVersion().getUrls().get(0).getUrl();
+      }
+      else if (tournamentTreeModel.getVpsTable() != null) {
+        url = VPS.getVpsTableUrl(tournamentTreeModel.getVpsTable().getId());
+      }
+
+      if (url == null) {
+        return;
+      }
+
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(url));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage(), e);
+        }
+      }
     }
   }
 
@@ -238,7 +283,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get();
       ManiaTournamentRepresentation tournament = tournamentTreeModel.getTournament();
-      boolean isOwner = true;//TODO
+      boolean isOwner = tournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId());
       if (isOwner) {
         deleteTournament(tournament);
       }
@@ -321,7 +366,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
 
     new Thread(() -> {
-
       Platform.runLater(() -> {
         TreeItem<TournamentTreeModel> selectedItem = treeTableView.getSelectionModel().getSelectedItem();
         TreeItem<TournamentTreeModel> root = loadTreeModel();
@@ -329,8 +373,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
         treeTableView.refresh();
         treeTableView.getSelectionModel().select(selectedItem);
+        if (selectedItem == null) {
+          treeTableView.getSelectionModel().select(0);
+        }
+
         tableStack.getChildren().remove(loadingOverlay);
         treeTableView.setVisible(true);
+        TournamentTreeModel.expandTreeView(root);
       });
     }).start();
 
@@ -345,19 +394,19 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private String getLabelCss(TournamentTreeModel model) {
     String status = "";
-//    if (value.getValidationState().getCode() > 0) {
-//      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
-//    }
-//    else if (value.isActive()) {
-//      status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;";
-//    }
-//    else if (value.isPlanned()) {
-//      status = "";
-//    }
+    ManiaTournamentRepresentation tournament = model.getTournament();
+    if (tournament.isActive()) {
+      status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;";
+    }
+    else if (tournament.isPlanned()) {
+      status = "-fx-font-color: #FF9933;-fx-text-fill:#FF9933;-fx-font-weight: bold;";
+    }
     return status;
   }
 
   private void refreshView(Optional<TournamentTreeModel> model) {
+    tournamentsController.setTournament(model);
+
     validationError.setVisible(false);
     TournamentTreeModel newSelection = null;
     if (model.isPresent()) {
@@ -366,14 +415,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     boolean disable = newSelection == null;
     boolean isOwner = newSelection != null && newSelection.getTournament() != null && newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId());
-    editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
+    editBtn.setDisable(disable || !isOwner || newSelection == null || newSelection.getTournament().isFinished());
     validateBtn.setDisable(model.isEmpty() || model.get().getTournament().isFinished());
     finishBtn.setDisable(disable || !isOwner || model.isEmpty() || !model.get().getTournament().isActive());
     deleteBtn.setDisable(disable);
     duplicateBtn.setDisable(disable || !isOwner);
     reloadBtn.setDisable(this.maniaAccount != null);
     addBtn.setDisable(this.maniaAccount != null);
-    joinBtn.setDisable(this.maniaAccount != null);
+    downloadBtn.setDisable(!disable && newSelection != null && newSelection.getGame() != null);
+    joinBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
 
     if (model.isPresent()) {
 //      if (newSelection.getValidationState().getCode() > 0) {
@@ -388,7 +438,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
 
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
-    if(model.isPresent()) {
+    if (model.isPresent()) {
       NavigationController.setBreadCrumb(Arrays.asList("Tournaments", model.get().getTournament().getDisplayName()));
     }
   }
@@ -420,34 +470,12 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (!tournament.getDisplayName().toLowerCase().contains(textfieldSearch.getText().toLowerCase())) {
         continue;
       }
-      TreeItem<TournamentTreeModel> treeModel = toTreeModel(tournament);
+      TreeItem<TournamentTreeModel> treeModel = TournamentTreeModel.create(tournament);
 
       root.getChildren().add(treeModel);
     }
+    root.setExpanded(true);
     return root;
-  }
-
-  private static TreeItem<TournamentTreeModel> toTreeModel(ManiaTournamentRepresentation tournament) {
-    TreeItem<TournamentTreeModel> tournamentNode = new TreeItem<>(new TournamentTreeModel(tournament, null, null, null));
-    List<String> tableIdList = tournament.getTableIdList();
-    for (String s : tableIdList) {
-      VpsTableVersion version = null;
-      VpsTable table = null;
-      GameRepresentation game = null;
-      String[] split = s.split("#");
-      if (split.length > 0) {
-        String tableId = split[0];
-        table = VPS.getInstance().getTableById(tableId);
-        if (table != null && split.length == 2) {
-          version = table.getVersion(split[1]);
-          game = client.getGameService().getGameByVpsTable(table, version);
-        }
-      }
-
-      TournamentTreeModel model = new TournamentTreeModel(tournament, game, table, version);
-      tournamentNode.getChildren().add(new TreeItem<>(model));
-    }
-    return tournamentNode;
   }
 
   @Override
@@ -496,61 +524,40 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
 
     columnName.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue().getValue();
-      Label label = new Label(value.getTournament().getDisplayName());
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
+      if (!cellData.getValue().getChildren().isEmpty()) {
+        TournamentTreeModel value = cellData.getValue().getValue();
+        return new SimpleObjectProperty(new TournamentCellContainer(value.getTournament()));
+      }
+      return null;
     });
 
 
     columnTable.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue().getValue();
-      VpsTable vpsTable = value.getVpsTable();
-      if (vpsTable != null) {
-        GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-        Label label = new Label("- not available anymore -");
-        if (game != null) {
-          label = new Label(game.getGameDisplayName());
+      if (cellData.getValue().getChildren().isEmpty()) {
+        TournamentTreeModel value = cellData.getValue().getValue();
+        VpsTable vpsTable = value.getVpsTable();
+        if (vpsTable != null) {
+          GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
+          Label label = new Label("- not available anymore -");
+          if (game != null) {
+            label = new Label(game.getGameDisplayName());
+          }
+          HBox hBox = new HBox(3);
+          hBox.setAlignment(Pos.CENTER_LEFT);
+
+          ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+          Image image = new Image(gameMediaItem);
+          ImageView view = new ImageView(image);
+          view.setPreserveRatio(true);
+          view.setSmooth(true);
+          view.setFitWidth(80);
+          hBox.getChildren().addAll(view, label);
+
+          return new SimpleObjectProperty(hBox);
         }
-        label.setStyle(getLabelCss(value));
-
-        HBox hBox = new HBox(6);
-        hBox.setAlignment(Pos.CENTER_LEFT);
-
-        ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-        Image image = new Image(gameMediaItem);
-        ImageView view = new ImageView(image);
-        view.setPreserveRatio(true);
-        view.setSmooth(true);
-        view.setFitWidth(60);
-        view.setFitHeight(60);
-        hBox.getChildren().addAll(view, label);
-
-        return new SimpleObjectProperty(hBox);
       }
 
-      return new SimpleObjectProperty("todo");
-    });
-
-    columnOwner.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue().getValue();
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-//      PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
-//      if (discordPlayer != null) {
-//        Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-//        ImageView view = new ImageView(image);
-//        view.setPreserveRatio(true);
-//        view.setFitWidth(50);
-//        view.setFitHeight(50);
-//        CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-//
-//        Label label = new Label(discordPlayer.getName());
-//        label.setStyle(getLabelCss(value));
-//        hBox.getChildren().addAll(view, label);
-//      }
-
-      return new SimpleObjectProperty(hBox);
+      return null;
     });
 
     columnStatus.setCellValueFactory(cellData -> {
@@ -568,22 +575,39 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       return new SimpleObjectProperty(label);
     });
 
-    columnStartDate.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue().getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getTournament().getStartDate()));
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
+    columnDate.setCellValueFactory(cellData -> {
+      if (!cellData.getValue().getChildren().isEmpty()) {
+        TournamentTreeModel value = cellData.getValue().getValue();
+        return new SimpleObjectProperty(new DateCellContainer(value.getTournament()));
+      }
+      return null;
     });
 
-    columnEndDate.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue().getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getTournament().getEndDate()));
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
+    columnVPSTable.setCellValueFactory(cellData -> {
+      if (cellData.getValue().getChildren().isEmpty()) {
+        TournamentTreeModel value = cellData.getValue().getValue();
+        VpsTable vpsTable = value.getVpsTable();
+        return new SimpleObjectProperty(new VpsTableContainer(vpsTable));
+      }
+      return null;
+    });
+
+    columnVPSVersion.setCellValueFactory(cellData -> {
+      if (cellData.getValue().getChildren().isEmpty()) {
+        TournamentTreeModel value = cellData.getValue().getValue();
+        VpsTableVersion vpsTableVersion = value.getVpsTableVersion();
+        if(vpsTableVersion == null) {
+          return new SimpleObjectProperty<>("All versions allowed.");
+        }
+
+        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion));
+      }
+      return null;
     });
 
     treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
       "Create a new tournament by pressing the '+' button."));
+
     treeTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {
         refreshView(Optional.ofNullable(newSelection.getValue()));
@@ -606,9 +630,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     validationError.setVisible(false);
     bindSearchField();
     onViewActivated();
-
-
-//    treeTableView.setVisible(false);
+    treeTableView.setVisible(false);
 
     EventManager.getInstance().addListener(this);
     onReload();

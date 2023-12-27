@@ -2,11 +2,15 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,6 +19,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tournaments.TournamentsController">
@@ -48,19 +53,7 @@
          <children>
             <Accordion fx:id="accordion" prefWidth="600.0">
               <panes>
-                <TitledPane fx:id="competitionMembersPane" expanded="false" text="Members">
-                     <content>
-                        <ScrollPane vbarPolicy="NEVER">
-                           <content>
-                              <VBox fx:id="membersBox">
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content></TitledPane>
-                  <TitledPane fx:id="metaDataPane" text="Metadata">
+                  <TitledPane fx:id="metaDataPane" text="Tournament Details">
                      <content>
                         <VBox>
                            <children>
@@ -68,32 +61,24 @@
                                  <center>
                                     <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="144.0000244140625" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="435.9999755859375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="110.80001525878907" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="412.399984741211" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="58.79999389648435" />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="UUID:">
+                                          <Label text="Token:">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" text="Created At:" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="6">
+                                          <Label layoutX="10.0" layoutY="15.0" text="Created By:" GridPane.rowIndex="4">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -103,79 +88,175 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="7">
+                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Link:" GridPane.rowIndex="3">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
+                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="1">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
+                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="2">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <children>
+                                                <Hyperlink fx:id="discordLink" onAction="#onDiscordLink" text="-">
+                                                   <HBox.margin>
+                                                      <Insets left="-4.0" />
+                                                   </HBox.margin>
+                                                </Hyperlink>
+                                             </children></HBox>
+                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="channelLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0" prefWidth="113.0" text="Score Limit:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0" prefWidth="113.0" text="Score Validation:" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="scoreLimitLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="scoreValidationLabel" layoutX="154.0" layoutY="150.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                             <children>
+                                                <Button fx:id="copyTokenBtn" mnemonicParsing="false" onAction="#onTokenCopy">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                                   </graphic>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <tooltip>
+                                                      <Tooltip text="Copy tournament token to clipboard" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </GridPane>
                                  </center>
                               </BorderPane>
                               <ImageView fx:id="bannerImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                  <VBox.margin>
-                                    <Insets left="141.0" top="-28.0" />
+                                    <Insets left="110.0" />
                                  </VBox.margin>
                               </ImageView>
+                              <Label text="Description:">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox fx:id="descriptionWrapper" styleClass="media-container">
+                                 <children>
+                                    <ScrollPane prefHeight="350.0" styleClass="media-parent">
+                                       <content>
+                                          <Label fx:id="descriptionLabel" text="Label" textFill="WHITE" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </content>
+                                       <padding>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </padding>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
                            </children>
                         </VBox>
+                     </content>
+                  </TitledPane>
+                <TitledPane fx:id="tournamentMembersPane" expanded="false" text="Members">
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <ScrollPane vbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="membersBox">
+                                       <padding>
+                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </center>
+                           <top>
+                              <ToolBar BorderPane.alignment="TOP_LEFT">
+                                <items>
+                                  <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onUserRefresh" text="Refresh" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                </items>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </ToolBar>
+                           </top>
+                           <padding>
+                              <Insets bottom="1.0" />
+                           </padding>
+                        </BorderPane>
+                     </content></TitledPane>
+                  <TitledPane fx:id="dashboardPane" expanded="false" layoutX="10.0" layoutY="41.0" text="Dashboard">
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <ScrollPane vbarPolicy="NEVER">
+                                 <content>
+                                    <VBox fx:id="membersBox1">
+                                       <children>
+                                          <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="This tournament has no dashboard URL.">
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="560.0" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                                 <BorderPane.margin>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </BorderPane.margin>
+                              </ScrollPane>
+                           </center>
+                           <top>
+                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <items>
+                                  <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="Open Dashboard">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                    </Button>
+                                </items>
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                              </ToolBar>
+                           </top>
+                           <padding>
+                              <Insets bottom="1.0" />
+                           </padding>
+                        </BorderPane>
                      </content>
                   </TitledPane>
               </panes>

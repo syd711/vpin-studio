@@ -92,7 +92,7 @@
                         </Label>
                         <HBox>
                            <children>
-                              <TextField fx:id="iscoredUrlField" prefWidth="450.0">
+                              <TextField fx:id="dashboardUrlField" prefWidth="450.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

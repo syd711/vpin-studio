@@ -35,6 +35,11 @@ public class TournamentCreationProgressModel extends ProgressModel<ManiaTourname
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return true;
+  }
+
+  @Override
   public int getMax() {
     return tournaments.size();
   }

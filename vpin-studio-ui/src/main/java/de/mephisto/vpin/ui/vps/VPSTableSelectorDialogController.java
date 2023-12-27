@@ -20,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VPSTableSelectorDialogController implements DialogController, AutoCompleteTextFieldChangeListener, Initializable {
@@ -41,6 +38,8 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
   private ComboBox<VpsTableVersion> versionsCombo;
   private VpsTable vpsTable;
 
+  private VpsSelection selection = new VpsSelection(null, null);
+
 
   @Override
   public void onDialogCancel() {
@@ -49,6 +48,7 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    selection = new VpsSelection(null, null);
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -62,21 +62,27 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
   private void refreshTableView(VpsTable vpsTable) {
     autoCompleteNameField.reset();
     autoCompleteNameField.setText(vpsTable.getDisplayName());
-    okButton.setDisable(versionsCombo.getValue() == null);
+    okButton.setDisable(selection.getTable() == null);
   }
 
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
     Optional<VpsTable> first = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+    okButton.setDisable(!first.isPresent());
+
     if (first.isPresent()) {
       vpsTable = first.get();
+      selection.setTable(vpsTable);
 
-      List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
+      List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFiles());
+      tableFiles.add(0, null);
+
       versionsCombo.setItems(FXCollections.emptyObservableList());
       versionsCombo.setItems(FXCollections.observableList(tableFiles));
       if (!tableFiles.isEmpty()) {
         versionsCombo.getSelectionModel().select(0);
+        selection.setVersion(versionsCombo.getValue());
       }
 
       refreshTableView(vpsTable);
@@ -84,7 +90,7 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
   }
 
   public VpsSelection getSelection() {
-    return new VpsSelection(vpsTable, versionsCombo.getValue());
+    return selection;
   }
 
   @Override
@@ -95,7 +101,9 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
 
     versionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     versionsCombo.setButtonCell(new VpsTableVersionCell());
-    versionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> okButton.setDisable(newValue == null));
+    versionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      selection.setVersion(newValue);
+    });
 
     Platform.runLater(() -> nameField.requestFocus());
   }

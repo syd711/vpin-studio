@@ -12,6 +12,14 @@ public class VpsSelection {
     version = tableVersion;
   }
 
+  public void setTable(VpsTable table) {
+    this.table = table;
+  }
+
+  public void setVersion(VpsTableVersion version) {
+    this.version = version;
+  }
+
   public VpsTable getTable() {
     return table;
   }

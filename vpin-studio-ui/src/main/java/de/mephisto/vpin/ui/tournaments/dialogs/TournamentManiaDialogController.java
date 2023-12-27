@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -14,12 +15,12 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.tables.vps.VpsTableContainer;
-import de.mephisto.vpin.ui.tables.vps.VpsVersionContainer;
-import de.mephisto.vpin.ui.tournaments.GameCellContainer;
 import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
-import de.mephisto.vpin.ui.tournaments.TournamentTreeModel;
+import de.mephisto.vpin.ui.tournaments.view.GameCellContainer;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.vps.VpsSelection;
+import de.mephisto.vpin.ui.vps.VpsTableContainer;
+import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -88,7 +89,7 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   private TextField nameField;
 
   @FXML
-  private TextField iscoredUrlField;
+  private TextField dashboardUrlField;
 
   @FXML
   private Label durationLabel;
@@ -157,6 +158,18 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   @FXML
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+
+    ObservableList<TournamentTreeModel> items = this.tableView.getItems();
+    List<String> tableEntries = new ArrayList<>();
+    for (TournamentTreeModel item : items) {
+      String entry = item.getVpsTable().getId() + "#";
+      if (item.getVpsTableVersion() != null) {
+        entry += item.getVpsTableVersion().getId();
+      }
+      tableEntries.add(entry);
+    }
+    tournament.setTableIds(String.join(",", tableEntries));
+
     stage.close();
   }
 
@@ -167,10 +180,6 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   }
 
   private void validate() {
-    if (this.tournament.getCabinetId() != null) {
-      return;
-    }
-
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
@@ -205,9 +214,8 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       }
     }
 
-
-    validationContainer.setVisible(false);
     this.saveBtn.setDisable(false);
+    validationContainer.setVisible(false);
   }
 
   @Override
@@ -225,24 +233,33 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       editable = true;
     }
 
-    tournamentBadgeCombo.setDisable(!editable);
+    tournamentBadgeCombo.setDisable(tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());
-    this.nameField.setDisable(!editable);
 
     this.startDatePicker.setValue(selectedTournament.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     this.startDatePicker.setDisable(!editable);
     this.startTime.setValue(DateUtil.formatTimeString(selectedTournament.getStartDate()));
-    this.startTime.setDisable(!editable);
+    this.startTime.setDisable(tournament.getUuid() != null && tournament.isActive());
 
     this.endDatePicker.setValue(selectedTournament.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     this.endDatePicker.setDisable(!editable);
     this.endTime.setValue(DateUtil.formatTimeString(selectedTournament.getEndDate()));
-    this.endTime.setDisable(!editable);
+    this.endDatePicker.setDisable(tournament.getUuid() != null && tournament.isFinished());
+
+    this.validationContainer.setVisible(editable);
 
     this.tournament = selectedTournament;
 
-    this.validationContainer.setVisible(editable);
-    validate();
+    List<String> tableIdList = this.tournament.getTableIdList();
+    for (String s : tableIdList) {
+      String[] split = s.split("#");
+      VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
+      VpsTableVersion vpsVersion = vpsTable.getVersion(split[1]);
+      GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+      this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
+    }
+
+    reloadTables();
   }
 
   @Override
@@ -320,6 +337,8 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
     tournamentBadgeCombo.setButtonCell(new TournamentImageCell(client));
     this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
 
+    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> tournament.setDashboardUrl(newValue));
+
 
     statusColumn.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue();
@@ -349,6 +368,9 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
       VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
+      if (vpsTableVersion == null) {
+        return new SimpleObjectProperty<>("All versions allowed.");
+      }
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion));
     });
 

@@ -610,7 +610,6 @@
 }
 .tree-table-row-cell: selected {
     -fx-text-background-color: #FFFFFF;
-    -fx-font-weight: bold;
     -fx-background-color: #6666FFAA;
 }
 

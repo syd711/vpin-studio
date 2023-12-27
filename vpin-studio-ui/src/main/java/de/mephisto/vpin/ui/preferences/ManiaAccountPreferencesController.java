@@ -66,15 +66,15 @@ public class ManiaAccountPreferencesController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete your VPin-Mania account?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      try {
-        maniaClient.getAccountClient().deleteAccount();
-      } catch (Exception e) {
-        WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
-      }
-      refreshView();
-    }
+//    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete your VPin-Mania account?");
+//    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+//      try {
+//        maniaClient.getAccountClient().deleteAccount();
+//      } catch (Exception e) {
+//        WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
+//      }
+//      refreshView();
+//    }
   }
 
 
@@ -87,14 +87,14 @@ public class ManiaAccountPreferencesController implements Initializable {
   }
 
   private void refreshView() {
-    account = maniaClient.getAccountClient().getAccount();
-    accountPanel.setVisible(account != null);
-    registrationPanel.setVisible(account == null);
-
-    if(account != null) {
-      displayNameText.setText(account.getDisplayName());
-      cabinetIdText.setText(account.getCabinetId());
-      initialsText.setText(account.getInitials());
-    }
+//    account = maniaClient.getAccountClient().getAccount();
+//    accountPanel.setVisible(account != null);
+//    registrationPanel.setVisible(account == null);
+//
+//    if(account != null) {
+//      displayNameText.setText(account.getDisplayName());
+//      cabinetIdText.setText(account.getCabinetId());
+//      initialsText.setText(account.getInitials());
+//    }
   }
 }
