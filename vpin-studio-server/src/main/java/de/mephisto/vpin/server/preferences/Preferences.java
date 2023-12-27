@@ -98,6 +98,39 @@ public class Preferences {
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
 
+  @Column(name = "tournamentEnabled", nullable = false, columnDefinition = "boolean default false")
+  private boolean tournamentEnabled;
+
+  @Column(length = 2048)
+  private String tournamentDiscordLink;
+
+  @Column(length = 2048)
+  private String tournamentDashboardUrl;
+
+  public boolean getTournamentEnabled() {
+    return tournamentEnabled;
+  }
+
+  public void setTournamentEnabled(boolean tournamentEnabled) {
+    this.tournamentEnabled = tournamentEnabled;
+  }
+
+  public String getTournamentDiscordLink() {
+    return tournamentDiscordLink;
+  }
+
+  public void setTournamentDiscordLink(String tournamentDiscordLink) {
+    this.tournamentDiscordLink = tournamentDiscordLink;
+  }
+
+  public String getTournamentDashboardUrl() {
+    return tournamentDashboardUrl;
+  }
+
+  public void setTournamentDashboardUrl(String tournamentDashboardUrl) {
+    this.tournamentDashboardUrl = tournamentDashboardUrl;
+  }
+
   public String getDiscordVpsChannelId() {
     return discordVpsChannelId;
   }

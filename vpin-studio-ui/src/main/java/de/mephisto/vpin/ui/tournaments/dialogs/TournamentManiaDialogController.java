@@ -254,7 +254,10 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
     for (String s : tableIdList) {
       String[] split = s.split("#");
       VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-      VpsTableVersion vpsVersion = vpsTable.getVersion(split[1]);
+      VpsTableVersion vpsVersion = null;
+      if(split.length == 2) {
+        vpsVersion = vpsTable.getVersion(split[1]);
+      }
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
       this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
     }

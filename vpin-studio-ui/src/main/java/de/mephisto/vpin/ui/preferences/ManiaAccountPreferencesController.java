@@ -1,100 +1,68 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.*;
+import static de.mephisto.vpin.ui.Studio.client;
 
-public class ManiaAccountPreferencesController implements Initializable {
+public class ManiaAccountPreferencesController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountPreferencesController.class);
 
   @FXML
-  private VBox accountPanel;
+  private VBox preferencesPanel;
 
   @FXML
   private VBox registrationPanel;
 
   @FXML
-  private TextField displayNameText;
+  private CheckBox registrationCheckbox;
 
   @FXML
-  private TextField cabinetIdText;
+  private TextField dashboardUrl;
 
   @FXML
-  private TextField initialsText;
-
-  private ManiaAccountRepresentation account;
-
-  @FXML
-  private void onCopy() {
-    String text = cabinetIdText.getText();
-    if (!StringUtils.isEmpty(text)) {
-      final ClipboardContent content = new ClipboardContent();
-      content.putString(text);
-      Clipboard.getSystemClipboard().setContent(content);
-    }
-  }
-
-  @FXML
-  private void onNameEdit() {
-    TournamentDialogs.openManiaAccountDialog("VPin Mania Account Registration", this.account);
-    refreshView();
-  }
-
-  @FXML
-  private void onRegister() {
-    TournamentDialogs.openManiaAccountDialog("VPin Mania Account Registration", null);
-    refreshView();
-  }
-
-  @FXML
-  private void onDelete() {
-//    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete your VPin-Mania account?");
-//    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//      try {
-//        maniaClient.getAccountClient().deleteAccount();
-//      } catch (Exception e) {
-//        WidgetFactory.showAlert(stage, "Error", "Error deleting account: " + e.getMessage());
-//      }
-//      refreshView();
-//    }
-  }
+  private TextField discordLink;
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    accountPanel.managedProperty().bindBidirectional(accountPanel.visibleProperty());
-    registrationPanel.managedProperty().bindBidirectional(registrationPanel.visibleProperty());
+    preferencesPanel.managedProperty().bindBidirectional(preferencesPanel.visibleProperty());
 
-    refreshView();
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
+    preferencesPanel.setVisible(preference.getBooleanValue());
+    registrationCheckbox.setSelected(preference.getBooleanValue());
+
+    registrationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_ENABLED, newValue));
+
+    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL);
+    dashboardUrl.setText(preference.getValue());
+
+    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK);
+    discordLink.setText(preference.getValue());
+
+    dashboardUrl.textProperty().addListener((observable, oldValue, newValue) -> client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL, newValue));
+    discordLink.textProperty().addListener((observable, oldValue, newValue) -> client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK, newValue));
+
+    client.getPreferenceService().addListener(this);
   }
 
-  private void refreshView() {
-//    account = maniaClient.getAccountClient().getAccount();
-//    accountPanel.setVisible(account != null);
-//    registrationPanel.setVisible(account == null);
-//
-//    if(account != null) {
-//      displayNameText.setText(account.getDisplayName());
-//      cabinetIdText.setText(account.getCabinetId());
-//      initialsText.setText(account.getInitials());
-//    }
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
+      preferencesPanel.setVisible((Boolean) value);
+    }
   }
 }

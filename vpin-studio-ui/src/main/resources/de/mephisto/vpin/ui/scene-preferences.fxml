@@ -52,7 +52,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="133.0" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="133.0" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Service Settings" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">
                            <font>
                               <Font size="13.0" />

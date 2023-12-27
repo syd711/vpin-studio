@@ -166,9 +166,8 @@ public class TournamentsController implements Initializable, StudioFXController 
 
   @Override
   public void onViewActivated() {
-    refreshUsers(tournamentTreeModel);
-    tournamentMembersPane.setExpanded(true);
     maniaController.onViewActivated();
+    setTournament(this.tournamentTreeModel);
   }
 
   public void setTournament(Optional<TournamentTreeModel> model) {

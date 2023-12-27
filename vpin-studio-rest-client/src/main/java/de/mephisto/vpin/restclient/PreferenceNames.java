@@ -44,6 +44,10 @@ public interface PreferenceNames {
   String DISCORD_VPS_TABLE_FILTER_ENABLED = "discordVpsTableFilterEnabled";
   String DISCORD_VPS_REFRESH_INTERVAL_MIN = "discordVpsRefreshIntervalMin";
 
+  String TOURNAMENTS_ENABLED = "tournamentEnabled";
+  String TOURNAMENTS_DISCORD_LINK = "tournamentDiscordLink";
+  String TOURNAMENTS_DASHBOARD_URL = "tournamentDashboardUrl";
+
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";
