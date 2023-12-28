@@ -93,8 +93,9 @@ public class PlayerService {
     model.setName(player.getName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
-    model.setExternalId(player.getExternalId());
+    model.setDiscordId(player.getDiscordId());
     model.setTournamentUser(player.isTournamentUser());
+    model.setTournamentUserUuid(player.getTournamentUserUuid());
 
     Player updated = playerRepository.saveAndFlush(model);
     LOG.info("Saved " + updated);

@@ -81,4 +81,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.vps to javafx.fxml;
   exports de.mephisto.vpin.ui.tournaments.view;
   opens de.mephisto.vpin.ui.tournaments.view to javafx.fxml;
+  exports de.mephisto.vpin.ui.players.dialogs;
+  opens de.mephisto.vpin.ui.players.dialogs to javafx.fxml;
 }

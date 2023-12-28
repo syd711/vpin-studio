@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.players;
 
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 
 import java.util.Date;
 
@@ -33,6 +35,25 @@ public class PlayerRepresentation {
   private boolean administrative;
 
   private boolean tournamentUser;
+
+  private String tournamentUserUuid;
+
+  public ManiaAccountRepresentation toManiaAccount() {
+    ManiaAccountRepresentation account = new ManiaAccountRepresentation();
+    account.setCabinetId(SystemUtil.getBoardSerialNumber());
+    account.setInitials(this.getInitials());
+    account.setDisplayName(this.getDisplayName());
+    account.setUuid(this.getTournamentUserUuid());
+    return account;
+  }
+
+  public String getTournamentUserUuid() {
+    return tournamentUserUuid;
+  }
+
+  public void setTournamentUserUuid(String tournamentUserUuid) {
+    this.tournamentUserUuid = tournamentUserUuid;
+  }
 
   public boolean isTournamentUser() {
     return tournamentUser;

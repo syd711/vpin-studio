@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.tournaments;
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.server.util.SystemUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

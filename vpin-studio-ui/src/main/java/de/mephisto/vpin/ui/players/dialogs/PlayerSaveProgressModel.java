@@ -1,14 +1,15 @@
-package de.mephisto.vpin.ui.players;
+package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
@@ -79,6 +81,21 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       }
       client.getPlayerService().savePlayer(player);
       client.clearCache();
+
+      if (player.isTournamentUser()) {
+        ManiaAccountRepresentation maniaAccount = player.toManiaAccount();
+
+        if (!StringUtils.isEmpty(maniaAccount.getUuid())) {
+          maniaClient.getAccountClient().update(maniaAccount);
+          if (this.avatarFile != null) {
+            maniaClient.getAccountClient().updateAvatar(maniaAccount, this.avatarFile, null);
+          }
+        }
+        else {
+          maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+        }
+      }
+
       progressResultModel.getResults().add(player);
     } catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());

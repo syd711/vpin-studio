@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class BuiltInPlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
@@ -143,9 +144,23 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPlayerService().deletePlayer(selection);
-        tableView.getSelectionModel().clearSelection();
-        onReload();
+        if(selection.getTournamentUserUuid() != null) {
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player '\" + selection.getName() + \"' is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+          if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
+            client.getPlayerService().deletePlayer(selection);
+            tableView.getSelectionModel().clearSelection();
+            onReload();
+          }
+        }
+        else {
+          if(selection.getTournamentUserUuid() != null) {
+            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
+          }
+
+          client.getPlayerService().deletePlayer(selection);
+          tableView.getSelectionModel().clearSelection();
+          onReload();
+        }
       }
     }
   }
