@@ -14,7 +14,8 @@ public class ServerInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ServerInstallationUtil.class);
 
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
-  public static File BAT = new File("vpin-studio-server.bat");
+  public static final String VPIN_STUDIO_SERVER_BAT = "vpin-studio-server.bat";
+  public static File BAT = new File(VPIN_STUDIO_SERVER_BAT);
 
   public static boolean install() throws IOException {
     try {
@@ -72,15 +73,15 @@ public class ServerInstallationUtil {
     formattedPath = String.format(path, userName);
     autostartFolder = new File(formattedPath);
     if (autostartFolder.exists()) {
-      return autostartFolder;
+      return new File(autostartFolder, VPIN_STUDIO_SERVER_BAT);
     }
 
     String path2 = System.getenv("APPDATA") + "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
     autostartFolder = new File(path2);
     if (autostartFolder.exists()) {
-      return autostartFolder;
+      return new File(autostartFolder, VPIN_STUDIO_SERVER_BAT);
     }
 
-    return new File(System.getProperty("user.home"));
+    return new File(System.getProperty("user.home"), VPIN_STUDIO_SERVER_BAT);
   }
 }
