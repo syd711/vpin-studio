@@ -22,6 +22,16 @@ public class ServerInstallationUtil {
       File root = new File("./");
       String script = "cd /D " + root.getAbsolutePath() +
         "\nserver.bat";
+
+      File autostartFile = getAutostartFile();
+      if (autostartFile.isDirectory()) {
+        autostartFile = new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
+      }
+
+      if (autostartFile.exists() && !autostartFile.delete()) {
+        throw new IOException("Could not delete existing autostart file " + autostartFile.getAbsolutePath());
+      }
+
       FileUtils.writeStringToFile(getAutostartFile(), script, StandardCharsets.UTF_8);
       LOG.info("Written autostart file " + getAutostartFile().getAbsolutePath());
       return getAutostartFile().exists();
@@ -65,9 +75,9 @@ public class ServerInstallationUtil {
 
     String formattedPath = String.format(path, userName);
     File autostartFolder = new File(formattedPath);
-    if (autostartFolder.exists()) {
-      return autostartFolder;
-    }
+//    if (autostartFolder.exists()) {
+//      return autostartFolder;
+//    }
 
     userName = System.getenv("USERNAME");
     formattedPath = String.format(path, userName);
