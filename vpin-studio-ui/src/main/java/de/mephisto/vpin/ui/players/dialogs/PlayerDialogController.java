@@ -147,6 +147,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (this.avatarFile != null) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
       this.avatarFile = (File) progressDialog.getResults().get(0);
+      this.initialsOverlayLabel.setText("");
       return;
     }
 
@@ -163,7 +164,6 @@ public class PlayerDialogController implements Initializable, DialogController {
         .build();
       avatarPane.setCenter(avatar);
     }
-
 
     if (this.player.getAvatar() != null) {
       this.initialsOverlayLabel.setText("");
