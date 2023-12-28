@@ -1,23 +1,23 @@
-package de.mephisto.vpin.ui.players;
+package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.players.dialogs.PlayerSaveProgressModel;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.AvatarImageUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -58,6 +59,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private CheckBox adminRoleCheckbox;
+
+  @FXML
+  private CheckBox tournamentPlayerCheckbox;
 
   @FXML
   private Label initialsOverlayLabel;
@@ -87,9 +91,30 @@ public class PlayerDialogController implements Initializable, DialogController {
   @FXML
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.avatarFile, this.avatarStack));
-    this.player = (PlayerRepresentation) progressDialog.getResults().get(0);
-    stage.close();
+
+    Platform.runLater(() -> {
+      if (!StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
+        Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+        if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
+          return;
+        }
+      }
+
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
+      if (!progressDialog.getResults().isEmpty()) {
+        Object o = progressDialog.getResults().get(0);
+        if(o instanceof PlayerRepresentation) {
+          this.player = (PlayerRepresentation) o;
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, String.valueOf(o));
+        }
+      }
+      else {
+        this.player = null;
+      }
+      stage.close();
+    });
   }
 
   @FXML
@@ -111,7 +136,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     }
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
     if (this.avatarFile != null) {
@@ -122,30 +147,22 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   private void refreshAvatar() {
     if (this.avatarFile != null) {
-      try {
-        client.clearCache();
-        this.initialsOverlayLabel.setText("");
-        FileInputStream fileInputStream = new FileInputStream(this.avatarFile);
-        Image image = new Image(fileInputStream);
-        avatar.setImage(image);
-        fileInputStream.close();
-      } catch (IOException e) {
-        LOG.error("Failed to preview avatar: " + e.getMessage(), e);
-      }
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
+      this.avatarFile = (File) progressDialog.getResults().get(0);
       return;
     }
 
     if (this.avatar == null) {
       Image image = new Image(DashboardController.class.getResourceAsStream("avatar-blank.png"));
       avatar = TileBuilder.create()
-          .skinType(Tile.SkinType.IMAGE)
-          .maxSize(200, 200)
-          .backgroundColor(Color.TRANSPARENT)
-          .image(image)
-          .imageMask(Tile.ImageMask.ROUND)
-          .textSize(Tile.TextSize.BIGGER)
-          .textAlignment(TextAlignment.CENTER)
-          .build();
+        .skinType(Tile.SkinType.IMAGE)
+        .maxSize(200, 200)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
       avatarPane.setCenter(avatar);
     }
 
@@ -194,6 +211,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       initialsField.setText(this.player.getInitials());
       discordIdText.setText(this.player.getExternalId());
       adminRoleCheckbox.setSelected(player.isAdministrative());
+      tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
       refreshAvatar();
     }
   }
@@ -228,6 +246,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
+
+    this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
 
     this.discordIdText.setText(player.getExternalId());
     this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setExternalId(newValue));

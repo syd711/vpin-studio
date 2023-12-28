@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
-import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;

@@ -57,9 +57,6 @@ public class Player {
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
   private boolean administrative;
 
-  @Column(name = "tournamentUser", nullable = false, columnDefinition = "boolean default false")
-  private boolean tournamentUser;
-
   public String getTournamentUserUuid() {
     return tournamentUserUuid;
   }
@@ -171,14 +168,6 @@ public class Player {
 
   public void setAvatar(Asset avatar) {
     this.avatar = avatar;
-  }
-
-  public boolean isTournamentUser() {
-    return tournamentUser;
-  }
-
-  public void setTournamentUser(boolean tournamentUser) {
-    this.tournamentUser = tournamentUser;
   }
 
   @Override

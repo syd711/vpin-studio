@@ -11,6 +11,8 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -23,6 +25,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +68,9 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @FXML
   private TableColumn<PlayerRepresentation, String> avatarColumn;
+
+  @FXML
+  private TableColumn<PlayerRepresentation, Label> tournamentColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> columnCreatedAt;
@@ -120,8 +127,8 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   @FXML
   private void onAdd() {
     PlayerRepresentation player = Dialogs.openPlayerDialog(null);
-    onReload();
     if (player != null) {
+      onReload();
       tableView.getSelectionModel().select(player);
     }
   }
@@ -131,8 +138,8 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       PlayerRepresentation player = Dialogs.openPlayerDialog(selection);
-      onReload();
       if (player != null) {
+        onReload();
         tableView.getSelectionModel().select(player);
       }
     }
@@ -144,19 +151,16 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        if(selection.getTournamentUserUuid() != null) {
-          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player '\" + selection.getName() + \"' is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+        if (selection.getTournamentUserUuid() != null) {
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
+            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
             tableView.getSelectionModel().clearSelection();
             onReload();
           }
         }
         else {
-          if(selection.getTournamentUserUuid() != null) {
-            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
-          }
-
           client.getPlayerService().deletePlayer(selection);
           tableView.getSelectionModel().clearSelection();
           onReload();
@@ -205,14 +209,6 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   }
 
   @Override
-  public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
-      adminColumn.setVisible((Boolean) value);
-      discordIdColumn.setVisible((Boolean) value);
-    }
-  }
-
-  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
@@ -238,6 +234,17 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       return null;
     });
 
+
+    tournamentColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (!StringUtils.isEmpty(value.getTournamentUserUuid())) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
+    });
+
     adminColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.isAdministrative()) {
@@ -252,6 +259,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       PlayerRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(value.getName());
     });
+
     avatarColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.getAvatar() == null) {
@@ -259,13 +267,18 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       }
 
       Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
-      view.setFitHeight(UIDefaults.DEFAULT_AVATARSIZE);
-      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-      return new SimpleObjectProperty(view);
+      Tile avatar = TileBuilder.create()
+        .skinType(Tile.SkinType.IMAGE)
+        .maxSize(UIDefaults.DEFAULT_AVATARSIZE, UIDefaults.DEFAULT_AVATARSIZE)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
+      return new SimpleObjectProperty(avatar);
     });
+
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
@@ -280,6 +293,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       }
       return new SimpleObjectProperty(value.getInitials().toUpperCase());
     });
+
     columnCreatedAt.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(DateFormat.getInstance().format(value.getCreatedAt()));
@@ -319,5 +333,14 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     client.getPreferenceService().addListener(this);
 
     this.onReload();
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
+      adminColumn.setVisible((Boolean) value);
+      discordIdColumn.setVisible((Boolean) value);
+      tournamentColumn.setVisible((Boolean) value);
+    }
   }
 }

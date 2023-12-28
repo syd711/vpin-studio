@@ -34,15 +34,13 @@ public class PlayerRepresentation {
 
   private boolean administrative;
 
-  private boolean tournamentUser;
-
   private String tournamentUserUuid;
 
   public ManiaAccountRepresentation toManiaAccount() {
     ManiaAccountRepresentation account = new ManiaAccountRepresentation();
     account.setCabinetId(SystemUtil.getBoardSerialNumber());
     account.setInitials(this.getInitials());
-    account.setDisplayName(this.getDisplayName());
+    account.setDisplayName(this.getName());
     account.setUuid(this.getTournamentUserUuid());
     return account;
   }
@@ -53,14 +51,6 @@ public class PlayerRepresentation {
 
   public void setTournamentUserUuid(String tournamentUserUuid) {
     this.tournamentUserUuid = tournamentUserUuid;
-  }
-
-  public boolean isTournamentUser() {
-    return tournamentUser;
-  }
-
-  public void setTournamentUser(boolean tournamentUser) {
-    this.tournamentUser = tournamentUser;
   }
 
   public String getExternalId() {

@@ -6,17 +6,21 @@ import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.AvatarImageUtil;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -24,14 +28,16 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
   private List<PlayerRepresentation> players;
+  private final boolean tournamentPlayer;
   private File avatarFile;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(PlayerRepresentation playerRepresentation, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
     super("Saving Player");
     this.players = Arrays.asList(playerRepresentation);
+    this.tournamentPlayer = tournamentPlayer;
     this.avatarFile = avatarFile;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
@@ -71,7 +77,15 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   public void processNext(ProgressResultModel progressResultModel, PlayerRepresentation player) {
     try {
       if (player.getAvatar() == null && this.avatarFile == null) {
-        avatarFile = WidgetFactory.snapshot(avatarStack);
+        FutureTask<Object> futureTask = new FutureTask<>(() -> {
+          try {
+            avatarFile = WidgetFactory.snapshot(avatarStack);
+          } catch (IOException e) {
+            LOG.error("Failed to crop avatar image: " + e.getMessage());
+          }
+        }, null);
+        Platform.runLater(futureTask);
+        futureTask.get();
       }
 
       player = client.getPlayerService().savePlayer(player);
@@ -79,12 +93,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       if (this.avatarFile != null) {
         this.uploadAvatar(player, this.avatarFile);
       }
-      client.getPlayerService().savePlayer(player);
-      client.clearCache();
 
-      if (player.isTournamentUser()) {
+      if (tournamentPlayer) {
         ManiaAccountRepresentation maniaAccount = player.toManiaAccount();
-
         if (!StringUtils.isEmpty(maniaAccount.getUuid())) {
           maniaClient.getAccountClient().update(maniaAccount);
           if (this.avatarFile != null) {
@@ -92,12 +103,23 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           }
         }
         else {
-          maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+          ManiaAccountRepresentation register = maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+          player.setTournamentUserUuid(register.getUuid());
+        }
+      }
+      else {
+        if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+          maniaClient.getAccountClient().deleteAccount(player.getTournamentUserUuid());
+          player.setTournamentUserUuid(null);
         }
       }
 
+      client.getPlayerService().savePlayer(player);
+      client.clearCache();
+
       progressResultModel.getResults().add(player);
     } catch (Exception ex) {
+      progressResultModel.getResults().add(ex.getMessage());
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }
   }

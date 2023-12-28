@@ -22,6 +22,16 @@ public class ServerInstallationUtil {
       File root = new File("./");
       String script = "cd /D " + root.getAbsolutePath() +
         "\nserver.bat";
+
+      File autostartFile = getAutostartFile();
+      if (autostartFile.isDirectory()) {
+        autostartFile = new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
+      }
+
+      if (autostartFile.exists() && !autostartFile.delete()) {
+        throw new IOException("Could not delete existing autostart file " + autostartFile.getAbsolutePath());
+      }
+
       FileUtils.writeStringToFile(getAutostartFile(), script, StandardCharsets.UTF_8);
       LOG.info("Written autostart file " + getAutostartFile().getAbsolutePath());
       return getAutostartFile().exists();
@@ -64,22 +74,22 @@ public class ServerInstallationUtil {
     String userName = System.getProperty("user.name");
 
     String formattedPath = String.format(path, userName);
-    File autostartFolder = new File(formattedPath);
-    if (autostartFolder.exists()) {
-      return autostartFolder;
+    File autostartFile = new File(formattedPath);
+    if (autostartFile.exists()) {
+      return autostartFile;
     }
 
     userName = System.getenv("USERNAME");
     formattedPath = String.format(path, userName);
-    autostartFolder = new File(formattedPath);
-    if (autostartFolder.exists()) {
-      return new File(autostartFolder, VPIN_STUDIO_SERVER_BAT);
+    autostartFile = new File(formattedPath);
+    if (autostartFile.exists()) {
+      return new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
     }
 
     String path2 = System.getenv("APPDATA") + "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
-    autostartFolder = new File(path2);
-    if (autostartFolder.exists()) {
-      return new File(autostartFolder, VPIN_STUDIO_SERVER_BAT);
+    autostartFile = new File(path2);
+    if (autostartFile.exists()) {
+      return new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
     }
 
     return new File(System.getProperty("user.home"), VPIN_STUDIO_SERVER_BAT);

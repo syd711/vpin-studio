@@ -16,7 +16,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -57,10 +60,11 @@ public class WidgetFactory {
     snapshotParameters.setViewport(rectangle2D);
     WritableImage snapshot = root.snapshot(snapshotParameters, null);
     BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
-    File file = File.createTempFile("avatar", ".jpg");
+    File file = File.createTempFile("avatar", ".png");
     file.deleteOnExit();
     BufferedImage image = SwingFXUtils.fromFXImage(snapshot, bufferedImage);
     ImageIO.write(image, "png", file);
+    LOG.info("Written avatar temp file " + file.getAbsolutePath() + " [" + FileUtils.readableFileSize(file.length()) + "]");
     return file;
   }
 
