@@ -54,7 +54,7 @@ public class Dialogs {
     return true;
   }
 
-  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
+  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {
     String title = "Add New Player";
     if (selection != null) {
       title = "Edit Player";
@@ -63,7 +63,7 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
-    controller.setPlayer(selection);
+    controller.setPlayer(selection, players);
     stage.showAndWait();
 
     return controller.getPlayer();

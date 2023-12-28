@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.AvatarImageUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -33,9 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -204,7 +202,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     return player;
   }
 
-  public void setPlayer(PlayerRepresentation p) {
+  public void setPlayer(PlayerRepresentation p, List<PlayerRepresentation> players) {
     if (p != null) {
       this.player = p;
       nameField.setText(this.player.getName());
@@ -213,6 +211,13 @@ public class PlayerDialogController implements Initializable, DialogController {
       adminRoleCheckbox.setSelected(player.isAdministrative());
       tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
       refreshAvatar();
+    }
+
+    for (PlayerRepresentation other : players) {
+      if(other.getId() != this.player.getId() && other.isAdministrative()) {
+        this.adminRoleCheckbox.setDisable(true);
+        break;
+      }
     }
   }
 

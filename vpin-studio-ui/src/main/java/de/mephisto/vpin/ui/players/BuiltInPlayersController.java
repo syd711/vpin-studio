@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -23,7 +22,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -126,7 +124,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @FXML
   private void onAdd() {
-    PlayerRepresentation player = Dialogs.openPlayerDialog(null);
+    PlayerRepresentation player = Dialogs.openPlayerDialog(null, client.getPlayerService().getPlayers());
     if (player != null) {
       onReload();
       tableView.getSelectionModel().select(player);
@@ -137,7 +135,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   private void onEdit() {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      PlayerRepresentation player = Dialogs.openPlayerDialog(selection);
+      PlayerRepresentation player = Dialogs.openPlayerDialog(selection, client.getPlayerService().getPlayers());
       if (player != null) {
         onReload();
         tableView.getSelectionModel().select(player);
