@@ -3,14 +3,14 @@
 ### Breaking Change
 
 The preferences for filtering highscores by initials is gone and has been replaced by the build-in players.
-So if you only want to see updates for your highscore, create a build-in player with your initials.
+So if you only want to see updates for your highscores, create a build-in player with your initials.
 
 ### Changes
 
 - Moved "Analytics" section into "Tables" section tab "Table Statistics". The view doesn't have to be this prominent, that's why it has been moved.
 - Added copy buttons for VPS table URLs (needed later on).
 - Replaced update indicator icons with a colorized version.
-- Uploaded tables are now immediately mapped against VPS.
+- Uploaded/replaced tables are now immediately mapped against VPS.
 - The VPSaveEdit tool button is now also available in the "Highscores" section.
 - Replaced transient VPS table update notification with a persisted state. The update indicator for this is a new column in the table overview. If you are not interested in these updates, you can hide the column in the UI preferences. The update indicator can be resetted from the toolbar button.
 
@@ -28,6 +28,7 @@ So if you only want to see updates for your highscore, create a build-in player 
 
 - Fixed drag and drop of media assets ...again.
 - Fixed empty table view when a broken VPX file was scanned.
-- Fixed autostart folder fallback methods where the filename for the .bat file was missing.
+- Fixed auto-start folder selection of the Launcher installer ...again (how hard can this be?)
+- Fixed auto-start folder fallback methods where the filename for the .bat file was missing.
 
 
