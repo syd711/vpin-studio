@@ -92,6 +92,8 @@ public class PlayerService {
     model.setDomain(player.getDomain());
     model.setName(player.getName());
     model.setInitials(player.getInitials());
+    model.setAdministrative(player.isAdministrative());
+    model.setExternalId(player.getExternalId());
 
     Player updated = playerRepository.saveAndFlush(model);
     LOG.info("Saved " + updated);

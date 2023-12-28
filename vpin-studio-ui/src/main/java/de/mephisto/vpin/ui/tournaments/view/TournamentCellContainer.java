@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -19,7 +20,7 @@ public class TournamentCellContainer extends HBox {
     ImageView view = new ImageView(image);
     view.setPreserveRatio(true);
     view.setSmooth(true);
-    view.setFitWidth(70);
+    view.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
 
     this.getChildren().add(view);
 

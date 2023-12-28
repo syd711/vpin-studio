@@ -51,6 +51,27 @@ public class Player {
 
   private String email;
 
+  private String externalId;
+
+  @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
+  private boolean administrative;
+
+  public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
+  }
+
+  public boolean isAdministrative() {
+    return administrative;
+  }
+
+  public void setAdministrative(boolean administrative) {
+    this.administrative = administrative;
+  }
+
   public String getDisplayName() {
     return displayName;
   }

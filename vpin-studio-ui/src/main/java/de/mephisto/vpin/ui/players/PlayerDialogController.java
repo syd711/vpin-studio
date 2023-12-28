@@ -2,22 +2,30 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -50,6 +58,12 @@ public class PlayerDialogController implements Initializable, DialogController {
   private TextField initialsField;
 
   @FXML
+  private TextField discordIdText;
+
+  @FXML
+  private CheckBox adminRoleCheckbox;
+
+  @FXML
   private Label initialsOverlayLabel;
 
   @FXML
@@ -57,6 +71,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private StackPane avatarStack;
+
+  @FXML
+  private VBox tournamentGroup;
 
   private PlayerRepresentation player;
 
@@ -73,22 +90,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    try {
-      if (this.player.getAvatar() == null && this.avatarFile == null) {
-        avatarFile = WidgetFactory.snapshot(this.avatarStack);
-      }
-
-      this.player = client.getPlayerService().savePlayer(this.player);
-
-      if (this.avatarFile != null) {
-        this.uploadAvatar(this.avatarFile);
-      }
-      client.getPlayerService().savePlayer(this.player);
-      client.clearCache();
-    } catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, ex.getMessage());
-    }
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.avatarFile, this.avatarStack));
+    this.player = (PlayerRepresentation) progressDialog.getResults().get(0);
     stage.close();
   }
 
@@ -118,44 +122,6 @@ public class PlayerDialogController implements Initializable, DialogController {
       PlayerDialogController.lastFolderSelection = this.avatarFile.getParentFile();
     }
     refreshAvatar();
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.player = new PlayerRepresentation();
-    nameField.setText(player.getName());
-    nameField.textProperty().addListener((observableValue, s, t1) -> {
-      player.setName(t1);
-      validateInput();
-    });
-
-    initialsField.setText(player.getInitials());
-    initialsField.textProperty().addListener((observableValue, s, t1) -> {
-      String initials = t1.toUpperCase();
-      if (initials.length() > 3) {
-        initials = initials.substring(0, 3);
-        initialsField.setText(initials);
-      }
-      player.setInitials(initials);
-      validateInput();
-    });
-
-    Font font = Font.font("Impact", FontPosture.findByName("regular"), 60);
-    this.initialsOverlayLabel.setFont(font);
-
-    refreshAvatar();
-    this.validateInput();
-
-    this.nameField.requestFocus();
-  }
-
-  private void uploadAvatar(File file) throws Exception {
-    long assetId = 0;
-    if (player.getAvatar() != null) {
-      assetId = player.getAvatar().getId();
-    }
-    AssetRepresentation assetRepresentation = client.getAssetService().uploadAsset(file, assetId, 300, AssetType.AVATAR, null);
-    this.player.setAvatar(assetRepresentation);
   }
 
   private void refreshAvatar() {
@@ -230,7 +196,49 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
+      discordIdText.setText(this.player.getExternalId());
+      adminRoleCheckbox.setSelected(player.isAdministrative());
       refreshAvatar();
     }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
+
+    this.player = new PlayerRepresentation();
+    nameField.setText(player.getName());
+    nameField.textProperty().addListener((observableValue, s, t1) -> {
+      player.setName(t1);
+      validateInput();
+    });
+
+    initialsField.setText(player.getInitials());
+    initialsField.textProperty().addListener((observableValue, s, t1) -> {
+      String initials = t1.toUpperCase();
+      if (initials.length() > 3) {
+        initials = initials.substring(0, 3);
+        initialsField.setText(initials);
+      }
+      player.setInitials(initials);
+      validateInput();
+    });
+
+    Font font = Font.font("Impact", FontPosture.findByName("regular"), 60);
+    this.initialsOverlayLabel.setFont(font);
+
+    refreshAvatar();
+    this.validateInput();
+
+    this.adminRoleCheckbox.setSelected(player.isAdministrative());
+    this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
+
+    this.discordIdText.setText(player.getExternalId());
+    this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setExternalId(newValue));
+
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
+    this.tournamentGroup.setVisible(preference.getBooleanValue());
+
+    this.nameField.requestFocus();
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
@@ -84,8 +85,8 @@ public class DiscordPlayersController implements Initializable {
       Image image = new Image(client.getCachedUrlImage(value.getAvatarUrl()));
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
+      view.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
+      view.setFitHeight(UIDefaults.DEFAULT_AVATARSIZE);
       CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       return new SimpleObjectProperty(view);
     });

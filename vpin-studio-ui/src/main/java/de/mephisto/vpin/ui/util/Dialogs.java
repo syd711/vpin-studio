@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -12,7 +11,6 @@ import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.PlayerDialogController;
-import de.mephisto.vpin.ui.preferences.ManiaAccountDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;

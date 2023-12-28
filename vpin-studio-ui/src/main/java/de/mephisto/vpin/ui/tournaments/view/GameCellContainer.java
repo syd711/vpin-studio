@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
@@ -43,7 +44,7 @@ public class GameCellContainer extends HBox {
 
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);
-    imageView.setFitWidth(80);
+    imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
 
     this.getChildren().add(imageView);
 

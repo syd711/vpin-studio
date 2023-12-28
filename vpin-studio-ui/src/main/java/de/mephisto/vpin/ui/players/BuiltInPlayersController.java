@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -47,13 +48,16 @@ public class BuiltInPlayersController implements Initializable {
   private TableView<PlayerRepresentation> tableView;
 
   @FXML
-  private TableColumn<PlayerRepresentation, String> idColumn;
+  private TableColumn<PlayerRepresentation, Label> discordIdColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> nameColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> initialsColumn;
+
+  @FXML
+  private TableColumn<PlayerRepresentation, Label> adminColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> avatarColumn;
@@ -160,10 +164,26 @@ public class BuiltInPlayersController implements Initializable {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    idColumn.setCellValueFactory(cellData -> {
+    discordIdColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(String.valueOf(value.getId()));
+      if(!StringUtils.isEmpty(value.getExternalId())) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
     });
+
+    adminColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if(value.isAdministrative()) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
+    });
+
     nameColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(value.getName());
@@ -177,8 +197,8 @@ public class BuiltInPlayersController implements Initializable {
       Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
+      view.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
+      view.setFitHeight(UIDefaults.DEFAULT_AVATARSIZE);
       CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       return new SimpleObjectProperty(view);
     });
