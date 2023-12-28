@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -32,7 +34,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class BuiltInPlayersController implements Initializable {
+public class BuiltInPlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
 
   @FXML
@@ -148,11 +150,58 @@ public class BuiltInPlayersController implements Initializable {
     }
   }
 
+  public void setPlayersController(PlayersController playersController) {
+    this.playersController = playersController;
+  }
+
+  private void updateSelection(Optional<PlayerRepresentation> player) {
+    playersController.updateSelection(player);
+  }
+
+  private List<PlayerRepresentation> filterPlayers(List<PlayerRepresentation> players) {
+    List<PlayerRepresentation> filtered = new ArrayList<>();
+    String filterValue = searchTextField.textProperty().getValue();
+    if (filterValue == null) {
+      filterValue = "";
+    }
+
+    for (PlayerRepresentation player : players) {
+      if (player.getName() == null || player.getInitials() == null) {
+        continue;
+      }
+
+      if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) || player.getInitials().toLowerCase().contains(filterValue)) {
+        filtered.add(player);
+      }
+    }
+    return filtered;
+  }
+
+  public Optional<PlayerRepresentation> getSelection() {
+    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      return Optional.of(selection);
+    }
+    return Optional.empty();
+  }
+
+  public int getCount() {
+    return this.players != null ? this.players.size() : 0;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
+      adminColumn.setVisible((Boolean) value);
+      discordIdColumn.setVisible((Boolean) value);
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
-        "Add new players or connect a Discord server."));
+      "Add new players or connect a Discord server."));
 
 
     try {
@@ -166,7 +215,7 @@ public class BuiltInPlayersController implements Initializable {
 
     discordIdColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if(!StringUtils.isEmpty(value.getExternalId())) {
+      if (!StringUtils.isEmpty(value.getExternalId())) {
         Label label = new Label();
         label.setGraphic(WidgetFactory.createCheckIcon());
         return new SimpleObjectProperty<>(label);
@@ -176,7 +225,7 @@ public class BuiltInPlayersController implements Initializable {
 
     adminColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if(value.isAdministrative()) {
+      if (value.isAdministrative()) {
         Label label = new Label();
         label.setGraphic(WidgetFactory.createCheckIcon());
         return new SimpleObjectProperty<>(label);
@@ -252,45 +301,8 @@ public class BuiltInPlayersController implements Initializable {
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
+    client.getPreferenceService().addListener(this);
+
     this.onReload();
-  }
-
-  public void setPlayersController(PlayersController playersController) {
-    this.playersController = playersController;
-  }
-
-  private void updateSelection(Optional<PlayerRepresentation> player) {
-    playersController.updateSelection(player);
-  }
-
-  private List<PlayerRepresentation> filterPlayers(List<PlayerRepresentation> players) {
-    List<PlayerRepresentation> filtered = new ArrayList<>();
-    String filterValue = searchTextField.textProperty().getValue();
-    if (filterValue == null) {
-      filterValue = "";
-    }
-
-    for (PlayerRepresentation player : players) {
-      if (player.getName() == null || player.getInitials() == null) {
-        continue;
-      }
-
-      if (player.getName().toLowerCase().contains(filterValue.toLowerCase()) || player.getInitials().toLowerCase().contains(filterValue)) {
-        filtered.add(player);
-      }
-    }
-    return filtered;
-  }
-
-  public Optional<PlayerRepresentation> getSelection() {
-    PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      return Optional.of(selection);
-    }
-    return Optional.empty();
-  }
-
-  public int getCount() {
-    return this.players != null ? this.players.size() : 0;
   }
 }

@@ -32,6 +32,16 @@ public class PlayerRepresentation {
 
   private boolean administrative;
 
+  private boolean tournamentUser;
+
+  public boolean isTournamentUser() {
+    return tournamentUser;
+  }
+
+  public void setTournamentUser(boolean tournamentUser) {
+    this.tournamentUser = tournamentUser;
+  }
+
   public String getExternalId() {
     return externalId;
   }
