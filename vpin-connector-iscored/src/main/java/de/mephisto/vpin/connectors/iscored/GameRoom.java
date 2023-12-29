@@ -1,28 +1,23 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public class GameRoom {
 
-  private static ObjectMapper objectMapper;
+  private int roomID;
+  private GameRoomSettings settings;
 
-  static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  public int getRoomID() {
+    return roomID;
   }
 
-  @NonNull
-  private final String url;
-
-  GameRoom(@NonNull String url) {
-    this.url = url;
+  public void setRoomID(int roomID) {
+    this.roomID = roomID;
   }
 
-  void load() {
+  public GameRoomSettings getSettings() {
+    return settings;
+  }
 
+  public void setSettings(GameRoomSettings settings) {
+    this.settings = settings;
   }
 }
