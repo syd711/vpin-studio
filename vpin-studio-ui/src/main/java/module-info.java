@@ -34,6 +34,7 @@ module de.mephisto.vpin.ui {
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
   requires de.mephisto.vpin.connectors.assets;
+  requires de.mephisto.vpin.connectors.iscored;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;

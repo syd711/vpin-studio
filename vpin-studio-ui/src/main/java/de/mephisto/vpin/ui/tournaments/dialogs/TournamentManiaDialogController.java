@@ -3,6 +3,9 @@ package de.mephisto.vpin.ui.tournaments.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.iscored.Game;
+import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -25,8 +28,6 @@ import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -49,10 +50,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -264,14 +262,46 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       String[] split = s.split("#");
       VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
       VpsTableVersion vpsVersion = null;
-      if(split.length == 2) {
+      if (split.length == 2) {
         vpsVersion = vpsTable.getVersion(split[1]);
       }
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
       this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
     }
 
+    loadIScoredTables();
     reloadTables();
+  }
+
+  private void loadIScoredTables() {
+    String dashboardUrl = this.dashboardUrlField.getText();
+    if (!StringUtils.isEmpty(dashboardUrl)) {
+      try {
+        GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+        List<Game> games = gameRoom.getGames();
+        for (Game game : games) {
+          List<String> tags = game.getTags();
+          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
+          if (first.isPresent()) {
+            String vpsUrl = first.get();
+            String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
+            String[] split = idSegment.split("#");
+            VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
+            VpsTableVersion vpsVersion = null;
+            if (vpsTable != null && split.length > 1) {
+              vpsVersion = vpsTable.getVersion(split[1]);
+            }
+            GameRepresentation gameRep = null;
+            if (vpsTable != null) {
+              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+            }
+            this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
+          }
+        }
+      } catch (Exception e) {
+        LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
+      }
+    }
   }
 
   @Override

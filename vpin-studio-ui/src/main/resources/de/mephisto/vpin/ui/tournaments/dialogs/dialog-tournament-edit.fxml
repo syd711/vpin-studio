@@ -132,7 +132,7 @@
                   </VBox>
                </center>
                <left>
-                  <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                  <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="TOP_LEFT">
                      <padding>
                         <Insets right="12.0" />
                      </padding>
@@ -302,7 +302,7 @@
                   </Label>
                   <BorderPane>
                      <VBox.margin>
-                        <Insets />
+                        <Insets top="6.0" />
                      </VBox.margin>
                      <top>
                         <ToolBar BorderPane.alignment="CENTER">
