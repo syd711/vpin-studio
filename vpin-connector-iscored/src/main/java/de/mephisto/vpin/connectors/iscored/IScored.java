@@ -77,6 +77,7 @@ public class IScored {
         Game game = new Game();
         game.setId(gameModel.getGameID());
         game.setName(gameModel.getGameName());
+        game.setTags(gameModel.getTags());
 
         for (Score score : scores) {
           if (score.getGame().equals(String.valueOf(game.getId()))) {

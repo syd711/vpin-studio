@@ -7,6 +7,15 @@ public class Game {
   private int id;
   private String name;
   private List<Score> scores = new ArrayList<>();
+  private List<String> tags;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   public int getId() {
     return id;

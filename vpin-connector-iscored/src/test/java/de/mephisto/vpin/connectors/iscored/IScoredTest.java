@@ -1,9 +1,9 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IScoredTest {
 
@@ -13,6 +13,7 @@ public class IScoredTest {
     assertNotNull(gameRoom);
     assertFalse(gameRoom.getGames().isEmpty());
     assertFalse(gameRoom.getGames().get(0).getScores().isEmpty());
+    assertFalse(gameRoom.getGames().get(0).getTags().isEmpty());
 
     gameRoom = IScored.loadGameRoom("https://www.iScored.info?mode=public&user=Syd");
     assertNotNull(gameRoom);
