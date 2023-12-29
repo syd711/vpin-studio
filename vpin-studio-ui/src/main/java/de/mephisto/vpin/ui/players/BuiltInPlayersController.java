@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.Dialogs;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -65,7 +66,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   private TableColumn<PlayerRepresentation, Label> adminColumn;
 
   @FXML
-  private TableColumn<PlayerRepresentation, String> avatarColumn;
+  private TableColumn<PlayerRepresentation, Control> avatarColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, Label> tournamentColumn;
@@ -265,16 +266,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       }
 
       Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
-      Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .maxSize(UIDefaults.DEFAULT_AVATARSIZE, UIDefaults.DEFAULT_AVATARSIZE)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-      return new SimpleObjectProperty(avatar);
+      return new SimpleObjectProperty<>(AvatarFactory.create(image));
     });
 
     initialsColumn.setCellValueFactory(cellData -> {

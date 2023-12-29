@@ -80,7 +80,7 @@ public class VPSTableSelectorDialogController implements DialogController, AutoC
 
       versionsCombo.setItems(FXCollections.emptyObservableList());
       versionsCombo.setItems(FXCollections.observableList(tableFiles));
-      if (!tableFiles.isEmpty()) {
+      if (tableFiles.size() > 1) {
         versionsCombo.getSelectionModel().select(1);
         selection.setVersion(versionsCombo.getValue());
       }

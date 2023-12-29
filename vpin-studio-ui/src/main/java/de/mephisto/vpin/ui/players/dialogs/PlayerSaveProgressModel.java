@@ -96,7 +96,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
       if (tournamentPlayer) {
         ManiaAccountRepresentation maniaAccount = player.toManiaAccount();
-        if (!StringUtils.isEmpty(maniaAccount.getUuid())) {
+        if (player.isRegistered()) {
           maniaClient.getAccountClient().update(maniaAccount);
           if (this.avatarFile != null) {
             maniaClient.getAccountClient().updateAvatar(maniaAccount, this.avatarFile, null);
@@ -119,6 +119,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
       progressResultModel.getResults().add(player);
     } catch (Exception ex) {
+      LOG.error("Failed to save player: " + ex.getMessage(), ex);
       progressResultModel.getResults().add(ex.getMessage());
       WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }

@@ -185,7 +185,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     try {
       if (t != null) {
         PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-        if (defaultPlayer != null && defaultPlayer.toManiaAccount() != null) {
+        if (defaultPlayer != null && defaultPlayer.isRegistered()) {
           AssetRepresentation avatar = defaultPlayer.getAvatar();
           ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
           byte[] bytes = asset.readAllBytes();
@@ -237,7 +237,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (t != null) {
         try {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          if (defaultPlayer != null && !StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+          if (defaultPlayer != null && defaultPlayer.isRegistered()) {
             t = maniaClient.getTournamentClient().create(t, defaultPlayer.toManiaAccount(), this.getTournamentBadge());
             onReload();
             treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
@@ -365,7 +365,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     boolean validConfig = false;
-    if (defaultPlayer != null && defaultPlayer.toManiaAccount() != null) {
+    if (defaultPlayer != null && defaultPlayer.isRegistered()) {
       ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
       if (account == null) {
         WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.");
@@ -390,7 +390,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     else {
       treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
         "Go to the players section and select the default player of your VPin!"));
-      return;
     }
 
     new Thread(() -> {
@@ -450,7 +449,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     duplicateBtn.setDisable(disable || !isOwner);
     reloadBtn.setDisable(this.maniaAccount != null);
     addBtn.setDisable(this.maniaAccount != null);
-    downloadBtn.setDisable(!disable && newSelection != null && newSelection.getGame() != null);
+    downloadBtn.setDisable(!disable && newSelection.getGame() == null);
     joinBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
 
     if (model.isPresent()) {
@@ -477,10 +476,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       this.onReload();
     }
     else if (this.tournamentsController != null) {
-      refreshView(Optional.empty());
+      refreshView(this.getSelection());
     }
-
-    NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
   }
 
   public void setTournamentsController(TournamentsController tournamentsController) {

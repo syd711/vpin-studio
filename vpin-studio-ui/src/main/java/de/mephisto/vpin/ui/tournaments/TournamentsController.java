@@ -260,10 +260,10 @@ public class TournamentsController implements Initializable, StudioFXController 
         else {
           for (ManiaTournamentPlayer player : memberList) {
             try {
-              FXMLLoader loader = new FXMLLoader(TournamentPlayerController.class.getResource("discord-user.fxml"));
+              FXMLLoader loader = new FXMLLoader(TournamentPlayerController.class.getResource("tournament-player.fxml"));
               Parent playerPanel = loader.load();
               TournamentPlayerController controller = loader.getController();
-              controller.setData(player);
+              controller.setData(tournament, player);
               membersBox.getChildren().add(playerPanel);
             } catch (IOException e) {
               LOG.error("Failed to load tournament player list: " + e.getMessage(), e);

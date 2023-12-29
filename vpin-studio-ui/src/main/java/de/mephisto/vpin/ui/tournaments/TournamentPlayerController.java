@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tournaments;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
+import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +24,9 @@ public class TournamentPlayerController extends WidgetController implements Init
   @FXML
   private Label userNameLabel;
 
+  @FXML
+  private Label scoreCountLabel;
+
   // Add a public no-args constructor
   public TournamentPlayerController() {
   }
@@ -31,11 +35,12 @@ public class TournamentPlayerController extends WidgetController implements Init
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(ManiaTournamentPlayer player) {
+  public void setData(ManiaTournamentRepresentation tournament, ManiaTournamentPlayer player) {
     Image image = new Image(maniaClient.getAccountClient().getAccountUrl(player.getUuid()));
     userImageView.setImage(image);
     CommonImageUtil.setClippedImage(userImageView, (int) (image.getWidth() / 2));
 
     userNameLabel.setText(player.getDisplayName());
+    scoreCountLabel.setText(String.valueOf(maniaClient.getHighscoreClient().getPlayerHighscores(tournament, player).size()));
   }
 }
