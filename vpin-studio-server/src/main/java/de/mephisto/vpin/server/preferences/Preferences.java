@@ -107,6 +107,17 @@ public class Preferences {
   @Column(length = 2048)
   private String tournamentDashboardUrl;
 
+  @Column(length = 4096)
+  private String tournamentDescription;
+
+  public String getTournamentDescription() {
+    return tournamentDescription;
+  }
+
+  public void setTournamentDescription(String tournamentDescription) {
+    this.tournamentDescription = tournamentDescription;
+  }
+
   public boolean getTournamentEnabled() {
     return tournamentEnabled;
   }

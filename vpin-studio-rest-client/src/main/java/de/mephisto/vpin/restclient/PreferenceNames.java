@@ -47,6 +47,7 @@ public interface PreferenceNames {
   String TOURNAMENTS_ENABLED = "tournamentEnabled";
   String TOURNAMENTS_DISCORD_LINK = "tournamentDiscordLink";
   String TOURNAMENTS_DASHBOARD_URL = "tournamentDashboardUrl";
+  String TOURNAMENTS_DESCRIPTION = "tournamentDescription";
 
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";

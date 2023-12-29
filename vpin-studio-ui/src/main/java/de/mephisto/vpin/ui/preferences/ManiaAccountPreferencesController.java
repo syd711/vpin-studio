@@ -4,14 +4,13 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class ManiaAccountPreferencesController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountPreferencesController.class);
@@ -63,12 +61,23 @@ public class ManiaAccountPreferencesController implements Initializable, Prefere
     preference = client.getPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK);
     discordLink.setText(preference.getValue());
 
+    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DESCRIPTION);
+    descriptionText.setText(preference.getValue());
+
     dashboardUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("dashboardUrl", () -> {
       client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL, t1);
     }, 300));
 
     discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
       client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK, t1);
+    }, 300));
+
+    descriptionText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("descriptionText", () -> {
+      String value = String.valueOf(t1);
+      if (!StringUtils.isEmpty(String.valueOf(value)) && value.length() > 4096) {
+        value = value.substring(0, 4000);
+      }
+      client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DESCRIPTION, value);
     }, 300));
 
     client.getPreferenceService().addListener(this);

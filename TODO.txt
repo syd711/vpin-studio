@@ -4,8 +4,6 @@
 
 
 
-Thank you, I was able to update and play around with it.
-It works well, but if I might suggest consolidating a couple things
 At the moment, from what I can tell, to update a table entry, I have to click at the top the little arrow icon.  Then select “upload and replace”
 
 Then when that is done, I click the pancake icon at the top, go to details tab, change the version number, then click the info tab and update the url (if applicable)
@@ -15,7 +13,7 @@ I understand why you did it this way, because the upload screen allows you to al
 Perhaps you’d consider a for when you “update and replace” it also facilitates you changing the Game Version number, the URL, and Author.
 
 Those are the fields that usually are edited, at least for me, when I update a table entry.
-abhcoide — Today at 1:02 PM
+
 Also, in the upload window - rather than clicking the circles - perhaps you can click the actual words. I found (at least on mine) I had to be very precise clicking the little circles.
 
 Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
@@ -24,6 +22,4 @@ For example, my old table is fathom (Bally 1981).vpx and I want to replace it wi
 
 If I update in popper, I just drag the new file to the update button and it replaces my old table but keeps the name fathom (Bally 1981).
 
-If that makes sense?
-abhcoide — Today at 1:19 PM
 And finally - when you update a table it’s not updating the “last file update” part in popper.  This will impact “recently updated” playlists

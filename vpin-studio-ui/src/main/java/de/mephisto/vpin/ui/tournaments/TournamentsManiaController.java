@@ -182,6 +182,16 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     t.setEndDate(end);
     t.setStartDate(DateUtil.today());
 
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL);
+    t.setDashboardUrl(preference.getValue());
+
+    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK);
+    t.setDiscordLink(preference.getValue());
+
+    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DESCRIPTION);
+    t.setDescription(preference.getValue());
+
+
     t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
     try {
       if (t != null) {

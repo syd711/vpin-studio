@@ -89,6 +89,12 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   private TextField nameField;
 
   @FXML
+  private TextField discordLinkText;
+
+  @FXML
+  private TextArea descriptionText;
+
+  @FXML
   private TextField dashboardUrlField;
 
   @FXML
@@ -235,6 +241,9 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
 
     tournamentBadgeCombo.setDisable(tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());
+    this.descriptionText.setText(selectedTournament.getDescription());
+    this.discordLinkText.setText(selectedTournament.getDiscordLink());
+    this.dashboardUrlField.setText(selectedTournament.getDashboardUrl());
 
     this.startDatePicker.setValue(selectedTournament.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     this.startDatePicker.setDisable(!editable);
@@ -331,6 +340,15 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       tournament.setEndDate(date);
       validate();
     });
+
+    discordLinkText.textProperty().addListener((observable, oldValue, newValue) -> tournament.setDiscordLink(newValue));
+    descriptionText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("descriptionText", () -> {
+      String value = String.valueOf(t1);
+      if (!StringUtils.isEmpty(String.valueOf(value)) && value.length() > 4096) {
+        value = value.substring(0, 4000);
+      }
+      tournament.setDescription(value);
+    }, 300));
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
     badges.add(0, null);
