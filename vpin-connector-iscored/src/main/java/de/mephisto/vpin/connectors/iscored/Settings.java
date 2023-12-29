@@ -1,8 +1,6 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-public class GameRoomSettings {
+public class Settings {
   private String roomName;
 
   private String gameOrder;

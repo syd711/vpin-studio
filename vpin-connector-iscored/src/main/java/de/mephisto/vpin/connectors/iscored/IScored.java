@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.connectors.iscored.models.GameModel;
+import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -11,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -49,21 +49,49 @@ public class IScored {
       userName = params.get("user");
     }
     else {
-      userName = url.substring(BASE_URL.length()+1).trim();
+      userName = url.substring(BASE_URL.length() + 1).trim();
     }
 
     LOG.info("Loading game room for user '" + userName + "'");
 
-    URL gameRoomInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName);
+    URL gameRoomURL = new URL(BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName);
 
-    String json = loadGameRoomInfoJson(gameRoomInfoURL);
+    GameRoom gameRoom = new GameRoom();
+
+    String json = loadJson(gameRoomURL);
     if (json != null) {
-      return objectMapper.readValue(json, GameRoom.class);
+      GameRoomModel gameRoomModel = objectMapper.readValue(json, GameRoomModel.class);
+
+      gameRoom.setRoomID(gameRoomModel.getRoomID());
+      gameRoom.setSettings(gameRoom.getSettings());
+
+      URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
+      String gamesInfo = loadJson(gamesInfoURL);
+      GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
+
+      URL gameScoresURL = new URL(BASE_URL + "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
+      String scoresInfo = loadJson(gameScoresURL);
+      Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
+
+      for (GameModel gameModel : games) {
+        Game game = new Game();
+        game.setId(gameModel.getGameID());
+        game.setName(gameModel.getGameName());
+
+        for (Score score : scores) {
+          if (score.getGame().equals(String.valueOf(game.getId()))) {
+            game.getScores().add(score);
+          }
+        }
+        gameRoom.getGames().add(game);
+      }
+      return gameRoom;
     }
+
     return null;
   }
 
-  private static String loadGameRoomInfoJson(URL url) {
+  private static String loadJson(URL url) {
     BufferedInputStream in = null;
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -84,7 +112,7 @@ public class IScored {
     return null;
   }
 
-  public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
+  public static Map<String, String> splitQuery(URL url) {
     Map<String, String> query_pairs = new LinkedHashMap<String, String>();
     String query = url.getQuery();
     String[] pairs = query.split("&");
