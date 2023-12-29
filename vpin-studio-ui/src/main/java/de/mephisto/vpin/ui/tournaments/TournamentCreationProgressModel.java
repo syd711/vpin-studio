@@ -82,6 +82,7 @@ public class TournamentCreationProgressModel extends ProgressModel<ManiaTourname
       progressResultModel.getResults().add(maniaTournamentRepresentation);
     } catch (Exception e) {
       LOG.error("Error creating tournament: " + e.getMessage(), e);
+      progressResultModel.getResults().add(e.getMessage());
     }
   }
 }

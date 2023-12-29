@@ -11,7 +11,6 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -61,54 +60,56 @@
                                  <center>
                                     <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="110.80001525878907" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="412.399984741211" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="120.0" prefWidth="129.1999755859375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="394.0000244140625" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="58.79999389648435" />
                                       </columnConstraints>
                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="Token:">
+                                          <Label text="Token:" GridPane.rowIndex="1">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" text="Created By:" GridPane.rowIndex="4">
+                                          <Label layoutX="10.0" layoutY="15.0" text="Created:">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="uuidLabel" text="-" GridPane.columnIndex="1">
+                                          <Label fx:id="uuidLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                          <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Link:" GridPane.rowIndex="3">
+                                          <Label layoutX="10.0" layoutY="76.0" text="Discord Link:" GridPane.rowIndex="5">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="1">
+                                          <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="2">
+                                          <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <children>
                                                 <Hyperlink fx:id="discordLink" onAction="#onDiscordLink" text="-">
                                                    <HBox.margin>
@@ -116,17 +117,17 @@
                                                    </HBox.margin>
                                                 </Hyperlink>
                                              </children></HBox>
-                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                              <children>
                                                 <Button fx:id="copyTokenBtn" mnemonicParsing="false" onAction="#onTokenCopy">
                                                    <graphic>
@@ -141,15 +142,35 @@
                                                 </Button>
                                              </children>
                                           </HBox>
+                                          <Label layoutX="10.0" layoutY="150.0" text="Owner:" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="ownerLabel" layoutX="120.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="10.0" layoutY="116.0" prefHeight="0.0" text="Time Remaining:" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="remainingLabel" layoutX="138.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </GridPane>
                                  </center>
                               </BorderPane>
-                              <ImageView fx:id="bannerImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                              <VBox fx:id="avatarPane" prefHeight="100.0" prefWidth="100.0">
                                  <VBox.margin>
                                     <Insets left="110.0" />
                                  </VBox.margin>
-                              </ImageView>
+                              </VBox>
                               <Label text="Description:">
                                  <font>
                                     <Font name="System Bold" size="14.0" />

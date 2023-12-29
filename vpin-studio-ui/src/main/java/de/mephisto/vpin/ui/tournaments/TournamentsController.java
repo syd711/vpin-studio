@@ -4,9 +4,11 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -59,6 +61,12 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Label endLabel;
 
   @FXML
+  private Label remainingLabel;
+
+  @FXML
+  private Label ownerLabel;
+
+  @FXML
   private Label descriptionLabel;
 
   @FXML
@@ -98,7 +106,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Hyperlink discordLink;
 
   @FXML
-  private ImageView bannerImageView;
+  private VBox avatarPane;
 
   private TournamentsManiaController maniaController;
 
@@ -196,18 +204,24 @@ public class TournamentsController implements Initializable, StudioFXController 
     uuidLabel.setText("-");
     startLabel.setText("-");
     endLabel.setText("-");
+    remainingLabel.setText("-");
+    ownerLabel.setText("-");
     descriptionLabel.setText("");
-    bannerImageView.setImage(null);
+    avatarPane.getChildren().removeAll(avatarPane.getChildren());
 
     if (tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      ManiaTournamentPlayer owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
+
+      ownerLabel.setText(owner.getDisplayName());
       uuidLabel.setText(tournament.getUuid());
-      bannerImageView.setImage(new Image(maniaClient.getTournamentClient().getBadgeUrl(tournament)));
+      avatarPane.getChildren().add(AvatarFactory.create(new Image(maniaClient.getAccountClient().getAccountUrl(owner.getUuid()))));
       serverBox.getChildren().removeAll(serverBox.getChildren());
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
+      remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink()  : "-");
       descriptionLabel.setText(tournament.getDescription());
     }

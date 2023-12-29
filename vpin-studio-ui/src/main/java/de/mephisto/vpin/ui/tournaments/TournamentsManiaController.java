@@ -24,6 +24,7 @@ import de.mephisto.vpin.ui.tournaments.view.DateCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.vps.VpsTableContainer;
 import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import javafx.application.Platform;
@@ -189,9 +190,20 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           AssetRepresentation avatar = defaultPlayer.getAvatar();
           ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
           byte[] bytes = asset.readAllBytes();
-          ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), bytes));
-          onReload();
-          treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), bytes));
+
+          if (!progressDialog.getResults().isEmpty()) {
+            Object o = progressDialog.getResults().get(0);
+            if (o instanceof ManiaTournamentRepresentation) {
+              ManiaTournamentRepresentation newT = (ManiaTournamentRepresentation) o;
+              Platform.runLater(() -> {
+                onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null))));
+              });
+            }
+            else {
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create tournament: " + o);
+            }
+          }
         }
       }
     } catch (Exception e) {
@@ -239,8 +251,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           if (defaultPlayer != null && defaultPlayer.isRegistered()) {
             t = maniaClient.getTournamentClient().create(t, defaultPlayer.toManiaAccount(), this.getTournamentBadge());
-            onReload();
-            treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+            TreeItem<TournamentTreeModel> newModel = new TreeItem<>(new TournamentTreeModel(t, null, null, null));
+            onReload(Optional.of(newModel));
           }
 
         } catch (Exception e) {
@@ -278,8 +290,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (t != null) {
         try {
           t = maniaClient.getTournamentClient().update(t);
-          onReload();
-          treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+          onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(t, null, null, null))));
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -314,7 +325,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 //      treeTableView.getSelectionModel().clearSelection();
 //      maniaClient.getTournamentClient().deleteTournament(tournament.getUuid());
-      onReload();
+      onReload(Optional.empty());
     }
   }
 
@@ -328,7 +339,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       treeTableView.getSelectionModel().clearSelection();
       maniaClient.getTournamentClient().deleteTournament(tournament.getUuid());
-      onReload();
+      onReload(Optional.empty());
     }
   }
 
@@ -349,9 +360,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   public void onReload() {
+    onReload(Optional.empty());
+  }
+
+  private void onReload(Optional<TreeItem<TournamentTreeModel>> selection) {
     client.clearWheelCache();
 
+    treeTableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
+
     textfieldSearch.setDisable(true);
     addBtn.setDisable(true);
     editBtn.setDisable(true);
@@ -381,8 +398,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
       treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
         "Create a new tournament by pressing the '+' button."));
-      treeTableView.setVisible(true);
-      tableStack.getChildren().remove(loadingOverlay);
 
       treeTableView.setRoot(null);
       treeTableView.refresh();
@@ -390,23 +405,28 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     else {
       treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
         "Go to the players section and select the default player of your VPin!"));
+
+      tableStack.getChildren().remove(loadingOverlay);
+      treeTableView.setVisible(true);
+      return;
     }
 
     new Thread(() -> {
       Platform.runLater(() -> {
-        TreeItem<TournamentTreeModel> selectedItem = treeTableView.getSelectionModel().getSelectedItem();
         TreeItem<TournamentTreeModel> root = loadTreeModel();
+        tableStack.getChildren().remove(loadingOverlay);
+        treeTableView.setVisible(true);
+
         treeTableView.setRoot(root);
         treeTableView.refresh();
         TournamentTreeModel.expandTreeView(root);
 
-        treeTableView.getSelectionModel().select(selectedItem);
-        if (selectedItem == null) {
+        if (selection.isPresent()) {
+          treeTableView.getSelectionModel().select(selection.get());
+        }
+        else if (!root.getChildren().isEmpty()) {
           treeTableView.getSelectionModel().select(0);
         }
-
-        tableStack.getChildren().remove(loadingOverlay);
-        treeTableView.setVisible(true);
       });
     }).start();
 
@@ -473,7 +493,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   @Override
   public void onViewActivated() {
     if (this.addBtn.isDisabled()) {
-      this.onReload();
+      this.onReload(Optional.empty());
     }
     else if (this.tournamentsController != null) {
       refreshView(this.getSelection());
@@ -655,9 +675,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     validationError.setVisible(false);
     bindSearchField();
     onViewActivated();
-    treeTableView.setVisible(false);
 
     EventManager.getInstance().addListener(this);
-    onReload();
+    onReload(Optional.empty());
   }
 }

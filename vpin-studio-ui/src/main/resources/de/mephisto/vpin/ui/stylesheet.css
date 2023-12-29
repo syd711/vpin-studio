@@ -463,7 +463,7 @@
     -fx-background-insets: 0;
     -fx-focus-color: white;
     -fx-border-color: #111111;
-    -fx-text-fill: -fx-base-6;
+    -fx-text-fill: white;
     -fx-font-weight: normal;
     -fx-background-radius: 3 3 3 3;
  }

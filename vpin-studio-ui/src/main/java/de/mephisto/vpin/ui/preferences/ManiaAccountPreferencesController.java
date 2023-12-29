@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -8,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -17,9 +19,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class ManiaAccountPreferencesController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountPreferencesController.class);
+
+  public static final int DEBOUNCE_MS = 500;
+
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private VBox preferencesPanel;
@@ -35,6 +42,9 @@ public class ManiaAccountPreferencesController implements Initializable, Prefere
 
   @FXML
   private TextField discordLink;
+
+  @FXML
+  private TextArea descriptionText;
 
 
   @Override
@@ -53,8 +63,13 @@ public class ManiaAccountPreferencesController implements Initializable, Prefere
     preference = client.getPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK);
     discordLink.setText(preference.getValue());
 
-    dashboardUrl.textProperty().addListener((observable, oldValue, newValue) -> client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL, newValue));
-    discordLink.textProperty().addListener((observable, oldValue, newValue) -> client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK, newValue));
+    dashboardUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("dashboardUrl", () -> {
+      client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL, t1);
+    }, 300));
+
+    discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
+      client.getPreferenceService().setPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK, t1);
+    }, 300));
 
     client.getPreferenceService().addListener(this);
   }

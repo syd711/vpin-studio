@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -70,7 +71,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="dashboardUrl" editable="false" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
+                        <TextField fx:id="dashboardUrl" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -111,7 +112,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="discordLink" editable="false" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
+                        <TextField fx:id="discordLink" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -125,6 +126,22 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
+                  <Label layoutX="10.0" layoutY="131.0" styleClass="preference-subtitle" text="Tournament Description">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="Add a nice welcome text here which is used as default description for every new tournament." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="191.0" styleClass="preference-description" text="You can still adept the text when creating a new tournament." textFill="WHITE" />
+                  <VBox prefWidth="100.0">
+                     <children>
+                        <TextArea fx:id="descriptionText">
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </TextArea>
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </children>
