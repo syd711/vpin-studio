@@ -9,9 +9,10 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
@@ -19,12 +20,12 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.vps.VpsTableContainer;
-import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.view.DateCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.vps.VpsTableContainer;
+import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -183,10 +184,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
     try {
       if (t != null) {
-        File f = new File("E:\\Development\\workspace\\vpin-studio\\resources\\competition-badges\\mania.png");
-        ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, f));
-        onReload();
-        treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+        PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+        if (defaultPlayer != null && defaultPlayer.toManiaAccount() != null) {
+          AssetRepresentation avatar = defaultPlayer.getAvatar();
+          ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
+          byte[] bytes = asset.readAllBytes();
+          ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), bytes));
+          onReload();
+          treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+        }
       }
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -230,9 +236,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
       if (t != null) {
         try {
-          t = maniaClient.getTournamentClient().create(t, this.getTournamentBadge());
-          onReload();
-          treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+          PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+          if (defaultPlayer != null && !StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+            t = maniaClient.getTournamentClient().create(t, defaultPlayer.toManiaAccount(), this.getTournamentBadge());
+            onReload();
+            treeTableView.getSelectionModel().select(new TreeItem<>(new TournamentTreeModel(t, null, null, null)));
+          }
+
         } catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -342,26 +352,44 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     client.clearWheelCache();
 
     tableStack.getChildren().add(loadingOverlay);
+    textfieldSearch.setDisable(true);
+    addBtn.setDisable(true);
+    editBtn.setDisable(true);
+    validateBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+    duplicateBtn.setDisable(true);
+    finishBtn.setDisable(true);
+    downloadBtn.setDisable(true);
+    reloadBtn.setDisable(true);
+    joinBtn.setDisable(true);
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
-      textfieldSearch.setDisable(true);
-      addBtn.setDisable(true);
-      editBtn.setDisable(true);
-      validateBtn.setDisable(true);
-      deleteBtn.setDisable(true);
-      duplicateBtn.setDisable(true);
-      finishBtn.setDisable(true);
-      reloadBtn.setDisable(true);
-      joinBtn.setDisable(true);
+    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    boolean validConfig = false;
+    if (defaultPlayer != null && defaultPlayer.toManiaAccount() != null) {
+      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
+      if (account == null) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.");
+      }
+      validConfig = account != null;
+    }
 
-      treeTableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a \"VPin Mania\" account and join tournaments."));
+    if (validConfig) {
+      textfieldSearch.setDisable(false);
+      addBtn.setDisable(false);
+      duplicateBtn.setDisable(false);
+      reloadBtn.setDisable(false);
+
+      treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+        "Create a new tournament by pressing the '+' button."));
       treeTableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
       treeTableView.setRoot(null);
       treeTableView.refresh();
+    }
+    else {
+      treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
+        "Go to the players section and select the default player of your VPin!"));
       return;
     }
 
@@ -370,8 +398,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         TreeItem<TournamentTreeModel> selectedItem = treeTableView.getSelectionModel().getSelectedItem();
         TreeItem<TournamentTreeModel> root = loadTreeModel();
         treeTableView.setRoot(root);
-
         treeTableView.refresh();
+        TournamentTreeModel.expandTreeView(root);
+
         treeTableView.getSelectionModel().select(selectedItem);
         if (selectedItem == null) {
           treeTableView.getSelectionModel().select(0);
@@ -379,7 +408,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
         tableStack.getChildren().remove(loadingOverlay);
         treeTableView.setVisible(true);
-        TournamentTreeModel.expandTreeView(root);
       });
     }).start();
 
@@ -445,9 +473,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @Override
   public void onViewActivated() {
-    if (this.tournamentsController != null) {
+    if (this.addBtn.isDisabled()) {
+      this.onReload();
+    }
+    else if (this.tournamentsController != null) {
       refreshView(Optional.empty());
     }
+
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
   }
 
@@ -511,7 +543,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
-    treeTableView.setPlaceholder(new Label("            No tournaments found.\nClick the '+' button to create a new one."));
     treeTableView.setShowRoot(false);
 
     try {
@@ -596,7 +627,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (cellData.getValue().getChildren().isEmpty()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         VpsTableVersion vpsTableVersion = value.getVpsTableVersion();
-        if(vpsTableVersion == null) {
+        if (vpsTableVersion == null) {
           return new SimpleObjectProperty<>("All versions allowed.");
         }
 
@@ -604,9 +635,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       }
       return null;
     });
-
-    treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-      "Create a new tournament by pressing the '+' button."));
 
     treeTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {

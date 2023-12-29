@@ -207,7 +207,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
-      discordIdText.setText(this.player.getExternalId());
+      discordIdText.setText(this.player.getDiscordId());
       adminRoleCheckbox.setSelected(player.isAdministrative());
       tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
       refreshAvatar();
@@ -254,8 +254,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
 
-    this.discordIdText.setText(player.getExternalId());
-    this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setExternalId(newValue));
+    this.discordIdText.setText(player.getDiscordId());
+    this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setDiscordId(newValue));
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
     this.tournamentGroup.setVisible(preference.getBooleanValue());

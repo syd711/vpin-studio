@@ -97,7 +97,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="10.0" layoutY="33.0" text="VPin Default User:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="33.0" text="VPin Default Player:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

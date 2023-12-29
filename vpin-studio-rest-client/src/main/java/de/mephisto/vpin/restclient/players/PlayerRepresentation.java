@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.players;
 import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -30,13 +31,17 @@ public class PlayerRepresentation {
 
   private boolean bot;
 
-  private String externalId;
+  private String discordId;
 
   private boolean administrative;
 
   private String tournamentUserUuid;
 
   public ManiaAccountRepresentation toManiaAccount() {
+    if(StringUtils.isEmpty(tournamentUserUuid)) {
+      return null;
+    }
+
     ManiaAccountRepresentation account = new ManiaAccountRepresentation();
     account.setCabinetId(SystemUtil.getBoardSerialNumber());
     account.setInitials(this.getInitials());
@@ -53,12 +58,12 @@ public class PlayerRepresentation {
     this.tournamentUserUuid = tournamentUserUuid;
   }
 
-  public String getExternalId() {
-    return externalId;
+  public String getDiscordId() {
+    return discordId;
   }
 
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
+  public void setDiscordId(String discordId) {
+    this.discordId = discordId;
   }
 
   public boolean isAdministrative() {

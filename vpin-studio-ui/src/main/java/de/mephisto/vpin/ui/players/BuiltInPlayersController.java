@@ -224,7 +224,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
     discordIdColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getExternalId())) {
+      if (!StringUtils.isEmpty(value.getDiscordId())) {
         Label label = new Label();
         label.setGraphic(WidgetFactory.createCheckIcon());
         return new SimpleObjectProperty<>(label);
