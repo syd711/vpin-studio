@@ -30,6 +30,3 @@ could you make some table formation to separate them a little
 
 
 remote upater
-
-
-highscore settings issues
