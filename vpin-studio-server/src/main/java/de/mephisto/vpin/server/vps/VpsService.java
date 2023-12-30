@@ -53,7 +53,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   public boolean autofill(Game game, boolean overwrite) {
     try {
       String term = game.getGameDisplayName();
-      List<VpsTable> vpsTables = VPS.getInstance().find(term);
+      List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
       if (!vpsTables.isEmpty()) {
         VpsTable vpsTable = vpsTables.get(0);
 

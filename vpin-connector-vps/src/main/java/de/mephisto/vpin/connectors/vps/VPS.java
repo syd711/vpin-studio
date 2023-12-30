@@ -128,6 +128,10 @@ public class VPS {
   }
 
   public List<VpsTable> find(String searchTerm) {
+    return find(searchTerm, null);
+  }
+
+  public List<VpsTable> find(String searchTerm, String rom) {
     String term = searchTerm;
     term = term.replaceAll("_", " ");
     term = term.replaceAll("'", " ");

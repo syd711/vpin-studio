@@ -2,6 +2,7 @@
 - fix duplicate message emitting
 - scan highscores only after scanning games
 
+childs play vps
 
 
 At the moment, from what I can tell, to update a table entry, I have to click at the top the little arrow icon.  Then select “upload and replace”

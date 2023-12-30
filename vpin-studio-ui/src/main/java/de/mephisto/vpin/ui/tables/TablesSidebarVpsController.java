@@ -104,6 +104,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Label entriesLabel;
 
   @FXML
+  private Label versionAuthorsLabel;
+
+  @FXML
   private Label updateDateLabel;
 
   @FXML
@@ -289,6 +292,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       }
 
       openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      openTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
       copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
 
@@ -306,6 +310,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   private void refreshTableView(VpsTable vpsTable) {
+    versionAuthorsLabel.setText("-");
+    versionAuthorsLabel.setTooltip(new Tooltip(null));
     List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(VpsFeatures.VPX));
     if (!tableFiles.isEmpty()) {
       tableVersionsCombo.setItems(FXCollections.emptyObservableList());
@@ -314,9 +320,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       String extTableVersionId = game.get().getExtTableVersionId();
 
       if (!StringUtils.isEmpty(extTableVersionId)) {
-        for (VpsTableVersion tableFile : tableFiles) {
-          if (tableFile != null && tableFile.getId().equals(extTableVersionId)) {
-            tableVersionsCombo.setValue(tableFile);
+        for (VpsTableVersion tableVersion : tableFiles) {
+          if (tableVersion != null && tableVersion.getId().equals(extTableVersionId)) {
+            tableVersionsCombo.setValue(tableVersion);
+            if(tableVersion.getAuthors() != null) {
+              versionAuthorsLabel.setText(String.join(", ", tableVersion.getAuthors()));
+              versionAuthorsLabel.setTooltip(new Tooltip(String.join(", ", tableVersion.getAuthors())));
+            }
             break;
           }
         }
