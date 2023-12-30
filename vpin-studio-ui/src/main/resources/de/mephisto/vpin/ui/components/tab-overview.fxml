@@ -26,7 +26,7 @@
                             <Font size="14.0" />
                         </font>
                         <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                            <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                         </graphic>
                     </Button>
                 </items>

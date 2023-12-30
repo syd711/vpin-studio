@@ -157,7 +157,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Edit Popper Table Data" />
@@ -220,7 +220,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />

@@ -42,7 +42,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />

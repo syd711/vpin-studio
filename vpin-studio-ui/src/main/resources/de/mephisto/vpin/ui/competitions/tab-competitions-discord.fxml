@@ -54,7 +54,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
                   <Button fx:id="clearCacheBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache" textFill="WHITE">
@@ -62,7 +62,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="Clears cached Discord data" />
@@ -76,7 +76,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -85,7 +85,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
                   <Button fx:id="joinBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
@@ -93,7 +93,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" iconSize="18" />
                      </graphic>
                   </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -102,7 +102,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
                         <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
@@ -110,7 +110,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" iconSize="18" />
                             </graphic>
                         </Button>
                         <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -119,7 +119,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
+                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" iconSize="18" />
                             </graphic>
                         </Button>
                   <Separator layoutX="514.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -128,7 +128,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                         </Button>
                     </items>

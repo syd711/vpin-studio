@@ -68,7 +68,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                            </graphic>
                         </Button>
                         <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="Reset" textFill="#ff3333">
@@ -307,7 +307,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                            </graphic>
                         </Button>
                      </children>

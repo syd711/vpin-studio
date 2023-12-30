@@ -55,7 +55,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" />
                   </graphic>
                </Button>
             </items>

@@ -53,7 +53,7 @@
             <items>
                 <Button fx:id="defaultPictureUploadBtn" mnemonicParsing="false" onAction="#onDefaultBackgroundUpload" text="Upload">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />
@@ -61,7 +61,7 @@
                 </Button>
                 <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onDefaultBackgroundView" text="View">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />
@@ -70,7 +70,7 @@
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />

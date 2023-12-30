@@ -74,7 +74,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Clear cache" />
@@ -88,7 +88,7 @@
                               <Insets />
                            </HBox.margin>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-logout" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-logout" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Disconnect" />
@@ -99,7 +99,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Open Settings" />

@@ -49,7 +49,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
                   <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache" textFill="WHITE">
@@ -57,7 +57,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="Clears cached Discord data" />
@@ -80,7 +80,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
                   <Button fx:id="joinBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
@@ -97,7 +97,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                         </Button>
                     </items>

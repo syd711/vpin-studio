@@ -45,7 +45,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
@@ -56,7 +56,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-remove" iconSize="16" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-remove" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
@@ -74,7 +74,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo-variant" iconSize="16" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo-variant" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />

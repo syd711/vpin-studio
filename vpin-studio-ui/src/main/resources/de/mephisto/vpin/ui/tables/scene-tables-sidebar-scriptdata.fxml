@@ -116,7 +116,7 @@
                                         <children>
                                             <Button fx:id="romUploadBtn" mnemonicParsing="false" onAction="#onRomUpload">
                                                 <graphic>
-                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                                 </graphic>
                                                 <HBox.margin>
                                                     <Insets />
@@ -124,7 +124,7 @@
                                             </Button>
                                             <Button fx:id="editRomNameBtn" mnemonicParsing="false" onAction="#onRomEdit">
                                                 <graphic>
-                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                                 </graphic>
                                                 <tooltip>
                                                     <Tooltip text="Update the ROM name for this table." />
@@ -152,7 +152,7 @@
                                         <children>
                                     <Button fx:id="openEMHighscoreBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
@@ -160,7 +160,7 @@
                                     </Button>
                                             <Button fx:id="editHsFileNameBtn" mnemonicParsing="false" onAction="#onHsFileNameEdit">
                                                 <graphic>
-                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                                 </graphic>
                                                 <tooltip>
                                                     <Tooltip text="Set EM highscore filename manually." />
@@ -198,7 +198,7 @@
                                         <children>
                                             <Button fx:id="editTableNameBtn" mnemonicParsing="false" onAction="#onTableNameEdit">
                                                 <graphic>
-                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                                 </graphic>
                                                 <tooltip>
                                                     <Tooltip text="Update the table name of this game. This value may match the VReg highscore filename value." />
@@ -241,7 +241,7 @@
                                  <children>
                                     <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
                                        <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Update the ROM name for this table." />
@@ -249,7 +249,7 @@
                                     </Button>
                                     <Button fx:id="editAliasBtn" mnemonicParsing="false" onAction="#onAliasEdit">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Update the ROM name for this table." />
@@ -287,7 +287,7 @@
                                  <children>
                                     <Button fx:id="openTablesFolderBtn" mnemonicParsing="false" onAction="#onTablesFolderOpen" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
@@ -427,7 +427,7 @@
                                  <children>
                                     <Button fx:id="openTableRulesBtn" mnemonicParsing="false" onAction="#onShowTableRules" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
@@ -439,7 +439,7 @@
                                  <children>
                                     <Button fx:id="openTableDescriptionBtn" mnemonicParsing="false" onAction="#onShowTableDescription" styleClass="external-component">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
