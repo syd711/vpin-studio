@@ -119,7 +119,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private MenuItem validateAllBtn;
 
   @FXML
-  private Button joinBtn;
+  private Button browseBtn;
 
   @FXML
   private TextField textfieldSearch;
@@ -273,22 +273,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @FXML
-  private void onJoin() {
-//    client.clearDiscordCache();
-//    CompetitionRepresentation c = Dialogs.openDiscordJoinCompetitionDialog();
-//    if (c != null) {
-//      try {
-//        ProgressResultModel resultModel = Dialogs.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
-//        onReload();
-//        //TODO
-////        treeTableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-//      } catch (Exception e) {
-//        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-//      }
-//    }
-//    else {
-//      onReload();
-//    }
+  private void onBrowse() {
+    ManiaTournamentRepresentation t = TournamentDialogs.openTournamentBrowserDialog();
+    if (t != null) {
+      try {
+
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, e.getMessage());
+      }
+    }
   }
 
   @FXML
@@ -388,7 +381,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     finishBtn.setDisable(true);
     downloadBtn.setDisable(true);
     reloadBtn.setDisable(true);
-    joinBtn.setDisable(true);
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     boolean validConfig = false;
@@ -480,7 +472,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     reloadBtn.setDisable(this.maniaAccount != null);
     addBtn.setDisable(this.maniaAccount != null);
     downloadBtn.setDisable(!disable && newSelection.getGame() == null);
-    joinBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
+    browseBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
 
     if (model.isPresent()) {
 //      if (newSelection.getValidationState().getCode() > 0) {

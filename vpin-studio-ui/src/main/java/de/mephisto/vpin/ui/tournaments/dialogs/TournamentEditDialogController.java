@@ -12,15 +12,12 @@ import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
 import de.mephisto.vpin.ui.tournaments.view.GameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
@@ -40,7 +37,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -59,8 +55,8 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TournamentManiaDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentManiaDialogController.class);
+public class TournamentEditDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(TournamentEditDialogController.class);
 
   private final Debouncer debouncer = new Debouncer();
 

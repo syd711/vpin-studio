@@ -50,7 +50,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
                             </graphic>
                         </Button>
                   <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Synchronize" textFill="WHITE">
@@ -61,7 +61,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -70,15 +70,23 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Button fx:id="joinBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
+                  <Button fx:id="addBtn1" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
                      </graphic>
                   </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -95,7 +103,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forwardburger" iconSize="18" />
                             </graphic>
                         </Button>
                         <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -104,7 +112,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator layoutX="514.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -113,7 +121,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" />
+                                <FontIcon iconColor="WHITE" iconLiteral="bi-stop" iconSize="18" />
                             </graphic>
                         </Button>
                         <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
@@ -121,7 +129,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                         </Button>
                     </items>
