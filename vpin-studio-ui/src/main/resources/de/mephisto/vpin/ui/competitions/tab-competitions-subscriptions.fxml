@@ -71,7 +71,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -88,7 +88,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lan-connect" iconSize="18" />
                      </graphic>
                   </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

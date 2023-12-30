@@ -81,7 +81,7 @@
                         </Label>
                         <Button mnemonicParsing="false" onAction="#onFileSelect" text="Select Image...">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
