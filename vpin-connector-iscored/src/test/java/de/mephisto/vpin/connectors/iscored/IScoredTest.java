@@ -11,6 +11,7 @@ public class IScoredTest {
   public void testIscored() throws Exception {
     GameRoom gameRoom = IScored.loadGameRoom("https://www.iScored.info/Syd");
     assertNotNull(gameRoom);
+    assertNotNull(gameRoom.getSettings());
     assertFalse(gameRoom.getGames().isEmpty());
     assertFalse(gameRoom.getGames().get(0).getScores().isEmpty());
     assertFalse(gameRoom.getGames().get(0).getTags().isEmpty());

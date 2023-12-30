@@ -52,10 +52,7 @@ public class IScored {
       userName = url.substring(BASE_URL.length() + 1).trim();
     }
 
-    LOG.info("Loading game room for user '" + userName + "'");
-
     URL gameRoomURL = new URL(BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName);
-
     GameRoom gameRoom = new GameRoom();
 
     String json = loadJson(gameRoomURL);
@@ -63,7 +60,8 @@ public class IScored {
       GameRoomModel gameRoomModel = objectMapper.readValue(json, GameRoomModel.class);
 
       gameRoom.setRoomID(gameRoomModel.getRoomID());
-      gameRoom.setSettings(gameRoom.getSettings());
+      gameRoom.setSettings(gameRoomModel.getSettings());
+      gameRoom.setName(gameRoomModel.getSettings().getRoomName());
 
       URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
       String gamesInfo = loadJson(gamesInfoURL);
@@ -86,6 +84,8 @@ public class IScored {
         }
         gameRoom.getGames().add(game);
       }
+
+      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games.");
       return gameRoom;
     }
 

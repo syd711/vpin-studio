@@ -6,7 +6,6 @@ import java.util.List;
 public class GameRoom {
 
   private int roomID;
-
   private String name;
 
   private List<Game> games = new ArrayList<>();

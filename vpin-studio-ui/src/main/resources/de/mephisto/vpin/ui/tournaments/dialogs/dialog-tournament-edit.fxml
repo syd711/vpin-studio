@@ -58,11 +58,15 @@
                <center>
                   <VBox>
                      <children>
-                        <Label text="Tournament Name" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <Label text="Tournament Name" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_LEFT">
                            <children>
                               <TextField fx:id="nameField" prefWidth="450.0">
@@ -70,27 +74,57 @@
                                     <Font size="14.0" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets top="6.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </TextField>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament (Your tournament is not searchable)" textFill="WHITE">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label layoutX="10.0" layoutY="10.0" text="iscored.info Game Room URL" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
+                           <children>
+                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Public tournaments can are searchable via the tournament browser." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
-                        </Label>
+                           <children>
+                              <Label text="iscored.info Game Room URL" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automaically added here." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                         <HBox spacing="6.0">
                            <children>
                               <TextField fx:id="dashboardUrlField" prefWidth="410.0">
@@ -98,7 +132,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button mnemonicParsing="false">
+                              <Button mnemonicParsing="false" onAction="#loadIScoredTables">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
                                  </graphic>
@@ -111,14 +145,49 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="112.0" text="Discord Invite Link" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="73.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="iscoredScoresEnabled" disable="true" mnemonicParsing="false" text="Score submissions enabled" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Public tournaments can are searchable via the tournament browser." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
-                        </Label>
+                           <children>
+                              <Label text="Discord Invite Link" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This invite link is visible to users that joined your tournament or in the tournament browser, if the tournament is public." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                         <HBox>
                            <children>
                               <TextField fx:id="discordLinkText" prefWidth="450.0">
@@ -131,22 +200,30 @@
                      </children>
                   </VBox>
                </center>
-               <left>
-                  <BorderPane fx:id="avatarPane" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="TOP_LEFT">
-                     <padding>
-                        <Insets right="12.0" />
-                     </padding>
-                  </BorderPane>
-               </left>
                <right>
                   <VBox prefHeight="200.0" prefWidth="440.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Description" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                        </Label>
-                        <TextArea fx:id="descriptionText" prefHeight="200.0" prefWidth="200.0">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <Label text="Description" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The description text will be shown to players that joined the competiiton and in the tournament browser, if the tournament is public." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="descriptionText" prefHeight="216.0" prefWidth="200.0" wrapText="true">
                            <VBox.margin>
                               <Insets top="4.0" />
                            </VBox.margin>
@@ -154,6 +231,16 @@
                      </children>
                   </VBox>
                </right>
+               <left>
+                  <VBox fx:id="avatarPane" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <padding>
+                        <Insets right="12.0" top="12.0" />
+                     </padding>
+                  </VBox>
+               </left>
             </BorderPane>
             <BorderPane>
                <center>

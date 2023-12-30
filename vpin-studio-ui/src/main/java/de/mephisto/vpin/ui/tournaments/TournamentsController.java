@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tournaments;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -67,10 +68,13 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Label ownerLabel;
 
   @FXML
-  private Label descriptionLabel;
+  private Label nameLabel;
 
   @FXML
-  private HBox serverBox;
+  private Label visibilityLabel;
+
+  @FXML
+  private Label descriptionLabel;
 
   @FXML
   private TitledPane metaDataPane;
@@ -101,6 +105,9 @@ public class TournamentsController implements Initializable, StudioFXController 
 
   @FXML
   private Accordion accordion;
+
+  @FXML
+  private Hyperlink dashboardLink;
 
   @FXML
   private Hyperlink discordLink;
@@ -201,11 +208,14 @@ public class TournamentsController implements Initializable, StudioFXController 
   private void refreshMetaData(Optional<TournamentTreeModel> tournamentTreeModel) {
     copyTokenBtn.setDisable(tournamentTreeModel.isEmpty());
     discordLink.setText("-");
+    dashboardLink.setText("-");
     uuidLabel.setText("-");
     startLabel.setText("-");
     endLabel.setText("-");
     remainingLabel.setText("-");
     ownerLabel.setText("-");
+    nameLabel.setText("-");
+    visibilityLabel.setText("-");
     descriptionLabel.setText("");
     avatarPane.getChildren().removeAll(avatarPane.getChildren());
 
@@ -215,14 +225,16 @@ public class TournamentsController implements Initializable, StudioFXController 
       ManiaTournamentPlayer owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
       ownerLabel.setText(owner.getDisplayName());
+      nameLabel.setText(tournament.getDisplayName());
+      visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(ManiaTournamentVisibility.publicTournament) ? "public" : "private");
       uuidLabel.setText(tournament.getUuid());
       avatarPane.getChildren().add(AvatarFactory.create(new Image(maniaClient.getAccountClient().getAccountUrl(owner.getUuid()))));
-      serverBox.getChildren().removeAll(serverBox.getChildren());
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink()  : "-");
+      dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl()  : "-");
       descriptionLabel.setText(tournament.getDescription());
     }
   }

@@ -1,11 +1,13 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Settings {
   private String roomName;
 
   private String gameOrder;
 
-  private String publicScoresEnabled;
+  private String publicScoreEntryEnabled;
 
   private String adminApproval;
 
@@ -25,12 +27,17 @@ public class Settings {
     this.gameOrder = gameOrder;
   }
 
-  public String getPublicScoresEnabled() {
-    return publicScoresEnabled;
+  @JsonIgnore
+  public boolean isPublicScoresEnabled() {
+    return Boolean.parseBoolean(this.publicScoreEntryEnabled.toLowerCase());
   }
 
-  public void setPublicScoresEnabled(String publicScoresEnabled) {
-    this.publicScoresEnabled = publicScoresEnabled;
+  public String getPublicScoreEntryEnabled() {
+    return publicScoreEntryEnabled;
+  }
+
+  public void setPublicScoreEntryEnabled(String publicScoreEntryEnabled) {
+    this.publicScoreEntryEnabled = publicScoreEntryEnabled;
   }
 
   public String getAdminApproval() {

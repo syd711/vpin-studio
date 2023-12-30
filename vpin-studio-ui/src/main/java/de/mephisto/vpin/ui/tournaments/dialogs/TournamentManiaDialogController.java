@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tournaments.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -12,8 +13,10 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -39,6 +42,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -46,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -69,7 +74,7 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   private ComboBox<String> endTime;
 
   @FXML
-  private BorderPane avatarPane;
+  private VBox avatarPane;
 
   @FXML
   private Button saveBtn;
@@ -82,6 +87,9 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
 
   @FXML
   private CheckBox visibilityCheckbox;
+
+  @FXML
+  private CheckBox iscoredScoresEnabled;
 
   @FXML
   private TextField nameField;
@@ -214,7 +222,6 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       if (!item.isValid()) {
         validationTitle.setText("Table not valid.");
         validationDescription.setText("One or more tables are invalid.");
-        return;
       }
     }
 
@@ -273,11 +280,18 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
     reloadTables();
   }
 
+  @FXML
   private void loadIScoredTables() {
     String dashboardUrl = this.dashboardUrlField.getText();
+    iscoredScoresEnabled.setSelected(false);
+    this.tableSelection.clear();
+    this.tableView.refresh();
+
     if (!StringUtils.isEmpty(dashboardUrl)) {
       try {
         GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
+
         List<Game> games = gameRoom.getGames();
         for (Game game : games) {
           List<String> tags = game.getTags();
@@ -296,6 +310,7 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
               gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
             }
             this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
+            this.tableView.refresh();
           }
         }
       } catch (Exception e) {
@@ -308,16 +323,14 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
+    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    AssetRepresentation asset = defaultPlayer.getAvatar();
+    ByteArrayInputStream in = client.getAsset(AssetType.AVATAR, asset.getUuid());
 
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-    }
-
+    Image image = new Image(in);
     Tile avatar = TileBuilder.create()
       .skinType(Tile.SkinType.IMAGE)
-      .prefSize(300, 300)
+      .prefSize(UIDefaults.DEFAULT_AVATARSIZE*2, UIDefaults.DEFAULT_AVATARSIZE*2)
       .backgroundColor(Color.TRANSPARENT)
       .image(image)
       .imageMask(Tile.ImageMask.ROUND)
@@ -326,7 +339,7 @@ public class TournamentManiaDialogController implements Initializable, DialogCon
       .textAlignment(TextAlignment.CENTER)
       .build();
 
-    avatarPane.setCenter(avatar);
+    avatarPane.getChildren().add(avatar);
 
     deleteTableBtn.setDisable(true);
     saveBtn.setDisable(true);

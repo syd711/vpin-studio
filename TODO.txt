@@ -23,3 +23,14 @@ For example, my old table is fathom (Bally 1981).vpx and I want to replace it wi
 If I update in popper, I just drag the new file to the update button and it replaces my old table but keeps the name fathom (Bally 1981).
 
 And finally - when you update a table it’s not updating the “last file update” part in popper.  This will impact “recently updated” playlists
+
+
+Under Virtual Pinball spreadsheet, I like you have sorted the tables in date order
+could you make some table formation to separate them a little
+
+
+
+remote upater
+
+
+highscore settings issues
