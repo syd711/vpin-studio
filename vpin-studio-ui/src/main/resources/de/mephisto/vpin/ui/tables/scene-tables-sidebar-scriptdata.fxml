@@ -472,7 +472,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="Open the table script for the selected table." />
@@ -492,7 +492,7 @@
                   </MenuItem>
               </items>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="Open the table script for the selected table." />
@@ -507,7 +507,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="Open the table script for the selected table." />

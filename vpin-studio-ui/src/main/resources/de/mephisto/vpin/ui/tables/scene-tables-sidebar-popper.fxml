@@ -571,7 +571,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
                </graphic>
             </Button>
             </items>

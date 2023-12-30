@@ -23,7 +23,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="14" />
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="PinUP Popper Setup" />
@@ -35,7 +35,7 @@
                             <Font size="14.0" />
                         </font>
                         <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" iconSize="18" />
                         </graphic>
                     </Button>
                <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
