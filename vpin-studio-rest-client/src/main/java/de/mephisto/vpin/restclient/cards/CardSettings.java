@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * #Sun Dec 10 08:30:57 CET 2023
@@ -33,6 +35,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * popper.screen=Other2
  */
 public class CardSettings {
+  private final static Logger LOG = LoggerFactory.getLogger(CardSettings.class);
+
   private int cardAlphacompositeBlack = 33;
   private int cardAlphacompositeWhite = 1;
   private String cardBackground = "Old Bumbers";
@@ -44,7 +48,7 @@ public class CardSettings {
   private int cardScaling = 1280;
   private int cardBlur = 6;
   private String cardFontColor = "#FFFFFF";
-  private boolean cardGrayScale = true;
+  private boolean cardGrayScale = false;
   private boolean cardRawHighscore = true;
   private int cardSampleTable = 1;
   private String cardScoreFontName = "Monospaced";
@@ -69,7 +73,12 @@ public class CardSettings {
   }
 
   public static CardSettings fromJson(String json) throws JsonProcessingException {
-    return objectMapper.readValue(json, CardSettings.class);
+    try {
+      return objectMapper.readValue(json, CardSettings.class);
+    } catch (Exception e) {
+      LOG.error("Error parsing card settings json '" + json + "': " + e.getMessage());
+    }
+    return new CardSettings();
   }
 
   public int getNotificationTime() {
