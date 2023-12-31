@@ -2,7 +2,8 @@
 - fix duplicate message emitting
 - scan highscores only after scanning games
 - save table details with one update statement
-
+- remote upate must update local client too
+- vpin mame alias is broken
 
 Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
 
@@ -11,9 +12,4 @@ For example, my old table is fathom (Bally 1981).vpx and I want to replace it wi
 If I update in popper, I just drag the new file to the update button and it replaces my old table but keeps the name fathom (Bally 1981).
 
 
-Under Virtual Pinball spreadsheet, I like you have sorted the tables in date order
-could you make some table formation to separate them a little
 
-
-
-remote upater

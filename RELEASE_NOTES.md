@@ -20,4 +20,6 @@
 - VPS Section: Table versions without a format value are also shown in the version selector now.
 - VPS Section: Fixed missing table version reset for tables that did have a VPS table selected.
 - VPS Section: Added ROM name as additional lookup criteria when the automatic lookup for the VPS entry is triggered.
+- VPS Section: Improved styling of version combo-box list by adding altering background colors.
+- VPS Section: Fixed filter checkbox that resetted the table version.
 - Table Editing: Editing the Pinup Popper table data via Studio will now also update the "DateUpdated" column in the database (this is relevant for dynamic playlists that use this field).

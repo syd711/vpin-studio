@@ -478,7 +478,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
 
-    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
+    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      this.tableVersionsCombo.valueProperty().removeListener(this);
+      refreshView(game);
+      this.tableVersionsCombo.valueProperty().addListener(this);
+    });
 
     List<VpsTable> tables = VPS.getInstance().getTables();
     refreshSheetData(tables);
