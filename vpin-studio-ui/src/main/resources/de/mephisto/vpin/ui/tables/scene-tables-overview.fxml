@@ -220,7 +220,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-magnifier" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
