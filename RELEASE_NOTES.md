@@ -23,3 +23,4 @@
 - VPS Section: Improved styling of version combo-box list by adding altering background colors.
 - VPS Section: Fixed filter checkbox that resetted the table version.
 - Table Editing: Editing the Pinup Popper table data via Studio will now also update the "DateUpdated" column in the database (this is relevant for dynamic playlists that use this field).
+- Fixed font color of textareas.
