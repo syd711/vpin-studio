@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class UIPreferencesController implements Initializable {
+public class SettingsPreferencesController implements Initializable {
 
   @FXML
   private BorderPane avatarBorderPane;
@@ -44,6 +44,9 @@ public class UIPreferencesController implements Initializable {
 
   @FXML
   private CheckBox uiShowVersion;
+
+  @FXML
+  private CheckBox autoApplyVPSCheckbox;
 
   @FXML
   private CheckBox uiHideVPSUpdates;
@@ -105,6 +108,19 @@ public class UIPreferencesController implements Initializable {
       }
       else if (!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES)) {
         values.add(PreferenceNames.UI_HIDE_VPS_UPDATES);
+      }
+      PreferencesController.markDirty();
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+    });
+
+
+    autoApplyVPSCheckbox.setSelected(values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER));
+    autoApplyVPSCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (!t1) {
+        values.remove(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
+      }
+      else if (!values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER)) {
+        values.add(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
       }
       PreferencesController.markDirty();
       client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));

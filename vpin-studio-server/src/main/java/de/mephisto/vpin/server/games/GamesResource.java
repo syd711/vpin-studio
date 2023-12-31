@@ -1,14 +1,18 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.keyevent.OverlayClientImpl;
 import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import de.mephisto.vpin.server.util.ZipUtil;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -21,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +46,9 @@ public class GamesResource {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private PreferencesService preferenceService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -197,6 +205,8 @@ public class GamesResource {
       }
 
       if (uploadFile.exists()) {
+
+
         switch (mode) {
           case upload: {
             //nothing, we are done here
@@ -207,7 +217,6 @@ public class GamesResource {
             if (importedGameId >= 0) {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
-                popperService.autofillTableDetails(game, false);
                 vpsService.autofill(game, true);
               }
             }
@@ -225,7 +234,6 @@ public class GamesResource {
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
-              popperService.autofillTableDetails(game, false);
               vpsService.autofill(game, true);
             }
             break;
@@ -245,7 +253,6 @@ public class GamesResource {
               tableDetails.setGameVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId);
               if (importedGame != null) {
-                popperService.autofillTableDetails(importedGame, false);
                 vpsService.autofill(importedGame, true);
               }
 

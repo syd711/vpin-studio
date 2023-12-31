@@ -331,16 +331,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
               versionAuthorsLabel.setText(String.join(", ", tableVersion.getAuthors()));
               versionAuthorsLabel.setTooltip(new Tooltip(String.join(", ", tableVersion.getAuthors())));
             }
-
             break;
           }
         }
       }
-
-      Platform.runLater(() -> {
-        tableVersionsCombo.show();
-        tableVersionsCombo.hide();
-      });
     }
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());

@@ -140,6 +140,9 @@
                                                 <tooltip>
                                                     <Tooltip prefWidth="300.0" text="The ROM name usually also defines the folder name of the PUP pack and the highscore file. Check the table sources if this value does not match." wrapText="true" />
                                                 </tooltip>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
                                             </Label>
                                         </children>
                                     </HBox>
@@ -214,6 +217,9 @@
                                                 <graphic>
                                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                 </graphic>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
                                             </Label>
                                         </children>
                                     </HBox>
@@ -268,7 +274,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                  <children>
                                     <Label prefHeight="40.0" prefWidth="18.0">
                                        <font>

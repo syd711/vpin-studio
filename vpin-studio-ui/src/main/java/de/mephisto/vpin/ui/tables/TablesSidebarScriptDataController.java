@@ -317,8 +317,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onTableNameEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Table Name", "Enter Table Name",
-      "Enter the value for the 'TableName' property.",
+    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Alternative ROM Name", "Enter Alternative ROM Name",
+      "Enter the value for the \"Alternative ROM Name\" (or \"TableName\" property).",
       "The value is configured for some tables and used during highscore extraction.",
       gameRepresentation.getTableName());
     if (tableName != null) {

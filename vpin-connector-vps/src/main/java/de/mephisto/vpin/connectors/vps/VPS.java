@@ -26,7 +26,7 @@ public class VPS {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  private List<VpsChangeListener> listeners = new ArrayList<>();
+  private List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
   private final List<String> versionIndicators = Arrays.asList("vpw", "bigus", "salas", "tasty", "thalamus", "VPinWorkshop", "Paulie");
 
@@ -34,7 +34,7 @@ public class VPS {
 
   private static VPS instance;
 
-  public void addChangeListener(VpsChangeListener listener) {
+  public void addChangeListener(VpsSheetChangedListener listener) {
     this.listeners.add(listener);
   }
 
@@ -160,10 +160,12 @@ public class VPS {
     List<VpsTable> results = new ArrayList<>();
     for (VpsTable table : this.tables) {
       List<VpsAuthoredUrls> romFiles = table.getRomFiles();
-      for (VpsAuthoredUrls romFile : romFiles) {
-        if(romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
-          results.add(table);
-          return results;
+      if(romFiles != null) {
+        for (VpsAuthoredUrls romFile : romFiles) {
+          if(romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
+            results.add(table);
+            return results;
+          }
         }
       }
 
@@ -250,7 +252,7 @@ public class VPS {
 
       if (!diff.isEmpty()) {
         LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
-        for (VpsChangeListener listener : listeners) {
+        for (VpsSheetChangedListener listener : listeners) {
           listener.vpsSheetChanged(diff);
         }
       }

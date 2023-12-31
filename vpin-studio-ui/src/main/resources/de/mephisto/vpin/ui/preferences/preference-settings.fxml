@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.UIPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.SettingsPreferencesController">
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -104,8 +104,8 @@
                   </BorderPane>
                </left>
             </BorderPane>
-            <Label layoutX="34.0" layoutY="244.0" styleClass="preference-subtitle" text="UI Settings" />
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Miscellaneous UI settings can be configured here." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="244.0" styleClass="preference-subtitle" text="Settings" />
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Miscellaneous settings can be configured here." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" top="12.0" />
                </VBox.margin>
@@ -127,6 +127,16 @@
             </CheckBox>
             <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, the VPS updates column and related actions are not shown in the table overview" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="654.0" styleClass="checkbox-description" text="and VPS section anymore." textFill="WHITE" />
+            <CheckBox fx:id="autoApplyVPSCheckbox" layoutX="34.0" layoutY="688.0" mnemonicParsing="false" text="Auto apply Virtual-Pinball-Spreadsheet and VPX table info data to PinUP game details." textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="34.0" layoutY="729.0" styleClass="checkbox-description" text="When enabled, the selected VPS table, the VPS table version and the VPX table info values will be" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="729.0" styleClass="checkbox-description" text="automatically applied to the PinUP Popper game details and overwrite existing values." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
                <VBox.margin>
                   <Insets top="24.0" />

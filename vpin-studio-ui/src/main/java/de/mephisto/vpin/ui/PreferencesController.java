@@ -65,7 +65,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private static boolean dirty = false;
 
-  private static String lastScreen = "preference-ui.fxml";
+  private static String lastScreen = "preference-settings.fxml";
 
   static {
 
@@ -118,7 +118,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onAvatar(ActionEvent event) throws IOException {
-    load("preference-ui.fxml", event);
+    load("preference-settings.fxml", event);
   }
 
   @FXML

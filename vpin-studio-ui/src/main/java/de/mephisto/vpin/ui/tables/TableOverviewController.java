@@ -337,7 +337,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-//        TransitionUtil.createTranslateByXTransition(main, 300, 600).playFromStart();
+        onTableEdit();
       }
     }
   }
