@@ -151,7 +151,7 @@
                   <Insets top="28.0" />
                </BorderPane.margin>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-close" iconSize="36" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
                </graphic>
             </Button>
          </top>
