@@ -453,7 +453,7 @@
                                     </Button>
                                  </children>
                               </VBox>
-                              <TextArea fx:id="tableBlurbLabel" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <TextArea fx:id="tableBlurbLabel" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets right="6.0" />
                                  </GridPane.margin>

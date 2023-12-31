@@ -29,23 +29,32 @@ public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
     setGraphic(null);
     setText(null);
     if (item != null) {
-      StringBuilder builder = new StringBuilder();
+      VBox root = new VBox(3);
+      root.setMinHeight(120);
+      root.setMaxHeight(120);
+      root.setMaxWidth(500);
+
       String comment = item.getComment();
-      if (comment != null && comment.trim().length() > 0) {
-        builder.append(comment);
-      }
-      else {
-        String authors = String.join(", ", item.getAuthors());
-        if (authors.length() > 40) {
-          authors = authors.substring(0, 39) + "...";
-        }
-        builder.append(authors);
+      if (comment != null && !comment.trim().isEmpty()) {
+        Label title = new Label(comment);
+        title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+        root.getChildren().add(title);
       }
 
-      VBox root = new VBox(3);
-      Label title = new Label(builder.toString());
-      title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
-      root.getChildren().add(title);
+      if(item.getAuthors() != null && item.getAuthors().size() > 0) {
+        String authors = String.join(", ", item.getAuthors());
+        Label title = new Label(authors);
+        if (comment == null || comment.trim().isEmpty()) {
+          title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+        }
+        root.getChildren().add(title);
+        if (comment == null || comment.trim().isEmpty()) {
+          Label spacer = new Label();
+          spacer.setStyle("-fx-font-size : 14px;");
+          root.getChildren().add(spacer);
+        }
+      }
+
 
       HBox row = new HBox(6);
       Label titleLabel = new Label("Version:");
@@ -78,7 +87,7 @@ public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
       }
       root.getChildren().add(row);
 
-      row.setPadding(new Insets(6, 0,  6, 3));
+      row.setPadding(new Insets(6, 0, 6, 3));
 
       setGraphic(root);
     }

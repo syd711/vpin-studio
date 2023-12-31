@@ -4,6 +4,7 @@
 - save table details with one update statement
 - remote upate must update local client too
 - vpin mame alias is broken
+- do not reset version?
 
 Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
 
