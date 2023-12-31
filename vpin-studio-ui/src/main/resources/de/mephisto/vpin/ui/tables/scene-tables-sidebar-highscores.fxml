@@ -228,7 +228,7 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="Scan All">
                      <graphic>
-                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="sil-refresh">
+                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2r-refresh">
                            <font>
                               <Font size="14.0" />
                            </font></FontIcon>
@@ -239,7 +239,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                </graphic>
             </SplitMenuButton>
                 <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
