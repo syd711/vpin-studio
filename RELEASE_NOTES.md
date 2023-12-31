@@ -8,7 +8,8 @@
 - Icons: Replaced ugly database-edit icons with a pencil icon, indicating general editing of the selected item.
 - Icons: Unified icons by using the same size everywhere (there was a mixture of three different sizes all over the UI).
 - Icons: Unified different reload icons.
+- Icons: Added custom icons for the "Asset Manager" and the "Popper Table Edit" dialogs.
 - VPS Section: Fixed "download" button enablement that was not updated for new table selections.
 - VPS Section: Table versions without a format value are also shown in the version selector now.
 - VPS Section: Fixed missing table version restting for tables that did have a VPS table selected.
-- 
+- VPS Section: Added ROM name as additional lookup criteria when the automatic lookup for the VPS entry is triggered.
