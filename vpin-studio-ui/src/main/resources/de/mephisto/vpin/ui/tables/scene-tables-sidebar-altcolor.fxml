@@ -127,7 +127,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -136,7 +136,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
         </items>

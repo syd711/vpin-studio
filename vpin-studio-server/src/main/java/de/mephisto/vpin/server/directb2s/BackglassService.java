@@ -8,12 +8,9 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,18 +46,18 @@ public class BackglassService {
   public DirectB2STableSettings getTableSettings(int gameId) {
     Game game = gameService.getGame(gameId);
     String rom = game.getRom();
-    if (!StringUtils.isEmpty(game.getRomAlias())) {
-      rom = game.getRomAlias();
-    }
-
-    if (StringUtils.isEmpty(rom)) {
-      rom = game.getTableName();
-    }
 
     File settingsXml = game.getEmulator().getB2STableSettingsXml();
-    if(settingsXml.exists() && !StringUtils.isEmpty(rom)) {
+    if (settingsXml.exists() && !StringUtils.isEmpty(rom)) {
       B2STableSettingsParser tableSettingsParser = new B2STableSettingsParser(settingsXml);
       DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
+      if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
+        entry = tableSettingsParser.getEntry(game.getRomAlias());
+      }
+
+      if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
+        entry = tableSettingsParser.getEntry(game.getTableName());
+      }
 
       if (entry == null) {
         entry = new DirectB2STableSettings();

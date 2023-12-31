@@ -18,22 +18,30 @@ public class VpsVersionContainer extends VBox {
   public VpsVersionContainer(VpsTableVersion item) {
     super(3);
 
-    StringBuilder builder = new StringBuilder();
+    setMinHeight(120);
+    setMaxHeight(120);
+    setMaxWidth(500);
+
     String comment = item.getComment();
-    if (comment != null && comment.trim().length() > 0) {
-      builder.append(comment);
-    }
-    else {
-      String authors = String.join(", ", item.getAuthors());
-      if (authors.length() > 40) {
-        authors = authors.substring(0, 39) + "...";
-      }
-      builder.append(authors);
+    if (comment != null && !comment.trim().isEmpty()) {
+      Label title = new Label(comment);
+      title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+      this.getChildren().add(title);
     }
 
-    Label title = new Label(builder.toString());
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
-    this.getChildren().add(title);
+    if(item.getAuthors() != null && item.getAuthors().size() > 0) {
+      String authors = String.join(", ", item.getAuthors());
+      Label title = new Label(authors);
+      if (comment == null || comment.trim().isEmpty()) {
+        title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+      }
+      this.getChildren().add(title);
+      if (comment == null || comment.trim().isEmpty()) {
+        Label spacer = new Label();
+        spacer.setStyle("-fx-font-size : 14px;");
+        this.getChildren().add(spacer);
+      }
+    }
 
     HBox row = new HBox(6);
     Label titleLabel = new Label("Version:");

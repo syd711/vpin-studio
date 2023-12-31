@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;

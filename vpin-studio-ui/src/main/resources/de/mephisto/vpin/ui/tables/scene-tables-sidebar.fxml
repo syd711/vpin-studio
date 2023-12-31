@@ -370,7 +370,7 @@
                             <right>
                                 <Label BorderPane.alignment="CENTER">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Used for highscore cards and competition backgrounds." />

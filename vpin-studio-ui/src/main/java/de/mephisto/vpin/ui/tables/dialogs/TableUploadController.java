@@ -53,12 +53,6 @@ public class TableUploadController implements Initializable, DialogController {
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
-  private Label replaceTitle;
-
-  @FXML
-  private Label cloneTitle;
-
-  @FXML
   private Button uploadBtn;
 
   @FXML
@@ -189,8 +183,8 @@ public class TableUploadController implements Initializable, DialogController {
 
     if(game != null) {
       this.gameId = game.getId();
-      this.replaceTitle.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
-      this.cloneTitle.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+      this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
+      this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);

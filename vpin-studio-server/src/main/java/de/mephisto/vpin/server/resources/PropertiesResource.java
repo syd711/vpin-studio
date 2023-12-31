@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -40,8 +41,13 @@ public class PropertiesResource {
 
 
   @GetMapping("/{properties}")
-  public Map<String, Object> bundle(@PathVariable("properties") String properties) throws JsonProcessingException {
+  public Map<String, Object> bundle(@PathVariable("properties") String properties) throws Exception {
     String value = (String) preferencesService.getPreferenceValue(properties);
+    if(StringUtils.isEmpty(value) && properties.equals(PreferenceNames.HIGHSCORE_CARD_SETTINGS)) {
+      value = new CardSettings().toJson();
+      preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, value);
+    }
+
     return new ObjectMapper().readValue(value, HashMap.class);
   }
 

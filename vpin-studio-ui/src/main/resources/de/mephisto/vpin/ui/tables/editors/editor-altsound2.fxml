@@ -267,7 +267,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="Change filename" />
@@ -288,7 +288,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="Edit sample type" />
@@ -320,7 +320,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
                   <Tooltip text="Edit ducking profile" />

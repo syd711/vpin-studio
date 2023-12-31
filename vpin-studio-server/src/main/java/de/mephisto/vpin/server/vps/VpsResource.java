@@ -20,12 +20,12 @@ public class VpsResource {
   private GameService gameService;
 
   @GetMapping("/autofill/{gameId}/{overwrite}")
-  public boolean saveTable(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+  public boolean autofill(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
     return vpsService.autofill(gameService.getGame(gameId), overwrite);
   }
 
   @PutMapping("/table/{gameId}/{vpsId}")
-  public boolean saveTable(@PathVariable("gameId") int gameId, @PathVariable("vpsId") String vpsId) throws Exception {
+  public boolean autofill(@PathVariable("gameId") int gameId, @PathVariable("vpsId") String vpsId) throws Exception {
     return vpsService.saveExternalTableId(gameService.getGame(gameId), vpsId);
   }
 

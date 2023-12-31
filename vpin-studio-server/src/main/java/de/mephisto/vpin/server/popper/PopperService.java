@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -13,12 +14,16 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vps.VpsTableDataChangedListener;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,7 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PopperService implements InitializingBean {
+public class PopperService implements InitializingBean, VpsTableDataChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
@@ -49,6 +54,12 @@ public class PopperService implements InitializingBean {
 
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private VpsService vpsService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
@@ -162,40 +173,40 @@ public class PopperService implements InitializingBean {
   public TableDetails autofillTableDetails(Game game, boolean overwrite) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
     if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable tableData = VPS.getInstance().getTableById(game.getExtTableId());
-      if (tableData != null) {
-        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && tableData.getYear() > 0) {
-          tableDetails.setGameYear(tableData.getYear());
+      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+      if (vpsTable != null) {
+        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && vpsTable.getYear() > 0) {
+          tableDetails.setGameYear(vpsTable.getYear());
         }
 
-        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0 || overwrite) && tableData.getPlayers() > 0) {
-          tableDetails.setNumberOfPlayers(tableData.getPlayers());
+        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0 || overwrite) && vpsTable.getPlayers() > 0) {
+          tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
         }
 
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getUrl())) && !StringUtils.isEmpty(tableData.getIpdbUrl())) {
-          tableDetails.setUrl(tableData.getIpdbUrl());
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getUrl())) && !StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
+          tableDetails.setUrl(vpsTable.getIpdbUrl());
 
-          String url = tableData.getIpdbUrl();
+          String url = vpsTable.getIpdbUrl();
           if (url.contains("id=")) {
             tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
           }
         }
 
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getGameTheme())) && tableData.getTheme() != null && !tableData.getTheme().isEmpty()) {
-          tableDetails.setGameTheme(String.join(",", tableData.getTheme()));
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getGameTheme())) && vpsTable.getTheme() != null && !vpsTable.getTheme().isEmpty()) {
+          tableDetails.setGameTheme(String.join(",", vpsTable.getTheme()));
         }
 
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getDesignedBy())) && tableData.getDesigners() != null && !tableData.getDesigners().isEmpty()) {
-          tableDetails.setDesignedBy(String.join(",", tableData.getDesigners()));
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getDesignedBy())) && vpsTable.getDesigners() != null && !vpsTable.getDesigners().isEmpty()) {
+          tableDetails.setDesignedBy(String.join(",", vpsTable.getDesigners()));
         }
 
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getManufacturer())) && !StringUtils.isEmpty(tableData.getManufacturer())) {
-          tableDetails.setManufacturer(tableData.getManufacturer());
+        if ((overwrite || StringUtils.isEmpty(tableDetails.getManufacturer())) && !StringUtils.isEmpty(vpsTable.getManufacturer())) {
+          tableDetails.setManufacturer(vpsTable.getManufacturer());
         }
 
-        if ((overwrite || tableDetails.getGameType() == null) && !StringUtils.isEmpty(tableData.getType())) {
+        if ((overwrite || tableDetails.getGameType() == null) && !StringUtils.isEmpty(vpsTable.getType())) {
           try {
-            GameType gameType = GameType.valueOf(tableData.getType());
+            GameType gameType = GameType.valueOf(vpsTable.getType());
             tableDetails.setGameType(gameType);
           } catch (Exception e) {
             //ignore
@@ -203,43 +214,58 @@ public class PopperService implements InitializingBean {
         }
 
         if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-          List<VpsTableVersion> tableFiles = tableData.getTableFiles();
-          Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
-          if (tableVersion.isPresent()) {
-            VpsTableVersion version = tableVersion.get();
-            if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(version.getVersion())) {
-              tableDetails.setGameVersion(version.getVersion());
+          VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+          if (tableVersion != null) {
+            if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableVersion.getVersion())) {
+              tableDetails.setGameVersion(tableVersion.getVersion());
+            }
+
+            List<String> authors = tableVersion.getAuthors();
+            if (overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) {
+              if (authors != null) {
+                tableDetails.setAuthor(String.join(", ", authors));
+              }
+            }
+
+            if (overwrite || StringUtils.isEmpty(tableDetails.getNotes())) {
+              tableDetails.setNotes(tableVersion.getComment());
+            }
+
+            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
+              if (tableVersion.getFeatures() != null) {
+                tableDetails.setTags(String.join(", ", tableVersion.getFeatures()));
+              }
             }
           }
         }
-
-        TableInfo tableInfo = vpxService.getTableInfo(game);
-        if (tableInfo != null) {
-          if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
-            tableDetails.setGameVersion(tableInfo.getTableVersion());
-          }
-
-          if ((overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
-            tableDetails.setAuthor(tableInfo.getAuthorName());
-          }
+        else {
+          fillTableInfoWithVpxData(game, tableDetails, overwrite);
         }
       }
     }
     else {
-      TableInfo tableInfo = vpxService.getTableInfo(game);
-      if (tableInfo != null) {
-        if (overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) {
-          tableDetails.setGameVersion(tableInfo.getTableVersion());
-        }
-        if (overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) {
-          tableDetails.setAuthor(tableInfo.getAuthorName());
-        }
-      }
+      fillTableInfoWithVpxData(game, tableDetails, overwrite);
     }
 
     pinUPConnector.saveTableDetails(game.getId(), tableDetails);
-
+    LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
     return tableDetails;
+  }
+
+  /**
+   * Some fallback: we use the VPX script metadata for popper if the VPS version data has not been applied.
+   */
+  private void fillTableInfoWithVpxData(@NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
+    TableInfo tableInfo = vpxService.getTableInfo(game);
+    if (tableInfo != null) {
+      if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
+        tableDetails.setGameVersion(tableInfo.getTableVersion());
+      }
+
+      if ((overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
+        tableDetails.setAuthor(tableInfo.getAuthorName());
+      }
+    }
   }
 
 
@@ -394,8 +420,20 @@ public class PopperService implements InitializingBean {
   }
 
   @Override
+  public void tableDataChanged(@NotNull Game game) {
+    try {
+      List<String> values = preferencesService.getPreferenceCSVValue(PreferenceNames.UI_SETTINGS);
+      boolean autoApply = values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
+      autofillTableDetails(game, autoApply);
+    } catch (Exception e) {
+      LOG.error("Failed to execute auto-filling of game details: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyPopperExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
+    vpsService.addVpsTableDataChangeListener(this);
   }
 }

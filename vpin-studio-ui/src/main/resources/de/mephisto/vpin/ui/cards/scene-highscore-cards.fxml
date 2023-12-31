@@ -51,36 +51,34 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <BorderPane>
+                             <Label text="Fallback Background Image:" textFill="WHITE">
+                                <font>
+                                   <Font size="14.0" />
+                                </font>
                                  <VBox.margin>
                                     <Insets top="12.0" />
                                  </VBox.margin>
-                                 <left>
-                                   <Label text="Fallback Background Image:" textFill="WHITE" BorderPane.alignment="CENTER">
-                                      <font>
-                                         <Font size="14.0" />
-                                      </font>
-                                       <BorderPane.margin>
-                                          <Insets top="12.0" />
-                                       </BorderPane.margin>
-                                   </Label>
-                                 </left>
+                             </Label>
+                              <BorderPane>
+                                 <center>
+                                   <HBox prefHeight="31.0" prefWidth="276.0">
+                                      <children>
+                                         <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
+                                             <HBox.margin>
+                                                <Insets top="3.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                      </children>
+                                   </HBox>
+                                 </center>
                                  <right>
                                    <Button mnemonicParsing="false" onAction="#onUploadButton" BorderPane.alignment="CENTER">
                                       <graphic>
-                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
+                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                       </graphic>
                                    </Button>
                                  </right>
                               </BorderPane>
-                             <HBox prefHeight="31.0" prefWidth="276.0">
-                                <children>
-                                   <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
-                                       <HBox.margin>
-                                          <Insets top="3.0" />
-                                       </HBox.margin></ComboBox>
-                                </children>
-                             </HBox>
                               <Label text="Brighten Background:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -337,7 +335,7 @@
                                  <items>
                                     <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -345,7 +343,7 @@
                                     </Button>
                                     <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />
@@ -430,7 +428,7 @@
                      <graphic>
                                        </graphic>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-reload" wrappingWidth="12.800048828125" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -439,7 +437,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-images" />
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -448,7 +446,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                   </Button>
                   <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">
@@ -456,7 +454,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                      </graphic>
                   </Button>
                </items>

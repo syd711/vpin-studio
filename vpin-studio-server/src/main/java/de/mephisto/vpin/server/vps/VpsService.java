@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.VpsChangeListener;
+import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -10,7 +10,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -26,11 +25,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VpsService implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, VpsChangeListener {
+public class VpsService implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, VpsSheetChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
 
   private ApplicationContext applicationContext;
@@ -42,18 +42,21 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   private PreferencesService preferencesService;
 
   @Autowired
-  private JobService jobService;
-
-  @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
+  private List<VpsTableDataChangedListener> listeners = new ArrayList<>();
+
   public VpsService() {
+  }
+
+  public void addVpsTableDataChangeListener(@NonNull VpsTableDataChangedListener listener) {
+    this.listeners.add(listener);
   }
 
   public boolean autofill(Game game, boolean overwrite) {
     try {
       String term = game.getGameDisplayName();
-      List<VpsTable> vpsTables = VPS.getInstance().find(term);
+      List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
       if (!vpsTables.isEmpty()) {
         VpsTable vpsTable = vpsTables.get(0);
 
@@ -73,6 +76,8 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
             saveExternalTableVersionId(game, version.getId());
           }
         }
+
+        notifyVpsTableDataChangeListeners(game);
       }
       LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
       return true;
@@ -158,13 +163,14 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   public boolean saveExternalTableVersionId(Game game, String vpsId) throws Exception {
-    if(vpsId.equals("null")) {
+    if (vpsId.equals("null")) {
       game.setExtTableVersionId(null);
     }
-    else  {
+    else {
       game.setExtTableVersionId(vpsId);
     }
     (applicationContext.getBean(GameService.class)).save(game);
+    notifyVpsTableDataChangeListeners(game);
     return true;
   }
 
@@ -172,6 +178,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
     game.setExtTableId(vpsId);
     game.setExtTableVersionId(null);
     (applicationContext.getBean(GameService.class)).save(game);
+    notifyVpsTableDataChangeListeners(game);
     return true;
   }
 
@@ -183,11 +190,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Override
   public void onApplicationEvent(ContextRefreshedEvent event) {
     new VpsUpdateThread(preferencesService).start();
-  }
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    VPS.getInstance().addChangeListener(this);
   }
 
   @Override
@@ -212,5 +214,16 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
         LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
       }
     }
+  }
+
+  private void notifyVpsTableDataChangeListeners(Game game) {
+    for (VpsTableDataChangedListener listener : this.listeners) {
+      listener.tableDataChanged(game);
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    VPS.getInstance().addChangeListener(this);
   }
 }

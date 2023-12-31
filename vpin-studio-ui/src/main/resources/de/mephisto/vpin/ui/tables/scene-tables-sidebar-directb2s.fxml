@@ -400,7 +400,7 @@
         <items>
           <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />
@@ -408,7 +408,7 @@
             </Button>
             <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />

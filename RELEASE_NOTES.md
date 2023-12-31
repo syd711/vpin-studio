@@ -1,27 +1,26 @@
 ## Release Notes
 
-### Breaking Change
-
-The preferences for filtering highscores by initials is gone and has been replaced by the build-in players.
-So if you only want to see updates for your highscore, create a build-in player with your initials.
-
 ### Changes
 
-- Moved "Analytics" section into "Tables" section tab "Table Statistics". The view doesn't have to be this prominent, that's why it has been moved.
-- Added copy buttons for VPS table URLs (needed later on).
-- Replaced update indicator icons with a colorized version.
-- Uploaded tables are now immediately mapped against VPS.
-- The VPSSaveEdit tool button is now also available in the "Highscores" section. 
-- Replaced transient VPS table update notification with a persisted state. The update indicator for this is a new column in the table overview. If you are not interested in these updates, you can hide the column in the UI preferences. The update indicator can be resetted from the toolbar button.
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vps/update-colum.png?raw=true" width="600" />
-
-
+- Added server-site VPS version change listener, that is triggered when a new VPS version is assigned to a table. As a result, the updated VPS data is automatically written to PinUP Popper **if** the setting for this is enabled. 
+- Icons: Replaced ugly database-edit icons with a pencil icon, indicating general editing of the selected item.
+- Icons: Unified icons by using the same size and icon-font everywhere (there is a mixture of three different sizes and three different icon-fonts all over the UI, I try to unify these).
+- Icons: Added custom icons for the "Asset Manager" and the "Table Data" dialogs.
+- Table Overview: Double-clicking on a table now opens the "Table Data" dialog (why didn't I came up earlier with that?).
+- Preferences: Renamed "UI Settings" to "Settings" (because some of these affect the backend now too).
+- Preferences: Added "Auto apply to Popper..." setting to toggle the data push from VPS to PinUP Popper games.
 
 ### Bugfixes
 
-- Fixed drag and drop of media assets ...again.
-- Fixed empty table view when a broken VPX file was scanned.
-- Virtual Pinball Spreadsheet: Table version are sorted by date now.
-- Virtual Pinball Spreadsheet: Added empty version entry for older tables that are not listed in the VPS.
-- Virtual Pinball Spreadsheet: Re-implemented version combo-box with a more appealing design.
+- Highscore Card Settings: Fixed a **critical error** that when the highscore card settings invoked a "no content" error was shown (a follow up error from migrating the card settings from a properties file to the database).
+- Table Data Auto-Fill: Fixed errorneous or missing filling of fields "tags" and "authors", added filling "notes" fields with the VPS version comment. 
+- Table Upload Dialog: Fixed radio checkboxes in the table upload dialog so that the full text can be clicked now. 
+- Overlay and Highscore Card Overlay: The cursor is hidden now when overlays are shown.
+- VPS Section: Fixed "download" button enablement that was not updated for new table selections.
+- VPS Section: Table versions without a format value are also shown in the version selector now.
+- VPS Section: Fixed missing table version reset for tables that did have a VPS table selected.
+- VPS Section: Added ROM name as additional lookup criteria when the automatic lookup for the VPS entry is triggered.
+- VPS Section: Improved styling of version combo-box list by adding altering background colors.
+- VPS Section: Fixed filter checkbox that resetted the table version.
+- Table Editing: Editing the Pinup Popper table data via Studio will now also update the "DateUpdated" column in the database (this is relevant for dynamic playlists that use this field).
+- Fixed font color of textareas.

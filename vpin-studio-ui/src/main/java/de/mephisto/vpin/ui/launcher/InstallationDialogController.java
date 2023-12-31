@@ -95,6 +95,9 @@ public class InstallationDialogController implements Initializable, DialogContro
   private void onPopperFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     if (pinUPSystemInstallationFolder != null && pinUPSystemInstallationFolder.exists()) {
+      if(!pinUPSystemInstallationFolder.isDirectory()) {
+        pinUPSystemInstallationFolder = pinUPSystemInstallationFolder.getParentFile();
+      }
       directoryChooser.setInitialDirectory(this.pinUPSystemInstallationFolder);
     }
     directoryChooser.setTitle("Select PinUP System Folder");
@@ -111,7 +114,11 @@ public class InstallationDialogController implements Initializable, DialogContro
   private void onAutostartFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     if (autostartFolder != null && autostartFolder.exists()) {
-      directoryChooser.setInitialDirectory(this.autostartFolder);
+      if(autostartFolder.isFile()) {
+        autostartFolder = autostartFolder.getParentFile();
+      }
+
+      directoryChooser.setInitialDirectory(autostartFolder);
     }
 
     directoryChooser.setTitle("Select Autostart Folder");

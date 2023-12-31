@@ -55,6 +55,16 @@ public class PreferencesService implements InitializingBean {
     return value;
   }
 
+
+  public List<String> getPreferenceCSVValue(String key) {
+    BeanWrapper bean = new BeanWrapperImpl(preferences);
+    Object value = bean.getPropertyValue(key);
+    if (value == null) {
+      value = "";
+    }
+    return Arrays.asList(String.valueOf(value).split(","));
+  }
+
   public Long getPreferenceValueLong(String key, long defaultValue) {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
     Object value = bean.getPropertyValue(key);

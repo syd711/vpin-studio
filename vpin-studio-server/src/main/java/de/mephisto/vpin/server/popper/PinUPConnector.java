@@ -1300,9 +1300,14 @@ public class PinUPConnector implements InitializingBean {
 
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=? WHERE GameID=?");
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=?, DateUpdated=? WHERE GameID=?");
       preparedStatement.setObject(1, value);
-      preparedStatement.setInt(2, gameId);
+      preparedStatement.setObject(2, ts);
+      preparedStatement.setInt(3, gameId);
       preparedStatement.executeUpdate();
       preparedStatement.close();
     } catch (Exception e) {

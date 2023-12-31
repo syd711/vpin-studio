@@ -14,7 +14,7 @@
    <center>
       <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
         <center>
-           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-ui.fxml" BorderPane.alignment="TOP_LEFT" />
+           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings.fxml" BorderPane.alignment="TOP_LEFT" />
         </center>
          <BorderPane.margin>
             <Insets left="12.0" right="12.0" top="24.0" />
@@ -36,7 +36,7 @@
                               <Font size="13.0" />
                            </font>
                         </Label>
-                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="UI Settings" />
+                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
                            <VBox.margin>
                               <Insets />
@@ -160,7 +160,7 @@
                   <Insets top="28.0" />
                </BorderPane.margin>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-close" iconSize="36" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
                </graphic>
             </Button>
          </top>

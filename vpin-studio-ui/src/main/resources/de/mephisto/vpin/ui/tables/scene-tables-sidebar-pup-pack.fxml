@@ -102,7 +102,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="The selected option is only shown if the options are located in the &quot;PuP-Pack_Options&quot; folder." wrapText="true" />
@@ -134,7 +134,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="16" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="Here are text files listed that may contain additional installation instructions." wrapText="true" />
@@ -322,7 +322,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -331,7 +331,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -340,7 +340,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="196.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />

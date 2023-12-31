@@ -26,7 +26,7 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="18" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
@@ -34,7 +34,7 @@
                                         <BorderPane />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="16" text="" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18" text="" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="tableRepositoryTab" text=" Table Repository">
@@ -42,7 +42,7 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="16" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                                     </graphic>
                                 </Tab>
                             </tabs>

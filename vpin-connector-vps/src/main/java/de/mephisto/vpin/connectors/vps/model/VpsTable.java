@@ -131,7 +131,14 @@ public class VpsTable {
   }
 
   public List<VpsTableVersion> getTableFilesForFormat(String tableFormat) {
-    return tableFiles.stream().filter(t -> t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty())).collect(Collectors.toList());
+    return tableFiles.stream().filter(t -> isValidTableVersion(t, tableFormat)).collect(Collectors.toList());
+  }
+
+  private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
+    if(t.getTableFormat() == null) {
+      return true;
+    }
+    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty());
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {

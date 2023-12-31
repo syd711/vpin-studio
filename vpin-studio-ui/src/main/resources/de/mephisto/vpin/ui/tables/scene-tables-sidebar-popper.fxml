@@ -547,7 +547,7 @@
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                     </graphic>
                 </Button>
             <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
@@ -562,7 +562,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                </graphic>
             </SplitMenuButton>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
@@ -571,7 +571,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
                </graphic>
             </Button>
             </items>

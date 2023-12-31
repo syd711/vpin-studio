@@ -356,7 +356,7 @@
                                           </Button>
                                           <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="Update the ROM name for this table." />
@@ -371,7 +371,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" />
                                              </graphic>
                                           </Button>
                                           <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

@@ -165,7 +165,7 @@
                   </Label>
                   <Button mnemonicParsing="false" onAction="#onFileSelect" text="Select Image..." textFill="WHITE" GridPane.columnIndex="1">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -183,7 +183,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>

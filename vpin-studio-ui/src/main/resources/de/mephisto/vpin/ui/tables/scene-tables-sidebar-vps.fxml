@@ -93,7 +93,8 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="128.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <VBox.margin>
                                     <Insets top="6.0" />
@@ -159,7 +160,7 @@
                                           </TextField>
                                           <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -170,7 +171,7 @@
                                           </Button>
                                           <Button fx:id="copyTableBtn" layoutX="406.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCopyTable">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -194,7 +195,7 @@
                                           <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
                                           <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="external-component">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="16" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -208,7 +209,7 @@
                                           </Button>
                                           <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                              </graphic>
                                              <font>
                                                 <Font size="14.0" />
@@ -227,6 +228,20 @@
                                           <Insets right="90.0" />
                                        </GridPane.margin>
                                     </Label>
+                                    <Label layoutX="10.0" layoutY="168.0" text="Authors:" textFill="WHITE" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                       <children>
+                                          <Label fx:id="versionAuthorsLabel" text="-" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </GridPane>
                            </children>
@@ -272,7 +287,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
@@ -291,7 +306,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                </graphic>
             </SplitMenuButton>
             <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />

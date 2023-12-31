@@ -12,6 +12,8 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -243,11 +245,6 @@ public class TablesSidebarPopperController implements Initializable {
     }
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
-  }
-
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
@@ -355,5 +352,16 @@ public class TablesSidebarPopperController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
+
+    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
+    ImageView view4 = new ImageView(image4);
+    view4.setFitWidth(18);
+    view4.setFitHeight(18);
+    tableEditBtn.setGraphic(view4);
   }
 }

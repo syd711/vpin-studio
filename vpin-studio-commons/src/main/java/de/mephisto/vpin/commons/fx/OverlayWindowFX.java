@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
@@ -132,6 +133,7 @@ public class OverlayWindowFX extends Application {
     BorderPane root = new BorderPane();
     Screen screen = Screen.getPrimary();
     final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+    scene.setCursor(Cursor.NONE);
 
     maintenanceStage = new Stage();
     Rectangle2D bounds = screen.getVisualBounds();
@@ -174,6 +176,7 @@ public class OverlayWindowFX extends Application {
         Screen screen = Screen.getPrimary();
         final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
         scene.setFill(Color.TRANSPARENT);
+        scene.setCursor(Cursor.NONE);
 
         highscoreCardStage = new Stage();
         highscoreCardStage.setScene(scene);
@@ -199,7 +202,6 @@ public class OverlayWindowFX extends Application {
   }
 
   private void showHighscoreCard(int notificationTime) {
-
     highscoreCardStage.show();
     TransitionUtil.createInFader(highscoreCardController.getRoot(), 500).play();
     new Thread(() -> {
@@ -227,6 +229,7 @@ public class OverlayWindowFX extends Application {
     root = new BorderPane();
     Screen screen = Screen.getPrimary();
     final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+    scene.setCursor(Cursor.NONE);
 
     Rectangle2D bounds = screen.getVisualBounds();
     stage.setX(bounds.getMinX());

@@ -40,11 +40,17 @@
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Button>
                         <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="Maintenance Mode">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </ToggleButton>
                         <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="No active jobs">
                            <tooltip>
@@ -60,10 +66,13 @@
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </MenuButton>
                         <MenuButton fx:id="messagesBtn" mnemonicParsing="false">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="17" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />
@@ -74,7 +83,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Clear cache" />
@@ -88,7 +97,7 @@
                               <Insets />
                            </HBox.margin>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-logout" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Disconnect" />
@@ -99,7 +108,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="16" />
+                              <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Open Settings" />

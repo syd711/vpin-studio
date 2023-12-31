@@ -68,7 +68,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                         </Button>
                         <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="Reset" textFill="#ff3333">
@@ -76,7 +76,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon fx:id="" iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" onDragDetected="#onReset" />
+                              <FontIcon fx:id="" iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" onDragDetected="#onReset" />
                            </graphic>
                         </Button>
                      </children>
@@ -148,7 +148,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                      </graphic>
                   </Button>
                   <Label styleClass="preference-description" text="Only servers with your bots admin privileges shown here." textFill="WHITE" GridPane.columnIndex="2" />
@@ -307,7 +307,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>

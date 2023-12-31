@@ -3,10 +3,7 @@ package de.mephisto.vpin.connectors.vps;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.connectors.vps.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +27,7 @@ public class VPS {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  private List<VpsChangeListener> listeners = new ArrayList<>();
+  private List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
   private final List<String> versionIndicators = Arrays.asList("vpw", "bigus", "salas", "tasty", "thalamus", "VPinWorkshop", "Paulie");
 
@@ -38,7 +35,7 @@ public class VPS {
 
   private static VPS instance;
 
-  public void addChangeListener(VpsChangeListener listener) {
+  public void addChangeListener(VpsSheetChangedListener listener) {
     this.listeners.add(listener);
   }
 
@@ -129,6 +126,10 @@ public class VPS {
   }
 
   public List<VpsTable> find(String searchTerm) {
+    return find(searchTerm, null);
+  }
+
+  public List<VpsTable> find(String searchTerm, String rom) {
     String term = searchTerm;
     term = term.replaceAll("_", " ");
     term = term.replaceAll("'", " ");
@@ -141,7 +142,7 @@ public class VPS {
     }
     term = term.toLowerCase().trim();
 
-    List<VpsTable> results = findInternal(term);
+    List<VpsTable> results = findInternal(term, rom);
 
     while (results.isEmpty()) {
       if (term.contains(" ")) {
@@ -150,17 +151,28 @@ public class VPS {
       else {
         break;
       }
-      results = findInternal(term);
+      results = findInternal(term, rom);
     }
 
     return results;
   }
 
-  private List<VpsTable> findInternal(String term) {
+  private List<VpsTable> findInternal(String term, String rom) {
     List<VpsTable> results = new ArrayList<>();
     for (VpsTable table : this.tables) {
+      List<VpsAuthoredUrls> romFiles = table.getRomFiles();
+      if(romFiles != null) {
+        for (VpsAuthoredUrls romFile : romFiles) {
+          if(romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
+            results.add(table);
+            return results;
+          }
+        }
+      }
+
       String name = table.getName().toLowerCase();
       name = name.replaceAll("-", " ");
+      name = name.replaceAll("'", " ");
       name = name.replaceAll("'", " ");
       name = name.replaceAll("&", "and");
       if (!name.contains(term)) {
@@ -241,7 +253,7 @@ public class VPS {
 
       if (!diff.isEmpty()) {
         LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
-        for (VpsChangeListener listener : listeners) {
+        for (VpsSheetChangedListener listener : listeners) {
           listener.vpsSheetChanged(diff);
         }
       }

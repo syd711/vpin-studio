@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.VpsChangeListener;
+import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.connectors.discord.Permissions.*;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, VpsChangeListener, ApplicationContextAware {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, VpsSheetChangedListener, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
   public static final int MAX_VPS_ENTRIES = 24;
 

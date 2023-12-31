@@ -146,7 +146,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefWidth="12.0" />
@@ -155,7 +155,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="sil-reload" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -164,7 +164,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
             </Button>
             <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
@@ -172,7 +172,7 @@
                   <Font size="14.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />

@@ -337,7 +337,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-//        TransitionUtil.createTranslateByXTransition(main, 300, 600).playFromStart();
+        onTableEdit();
       }
     }
   }
@@ -911,7 +911,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         rowMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem validateItem = new MenuItem("Validate");
-        validateItem.setGraphic(WidgetFactory.createIcon("sil-magnifier"));
+        validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
         validateItem.setDisable(tableView.getSelectionModel().isEmpty());
         validateItem.setOnAction(actionEvent -> onValidate());
         rowMenu.getItems().add(validateItem);
@@ -1147,6 +1147,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view2.setFitWidth(18);
     view2.setFitHeight(18);
     vpsResetBtn.setGraphic(view2);
+
+    Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
+    ImageView view3 = new ImageView(image3);
+    view3.setFitWidth(18);
+    view3.setFitHeight(18);
+    assetManagerBtn.setGraphic(view3);
+
+    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
+    ImageView view4 = new ImageView(image4);
+    view4.setFitWidth(18);
+    view4.setFitHeight(18);
+    tableEditBtn.setGraphic(view4);
 
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);

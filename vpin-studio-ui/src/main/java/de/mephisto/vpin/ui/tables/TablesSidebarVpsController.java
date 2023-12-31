@@ -104,6 +104,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Label entriesLabel;
 
   @FXML
+  private Label versionAuthorsLabel;
+
+  @FXML
   private Label updateDateLabel;
 
   @FXML
@@ -261,7 +264,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     autoCompleteNameField.reset();
     autoCompleteNameField.setDisable(g.isEmpty());
     tableVersionsCombo.setDisable(g.isEmpty());
+    tableVersionsCombo.setValue(null);
 
+
+    versionAuthorsLabel.setText("-");
+    versionAuthorsLabel.setTooltip(null);
     yearLabel.setText("-");
     manufacturerLabel.setText("-");
     playersLabel.setText("-");
@@ -289,6 +296,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       }
 
       openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      openTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
       copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
 
@@ -306,6 +314,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   private void refreshTableView(VpsTable vpsTable) {
+    versionAuthorsLabel.setText("-");
+    versionAuthorsLabel.setTooltip(new Tooltip(null));
     List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(VpsFeatures.VPX));
     if (!tableFiles.isEmpty()) {
       tableVersionsCombo.setItems(FXCollections.emptyObservableList());
@@ -314,9 +324,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       String extTableVersionId = game.get().getExtTableVersionId();
 
       if (!StringUtils.isEmpty(extTableVersionId)) {
-        for (VpsTableVersion tableFile : tableFiles) {
-          if (tableFile != null && tableFile.getId().equals(extTableVersionId)) {
-            tableVersionsCombo.setValue(tableFile);
+        for (VpsTableVersion tableVersion : tableFiles) {
+          if (tableVersion != null && tableVersion.getId().equals(extTableVersionId)) {
+            tableVersionsCombo.setValue(tableVersion);
+            if(tableVersion.getAuthors() != null) {
+              versionAuthorsLabel.setText(String.join(", ", tableVersion.getAuthors()));
+              versionAuthorsLabel.setTooltip(new Tooltip(String.join(", ", tableVersion.getAuthors())));
+            }
             break;
           }
         }
@@ -464,7 +478,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
 
-    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshView(game));
+    filterCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      this.tableVersionsCombo.valueProperty().removeListener(this);
+      refreshView(game);
+      this.tableVersionsCombo.valueProperty().addListener(this);
+    });
 
     List<VpsTable> tables = VPS.getInstance().getTables();
     refreshSheetData(tables);
