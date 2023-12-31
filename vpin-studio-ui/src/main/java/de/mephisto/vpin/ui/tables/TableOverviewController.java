@@ -911,7 +911,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         rowMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem validateItem = new MenuItem("Validate");
-        validateItem.setGraphic(WidgetFactory.createIcon("sil-magnifier"));
+        validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
         validateItem.setDisable(tableView.getSelectionModel().isEmpty());
         validateItem.setOnAction(actionEvent -> onValidate());
         rowMenu.getItems().add(validateItem);
