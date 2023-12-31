@@ -78,7 +78,7 @@ public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
       }
       root.getChildren().add(row);
 
-      row.setPadding(new Insets(3, 0,  6, 0));
+      row.setPadding(new Insets(6, 0,  6, 3));
 
       setGraphic(root);
     }

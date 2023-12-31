@@ -440,6 +440,21 @@
     -fx-text-fill: #000000;
 }
 
+#tableVersionsCombo .combo-box-popup .list-view .list-cell:odd {
+    -fx-background-color: #2a2a2a;
+}
+
+#tableVersionsCombo .combo-box-popup .list-view .list-cell:even {
+    -fx-background-color: #222222;
+}
+
+#tableVersionsCombo .combo-box-popup .list-view .list-cell:filled:hover{
+    -fx-background-color: #333366;
+    -fx-text-fill: white;
+}
+
+
+
 .combo-box .list-cell:hover {
     -fx-text-fill: #FFFFFF;
     -fx-background-color: #333366;

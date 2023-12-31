@@ -2,11 +2,11 @@
 
 ### Changes
 
-- Added server-site VPS version change listener, that is triggered when a new VPS version is assigned to a table. As a result, the updated VPS data is automatically written to PinUP Popper is the setting for this is enabled. 
+- Added server-site VPS version change listener, that is triggered when a new VPS version is assigned to a table. As a result, the updated VPS data is automatically written to PinUP Popper **if** the setting for this is enabled. 
 - Icons: Replaced ugly database-edit icons with a pencil icon, indicating general editing of the selected item.
 - Icons: Unified icons by using the same size and icon-font everywhere (there is a mixture of three different sizes and three different icon-fonts all over the UI, I try to unify these).
 - Icons: Added custom icons for the "Asset Manager" and the "Table Data" dialogs.
-- Table Overview: Double-clicking on a table now opens the "Table Data" dialog.
+- Table Overview: Double-clicking on a table now opens the "Table Data" dialog (why didn't I came up earlier with that?).
 - Preferences: Renamed "UI Settings" to "Settings" (because some of these affect the backend now too).
 - Preferences: Added "Auto apply to Popper..." setting to toggle the data push from VPS to PinUP Popper games.
 

@@ -335,6 +335,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
       }
+
+      Platform.runLater(() -> {
+        tableVersionsCombo.show();
+        tableVersionsCombo.hide();
+      });
     }
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());

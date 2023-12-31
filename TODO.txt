@@ -1,17 +1,7 @@
 - add screen checkboxes to media manager
 - fix duplicate message emitting
 - scan highscores only after scanning games
-
-childs play vps
-
-
-Then when that is done, I click the pancake icon at the top, go to details tab, change the version number, then click the info tab and update the url (if applicable)
-That’s a good few steps.  In pinup popper all that information is available to change from the one screen/tab
-
-I understand why you did it this way, because the upload screen allows you to also add new tables and isn’t just there for “updating”
-Perhaps you’d consider a for when you “update and replace” it also facilitates you changing the Game Version number, the URL, and Author.
-
-Those are the fields that usually are edited, at least for me, when I update a table entry.
+- save table details with one update statement
 
 
 Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
@@ -19,8 +9,6 @@ Also, the upload and replace; presently, it renames everything to the “new fil
 For example, my old table is fathom (Bally 1981).vpx and I want to replace it with unclepaulies - which has a much longer file name with VR etc.
 
 If I update in popper, I just drag the new file to the update button and it replaces my old table but keeps the name fathom (Bally 1981).
-
-And finally - when you update a table it’s not updating the “last file update” part in popper.  This will impact “recently updated” playlists
 
 
 Under Virtual Pinball spreadsheet, I like you have sorted the tables in date order
