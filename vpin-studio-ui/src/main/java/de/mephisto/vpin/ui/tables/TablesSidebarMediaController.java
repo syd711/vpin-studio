@@ -19,6 +19,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
@@ -262,55 +264,6 @@ public class TablesSidebarMediaController implements Initializable {
   public TablesSidebarMediaController() {
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    top_Audio.setVisible(false);
-    top_AudioLaunch.setVisible(false);
-    top_Topper.setVisible(false);
-    top_Loading.setVisible(false);
-    top_PlayField.setVisible(false);
-    top_BackGlass.setVisible(false);
-    top_GameInfo.setVisible(false);
-    top_GameHelp.setVisible(false);
-    top_Menu.setVisible(false);
-    top_DMD.setVisible(false);
-    top_Other2.setVisible(false);
-    top_Wheel.setVisible(false);
-
-    boolean isLocal = Studio.client.getSystemService().isLocal();
-    btn_Audio.setVisible(isLocal);
-    btn_AudioLaunch.setVisible(isLocal);
-    btn_Topper.setVisible(isLocal);
-    btn_Loading.setVisible(isLocal);
-    btn_PlayField.setVisible(isLocal);
-    btn_BackGlass.setVisible(isLocal);
-    btn_GameInfo.setVisible(isLocal);
-    btn_GameHelp.setVisible(isLocal);
-    btn_Menu.setVisible(isLocal);
-    btn_DMD.setVisible(isLocal);
-    btn_Other2.setVisible(isLocal);
-    btn_Wheel.setVisible(isLocal);
-
-
-    Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;
-
-    screenAudio.hoverProperty().addListener(new VisibilityHoverListener(top_Audio, showPredicate));
-    screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch, showPredicate));
-    screenDMD.hoverProperty().addListener(new VisibilityHoverListener(top_DMD, showPredicate));
-    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
-    screenMenu.hoverProperty().addListener(new VisibilityHoverListener(top_Menu, showPredicate));
-    screenGameInfo.hoverProperty().addListener(new VisibilityHoverListener(top_GameInfo, showPredicate));
-    screenGameHelp.hoverProperty().addListener(new VisibilityHoverListener(top_GameHelp, showPredicate));
-    screenLoading.hoverProperty().addListener(new VisibilityHoverListener(top_Loading, showPredicate));
-    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
-    screenPlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
-    top_PlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
-    playfieldRoot.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
-    screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
-    screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
-    screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
-  }
-
   @FXML
   private void onMediaEdit(ActionEvent e) {
     if (game.isPresent()) {
@@ -514,5 +467,54 @@ public class TablesSidebarMediaController implements Initializable {
         ((AssetMediaPlayer) node).disposeMedia();
       }
     }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    top_Audio.setVisible(false);
+    top_AudioLaunch.setVisible(false);
+    top_Topper.setVisible(false);
+    top_Loading.setVisible(false);
+    top_PlayField.setVisible(false);
+    top_BackGlass.setVisible(false);
+    top_GameInfo.setVisible(false);
+    top_GameHelp.setVisible(false);
+    top_Menu.setVisible(false);
+    top_DMD.setVisible(false);
+    top_Other2.setVisible(false);
+    top_Wheel.setVisible(false);
+
+    boolean isLocal = Studio.client.getSystemService().isLocal();
+    btn_Audio.setVisible(isLocal);
+    btn_AudioLaunch.setVisible(isLocal);
+    btn_Topper.setVisible(isLocal);
+    btn_Loading.setVisible(isLocal);
+    btn_PlayField.setVisible(isLocal);
+    btn_BackGlass.setVisible(isLocal);
+    btn_GameInfo.setVisible(isLocal);
+    btn_GameHelp.setVisible(isLocal);
+    btn_Menu.setVisible(isLocal);
+    btn_DMD.setVisible(isLocal);
+    btn_Other2.setVisible(isLocal);
+    btn_Wheel.setVisible(isLocal);
+
+
+    Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;
+
+    screenAudio.hoverProperty().addListener(new VisibilityHoverListener(top_Audio, showPredicate));
+    screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch, showPredicate));
+    screenDMD.hoverProperty().addListener(new VisibilityHoverListener(top_DMD, showPredicate));
+    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
+    screenMenu.hoverProperty().addListener(new VisibilityHoverListener(top_Menu, showPredicate));
+    screenGameInfo.hoverProperty().addListener(new VisibilityHoverListener(top_GameInfo, showPredicate));
+    screenGameHelp.hoverProperty().addListener(new VisibilityHoverListener(top_GameHelp, showPredicate));
+    screenLoading.hoverProperty().addListener(new VisibilityHoverListener(top_Loading, showPredicate));
+    screenBackGlass.hoverProperty().addListener(new VisibilityHoverListener(top_BackGlass, showPredicate));
+    screenPlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    top_PlayField.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    playfieldRoot.hoverProperty().addListener(new VisibilityHoverListener(top_PlayField, showPredicate));
+    screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
+    screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
+    screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
   }
 }

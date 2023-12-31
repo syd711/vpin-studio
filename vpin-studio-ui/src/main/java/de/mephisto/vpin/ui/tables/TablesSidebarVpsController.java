@@ -264,7 +264,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     autoCompleteNameField.reset();
     autoCompleteNameField.setDisable(g.isEmpty());
     tableVersionsCombo.setDisable(g.isEmpty());
+    tableVersionsCombo.setValue(null);
 
+
+    versionAuthorsLabel.setText("-");
+    versionAuthorsLabel.setTooltip(null);
     yearLabel.setText("-");
     manufacturerLabel.setText("-");
     playersLabel.setText("-");
@@ -327,6 +331,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
               versionAuthorsLabel.setText(String.join(", ", tableVersion.getAuthors()));
               versionAuthorsLabel.setTooltip(new Tooltip(String.join(", ", tableVersion.getAuthors())));
             }
+
             break;
           }
         }

@@ -5,8 +5,6 @@
 childs play vps
 
 
-At the moment, from what I can tell, to update a table entry, I have to click at the top the little arrow icon.  Then select “upload and replace”
-
 Then when that is done, I click the pancake icon at the top, go to details tab, change the version number, then click the info tab and update the url (if applicable)
 That’s a good few steps.  In pinup popper all that information is available to change from the one screen/tab
 
