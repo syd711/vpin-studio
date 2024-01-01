@@ -12,12 +12,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServiceInfoPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Service Settings">
+            <Label styleClass="preference-subtitle" text="Server Settings">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -81,11 +81,6 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <HBox alignment="BASELINE_RIGHT" prefWidth="200.0">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </HBox>
             <Label styleClass="preference-description" text="Miscellaneous information about the VPin Studio Service." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" top="12.0" />
@@ -126,6 +121,47 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label styleClass="preference-subtitle" text="Options">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
+            <CheckBox fx:id="autoApplyVPSCheckbox" mnemonicParsing="false" text="Auto apply Virtual-Pinball-Spreadsheet and VPX table data to PinUP game details." textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="checkbox-description" text="When enabled, the selected VPS table, the VPS table version and the VPX table info values will be" textFill="WHITE" />
+            <Label styleClass="checkbox-description" text="automatically applied to the PinUP Popper game details and overwrite existing values." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="474.0" styleClass="checkbox-description" text="(Careful! This will also overwrite the table version stored in Popper and reset the version update indicator.)" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filenames when replacing tables." textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="checkbox-description" text="If enabled, the upload and replace action will keep the existing VPX filename" textFill="WHITE" />
+            <Label styleClass="checkbox-description" text="instead of using the one from the VPX file that has been uploaded." textFill="WHITE" />
+            <CheckBox fx:id="keepDisplayNamesCheckbox" layoutX="34.0" layoutY="529.0" mnemonicParsing="false" text="Keep existing display names when replacing tables." textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="34.0" layoutY="549.0" styleClass="checkbox-description" text="If enabled, the upload and replace action will keep the existing display name of the table" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="571.0" styleClass="checkbox-description" text="instead of using the VPX filename as a new display name value." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

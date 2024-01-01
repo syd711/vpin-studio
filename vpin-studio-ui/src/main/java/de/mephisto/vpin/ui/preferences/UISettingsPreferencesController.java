@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class SettingsPreferencesController implements Initializable {
+public class UISettingsPreferencesController implements Initializable {
 
   @FXML
   private BorderPane avatarBorderPane;
@@ -44,9 +44,6 @@ public class SettingsPreferencesController implements Initializable {
 
   @FXML
   private CheckBox uiShowVersion;
-
-  @FXML
-  private CheckBox autoApplyVPSCheckbox;
 
   @FXML
   private CheckBox uiHideVPSUpdates;
@@ -84,46 +81,32 @@ public class SettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     BindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
-    List<String> values = preference.getCSVValue();
+    PreferenceEntryRepresentation uiPreferences = client.getPreference(PreferenceNames.UI_SETTINGS);
+    List<String> uiSettings = uiPreferences.getCSVValue();
 
-
-    uiShowVersion.setSelected(values.contains(PreferenceNames.UI_HIDE_VERSIONS));
+    uiShowVersion.setSelected(uiSettings.contains(PreferenceNames.UI_HIDE_VERSIONS));
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       if (!t1) {
-        values.remove(PreferenceNames.UI_HIDE_VERSIONS);
+        uiSettings.remove(PreferenceNames.UI_HIDE_VERSIONS);
       }
-      else if (!values.contains(PreferenceNames.UI_HIDE_VERSIONS)) {
-        values.add(PreferenceNames.UI_HIDE_VERSIONS);
+      else if (!uiSettings.contains(PreferenceNames.UI_HIDE_VERSIONS)) {
+        uiSettings.add(PreferenceNames.UI_HIDE_VERSIONS);
       }
       PreferencesController.markDirty();
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", uiSettings));
     });
 
 
-    uiHideVPSUpdates.setSelected(values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
+    uiHideVPSUpdates.setSelected(uiSettings.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
     uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       if (!t1) {
-        values.remove(PreferenceNames.UI_HIDE_VPS_UPDATES);
+        uiSettings.remove(PreferenceNames.UI_HIDE_VPS_UPDATES);
       }
-      else if (!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES)) {
-        values.add(PreferenceNames.UI_HIDE_VPS_UPDATES);
-      }
-      PreferencesController.markDirty();
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
-    });
-
-
-    autoApplyVPSCheckbox.setSelected(values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER));
-    autoApplyVPSCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        values.remove(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
-      }
-      else if (!values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER)) {
-        values.add(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
+      else if (!uiSettings.contains(PreferenceNames.UI_HIDE_VPS_UPDATES)) {
+        uiSettings.add(PreferenceNames.UI_HIDE_VPS_UPDATES);
       }
       PreferencesController.markDirty();
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", values));
+      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", uiSettings));
     });
 
     refreshAvatar();

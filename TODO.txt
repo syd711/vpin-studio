@@ -2,15 +2,11 @@
 - fix duplicate message emitting
 - scan highscores only after scanning games
 - save table details with one update statement
-- remote upate must update local client too
-- vpin mame alias is broken
+- remote update must update local client too
+- vpin mame alias is not intuitive
 - do not reset version?
-
-Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
-
-For example, my old table is fathom (Bally 1981).vpx and I want to replace it with unclepaulies - which has a much longer file name with VR etc.
-
-If I update in popper, I just drag the new file to the update button and it replaces my old table but keeps the name fathom (Bally 1981).
-
+- Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
+- fix vps auto-fill for "Airport"
+- add option to rotate overlay and highscore card
 
 

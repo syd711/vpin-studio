@@ -3,14 +3,12 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.tables.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.keyevent.OverlayClientImpl;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -25,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -164,49 +162,67 @@ public class GamesResource {
         return false;
       }
 
+      String originalFilename = file.getOriginalFilename();
+      List<String> values = preferenceService.getPreferenceCSVValue(PreferenceNames.SERVER_SETTINGS);
+      boolean keepExistingFilename = values.contains(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES);
+      boolean keepExistingDisplayName = values.contains(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES);
+
+      //determine the target file depending on the selected emulator
+      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+
       TableUploadDescriptor mode = TableUploadDescriptor.valueOf(modeString);
       if (gameId > 0) {
         Game game = gameService.getGame(gameId);
         File gameFile = game.getGameFile();
 
         if (mode.equals(TableUploadDescriptor.uploadAndReplace)) {
-          if (!gameFile.delete()) {
+          if (gameFile.exists() && !gameFile.delete()) {
             LOG.error("Table upload failed: existing table could not be deleted.");
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+          }
+
+          if (keepExistingFilename) {
+            originalFilename = gameFile.getName();
           }
         }
         else if (mode.equals(TableUploadDescriptor.uploadAndClone)) {
         }
       }
 
-      //determine the target file depending on the selected emulator
-      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
-      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-
 
       File uploadFile = null;
-      if (suffix.equalsIgnoreCase("zip")) {
+      if (suffix != null && suffix.equalsIgnoreCase("zip")) {
         try {
-          File tempFile = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + suffix);
+          File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
           UploadUtil.upload(file, tempFile);
-          String name = ZipUtil.contains(tempFile, ".vpx");
-          File originalFile = new File(gameEmulator.getTablesFolder(), name);
-          uploadFile = FileUtils.uniqueFile(originalFile);
-          ZipUtil.unzipTargetFile(tempFile, uploadFile, name);
+          String fileNameToExtract = ZipUtil.contains(tempFile, ".vpx");
+          if (fileNameToExtract == null) {
+            throw new IOException("No VPX file found in zip file");
+          }
+          File targetFile = new File(gameEmulator.getTablesFolder(), fileNameToExtract);
+          if (keepExistingFilename) {
+            uploadFile = new File(gameEmulator.getTablesFolder(), FilenameUtils.getBaseName(originalFilename) + ".vpx");
+            LOG.info("Kept existing filename \"" + uploadFile.getAbsolutePath() + "\"");
+          }
+          else {
+            uploadFile = FileUtils.uniqueFile(targetFile);
+            LOG.info("New target file is \"" + uploadFile.getAbsolutePath() + "\"");
+          }
+          LOG.info("Unzipping archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
+          ZipUtil.unzipTargetFile(tempFile, uploadFile, fileNameToExtract);
         } catch (Exception e) {
           LOG.error("Upload of zip vpx file failed: " + e.getMessage(), e);
           throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of zipped VPX file failed: " + e.getMessage());
         }
       }
       else {
-        File originalFile = new File(gameEmulator.getTablesFolder(), file.getOriginalFilename());
+        File originalFile = new File(gameEmulator.getTablesFolder(), originalFilename);
         uploadFile = FileUtils.uniqueFile(originalFile);
         UploadUtil.upload(file, uploadFile);
       }
 
       if (uploadFile.exists()) {
-
-
         switch (mode) {
           case upload: {
             //nothing, we are done here
@@ -224,11 +240,12 @@ public class GamesResource {
           }
           case uploadAndReplace: {
             //the game file has already been deleted at this point
-            String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
             TableDetails tableDetails = popperService.getTableDetails(gameId);
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
             tableDetails.setGameFileName(uploadFile.getName());
-            tableDetails.setGameDisplayName(originalFilename);
+            if (!keepExistingDisplayName) {
+              tableDetails.setGameDisplayName(originalFilename);
+            }
             tableDetails.setGameVersion(""); //reset version to re-apply the newer one
             popperService.saveTableDetails(tableDetails, gameId);
 
@@ -273,6 +290,7 @@ public class GamesResource {
         }
       }
     } catch (Exception e) {
+      LOG.error("Table upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: " + e.getMessage());
     }
     return false;

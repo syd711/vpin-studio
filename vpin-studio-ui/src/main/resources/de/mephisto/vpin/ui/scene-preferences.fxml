@@ -14,7 +14,7 @@
    <center>
       <BorderPane fx:id="preferencesMain" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
         <center>
-           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings.fxml" BorderPane.alignment="TOP_LEFT" />
+           <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-ui.fxml" BorderPane.alignment="TOP_LEFT" />
         </center>
          <BorderPane.margin>
             <Insets left="12.0" right="12.0" top="24.0" />
@@ -36,14 +36,14 @@
                               <Font size="13.0" />
                            </font>
                         </Label>
-                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="Settings" />
+                        <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="UI Settings" />
+                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
                         </Button>
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
-                        <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Service" />
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">
                            <font>
                               <Font size="13.0" />

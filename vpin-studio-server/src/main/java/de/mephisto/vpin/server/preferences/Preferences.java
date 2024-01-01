@@ -73,6 +73,9 @@ public class Preferences {
   private String uiSettings;
 
   @Column(length = 1024)
+  private String serverSettings;
+
+  @Column(length = 1024)
   private String doNotShowAgains;
 
   private int idleTimeout;
@@ -97,6 +100,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getServerSettings() {
+    return serverSettings;
+  }
+
+  public void setServerSettings(String serverSettings) {
+    this.serverSettings = serverSettings;
+  }
 
   public String getDiscordVpsChannelId() {
     return discordVpsChannelId;

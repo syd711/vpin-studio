@@ -24,3 +24,9 @@
 - VPS Section: Fixed filter checkbox that resetted the table version.
 - Table Editing: Editing the Pinup Popper table data via Studio will now also update the "DateUpdated" column in the database (this is relevant for dynamic playlists that use this field).
 - Fixed font color of textareas.
+
+### Known Issues
+
+- There are still some updater/installer issues not tackled yet. More about this in future updates.
+- There were request to rotate and position the highscore overlay.
+- ROM Aliases: the logic/UI for the alias stuff is too confusing and needs an overhaul.

@@ -422,7 +422,7 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   @Override
   public void tableDataChanged(@NotNull Game game) {
     try {
-      List<String> values = preferencesService.getPreferenceCSVValue(PreferenceNames.UI_SETTINGS);
+      List<String> values = preferencesService.getPreferenceCSVValue(PreferenceNames.SERVER_SETTINGS);
       boolean autoApply = values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
       autofillTableDetails(game, autoApply);
     } catch (Exception e) {
