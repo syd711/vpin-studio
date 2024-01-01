@@ -96,16 +96,26 @@ public class VPS {
       return tableFiles.get(0);
     }
 
-    for (VpsTableVersion tableFile : tableFiles) {
-      if (version != null && tableFile.toString().toLowerCase().contains(version.toLowerCase())) {
-        return tableFile;
+    for (VpsTableVersion tableVersion : tableFiles) {
+      if (tableVersion.getTableFormat() != null && tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
+        continue;
       }
 
-      String versionString = tableFile.toString();
+      if (version != null && tableVersion.toString().toLowerCase().contains(version.toLowerCase())) {
+        return tableVersion;
+      }
+
+      String versionString = tableVersion.toString();
       for (String versionIndicator : versionIndicators) {
         if (versionMatches(versionString, tableFileName, tableName, versionIndicator)) {
-          return tableFile;
+          return tableVersion;
         }
+      }
+    }
+
+    for (VpsTableVersion tableVersion : tableFiles) {
+      if (tableVersion.getTableFormat() == null || !tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
+        return tableVersion;
       }
     }
 
@@ -160,9 +170,9 @@ public class VPS {
     List<VpsTable> results = new ArrayList<>();
     for (VpsTable table : this.tables) {
       List<VpsAuthoredUrls> romFiles = table.getRomFiles();
-      if(romFiles != null) {
+      if (romFiles != null) {
         for (VpsAuthoredUrls romFile : romFiles) {
-          if(romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
+          if (romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
             results.add(table);
             return results;
           }

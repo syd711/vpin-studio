@@ -26,6 +26,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,9 +72,10 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           tableVersion = tableInfo.getTableVersion();
         }
 
-        VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
-        if (version != null) {
-          if (StringUtils.isEmpty(game.getExtTableVersionId()) || overwrite) {
+        if (StringUtils.isEmpty(game.getExtTableVersionId()) || overwrite) {
+          VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
+          if (version != null) {
+            LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
             saveExternalTableVersionId(game, version.getId());
           }
         }

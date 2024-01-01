@@ -7,8 +7,10 @@
 - Icons: Unified icons by using the same size and icon-font everywhere (there is a mixture of three different sizes and three different icon-fonts all over the UI, I try to unify these).
 - Icons: Added custom icons for the "Asset Manager" and the "Table Data" dialogs.
 - Table Overview: Double-clicking on a table now opens the "Table Data" dialog (why didn't I came up earlier with that?).
-- Preferences: Renamed "UI Settings" to "Settings" (because some of these affect the backend now too).
-- Preferences: Added "Auto apply to Popper..." setting to toggle the data push from VPS to PinUP Popper games.
+- Preferences: Rename "Service" section to "Server Settings" (starting with some server flags there).
+- Preferences (Server Settings): Added "Auto apply to Popper..." setting to toggle the data push from VPS to PinUP Popper games.
+- Preferences (Server Settings): Added "Keep VPX Filenames..." (explanation text is there). 
+- Preferences (Server Settings): Added "Keep display names..." (explanation text is there).
 
 ### Bugfixes
 
