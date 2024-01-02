@@ -32,7 +32,7 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public boolean isLocal() {
     String url = getRestClient().getBaseUrl();
-    return url.contains("localhost") || url.contains("127.0.0.1");
+    return false; //url.contains("localhost") || url.contains("127.0.0.1");
   }
 
   public void shutdown() {

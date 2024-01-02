@@ -57,6 +57,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private ComponentType type;
   private ComponentRepresentation component;
 
+  private boolean localInstallOnly = true;
+
   @FXML
   private void onFetch() {
     ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-", "-latest-");
@@ -151,11 +153,15 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
       checkBtn.setDisable(t1 == null);
-      installBtn.setDisable(t1 == null || !client.getSystemService().isLocal());
+      installBtn.setDisable(t1 == null || localInstallOnly);
       simBtn.setDisable(t1 == null);
     });
 
     refresh(null, null);
+  }
+
+  public void setLocalInstallOnly(boolean localInstallOnly) {
+    this.localInstallOnly = localInstallOnly;
   }
 
   public void refresh(@Nullable String releaseTag, @Nullable String artifactId) {
@@ -171,7 +177,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
-    installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || !client.getSystemService().isLocal());
+    installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || localInstallOnly);
 
     if (!component.getReleases().isEmpty()) {
       GithubReleaseRepresentation release = component.getReleases().get(0);

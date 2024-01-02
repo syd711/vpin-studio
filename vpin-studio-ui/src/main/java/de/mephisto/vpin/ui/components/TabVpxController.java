@@ -58,5 +58,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
     super.initialize();
     playBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getSystemService().isLocal());
+
+    componentUpdateController.setLocalInstallOnly(false);
   }
 }
