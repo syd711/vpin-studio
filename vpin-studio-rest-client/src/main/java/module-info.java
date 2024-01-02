@@ -38,4 +38,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.dmd;
   exports de.mephisto.vpin.restclient.components;
   exports de.mephisto.vpin.restclient.cards;
+  exports de.mephisto.vpin.restclient.dof;
 }

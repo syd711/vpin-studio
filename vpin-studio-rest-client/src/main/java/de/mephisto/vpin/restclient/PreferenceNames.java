@@ -18,6 +18,8 @@ public interface PreferenceNames {
   String AVATAR = "avatar";
   String RESET_KEY = "resetKey";
 
+  String DOF_SETTINGS = "dofSettings";
+
   String OVERLAY_KEY = "overlayKey";
   String OVERLAY_DESIGN = "overlayDesign";
   String OVERLAY_PAGE_URL = "overlayPageUrl";

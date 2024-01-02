@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -74,7 +75,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     try {
       PreferenceEntryRepresentation preference = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
       String value = preference.getValue();
-      CardSettings cardSettings = CardSettings.fromJson(value);
+      CardSettings cardSettings = JsonSettings.fromJson(CardSettings.class, value);
 
       String popperScreen = cardSettings.getPopperScreen();
       if (popperScreen != null && popperScreen.length() > 0) {

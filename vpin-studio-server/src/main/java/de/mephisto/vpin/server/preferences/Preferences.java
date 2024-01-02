@@ -64,6 +64,8 @@ public class Preferences {
 
   private String rankingPoints;
 
+  private String dofSettings;
+
   @Column(length = 1024)
   private String highscoreTitles;
 
@@ -100,6 +102,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getDofSettings() {
+    return dofSettings;
+  }
+
+  public void setDofSettings(String dofSettings) {
+    this.dofSettings = dofSettings;
+  }
 
   public String getServerSettings() {
     return serverSettings;

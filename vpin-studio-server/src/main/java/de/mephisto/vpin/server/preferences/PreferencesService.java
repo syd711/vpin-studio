@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import org.slf4j.Logger;
@@ -86,7 +88,7 @@ public class PreferencesService implements InitializingBean {
       bean.setPropertyValue(entry.getKey(), entry.getValue());
     }
     preferencesRepository.saveAndFlush(preferences);
-    LOG.info("Saved preferences " + values);
+    LOG.info("Saved " + values.size() + " preferences.");
 
     notifyChangeListeners(values, oldValues);
     return true;
@@ -96,6 +98,11 @@ public class PreferencesService implements InitializingBean {
     Map<String, Object> values = new HashMap<>();
     values.put(key, value);
     return savePreference(values);
+  }
+
+  public boolean savePreference(String key, JsonSettings<?> value) throws Exception {
+    String json = value.toJson();
+    return savePreference(key, json);
   }
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {
@@ -129,6 +136,14 @@ public class PreferencesService implements InitializingBean {
       Object newValue = values.get(key);
       notifyListeners(key, oldValue, newValue);
     }
+  }
+
+  public <T> T getJsonPreference(String key, Class<T> jsonSettings) throws Exception {
+    Object preferenceValue = getPreferenceValue(key);
+    if(preferenceValue != null) {
+      return JsonSettings.fromJson(jsonSettings, (String)preferenceValue);
+    }
+    return jsonSettings.getDeclaredConstructor().newInstance();
   }
 
   @Override

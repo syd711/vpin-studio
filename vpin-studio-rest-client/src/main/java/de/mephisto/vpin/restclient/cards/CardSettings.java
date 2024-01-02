@@ -1,9 +1,6 @@
 package de.mephisto.vpin.restclient.cards;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.JsonSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * card.useDirectB2S=true
  * popper.screen=Other2
  */
-public class CardSettings {
+public class CardSettings extends JsonSettings<CardSettings> {
   private final static Logger LOG = LoggerFactory.getLogger(CardSettings.class);
 
   private int cardAlphacompositeBlack = 33;
@@ -65,20 +62,9 @@ public class CardSettings {
   private String popperScreen = "Other2";
   private int notificationTime = 0;
 
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  //do not delete
+  public CardSettings() {
 
-  static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-  }
-
-  public static CardSettings fromJson(String json) throws JsonProcessingException {
-    try {
-      return objectMapper.readValue(json, CardSettings.class);
-    } catch (Exception e) {
-      LOG.error("Error parsing card settings json '" + json + "': " + e.getMessage());
-    }
-    return new CardSettings();
   }
 
   public int getNotificationTime() {
@@ -297,7 +283,4 @@ public class CardSettings {
     this.popperScreen = popperScreen;
   }
 
-  public String toJson() throws JsonProcessingException {
-    return objectMapper.writeValueAsString(this);
-  }
 }

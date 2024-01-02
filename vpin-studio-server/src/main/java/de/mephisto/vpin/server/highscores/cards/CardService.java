@@ -63,10 +63,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        String cardSettingsJson = preferencesService.getPreferences().getHighscoreCardSettings();
-        CardSettings cardSettings = new CardSettings();
-        if (!StringUtils.isEmpty(cardSettingsJson)) {
-          cardSettings = CardSettings.fromJson(cardSettingsJson);
+        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        if (cardSettings == null) {
+          cardSettings = new CardSettings();
         }
 
         //sample card are always generated
@@ -163,8 +162,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         settings.setCardUseDirectB2S(store.getBoolean("card.useDirectB2S"));
         settings.setPopperScreen(store.getString("popper.screen"));
 
-        String json = settings.toJson();
-        preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, json);
+        preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, settings);
 
         LOG.info("Finished highscore card settings migration");
         if (cardSettings.delete()) {

@@ -43,6 +43,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
+  private final DOFServiceClient dofServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
@@ -78,6 +79,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
+    this.dofServiceClient = new DOFServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
@@ -115,6 +117,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public AlxServiceClient getAlxService() {
     return alxServiceClient;
+  }
+
+  public DOFServiceClient getDofService() {
+    return dofServiceClient;
   }
 
   public ComponentServiceClient getComponentService() {
