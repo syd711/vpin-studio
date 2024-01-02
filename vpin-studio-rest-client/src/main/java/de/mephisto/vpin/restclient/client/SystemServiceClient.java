@@ -75,6 +75,21 @@ public class SystemServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/install", Boolean.class);
   }
 
+  public int getRemoteClientProgress() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/download/client/status", Integer.class);
+  }
+
+  public void startRemoteClientUpdate(String version) {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/" + version + "/download/client/start", Boolean.class);
+  }
+
+  public boolean installRemoteClientUpdate() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/client/install", Boolean.class);
+  }
+
   public String getVersion() {
     try {
       final RestTemplate restTemplate = new RestTemplate();
@@ -115,4 +130,5 @@ public class SystemServiceClient extends VPinStudioClientService {
   public void clearCache() {
     getRestClient().clearCache(API + "system/info");
   }
+
 }

@@ -105,7 +105,7 @@ public class Updater {
     return true;
   }
 
-  public static boolean installClientUpdate() throws IOException {
+  public static boolean installFromLocalClientUpdate() throws IOException {
     String cmds = "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
     FileUtils.writeBatch("update-client.bat", cmds);
     LOG.info("Written temporary batch: " + cmds);
@@ -121,6 +121,17 @@ public class Updater {
         //ignore
       }
     }).start();
+    return true;
+  }
+
+  public static boolean installFromRemoteClientUpdate() throws IOException {
+    String cmds = "resources\\7z.exe -aoa x \"VPin-Studio.zip\"\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
+    FileUtils.writeBatch("update-client.bat", cmds);
+    LOG.info("Written temporary batch: " + cmds);
+    List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(getBasePath());
+    executor.executeCommandAsync();
     return true;
   }
 

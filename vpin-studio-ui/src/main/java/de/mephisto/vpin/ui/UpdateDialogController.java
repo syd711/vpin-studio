@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,25 +25,39 @@ public class UpdateDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(UpdateDialogController.class);
 
   @FXML
-  private Label clientLabel;
+  private Label localClientLabel;
+
+  @FXML
+  private Label remoteClientLabel;
 
   @FXML
   private Label serverLabel;
 
   @FXML
-  private ProgressBar clientProgress;
+  private ProgressBar localClientProgress;
+
+  @FXML
+  private ProgressBar remoteClientProgress;
 
   @FXML
   private ProgressBar serverProgress;
 
   private Service serverService;
+  private Service remoteClientService;
   private Service clientService;
 
   private boolean updateServer = false;
   private boolean updateClient = false;
+  private boolean updateRemoteClient = false;
+
+
+  @FXML
+  private VBox serverClientUpdateRoot;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    serverClientUpdateRoot.managedProperty().bindBidirectional(serverClientUpdateRoot.visibleProperty());
+
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
 
@@ -52,14 +67,23 @@ public class UpdateDialogController implements Initializable, DialogController {
     String newServerVersion = Updater.checkForUpdate(serverVersion);
     updateServer = newServerVersion != null;
 
+    if (client.getSystemService().isLocal()) {
+      serverClientUpdateRoot.setVisible(false);
+    }
+    else if (updateServer) {
+      //remote server and remote client are always updated together
+      updateRemoteClient = true;
+    }
+
+
     //initialize UI
     if (!updateClient) {
-      clientProgress.setDisable(true);
-      clientProgress.setProgress(1f);
-      clientLabel.setText("The client is already running on version " + clientVersion);
+      localClientProgress.setDisable(true);
+      localClientProgress.setProgress(1f);
+      localClientLabel.setText("The client is already running on version " + clientVersion);
     }
     else {
-      clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
+      localClientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
     }
 
     if (!updateServer) {
@@ -125,7 +149,12 @@ public class UpdateDialogController implements Initializable, DialogController {
             //finished
             if (updateClient) {
               Platform.runLater(() -> {
-                startClientUpdate(newClientVersion);
+                if(updateRemoteClient) {
+                  startClientUpdate(newClientVersion);
+                }
+                else {
+                  startClientUpdate(newClientVersion);
+                }
               });
             }
 
@@ -135,6 +164,56 @@ public class UpdateDialogController implements Initializable, DialogController {
       }
     };
     serverService.start();
+  }
+
+
+  private void startRemoteClientUpdate(String newServerVersion, String newClientVersion) {
+    remoteClientService = new Service() {
+      @Override
+      protected Task createTask() {
+        return new Task() {
+          @Override
+          protected Object call() throws Exception {
+            client.getSystemService().startRemoteClientUpdate(newServerVersion);
+            while (true) {
+              int progress = client.getSystemService().getRemoteClientProgress();
+              LOG.info("Remote Client Update Download: " + progress);
+              updateProgress(progress, 100);
+              Thread.sleep(1000);
+              Platform.runLater(() -> {
+                double p = Double.valueOf(progress) / 100.0;
+                serverProgress.setProgress(p);
+              });
+
+              if (progress >= 100) {
+                break;
+              }
+            }
+            Platform.runLater(() -> {
+              remoteClientLabel.setText("Installing Remote Client");
+              remoteClientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+            });
+
+            client.getSystemService().installRemoteClientUpdate();
+
+            Platform.runLater(() -> {
+              remoteClientLabel.setText("Update successful, server is running on version " + client.getSystemService().getVersion());
+              remoteClientProgress.setProgress(1f);
+            });
+
+            //finished
+            if (updateClient) {
+              Platform.runLater(() -> {
+                startClientUpdate(newClientVersion);
+              });
+            }
+
+            return null;
+          }
+        };
+      }
+    };
+    remoteClientService.start();
   }
 
   private void startClientUpdate(String newVersion) {
@@ -157,7 +236,7 @@ public class UpdateDialogController implements Initializable, DialogController {
               Thread.sleep(1000);
               Platform.runLater(() -> {
                 double p = Double.valueOf(progress) / 100.0;
-                clientProgress.setProgress(p);
+                localClientProgress.setProgress(p);
               });
 
               if (progress >= 100) {
@@ -165,12 +244,12 @@ public class UpdateDialogController implements Initializable, DialogController {
               }
             }
             Platform.runLater(() -> {
-              clientLabel.setText("Installing Update");
-              clientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+              localClientLabel.setText("Installing Update");
+              localClientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
             Thread.sleep(2000);
-            Updater.installClientUpdate();
+            Updater.installFromLocalClientUpdate();
             return null;
           }
         };

@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -110,6 +109,27 @@ public class SystemResource {
     }).start();
     return true;
   }
+
+  @GetMapping("/update/client/install")
+  public boolean installFromRemoteClientUpdate() throws IOException {
+    Updater.installFromRemoteClientUpdate();
+    return true;
+  }
+
+  @GetMapping("/update/{version}/download/client/start")
+  public boolean downloadClientUpdate(@PathVariable("version") String version) {
+    new Thread(() -> {
+      Thread.currentThread().setName("Server Update Downloader");
+      Updater.downloadUpdate(version, Updater.UI_ZIP);
+    }).start();
+    return true;
+  }
+
+  @GetMapping("/update/download/client/status")
+  public int updateClientDownloadStatus() {
+    return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.UI_ZIP_SIZE);
+  }
+
 
   @GetMapping("/autostart/installed")
   public boolean autostart() {

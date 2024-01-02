@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="242.0" prefWidth="640.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.UpdateDialogController">
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="640.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.UpdateDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header-no-close.fxml" />
    </top>
    <center>
-      <VBox alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="root" spacing="6.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label fx:id="titleLabel" text="Server Update Progress" textFill="WHITE">
                <font>
@@ -19,7 +23,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <ProgressBar fx:id="serverProgress" prefHeight="18.0" prefWidth="642.0" progress="0.0">
+            <ProgressBar fx:id="serverProgress" prefWidth="642.0" progress="0.0">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -29,18 +33,33 @@
                   <Label fx:id="serverLabel" text="-" textFill="WHITE" />
                </children>
             </HBox>
-            <Label fx:id="titleLabel1" layoutX="10.0" layoutY="15.0" text="Client Update Progress" textFill="WHITE">
+            <VBox fx:id="serverClientUpdateRoot">
+               <children>
+                  <Label text="Server Client Update Progress" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <ProgressBar fx:id="remoteClientProgress" prefWidth="630.0" progress="0.0" />
+                  <HBox alignment="TOP_RIGHT">
+                     <children>
+                        <Label fx:id="remoteClientLabel" text="-" textFill="WHITE" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Label fx:id="titleLabel11" layoutX="10.0" layoutY="102.0" text="Local Client Update Progress" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
             </Label>
-            <ProgressBar fx:id="clientProgress" prefHeight="18.0" prefWidth="630.0" progress="0.0" />
-            <HBox alignment="TOP_RIGHT">
+            <ProgressBar fx:id="localClientProgress" layoutX="10.0" layoutY="124.0" prefWidth="630.0" progress="0.0" />
+            <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="148.0">
                <children>
-                  <Label fx:id="clientLabel" text="-" textFill="WHITE" />
+                  <Label fx:id="localClientLabel" text="-" textFill="WHITE" />
                </children>
             </HBox>
          </children>
