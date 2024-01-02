@@ -1,4 +1,4 @@
-DOFpackage de.mephisto.vpin.restclient.client;
+package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
