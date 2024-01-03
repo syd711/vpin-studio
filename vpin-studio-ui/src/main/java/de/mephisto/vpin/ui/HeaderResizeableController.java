@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -48,8 +50,21 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onCloseClick() {
-    client.getSystemService().setMaintenanceMode(false);
-    if (JobPoller.getInstance().isPolling()) {
+    AtomicBoolean polling = new AtomicBoolean(false);
+    try {
+      final ExecutorService executor = Executors.newFixedThreadPool(1);
+      final Future<?> future = executor.submit(() -> {
+        client.getSystemService().setMaintenanceMode(false);
+        polling.set(JobPoller.getInstance().isPolling());
+      });
+      future.get(2000, TimeUnit.MILLISECONDS);
+      executor.shutdownNow();
+    } catch (Exception e) {
+      //ignore
+    }
+
+
+    if (polling.get()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, continue");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         System.exit(0);

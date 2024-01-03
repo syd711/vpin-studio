@@ -19,10 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -49,9 +47,13 @@ public class DOFService {
   public DOFSettings getSettings() {
     try {
       DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
-      File dofInstallationFolder = getDOFInstallationFolder();
-      if(dofInstallationFolder != null && dofInstallationFolder.exists()) {
-        settings.setInstallationPath(dofInstallationFolder.getAbsolutePath());
+      settings.setValidDOFFolder(settings.getInstallationPath() != null && new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
+      if (!settings.isValidDOFFolder()) {
+        File autoResolvedFolder = getDOFInstallationFolder();
+        if (autoResolvedFolder != null && autoResolvedFolder.exists() && new File(autoResolvedFolder, "DirectOutput.dll").exists()) {
+          settings.setValidDOFFolder(true);
+          settings.setInstallationPath(autoResolvedFolder.getAbsolutePath());
+        }
       }
       return settings;
     } catch (Exception e) {

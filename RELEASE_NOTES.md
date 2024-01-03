@@ -8,8 +8,9 @@
 ### Bugfixes
 
 - Improved VPX emulator lookup from Popper database (there may have been issues when the VPX emulator was renamed).
+- Fixed hanging Studio UI closing: When the server is offline and the Studio client is still open, you don't have to kill the process anymore.
+- Fixed "Release Notes" info dialog: I've always shown the latest from the master, so you may have read the updates for the next version already. The dialog shows the correct version release notes now.
 
 ### Known Issues
 
-- There are still some updater/installer issues not tackled yet. More about this in future updates.
-- ROM Aliases: the logic/UI for the alias stuff is too confusing and needs an overhaul.
+See https://github.com/syd711/vpin-studio/issues

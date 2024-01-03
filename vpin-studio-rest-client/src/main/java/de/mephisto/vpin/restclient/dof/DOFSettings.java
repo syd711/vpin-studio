@@ -5,10 +5,19 @@ import de.mephisto.vpin.restclient.JsonSettings;
 public class DOFSettings extends JsonSettings<DOFSettings> {
   private String apiKey;
   private String installationPath;
+  private boolean validDOFFolder;
 
   //do not delete
   public DOFSettings() {
 
+  }
+
+  public boolean isValidDOFFolder() {
+    return validDOFFolder;
+  }
+
+  public void setValidDOFFolder(boolean validDOFFolder) {
+    this.validDOFFolder = validDOFFolder;
   }
 
   public String getInstallationPath() {

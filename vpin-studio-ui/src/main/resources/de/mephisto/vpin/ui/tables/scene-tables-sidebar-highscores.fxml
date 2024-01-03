@@ -252,17 +252,11 @@
                 </Button>
             <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-down-outline" iconSize="18" />
-               </graphic>
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
             <Button fx:id="restoreBtn" layoutX="183.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" iconSize="18" />
-               </graphic>
                <font>
                   <Font size="14.0" />
                </font>
@@ -276,7 +270,6 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
-            <Separator layoutX="375.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="VPSaveEdit" textFill="WHITE">
                <font>
                   <Font size="14.0" />

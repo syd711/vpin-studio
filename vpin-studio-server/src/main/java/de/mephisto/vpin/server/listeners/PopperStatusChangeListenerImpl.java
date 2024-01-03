@@ -78,7 +78,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       CardSettings cardSettings = JsonSettings.fromJson(CardSettings.class, value);
 
       String popperScreen = cardSettings.getPopperScreen();
-      if (popperScreen != null && popperScreen.length() > 0) {
+      if (popperScreen != null && !popperScreen.isEmpty()) {
         PopperScreen screen = PopperScreen.valueOf(popperScreen);
         GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
@@ -89,7 +89,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         }
       }
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      LOG.info("Error showing highscore card: " + e.getMessage(), e);
     }
   }
 

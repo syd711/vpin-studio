@@ -88,6 +88,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
             return true;
           }
         }
+        else {
+          LOG.info("Skipped card generation, no target screen set.");
+        }
 
         return false;
       }

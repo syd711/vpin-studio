@@ -7,18 +7,20 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -28,6 +30,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class DOFPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DOFPreferencesController.class);
+  private static File lastFolderSelection;
 
   private final Debouncer debouncer = new Debouncer();
 
@@ -40,28 +43,29 @@ public class DOFPreferencesController implements Initializable {
   @FXML
   private Button downloadBtn;
 
+  @FXML
+  private Button folderBtn;
+
+  @FXML
+  private Label dofFolderErrorLabel;
+
   private DOFSettings settings;
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    settings = client.getDofService().getSettings();
-    installationFolderText.setText(settings.getInstallationPath());
+  @FXML
+  private void onFolder(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    apiKeyText.setText(settings.getApiKey());
-    apiKeyText.textProperty().addListener((observableValue, integer, t1) -> {
-      downloadBtn.setDisable(StringUtils.isEmpty(apiKeyText.getText()));
+    DirectoryChooser chooser = new DirectoryChooser();
+    chooser.setTitle("Select DOF Installation Folder");
+    if (DOFPreferencesController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(DOFPreferencesController.lastFolderSelection);
+    }
 
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          settings.setApiKey(t1);
-          client.getDofService().saveSettings(settings);
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-        }
-      }, 300);
-    });
-
-    downloadBtn.setDisable(StringUtils.isEmpty(apiKeyText.getText()));
+    File folder = chooser.showDialog(stage);
+    if (folder != null && folder.exists()) {
+      DOFPreferencesController.lastFolderSelection = folder;
+      this.installationFolderText.setText(folder.getAbsolutePath());
+    }
   }
 
   @FXML
@@ -97,5 +101,48 @@ public class DOFPreferencesController implements Initializable {
     } catch (Exception e) {
       LOG.error("Failed to sync dof: " + e.getMessage());
     }
+  }
+
+  private void refresh() {
+    settings = client.getDofService().getSettings();
+    downloadBtn.setDisable(StringUtils.isEmpty(apiKeyText.getText()) || !settings.isValidDOFFolder());
+    dofFolderErrorLabel.setVisible(!settings.isValidDOFFolder());
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    folderBtn.setVisible(client.getSystemService().isLocal());
+
+    settings = client.getDofService().getSettings();
+    installationFolderText.setText(settings.getInstallationPath());
+
+    apiKeyText.setText(settings.getApiKey());
+    apiKeyText.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("apiKeyText", () -> {
+        try {
+          settings.setApiKey(t1);
+          client.getDofService().saveSettings(settings);
+          refresh();
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 300);
+    });
+
+    installationFolderText.setText(settings.getInstallationPath());
+    installationFolderText.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("installationFolderText", () -> {
+        try {
+          settings.setInstallationPath(t1);
+          client.getDofService().saveSettings(settings);
+          refresh();
+        } catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 300);
+    });
+
+    downloadBtn.setDisable(StringUtils.isEmpty(apiKeyText.getText()));
+    refresh();
   }
 }
