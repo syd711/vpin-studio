@@ -1,8 +1,8 @@
-package de.mephisto.vpin.tablemanager;
+package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.tablemanager.states.StateMananger;
+import de.mephisto.vpin.restclient.popper.PinUPControls;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -17,11 +17,12 @@ import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.logging.Level;
 
-public class Menu extends Application {
-  private final static Logger LOG = LoggerFactory.getLogger(Menu.class);
+import static java.util.logging.Logger.*;
+
+public class PauseMenu extends Application {
+  private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
 
   //do not change this title as it is used in popper as launch parameter
 
@@ -36,13 +37,13 @@ public class Menu extends Application {
 
   @Override
   public void start(Stage stage) {
-    Menu.client = new VPinStudioClient("localhost");
+    PauseMenu.client = new VPinStudioClient("localhost");
     loadUpdater(stage);
   }
 
   public static void loadUpdater(Stage stage) {
     try {
-      stage.getIcons().add(new Image(Menu.class.getResourceAsStream("logo-64.png")));
+      stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
@@ -77,17 +78,13 @@ public class Menu extends Application {
       StateMananger.getInstance().setControls(pinUPControls);
 
       GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+      java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
-        Menu.client.getPinUPPopperService().terminatePopper();
-        Thread shutdownHook = new Thread(() -> {
-          Menu.client.getPinUPPopperService().restartPopper();
-        });
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        //TODO execute pause exe here
       }
       stage.show();
     } catch (Exception e) {

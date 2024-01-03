@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.popper;
 
 public class Emulator {
-
   private String name;
   private String description;
+  private String displayName;
   private int id;
   private String dirMedia;
   private String dirGames;
@@ -11,6 +11,14 @@ public class Emulator {
   private String emuLaunchDir;
   private String gamesExt;
   private boolean visible;
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
 
   public String getDescription() {
     return description;
@@ -85,13 +93,30 @@ public class Emulator {
   }
 
   public boolean isVisualPinball() {
-    return isVisualPinball(this.name);
+    return isVisualPinball(this.name, this.displayName, this.description);
   }
 
-  public static boolean isVisualPinball(String name) {
+  public static boolean isVisualPinball(String name, String displayName, String description) {
+    if (matchesVPX(name)) {
+      return true;
+    }
+    if (matchesVPX(displayName)) {
+      return true;
+    }
+    if (matchesVPX(description)) {
+      return true;
+    }
+    return false;
+  }
+
+  private static boolean matchesVPX(String name) {
+    if (name == null) {
+      return false;
+    }
+
     return name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL_X.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALL.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALLX.toLowerCase());
+      || name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALLX.toLowerCase());
   }
 }

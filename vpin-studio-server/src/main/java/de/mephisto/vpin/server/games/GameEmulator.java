@@ -30,6 +30,7 @@ public class GameEmulator {
 
   private final String name;
   private final String description;
+  private final String displayName;
   private final String installationDirectory;
   private final String tablesDirectory;
   private final String altSoundDirectory;
@@ -45,6 +46,7 @@ public class GameEmulator {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
+    this.displayName = emulator.getDisplayName();
     this.visible = emulator.isVisible();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
@@ -77,6 +79,10 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+  }
+
+  public String getDisplayName() {
+    return displayName;
   }
 
   public boolean isVisible() {

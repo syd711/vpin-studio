@@ -69,7 +69,7 @@ public class PinUPConnector implements InitializingBean {
         return value;
       }
     }
-    throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved.");
+    throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
   }
 
   @Override
@@ -835,6 +835,7 @@ public class PinUPConnector implements InitializingBean {
         Emulator e = new Emulator();
         e.setId(rs.getInt("EMUID"));
         e.setName(rs.getString("EmuName"));
+        e.setDisplayName(rs.getString("EmuDisplay"));
         e.setDirMedia(rs.getString("DirMedia"));
         e.setDirGames(rs.getString("DirGames"));
         e.setDirRoms(rs.getString("DirRoms"));
