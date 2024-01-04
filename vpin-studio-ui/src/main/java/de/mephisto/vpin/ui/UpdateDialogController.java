@@ -91,8 +91,20 @@ public class UpdateDialogController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onClose(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+  private void onClose(ActionEvent ae) {
+    try {
+      if(serverService != null && serverService.isRunning()) {
+        serverService.cancel();
+      }
+
+      if(clientService != null && clientService.isRunning()) {
+        clientService.cancel();
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to cancel update services: " + e.getMessage());
+    }
+    Stage stage = (Stage) ((Button) ae.getSource()).getScene().getWindow();
     stage.close();
   }
 
