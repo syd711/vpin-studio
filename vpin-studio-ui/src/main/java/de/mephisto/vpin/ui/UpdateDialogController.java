@@ -69,7 +69,6 @@ public class UpdateDialogController implements Initializable, DialogController {
     serverClientUpdateRoot.managedProperty().bindBidirectional(serverClientUpdateRoot.visibleProperty());
     footer.managedProperty().bindBidirectional(footer.visibleProperty());
     serverClientUpdateRoot.setVisible(false);
-    closeBtn.setDisable(true);
 
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
@@ -166,7 +165,6 @@ public class UpdateDialogController implements Initializable, DialogController {
               serverProgress.setProgress(1f);
 
               LOG.info("Server updated finished to " + client.getSystemService().getVersion());
-              closeBtn.setDisable(false);
             });
 
             //finished

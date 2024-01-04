@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
 
-//  public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
-  public final static String BASE_URL = "https://vpin-mania.net/updates/";
+  public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
   public static String LATEST_VERSION = null;
 
