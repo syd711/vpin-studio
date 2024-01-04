@@ -118,8 +118,9 @@ public class SystemResource {
 
   @GetMapping("/update/{version}/download/client/start")
   public boolean downloadClientUpdate(@PathVariable("version") String version) {
+    LOG.info("Download remote client " + version);
     new Thread(() -> {
-      Thread.currentThread().setName("Server Update Downloader");
+      Thread.currentThread().setName("Studio Remot Client Update Downloader");
       Updater.downloadUpdate(version, Updater.UI_ZIP);
     }).start();
     return true;
