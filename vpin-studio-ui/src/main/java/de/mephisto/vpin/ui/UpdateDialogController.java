@@ -7,11 +7,15 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +46,9 @@ public class UpdateDialogController implements Initializable, DialogController {
   @FXML
   private ProgressBar serverProgress;
 
+  @FXML
+  private HBox footer;
+
   private Service serverService;
   private Service remoteClientService;
   private Service clientService;
@@ -57,6 +64,8 @@ public class UpdateDialogController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     serverClientUpdateRoot.managedProperty().bindBidirectional(serverClientUpdateRoot.visibleProperty());
+    footer.managedProperty().bindBidirectional(footer.visibleProperty());
+    serverClientUpdateRoot.setVisible(false);
 
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
@@ -73,6 +82,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     else if (updateServer) {
       //remote server and remote client are always updated together
       updateRemoteClient = true;
+      serverClientUpdateRoot.setVisible(true);
     }
 
 
@@ -102,6 +112,12 @@ public class UpdateDialogController implements Initializable, DialogController {
     else if (updateClient) {
       startClientUpdate(newClientVersion);
     }
+  }
+
+  @FXML
+  private void onClose(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
   }
 
   private void startServerUpdate(String newServerVersion, String newClientVersion) {
@@ -147,16 +163,14 @@ public class UpdateDialogController implements Initializable, DialogController {
             });
 
             //finished
-            if (updateClient) {
-              Platform.runLater(() -> {
-                if(updateRemoteClient) {
-                  startClientUpdate(newClientVersion);
-                }
-                else {
-                  startClientUpdate(newClientVersion);
-                }
-              });
-            }
+            Platform.runLater(() -> {
+              if (updateRemoteClient) {
+                startRemoteClientUpdate(newServerVersion, newClientVersion);
+              }
+              else {
+                startClientUpdate(newClientVersion);
+              }
+            });
 
             return null;
           }
@@ -218,6 +232,16 @@ public class UpdateDialogController implements Initializable, DialogController {
 
   private void startClientUpdate(String newVersion) {
     resetDoNotShowAgain();
+
+    String clientVersion = Studio.getVersion();
+    if(clientVersion != null && clientVersion.equals(newVersion)) {
+      try {
+        Thread.sleep(2000);
+      } catch (InterruptedException e) {
+        //ignore
+      }
+      return;
+    }
 
     clientService = new Service() {
       @Override
