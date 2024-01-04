@@ -49,6 +49,9 @@ public class UpdateDialogController implements Initializable, DialogController {
   @FXML
   private HBox footer;
 
+  @FXML
+  private Button closeBtn;
+
   private Service serverService;
   private Service remoteClientService;
   private Service clientService;
@@ -66,6 +69,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     serverClientUpdateRoot.managedProperty().bindBidirectional(serverClientUpdateRoot.visibleProperty());
     footer.managedProperty().bindBidirectional(footer.visibleProperty());
     serverClientUpdateRoot.setVisible(false);
+    closeBtn.setDisable(true);
 
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
@@ -160,14 +164,19 @@ public class UpdateDialogController implements Initializable, DialogController {
             Platform.runLater(() -> {
               serverLabel.setText("Update successful, server is running on version " + client.getSystemService().getVersion());
               serverProgress.setProgress(1f);
+
+              LOG.info("Server updated finished to " + client.getSystemService().getVersion());
+              closeBtn.setDisable(false);
             });
 
             //finished
             Platform.runLater(() -> {
               if (updateRemoteClient) {
+                LOG.info("Starting remote client update.");
                 startRemoteClientUpdate(newServerVersion, newClientVersion);
               }
               else {
+                LOG.info("Starting local client update.");
                 startClientUpdate(newClientVersion);
               }
             });
@@ -188,6 +197,7 @@ public class UpdateDialogController implements Initializable, DialogController {
         return new Task() {
           @Override
           protected Object call() throws Exception {
+            LOG.info("Remote Client Update Service started");
             client.getSystemService().startRemoteClientUpdate(newServerVersion);
             while (true) {
               int progress = client.getSystemService().getRemoteClientProgress();
