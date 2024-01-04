@@ -143,13 +143,12 @@ public class Updater {
       conn.addRequestProperty("Referer", "google.com");
       int responseCode = conn.getResponseCode();//DO NOT DELETE!!!!
 
-//      String s = conn.getURL().toString();
-//      String latestVersion = s.substring(s.lastIndexOf("/") + 1);
-//      if (isLargerVersionThan(latestVersion, referenceVersion)) {
-//        LATEST_VERSION = latestVersion;
-//        return latestVersion;
-//      }
-      return "2.9.0";
+      String s = conn.getURL().toString();
+      String latestVersion = s.substring(s.lastIndexOf("/") + 1);
+      if (isLargerVersionThan(latestVersion, referenceVersion)) {
+        LATEST_VERSION = latestVersion;
+        return latestVersion;
+      }
     } catch (Exception e) {
       LOG.error("Update check failed: " + e.getMessage());
     }
