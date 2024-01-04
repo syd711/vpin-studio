@@ -83,7 +83,6 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
-            LOG.info("Showing highscore card " + defaultMediaItem.getFile().getAbsolutePath());
             OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, defaultMediaItem.getFile());
           });
         }

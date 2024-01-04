@@ -18,7 +18,10 @@ public class JsonSettings<T> {
 
   public static <T> T fromJson(Class<T> clazz, String json) throws Exception {
     try {
-      return objectMapper.readValue(json, clazz);
+      T t = objectMapper.readValue(json, clazz);
+      if (t != null) {
+        return t;
+      }
     } catch (Exception e) {
       LOG.error("Error parsing settings json '" + json + "': " + e.getMessage());
     }

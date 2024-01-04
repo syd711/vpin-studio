@@ -166,6 +166,8 @@ public class OverlayWindowFX extends Application {
     try {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {
+        LOG.info("Showing highscore card " + file.getAbsolutePath());
+
         if (highscoreCardStage != null) {
           highscoreCardController.setImage(highscoreCardStage, file);
           showHighscoreCard(notificationTime);
@@ -195,6 +197,9 @@ public class OverlayWindowFX extends Application {
         }
 
         showHighscoreCard(notificationTime);
+      }
+      else {
+        LOG.info("Skipping highscore card overlay, zero time set.");
       }
     } catch (Exception e) {
       LOG.error("Failed to open highscore card notification: " + e.getMessage());

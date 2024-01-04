@@ -8,5 +8,6 @@
 - Also, the upload and replace; presently, it renames everything to the “new file name” - it be nice if there was a way to preserve the old file name.
 - fix vps auto-fill for "Airport"
 - add option to rotate overlay and highscore card
+- check why GL artifacts are not included
 
 
