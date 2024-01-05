@@ -13,14 +13,14 @@
 - Enabled Remote VPX Installations in the "System Manager": Since a VPX update does not need any additional steps, the installer button is now enabled also when the Studio client has a remote connection to the server.
 - System Manager: For the VPX installations, no additional post-processing it executed anymore (renaming of the .exe files). So the VPX zip files is extracted "as-is" and the user can take care of the **VisualPinballX.exe** that should be used in the emulator scripts of PinUP Popper.
 - Table Launches: If a table is launched from the Studio, the **VPXEXE=....** configured in the launch script of the default emulator in PinUP Popper is used (It was always the **VisualPinballX.exe** before).
-
+- Initial Table Scan: Added VPS auto-fix to the initial table scan so that the user is bothered less with table setups.
 
 ### Bugfixes
 
-- **Fixed card generation**: The wrong filename was chosen for the card generation which lead to missing updates. (Because I'm usually too lazy to rename anything, I never noticed before.)
+- **Fixed card generation**: The wrong filename was chosen for the card generation which lead to missing updates. (Because I'm usually too lazy to rename anything, I never noticed this before.)
 - VPX emulator lookup: Improved lookup from Popper database (there may have been issues when the VPX emulator was renamed).
-- Release Notes Info Dialog: I've always shown the latest from the main branch, so you may have read the updates for the next version already. The dialog shows the correct version release notes now.
-- Studio UI: Fixed "hanging" Studio process problem. When the server is offline and the Studio client is still open, you don't have to kill the process anymore.
+- Release Notes Info Dialog: I've always shown the latest from the main branch, so you may have read the updates for the next version already. The dialog shows always the correct version of the release notes now.
+- Studio UI: Fixed "hanging" Studio process problem. When the server is offline and the Studio client is still open, you don't have to kill the process anymore and can close the UI as usual.
 - Studio UI: Fixed issues with the initial window size.
 - Studio UI: Fullscreen mode now takes care about the insets caused by the location of the Windows toolbar.
 - System Manager: The combo box for the release artifacts has not been filled properly. For VPX, the "GL" version artifacts are now also selectable for installation.

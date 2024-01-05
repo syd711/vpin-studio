@@ -414,10 +414,12 @@ public class GameService implements InitializingBean {
       gameDetails = gameDetailsRepository.findByPupId(game.getId());
     }
 
+    boolean initialScan = false;
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 
       if (gameDetails == null) {
+        initialScan = true;
         gameDetails = new GameDetails();
       }
 
@@ -471,7 +473,7 @@ public class GameService implements InitializingBean {
 
     //VPS Stuff
     String updates = gameDetails.getUpdates();
-    if(updates != null) {
+    if (updates != null) {
       String[] split = updates.split(",");
       List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
       game.setUpdates(collect);
@@ -480,6 +482,9 @@ public class GameService implements InitializingBean {
       game.setUpdates(Collections.emptyList());
     }
 
+    if (initialScan) {
+      vpsService.autofill(game, true);
+    }
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
@@ -501,7 +506,7 @@ public class GameService implements InitializingBean {
     return gameValidator.validate(game, false);
   }
 
-  public Game save(Game game) throws Exception {
+  public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     String existingRom = String.valueOf(gameDetails.getRomName());
     boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(existingRom);
@@ -513,7 +518,7 @@ public class GameService implements InitializingBean {
     gameDetails.setExtTableId(game.getExtTableId());
     gameDetails.setExtTableVersionId(game.getExtTableVersionId());
 
-    if(game.getUpdates() != null) {
+    if (game.getUpdates() != null) {
       gameDetails.setUpdates(String.join(",", game.getUpdates()));
     }
 

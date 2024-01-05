@@ -372,6 +372,7 @@
                                         <include>*.dll</include>
                                         <include>*.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
+                                        <include>maintenance.jpg</include>
                                         <include>competition-bg-default.png</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
