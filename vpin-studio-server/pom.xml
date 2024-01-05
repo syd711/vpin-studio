@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>2.7.0</version>
+    <version>2.8.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -372,6 +372,7 @@
                                         <include>*.dll</include>
                                         <include>*.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
+                                        <include>maintenance.jpg</include>
                                         <include>competition-bg-default.png</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>

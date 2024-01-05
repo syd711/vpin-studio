@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.BorderPane?>
@@ -33,34 +34,24 @@
                   <Label fx:id="serverLabel" text="-" textFill="WHITE" />
                </children>
             </HBox>
-            <VBox fx:id="serverClientUpdateRoot">
-               <children>
-                  <Label text="Server Client Update Progress" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Label>
-                  <ProgressBar fx:id="remoteClientProgress" prefWidth="630.0" progress="0.0" />
-                  <HBox alignment="TOP_RIGHT">
-                     <children>
-                        <Label fx:id="remoteClientLabel" text="-" textFill="WHITE" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <Label fx:id="titleLabel11" layoutX="10.0" layoutY="102.0" text="Local Client Update Progress" textFill="WHITE">
+            <Label fx:id="titleLabel11" layoutX="10.0" layoutY="102.0" text="Client Update Progress" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <ProgressBar fx:id="localClientProgress" layoutX="10.0" layoutY="124.0" prefWidth="630.0" progress="0.0" />
+            <ProgressBar fx:id="clientProgress" layoutX="10.0" layoutY="124.0" prefWidth="630.0" progress="0.0" />
             <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="148.0">
                <children>
-                  <Label fx:id="localClientLabel" text="-" textFill="WHITE" />
+                  <Label fx:id="clientLabel" text="-" textFill="WHITE" />
                </children>
+            </HBox>
+            <HBox fx:id="footer" alignment="CENTER_RIGHT">
+               <children>
+                  <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="Close" />
+               </children>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
             </HBox>
          </children>
          <BorderPane.margin>

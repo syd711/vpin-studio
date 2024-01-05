@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
@@ -32,6 +33,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Pane;
@@ -51,7 +54,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
+public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion>, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarVpsController.class);
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -118,6 +121,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @FXML
   private Label errorText;
 
+  @FXML
+  private Button vpsResetBtn;
 
   @FXML
   private Hyperlink ipdbLink;
@@ -129,6 +134,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   // Add a public no-args constructor
   public TablesSidebarVpsController() {
   }
+
 
   @FXML
   private void onCopyTable() {
@@ -199,6 +205,19 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
+  @FXML
+  private void onVpsReset() {
+    try {
+      if (!this.game.isEmpty()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        gameRepresentation.setUpdates(Collections.emptyList());
+        client.getGameService().saveGame(gameRepresentation);
+        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
+    }
+  }
 
   @FXML
   private void onTableOpen() {
@@ -278,9 +297,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(g.isEmpty());
+    vpsResetBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      vpsResetBtn.setDisable(game.getUpdates().isEmpty());
 
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
@@ -327,7 +348,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         for (VpsTableVersion tableVersion : tableFiles) {
           if (tableVersion != null && tableVersion.getId().equals(extTableVersionId)) {
             tableVersionsCombo.setValue(tableVersion);
-            if(tableVersion.getAuthors() != null) {
+            if (tableVersion.getAuthors() != null) {
               versionAuthorsLabel.setText(String.join(", ", tableVersion.getAuthors()));
               versionAuthorsLabel.setTooltip(new Tooltip(String.join(", ", tableVersion.getAuthors())));
             }
@@ -450,6 +471,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
     openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
+
     if (newValue != null) {
       copyTableVersionBtn.setDisable(false);
       String existingValueId = this.game.get().getExtTableVersionId();
@@ -467,10 +489,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    vpsResetBtn.managedProperty().bindBidirectional(vpsResetBtn.visibleProperty());
     detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
+    vpsResetBtn.setVisible(false);
     openTableBtn.setDisable(true);
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
@@ -488,5 +512,23 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     refreshSheetData(tables);
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setFitWidth(18);
+    view2.setFitHeight(18);
+    vpsResetBtn.setGraphic(view2);
+
+    preferencesChanged(PreferenceNames.UI_SETTINGS, null);
+    client.getPreferenceService().addListener(this);
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.UI_SETTINGS)) {
+      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
+      List<String> values = preference.getCSVValue();
+      this.vpsResetBtn.setVisible(!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
+    }
   }
 }

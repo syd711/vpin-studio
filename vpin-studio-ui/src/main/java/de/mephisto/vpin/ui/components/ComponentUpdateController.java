@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -190,24 +191,26 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
       release = component.getReleases().stream().filter(r -> r.getTag().equals(releasesCombo.getValue())).findFirst().get();
       List<String> artifacts = release.getArtifacts();
-      artifactCombo.setItems(FXCollections.observableList(releaseArtifacts));
+      artifactCombo.setItems(FXCollections.observableList(artifacts));
+      String systemPreset = client.getSystemPreset();
+      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+        List<String> collect = release.getArtifacts().stream().filter(r -> r.contains("x64")).collect(Collectors.toList());
+        if(!collect.isEmpty()) {
+          artifactCombo.setItems(FXCollections.observableList(collect));
+          artifactCombo.setValue(collect.get(0));
+        }
+      }
+      else {
+        List<String> collect = release.getArtifacts().stream().filter(r -> !r.contains("x64")).collect(Collectors.toList());
+        if(!collect.isEmpty()) {
+          artifactCombo.setItems(FXCollections.observableList(collect));
+          artifactCombo.setValue(collect.get(0));
+        }
+      }
+
       if (artifactId != null) {
         artifactCombo.setValue(artifactId);
       }
-      else {
-        artifactCombo.setValue(artifacts.get(0));
-      }
-
-      String systemPreset = client.getSystemPreset();
-      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
-        Optional<String> first = release.getArtifacts().stream().filter(r -> r.contains("x64")).findFirst();
-        first.ifPresent(s -> artifactCombo.setValue(first.get()));
-      }
-      else {
-        Optional<String> first = release.getArtifacts().stream().filter(r -> !r.contains("x64")).findFirst();
-        first.ifPresent(s -> artifactCombo.setValue(first.get()));
-      }
-
 
       artifactCombo.setDisable(releases.isEmpty());
     }

@@ -112,7 +112,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   private File getCardFile(@NonNull Game game, @NonNull String screenName) {
     PopperScreen screen = PopperScreen.valueOf(screenName);
     File mediaFolder = game.getPinUPMediaFolder(screen);
-    return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameFileName()) + ".png");
+    return new File(mediaFolder, FilenameUtils.getBaseName(game.getGameName()) + ".png");
   }
 
   @Override

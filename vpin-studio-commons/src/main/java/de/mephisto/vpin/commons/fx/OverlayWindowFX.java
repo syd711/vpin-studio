@@ -8,8 +8,6 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -168,8 +166,18 @@ public class OverlayWindowFX extends Application {
       if (notificationTime > 0) {
         LOG.info("Showing highscore card " + file.getAbsolutePath());
 
+        int rotation = 0;
+        String rotationValue = cardSettings.getNotificationRotation();
+        if(rotationValue != null) {
+          try {
+            rotation = Integer.parseInt(rotationValue);
+          } catch (NumberFormatException e) {
+            LOG.info("Error reading card rotation value: " + e.getMessage());
+          }
+        }
+
         if (highscoreCardStage != null) {
-          highscoreCardController.setImage(highscoreCardStage, file);
+          highscoreCardController.setImage(highscoreCardStage, file, rotation);
           showHighscoreCard(notificationTime);
           return;
         }
@@ -190,7 +198,7 @@ public class OverlayWindowFX extends Application {
           FXMLLoader loader = new FXMLLoader(HighscoreCardController.class.getResource(resource));
           Parent widgetRoot = loader.load();
           highscoreCardController = loader.getController();
-          highscoreCardController.setImage(highscoreCardStage, file);
+          highscoreCardController.setImage(highscoreCardStage, file, rotation);
           root.setCenter(widgetRoot);
         } catch (IOException e) {
           LOG.error("Failed to init dashboard: " + e.getMessage(), e);

@@ -66,9 +66,6 @@
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
                                   <Label styleClass="default-text" text="The 32 and 64-bit installations may only differ in the .exe file of Visual Pinball X, therefore both versions will be identified as current version (if all other files match)." />
-                           <Label styleClass="default-text" text="After updating to the latest Visual Pinball version, a backup file of the existing &quot;VisualPinballX.exe&quot; will be created." />
-                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="The installer will create a copy of the &quot;VisualPinballX[64 | _GL64].exe&quot; named &quot;VisualPinballX.exe&quot;." />
-                           <Label layoutX="23.0" layoutY="63.0" styleClass="default-text" text="The renamed copy ensures that the emulator configuration of PinUP Popper does not need to be updated." />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

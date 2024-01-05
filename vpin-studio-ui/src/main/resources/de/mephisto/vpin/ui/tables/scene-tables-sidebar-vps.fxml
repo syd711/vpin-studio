@@ -291,6 +291,14 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
+            <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset Updates" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Reset VPS updates indicators in the overview for this table." />
+               </tooltip>
+            </Button>
             <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">

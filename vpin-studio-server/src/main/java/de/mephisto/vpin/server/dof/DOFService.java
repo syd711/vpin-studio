@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WindowsShortcut;
 import de.mephisto.vpin.server.util.ZipUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class DOFService {
     try {
       DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
       settings.setValidDOFFolder(settings.getInstallationPath() != null && new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
-      if (!settings.isValidDOFFolder()) {
+      if (StringUtils.isEmpty(settings.getInstallationPath())) {
         File autoResolvedFolder = getDOFInstallationFolder();
         if (autoResolvedFolder != null && autoResolvedFolder.exists() && new File(autoResolvedFolder, "DirectOutput.dll").exists()) {
           settings.setValidDOFFolder(true);
@@ -91,9 +92,9 @@ public class DOFService {
 
       LOG.info("Downloaded file " + zipFile.getAbsolutePath());
 
-      File targetFolder = getDOFInstallationFolder();
-      if (targetFolder == null) {
-        return JobExecutionResultFactory.error("Failed to determine DOF zipFile folder.");
+      File targetFolder = new File(getDOFInstallationFolder(), "Config");
+      if (!targetFolder.exists()) {
+        return JobExecutionResultFactory.error("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
       }
 
       ZipUtil.unzip(zipFile, targetFolder);

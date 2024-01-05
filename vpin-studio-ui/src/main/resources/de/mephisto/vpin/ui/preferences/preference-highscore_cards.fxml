@@ -104,6 +104,17 @@
                         <Label styleClass="default-text" text="seconds" />
                      </children>
                   </HBox>
+                  <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Rotate Highscore Card:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <ComboBox fx:id="rotationCombo" prefWidth="150.0" />
+                        <Label styleClass="default-text" text="°" />
+                     </children>
+                  </HBox>
                </children>
                <opaqueInsets>
                   <Insets />

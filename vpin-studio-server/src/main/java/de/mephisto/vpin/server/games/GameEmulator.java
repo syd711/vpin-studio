@@ -41,12 +41,14 @@ public class GameEmulator {
   private final String mediaDirectory;
   private final int id;
   private final boolean visible;
+  private final String vpxExeName;
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
+    this.vpxExeName = emulator.getVpxExeName();
     this.visible = emulator.isVisible();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
@@ -134,7 +136,7 @@ public class GameEmulator {
   }
 
   public File getVPXExe() {
-    return new File(installationFolder, "VPinballX.exe");
+    return new File(installationFolder, vpxExeName);
   }
 
   public boolean isVpx() {
@@ -248,6 +250,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + ")";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getVPXExe().getName() + ")";
   }
 }

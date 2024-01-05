@@ -199,7 +199,7 @@ public class ImageUtil {
       ImageIO.write(image, "JPG", imageOutputStream);
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
-      LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+      LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms.");
     } finally {
       if (fileOutputStream != null) {
         fileOutputStream.close();

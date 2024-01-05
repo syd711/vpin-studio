@@ -120,40 +120,28 @@ public class Studio extends Application {
       FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
       Parent root = loader.load();
 
+      Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
       double screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
-      double width = 1920 * (screenResolution / 100);
-      double height = 1080 * (screenResolution / 100);
+      double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
+      double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
 
-      if (screenResolution > 100) {
-        double screenWidth = screenBounds.getWidth() * (screenResolution / 100);
-        if (width > screenWidth) {
-          width = screenWidth - (screenWidth * (screenResolution - 100) / 100);
-        }
-
-        double screenHeight = screenBounds.getHeight() * (screenResolution / 100);
-        if (height > screenHeight) {
-          height = screenHeight - (screenHeight * (screenResolution - 100) / 100);
-        }
-      }
-
-      if (screenBounds.getWidth() > 2460 && screenBounds.getWidth() < 2600) {
-        width = width + 200;
-      }
-
-      if (screenBounds.getHeight() > 1280) {
-        height = 1300;
-      }
-      if (screenBounds.getHeight() >= 1480) {
-        height = 1400;
-      }
+//      if (screenResolution > 100) {
+//        double screenWidth = screenBounds.getWidth() * (screenResolution / 100);
+//        if (width > screenWidth) {
+//          width = screenWidth - (screenWidth * (screenResolution - 100) / 100);
+//        }
+//
+//        double screenHeight = screenBounds.getHeight() * (screenResolution / 100);
+//        if (height > screenHeight) {
+//          height = screenHeight - (screenHeight * (screenResolution - 100) / 100);
+//        }
+//      }
 
       Scene scene = new Scene(root, width, height);
       scene.setFill(Paint.valueOf("#212529"));
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
       stage.setScene(scene);
       stage.setResizable(true);
-      stage.setMinWidth(1580);
-      stage.setMinHeight(1000);
       stage.initStyle(StageStyle.UNDECORATED);
 
       stage.setX((screenBounds.getWidth() / 2) - (width / 2));

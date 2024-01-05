@@ -110,27 +110,6 @@ public class SystemResource {
     return true;
   }
 
-  @GetMapping("/update/client/install")
-  public boolean installFromRemoteClientUpdate() throws IOException {
-    Updater.installFromRemoteClientUpdate();
-    return true;
-  }
-
-  @GetMapping("/update/{version}/download/client/start")
-  public boolean downloadClientUpdate(@PathVariable("version") String version) {
-    new Thread(() -> {
-      Thread.currentThread().setName("Server Update Downloader");
-      Updater.downloadUpdate(version, Updater.UI_ZIP);
-    }).start();
-    return true;
-  }
-
-  @GetMapping("/update/download/client/status")
-  public int updateClientDownloadStatus() {
-    return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.UI_ZIP_SIZE);
-  }
-
-
   @GetMapping("/autostart/installed")
   public boolean autostart() {
     return ServerInstallationUtil.isInstalled();

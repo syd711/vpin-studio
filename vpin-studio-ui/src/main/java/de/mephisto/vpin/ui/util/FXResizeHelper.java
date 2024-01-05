@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.HashMap;
 
 /**
@@ -73,8 +74,13 @@ public class FXResizeHelper {
       mWidthStore = STAGE.getWidth();
       mHeightStore = STAGE.getHeight();
 
-      STAGE.setY(0);
-      STAGE.setX(0);
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
+      GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
+      Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(defaultConfiguration);
+
+      STAGE.setY(screenInsets.top);
+      STAGE.setX(screenInsets.left);
       STAGE.setWidth(SCREEN_WIDTH);
       STAGE.setHeight(SCREEN_HEIGHT);
     }

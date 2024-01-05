@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.popper;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Emulator {
   private String name;
   private String description;
@@ -9,8 +12,32 @@ public class Emulator {
   private String dirGames;
   private String dirRoms;
   private String emuLaunchDir;
+  private String launchScript;
   private String gamesExt;
   private boolean visible;
+  
+  public String getVpxExeName() {
+    if(launchScript != null) {
+      Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
+      Matcher m = pattern.matcher(launchScript);
+      while( m.find() ) {
+        String key = m.group(1);
+        String value = m.group(2);
+        if(key != null && key.equals("VPXEXE") && value != null) {
+          return value.trim() + ".exe";
+        }
+      }
+    }
+    return "VisualPinbalX.exe";
+  }
+
+  public String getLaunchScript() {
+    return launchScript;
+  }
+
+  public void setLaunchScript(String launchScript) {
+    this.launchScript = launchScript;
+  }
 
   public String getDisplayName() {
     return displayName;

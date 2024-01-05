@@ -24,6 +24,9 @@ public class CardGenerationPreferencesController implements Initializable {
   private ComboBox<String> popperScreenCombo;
 
   @FXML
+  private ComboBox<String> rotationCombo;
+
+  @FXML
   private Label validationError;
 
   @FXML
@@ -36,6 +39,9 @@ public class CardGenerationPreferencesController implements Initializable {
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", "Other2", "GameInfo", "GameHelp")));
     BindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
     popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
+
+    rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
+    BindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
 
     BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 10);
     highscoreCardDuration.setDisable(popperScreenCombo.getValue() == null);
