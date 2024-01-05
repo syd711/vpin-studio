@@ -7,6 +7,7 @@
 
 ### Bugfixes
 
+- **Fixed card generation**: The wrong filename was chosen for the card generation which lead to missing updated. (Because I'm usually too lazy to rename anything, I never noticed before.)
 - Improved VPX emulator lookup from Popper database (there may have been issues when the VPX emulator was renamed).
 - Fixed "hanging" Studio UI closing: When the server is offline and the Studio client is still open, you don't have to kill the process anymore.
 - Fixed "Release Notes" info dialog: I've always shown the latest from the main branch, so you may have read the updates for the next version already. The dialog shows the correct version release notes now.

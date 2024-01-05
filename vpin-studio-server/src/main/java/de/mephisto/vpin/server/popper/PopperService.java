@@ -274,14 +274,16 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   }
 
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId) {
-    Game game = pinUPConnector.getGame(gameId);
-    pinUPConnector.saveTableDetails(game.getId(), updatedTableDetails);
-
-    String gameFilename = game.getGameFileName();
+    TableDetails oldDetails = getTableDetails(gameId);
+    String gameFilename = updatedTableDetails.getGameFileName();
     if (!gameFilename.endsWith(".vpx")) {
       gameFilename = gameFilename + ".vpx";
+      updatedTableDetails.setGameFileName(gameFilename);
     }
 
+    pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
+
+    Game game = pinUPConnector.getGame(gameId);
     try {
       if (!String.valueOf(game.getRom()).equals(String.valueOf(updatedTableDetails.getRomName())) && !StringUtils.isEmpty(updatedTableDetails.getRomName())) {
         game.setRom(updatedTableDetails.getRomName());
@@ -295,14 +297,13 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     } catch (Exception e) {
       LOG.error("Error updating table for table details: " + e.getMessage());
     }
-
-    if (!updatedTableDetails.getGameFileName().equals(gameFilename)) {
+    if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
       de.mephisto.vpin.commons.utils.FileUtils.rename(game.getGameFile(), name);
       de.mephisto.vpin.commons.utils.FileUtils.rename(game.getDirectB2SFile(), name);
       de.mephisto.vpin.commons.utils.FileUtils.rename(game.getPOVFile(), name);
       de.mephisto.vpin.commons.utils.FileUtils.rename(game.getResFile(), name);
-      LOG.info("Finished game file renaming to " + game.getGameFileName());
+      LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + game.getGameFileName() + "\"");
     }
 
     return updatedTableDetails;
@@ -375,27 +376,25 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     }
   }
 
-  //TODO use or delete?
-  public void renameGameMedia(Game game, String oldName, String newBaseName) {
+  public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {
     PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen originalScreenValue : values) {
-
-      List<GameMediaItem> gameMediaItems = game.getGameMedia().getMediaItems(originalScreenValue);
+    int assetRenameCounter = 0;
+    for (PopperScreen screen : values) {
+      List<GameMediaItem> gameMediaItems = game.getGameMedia().getMediaItems(screen);
       for (GameMediaItem gameMediaItem : gameMediaItems) {
         File gameMediaFile = gameMediaItem.getFile();
         if (gameMediaFile.exists()) {
-          String name = gameMediaFile.getName();
-          String newName = name.replace(oldName, newBaseName);
-          File target = new File(gameMediaFile.getParentFile(), newName);
-          if (gameMediaFile.renameTo(target)) {
-            LOG.info("Renamed PinUP Popper media from " + gameMediaFile.getAbsolutePath() + " to " + target.getAbsolutePath());
+          if (de.mephisto.vpin.commons.utils.FileUtils.rename(gameMediaFile, newBaseName)) {
+            assetRenameCounter++;
+            LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
           }
           else {
-            LOG.warn("Renaming PinUP Popper media from " + gameMediaFile.getAbsolutePath() + " to " + target.getName() + " failed.");
+            LOG.warn("[" + screen + "] Renaming PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
           }
         }
       }
     }
+    LOG.info("Finished asset renaming for \"" + oldBaseName+ "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
   }
 
   public PopperCustomOptions getCustomOptions() {
