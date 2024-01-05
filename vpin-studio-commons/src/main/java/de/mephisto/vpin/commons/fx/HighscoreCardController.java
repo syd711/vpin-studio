@@ -36,7 +36,7 @@ public class HighscoreCardController implements Initializable {
     imageView.setPreserveRatio(false);
   }
 
-  public void setImage(Stage highscoreCardStage, File file) {
+  public void setImage(Stage highscoreCardStage, File file, int rotation) {
     try {
       Screen screen = Screen.getPrimary();
       Rectangle2D bounds = screen.getVisualBounds();
@@ -44,7 +44,6 @@ public class HighscoreCardController implements Initializable {
       FileInputStream fileInputStream = new FileInputStream(file);
       Image image = new Image(fileInputStream);
       fileInputStream.close();
-
 
       int targetX = (int) (bounds.getHeight() / 2 - image.getWidth() / 2);
 
@@ -54,6 +53,7 @@ public class HighscoreCardController implements Initializable {
       highscoreCardStage.setWidth(image.getWidth() + 12);
 
       imageView.setImage(image);
+      imageView.setRotate(rotation);
     } catch (IOException e) {
       LOG.error("Failed to show card: " + e.getMessage(), e);
     }

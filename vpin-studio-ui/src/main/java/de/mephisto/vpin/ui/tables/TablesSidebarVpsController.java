@@ -208,7 +208,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @FXML
   private void onVpsReset() {
     try {
-      if (this.game.isEmpty()) {
+      if (!this.game.isEmpty()) {
         GameRepresentation gameRepresentation = this.game.get();
         gameRepresentation.setUpdates(Collections.emptyList());
         client.getGameService().saveGame(gameRepresentation);

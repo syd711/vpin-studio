@@ -61,10 +61,19 @@ public class CardSettings extends JsonSettings<CardSettings> {
   private boolean cardUseDirectB2S = true;
   private String popperScreen = "Other2";
   private int notificationTime = 0;
+  private String notificationRotation = "0";
 
   //do not delete
   public CardSettings() {
 
+  }
+
+  public String getNotificationRotation() {
+    return notificationRotation;
+  }
+
+  public void setNotificationRotation(String notificationRotation) {
+    this.notificationRotation = notificationRotation;
   }
 
   public int getNotificationTime() {
