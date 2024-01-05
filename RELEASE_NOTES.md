@@ -6,7 +6,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/dof.png" width="500" />
 
-- Add update VPS indicators for table columns: Instead of showing only the one update column, an additional update icon with tooltip is shown for assets that are shown in the table overview and received an update.
+- Added update VPS indicators for table columns: Instead of showing only the one update column, an additional update icon with tooltip is shown for assets that are shown in the table overview and received an update.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-colum.png" width="700" />
 
