@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -23,6 +24,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -70,6 +72,19 @@ public class WidgetFactory {
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
     fontIcon.setIconLiteral("bi-check-circle");
     return fontIcon;
+  }
+
+  public static HBox createCheckAndUpdateIcon(String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(createCheckIcon("#FFFFFF"));
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createUpdateIcon());
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
   }
 
   public static FontIcon createUpdateStar() {

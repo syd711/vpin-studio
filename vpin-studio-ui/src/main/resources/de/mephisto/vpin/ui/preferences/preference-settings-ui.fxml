@@ -108,7 +108,7 @@
                   <Insets bottom="6.0" top="12.0" />
                </VBox.margin>
             </Label>
-            <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Hide table update indicator in table overview." textFill="WHITE">
+            <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Hide table version update indicator in table overview." textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -123,7 +123,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, the VPS updates column and related actions are not shown in the table overview" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, the VPS update indicators and related actions are not shown in the table overview" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="654.0" styleClass="checkbox-description" text="and VPS section anymore." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
                <VBox.margin>

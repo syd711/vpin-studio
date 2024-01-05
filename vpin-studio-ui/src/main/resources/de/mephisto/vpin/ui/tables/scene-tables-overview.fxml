@@ -169,7 +169,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Reset VPS updates indicator" />
+                              <Tooltip text="Reset VPS updates indicators" />
                            </tooltip>
                         </Button>
                         <Button fx:id="vpsBtn" layoutX="588.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVps" textFill="WHITE">
