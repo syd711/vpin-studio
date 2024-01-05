@@ -3,12 +3,15 @@
 ### Changes
 
 - Added DOF Preferences: You can synchronize your DOF settings via API key now. Note that this synchronization is not performed during the server startup, but only added for convenience in the preferences.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/dof.png" width="500" />
+
 - Enabled Remote VPX Installations in the "System Manager": Since a VPX update does not need any additional steps, the installer button is now enabled also when the Studio client has a remote connection to the server.
 - System Manager: For the VPX installations, no additional post-processing it executed anymore (renaming of the .exe files). So the VPX zip files is extracted "as-is" and the user can take care of the **VisualPinballX.exe** that should be used in the emulator scripts of PinUP Popper.
 - Table Launches: If a table is launched from the Studio, the **VPXEXE=....** configured in the launch script of the default emulator in PinUP Popper is used (It was always the **VisualPinballX.exe** before).
 - Add update VPS indicators for table columns: Instead of showing only the one update column, an additional update icon with tooltip is shown for assets that are shown in the table overview and received an update.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/2.8.0/documentation/vps/update-colum.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-colum.png" width="700" />
 
 
 ### Bugfixes
