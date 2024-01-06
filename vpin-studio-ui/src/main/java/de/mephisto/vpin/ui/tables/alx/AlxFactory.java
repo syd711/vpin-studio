@@ -33,7 +33,13 @@ public class AlxFactory {
       total += entry.getTimePlayedSecs();
     }
 
-    String totalTimeFormatted = DurationFormatUtils.formatDuration(total * 1000, "HH 'hrs'", false);
+
+    String totalTimeFormatted = null;
+    try {
+      totalTimeFormatted = DurationFormatUtils.formatDuration(total * 1000, "HH 'hrs'", false);
+    } catch (Exception e) {
+      LOG.error("Error calculating total play time: " + e.getMessage());
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
