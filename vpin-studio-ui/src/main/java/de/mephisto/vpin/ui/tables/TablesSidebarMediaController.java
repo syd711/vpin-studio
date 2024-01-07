@@ -418,11 +418,11 @@ public class TablesSidebarMediaController implements Initializable {
     screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
     screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.BackGlass, "mp4", "png", "jpg"));
 
-    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "png", "jpg"));
-    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameInfo, "png", "jpg"));
+    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameInfo, "mp4", "png", "jpg"));
 
-    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "png", "jpg"));
-    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameHelp, "png", "jpg"));
+    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "mp4", "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameHelp, "mp4", "png", "jpg"));
 
     screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
     screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Menu, "mp4", "png", "jpg"));

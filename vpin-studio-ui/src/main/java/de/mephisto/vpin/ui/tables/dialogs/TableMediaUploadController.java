@@ -120,7 +120,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
     if (popperScreen.equals(PopperScreen.Audio) || popperScreen.equals(PopperScreen.AudioLaunch)) {
       fileSelection.add("*.mp3");
     }
-    else if (popperScreen.equals(PopperScreen.GameInfo) || popperScreen.equals(PopperScreen.Wheel) || popperScreen.equals(PopperScreen.GameHelp)) {
+    else if (popperScreen.equals(PopperScreen.Wheel)) {
       fileSelection.add("*.jpg");
       fileSelection.add("*.png");
       fileSelection.add("*.apng");
