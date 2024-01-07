@@ -95,7 +95,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
       if (!StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch)) {
         try {
-          Thread.sleep(1000);
+          Thread.sleep(2000);
         } catch (InterruptedException e) {
           //ignore
         }

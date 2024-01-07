@@ -154,7 +154,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
     artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
       checkBtn.setDisable(t1 == null);
-      installBtn.setDisable(t1 == null || localInstallOnly);
+      installBtn.setDisable(t1 == null || (localInstallOnly && !client.getSystemService().isLocal()));
       simBtn.setDisable(t1 == null);
     });
 
@@ -178,7 +178,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
-    installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || localInstallOnly);
+    installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || (localInstallOnly && !client.getSystemService().isLocal()));
 
     if (!component.getReleases().isEmpty()) {
       GithubReleaseRepresentation release = component.getReleases().get(0);
