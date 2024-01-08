@@ -62,7 +62,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   private TableColumn<PlayerRepresentation, Label> adminColumn;
 
   @FXML
-  private TableColumn<PlayerRepresentation, Control> avatarColumn;
+  private TableColumn<PlayerRepresentation, Object> avatarColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, Label> tournamentColumn;
@@ -261,8 +261,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
         return new SimpleObjectProperty("");
       }
 
-      Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
-      return new SimpleObjectProperty<>(AvatarFactory.create(image));
+      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
     });
 
     initialsColumn.setCellValueFactory(cellData -> {

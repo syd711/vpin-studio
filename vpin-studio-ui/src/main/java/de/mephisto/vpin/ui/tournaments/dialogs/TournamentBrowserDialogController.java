@@ -10,9 +10,9 @@ import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResult;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResultItem;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.AvatarImageUtil;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
+import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
+import de.mephisto.vpin.ui.tournaments.view.TournamentSearchText;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -26,13 +26,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +82,12 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private Label descriptionText;
 
   @FXML
+  private Button nextBtn;
+
+  @FXML
+  private Button previousBtn;
+
+  @FXML
   private TableView<ManiaTournamentSearchResultItem> tableView;
 
   @FXML
@@ -97,19 +100,18 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private TableColumn<ManiaTournamentSearchResultItem, String> playersColumn;
 
   @FXML
-  private TableColumn<ManiaTournamentSearchResultItem, String> detailsColumn;
-
-  @FXML
   private TableColumn<ManiaTournamentSearchResultItem, String> tablesColumn;
 
   @FXML
   private StackPane viewStack;
 
+  @FXML
+  private Label pagingInfo;
 
   private ManiaTournamentSearchResultItem tournament;
   private Optional<ManiaTournamentSearchResultItem> selection = Optional.empty();
   private Parent loadingOverlay;
-  private int pageSize = 30;
+  private ManiaTournamentSearchResult searchResult;
   private int page = 0;
 
   @FXML
@@ -123,6 +125,18 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onNext() {
+    int page = searchResult.getPage();
+    doSearch(searchText.getText(), page + 1);
+  }
+
+  @FXML
+  private void onPrevious() {
+    int page = searchResult.getPage();
+    doSearch(searchText.getText(), page - 1);
   }
 
   @FXML
@@ -148,42 +162,6 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     this.tournament = null;
   }
 
-  @FXML
-  private void loadIScoredTables() {
-    this.tableView.refresh();
-
-//    if (!StringUtils.isEmpty(dashboardUrl)) {
-//      try {
-//        GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
-//        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
-//
-//        List<Game> games = gameRoom.getGames();
-//        for (Game game : games) {
-//          List<String> tags = game.getTags();
-//          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
-//          if (first.isPresent()) {
-//            String vpsUrl = first.get();
-//            String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
-//            String[] split = idSegment.split("#");
-//            VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-//            VpsTableVersion vpsVersion = null;
-//            if (vpsTable != null && split.length > 1) {
-//              vpsVersion = vpsTable.getVersion(split[1]);
-//            }
-//            GameRepresentation gameRep = null;
-//            if (vpsTable != null) {
-//              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-//            }
-//            this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
-//            this.tableView.refresh();
-//          }
-//        }
-//      } catch (Exception e) {
-//        LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
-//      }
-//    }
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                  No tournaments found!\nUse the search field to filter tournaments."));
@@ -191,30 +169,21 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     searchText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("nameField", () -> {
       this.page = 0;
       Platform.runLater(() -> {
-        doSearch(t1);
+        doSearch(t1, 0);
       });
     }, 300));
 
     avatarColumn.setCellValueFactory(cellData -> {
       ManiaTournamentSearchResultItem value = cellData.getValue();
       String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
-      Image image = new Image(client.getCachedUrlImage(avatarUrl));
-      Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(UIDefaults.DEFAULT_AVATARSIZE, UIDefaults.DEFAULT_AVATARSIZE)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-      return new SimpleObjectProperty<>(avatar);
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
+      return new SimpleObjectProperty<>(imageView);
     });
 
     nameColumn.setCellValueFactory(cellData -> {
       ManiaTournamentSearchResultItem value = cellData.getValue();
-      return new SimpleObjectProperty(value.getDisplayName());
+      return new SimpleObjectProperty(new TournamentSearchText(value));
     });
 
     playersColumn.setCellValueFactory(cellData -> {
@@ -222,15 +191,10 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       return new SimpleObjectProperty(value.getPlayerCount());
     });
 
-    detailsColumn.setCellValueFactory(cellData -> {
-      ManiaTournamentSearchResultItem value = cellData.getValue();
-      value.getTableIdList();
-      return new SimpleObjectProperty("");
-    });
-
     tablesColumn.setCellValueFactory(cellData -> {
       ManiaTournamentSearchResultItem value = cellData.getValue();
-      return new SimpleObjectProperty(new SimpleObjectProperty(""));
+      TournamentSearchTableSummary summary = new TournamentSearchTableSummary(value);
+      return new SimpleObjectProperty(summary);
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<ManiaTournamentSearchResultItem>) c -> {
@@ -254,26 +218,41 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     }
 
     Platform.runLater(() -> {
-      doSearch("");
+      doSearch("", 0);
     });
   }
 
-  private void doSearch(String t1) {
+  private void doSearch(String t1, int page) {
     Platform.runLater(() -> {
       try {
         viewStack.getChildren().add(loadingOverlay);
-        ManiaTournamentSearchResult search = maniaClient.getTournamentClient().search(t1, 0, UIDefaults.TOURNAMENT_BROWSER_PAGE_SIZE);
-        List<ManiaTournamentSearchResultItem> results = search.getResults();
+        searchResult = maniaClient.getTournamentClient().search(t1, page, UIDefaults.TOURNAMENT_BROWSER_PAGE_SIZE);
+        List<ManiaTournamentSearchResultItem> results = searchResult.getResults();
+
+        int from = searchResult.getPage() * UIDefaults.TOURNAMENT_BROWSER_PAGE_SIZE;
+        int to = from + UIDefaults.TOURNAMENT_BROWSER_PAGE_SIZE;
+        if (to > searchResult.getTotal()) {
+          to = searchResult.getTotal();
+        }
+
+        pagingInfo.setText((from+1) + " to " + to + " of " + searchResult.getTotal());
+        previousBtn.setDisable(true);
+        nextBtn.setDisable(true);
+
+        if (!results.isEmpty()) {
+          boolean hasNext = to < searchResult.getTotal();
+          boolean hasPrevious = searchResult.getPage() > 0;
+          nextBtn.setDisable(!hasNext);
+          previousBtn.setDisable(!hasPrevious);
+        }
+
         new Thread(() -> {
           Platform.runLater(() -> {
             for (ManiaTournamentSearchResultItem result : results) {
               String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
               client.getCachedUrlImage(avatarUrl);
             }
-
-
             tableView.setItems(FXCollections.observableList(results));
-
             if (!results.isEmpty()) {
               tableView.getSelectionModel().select(0);
             }
@@ -311,20 +290,10 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         descriptionText.setText(item.getDescription());
       }
 
-      ownerLabel.setText("-");
-      Image image = new Image(maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid()));
-      Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-
-      avatarPane.getChildren().add(avatar);
+      ownerLabel.setText(item.getOwnerName());
+      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      avatarPane.getChildren().add(imageView);
     }
   }
 

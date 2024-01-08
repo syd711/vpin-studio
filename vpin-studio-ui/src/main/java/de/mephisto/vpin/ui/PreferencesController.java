@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -238,7 +239,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
-        desktop.browse(new URI("https://discord.gg/69YqHYd3wD"));
+        desktop.browse(new URI(UIDefaults.DISCORD_INVITE_LINK));
       } catch (Exception e) {
         LOG.error("Failed to open discord link: " + e.getMessage(), e);
       }

@@ -393,7 +393,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     if (validConfig) {
       addBtn.setDisable(false);
-      createBtn.setDisable(true);
+      createBtn.setDisable(false);
       browseBtn.setDisable(false);
       textfieldSearch.setDisable(false);
       duplicateBtn.setDisable(false);

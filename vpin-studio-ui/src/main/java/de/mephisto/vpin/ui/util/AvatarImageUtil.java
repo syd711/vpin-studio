@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.ui.players.dialogs.PlayerSaveProgressModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

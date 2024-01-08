@@ -17,29 +17,59 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Join Tournament">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="18.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <right>
+            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+               <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Join Tournament">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </right>
+         <center>
+            <HBox alignment="CENTER" prefWidth="300.0" spacing="6.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="previousBtn" mnemonicParsing="false" onAction="#onPrevious" text="Previous">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold-circle-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="nextBtn" contentDisplay="RIGHT" layoutX="492.0" layoutY="11.0" mnemonicParsing="false" onAction="#onNext" text="Next">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-right-bold-circle-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </center>
+         <left>
+            <Label fx:id="pagingInfo" styleClass="default-text" BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <StackPane fx:id="viewStack" BorderPane.alignment="CENTER">
@@ -56,7 +86,7 @@
                      <top>
                         <ToolBar BorderPane.alignment="CENTER">
                           <items>
-                              <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0">
+                              <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0" promptText="Filter for tournament names...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -67,11 +97,10 @@
                      <center>
                         <TableView fx:id="tableView" prefHeight="824.0" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                           <columns>
-                              <TableColumn fx:id="avatarColumn" prefWidth="112.79998445510864" />
-                            <TableColumn fx:id="nameColumn" prefWidth="487.1999053955078" text="Name" />
-                            <TableColumn fx:id="detailsColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Details" />
-                              <TableColumn fx:id="playersColumn" style="-fx-alignment: CENTER;" text="Players" />
-                              <TableColumn fx:id="tablesColumn" prefWidth="324.7999572753906" text="Tables" />
+                              <TableColumn fx:id="avatarColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" />
+                            <TableColumn fx:id="nameColumn" prefWidth="450.0" text="Name" />
+                              <TableColumn fx:id="playersColumn" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Active Players" />
+                              <TableColumn fx:id="tablesColumn" maxWidth="-1.0" minWidth="350.0" prefWidth="350.0" text="Tables" />
                           </columns>
                         </TableView>
                      </center>

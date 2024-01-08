@@ -115,9 +115,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Label validationTitle;
 
   @FXML
-  private Label validationDescription;
-
-  @FXML
   private TableView<TournamentTreeModel> tableView;
 
   @FXML
@@ -196,28 +193,24 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(tournament.getDisplayName())) {
-      validationTitle.setText("No tournament name set.");
-      validationDescription.setText("Define a meaningful tournament name.");
+      validationTitle.setText("No tournament name set: Define a meaningful tournament name.");
       return;
     }
 
     if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
-      validationTitle.setText("Invalid start/end date set.");
-      validationDescription.setText("The end date must be after the start date.");
+      validationTitle.setText("Invalid start/end date set: The end date must be after the start date.");
       return;
     }
 
     ObservableList<TournamentTreeModel> items = this.tableView.getItems();
     if (items.isEmpty()) {
-      validationTitle.setText("Not tables selected.");
-      validationDescription.setText("A tournament must have at least one table to be played.");
+      validationTitle.setText("Not tables selected: A tournament must have at least one table to be played.");
       return;
     }
 
     for (TournamentTreeModel item : items) {
       if (!item.isValid()) {
-        validationTitle.setText("Table not valid.");
-        validationDescription.setText("One or more tables are invalid.");
+        validationTitle.setText("Table not valid: One or more tables are invalid.");
       }
     }
 

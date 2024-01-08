@@ -27,23 +27,30 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="18.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <right>
+            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+               <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </right>
+         <left>
+            <Label fx:id="pagingInfo" styleClass="default-text" BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <VBox BorderPane.alignment="CENTER">
@@ -201,7 +208,7 @@
                   </VBox>
                </center>
                <right>
-                  <VBox prefHeight="200.0" prefWidth="440.0" BorderPane.alignment="CENTER">
+                  <VBox prefHeight="200.0" prefWidth="540.0" BorderPane.alignment="CENTER">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
@@ -223,12 +230,22 @@
                               </Label>
                            </children>
                         </HBox>
-                        <TextArea fx:id="descriptionText" prefHeight="216.0" prefWidth="200.0" wrapText="true">
+                        <VBox>
                            <VBox.margin>
                               <Insets top="4.0" />
                            </VBox.margin>
-                        </TextArea>
+                           <children>
+                              <TextArea fx:id="descriptionText" prefHeight="216.0" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                        </VBox>
                      </children>
+                     <BorderPane.margin>
+                        <Insets left="12.0" />
+                     </BorderPane.margin>
                   </VBox>
                </right>
                <left>
@@ -387,7 +404,7 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <BorderPane>
+                  <BorderPane prefHeight="400.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
@@ -420,7 +437,7 @@
                               <TableColumn fx:id="statusColumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
                             <TableColumn fx:id="tableColumn" prefWidth="350.0" text="Your Table" />
                             <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
-                              <TableColumn fx:id="vpsTableVersionColumn" prefWidth="324.7999572753906" text="Table Version" />
+                              <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
                           </columns>
                         </TableView>
                      </center>
@@ -434,13 +451,6 @@
                <top>
                   <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
                </top>
-               <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </bottom>
                <padding>
                   <Insets bottom="6.0" left="12.0" right="6.0" top="6.0" />
                </padding>
