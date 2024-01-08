@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
@@ -254,15 +255,15 @@ public class NavigationController implements Initializable, StudioEventListener,
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
-    tournamentsBtn.setVisible(preference.getBooleanValue());
+    TournamentSettings settings = client.getTournamentsService().getSettings();
+    tournamentsBtn.setVisible(settings.isEnabled());
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
-      tournamentsBtn.setVisible((Boolean) value);
-
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+      TournamentSettings settings = client.getTournamentsService().getSettings();
+      tournamentsBtn.setVisible(settings.isEnabled());
       if(!tournamentsBtn.isVisible()) {
         try {
           onTablesClick(null);

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -257,8 +258,8 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.discordIdText.setText(player.getDiscordId());
     this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setDiscordId(newValue));
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
-    this.tournamentGroup.setVisible(preference.getBooleanValue());
+    TournamentSettings settings = client.getTournamentsService().getSettings();
+    this.tournamentGroup.setVisible(settings.isEnabled());
 
     this.nameField.requestFocus();
   }

@@ -70,6 +70,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host);
+    this.preferencesServiceClient = new PreferencesServiceClient(this);
 
     this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
@@ -87,12 +88,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
-    this.tournamentsServiceClient = new TournamentsServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
-    this.preferencesServiceClient = new PreferencesServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
@@ -102,6 +101,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+
+    this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
   }
 
   public String getSystemPreset() {

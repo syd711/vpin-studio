@@ -123,7 +123,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onAccount(ActionEvent event) throws IOException {
-    load("preference-mania.fxml", event);
+    load("preference-tournaments.fxml", event);
   }
 
   @FXML

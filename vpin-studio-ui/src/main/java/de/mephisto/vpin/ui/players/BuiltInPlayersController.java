@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
@@ -327,10 +328,11 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
-      adminColumn.setVisible((Boolean) value);
-      discordIdColumn.setVisible((Boolean) value);
-      tournamentColumn.setVisible((Boolean) value);
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+      TournamentSettings settings = client.getTournamentsService().getSettings();
+      adminColumn.setVisible(settings.isEnabled());
+      discordIdColumn.setVisible(settings.isEnabled());
+      tournamentColumn.setVisible(settings.isEnabled());
     }
   }
 }

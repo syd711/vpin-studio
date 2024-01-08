@@ -36,9 +36,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       if (result) {
         Set<Map.Entry<String, Object>> entries = values.entrySet();
         for (Map.Entry<String, Object> entry : entries) {
-          listeners.stream().forEach(listener -> {
-            listener.preferencesChanged(entry.getKey(), entry.getValue());
-          });
+          notifyPreferenceChange(entry.getKey(), entry.getValue());
         }
       }
       return result;
@@ -46,6 +44,12 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  public void notifyPreferenceChange(String key, Object value) {
+    listeners.stream().forEach(listener -> {
+      listener.preferencesChanged(key, value);
+    });
   }
 
   public boolean setPreference(String key, Object value) {

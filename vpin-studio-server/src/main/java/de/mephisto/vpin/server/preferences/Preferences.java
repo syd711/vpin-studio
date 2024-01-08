@@ -119,48 +119,15 @@ public class Preferences {
     this.serverSettings = serverSettings;
   }
 
-  @Column(name = "tournamentEnabled", nullable = false, columnDefinition = "boolean default false")
-  private boolean tournamentEnabled;
+  @Column(length = 8192)
+  private String tournamentSettings;
 
-  @Column(length = 2048)
-  private String tournamentDiscordLink;
-
-  @Column(length = 2048)
-  private String tournamentDashboardUrl;
-
-  @Column(length = 4096)
-  private String tournamentDescription;
-
-  public String getTournamentDescription() {
-    return tournamentDescription;
+  public String getTournamentSettings() {
+    return tournamentSettings;
   }
 
-  public void setTournamentDescription(String tournamentDescription) {
-    this.tournamentDescription = tournamentDescription;
-  }
-
-  public boolean getTournamentEnabled() {
-    return tournamentEnabled;
-  }
-
-  public void setTournamentEnabled(boolean tournamentEnabled) {
-    this.tournamentEnabled = tournamentEnabled;
-  }
-
-  public String getTournamentDiscordLink() {
-    return tournamentDiscordLink;
-  }
-
-  public void setTournamentDiscordLink(String tournamentDiscordLink) {
-    this.tournamentDiscordLink = tournamentDiscordLink;
-  }
-
-  public String getTournamentDashboardUrl() {
-    return tournamentDashboardUrl;
-  }
-
-  public void setTournamentDashboardUrl(String tournamentDashboardUrl) {
-    this.tournamentDashboardUrl = tournamentDashboardUrl;
+  public void setTournamentSettings(String tournamentSettings) {
+    this.tournamentSettings = tournamentSettings;
   }
 
   public String getDiscordVpsChannelId() {

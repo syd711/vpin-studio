@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -182,15 +183,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     t.setEndDate(end);
     t.setStartDate(DateUtil.today());
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_DASHBOARD_URL);
-    t.setDashboardUrl(preference.getValue());
-
-    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DISCORD_LINK);
-    t.setDiscordLink(preference.getValue());
-
-    preference = client.getPreference(PreferenceNames.TOURNAMENTS_DESCRIPTION);
-    t.setDescription(preference.getValue());
-
+    TournamentSettings settings = client.getTournamentsService().getSettings();
+    t.setDashboardUrl(settings.getDefaultDashboardUrl());
+    t.setDiscordLink(settings.getDefaultDiscordLink());
+    t.setDescription(settings.getDefaultDescription());
 
     t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
     try {

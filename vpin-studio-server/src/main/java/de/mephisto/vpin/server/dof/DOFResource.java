@@ -23,14 +23,14 @@ public class DOFResource {
   @Autowired
   private DOFService dofService;
 
-  @GetMapping
-  public DOFSettings getSettings() {
-    return dofService.getSettings();
-  }
-
   @GetMapping("sync")
   public JobExecutionResult syncDofConfig() {
     return dofService.sync();
+  }
+
+  @GetMapping
+  public DOFSettings getSettings() {
+    return dofService.getSettings();
   }
 
   @PostMapping

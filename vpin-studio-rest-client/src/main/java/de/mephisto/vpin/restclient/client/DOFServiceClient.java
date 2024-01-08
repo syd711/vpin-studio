@@ -19,10 +19,6 @@ public class DOFServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "dof", DOFSettings.class);
   }
 
-  public JobExecutionResult sync() {
-    return getRestClient().get(API + "dof/sync", JobExecutionResult.class);
-  }
-
   public DOFSettings saveSettings(DOFSettings s) throws Exception {
     try {
       return getRestClient().post(API + "dof", s, DOFSettings.class);
@@ -30,5 +26,9 @@ public class DOFServiceClient extends VPinStudioClientService {
       LOG.error("Failed to save dof settings: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public JobExecutionResult sync() {
+    return getRestClient().get(API + "dof/sync", JobExecutionResult.class);
   }
 }
