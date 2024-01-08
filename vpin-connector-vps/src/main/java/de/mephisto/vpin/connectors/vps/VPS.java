@@ -17,6 +17,7 @@ public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
   public final static String URL = "https://fraesh.github.io/vps-db/vpsdb.json";
+  public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
 
   private static ObjectMapper objectMapper;
 
@@ -50,7 +51,7 @@ public class VPS {
   }
 
   public static String getVpsTableUrl(String tableId, String versionId) {
-    String url = "https://virtual-pinball-spreadsheet.web.app/game/" + tableId;
+    String url = BASE_URL + "/game/" + tableId;
     if (versionId != null) {
       url += "#" + versionId;
     }
@@ -58,7 +59,7 @@ public class VPS {
   }
 
   public static String getVpsTableUrl(String tableId) {
-    return "https://virtual-pinball-spreadsheet.web.app/game/" + tableId;
+    return BASE_URL + "/game/" + tableId;
   }
 
   public static VPS getInstance() {

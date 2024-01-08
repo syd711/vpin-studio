@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -14,6 +15,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tournaments.TournamentsController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -44,7 +46,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class NavigationController implements Initializable, StudioEventListener {
+public class NavigationController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
   private final static FontIcon updateIcon = WidgetFactory.createUpdateStar();
@@ -70,6 +72,10 @@ public class NavigationController implements Initializable, StudioEventListener 
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
+
+  @FXML
+  private Pane tournamentsBtn;
+
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -112,6 +118,11 @@ public class NavigationController implements Initializable, StudioEventListener 
   @FXML
   private void onPlayersClick(MouseEvent event) throws IOException {
     loadScreen(event, PlayersController.class, "scene-players.fxml");
+  }
+
+  @FXML
+  private void onTournamentsClick(MouseEvent event) throws IOException {
+    loadScreen(event, TournamentsController.class, "scene-tournaments.fxml");
   }
 
   @FXML
@@ -232,6 +243,8 @@ public class NavigationController implements Initializable, StudioEventListener 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
+
     staticAvatarPane = this.avatarPane;
     refreshAvatar();
 
@@ -239,5 +252,24 @@ public class NavigationController implements Initializable, StudioEventListener 
 
     staticButtonList = this.buttonList;
     EventManager.getInstance().addListener(this);
+    client.getPreferenceService().addListener(this);
+
+    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.TOURNAMENTS_ENABLED);
+    tournamentsBtn.setVisible(preference.getBooleanValue());
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
+      tournamentsBtn.setVisible((Boolean) value);
+
+      if(!tournamentsBtn.isVisible()) {
+        try {
+          onTablesClick(null);
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
   }
 }

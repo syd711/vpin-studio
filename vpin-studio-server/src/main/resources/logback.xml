@@ -4,7 +4,7 @@
         <file>./vpin-studio-server.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>./vpin-studio-server.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <MaxHistory>5</MaxHistory>
+            <MaxHistory>2</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>

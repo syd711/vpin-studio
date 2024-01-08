@@ -2,6 +2,7 @@
   <configuration default="false" name="VPinStudioServer" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.server.VPinStudioServer" />
     <module name="vpin-studio-server" />
+    <option name="PROGRAM_PARAMETERS" value="-Dspring.profiles.active=dev" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.mephisto.vpin.server.*" />

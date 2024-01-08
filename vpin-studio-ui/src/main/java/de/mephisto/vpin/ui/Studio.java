@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
+import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.ui.launcher.LauncherController;
@@ -37,6 +39,7 @@ public class Studio extends Application {
   public static Stage stage;
 
   public static VPinStudioClient client;
+  public static VPinManiaClient maniaClient;
 
   public static void main(String[] args) {
     launch(args);
@@ -115,6 +118,9 @@ public class Studio extends Application {
 
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
+
+      ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
+      Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
       OverlayWindowFX.client = Studio.client;
 
       FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));

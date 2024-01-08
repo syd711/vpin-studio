@@ -30,9 +30,11 @@ module de.mephisto.vpin.ui {
 
   requires de.mephisto.vpin.connectors.discord;
   requires de.mephisto.vpin.connectors.vps;
+  requires de.mephisto.vpin.connectors.mania;
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
   requires de.mephisto.vpin.connectors.assets;
+  requires de.mephisto.vpin.connectors.iscored;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
   exports de.mephisto.vpin.ui;
@@ -46,6 +48,8 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables to javafx.fxml;
   exports de.mephisto.vpin.ui.competitions;
   opens de.mephisto.vpin.ui.competitions to javafx.fxml;
+  exports de.mephisto.vpin.ui.tournaments;
+  opens de.mephisto.vpin.ui.tournaments to javafx.fxml;
   exports de.mephisto.vpin.ui.players;
   opens de.mephisto.vpin.ui.players to javafx.fxml;
   exports de.mephisto.vpin.ui.preferences;
@@ -72,4 +76,12 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.tables.editors.dialogs to javafx.fxml;
   exports de.mephisto.vpin.ui.tables.alx;
   opens de.mephisto.vpin.ui.tables.alx to javafx.fxml;
+  exports de.mephisto.vpin.ui.tournaments.dialogs;
+  opens de.mephisto.vpin.ui.tournaments.dialogs to javafx.fxml;
+  exports de.mephisto.vpin.ui.vps;
+  opens de.mephisto.vpin.ui.vps to javafx.fxml;
+  exports de.mephisto.vpin.ui.tournaments.view;
+  opens de.mephisto.vpin.ui.tournaments.view to javafx.fxml;
+  exports de.mephisto.vpin.ui.players.dialogs;
+  opens de.mephisto.vpin.ui.players.dialogs to javafx.fxml;
 }

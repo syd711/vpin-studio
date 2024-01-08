@@ -11,22 +11,24 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuiltInPlayersController">
+<StackPane fx:id="tableStack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.BuiltInPlayersController">
     <children>
         <BorderPane>
             <center>
                 <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="idColumn" prefWidth="62.399903774261475" style="-fx-alignment: CENTER;" text="ID" />
-                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="90.39989471435547" style="-fx-alignment: CENTER;" text="Avatar" />
-                        <TableColumn fx:id="nameColumn" prefWidth="280.0001220703125" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="76.0" style="-fx-alignment: CENTER;" text="Initials" />
-                  <TableColumn fx:id="columnCreatedAt" minWidth="2.39996337890625" prefWidth="112.00003051757812" style="-fx-alignment: CENTER;" text="Created At" />
+                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Avatar" />
+                        <TableColumn fx:id="nameColumn" prefWidth="280.0001220703125" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Initials" />
+                        <TableColumn fx:id="discordIdColumn" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Discord Id" />
+                  <TableColumn fx:id="adminColumn" prefWidth="150.0" style="-fx-alignment: CENTER;" text="VPin Default Player" />
+                  <TableColumn fx:id="tournamentColumn" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Tournament Player" />
+                  <TableColumn fx:id="columnCreatedAt" minWidth="2.39996337890625" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Created At" />
                     </columns>
                 </TableView>
             </center>
          <top>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <ToolBar BorderPane.alignment="CENTER">
               <items>
                   <TextField fx:id="searchTextField" promptText="Search Player...">
                      <font>
@@ -56,7 +58,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" iconSize="18" />
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

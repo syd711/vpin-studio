@@ -41,7 +41,7 @@
                 </StackPane>
             </center>
             <top>
-                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <ToolBar BorderPane.alignment="CENTER">
                     <items>
                         <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
                             <font>

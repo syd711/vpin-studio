@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
-import de.mephisto.vpin.ui.players.PlayerDialogController;
+import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
@@ -54,7 +54,7 @@ public class Dialogs {
     return true;
   }
 
-  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection) {
+  public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {
     String title = "Add New Player";
     if (selection != null) {
       title = "Edit Player";
@@ -63,7 +63,7 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
-    controller.setPlayer(selection);
+    controller.setPlayer(selection, players);
     stage.showAndWait();
 
     return controller.getPlayer();

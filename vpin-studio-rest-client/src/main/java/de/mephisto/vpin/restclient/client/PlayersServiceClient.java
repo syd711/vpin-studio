@@ -62,4 +62,14 @@ public class PlayersServiceClient extends VPinStudioClientService {
   public ScoreSummaryRepresentation getPlayerScores(String initials) {
     return getRestClient().get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
   }
+
+  public PlayerRepresentation getDefaultPlayer() {
+    List<PlayerRepresentation> players = this.getPlayers();
+    for (PlayerRepresentation player : players) {
+      if (player.isAdministrative()) {
+        return player;
+      }
+    }
+    return null;
+  }
 }

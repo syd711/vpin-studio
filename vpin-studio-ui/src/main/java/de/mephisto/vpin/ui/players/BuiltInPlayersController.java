@@ -1,13 +1,18 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.client.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.Dialogs;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -18,8 +23,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +36,9 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class BuiltInPlayersController implements Initializable {
+public class BuiltInPlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
 
   @FXML
@@ -47,7 +54,7 @@ public class BuiltInPlayersController implements Initializable {
   private TableView<PlayerRepresentation> tableView;
 
   @FXML
-  private TableColumn<PlayerRepresentation, String> idColumn;
+  private TableColumn<PlayerRepresentation, Label> discordIdColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> nameColumn;
@@ -56,7 +63,13 @@ public class BuiltInPlayersController implements Initializable {
   private TableColumn<PlayerRepresentation, String> initialsColumn;
 
   @FXML
-  private TableColumn<PlayerRepresentation, String> avatarColumn;
+  private TableColumn<PlayerRepresentation, Label> adminColumn;
+
+  @FXML
+  private TableColumn<PlayerRepresentation, Control> avatarColumn;
+
+  @FXML
+  private TableColumn<PlayerRepresentation, Label> tournamentColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> columnCreatedAt;
@@ -112,9 +125,9 @@ public class BuiltInPlayersController implements Initializable {
 
   @FXML
   private void onAdd() {
-    PlayerRepresentation player = Dialogs.openPlayerDialog(null);
-    onReload();
+    PlayerRepresentation player = Dialogs.openPlayerDialog(null, client.getPlayerService().getPlayers());
     if (player != null) {
+      onReload();
       tableView.getSelectionModel().select(player);
     }
   }
@@ -123,9 +136,9 @@ public class BuiltInPlayersController implements Initializable {
   private void onEdit() {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      PlayerRepresentation player = Dialogs.openPlayerDialog(selection);
-      onReload();
+      PlayerRepresentation player = Dialogs.openPlayerDialog(selection, client.getPlayerService().getPlayers());
       if (player != null) {
+        onReload();
         tableView.getSelectionModel().select(player);
       }
     }
@@ -137,102 +150,22 @@ public class BuiltInPlayersController implements Initializable {
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPlayerService().deletePlayer(selection);
-        tableView.getSelectionModel().clearSelection();
-        onReload();
-      }
-    }
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-    tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
-        "Add new players or connect a Discord server."));
-
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      playersLoadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Players...");
-    } catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
-
-    idColumn.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(String.valueOf(value.getId()));
-    });
-    nameColumn.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(value.getName());
-    });
-    avatarColumn.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      if (value.getAvatar() == null) {
-        return new SimpleObjectProperty("");
-      }
-
-      Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setFitWidth(50);
-      view.setFitHeight(50);
-      CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-      return new SimpleObjectProperty(view);
-    });
-    initialsColumn.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
-        Label label = new Label(value.getInitials());
-        String color = "#FF3333";
-        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
-        return new SimpleObjectProperty(label);
-      }
-
-      if (StringUtils.isEmpty(value.getInitials())) {
-        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
-      }
-      return new SimpleObjectProperty(value.getInitials().toUpperCase());
-    });
-    columnCreatedAt.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(DateFormat.getInstance().format(value.getCreatedAt()));
-    });
-
-    editBtn.setDisable(true);
-    deleteBtn.setDisable(true);
-
-    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null;
-      editBtn.setDisable(disable);
-      deleteBtn.setDisable(disable);
-
-      if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        updateSelection(Optional.ofNullable(newSelection));
-      }
-    });
-
-
-    tableView.setRowFactory(tv -> {
-      TableRow<PlayerRepresentation> row = new TableRow<>();
-      row.setOnMouseClicked(event -> {
-        if (event.getClickCount() == 2 && (!row.isEmpty())) {
-          onEdit();
+        if (selection.getTournamentUserUuid() != null) {
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+          if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
+            client.getPlayerService().deletePlayer(selection);
+            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
+            tableView.getSelectionModel().clearSelection();
+            onReload();
+          }
         }
-      });
-      return row;
-    });
-
-    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-
-      List<PlayerRepresentation> filtered = filterPlayers(this.players);
-      tableView.setItems(FXCollections.observableList(filtered));
-    });
-
-    this.onReload();
+        else {
+          client.getPlayerService().deletePlayer(selection);
+          tableView.getSelectionModel().clearSelection();
+          onReload();
+        }
+      }
+    }
   }
 
   public void setPlayersController(PlayersController playersController) {
@@ -272,5 +205,132 @@ public class BuiltInPlayersController implements Initializable {
 
   public int getCount() {
     return this.players != null ? this.players.size() : 0;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
+      "Add new players or connect a Discord server."));
+
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      playersLoadingOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Players...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+    discordIdColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (!StringUtils.isEmpty(value.getDiscordId())) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
+    });
+
+
+    tournamentColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (!StringUtils.isEmpty(value.getTournamentUserUuid())) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
+    });
+
+    adminColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (value.isAdministrative()) {
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        return new SimpleObjectProperty<>(label);
+      }
+      return null;
+    });
+
+    nameColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      return new SimpleObjectProperty(value.getName());
+    });
+
+    avatarColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (value.getAvatar() == null) {
+        return new SimpleObjectProperty("");
+      }
+
+      Image image = new Image(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid()));
+      return new SimpleObjectProperty<>(AvatarFactory.create(image));
+    });
+
+    initialsColumn.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
+        Label label = new Label(value.getInitials());
+        String color = "#FF3333";
+        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+        return new SimpleObjectProperty(label);
+      }
+
+      if (StringUtils.isEmpty(value.getInitials())) {
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+      }
+      return new SimpleObjectProperty(value.getInitials().toUpperCase());
+    });
+
+    columnCreatedAt.setCellValueFactory(cellData -> {
+      PlayerRepresentation value = cellData.getValue();
+      return new SimpleObjectProperty(DateFormat.getInstance().format(value.getCreatedAt()));
+    });
+
+    editBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+
+    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      boolean disable = newSelection == null;
+      editBtn.setDisable(disable);
+      deleteBtn.setDisable(disable);
+
+      if (oldSelection == null || !oldSelection.equals(newSelection)) {
+        updateSelection(Optional.ofNullable(newSelection));
+      }
+    });
+
+
+    tableView.setRowFactory(tv -> {
+      TableRow<PlayerRepresentation> row = new TableRow<>();
+      row.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+          onEdit();
+        }
+      });
+      return row;
+    });
+
+    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+      tableView.getSelectionModel().clearSelection();
+
+      List<PlayerRepresentation> filtered = filterPlayers(this.players);
+      tableView.setItems(FXCollections.observableList(filtered));
+    });
+
+    client.getPreferenceService().addListener(this);
+
+    this.onReload();
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_ENABLED.equals(key)) {
+      adminColumn.setVisible((Boolean) value);
+      discordIdColumn.setVisible((Boolean) value);
+      tournamentColumn.setVisible((Boolean) value);
+    }
   }
 }

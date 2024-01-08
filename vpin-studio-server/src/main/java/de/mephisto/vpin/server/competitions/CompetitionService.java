@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.tournaments.TournamentsService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -48,6 +49,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private CompetitionValidator campaignValidationService;
+
+  @Autowired
+  private TournamentsService maniaService;
 
   private final List<CompetitionChangeListener> listeners = new ArrayList<>();
 

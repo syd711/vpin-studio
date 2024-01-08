@@ -1,6 +1,10 @@
 package de.mephisto.vpin.restclient.players;
 
+import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
@@ -27,6 +31,50 @@ public class PlayerRepresentation {
   private String duplicatePlayerName;
 
   private boolean bot;
+
+  private String discordId;
+
+  private boolean administrative;
+
+  private String tournamentUserUuid;
+
+  public boolean isRegistered() {
+    return !StringUtils.isEmpty(this.getTournamentUserUuid());
+  }
+
+  @NonNull
+  public ManiaAccountRepresentation toManiaAccount() {
+    ManiaAccountRepresentation account = new ManiaAccountRepresentation();
+    account.setCabinetId(SystemUtil.getBoardSerialNumber());
+    account.setInitials(this.getInitials());
+    account.setDisplayName(this.getName());
+    account.setUuid(this.getTournamentUserUuid());
+    return account;
+  }
+
+  public String getTournamentUserUuid() {
+    return tournamentUserUuid;
+  }
+
+  public void setTournamentUserUuid(String tournamentUserUuid) {
+    this.tournamentUserUuid = tournamentUserUuid;
+  }
+
+  public String getDiscordId() {
+    return discordId;
+  }
+
+  public void setDiscordId(String discordId) {
+    this.discordId = discordId;
+  }
+
+  public boolean isAdministrative() {
+    return administrative;
+  }
+
+  public void setAdministrative(boolean administrative) {
+    this.administrative = administrative;
+  }
 
   public String getDisplayName() {
     return displayName;

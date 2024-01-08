@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -50,6 +49,37 @@ public class Player {
   private String domain;
 
   private String email;
+
+  private String discordId;
+
+  private String tournamentUserUuid;
+
+  @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
+  private boolean administrative;
+
+  public String getTournamentUserUuid() {
+    return tournamentUserUuid;
+  }
+
+  public void setTournamentUserUuid(String tournamentUserUuid) {
+    this.tournamentUserUuid = tournamentUserUuid;
+  }
+
+  public String getDiscordId() {
+    return discordId;
+  }
+
+  public void setDiscordId(String discordId) {
+    this.discordId = discordId;
+  }
+
+  public boolean isAdministrative() {
+    return administrative;
+  }
+
+  public void setAdministrative(boolean administrative) {
+    this.administrative = administrative;
+  }
 
   public String getDisplayName() {
     return displayName;

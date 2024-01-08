@@ -46,7 +46,6 @@ public class VPinStudioClientService {
   }
 
   protected RestTemplate createUploadTemplate() {
-    String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
     SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
     rf.setBufferRequestBody(false);
     return new RestTemplate(rf);

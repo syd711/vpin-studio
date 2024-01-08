@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -66,7 +67,13 @@ public class ProgressDialogController implements Initializable, DialogController
                 Platform.runLater(() -> {
                   String label = model.nextToString(next);
                   if (label != null) {
-                    progressBarLabel.setText(model.nextToString(next));
+                    String progressText = model.nextToString(next);
+                    if(!StringUtils.isEmpty(progressText)) {
+                      progressBarLabel.setText(progressText);
+                    }
+                    else {
+                      progressBarLabel.setText("");
+                    }
                   }
                   String title = model.getTitle();
                   if (model.getMax() > 1) {

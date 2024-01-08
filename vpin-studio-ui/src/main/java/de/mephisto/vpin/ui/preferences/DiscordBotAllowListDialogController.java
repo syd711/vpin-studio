@@ -82,7 +82,7 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
           root.setSpacing(3);
           CheckBox checkBox = new CheckBox();
           checkBox.setUserData(user);
-          checkBox.setText(user.getDisplayName());
+          checkBox.setText(user.getName());
           checkBox.setSelected(allowList.contains(user));
           checkBox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 

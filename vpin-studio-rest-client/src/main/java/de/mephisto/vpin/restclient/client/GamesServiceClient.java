@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -13,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -126,6 +130,26 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
+  @Nullable
+  public GameRepresentation getGameByVpsTable(@NonNull VpsTable vpsTable, @Nullable VpsTableVersion vpsTableVersion) {
+    List<GameRepresentation> gamesCached = getGamesCached();
+    GameRepresentation hit = null;
+    for (GameRepresentation game : gamesCached) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTable.getId())) {
+        if (vpsTableVersion == null) {
+          hit = game;
+          break;
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersion.getId())) {
+          hit = game;
+          break;
+        }
+      }
+    }
+    return hit;
+  }
+
   public List<Integer> getGameIds() {
     try {
       final RestTemplate restTemplate = new RestTemplate();
@@ -203,5 +227,4 @@ public class GamesServiceClient extends VPinStudioClientService {
   public boolean resetHighscore(int gameId) {
     return getRestClient().delete(API + "games/reset/" + gameId);
   }
-
 }
