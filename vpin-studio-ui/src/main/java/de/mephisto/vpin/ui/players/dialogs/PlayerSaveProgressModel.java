@@ -5,8 +5,6 @@ import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.AvatarImageUtil;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -97,10 +95,18 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       if (tournamentPlayer) {
         ManiaAccountRepresentation maniaAccount = player.toManiaAccount();
         if (player.isRegistered()) {
-          maniaClient.getAccountClient().update(maniaAccount);
-          if (this.avatarFile != null) {
-            maniaClient.getAccountClient().updateAvatar(maniaAccount, this.avatarFile, null);
+          ManiaAccountRepresentation update = maniaClient.getAccountClient().update(maniaAccount);
+          if (update == null) {
+            update = maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+            player.setTournamentUserUuid(update.getUuid());
+            client.getPlayerService().savePlayer(player);
           }
+          else {
+            if (this.avatarFile != null) {
+              maniaClient.getAccountClient().updateAvatar(maniaAccount, this.avatarFile, null);
+            }
+          }
+
         }
         else {
           ManiaAccountRepresentation register = maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
@@ -121,7 +127,6 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     } catch (Exception ex) {
       LOG.error("Failed to save player: " + ex.getMessage(), ex);
       progressResultModel.getResults().add(ex.getMessage());
-      WidgetFactory.showAlert(Studio.stage, ex.getMessage());
     }
   }
 

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -45,13 +46,16 @@
                             </font>
                         </TextField>
                         <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
                             </graphic>
+                     <tooltip>
+                        <Tooltip text="Reload Tournaments" />
+                     </tooltip>
                         </Button>
                   <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Synchronize" textFill="WHITE">
                      <items>
@@ -65,20 +69,20 @@
                      </graphic>
                   </SplitMenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Create" textFill="WHITE">
+                        <Button fx:id="createBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Create" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Button fx:id="addBtn1" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Add" textFill="WHITE">
+                  <Button fx:id="addBtn" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
                   <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">

@@ -7,4 +7,6 @@ public interface UIDefaults {
   String MANAGER_TITLE = "VPin Studio Table Manager";
 
   int DEFAULT_AVATARSIZE = 70;
+
+  int TOURNAMENT_BROWSER_PAGE_SIZE = 5;
 }

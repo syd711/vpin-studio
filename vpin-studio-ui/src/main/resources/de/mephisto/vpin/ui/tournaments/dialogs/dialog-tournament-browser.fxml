@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -41,39 +42,44 @@
       </HBox>
    </bottom>
    <center>
-      <VBox prefHeight="500.0" BorderPane.alignment="CENTER">
+      <StackPane fx:id="viewStack" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="6.0" left="6.0" right="12.0" top="6.0" />
          </BorderPane.margin>
          <children>
-            <BorderPane>
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-               <top>
-                  <ToolBar BorderPane.alignment="CENTER">
-                    <items>
-                        <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                    </items>
-                  </ToolBar>
-               </top>
-               <center>
-                  <TableView fx:id="tableView" prefHeight="500.0" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
-                    <columns>
-                      <TableColumn fx:id="playersColumn" prefWidth="300.0" text="Name" />
-                      <TableColumn fx:id="detailsColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Details" />
-                        <TableColumn fx:id="tableColumn1" text="Players" />
-                        <TableColumn fx:id="tablesColumn" prefWidth="324.7999572753906" text="Tables" />
-                    </columns>
-                  </TableView>
-               </center>
-            </BorderPane>
+            <VBox prefHeight="500.0">
+               <children>
+                  <BorderPane>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                     <top>
+                        <ToolBar BorderPane.alignment="CENTER">
+                          <items>
+                              <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                          </items>
+                        </ToolBar>
+                     </top>
+                     <center>
+                        <TableView fx:id="tableView" prefHeight="824.0" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                          <columns>
+                              <TableColumn fx:id="avatarColumn" prefWidth="112.79998445510864" />
+                            <TableColumn fx:id="nameColumn" prefWidth="487.1999053955078" text="Name" />
+                            <TableColumn fx:id="detailsColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Details" />
+                              <TableColumn fx:id="playersColumn" style="-fx-alignment: CENTER;" text="Players" />
+                              <TableColumn fx:id="tablesColumn" prefWidth="324.7999572753906" text="Tables" />
+                          </columns>
+                        </TableView>
+                     </center>
+                  </BorderPane>
+               </children>
+            </VBox>
          </children>
-      </VBox>
+      </StackPane>
    </center>
    <right>
       <VBox BorderPane.alignment="CENTER">
@@ -171,9 +177,9 @@
             </Label>
             <VBox fx:id="descriptionWrapper" styleClass="media-container">
                <children>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="250.0" prefWidth="300.0" styleClass="media-parent">
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="437.0" prefWidth="300.0" styleClass="media-parent">
                      <content>
-                        <Label fx:id="descriptionText" prefWidth="400.0" text="Label" textFill="WHITE" wrapText="true">
+                        <Label fx:id="descriptionText" prefWidth="400.0" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -182,8 +188,14 @@
                      <padding>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                      </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </ScrollPane>
                </children>
+               <VBox.margin>
+                  <Insets bottom="6.0" />
+               </VBox.margin>
             </VBox>
          </children>
          <BorderPane.margin>

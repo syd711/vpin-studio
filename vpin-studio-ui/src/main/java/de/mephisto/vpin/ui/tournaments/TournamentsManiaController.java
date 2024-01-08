@@ -108,6 +108,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private Button addBtn;
 
   @FXML
+  private Button createBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -172,6 +175,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 //      Dialogs.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
 //      this.onReload();
 //    }
+  }
+
+  @FXML
+  private void onAdd() {
+
   }
 
   @FXML
@@ -370,27 +378,24 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     textfieldSearch.setDisable(true);
     addBtn.setDisable(true);
+    createBtn.setDisable(true);
     editBtn.setDisable(true);
+    createBtn.setDisable(true);
     validateBtn.setDisable(true);
     deleteBtn.setDisable(true);
     duplicateBtn.setDisable(true);
     finishBtn.setDisable(true);
     downloadBtn.setDisable(true);
     reloadBtn.setDisable(true);
+    browseBtn.setDisable(true);
 
-    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    boolean validConfig = false;
-    if (defaultPlayer != null && defaultPlayer.isRegistered()) {
-      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
-      if (account == null) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.");
-      }
-      validConfig = account != null;
-    }
+    boolean validConfig = isValidTournamentSetupAvailable();
 
     if (validConfig) {
-      textfieldSearch.setDisable(false);
       addBtn.setDisable(false);
+      createBtn.setDisable(true);
+      browseBtn.setDisable(false);
+      textfieldSearch.setDisable(false);
       duplicateBtn.setDisable(false);
       reloadBtn.setDisable(false);
 
@@ -430,6 +435,20 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   }
 
+  private static boolean isValidTournamentSetupAvailable() {
+    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+
+    boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
+    if (validConfig) {
+      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
+      if (account == null) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
+      }
+      validConfig = account != null;
+    }
+    return validConfig;
+  }
+
   private void bindSearchField() {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
       treeTableView.getSelectionModel().clearSelection();
@@ -458,17 +477,34 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       newSelection = model.get();
     }
 
-    boolean disable = newSelection == null;
-    boolean isOwner = newSelection != null && newSelection.getTournament() != null && newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId());
-    editBtn.setDisable(disable || !isOwner || newSelection == null || newSelection.getTournament().isFinished());
-    validateBtn.setDisable(model.isEmpty() || model.get().getTournament().isFinished());
-    finishBtn.setDisable(disable || !isOwner || model.isEmpty() || !model.get().getTournament().isActive());
-    deleteBtn.setDisable(disable);
-    duplicateBtn.setDisable(disable || !isOwner);
-    reloadBtn.setDisable(this.maniaAccount != null);
-    addBtn.setDisable(this.maniaAccount != null);
-    downloadBtn.setDisable(!disable && newSelection.getGame() == null);
-    browseBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
+    addBtn.setDisable(true);
+    createBtn.setDisable(true);
+    editBtn.setDisable(true);
+    validateBtn.setDisable(true);
+    finishBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+    duplicateBtn.setDisable(true);
+    reloadBtn.setDisable(true);
+    downloadBtn.setDisable(true);
+    browseBtn.setDisable(true);
+
+    boolean validTournamentSetupAvailable = isValidTournamentSetupAvailable();
+    if (validTournamentSetupAvailable) {
+      boolean disable = newSelection == null;
+      boolean isOwner = newSelection != null && newSelection.getTournament() != null && newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId());
+
+      createBtn.setDisable(disable);
+      editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
+      validateBtn.setDisable(model.isEmpty() || model.get().getTournament().isFinished());
+      finishBtn.setDisable(disable || !isOwner || !model.get().getTournament().isActive());
+
+      deleteBtn.setDisable(disable);
+      duplicateBtn.setDisable(disable || !isOwner);
+      reloadBtn.setDisable(this.maniaAccount != null);
+      addBtn.setDisable(this.maniaAccount != null);
+      downloadBtn.setDisable(!disable && newSelection.getGame() == null);
+      browseBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
+    }
 
     if (model.isPresent()) {
 //      if (newSelection.getValidationState().getCode() > 0) {
