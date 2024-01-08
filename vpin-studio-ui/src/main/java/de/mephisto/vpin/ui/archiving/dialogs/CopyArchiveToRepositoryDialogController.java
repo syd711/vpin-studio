@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveCopyToRepositoryDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;

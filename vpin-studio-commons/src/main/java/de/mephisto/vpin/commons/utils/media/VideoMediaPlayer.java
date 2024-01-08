@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;

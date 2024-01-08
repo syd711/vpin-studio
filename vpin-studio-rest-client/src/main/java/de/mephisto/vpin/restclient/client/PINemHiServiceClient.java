@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class PINemHiServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  PINemHiServiceClient(VPinStudioClient client) {
+  public PINemHiServiceClient(VPinStudioClient client) {
     super(client);
   }
 

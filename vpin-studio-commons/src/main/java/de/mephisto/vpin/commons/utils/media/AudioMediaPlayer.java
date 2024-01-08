@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;

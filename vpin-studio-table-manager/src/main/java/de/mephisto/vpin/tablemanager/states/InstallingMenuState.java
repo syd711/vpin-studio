@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
@@ -9,8 +9,6 @@ import de.mephisto.vpin.tablemanager.MenuController;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 
 public class InstallingMenuState extends MenuState {

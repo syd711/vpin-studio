@@ -2,9 +2,9 @@ package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.tables.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.tables.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.animation.ParallelTransition;

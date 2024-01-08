@@ -18,7 +18,7 @@ public class VPinStudioClientService {
 
   public VPinStudioClient client;
 
-  VPinStudioClientService(VPinStudioClient client) {
+  public VPinStudioClientService(VPinStudioClient client) {
     this.client = client;
   }
 

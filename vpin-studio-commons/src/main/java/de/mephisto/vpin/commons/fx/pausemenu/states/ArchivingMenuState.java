@@ -2,8 +2,8 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.restclient.tables.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

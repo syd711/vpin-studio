@@ -15,7 +15,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.representations;
   exports de.mephisto.vpin.restclient.discord;
   exports de.mephisto.vpin.restclient.util;
-  exports de.mephisto.vpin.restclient.tables.descriptors;
+  exports de.mephisto.vpin.restclient.games.descriptors;
   exports de.mephisto.vpin.restclient.client;
   exports de.mephisto.vpin.restclient.jobs;
   exports de.mephisto.vpin.restclient.popper;
@@ -28,7 +28,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.competitions;
   exports de.mephisto.vpin.restclient.directb2s;
   exports de.mephisto.vpin.restclient.highscores;
-  exports de.mephisto.vpin.restclient.tables;
+  exports de.mephisto.vpin.restclient.games;
   exports de.mephisto.vpin.restclient.puppacks;
   exports de.mephisto.vpin.restclient.players;
   exports de.mephisto.vpin.restclient.validation;
@@ -41,4 +41,6 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.cards;
   exports de.mephisto.vpin.restclient.dof;
   exports de.mephisto.vpin.restclient.tournaments;
+  exports de.mephisto.vpin.restclient.preferences;
+  exports de.mephisto.vpin.restclient.vps;
 }

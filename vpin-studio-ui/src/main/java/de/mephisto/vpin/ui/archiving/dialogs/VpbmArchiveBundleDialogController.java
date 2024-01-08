@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;

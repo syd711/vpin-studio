@@ -2,12 +2,6 @@ package de.mephisto.vpin.server.dof;
 
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveCopyToRepositoryDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.BackupDescriptor;
-import de.mephisto.vpin.server.io.IOService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

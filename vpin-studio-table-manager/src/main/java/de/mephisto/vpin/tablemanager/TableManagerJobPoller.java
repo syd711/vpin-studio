@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager;
 
-import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.slf4j.Logger;

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class PinVolServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  PinVolServiceClient(VPinStudioClient client) {
+  public PinVolServiceClient(VPinStudioClient client) {
     super(client);
   }
 

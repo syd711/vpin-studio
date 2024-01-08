@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.jobs;
 
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.tables.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class PlaylistsServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  PlaylistsServiceClient(VPinStudioClient client) {
+  public PlaylistsServiceClient(VPinStudioClient client) {
     super(client);
   }
 

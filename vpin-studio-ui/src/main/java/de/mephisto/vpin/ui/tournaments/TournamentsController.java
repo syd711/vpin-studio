@@ -228,7 +228,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       nameLabel.setText(tournament.getDisplayName());
       visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(ManiaTournamentVisibility.publicTournament) ? "public" : "private");
       uuidLabel.setText(tournament.getUuid());
-      avatarPane.getChildren().add(AvatarFactory.create(new Image(maniaClient.getAccountClient().getAccountUrl(owner.getUuid()))));
+      avatarPane.getChildren().add(AvatarFactory.create(new Image(maniaClient.getAccountClient().getAvatarUrl(owner.getUuid()))));
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));

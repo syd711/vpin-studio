@@ -9,8 +9,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

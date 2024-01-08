@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.archiving.dialogs;
 
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;

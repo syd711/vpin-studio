@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.io;
 
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveCopyToRepositoryDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.BackupDescriptor;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveCopyToRepositoryDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

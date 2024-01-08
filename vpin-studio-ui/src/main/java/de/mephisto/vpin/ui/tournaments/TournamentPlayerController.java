@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -36,7 +35,7 @@ public class TournamentPlayerController extends WidgetController implements Init
   }
 
   public void setData(ManiaTournamentRepresentation tournament, ManiaTournamentPlayer player) {
-    Image image = new Image(maniaClient.getAccountClient().getAccountUrl(player.getUuid()));
+    Image image = new Image(maniaClient.getAccountClient().getAvatarUrl(player.getUuid()));
     userImageView.setImage(image);
     CommonImageUtil.setClippedImage(userImageView, (int) (image.getWidth() / 2));
 

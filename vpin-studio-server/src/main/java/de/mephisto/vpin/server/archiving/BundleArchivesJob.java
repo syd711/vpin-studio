@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.archiving;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.tables.descriptors.ArchiveBundleDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ZipUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;

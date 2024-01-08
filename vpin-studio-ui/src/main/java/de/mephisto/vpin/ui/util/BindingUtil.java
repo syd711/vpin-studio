@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

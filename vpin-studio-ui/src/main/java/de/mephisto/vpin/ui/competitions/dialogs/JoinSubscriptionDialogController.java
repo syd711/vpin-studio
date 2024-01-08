@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.tables.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;

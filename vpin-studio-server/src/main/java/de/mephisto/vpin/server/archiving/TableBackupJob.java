@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.archiving;
 
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.tables.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
