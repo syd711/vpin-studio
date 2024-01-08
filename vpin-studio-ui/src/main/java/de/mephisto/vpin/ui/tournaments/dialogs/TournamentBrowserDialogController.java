@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResult;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResultItem;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
@@ -113,6 +114,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private Parent loadingOverlay;
   private ManiaTournamentSearchResult searchResult;
   private int page = 0;
+  private PlayerRepresentation defaultPlayer;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -217,6 +219,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
+    defaultPlayer = client.getPlayerService().getDefaultPlayer();
+
     Platform.runLater(() -> {
       doSearch("", 0);
     });
@@ -276,9 +280,13 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     ownerLabel.setText("-");
     descriptionText.setText("-");
     avatarPane.getChildren().removeAll(avatarPane.getChildren());
+    saveBtn.setDisable(true);
 
     if (selection.isPresent()) {
       ManiaTournamentSearchResultItem item = selection.get();
+
+      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
+
       nameLabel.setText(item.getDisplayName());
       startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
       endLabel.setText(DateFormat.getDateTimeInstance().format(item.getEndDate()));

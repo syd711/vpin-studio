@@ -28,6 +28,7 @@ public class TournamentSearchTableSummary extends VBox {
 
       if (vpsTable != null && count < 3) {
         Label titleLabel = new Label(vpsTable.getDisplayName());
+        titleLabel.getStyleClass().add("default-text");
         getChildren().add(titleLabel);
       }
       count++;

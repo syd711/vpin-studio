@@ -15,6 +15,7 @@ public class TournamentSearchText extends VBox {
 
     Label descriptionLabel = new Label(item.getDescription());
     descriptionLabel.setWrapText(true);
+    descriptionLabel.getStyleClass().add("default-text");
     getChildren().add(descriptionLabel);
 
     this.setPrefHeight(70);

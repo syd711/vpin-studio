@@ -659,6 +659,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getGameDisplayName());
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -666,6 +667,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVersion.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
@@ -682,6 +684,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnId.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       Label label = new Label(String.valueOf(value.getId()));
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -701,6 +704,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       Label label = new Label(rom);
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -712,6 +716,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         hsType = "Text";
       }
       Label label = new Label(hsType);
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });

@@ -15,8 +15,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
 import de.mephisto.vpin.ui.tournaments.view.GameCellContainer;
@@ -34,6 +34,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,11 +50,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -115,6 +122,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Label validationTitle;
 
   @FXML
+  private Button openDiscordBtn;
+
+  @FXML
   private TableView<TournamentTreeModel> tableView;
 
   @FXML
@@ -138,6 +148,21 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.tournament = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onDiscordOpen() {
+    String discordLink = this.discordLinkText.getText();
+    if (!StringUtils.isEmpty(discordLink)) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(discordLink));
+        } catch (Exception e) {
+          LOG.error("Failed to open discord link: " + e.getMessage(), e);
+        }
+      }
+    }
   }
 
   @FXML
@@ -187,6 +212,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private void validate() {
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
+    this.openDiscordBtn.setDisable(true);
+
+    if (!StringUtils.isEmpty(this.discordLinkText.getText())) {
+      openDiscordBtn.setDisable(false);
+    }
 
     Date startDate = tournament.getStartDate();
     Date endDate = tournament.getEndDate();
@@ -319,7 +349,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     Image image = new Image(in);
     Tile avatar = TileBuilder.create()
       .skinType(Tile.SkinType.IMAGE)
-      .prefSize(UIDefaults.DEFAULT_AVATARSIZE*2, UIDefaults.DEFAULT_AVATARSIZE*2)
+      .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
       .backgroundColor(Color.TRANSPARENT)
       .image(image)
       .imageMask(Tile.ImageMask.ROUND)
@@ -373,7 +403,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       validate();
     });
 
-    discordLinkText.textProperty().addListener((observable, oldValue, newValue) -> tournament.setDiscordLink(newValue));
+    discordLinkText.textProperty().addListener((observable, oldValue, newValue) -> {
+      tournament.setDiscordLink(newValue);
+      validate();
+    });
+
     descriptionText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("descriptionText", () -> {
       String value = String.valueOf(t1);
       if (!StringUtils.isEmpty(String.valueOf(value)) && value.length() > 4096) {

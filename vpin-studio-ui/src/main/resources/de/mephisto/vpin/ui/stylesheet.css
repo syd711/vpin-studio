@@ -603,12 +603,12 @@
 }
 /* Row hovered */
 .table-view:row-selection .table-row-cell:filled:hover {
-    -fx-background-color: #6666FF33;
+    -fx-background-color: #6666FF55;
     -fx-text-fill: #FFFFFF;
 }
 /* Selected row hovered when table not focused */
 .table-view:row-selection .table-row-cell:filled:focused:hover {
-    -fx-background-color: #6666FF33;
+    -fx-background-color: #6666FF55;
     -fx-text-fill: #FFFFFF;
 }
 /* Selected row hovered */

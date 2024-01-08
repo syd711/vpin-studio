@@ -47,9 +47,6 @@
                </children>
             </HBox>
          </right>
-         <left>
-            <Label fx:id="pagingInfo" styleClass="default-text" BorderPane.alignment="CENTER" />
-         </left>
       </BorderPane>
    </bottom>
    <center>
@@ -195,13 +192,24 @@
                               </Label>
                            </children>
                         </HBox>
-                        <HBox>
+                        <HBox spacing="6.0">
                            <children>
-                              <TextField fx:id="discordLinkText" prefWidth="450.0">
+                              <TextField fx:id="discordLinkText" prefWidth="410.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
+                              <Button fx:id="openDiscordBtn" mnemonicParsing="false" onAction="#onDiscordOpen" styleClass="external-component">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Reload table with data fetched from iscored.info" />
+                                 </tooltip>
+                              </Button>
                            </children>
                         </HBox>
                      </children>
