@@ -128,7 +128,7 @@ public class Dialogs {
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
         "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
-      if (confirmationResult.isApplied()) {
+      if (confirmationResult.isApplyClicked()) {
         client.getPinUPPopperService().terminatePopper();
         if (confirmationResult.isChecked()) {
           EventManager.getInstance().notifyMaintenanceMode(true);

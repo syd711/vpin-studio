@@ -72,7 +72,7 @@ public class UISettingsPreferencesController implements Initializable {
   private void onHideReset() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset \"Do not show again\" flags?", "All previously hidden dialogs or panels will be shown again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO);
+      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, "");
       EventManager.getInstance().notifyPreferenceChanged();
     }
   }

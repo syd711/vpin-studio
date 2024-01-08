@@ -7,6 +7,7 @@
 - Fixed disabled "Install" button in the System Manager.
 - The file type ".mp4" is now allowed for the screens "Info" and "Other" too, including for drag-and-drop.
 - Fixed statistics overview: There was a case of negative playtime values (How? I don't know.). This statistics dashboard does handle these value more gracefully now.
+- Confirmation Dialogs: For the standard confirmation dialogs, the "OK" but has the focus now, so that you only need to press enter.
 
 ### Known Issues
 

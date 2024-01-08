@@ -215,7 +215,7 @@ public class TablesSidebarPopperController implements Initializable {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for \"" + game.get().getGameDisplayName() + "\"?",
         "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
         "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplied()) {
+      if (!result.isApplyClicked()) {
         try {
           boolean checked = result.isChecked();
           client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId(), checked);
@@ -233,7 +233,7 @@ public class TablesSidebarPopperController implements Initializable {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for all " + client.getGameService().getGamesCached().size() + " tables?",
         "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
         "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplied()) {
+      if (!result.isApplyClicked()) {
         try {
           boolean checked = result.isChecked();
           ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));

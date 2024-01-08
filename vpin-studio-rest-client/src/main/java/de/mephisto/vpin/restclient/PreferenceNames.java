@@ -29,16 +29,17 @@ public interface PreferenceNames {
   String UI_HIDE_VERSIONS = "hideVersions";
   String UI_HIDE_VPS_UPDATES = "uiHideVPSUpdates";
 
-  String SERVER_SETTINGS = "serverSettings";
-  String SERVER_AUTO_APPLY_VPS_TO_POPPER = "vpsAutoApplyToPopper";
-  String SERVER_KEEP_EXISTING_VXP_FILENAMES = "vpxKeepNames";
-  String SERVER_KEEP_EXISTING_DISPLAY_NAMES = "vpxKeepDisplayNames";
-
   String UI_DO_NOT_SHOW_AGAINS = "doNotShowAgains";
   String UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING = "componentsWarning";
   String UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS = "hideDismissConfirmations";
   String UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISS_ALL = "hideDimissAllConfirmations";
+  String UI_DO_NOT_SHOW_AGAIN_VPX_START = "hideVPXStartInfo";
   String UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO = "updateInfo";
+
+  String SERVER_SETTINGS = "serverSettings";
+  String SERVER_AUTO_APPLY_VPS_TO_POPPER = "vpsAutoApplyToPopper";
+  String SERVER_KEEP_EXISTING_VXP_FILENAMES = "vpxKeepNames";
+  String SERVER_KEEP_EXISTING_DISPLAY_NAMES = "vpxKeepDisplayNames";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";

@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -66,6 +66,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
@@ -248,9 +249,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onPlay() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Start playing table \"" + game.getGameDisplayName() + "\"?",
-        "All existing VPX and Popper processes will be terminated.");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
+      List<String> values = doNotShowAgainPref.getCSVValue();
+      if (values.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START)) {
+        client.getVpxService().playGame(game.getId());
+        return;
+      }
+
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and Popper processes will be terminated.", null, "Do not shown again", false);
+      if (!confirmationResult.isApplyClicked()) {
+        if (confirmationResult.isChecked()) {
+          if (!values.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START)) {
+            values.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START);
+          }
+          client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", values));
+        }
         client.getVpxService().playGame(game.getId());
       }
     }
@@ -706,7 +719,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        if(this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -742,7 +755,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPOV.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPovAvailable()) {
-        if(this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -754,7 +767,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltSoundAvailable()) {
-        if(this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -766,7 +779,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltColor.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.getAltColorType() != null) {
-        if(this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -779,7 +792,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPupPackAvailable()) {
-        if(this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }

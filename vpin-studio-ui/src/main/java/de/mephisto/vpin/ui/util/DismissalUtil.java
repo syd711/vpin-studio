@@ -3,9 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tables.GameRepresentation;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -24,11 +22,11 @@ public class DismissalUtil {
     else {
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", "Dismiss",
         "The warning can be re-enabled by validating the table again.", null, "Do not show again", false);
-      if (!confirmationResult.isApplied()) {
+      if (!confirmationResult.isApplyClicked()) {
         dismiss(game, validationState);
       }
 
-      if (!confirmationResult.isApplied() && confirmationResult.isChecked()) {
+      if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
         if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS)) {
           csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS);
           client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));

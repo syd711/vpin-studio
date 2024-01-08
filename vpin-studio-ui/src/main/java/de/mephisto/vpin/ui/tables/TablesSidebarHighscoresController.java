@@ -206,7 +206,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
         "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
-      if (confirmationResult.isChecked() && !confirmationResult.isApplied()) {
+      if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
         if (!Studio.client.getGameService().resetHighscore(g.getId())) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
         }

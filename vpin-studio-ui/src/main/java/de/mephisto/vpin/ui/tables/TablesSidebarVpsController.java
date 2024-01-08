@@ -177,7 +177,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (this.game.isPresent()) {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table type and version for all " + client.getGameService().getGamesCached().size() + " tables?",
         "Cancel", "Continue", "The tablename and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing assignments", false);
-      if (!result.isApplied()) {
+      if (!result.isApplyClicked()) {
         ProgressDialog.createProgressDialog(new TableVpsDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
         EventManager.getInstance().notifyTablesChanged();
       }

@@ -1,15 +1,15 @@
 package de.mephisto.vpin.commons.fx;
 
 public class ConfirmationResult {
-  private boolean applied;
+  private boolean applyClicked;
   private boolean checked;
 
-  public boolean isApplied() {
-    return applied;
+  public boolean isApplyClicked() {
+    return applyClicked;
   }
 
-  public void setApplied(boolean applied) {
-    this.applied = applied;
+  public void setApplyClicked(boolean applyClicked) {
+    this.applyClicked = applyClicked;
   }
 
   public boolean isChecked() {

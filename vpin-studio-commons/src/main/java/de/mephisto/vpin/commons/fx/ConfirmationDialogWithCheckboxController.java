@@ -1,7 +1,5 @@
 package de.mephisto.vpin.commons.fx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -101,7 +99,7 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
   public ConfirmationResult getResult() {
     ConfirmationResult r = new ConfirmationResult();
     r.setChecked(checked);
-    r.setApplied(result.isPresent() && result.get().equals(ButtonType.APPLY));
+    r.setApplyClicked(result.isPresent() && result.get().equals(ButtonType.APPLY));
     return r;
   }
 
