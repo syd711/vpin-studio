@@ -80,7 +80,9 @@ public class ConfirmationDialogController implements DialogController {
     }
 
     Platform.runLater(() -> {
-      okButton.requestFocus();
+      if (okButton != null) {
+        okButton.requestFocus();
+      }
     });
   }
 

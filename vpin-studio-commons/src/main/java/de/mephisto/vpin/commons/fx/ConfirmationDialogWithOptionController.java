@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -77,6 +78,12 @@ public class ConfirmationDialogWithOptionController implements DialogController 
     if(okText != null) {
       okButton.setText(okText);
     }
+
+    Platform.runLater(() -> {
+      if (okButton != null) {
+        okButton.requestFocus();
+      }
+    });
   }
 
   public Optional<ButtonType> getResult() {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -94,6 +95,12 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
     }
 
     this.checkBox.setText(checkboxText);
+
+    Platform.runLater(() -> {
+      if (okButton != null) {
+        okButton.requestFocus();
+      }
+    });
   }
 
   public ConfirmationResult getResult() {
