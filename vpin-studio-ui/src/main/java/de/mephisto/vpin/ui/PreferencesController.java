@@ -54,6 +54,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private VBox navigationBox;
 
+  @FXML
+  private VBox tournamentGroup;
+
   private static Button lastSelection;
 
   private static Node preferencesRoot;
@@ -291,6 +294,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     avatarButton = avatarBtn;
     prefsMain = preferencesMain;
     navBox = navigationBox;
+
+    tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());

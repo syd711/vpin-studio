@@ -396,7 +396,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       createBtn.setDisable(false);
       browseBtn.setDisable(false);
       textfieldSearch.setDisable(false);
-      duplicateBtn.setDisable(false);
       reloadBtn.setDisable(false);
 
       treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +

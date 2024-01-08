@@ -574,11 +574,13 @@
     -fx-border-width: 1;
 }
 .table-row-cell {
+    -fx-text-fill: #FFFFFF;
     -fx-cell-size: 40px;
     -fx-border-width: 1;
 }
 .table-view .table-cell{
     -fx-border-width: 1;
+    -fx-text-fill: #FFFFFF;
     -fx-border-color: transparent;
 }
 .table-row-cell: hover {
@@ -588,15 +590,33 @@
 }
 .table-row-cell: odd{
     -fx-background-color: #93f9b911;
+    -fx-text-fill: #FFFFFF;
 }
 .table-row-cell: even{
     -fx-background-color: #1dbbdd11;
+    -fx-text-fill: #FFFFFF;
 }
 .table-row-cell: selected {
     -fx-text-background-color: #FFFFFF;
     -fx-font-weight: bold;
     -fx-background-color: #6666FFAA;
 }
+/* Row hovered */
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: #6666FF33;
+    -fx-text-fill: #FFFFFF;
+}
+/* Selected row hovered when table not focused */
+.table-view:row-selection .table-row-cell:filled:focused:hover {
+    -fx-background-color: #6666FF33;
+    -fx-text-fill: #FFFFFF;
+}
+/* Selected row hovered */
+ .table-view:focused .table-row-cell:filled:focused:selected:hover {
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
+ }
 
 
 /**
