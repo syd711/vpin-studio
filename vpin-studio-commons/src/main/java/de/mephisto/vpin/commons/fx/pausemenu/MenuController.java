@@ -134,8 +134,15 @@ public class MenuController implements Initializable {
 
     new Thread(() -> {
       menuItems = new ArrayList<>();
-      PauseMenuItem exit = new PauseMenuItem("Exit");
-      menuItems.add(exit);
+      PauseMenuItem item = new PauseMenuItem("Exit");
+      menuItems.add(item);
+      item = new PauseMenuItem("Highscores");
+      menuItems.add(item);
+      item = new PauseMenuItem("Instructions");
+      menuItems.add(item);
+      item = new PauseMenuItem("Statistics");
+      menuItems.add(item);
+
       activeModels = menuItems; //TODO mpf
       Platform.runLater(() -> {
         loadMenuItems();
