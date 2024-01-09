@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
+import de.mephisto.vpin.ui.util.LocalUISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -18,15 +21,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HeaderResizeableController implements Initializable {
-  private double xOffset;
-  private double yOffset;
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private Button maximizeBtn;
@@ -76,6 +81,15 @@ public class HeaderResizeableController implements Initializable {
   }
 
   @FXML
+  private void onDragDone() {
+    debouncer.debounce("position", () -> {
+      int y = (int) stage.getY();
+      int x = (int) stage.getX();
+      LocalUISettings.saveLocation(x, y, (int) stage.getWidth(), (int) stage.getHeight());
+    }, 500);
+  }
+
+  @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
     helper.switchWindowedMode(null);
@@ -100,5 +114,10 @@ public class HeaderResizeableController implements Initializable {
       name = systemNameEntry.getValue();
     }
     titleLabel.setText("VPin Studio - " + name);
+
+    stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
   }
 }

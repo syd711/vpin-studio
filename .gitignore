@@ -101,3 +101,4 @@ yarn-error.log*
 /testsystem/vPinball/**/*.mp3
 /testsystem/vPinball/**/*.mp4
 /resources/backglassdesigner/Projects/**
+/config/settings.properties
