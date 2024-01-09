@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -87,6 +88,9 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private Button mameBtn;
 
+  @FXML
+  private Button reloadBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -96,6 +100,22 @@ public class TablesSidebarMameController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarMameController() {
+  }
+
+  @FXML
+  private void onReload() {
+    this.reloadBtn.setDisable(true);
+
+    Platform.runLater(() -> {
+      new Thread(() -> {
+        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+
+        Platform.runLater(() -> {
+          this.reloadBtn.setDisable(false);
+          this.refreshView(this.game);
+        });
+      }).start();
+    });
   }
 
   @FXML

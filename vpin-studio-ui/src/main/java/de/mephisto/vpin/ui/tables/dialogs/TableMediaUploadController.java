@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -52,7 +52,6 @@ public class TableMediaUploadController implements Initializable, DialogControll
 
   private boolean result = false;
   private GameRepresentation game;
-  private List<String> fileSelection = new ArrayList<>();
 
   public ComboBox<PopperScreen> getScreenCombo() {
     return screenCombo;
@@ -73,7 +72,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
 
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(this.game.getId(),
-            "Popper Media Upload", selection, "popperMedia", screenCombo.getValue());
+          "Popper Media Upload", selection, "popperMedia", screenCombo.getValue());
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -88,7 +87,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Files", fileSelection));
+      new FileChooser.ExtensionFilter("Files", getFileSelection(this.screenCombo.getValue())));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     this.uploadBtn.setDisable(selection == null);
@@ -106,6 +105,22 @@ public class TableMediaUploadController implements Initializable, DialogControll
     }
   }
 
+  public static void directUpload(Stage stage, GameRepresentation game, PopperScreen screen) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select Media");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Files", getFileSelection(screen)));
+
+    List<File> files = fileChooser.showOpenMultipleDialog(stage);
+    if (files != null && !files.isEmpty()) {
+      Platform.runLater(() -> {
+        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
+          "Popper Media Upload", files, "popperMedia", screen);
+        ProgressDialog.createProgressDialog(model);
+      });
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.result = false;
@@ -113,11 +128,11 @@ public class TableMediaUploadController implements Initializable, DialogControll
     this.uploadBtn.setDisable(true);
 
     this.screenCombo.setItems(FXCollections.observableList(Arrays.asList(PopperScreen.values())));
-    this.screenCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateMediaSelection(newValue));
+//    this.screenCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateMediaSelection(newValue));
   }
 
-  private void updateMediaSelection(PopperScreen popperScreen) {
-    fileSelection.clear();
+  private static List<String> getFileSelection(PopperScreen popperScreen) {
+    List<String> fileSelection = new ArrayList<>();
     if (popperScreen.equals(PopperScreen.Audio) || popperScreen.equals(PopperScreen.AudioLaunch)) {
       fileSelection.add("*.mp3");
     }
@@ -132,6 +147,7 @@ public class TableMediaUploadController implements Initializable, DialogControll
       fileSelection.add("*.apng");
       fileSelection.add("*.mp4");
     }
+    return fileSelection;
   }
 
   @Override

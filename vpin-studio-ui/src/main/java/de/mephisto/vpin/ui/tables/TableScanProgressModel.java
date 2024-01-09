@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
     this.gameRepresentations = gameRepresentations;
 
     Studio.client.getMameService().clearCache();
+    Studio.client.getDmdService().clearCache();
   }
 
   @Override
@@ -50,6 +52,7 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
+      Studio.client.getGameService().scanGame(game.getId());
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Table scan error: " + e.getMessage(), e);

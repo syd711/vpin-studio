@@ -211,7 +211,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    TableDialogs.openMediaUploadDialog(stage, game, screen);
+//    TableDialogs.openMediaUploadDialog(stage, game, screen);
+    TableMediaUploadController.directUpload(stage, game, screen);
     refreshTableMediaView();
   }
 

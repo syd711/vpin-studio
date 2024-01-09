@@ -145,8 +145,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
     Platform.runLater(() -> {
       new Thread(() -> {
-        Studio.client.getAltSoundService().clearCache();
-
+        Studio.client.getMameService().clearCache();
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {

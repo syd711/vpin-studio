@@ -408,6 +408,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     getSystemService().clearCache();
     getPupPackService().clearCache();
     getMameService().clearCache();
+    getDmdService().clearCache();
   }
 
   public void clearWheelCache() {
