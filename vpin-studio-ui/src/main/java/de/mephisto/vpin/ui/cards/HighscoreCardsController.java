@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -174,7 +175,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onUploadButton() {
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),

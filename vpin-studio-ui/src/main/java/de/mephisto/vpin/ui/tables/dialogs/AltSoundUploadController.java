@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,8 +26,6 @@ import java.util.ResourceBundle;
 
 public class AltSoundUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -75,14 +74,10 @@ public class AltSoundUploadController implements Initializable, DialogController
 
     this.uploadBtn.setDisable(true);
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select ALT Sound");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("ALT Sound Package", "*.zip"));
-
-    if (AltSoundUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(AltSoundUploadController.lastFolderSelection);
-    }
 
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);
@@ -97,7 +92,6 @@ public class AltSoundUploadController implements Initializable, DialogController
   private void refreshSelection() {
     this.uploadBtn.setDisable(selection == null);
 
-    AltSoundUploadController.lastFolderSelection = this.selection.getParentFile();
     this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);

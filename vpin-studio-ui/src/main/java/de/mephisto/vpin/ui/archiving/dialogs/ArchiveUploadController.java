@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -34,8 +35,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ArchiveUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -87,18 +86,13 @@ public class ArchiveUploadController implements Initializable, DialogController 
       filters = Arrays.asList("*.vpa");
     }
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Archives");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Visual Pinball Archive", filters));
 
-    if (ArchiveUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(ArchiveUploadController.lastFolderSelection);
-    }
-
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
-      ArchiveUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
       this.fileNameField.setText(this.selection.stream().map(f -> f.getName()).collect(Collectors.joining()));
     }
     else {

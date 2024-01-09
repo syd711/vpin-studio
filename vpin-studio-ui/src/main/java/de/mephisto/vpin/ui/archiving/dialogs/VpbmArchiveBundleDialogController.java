@@ -32,8 +32,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 public class VpbmArchiveBundleDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmArchiveBundleDialogController.class);
 
-  private static File lastFolderSelection;
-
   @FXML
   private TextField fileNameField;
 
@@ -86,13 +84,8 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    if (VpbmArchiveBundleDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(VpbmArchiveBundleDialogController.lastFolderSelection);
-    }
-
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
-      VpbmArchiveBundleDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -107,10 +100,6 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
-    if (VpbmArchiveBundleDialogController.lastFolderSelection != null) {
-      fileNameField.setText(VpbmArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
-    }
-
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
     String value = preference.getValue();
     if (!StringUtils.isEmpty(value)) {

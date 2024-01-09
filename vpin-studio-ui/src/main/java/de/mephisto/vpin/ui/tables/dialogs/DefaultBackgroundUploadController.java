@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,7 +25,6 @@ import java.util.ResourceBundle;
 public class DefaultBackgroundUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultBackgroundUploadController.class);
 
-  private static File lastFolderSelection;
   private static boolean uploadTypeGeneratorSelectedLast;
 
   @FXML
@@ -69,18 +69,13 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Picture File");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Pictures", "*.png", "*.jpg", "*.jpeg"));
 
-    if (DefaultBackgroundUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(DefaultBackgroundUploadController.lastFolderSelection);
-    }
-
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
-      DefaultBackgroundUploadController.lastFolderSelection = this.selection.getParentFile();
       this.fileNameField.setText(this.selection.getAbsolutePath());
     }
     else {

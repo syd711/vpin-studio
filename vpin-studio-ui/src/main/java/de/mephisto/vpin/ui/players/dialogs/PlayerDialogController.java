@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -42,7 +43,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
-  private static File lastFolderSelection;
 
   @FXML
   private Button saveBtn;
@@ -129,18 +129,12 @@ public class PlayerDialogController implements Initializable, DialogController {
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    FileChooser fileChooser = new FileChooser();
-    if (PlayerDialogController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(PlayerDialogController.lastFolderSelection);
-    }
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
       new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
-    if (this.avatarFile != null) {
-      PlayerDialogController.lastFolderSelection = this.avatarFile.getParentFile();
-    }
     refreshAvatar();
   }
 

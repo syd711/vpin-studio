@@ -2,8 +2,8 @@ package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.event.ActionEvent;
@@ -30,8 +30,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ArchiveDownloadDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveDownloadDialogController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -86,13 +84,8 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    if (ArchiveDownloadDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(ArchiveDownloadDialogController.lastFolderSelection);
-    }
-
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
-      ArchiveDownloadDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -107,9 +100,6 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
-    if (ArchiveDownloadDialogController.lastFolderSelection != null) {
-      fileNameField.setText(ArchiveDownloadDialogController.lastFolderSelection.getAbsolutePath());
-    }
   }
 
   private void validateInput() {

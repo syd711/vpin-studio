@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,8 +25,6 @@ import java.util.ResourceBundle;
 
 public class DMDUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -74,15 +73,10 @@ public class DMDUploadController implements Initializable, DialogController {
 
     this.uploadBtn.setDisable(true);
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMD Bundle");
     fileChooser.getExtensionFilters().addAll(
       new FileChooser.ExtensionFilter("DMD Bundle", "*.zip"));
-
-    if (DMDUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(DMDUploadController.lastFolderSelection);
-    }
-
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       refreshSelection(stage);
@@ -90,7 +84,6 @@ public class DMDUploadController implements Initializable, DialogController {
   }
 
   private void refreshSelection(Stage stage) {
-    DMDUploadController.lastFolderSelection = this.selection.getParentFile();
     this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,8 +23,6 @@ import java.util.ResourceBundle;
 
 public class PovUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PovUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -72,19 +71,13 @@ public class PovUploadController implements Initializable, DialogController {
 
     this.uploadBtn.setDisable(true);
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select POV File");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("POV File", "*.pov"));
-
-    if (PovUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(PovUploadController.lastFolderSelection);
-    }
+    fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("POV File", "*.pov"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
-      PovUploadController.lastFolderSelection = this.selection.getParentFile();
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.uploadBtn.setDisable(false);
     }

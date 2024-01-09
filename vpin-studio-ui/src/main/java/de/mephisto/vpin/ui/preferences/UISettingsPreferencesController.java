@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
@@ -52,7 +53,7 @@ public class UISettingsPreferencesController implements Initializable {
 
   @FXML
   private void onFileSelect(ActionEvent e) {
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
       new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));

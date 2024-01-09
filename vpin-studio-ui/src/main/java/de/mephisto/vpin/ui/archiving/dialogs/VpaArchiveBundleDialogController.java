@@ -29,8 +29,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 public class VpaArchiveBundleDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveBundleDialogController.class);
 
-  private static File lastFolderSelection;
-
   @FXML
   private TextField fileNameField;
 
@@ -79,13 +77,8 @@ public class VpaArchiveBundleDialogController implements Initializable, DialogCo
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    if (VpaArchiveBundleDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(VpaArchiveBundleDialogController.lastFolderSelection);
-    }
-
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
-      VpaArchiveBundleDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -100,9 +93,6 @@ public class VpaArchiveBundleDialogController implements Initializable, DialogCo
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
-    if (VpaArchiveBundleDialogController.lastFolderSelection != null) {
-      fileNameField.setText(VpaArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
-    }
   }
 
   private void validateInput() {

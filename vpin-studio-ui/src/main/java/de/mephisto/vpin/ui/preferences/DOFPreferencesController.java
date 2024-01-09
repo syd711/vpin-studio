@@ -30,7 +30,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class DOFPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DOFPreferencesController.class);
-  private static File lastFolderSelection;
 
   private final Debouncer debouncer = new Debouncer();
 
@@ -57,13 +56,8 @@ public class DOFPreferencesController implements Initializable {
 
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select DOF Installation Folder");
-    if (DOFPreferencesController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(DOFPreferencesController.lastFolderSelection);
-    }
-
     File folder = chooser.showDialog(stage);
     if (folder != null && folder.exists()) {
-      DOFPreferencesController.lastFolderSelection = folder;
       this.installationFolderText.setText(folder.getAbsolutePath());
     }
   }

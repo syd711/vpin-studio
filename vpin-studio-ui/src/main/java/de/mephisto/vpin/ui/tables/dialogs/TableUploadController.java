@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,8 +32,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -110,20 +109,14 @@ public class TableUploadController implements Initializable, DialogController {
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip"));
 
-    if (TableUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(TableUploadController.lastFolderSelection);
-    }
-
     this.selection = fileChooser.showOpenDialog(stage);
     uploadBtn.setDisable(true);
     if (this.selection != null) {
-      TableUploadController.lastFolderSelection = this.selection.getParentFile();
-
       String suffix = FilenameUtils.getExtension(this.selection.getName());
       if(suffix.equalsIgnoreCase("zip")) {
 

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,8 +31,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ROMUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ROMUploadController.class);
-
-  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
@@ -75,18 +74,13 @@ public class ROMUploadController implements Initializable, DialogController {
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    FileChooser fileChooser = new FileChooser();
+    StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select ROM File");
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("ROM", "*.zip"));
 
-    if (ROMUploadController.lastFolderSelection != null) {
-      fileChooser.setInitialDirectory(ROMUploadController.lastFolderSelection);
-    }
-
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
-      ROMUploadController.lastFolderSelection = this.selection.get(0).getParentFile();
       List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
       this.fileNameField.setText(String.join(", ", collect));
     }
