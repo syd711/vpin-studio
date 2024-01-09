@@ -10,20 +10,22 @@ import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
-import de.mephisto.vpin.restclient.popper.TableAssetSearch;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableAssetSearch;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.PopperMediaTypesSelector;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -42,6 +44,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -211,8 +214,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//    TableDialogs.openMediaUploadDialog(stage, game, screen);
-    TableMediaUploadController.directUpload(stage, game, screen);
+    directUpload(stage, game, screen);
     refreshTableMediaView();
   }
 
@@ -588,7 +590,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private void disposeServerAssetPreview() {
     Node center = serverAssetMediaPane.getCenter();
     if (center instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer)center).disposeMedia();
+      ((AssetMediaPlayer) center).disposeMedia();
     }
     serverAssetMediaPane.setCenter(null);
   }
@@ -597,7 +599,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private void disposeTableMediaPreview() {
     Node center = mediaPane.getCenter();
     if (center instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer)center).disposeMedia();
+      ((AssetMediaPlayer) center).disposeMedia();
     }
     mediaPane.setCenter(null);
   }
@@ -750,6 +752,22 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     Platform.runLater(() -> {
       refreshTableMediaView();
     });
+  }
+
+  private static void directUpload(Stage stage, GameRepresentation game, PopperScreen screen) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select Media");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
+
+    List<File> files = fileChooser.showOpenMultipleDialog(stage);
+    if (files != null && !files.isEmpty()) {
+      Platform.runLater(() -> {
+        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
+          "Popper Media Upload", files, "popperMedia", screen);
+        ProgressDialog.createProgressDialog(model);
+      });
+    }
   }
 
   public GameRepresentation getGame() {

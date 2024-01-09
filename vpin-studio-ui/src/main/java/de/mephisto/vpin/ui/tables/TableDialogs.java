@@ -31,15 +31,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class TableDialogs {
-  public static boolean openMediaUploadDialog(Stage parentStage, GameRepresentation game, PopperScreen screen) {
-    Stage stage = Dialogs.createStudioDialogStage(parentStage, TableMediaUploadController.class, "dialog-media-upload.fxml", "Table Media Upload");
-    TableMediaUploadController controller = (TableMediaUploadController) stage.getUserData();
-    controller.setGame(game, screen);
-    controller.getScreenCombo().setDisable(true);
-    stage.showAndWait();
-
-    return controller.uploadFinished();
-  }
 
   public static boolean openPopperMediaAdminDialog(GameRepresentation game, PopperScreen screen) {
     Stage stage = Dialogs.createStudioDialogStage(TablePopperMediaDialogController.class, "dialog-popper-media-selector.fxml", "Asset Manager");
