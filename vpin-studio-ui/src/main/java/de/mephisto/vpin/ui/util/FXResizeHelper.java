@@ -62,7 +62,7 @@ public class FXResizeHelper {
    * If the stage is maximized, it will be restored to the last postition
    * with heigth and width. Otherwise it will be maximized to fullscreen.
    */
-  public void switchWindowedMode() {
+  public void switchWindowedMode(MouseEvent e) {
     if (mIsMaximized) {
       STAGE.setY(mYStore);
       STAGE.setX(mXStore);

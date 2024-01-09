@@ -317,6 +317,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
     client.getPreferenceService().addListener(this);
 
+    preferencesChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null);
     this.onReload();
   }
 

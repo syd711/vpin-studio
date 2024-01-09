@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tournaments.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
@@ -19,6 +20,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
+import de.mephisto.vpin.ui.tournaments.TournamentHelper;
 import de.mephisto.vpin.ui.tournaments.view.GameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.vps.VpsSelection;
@@ -33,7 +35,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -42,6 +46,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -52,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -81,6 +87,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private Button saveBtn;
+
+  @FXML
+  private Button iscoredReloadBtn;
 
   @FXML
   private Button addTableBtn;
@@ -125,6 +134,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Button openDiscordBtn;
 
   @FXML
+  private StackPane rootStack;
+
+  @FXML
   private TableView<TournamentTreeModel> tableView;
 
   @FXML
@@ -142,6 +154,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private ManiaTournamentRepresentation tournament;
 
   private List<TournamentTreeModel> tableSelection = new ArrayList<>();
+  private Node loadingOverlay;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -189,23 +202,25 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    ObservableList<TournamentTreeModel> items = this.tableView.getItems();
-    List<String> tableEntries = new ArrayList<>();
-    for (TournamentTreeModel item : items) {
-      String entry = item.getVpsTable().getId() + "#";
-      if (item.getVpsTableVersion() != null) {
-        entry += item.getVpsTableVersion().getId();
+    if (TournamentHelper.isOwner(this.tournament)) {
+      ObservableList<TournamentTreeModel> items = this.tableView.getItems();
+      List<String> tableEntries = new ArrayList<>();
+      for (TournamentTreeModel item : items) {
+        String entry = item.getVpsTable().getId() + "#";
+        if (item.getVpsTableVersion() != null) {
+          entry += item.getVpsTableVersion().getId();
+        }
+        tableEntries.add(entry);
       }
-      tableEntries.add(entry);
+      tournament.setTableIds(String.join(",", tableEntries));
     }
-    tournament.setTableIds(String.join(",", tableEntries));
-
     stage.close();
   }
 
   private void reloadTables() {
     tableView.setItems(FXCollections.observableList(tableSelection));
     tableView.refresh();
+    rootStack.getChildren().remove(loadingOverlay);
     this.validate();
   }
 
@@ -257,27 +272,36 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.tournament = selectedTournament;
     this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(ManiaTournamentVisibility.privateTournament));
 
-    boolean isOwner = selectedTournament.getCabinetId() == null || selectedTournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId());
+    boolean isOwner = TournamentHelper.isOwner(selectedTournament);
     boolean editable = isOwner && !selectedTournament.isActive();
     if (tournament.getUuid() == null) {
       editable = true;
     }
 
-    tournamentBadgeCombo.setDisable(tournament.getUuid() != null);
+    this.iscoredReloadBtn.setDisable(!isOwner);
+    this.addTableBtn.setDisable(!isOwner);
+    this.deleteTableBtn.setDisable(!isOwner);
+
+    tournamentBadgeCombo.setDisable(isOwner && tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());
+    this.nameField.setDisable(!isOwner);
     this.descriptionText.setText(selectedTournament.getDescription());
+    this.descriptionText.setDisable(!isOwner);
     this.discordLinkText.setText(selectedTournament.getDiscordLink());
+    this.discordLinkText.setDisable(!isOwner);
     this.dashboardUrlField.setText(selectedTournament.getDashboardUrl());
+    this.dashboardUrlField.setDisable(!isOwner);
+    this.visibilityCheckbox.setDisable(!isOwner);
 
     this.startDatePicker.setValue(selectedTournament.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     this.startDatePicker.setDisable(!editable);
     this.startTime.setValue(DateUtil.formatTimeString(selectedTournament.getStartDate()));
-    this.startTime.setDisable(tournament.getUuid() != null && tournament.isActive());
+    this.startTime.setDisable(!isOwner || (tournament.getUuid() != null && tournament.isActive()));
 
     this.endDatePicker.setValue(selectedTournament.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     this.endDatePicker.setDisable(!editable);
     this.endTime.setValue(DateUtil.formatTimeString(selectedTournament.getEndDate()));
-    this.endDatePicker.setDisable(tournament.getUuid() != null && tournament.isFinished());
+    this.endTime.setDisable(!isOwner || (tournament.getUuid() != null && tournament.isFinished()));
 
     this.validationContainer.setVisible(editable);
 
@@ -295,47 +319,63 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
     }
 
-    loadIScoredTables();
-    reloadTables();
+    if (!isOwner) {
+      this.saveBtn.setText("Join Tournament");
+    }
+
+    Platform.runLater(() -> {
+      rootStack.getChildren().add(loadingOverlay);
+      if (isOwner && this.tableSelection.isEmpty()) {
+        loadIScoredTables();
+      }
+      else {
+        reloadTables();
+      }
+    });
   }
 
   @FXML
   private void loadIScoredTables() {
-    String dashboardUrl = this.dashboardUrlField.getText();
-    iscoredScoresEnabled.setSelected(false);
-    this.tableSelection.clear();
-    this.tableView.refresh();
+    new Thread(() -> {
+      Platform.runLater(() -> {
+        String dashboardUrl = this.dashboardUrlField.getText();
+        iscoredScoresEnabled.setSelected(false);
+        this.tableSelection.clear();
+        this.tableView.refresh();
 
-    if (!StringUtils.isEmpty(dashboardUrl)) {
-      try {
-        GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
-        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
+        if (!StringUtils.isEmpty(dashboardUrl)) {
+          try {
+            GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+            iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-        List<Game> games = gameRoom.getGames();
-        for (Game game : games) {
-          List<String> tags = game.getTags();
-          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
-          if (first.isPresent()) {
-            String vpsUrl = first.get();
-            String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
-            String[] split = idSegment.split("#");
-            VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-            VpsTableVersion vpsVersion = null;
-            if (vpsTable != null && split.length > 1) {
-              vpsVersion = vpsTable.getVersion(split[1]);
+            List<Game> games = gameRoom.getGames();
+            for (Game game : games) {
+              List<String> tags = game.getTags();
+              Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
+              if (first.isPresent()) {
+                String vpsUrl = first.get();
+                String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
+                String[] split = idSegment.split("#");
+                VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
+                VpsTableVersion vpsVersion = null;
+                if (vpsTable != null && split.length > 1) {
+                  vpsVersion = vpsTable.getVersion(split[1]);
+                }
+                GameRepresentation gameRep = null;
+                if (vpsTable != null) {
+                  gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+                }
+                this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
+                this.tableView.refresh();
+              }
             }
-            GameRepresentation gameRep = null;
-            if (vpsTable != null) {
-              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-            }
-            this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
-            this.tableView.refresh();
+          } catch (Exception e) {
+            LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
           }
         }
-      } catch (Exception e) {
-        LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
-      }
-    }
+        reloadTables();
+      });
+    }).start();
   }
 
   @Override
@@ -405,7 +445,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     discordLinkText.textProperty().addListener((observable, oldValue, newValue) -> {
       tournament.setDiscordLink(newValue);
-      validate();
     });
 
     descriptionText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("descriptionText", () -> {
@@ -467,6 +506,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         deleteTableBtn.setDisable(c == null || c.getList().isEmpty());
       }
     });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loadingOverlay = loader.load();
+      LoadingOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Loading Tournament Data...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
   }
 
   public ManiaTournamentRepresentation getTournament() {

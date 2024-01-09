@@ -35,6 +35,7 @@ public class IScored {
   }
 
   public static GameRoom loadGameRoom(@NonNull String url) throws Exception {
+    long start = System.currentTimeMillis();
     if (!url.toLowerCase().startsWith(BASE_URL.toLowerCase())) {
       throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
     }
@@ -85,7 +86,7 @@ public class IScored {
         gameRoom.getGames().add(game);
       }
 
-      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games.");
+      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis()-start) + "ms)");
       return gameRoom;
     }
 

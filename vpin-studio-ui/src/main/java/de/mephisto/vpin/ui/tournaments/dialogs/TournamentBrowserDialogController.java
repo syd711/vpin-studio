@@ -125,6 +125,10 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    if(this.selection.isPresent()) {
+      this.tournament = selection.get();
+    }
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }

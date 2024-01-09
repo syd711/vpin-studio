@@ -27,11 +27,11 @@
                   <TreeTableView fx:id="treeTableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TreeTableColumn fx:id="columnName" prefWidth="330.0" text="Name" />
-                        <TreeTableColumn fx:id="columnDate" prefWidth="320.0" style="-fx-alignment: CENTER;" text="Start /End" />
+                        <TreeTableColumn fx:id="columnDate" prefWidth="260.0" style="-fx-alignment: CENTER;" text="Start /End" />
                         <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
                       <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
-                        <TreeTableColumn fx:id="columnVPSTable" prefWidth="200.0" text="Table Data" />
-                        <TreeTableColumn fx:id="columnVPSVersion" prefWidth="250.0" text="Table Version" />
+                        <TreeTableColumn fx:id="columnVPSTable" prefWidth="250.0" text="Table Data" />
+                        <TreeTableColumn fx:id="columnVPSVersion" prefWidth="300.0" text="Table Version" />
                     </columns>
                   </TreeTableView>
                </children>
@@ -99,7 +99,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-edit-outline" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
                         <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">

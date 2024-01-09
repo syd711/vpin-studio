@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.KeyChecker;
@@ -27,7 +28,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 @Service
-public class KeyEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener {
+public class KeyEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(KeyEventService.class);
 
   @Autowired
@@ -46,9 +47,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private JobQueue queue;
 
   private boolean visible;
-
   private ShutdownThread shutdownThread;
-
+  private boolean launchOverlayOnStartup = false;
+  private String overlayKey;
+  private String resetKey;
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
@@ -59,15 +61,12 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     shutdownThread.notifyKeyEvent();
 
-    String hotkey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
-    String resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
-
-    if (!StringUtils.isEmpty(hotkey)) {
-      KeyChecker keyChecker = new KeyChecker(hotkey);
+    if (!StringUtils.isEmpty(overlayKey)) {
+      KeyChecker keyChecker = new KeyChecker(overlayKey);
       if (keyChecker.matches(nativeKeyEvent) || visible) {
         this.visible = !visible;
         Platform.runLater(() -> {
-          LOG.info("Toggle show (Key " + hotkey + ")");
+          LOG.info("Toggle show (Key " + overlayKey + ")");
           OverlayWindowFX.getInstance().setVisible(visible);
         });
       }
@@ -92,10 +91,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   @Override
   public void popperLaunched() {
     Platform.runLater(() -> {
-      String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
-      if (!StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch)) {
+      if (this.launchOverlayOnStartup) {
         try {
-          Thread.sleep(2000);
+          Thread.sleep(1000);
         } catch (InterruptedException e) {
           //ignore
         }
@@ -129,7 +127,26 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     shutdownThread.reset();
   }
 
-  private void afterStartup() {
+  @Override
+  public void afterPropertiesSet() throws NativeHookException {
+    GlobalScreen.registerNativeHook();
+    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+    logger.setLevel(Level.OFF);
+    logger.setUseParentHandlers(false);
+    GlobalScreen.addNativeKeyListener(this);
+
+    new Thread(() -> {
+      OverlayWindowFX.main(new String[]{});
+      LOG.info("Overlay listener started.");
+    }).start();
+
+    shutdownThread = new ShutdownThread(preferencesService, queue);
+    shutdownThread.start();
+
+    OverlayWindowFX.client = overlayClient;
+    OverlayWindowFX.waitForOverlay();
+    LOG.info("Finished initialization of OverlayWindowFX");
+
     new VPinStudioServerTray();
     LOG.info("Application tray created.");
 
@@ -150,32 +167,29 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     } catch (UnknownHostException e) {
       //
     }
+    preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
+    preferenceChanged(PreferenceNames.OVERLAY_KEY, null, null);
+    preferenceChanged(PreferenceNames.RESET_KEY, null, null);
+
+    preferencesService.addChangeListener(this);
   }
 
   @Override
-  public void afterPropertiesSet() throws NativeHookException {
-    GlobalScreen.registerNativeHook();
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-    logger.setLevel(Level.OFF);
-    logger.setUseParentHandlers(false);
-    GlobalScreen.addNativeKeyListener(this);
-
-    String hotkey = (String) preferencesService.getPreferenceValue("overlayKey");
-    if (StringUtils.isEmpty(hotkey)) {
-      LOG.warn("No overlay hotkey defined! Define a key binding on the overlay configuration tab.");
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    switch (propertyName) {
+      case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
+        String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
+        this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
+        break;
+      }
+      case PreferenceNames.OVERLAY_KEY: {
+        overlayKey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
+        break;
+      }
+      case PreferenceNames.RESET_KEY: {
+        resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
+        break;
+      }
     }
-
-    new Thread(() -> {
-      OverlayWindowFX.main(new String[]{});
-      LOG.info("Overlay listener started.");
-    }).start();
-
-    shutdownThread = new ShutdownThread(preferencesService, queue);
-    shutdownThread.start();
-
-    OverlayWindowFX.client = overlayClient;
-    OverlayWindowFX.waitForOverlay();
-    LOG.info("Finished initialization of OverlayWindowFX");
-    afterStartup();
   }
 }

@@ -32,6 +32,7 @@ public class VpsVersionContainer extends VBox {
     if(item.getAuthors() != null && item.getAuthors().size() > 0) {
       String authors = String.join(", ", item.getAuthors());
       Label title = new Label(authors);
+      title.getStyleClass().add("default-text");
       if (comment == null || comment.trim().isEmpty()) {
         title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
       }
@@ -67,6 +68,7 @@ public class VpsVersionContainer extends VBox {
     if (features != null) {
       for (String feature : features) {
         Label badge = new Label(feature);
+        badge.getStyleClass().add("white-label");
         badge.setTooltip(new Tooltip(feature));
         badge.getStyleClass().add("vps-badge");
         badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");

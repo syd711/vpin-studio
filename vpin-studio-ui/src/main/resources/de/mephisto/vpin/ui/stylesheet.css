@@ -652,6 +652,22 @@
     -fx-text-background-color: #FFFFFF;
     -fx-background-color: #6666FFAA;
 }
+/* Row hovered */
+.tree-table-view:row-selection .tree-table-row-cell:filled:hover {
+    -fx-background-color: #6666FF55;
+    -fx-text-fill: #FFFFFF;
+}
+/* Selected row hovered when table not focused */
+.tree-table-view:row-selection .tree-table-row-cell:filled:focused:hover {
+    -fx-background-color: #6666FF55;
+    -fx-text-fill: #FFFFFF;
+}
+/* Selected row hovered */
+.tree-table-view:focused .tree-table-row-cell:filled:focused:selected:hover {
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
+}
 
 /**
  * List View
@@ -976,6 +992,11 @@
     -fx-text-fill: #FF9933;
     -fx-font-weight : bold;
     -fx-font-size: 14px;
+}
+
+
+.white-label {
+    -fx-text-fill: #FFFFFF;
 }
 
 .green-label {

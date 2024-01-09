@@ -20,6 +20,7 @@
 
     <logger name="javafx" level="error" />
     <logger name="net.dv8tion.jda.api" level="error" />
+    <logger name="com.zaxxer" level="error" />
 
     <root level="INFO">
         <appender-ref ref="rollingFile"/>

@@ -97,7 +97,7 @@ public class SystemInfo {
       reader.join();
       return reader.getResult();
     } catch (Exception e) {
-      LOG.error("Failed to read registry key " + location);
+      LOG.warn("Failed to read registry key " + location);
       return null;
     }
   }

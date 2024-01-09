@@ -281,7 +281,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     ManiaTournamentRepresentation t = TournamentDialogs.openTournamentBrowserDialog();
     if (t != null) {
       try {
-
+        ManiaTournamentRepresentation selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
+        if(selectedTournament != null) {
+          PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+          ManiaAccountRepresentation acc = defaultPlayer.toManiaAccount();
+          maniaClient.getTournamentClient().addPlayer(selectedTournament, acc);
+          onReload();
+        }
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -311,7 +317,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get();
       ManiaTournamentRepresentation tournament = tournamentTreeModel.getTournament();
-      boolean isOwner = tournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId());
+      boolean isOwner = TournamentHelper.isOwner(tournament);
       if (isOwner) {
         deleteTournament(tournament);
       }
@@ -490,7 +496,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     boolean validTournamentSetupAvailable = isValidTournamentSetupAvailable();
     if (validTournamentSetupAvailable) {
       boolean disable = newSelection == null;
-      boolean isOwner = newSelection != null && newSelection.getTournament() != null && newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId());
+      boolean isOwner = TournamentHelper.isOwner(newSelection.getTournament());
 
       createBtn.setDisable(disable);
       editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
@@ -501,8 +507,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       duplicateBtn.setDisable(disable || !isOwner);
       reloadBtn.setDisable(this.maniaAccount != null);
       addBtn.setDisable(this.maniaAccount != null);
-      downloadBtn.setDisable(!disable && newSelection.getGame() == null);
-      browseBtn.setDisable(this.maniaAccount != null && newSelection != null && newSelection.getTournament() != null && !newSelection.getTournament().getCabinetId().equals(maniaClient.getCabinetId()));
+      downloadBtn.setDisable(disable || newSelection.getGame() != null);
+      browseBtn.setDisable(this.maniaAccount != null);
     }
 
     if (model.isPresent()) {
@@ -547,6 +553,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private TreeItem<TournamentTreeModel> loadTreeModel() {
     List<ManiaTournamentRepresentation> tournaments = maniaClient.getTournamentClient().getTournaments();
+    LOG.info("Loaded " + tournaments.size() + " tournaments.");
     TreeItem<TournamentTreeModel> root = new TreeItem<>(new TournamentTreeModel(null, null, null, null));
     for (ManiaTournamentRepresentation tournament : tournaments) {
       if (!tournament.getDisplayName().toLowerCase().contains(textfieldSearch.getText().toLowerCase())) {
@@ -620,14 +627,19 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
           Label label = new Label("- not available anymore -");
+          label.getStyleClass().add("default-headline");
+          Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
           if (game != null) {
             label = new Label(game.getGameDisplayName());
+            label.getStyleClass().add("default-headline");
+            ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+            if(gameMediaItem != null) {
+              image = new Image(gameMediaItem);
+            }
           }
           HBox hBox = new HBox(3);
           hBox.setAlignment(Pos.CENTER_LEFT);
 
-          ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-          Image image = new Image(gameMediaItem);
           ImageView view = new ImageView(image);
           view.setPreserveRatio(true);
           view.setSmooth(true);

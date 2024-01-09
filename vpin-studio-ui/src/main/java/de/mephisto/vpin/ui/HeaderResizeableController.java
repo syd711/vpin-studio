@@ -44,7 +44,7 @@ public class HeaderResizeableController implements Initializable {
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
-      helper.switchWindowedMode();
+      helper.switchWindowedMode(e);
     }
   }
 
@@ -78,7 +78,7 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
-    helper.switchWindowedMode();
+    helper.switchWindowedMode(null);
   }
 
   @FXML
