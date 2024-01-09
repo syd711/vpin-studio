@@ -27,11 +27,12 @@ public class MainMenuState extends MenuState {
   @Override
   MenuState enter() {
     menuController.resetGameRow();
-    return new ArchiveSelectionMenuState(menuController);
+    return new MenuItemSelectionState(menuController);
   }
 
   @Override
   MenuState back() {
-    return new ExitMenuState(this, menuController);
+    System.out.println("do exit!");
+    return null;
   }
 }

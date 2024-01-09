@@ -2,13 +2,14 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 
 
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 
-public class ArchiveSelectionMenuState extends MenuState{
+public class MenuItemSelectionState extends MenuState{
   private final MenuController menuController;
 
-  public ArchiveSelectionMenuState(MenuController menuController) {
+  public MenuItemSelectionState(MenuController menuController) {
     this.menuController = menuController;
-    menuController.enterArchive();
+    menuController.enterMenuItemSelection();
   }
 
   @Override
@@ -25,12 +26,12 @@ public class ArchiveSelectionMenuState extends MenuState{
 
   @Override
   MenuState enter() {
-    return new ArchiveConfirmationMenuState(this, menuController);
+    return this;
   }
 
   @Override
   MenuState back() {
-    menuController.enterMainMenu();
-    return new MainMenuState(menuController);
+    PauseMenu.exit();
+    return null;
   }
 }

@@ -32,6 +32,8 @@ public class PauseMenu extends Application {
   private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
   private final static boolean TEST_PRODUCTION = false;
 
+  private static Stage stage;
+
   public static void main(String[] args) {
     launch(args);
   }
@@ -43,6 +45,7 @@ public class PauseMenu extends Application {
   }
 
   public static void loadUpdater(Stage stage) {
+    PauseMenu.stage = stage;
     try {
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
@@ -90,6 +93,15 @@ public class PauseMenu extends Application {
       stage.show();
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
+    }
+  }
+
+  public static void exit() {
+    if(TEST_PRODUCTION) {
+      System.exit(0);
+    }
+    else {
+      stage.hide();
     }
   }
 }

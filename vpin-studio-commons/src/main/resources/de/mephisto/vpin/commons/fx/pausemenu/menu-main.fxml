@@ -94,7 +94,7 @@
                      </image>
                   </ImageView>
                </center></BorderPane>
-            <HBox fx:id="gameRow" alignment="CENTER_LEFT" prefWidth="500.0">
+            <HBox fx:id="menuItemsRow" alignment="CENTER_LEFT" prefWidth="500.0">
                <padding>
                   <Insets top="20.0" />
                </padding></HBox>
