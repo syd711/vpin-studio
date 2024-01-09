@@ -44,11 +44,6 @@ public class AltColorResource {
     return new AltColor();
   }
 
-  @GetMapping("/clearcache")
-  public boolean clearCache() {
-    return true;
-  }
-
   @PostMapping("/upload")
   public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam(value = "uploadType", required = false) String uploadType,

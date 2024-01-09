@@ -39,9 +39,4 @@ public class RomResource {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Delete alias mapping failed: " + e.getMessage());
     }
   }
-
-  @GetMapping("/clearcache")
-  public boolean clearCache() {
-    return true;
-  }
 }

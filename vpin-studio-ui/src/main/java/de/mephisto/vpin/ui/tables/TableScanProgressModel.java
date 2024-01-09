@@ -19,6 +19,8 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
     super(title);
     iterator = gameRepresentations.iterator();
     this.gameRepresentations = gameRepresentations;
+
+    Studio.client.getMameService().clearCache();
   }
 
   @Override
@@ -48,7 +50,6 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.getGameService().scanGame(game.getId());
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Table scan error: " + e.getMessage(), e);
