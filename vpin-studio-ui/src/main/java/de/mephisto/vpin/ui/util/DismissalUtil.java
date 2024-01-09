@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -15,8 +16,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class DismissalUtil {
   public static void dismissValidation(GameRepresentation game, ValidationState validationState) {
-    List<String> csvValue = client.getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS).getCSVValue();
-    if (csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS)) {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (uiSettings.isHideDismissConfirmations()) {
       dismiss(game, validationState);
     }
     else {
@@ -27,10 +28,8 @@ public class DismissalUtil {
       }
 
       if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
-        if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS)) {
-          csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_CONFIRM_DISMISSALS);
-          client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
-        }
+        uiSettings.setHideDismissConfirmations(true);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       }
     }
   }
@@ -56,9 +55,9 @@ public class DismissalUtil {
   }
 
   public static void dismissSelection(GameRepresentation game, List<Integer> codes) {
-    List<Integer> ignoredValidations =  new ArrayList<>(game.getIgnoredValidations());
+    List<Integer> ignoredValidations = new ArrayList<>(game.getIgnoredValidations());
     for (Integer code : codes) {
-      if(!ignoredValidations.contains(code)) {
+      if (!ignoredValidations.contains(code)) {
         ignoredValidations.add(code);
       }
     }
@@ -73,7 +72,7 @@ public class DismissalUtil {
   }
 
   private static void dismissAll(GameRepresentation game) {
-    List<Integer> ignoredValidations =  new ArrayList<>();
+    List<Integer> ignoredValidations = new ArrayList<>();
     ignoredValidations.add(-1);
     game.setIgnoredValidations(ignoredValidations);
 

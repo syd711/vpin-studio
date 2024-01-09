@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -70,8 +71,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   private boolean initialized = false;
 
-  private PreferenceEntryRepresentation doNotShowAgainPref;
-
   // Add a public no-args constructor
   public ComponentsController() {
   }
@@ -85,11 +84,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
 
     if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
-      List<String> values = doNotShowAgainPref.getCSVValue();
-      if (!values.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING)) {
-        values.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING);
-      }
-      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", values));
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      uiSettings.setHideComponentWarning(true);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     }
   }
 
@@ -187,8 +184,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @Override
   public void preferencesChanged() {
-    doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
-    List<String> csvValue = doNotShowAgainPref.getCSVValue();
-    hint.setVisible(!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_COMPONENTS_WARNING));
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    hint.setVisible(!uiSettings.isHideComponentWarning());
   }
 }

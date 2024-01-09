@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
@@ -526,9 +527,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
-      List<String> values = preference.getCSVValue();
-      this.vpsResetBtn.setVisible(!values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      this.vpsResetBtn.setVisible(!uiSettings.isHideVPSUpdates());
     }
   }
 }

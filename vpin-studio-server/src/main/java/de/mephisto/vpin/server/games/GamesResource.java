@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
@@ -163,9 +164,9 @@ public class GamesResource {
       }
 
       String originalFilename = file.getOriginalFilename();
-      List<String> values = preferenceService.getPreferenceCSVValue(PreferenceNames.SERVER_SETTINGS);
-      boolean keepExistingFilename = values.contains(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES);
-      boolean keepExistingDisplayName = values.contains(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES);
+      ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      boolean keepExistingFilename = serverSettings.isVpxKeepFileNames();
+      boolean keepExistingDisplayName = serverSettings.isVpxKeepDisplayNames();
 
       //determine the target file depending on the selected emulator
       GameEmulator gameEmulator = popperService.getGameEmulator(emuId);

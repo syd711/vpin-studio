@@ -5,11 +5,12 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
+import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.games.GameList;
-import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -394,7 +395,7 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
         }
       }
     }
-    LOG.info("Finished asset renaming for \"" + oldBaseName+ "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
+    LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
   }
 
   public PopperCustomOptions getCustomOptions() {
@@ -421,8 +422,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   @Override
   public void tableDataChanged(@NotNull Game game) {
     try {
-      List<String> values = preferencesService.getPreferenceCSVValue(PreferenceNames.SERVER_SETTINGS);
-      boolean autoApply = values.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
+      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      boolean autoApply = serverSettings.isVpsAutoApplyToPopper();
       autofillTableDetails(game, autoApply);
     } catch (Exception e) {
       LOG.error("Failed to execute auto-filling of game details: " + e.getMessage(), e);

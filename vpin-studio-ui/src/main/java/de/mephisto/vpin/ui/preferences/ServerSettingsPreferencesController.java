@@ -2,11 +2,14 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
@@ -66,41 +69,25 @@ public class ServerSettingsPreferencesController implements Initializable {
     }, 1000));
 
 
-    PreferenceEntryRepresentation serverPreferences = client.getPreference(PreferenceNames.SERVER_SETTINGS);
-    List<String> serverSettings = serverPreferences.getCSVValue();
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    autoApplyVPSCheckbox.setSelected(serverSettings.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER));
+    autoApplyVPSCheckbox.setSelected(serverSettings.isVpsAutoApplyToPopper());
     autoApplyVPSCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        serverSettings.remove(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
-      }
-      else if (!serverSettings.contains(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER)) {
-        serverSettings.add(PreferenceNames.SERVER_AUTO_APPLY_VPS_TO_POPPER);
-      }
-      client.getPreferenceService().setPreference(PreferenceNames.SERVER_SETTINGS, String.join(",", serverSettings));
+      serverSettings.setVpsAutoApplyToPopper(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
 
-    keepNamesCheckbox.setSelected(serverSettings.contains(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES));
+    keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        serverSettings.remove(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES);
-      }
-      else if (!serverSettings.contains(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES)) {
-        serverSettings.add(PreferenceNames.SERVER_KEEP_EXISTING_VXP_FILENAMES);
-      }
-      client.getPreferenceService().setPreference(PreferenceNames.SERVER_SETTINGS, String.join(",", serverSettings));
+      serverSettings.setVpxKeepFileNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    keepDisplayNamesCheckbox.setSelected(serverSettings.contains(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES));
+    keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
     keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        serverSettings.remove(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES);
-      }
-      else if (!serverSettings.contains(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES)) {
-        serverSettings.add(PreferenceNames.SERVER_KEEP_EXISTING_DISPLAY_NAMES);
-      }
-      client.getPreferenceService().setPreference(PreferenceNames.SERVER_SETTINGS, String.join(",", serverSettings));
+      serverSettings.setVpxKeepDisplayNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }
 }

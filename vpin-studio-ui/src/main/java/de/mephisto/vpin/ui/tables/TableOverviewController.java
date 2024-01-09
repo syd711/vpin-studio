@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -249,9 +250,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onPlay() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
-      List<String> values = doNotShowAgainPref.getCSVValue();
-      if (values.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START)) {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      if (uiSettings.isHideVPXStartInfo()) {
         client.getVpxService().playGame(game.getId());
         return;
       }
@@ -259,10 +259,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and Popper processes will be terminated.", null, "Do not shown again", false);
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
-          if (!values.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START)) {
-            values.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_VPX_START);
-          }
-          client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", values));
+          uiSettings.setHideVPXStartInfo(true);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }
         client.getVpxService().playGame(game.getId());
       }
@@ -548,10 +546,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onReload() {
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.UI_SETTINGS);
-    List<String> values = preference.getCSVValue();
-    this.showVersionUpdates = !values.contains(PreferenceNames.UI_HIDE_VERSIONS);
-    this.showVpsUpdates = !values.contains(PreferenceNames.UI_HIDE_VPS_UPDATES);
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.showVersionUpdates = !uiSettings.isHideVersions();
+    this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
 
     refreshPlaylists();
 

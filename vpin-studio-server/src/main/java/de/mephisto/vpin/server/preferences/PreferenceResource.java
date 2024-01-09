@@ -1,16 +1,22 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "preferences")
@@ -27,6 +33,26 @@ public class PreferenceResource {
       return new PreferenceEntry(key, null);
     }
     return new PreferenceEntry(key, String.valueOf(preferenceValue));
+  }
+
+  @GetMapping("/json/{key}")
+  public JsonSettings<?> getJson(@PathVariable("key") String key) {
+    try {
+      switch (key) {
+        case PreferenceNames.UI_SETTINGS: {
+          return preferencesService.getJsonPreference(key, UISettings.class);
+        }
+        case PreferenceNames.SERVER_SETTINGS: {
+          return preferencesService.getJsonPreference(key, ServerSettings.class);
+        }
+        default: {
+          throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to read JSON preferences: " + e.getMessage());
+    }
   }
 
   @PostMapping(value = "/avatar")
@@ -50,6 +76,11 @@ public class PreferenceResource {
     return preferencesService.savePreference(values);
   }
 
+  @PutMapping(value = "/json/{key}")
+  public boolean put(@PathVariable("key") String key, @RequestBody Map<String, Object> values) throws Exception {
+    String json = (String) values.get("data");
+    return preferencesService.savePreference(key, json);
+  }
 
   static class PreferenceEntry {
     private final String key;

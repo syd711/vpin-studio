@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -27,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -72,7 +72,13 @@ public class UISettingsPreferencesController implements Initializable {
   private void onHideReset() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset \"Do not show again\" flags?", "All previously hidden dialogs or panels will be shown again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, "");
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+      uiSettings.setHideComponentWarning(false);
+      uiSettings.setHideDismissConfirmations(false);
+      uiSettings.setHideVPXStartInfo(false);
+
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       EventManager.getInstance().notifyPreferenceChanged();
     }
   }
@@ -81,32 +87,20 @@ public class UISettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     BindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
 
-    PreferenceEntryRepresentation uiPreferences = client.getPreference(PreferenceNames.UI_SETTINGS);
-    List<String> uiSettings = uiPreferences.getCSVValue();
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    uiShowVersion.setSelected(uiSettings.contains(PreferenceNames.UI_HIDE_VERSIONS));
+    uiShowVersion.setSelected(uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        uiSettings.remove(PreferenceNames.UI_HIDE_VERSIONS);
-      }
-      else if (!uiSettings.contains(PreferenceNames.UI_HIDE_VERSIONS)) {
-        uiSettings.add(PreferenceNames.UI_HIDE_VERSIONS);
-      }
+      uiSettings.setHideVersions(t1);
       PreferencesController.markDirty();
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", uiSettings));
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
-
-    uiHideVPSUpdates.setSelected(uiSettings.contains(PreferenceNames.UI_HIDE_VPS_UPDATES));
+    uiHideVPSUpdates.setSelected(uiSettings.isHideVPSUpdates());
     uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        uiSettings.remove(PreferenceNames.UI_HIDE_VPS_UPDATES);
-      }
-      else if (!uiSettings.contains(PreferenceNames.UI_HIDE_VPS_UPDATES)) {
-        uiSettings.add(PreferenceNames.UI_HIDE_VPS_UPDATES);
-      }
+      uiSettings.setHideVPSUpdates(t1);
       PreferencesController.markDirty();
-      client.getPreferenceService().setPreference(PreferenceNames.UI_SETTINGS, String.join(",", uiSettings));
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     refreshAvatar();

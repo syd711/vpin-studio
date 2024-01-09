@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.ui.Studio;
@@ -34,18 +35,15 @@ public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
   public static void openUpdateInfoDialog(String version, boolean force) {
-    PreferenceEntryRepresentation doNotShowAgainPref = client.getPreferenceService().getPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS);
-    List<String> csvValue = doNotShowAgainPref.getCSVValue();
-    if (force || !csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (force || !uiSettings.isHideUpdateInfo()) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
       Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();
     }
 
-    if (!csvValue.contains(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO)) {
-      csvValue.add(PreferenceNames.UI_DO_NOT_SHOW_AGAIN_UPDATE_INFO);
-      client.getPreferenceService().setPreference(PreferenceNames.UI_DO_NOT_SHOW_AGAINS, String.join(",", csvValue));
-    }
+    uiSettings.setHideUpdateInfo(true);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
   }
 
   public static boolean openUpdateDialog() {

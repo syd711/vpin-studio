@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.preferences;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
@@ -32,6 +33,23 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
+  public <T> T getJsonPreference(String key, Class<T> clazz) {
+    return getRestClient().get(API + "preferences/json/" + key, clazz);
+  }
+
+  public boolean setJsonPreference(String key, JsonSettings settings) {
+    try {
+      Map<String, Object> data = new HashMap<>();
+      data.put("data", settings.toJson());
+      boolean result = getRestClient().put(API + "preferences/json/" + key, data);
+      notifyPreferenceChange(key, settings);
+      return result;
+    } catch (Exception e) {
+      LOG.error("Failed to set json preferences: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
   public boolean setPreferences(Map<String, Object> values) {
     try {
       boolean result = getRestClient().put(API + "preferences", values);
@@ -55,6 +73,10 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   }
 
   public boolean setPreference(String key, Object value) {
+    if (value instanceof JsonSettings) {
+      throw new UnsupportedOperationException("Use setJsonPreference for JSON settings");
+    }
+
     try {
       Map<String, Object> values = new HashMap<>();
       values.put(key, value);
@@ -75,5 +97,4 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
-
 }
