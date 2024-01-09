@@ -17,6 +17,7 @@ import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.*;
@@ -28,7 +29,7 @@ public class PauseMenu extends Application {
 
   public static VPinStudioClient client;
 
-  private final static boolean PRODUCTION_USE = true;//!new File("./").getAbsolutePath().contains("workspace");
+  private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
   private final static boolean TEST_PRODUCTION = false;
 
   public static void main(String[] args) {

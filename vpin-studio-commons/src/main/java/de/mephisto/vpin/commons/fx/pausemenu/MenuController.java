@@ -3,10 +3,10 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -86,7 +86,6 @@ public class MenuController implements Initializable {
   @FXML
   private Node arrowLeft;
 
-  private boolean installToggle = true;
   private int selectionIndex = 0;
   private List<ArchiveDescriptorRepresentation> archiveDescriptors;
   private List<GameRepresentation> games;
@@ -97,21 +96,9 @@ public class MenuController implements Initializable {
   }
 
   public void toggleInstall() {
-    if (installToggle) {
-      baseSelector.setStyle("-fx-background-color: #33CC00;");
-      TransitionUtil.createOutFader(greenPanel).play();
-      TransitionUtil.createInFader(bluePanel).play();
-    }
-    else {
-      baseSelector.setStyle("-fx-background-color: #FF3333;");
-      TransitionUtil.createOutFader(bluePanel).play();
-      TransitionUtil.createInFader(greenPanel).play();
-    }
-    installToggle = !installToggle;
-  }
-
-  public boolean isInstallSelected() {
-    return this.installToggle;
+    baseSelector.setStyle("-fx-background-color: #33CC00;");
+    TransitionUtil.createOutFader(greenPanel).play();
+    TransitionUtil.createInFader(bluePanel).play();
   }
 
   public void enterInstall() {
@@ -195,12 +182,7 @@ public class MenuController implements Initializable {
 
   public void enterMainMenu() {
     resetFooter();
-    if (this.installToggle) {
-      enterMainWithInstall();
-    }
-    else {
-      enterMainWithArchive();
-    }
+    enterMainWithArchive();
   }
 
   public void enterTableInstallConfirmation() {

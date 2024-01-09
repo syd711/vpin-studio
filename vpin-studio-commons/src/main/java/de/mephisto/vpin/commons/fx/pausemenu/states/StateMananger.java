@@ -79,7 +79,7 @@ public class StateMananger implements NativeKeyListener {
 
   public void init(MenuController controller) {
     menuController = controller;
-    this.activeState = new MainMenuState(controller);
+    this.activeState = new ArchiveSelectionMenuState(menuController);
   }
 
   public void handle(int keyCode) {
