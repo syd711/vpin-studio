@@ -11,10 +11,22 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="2200.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="2200.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
    <center>
       <StackPane styleClass="root" BorderPane.alignment="CENTER">
          <children>
+            <StackPane fx:id="screenStack">
+               <StackPane.margin>
+                  <Insets bottom="1200.0" />
+               </StackPane.margin>
+               <children>
+                  <ImageView fitHeight="800.0" fitWidth="1400.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@screen.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </StackPane>
             <BorderPane fx:id="footer">
                <center>
                   <StackPane BorderPane.alignment="CENTER">

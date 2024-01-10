@@ -1,7 +1,9 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +47,7 @@ public class PauseMenu extends Application {
   }
 
   public static void loadUpdater(Stage stage) {
+    GameRepresentation game = client.getGameService().getGame(243);
     PauseMenu.stage = stage;
     try {
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
@@ -55,6 +58,7 @@ public class PauseMenu extends Application {
 
       Scene scene = null;
 
+      int height = 1400;
       if (PRODUCTION_USE || TEST_PRODUCTION) {
         root.setRotate(-90);
         root.setTranslateY(0);
@@ -64,9 +68,9 @@ public class PauseMenu extends Application {
         stage.setX(screenBounds.getWidth() / 2 / 2);
       }
       else {
-        scene = new Scene(root, screenBounds.getWidth(), 1000);
+        scene = new Scene(root, screenBounds.getWidth(), height);
         stage.setX((screenBounds.getWidth() / 2) - (screenBounds.getWidth() / 2));
-        stage.setY((screenBounds.getHeight() / 2) - (1000 / 2));
+        stage.setY((screenBounds.getHeight() / 2) - (height / 2));
       }
 
       scene.setFill(Color.TRANSPARENT);

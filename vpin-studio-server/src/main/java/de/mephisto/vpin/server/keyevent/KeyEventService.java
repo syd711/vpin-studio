@@ -2,7 +2,9 @@ package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
@@ -51,6 +53,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private boolean launchOverlayOnStartup = false;
   private String overlayKey;
   private String resetKey;
+  private Game activeGame;
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
@@ -105,22 +108,22 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-
+    this.activeGame = event.getGame();
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-
+    this.activeGame = null;
   }
 
   @Override
   public void popperExited() {
-
+    this.activeGame = null;
   }
 
   @Override
   public void popperRestarted() {
-
+    this.activeGame = null;
   }
 
   public void resetShutdownTimer() {

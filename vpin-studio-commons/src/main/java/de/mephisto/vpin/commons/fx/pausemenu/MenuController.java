@@ -14,7 +14,6 @@ import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -101,26 +100,24 @@ public class MenuController implements Initializable {
 
     setLoadLabel("Loading...");
 
-    new Thread(() -> {
-      menuItems = new ArrayList<>();
-      PauseMenuItem item = new PauseMenuItem("Exit");
-      menuItems.add(item);
-      item = new PauseMenuItem("Highscores");
-      menuItems.add(item);
-      item = new PauseMenuItem("Instructions");
-      menuItems.add(item);
-      item = new PauseMenuItem("Statistics");
-      menuItems.add(item);
+    menuItems = new ArrayList<>();
+    PauseMenuItem item = new PauseMenuItem("Exit");
+    menuItems.add(item);
+    item = new PauseMenuItem("Highscores");
+    menuItems.add(item);
+    item = new PauseMenuItem("Instructions");
+    menuItems.add(item);
+    item = new PauseMenuItem("Statistics");
+    menuItems.add(item);
 
-      activeModels = menuItems; //TODO mpf
-      Platform.runLater(() -> {
-        loadMenuItems();
-        initGameBarSelection();
+    activeModels = menuItems; //TODO mpf
+    Platform.runLater(() -> {
+      loadMenuItems();
+      initGameBarSelection();
 
-        TransitionUtil.createOutFader(loadMask).play();
-        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
-      });
-    }).start();
+      TransitionUtil.createOutFader(loadMask).play();
+      StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
+    });
   }
 
   private void enterMainWithArchive() {

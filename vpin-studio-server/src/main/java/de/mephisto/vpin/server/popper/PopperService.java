@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
@@ -69,6 +70,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   public PinUPControls getPinUPControls() {
     return pinUPConnector.getControls();
   }
+
+  private GameRepresentation activeGame;
 
   @SuppressWarnings("unused")
   public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
