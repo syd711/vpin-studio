@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -20,27 +19,6 @@
                <center>
                   <StackPane BorderPane.alignment="CENTER">
                      <children>
-                        <StackPane fx:id="progressStack">
-                           <StackPane.margin>
-                              <Insets top="-100.0" />
-                           </StackPane.margin>
-                           <children>
-                              <ProgressBar fx:id="progressBar" prefHeight="70.0" prefWidth="980.0" progress="0.0" />
-                              <Label fx:id="progressLabel" text="Loading Tables..." textFill="WHITE">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@footer-progress.png" />
-                                 </image>
-                                 <StackPane.margin>
-                                    <Insets />
-                                 </StackPane.margin>
-                              </ImageView>
-                           </children>
-                        </StackPane>
                         <StackPane fx:id="footerStack">
                            <children>
                               <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">

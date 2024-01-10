@@ -66,15 +66,6 @@ public class MenuController implements Initializable {
   private Label nameLabel;
 
   @FXML
-  private Node progressStack;
-
-  @FXML
-  private ProgressBar progressBar;
-
-  @FXML
-  private Label progressLabel;
-
-  @FXML
   private Node footer;
 
   @FXML
@@ -96,28 +87,6 @@ public class MenuController implements Initializable {
     baseSelector.setStyle("-fx-background-color: #33CC00;");
     TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel).play();
-  }
-
-  public void enterInstall() {
-    StateMananger.getInstance().setInputBlocked(true);
-    resetGameRow();
-    greenLabel.setText("Restore");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createInFader(menuItemsRow).play();
-    TransitionUtil.createInFader(loadMask).play();
-    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
-
-    new Thread(() -> {
-      archiveDescriptors = PauseMenu.client.getArchiveService().getArchiveDescriptorsFiltered();
-      activeModels = archiveDescriptors; //TODO mpf
-      Platform.runLater(() -> {
-        initGameBarSelection();
-
-        TransitionUtil.createOutFader(loadMask).play();
-        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
-      });
-    }).start();
   }
 
   public void enterMenuItemSelection() {
@@ -154,18 +123,6 @@ public class MenuController implements Initializable {
     }).start();
   }
 
-  private void enterMainWithInstall() {
-    redLabel.setText("");
-    greenLabel.setText("Restore");
-    blueLabel.setText("Archive");
-    setLoadLabel("");
-    resetGameRow();
-    TransitionUtil.createOutFader(menuItemsRow).play();
-    TransitionUtil.createOutFader(redPanel).play();
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createInFader(greenPanel).play();
-  }
-
   private void enterMainWithArchive() {
     redLabel.setText("");
     greenLabel.setText("Restore");
@@ -188,55 +145,6 @@ public class MenuController implements Initializable {
   public void enterMainMenu() {
     resetFooter();
     enterMainWithArchive();
-  }
-
-  public void enterTableInstallConfirmation() {
-    greenLabel.setText("Restore Table?");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
-  }
-
-  public void enterArchiveInstallConfirmation() {
-    greenLabel.setText("Archive Table?");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createInFader(greenPanel, 0.9, 100).play();
-  }
-
-  public void leaveConfirmation() {
-    setLoadLabel("");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createOutFader(loadMask).play();
-  }
-
-  public void enterArchiving() {
-    greenLabel.setText("");
-    blueLabel.setText("");
-    setLoadLabel("Archiving Table...");
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
-    TransitionUtil.createInFader(loadMask).play();
-  }
-
-
-  public void enterInstalling() {
-    greenLabel.setText("");
-    blueLabel.setText("");
-    setLoadLabel("Restoring Table...");
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createInFader(bluePanel, 0.9, 100).play();
-    TransitionUtil.createInFader(loadMask).play();
-  }
-
-
-  public void enterExitConfirmation() {
-    blueLabel.setText("");
-    greenLabel.setText("");
-    redLabel.setText("Back To Popper?");
-    TransitionUtil.createInFader(redPanel).play();
-    TransitionUtil.createOutFader(greenPanel).play();
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createOutFader(loadMask).play();
   }
 
   public void setLoadLabel(String text) {
@@ -381,49 +289,8 @@ public class MenuController implements Initializable {
     return (ArchiveDescriptorRepresentation) node.getUserData();
   }
 
-  public void showProgressbar() {
-    TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, 70).play();
-  }
-
-  public void hideProgressbar() {
-    this.progressBar.setProgress(1);
-    TransitionUtil.createTranslateByYTransition(progressStack, FOOTER_ANIMATION_DURATION, -70).play();
-  }
-
-  public void setNameLabelText(String text) {
-    nameLabel.setText(text);
-  }
-
-  public void setStatus(String status, double progress) {
-    this.progressBar.setProgress(progress / 100);
-    this.progressLabel.setText(status);
-    LOG.info("Setting status: \"" + status + "\" / " + progress);
-  }
-
-  public void enterArchiveOptionsSelection() {
-    arrowRight.setVisible(true);
-    arrowLeft.setVisible(true);
-    greenLabel.setText("Archive Options");
-  }
-
-  public void enterPlaylistSelection() {
-    arrowRight.setVisible(true);
-    arrowLeft.setVisible(true);
-    greenLabel.setText("Select Playlist");
-  }
-
   public void setArrowsVisible(boolean b) {
     arrowRight.setVisible(b);
     arrowLeft.setVisible(b);
-  }
-
-  public void leaveArchiveSubSelection() {
-    setArrowsVisible(false);
-    nameLabel.setText(this.getGameSelection().getGameDisplayName());
-  }
-
-  public void leaveInstallSubSelection() {
-    setArrowsVisible(false);
-    nameLabel.setText(this.getArchiveSelection().getTableDetails().getGameDisplayName());
   }
 }
