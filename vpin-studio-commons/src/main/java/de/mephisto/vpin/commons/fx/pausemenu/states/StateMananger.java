@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import javafx.application.Platform;
@@ -101,17 +102,8 @@ public class StateMananger implements NativeKeyListener {
       LOG.info("Entered " + this.activeState);
     }
     else if (keyCode == BACK) {
-      backPlayer.play();
-      this.activeState = activeState.back();
-      LOG.info("Went back to " + this.activeState);
+      PauseMenu.exit();
     }
-  }
-
-  public void waitForJobAndGoBack() {
-//    this.setInputBlocked(true);
-//    Platform.runLater(() -> {
-//      TableManagerJobPoller.getInstance().setPolling();
-//    });
   }
 
   @Override
@@ -121,14 +113,16 @@ public class StateMananger implements NativeKeyListener {
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+    System.out.println(nativeKeyEvent.getRawCode());
+    System.out.println(blocked);
     Platform.runLater(() -> {
       handle(nativeKeyEvent.getRawCode());
-      try {
-        Thread.sleep(60);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
     });
+    try {
+      Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

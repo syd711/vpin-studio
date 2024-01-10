@@ -33,15 +33,8 @@ import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.*;
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuController.class);
 
-
-  @FXML
-  private Node greenPanel;
-
   @FXML
   private Node bluePanel;
-
-  @FXML
-  private Node redPanel;
 
   @FXML
   private Node baseSelector;
@@ -56,12 +49,6 @@ public class MenuController implements Initializable {
   private Node loadMask;
 
   @FXML
-  private Label greenLabel;
-
-  @FXML
-  private Label redLabel;
-
-  @FXML
   private Label nameLabel;
 
   @FXML
@@ -74,7 +61,6 @@ public class MenuController implements Initializable {
   private Node arrowLeft;
 
   private int selectionIndex = 0;
-  private List<ArchiveDescriptorRepresentation> archiveDescriptors;
   private List<PauseMenuItem> menuItems;
   private List<?> activeModels;
 
@@ -84,7 +70,6 @@ public class MenuController implements Initializable {
 
   public void toggleInstall() {
     baseSelector.setStyle("-fx-background-color: #33CC00;");
-    TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel).play();
   }
 
@@ -93,7 +78,6 @@ public class MenuController implements Initializable {
     resetGameRow();
     blueLabel.setText("Archive Table");
     TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();
     TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
@@ -121,14 +105,10 @@ public class MenuController implements Initializable {
   }
 
   private void enterMainWithArchive() {
-    redLabel.setText("");
-    greenLabel.setText("Restore");
     blueLabel.setText("Archive");
     setLoadLabel("");
     resetGameRow();
     TransitionUtil.createOutFader(menuItemsRow).play();
-    TransitionUtil.createOutFader(redPanel).play();
-    TransitionUtil.createOutFader(greenPanel).play();
     TransitionUtil.createInFader(bluePanel).play();
   }
 
@@ -193,12 +173,13 @@ public class MenuController implements Initializable {
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.play();
 
-    updateLabel(updatedNode);
+    updateSelection(updatedNode);
   }
 
-  private void updateLabel(Node node) {
+  private void updateSelection(Node node) {
     PauseMenuItem menuItem = (PauseMenuItem) node.getUserData();
     nameLabel.setText(menuItem.getName());
+    System.out.println("Selected " + menuItem.getName());
   }
 
   /**
@@ -223,7 +204,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
     TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
-    updateLabel(child);
+    updateSelection(child);
   }
 
   public void resetGameRow() {

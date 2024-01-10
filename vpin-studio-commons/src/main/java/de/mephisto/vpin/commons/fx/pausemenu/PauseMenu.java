@@ -32,7 +32,6 @@ public class PauseMenu extends Application {
   public static VPinStudioClient client;
 
   private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
-  private final static boolean TEST_PRODUCTION = false;
 
   private static Stage stage;
 
@@ -59,7 +58,7 @@ public class PauseMenu extends Application {
       Scene scene = null;
 
       int height = 1400;
-      if (PRODUCTION_USE || TEST_PRODUCTION) {
+      if (PRODUCTION_USE) {
         root.setRotate(-90);
         root.setTranslateY(0);
         root.setTranslateX(0);
@@ -89,22 +88,25 @@ public class PauseMenu extends Application {
       java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
-      GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
         //TODO execute pause exe here
       }
-      stage.show();
+      else {
+        GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+        stage.show();
+      }
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
 
   public static void exit() {
-    if(TEST_PRODUCTION) {
+    if(!PRODUCTION_USE) {
       System.exit(0);
     }
     else {
+      GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
       stage.hide();
     }
   }

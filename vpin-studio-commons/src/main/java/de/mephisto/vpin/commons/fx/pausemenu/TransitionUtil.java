@@ -144,9 +144,9 @@ public class TransitionUtil {
     transition.setInterpolator(Interpolator.EASE_BOTH);
 
     //apply speed as default cache strategy.
-    if (!node.getCacheHint().equals(CacheHint.SPEED)) {
-      node.setCache(true);
-      node.setCacheHint(CacheHint.SPEED);
-    }
+//    if (!node.getCacheHint().equals(CacheHint.SCALE_AND_ROTATE)) {
+//      node.setCache(true);
+//      node.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+//    }
   }
 }

@@ -106,42 +106,6 @@
                   </StackPane>
                </center>
             </BorderPane>
-            <BorderPane fx:id="redPanel" layoutX="1810.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" opacity="0.0" styleClass="red-selector">
-               <center>
-                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@red.png" />
-                           </image>
-                        </ImageView>
-                        <Label fx:id="redLabel" textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font name="Impact" size="88.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </StackPane>
-               </center>
-            </BorderPane>
-            <BorderPane fx:id="greenPanel" maxHeight="400.0" maxWidth="400.0" styleClass="green-selector">
-               <center>
-                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@green.png" />
-                           </image>
-                        </ImageView>
-                        <Label fx:id="greenLabel" text="Install Table" textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font name="Impact" size="88.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </StackPane>
-               </center>
-            </BorderPane>
             <BorderPane fx:id="loadMask" maxHeight="400.0" maxWidth="400.0" opacity="0.0" styleClass="loading-selector">
                <center>
                   <StackPane BorderPane.alignment="CENTER">
