@@ -8,6 +8,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileReader;
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -40,7 +43,6 @@ public class PinUPConnector implements InitializingBean {
   private SystemService systemService;
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
-  private final Map<String, PopperWindowScreen> screens = new LinkedHashMap<>();
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
@@ -68,6 +70,8 @@ public class PinUPConnector implements InitializingBean {
     for (GameEmulator value : values) {
       if (value.getNvramFolder().exists()) {
         return value;
+      } else {
+        LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
     throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
@@ -612,8 +616,7 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        }
-        else {
+        } else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
       }
@@ -656,8 +659,7 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        }
-        else {
+        } else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
 
@@ -1276,37 +1278,58 @@ public class PinUPConnector implements InitializingBean {
     }
   }
 
-  public List<PopperWindowScreen> getWindowScreens() {
-    if(!this.screens.isEmpty()) {
-      return new ArrayList<>(this.screens.values());
-    }
-
-    Connection connect = this.connect();
-    List<PopperWindowScreen> result = new ArrayList<>();
+  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
+    List<PinUPPlayerDisplay> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Screens;");
-      while (rs.next()) {
-        try {
-          PopperWindowScreen screen = new PopperWindowScreen();
-          screen.setScreen(PopperScreen.ofDbName(rs.getString("ScreenName")));
-          screen.setWidth(rs.getInt("ScreenWidth"));
-          screen.setHeight(rs.getInt("ScreenHeight"));
-          screen.setX(rs.getInt("POSx"));
-          screen.setY(rs.getInt("POSy"));
-          screen.setVisible(rs.getInt("Visible") == 1);
-          result.add(screen);
-        } catch (Exception e) {
-          LOG.error("Error loading screen info: " + e.getMessage());
+      INIConfiguration iniConfiguration = new INIConfiguration();
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setSeparatorUsedInOutput("=");
+      iniConfiguration.setSeparatorUsedInInput("=");
+
+      File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
+      FileReader fileReader = new FileReader(ini);
+      try {
+        iniConfiguration.read(fileReader);
+      } finally {
+        fileReader.close();
+      }
+
+      Map<String, String> sectionMappings = new HashMap<>();
+      sectionMappings.put("[INFO]", "Topper");
+      sectionMappings.put("[INFO1]", "DMD (4:1 slim)");
+      sectionMappings.put("[INFO2]", "BackGlass");
+      sectionMappings.put("[INFO3]", "PlayField");
+      sectionMappings.put("[INFO4]", "Music");
+      sectionMappings.put("[INFO5]", "Apron/FullDMD");
+      sectionMappings.put("[INFO6]", "Game Select");
+      sectionMappings.put("[INFO7]", "Loading");
+      sectionMappings.put("[INFO8]", "Other2");
+      sectionMappings.put("[INFO9]", "GameInfo");
+      sectionMappings.put("[INFO10]", "GameHelp");
+
+      Set<String> sections = iniConfiguration.getSections();
+      for (String section : sections) {
+        if (section.contains("INFO")) {
+          try {
+            PinUPPlayerDisplay display = new PinUPPlayerDisplay();
+            SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
+            display.setName(sectionMappings.get(sectionNode));
+            display.setX(sectionNode.getInt("ScreenXPos"));
+            display.setY(sectionNode.getInt("ScreenYPos"));
+            display.setWidth(sectionNode.getInt("ScreenWidth"));
+            display.setHeight(sectionNode.getInt("ScreenHeight"));
+            display.setRotation(sectionNode.getInt("ScreenRotation"));
+
+            result.add(display);
+          } catch (Exception e) {
+            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
+          }
         }
       }
-      rs.close();
-      statement.close();
-      LOG.info("Loaded screen info of " + result.size() + " Popper screens.");
-    } catch (SQLException e) {
-      LOG.error("Failed to get screens: " + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
+
+      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
+    } catch (Exception e) {
+      LOG.error("Failed to get player displays: " + e.getMessage(), e);
     }
     return result;
   }
@@ -1315,8 +1338,6 @@ public class PinUPConnector implements InitializingBean {
   public void afterPropertiesSet() {
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-
-    this.getWindowScreens();
 
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
@@ -1354,12 +1375,10 @@ public class PinUPConnector implements InitializingBean {
           if (!found) {
             LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
           }
-        }
-        else {
+        } else {
           LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
         }
-      }
-      else {
+      } else {
         String path = String.valueOf(pathEntry.values().iterator().next());
         if (path.contains("\"")) {
           path = path.substring(1);

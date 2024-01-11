@@ -1,20 +1,19 @@
 package de.mephisto.vpin.restclient.popper;
 
-public class PopperWindowScreen {
-  private PopperScreen screen;
+public class PinUPPlayerDisplay {
+  private String name;
   private int x;
   private int y;
   private int width;
   private int height;
   private int rotation;
-  private boolean visible;
 
-  public PopperScreen getScreen() {
-    return screen;
+  public String getName() {
+    return name;
   }
 
-  public void setScreen(PopperScreen screen) {
-    this.screen = screen;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public int getX() {
@@ -55,13 +54,5 @@ public class PopperWindowScreen {
 
   public void setRotation(int rotation) {
     this.rotation = rotation;
-  }
-
-  public boolean isVisible() {
-    return visible;
-  }
-
-  public void setVisible(boolean visible) {
-    this.visible = visible;
   }
 }
