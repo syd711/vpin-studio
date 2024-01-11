@@ -6,11 +6,14 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,6 +35,12 @@ public class CardGenerationPreferencesController implements Initializable {
   @FXML
   private Spinner<Integer> highscoreCardDuration;
 
+  @FXML
+  private RadioButton cardPosPopperRadio;
+
+  @FXML
+  private RadioButton cardPosPlayfieldRadio;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
@@ -44,7 +53,27 @@ public class CardGenerationPreferencesController implements Initializable {
     BindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
 
     BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 10);
-    highscoreCardDuration.setDisable(popperScreenCombo.getValue() == null);
+
+    cardPosPlayfieldRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        rotationCombo.setDisable(!newValue);
+        cardPosPopperRadio.setSelected(!newValue);
+        properties.set("notificationOnPopperScreen", String.valueOf(!newValue));
+      }
+    });
+    cardPosPopperRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        rotationCombo.setDisable(newValue);
+        cardPosPlayfieldRadio.setSelected(!newValue);
+        properties.set("notificationOnPopperScreen", String.valueOf(newValue));
+      }
+    });
+
+    boolean notificationOnPopperScreen = properties.getProperty("notificationOnPopperScreen", false);
+    cardPosPopperRadio.setSelected(notificationOnPopperScreen);
+    cardPosPlayfieldRadio.setSelected(!notificationOnPopperScreen);
 
     onScreenChange();
   }
@@ -69,8 +98,7 @@ public class CardGenerationPreferencesController implements Initializable {
 
       validationError.setVisible(msg != null);
       validationError.setText(msg);
-    }
-    else {
+    } else {
       validationError.setVisible(false);
     }
   }
