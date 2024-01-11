@@ -22,6 +22,7 @@ import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vps.VpsTableDataChangedListener;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -410,14 +411,34 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return options;
   }
 
+  @NonNull
   public List<GameEmulator> getGameEmulators() {
     return pinUPConnector.getGameEmulators();
   }
 
+  @NonNull
+  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
+    return pinUPConnector.getPupPlayerDisplays();
+  }
+
+  @Nullable
+  public PinUPPlayerDisplay getPupPlayerDisplay(@NonNull PopperScreen screen) {
+    List<PinUPPlayerDisplay> pupPlayerDisplays = pinUPConnector.getPupPlayerDisplays();
+    for (PinUPPlayerDisplay pupPlayerDisplay : pupPlayerDisplays) {
+      PopperScreen popperScreen = PopperScreen.valueOfScreen(pupPlayerDisplay.getName());
+      if(popperScreen != null && popperScreen.equals(screen)) {
+        return pupPlayerDisplay;
+      }
+    }
+    return null;
+  }
+
+  @NonNull
   public List<GameEmulator> getBackglassGameEmulators() {
     return pinUPConnector.getBackglassGameEmulators();
   }
 
+  @Nullable
   public GameEmulator getGameEmulator(int id) {
     return pinUPConnector.getGameEmulator(id);
   }

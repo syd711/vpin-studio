@@ -8,6 +8,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileReader;
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -67,71 +70,11 @@ public class PinUPConnector implements InitializingBean {
     for (GameEmulator value : values) {
       if (value.getNvramFolder().exists()) {
         return value;
+      } else {
+        LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
     throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
-  }
-
-  @Override
-  public void afterPropertiesSet() {
-    File file = systemService.getPinUPDatabaseFile();
-    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-
-    List<Emulator> ems = this.getEmulators();
-    for (Emulator emulator : ems) {
-      if (!emulator.isVisualPinball()) {
-        continue;
-      }
-
-      GameEmulator gameEmulator = new GameEmulator(emulator);
-      emulators.put(emulator.getId(), gameEmulator);
-      initVisualPinballXScripts(emulator);
-      LOG.info("Loaded Emulator: " + gameEmulator);
-    }
-    LOG.info("Finished Popper scripts configuration check.");
-
-    GameEmulator defaultEmulator = getDefaultGameEmulator();
-    if (defaultEmulator != null) {
-      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
-      if (pathEntry.isEmpty()) {
-        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
-        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
-        if (!exeFile.exists()) {
-          //search recursively for the server exe file
-          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
-          boolean found = false;
-          while (fileIterator.hasNext()) {
-            File next = fileIterator.next();
-            if (next.getName().equals(exeFile.getName())) {
-              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
-              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
-          }
-        }
-        else {
-          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
-        }
-      }
-      else {
-        String path = String.valueOf(pathEntry.values().iterator().next());
-        if (path.contains("\"")) {
-          path = path.substring(1);
-          path = path.substring(0, path.indexOf("\""));
-          File exeFile = new File(path);
-          File b2sFolder = exeFile.getParentFile();
-          if (b2sFolder.exists()) {
-            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
-            defaultEmulator.setBackglassServerDirectory(b2sFolder);
-          }
-        }
-      }
-    }
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -673,8 +616,7 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        }
-        else {
+        } else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
       }
@@ -717,8 +659,7 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        }
-        else {
+        } else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
 
@@ -1334,6 +1275,129 @@ public class PinUPConnector implements InitializingBean {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
+    }
+  }
+
+  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
+    List<PinUPPlayerDisplay> result = new ArrayList<>();
+    try {
+      INIConfiguration iniConfiguration = new INIConfiguration();
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setSeparatorUsedInOutput("=");
+      iniConfiguration.setSeparatorUsedInInput("=");
+
+      File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
+      FileReader fileReader = new FileReader(ini);
+      try {
+        iniConfiguration.read(fileReader);
+      } finally {
+        fileReader.close();
+      }
+
+      Map<String, String> sectionMappings = new HashMap<>();
+      sectionMappings.put("INFO", "Topper");
+      sectionMappings.put("INFO1", "DMD");
+      sectionMappings.put("INFO2", "BackGlass");
+      sectionMappings.put("INFO3", "PlayField");
+      sectionMappings.put("INFO4", "Music");
+      sectionMappings.put("INFO5", "Apron/FullDMD");
+      sectionMappings.put("INFO6", "GameSelect");
+      sectionMappings.put("INFO7", "Loading");
+      sectionMappings.put("INFO8", PopperScreen.Other2.name());
+      sectionMappings.put("INFO9", PopperScreen.GameInfo.name());
+      sectionMappings.put("INFO10", PopperScreen.GameHelp.name());
+
+      Set<String> sections = iniConfiguration.getSections();
+      for (String section : sections) {
+        if (section.contains("INFO")) {
+          try {
+            PinUPPlayerDisplay display = new PinUPPlayerDisplay();
+            SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
+            String name = sectionMappings.get(section);
+            if (name != null) {
+              display.setName(name);
+              display.setX(sectionNode.getInt("ScreenXPos"));
+              display.setY(sectionNode.getInt("ScreenYPos"));
+              display.setWidth(sectionNode.getInt("ScreenWidth"));
+              display.setHeight(sectionNode.getInt("ScreenHeight"));
+              display.setRotation(sectionNode.getInt("ScreenRotation"));
+            }
+            else {
+              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
+            }
+            result.add(display);
+          } catch (Exception e) {
+            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
+          }
+        }
+      }
+
+      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
+    } catch (Exception e) {
+      LOG.error("Failed to get player displays: " + e.getMessage(), e);
+    }
+    return result;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    File file = systemService.getPinUPDatabaseFile();
+    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+
+    List<Emulator> ems = this.getEmulators();
+    for (Emulator emulator : ems) {
+      if (!emulator.isVisualPinball()) {
+        continue;
+      }
+
+      GameEmulator gameEmulator = new GameEmulator(emulator);
+      emulators.put(emulator.getId(), gameEmulator);
+      initVisualPinballXScripts(emulator);
+      LOG.info("Loaded Emulator: " + gameEmulator);
+    }
+    LOG.info("Finished Popper scripts configuration check.");
+
+    getPupPlayerDisplays();
+
+    GameEmulator defaultEmulator = getDefaultGameEmulator();
+    if (defaultEmulator != null) {
+      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
+      if (pathEntry.isEmpty()) {
+        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
+        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
+        if (!exeFile.exists()) {
+          //search recursively for the server exe file
+          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
+          boolean found = false;
+          while (fileIterator.hasNext()) {
+            File next = fileIterator.next();
+            if (next.getName().equals(exeFile.getName())) {
+              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
+              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
+          }
+        } else {
+          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
+        }
+      } else {
+        String path = String.valueOf(pathEntry.values().iterator().next());
+        if (path.contains("\"")) {
+          path = path.substring(1);
+          path = path.substring(0, path.indexOf("\""));
+          File exeFile = new File(path);
+          File b2sFolder = exeFile.getParentFile();
+          if (b2sFolder.exists()) {
+            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+            defaultEmulator.setBackglassServerDirectory(b2sFolder);
+          }
+        }
+      }
     }
   }
 }

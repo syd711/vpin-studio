@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,13 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Autowired
   private PinUPConnector connector;
+
+
+  @Test
+  public void testPupPlayerDisplays() {
+    List<PinUPPlayerDisplay> pupPlayerDisplays = connector.getPupPlayerDisplays();
+    assertFalse(pupPlayerDisplays.isEmpty());
+  }
 
   @Test
   public void testGameAdding() {
