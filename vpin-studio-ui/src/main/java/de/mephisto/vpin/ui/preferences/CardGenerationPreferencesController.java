@@ -45,7 +45,7 @@ public class CardGenerationPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
 
-    popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", "Other2", "GameInfo", "GameHelp")));
+    popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
     BindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
     popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
 
@@ -62,6 +62,7 @@ public class CardGenerationPreferencesController implements Initializable {
         properties.set("notificationOnPopperScreen", String.valueOf(!newValue));
       }
     });
+
     cardPosPopperRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
@@ -87,8 +88,7 @@ public class OverlayWindowFX extends Application {
       }
       stage.show();
       overlayController.refreshData();
-    }
-    else {
+    } else {
       stage.hide();
     }
   }
@@ -109,8 +109,7 @@ public class OverlayWindowFX extends Application {
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     if (screenBounds.getWidth() < 3000 && screenBounds.getWidth() > 2000) {
       resource = "wqhd";
-    }
-    else if (screenBounds.getWidth() < 2000) {
+    } else if (screenBounds.getWidth() < 2000) {
       resource = "hd";
     }
     return resource;
@@ -121,8 +120,7 @@ public class OverlayWindowFX extends Application {
       if (b) {
         maintenanceStage.setFullScreen(true);
         maintenanceStage.show();
-      }
-      else {
+      } else {
         maintenanceStage.hide();
       }
       return;
@@ -160,24 +158,13 @@ public class OverlayWindowFX extends Application {
     }
   }
 
-  public void showHighscoreCard(CardSettings cardSettings, File file) {
+  public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {
         LOG.info("Showing highscore card " + file.getAbsolutePath());
-
-        int rotation = 0;
-        String rotationValue = cardSettings.getNotificationRotation();
-        if(rotationValue != null) {
-          try {
-            rotation = Integer.parseInt(rotationValue);
-          } catch (NumberFormatException e) {
-            LOG.info("Error reading card rotation value: " + e.getMessage());
-          }
-        }
-
         if (highscoreCardStage != null) {
-          highscoreCardController.setImage(highscoreCardStage, file, rotation);
+          highscoreCardController.setImage(highscoreCardStage, cardSettings, display, file);
           showHighscoreCard(notificationTime);
           return;
         }
@@ -198,15 +185,14 @@ public class OverlayWindowFX extends Application {
           FXMLLoader loader = new FXMLLoader(HighscoreCardController.class.getResource(resource));
           Parent widgetRoot = loader.load();
           highscoreCardController = loader.getController();
-          highscoreCardController.setImage(highscoreCardStage, file, rotation);
+          highscoreCardController.setImage(highscoreCardStage, cardSettings, display, file);
           root.setCenter(widgetRoot);
         } catch (IOException e) {
           LOG.error("Failed to init dashboard: " + e.getMessage(), e);
         }
 
         showHighscoreCard(notificationTime);
-      }
-      else {
+      } else {
         LOG.info("Skipping highscore card overlay, zero time set.");
       }
     } catch (Exception e) {

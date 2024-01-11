@@ -1295,17 +1295,17 @@ public class PinUPConnector implements InitializingBean {
       }
 
       Map<String, String> sectionMappings = new HashMap<>();
-      sectionMappings.put("[INFO]", "Topper");
-      sectionMappings.put("[INFO1]", "DMD (4:1 slim)");
-      sectionMappings.put("[INFO2]", "BackGlass");
-      sectionMappings.put("[INFO3]", "PlayField");
-      sectionMappings.put("[INFO4]", "Music");
-      sectionMappings.put("[INFO5]", "Apron/FullDMD");
-      sectionMappings.put("[INFO6]", "Game Select");
-      sectionMappings.put("[INFO7]", "Loading");
-      sectionMappings.put("[INFO8]", "Other2");
-      sectionMappings.put("[INFO9]", "GameInfo");
-      sectionMappings.put("[INFO10]", "GameHelp");
+      sectionMappings.put("INFO", "Topper");
+      sectionMappings.put("INFO1", "DMD");
+      sectionMappings.put("INFO2", "BackGlass");
+      sectionMappings.put("INFO3", "PlayField");
+      sectionMappings.put("INFO4", "Music");
+      sectionMappings.put("INFO5", "Apron/FullDMD");
+      sectionMappings.put("INFO6", "GameSelect");
+      sectionMappings.put("INFO7", "Loading");
+      sectionMappings.put("INFO8", PopperScreen.Other2.name());
+      sectionMappings.put("INFO9", PopperScreen.GameInfo.name());
+      sectionMappings.put("INFO10", PopperScreen.GameHelp.name());
 
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
@@ -1313,13 +1313,18 @@ public class PinUPConnector implements InitializingBean {
           try {
             PinUPPlayerDisplay display = new PinUPPlayerDisplay();
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
-            display.setName(sectionMappings.get(sectionNode));
-            display.setX(sectionNode.getInt("ScreenXPos"));
-            display.setY(sectionNode.getInt("ScreenYPos"));
-            display.setWidth(sectionNode.getInt("ScreenWidth"));
-            display.setHeight(sectionNode.getInt("ScreenHeight"));
-            display.setRotation(sectionNode.getInt("ScreenRotation"));
-
+            String name = sectionMappings.get(section);
+            if (name != null) {
+              display.setName(name);
+              display.setX(sectionNode.getInt("ScreenXPos"));
+              display.setY(sectionNode.getInt("ScreenYPos"));
+              display.setWidth(sectionNode.getInt("ScreenWidth"));
+              display.setHeight(sectionNode.getInt("ScreenHeight"));
+              display.setRotation(sectionNode.getInt("ScreenRotation"));
+            }
+            else {
+              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
+            }
             result.add(display);
           } catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
@@ -1351,6 +1356,8 @@ public class PinUPConnector implements InitializingBean {
       LOG.info("Loaded Emulator: " + gameEmulator);
     }
     LOG.info("Finished Popper scripts configuration check.");
+
+    getPupPlayerDisplays();
 
     GameEmulator defaultEmulator = getDefaultGameEmulator();
     if (defaultEmulator != null) {

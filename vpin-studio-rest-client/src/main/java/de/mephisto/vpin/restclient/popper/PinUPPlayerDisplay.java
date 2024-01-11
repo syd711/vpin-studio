@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.popper;
 
+import java.util.Objects;
+
 public class PinUPPlayerDisplay {
   private String name;
   private int x;
@@ -54,5 +56,23 @@ public class PinUPPlayerDisplay {
 
   public void setRotation(int rotation) {
     this.rotation = rotation;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    PinUPPlayerDisplay display = (PinUPPlayerDisplay) o;
+    return Objects.equals(name, display.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
+  }
+
+  @Override
+  public String toString() {
+    return name + "[" + x + "/" + y + " - " + width + "x" + height + "]";
   }
 }

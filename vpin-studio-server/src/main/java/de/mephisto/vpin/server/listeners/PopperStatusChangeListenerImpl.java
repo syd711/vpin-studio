@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
@@ -83,7 +84,8 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
-            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, defaultMediaItem.getFile());
+            PinUPPlayerDisplay pupPlayerDisplay = popperService.getPupPlayerDisplay(screen);
+            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getFile());
           });
         }
       }

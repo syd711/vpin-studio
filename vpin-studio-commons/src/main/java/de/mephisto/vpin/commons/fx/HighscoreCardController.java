@@ -1,5 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -36,24 +38,55 @@ public class HighscoreCardController implements Initializable {
     imageView.setPreserveRatio(false);
   }
 
-  public void setImage(Stage highscoreCardStage, File file, int rotation) {
+  public void setImage(Stage highscoreCardStage, CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
     try {
       Screen screen = Screen.getPrimary();
       Rectangle2D bounds = screen.getVisualBounds();
 
-      FileInputStream fileInputStream = new FileInputStream(file);
-      Image image = new Image(fileInputStream);
-      fileInputStream.close();
+      Image image = null;
 
-      int targetX = (int) (bounds.getHeight() / 2 - image.getWidth() / 2);
+      LOG.info("Showing card \"" + file.getAbsolutePath() + "\", display \"" + display + "\" (using display: " + cardSettings.isNotificationOnPopperScreen() + ")");
+      if (cardSettings.isNotificationOnPopperScreen() && display != null) {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        image = new Image(fileInputStream, display.getWidth(), display.getHeight(), false, true);
+        fileInputStream.close();
 
-      highscoreCardStage.setX(bounds.getMinX() / 2 + image.getWidth() / 2);
-      highscoreCardStage.setY(targetX);
-      highscoreCardStage.setHeight(image.getWidth() + 12);
-      highscoreCardStage.setWidth(image.getWidth() + 12);
+        highscoreCardStage.setX(display.getX());
+        highscoreCardStage.setY(display.getY());
+        highscoreCardStage.setHeight(display.getHeight());
+        highscoreCardStage.setWidth(display.getWidth());
+        if (display.getRotation() == 90 || display.getRotation() == 270) {
+          highscoreCardStage.setHeight(display.getWidth());
+        }
+
+        imageView.setPreserveRatio(false);
+        imageView.setFitWidth(display.getWidth());
+        imageView.setFitHeight(display.getHeight());
+        root.setRotate(display.getRotation());
+      } else {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        image = new Image(fileInputStream);
+        fileInputStream.close();
+
+        int targetX = (int) (bounds.getHeight() / 2 - image.getWidth() / 2);
+        highscoreCardStage.setX(bounds.getMinX() / 2 + image.getWidth() / 2);
+        highscoreCardStage.setY(targetX);
+        highscoreCardStage.setHeight(image.getWidth() + 12);
+        highscoreCardStage.setWidth(image.getWidth() + 12);
+
+        int rotation = 0;
+        String rotationValue = cardSettings.getNotificationRotation();
+        if (rotationValue != null) {
+          try {
+            rotation = Integer.parseInt(rotationValue);
+          } catch (NumberFormatException e) {
+            LOG.info("Error reading card rotation value: " + e.getMessage());
+          }
+        }
+        imageView.setRotate(rotation);
+      }
 
       imageView.setImage(image);
-      imageView.setRotate(rotation);
     } catch (IOException e) {
       LOG.error("Failed to show card: " + e.getMessage(), e);
     }
