@@ -98,7 +98,7 @@ public class PauseMenu extends Application {
       else {
         GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
         GameRepresentation game = client.getGameService().getGame(243);
-        controller.setGame(game, screen, PopperScreen.GameInfo);
+        controller.setGame(game, screen);
         stage.show();
       }
 

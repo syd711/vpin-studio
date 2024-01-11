@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -20,10 +21,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +60,14 @@ public class MenuController implements Initializable {
   @FXML
   private ImageView screenImageView;
 
+  @FXML
+  private WebView webView;
+
   private int selectionIndex = 0;
 
   private PopperScreen cardScreen;
-  private PopperScreen infoCardScreen;
   private GameRepresentation game;
+  private PauseMenuItem activeSelection;
 
   private List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
@@ -70,10 +75,9 @@ public class MenuController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setGame(GameRepresentation game, PopperScreen cardScreen, PopperScreen infoCardScreen) {
+  public void setGame(GameRepresentation game, PopperScreen cardScreen) {
     this.game = game;
     this.cardScreen = cardScreen;
-    this.infoCardScreen = infoCardScreen;
   }
 
   public void enterMenuItemSelection() {
@@ -149,9 +153,24 @@ public class MenuController implements Initializable {
   }
 
   private void updateSelection(Node node) {
-    PauseMenuItem menuItem = (PauseMenuItem) node.getUserData();
-    nameLabel.setText(menuItem.getDescription());
-    System.out.println("Selected " + menuItem.getName());
+    activeSelection = (PauseMenuItem) node.getUserData();
+    nameLabel.setText(activeSelection.getDescription());
+    screenImageView.setVisible(false);
+    webView.setVisible(false);
+
+    if (activeSelection.getDataImage() != null) {
+      screenImageView.setVisible(true);
+      screenImageView.setImage(activeSelection.getDataImage());
+    }
+    else if (activeSelection.getYouTubeUrl() != null) {
+      webView.setVisible(true);
+      WebEngine engine = webView.getEngine();
+      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "&autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>");
+    }
+  }
+
+  public PauseMenuItem getSelection() {
+    return activeSelection;
   }
 
   /**
@@ -185,19 +204,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-
-    InputStream gameMediaItem = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
-    Image scoreImage = new Image(gameMediaItem);
-    screenImageView.setImage(scoreImage);
-
-    PauseMenuItem item = new PauseMenuItem("Exit", "Return to Game Selection", new Image(PauseMenu.class.getResourceAsStream("exit.png")));
-    pauseMenuItems.add(item);
-    item = new PauseMenuItem("Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    pauseMenuItems.add(item);
-    item = new PauseMenuItem("Instructions", "Instruction Card or Media", new Image(PauseMenu.class.getResourceAsStream("infocard.png")));
-    pauseMenuItems.add(item);
-    item = new PauseMenuItem("Rules", "Table Rules", new Image(PauseMenu.class.getResourceAsStream("rules.png")));
-    pauseMenuItems.add(item);
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, cardScreen));
 
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;
