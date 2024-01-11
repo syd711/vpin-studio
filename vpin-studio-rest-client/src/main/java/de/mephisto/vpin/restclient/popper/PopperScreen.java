@@ -22,6 +22,17 @@ public enum PopperScreen {
     this.segment = segment;
   }
 
+  public static PopperScreen ofDbName(String dbName) {
+    switch (dbName) {
+      case "Table": {
+        return PopperScreen.PlayField;
+      }
+      default: {
+        return PopperScreen.valueOf(dbName);
+      }
+    }
+  }
+
   public String getSegment() {
     return segment;
   }

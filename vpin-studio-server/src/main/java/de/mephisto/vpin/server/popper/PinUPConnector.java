@@ -40,6 +40,7 @@ public class PinUPConnector implements InitializingBean {
   private SystemService systemService;
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
+  private final Map<String, PopperWindowScreen> screens = new LinkedHashMap<>();
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
@@ -70,68 +71,6 @@ public class PinUPConnector implements InitializingBean {
       }
     }
     throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
-  }
-
-  @Override
-  public void afterPropertiesSet() {
-    File file = systemService.getPinUPDatabaseFile();
-    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-
-    List<Emulator> ems = this.getEmulators();
-    for (Emulator emulator : ems) {
-      if (!emulator.isVisualPinball()) {
-        continue;
-      }
-
-      GameEmulator gameEmulator = new GameEmulator(emulator);
-      emulators.put(emulator.getId(), gameEmulator);
-      initVisualPinballXScripts(emulator);
-      LOG.info("Loaded Emulator: " + gameEmulator);
-    }
-    LOG.info("Finished Popper scripts configuration check.");
-
-    GameEmulator defaultEmulator = getDefaultGameEmulator();
-    if (defaultEmulator != null) {
-      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
-      if (pathEntry.isEmpty()) {
-        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
-        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
-        if (!exeFile.exists()) {
-          //search recursively for the server exe file
-          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
-          boolean found = false;
-          while (fileIterator.hasNext()) {
-            File next = fileIterator.next();
-            if (next.getName().equals(exeFile.getName())) {
-              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
-              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
-          }
-        }
-        else {
-          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
-        }
-      }
-      else {
-        String path = String.valueOf(pathEntry.values().iterator().next());
-        if (path.contains("\"")) {
-          path = path.substring(1);
-          path = path.substring(0, path.indexOf("\""));
-          File exeFile = new File(path);
-          File b2sFolder = exeFile.getParentFile();
-          if (b2sFolder.exists()) {
-            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
-            defaultEmulator.setBackglassServerDirectory(b2sFolder);
-          }
-        }
-      }
-    }
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -1334,6 +1273,105 @@ public class PinUPConnector implements InitializingBean {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
+    }
+  }
+
+  public List<PopperWindowScreen> getWindowScreens() {
+    if(!this.screens.isEmpty()) {
+      return new ArrayList<>(this.screens.values());
+    }
+
+    Connection connect = this.connect();
+    List<PopperWindowScreen> result = new ArrayList<>();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Screens;");
+      while (rs.next()) {
+        try {
+          PopperWindowScreen screen = new PopperWindowScreen();
+          screen.setScreen(PopperScreen.ofDbName(rs.getString("ScreenName")));
+          screen.setWidth(rs.getInt("ScreenWidth"));
+          screen.setHeight(rs.getInt("ScreenHeight"));
+          screen.setX(rs.getInt("POSx"));
+          screen.setY(rs.getInt("POSy"));
+          screen.setVisible(rs.getInt("Visible") == 1);
+          result.add(screen);
+        } catch (Exception e) {
+          LOG.error("Error loading screen info: " + e.getMessage());
+        }
+      }
+      rs.close();
+      statement.close();
+      LOG.info("Loaded screen info of " + result.size() + " Popper screens.");
+    } catch (SQLException e) {
+      LOG.error("Failed to get screens: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    File file = systemService.getPinUPDatabaseFile();
+    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+
+    this.getWindowScreens();
+
+    List<Emulator> ems = this.getEmulators();
+    for (Emulator emulator : ems) {
+      if (!emulator.isVisualPinball()) {
+        continue;
+      }
+
+      GameEmulator gameEmulator = new GameEmulator(emulator);
+      emulators.put(emulator.getId(), gameEmulator);
+      initVisualPinballXScripts(emulator);
+      LOG.info("Loaded Emulator: " + gameEmulator);
+    }
+    LOG.info("Finished Popper scripts configuration check.");
+
+    GameEmulator defaultEmulator = getDefaultGameEmulator();
+    if (defaultEmulator != null) {
+      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
+      if (pathEntry.isEmpty()) {
+        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
+        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
+        if (!exeFile.exists()) {
+          //search recursively for the server exe file
+          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
+          boolean found = false;
+          while (fileIterator.hasNext()) {
+            File next = fileIterator.next();
+            if (next.getName().equals(exeFile.getName())) {
+              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
+              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
+          }
+        }
+        else {
+          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
+        }
+      }
+      else {
+        String path = String.valueOf(pathEntry.values().iterator().next());
+        if (path.contains("\"")) {
+          path = path.substring(1);
+          path = path.substring(0, path.indexOf("\""));
+          File exeFile = new File(path);
+          File b2sFolder = exeFile.getParentFile();
+          if (b2sFolder.exists()) {
+            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+            defaultEmulator.setBackglassServerDirectory(b2sFolder);
+          }
+        }
+      }
     }
   }
 }

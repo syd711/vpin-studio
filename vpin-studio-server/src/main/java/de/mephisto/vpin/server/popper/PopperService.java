@@ -411,6 +411,10 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getGameEmulators();
   }
 
+  public List<PopperWindowScreen> getWindowScreens() {
+    return pinUPConnector.getWindowScreens();
+  }
+
   public List<GameEmulator> getBackglassGameEmulators() {
     return pinUPConnector.getBackglassGameEmulators();
   }
