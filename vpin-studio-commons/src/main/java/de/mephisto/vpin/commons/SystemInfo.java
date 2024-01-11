@@ -117,7 +117,6 @@ public class SystemInfo {
       reader.start();
       process.waitFor();
       reader.join();
-      System.out.println("Written command: " + cmd);
     } catch (Exception e) {
       LOG.error("Failed to write registry key " + location + ": " + e.getMessage(), e);
     }

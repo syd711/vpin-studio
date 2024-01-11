@@ -115,8 +115,6 @@ public class ResizeHelper {
             if (stage.getHeight() > minHeight || mouseEventY < 0) {
               double height = stage.getY() - mouseEvent.getScreenY() + stage.getHeight() + sceneOffsetY;
               double y = mouseEvent.getScreenY() - sceneOffsetY;
-
-              System.out.println(height + "/" + y);
               stage.setHeight(height);
               stage.setY(y);
             }

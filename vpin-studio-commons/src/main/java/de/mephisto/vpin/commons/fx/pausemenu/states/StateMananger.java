@@ -107,13 +107,10 @@ public class StateMananger implements NativeKeyListener {
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-    System.out.println(nativeKeyEvent.getRawCode());
   }
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    System.out.println(nativeKeyEvent.getRawCode());
-    System.out.println(blocked);
     Platform.runLater(() -> {
       handle(nativeKeyEvent.getRawCode());
     });
