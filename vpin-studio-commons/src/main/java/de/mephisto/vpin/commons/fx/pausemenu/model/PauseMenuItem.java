@@ -1,17 +1,27 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
-public class PauseMenuItem {
-  private String name;
+import javafx.scene.image.Image;
 
-  public PauseMenuItem(String name) {
+public class PauseMenuItem {
+  private final String name;
+  private final String description;
+  private final Image image;
+
+  public PauseMenuItem(String name, String description, Image image) {
     this.name = name;
+    this.description = description;
+    this.image = image;
+  }
+
+  public Image getImage() {
+    return image;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public String getDescription() {
+    return description;
   }
 }

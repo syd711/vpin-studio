@@ -81,7 +81,6 @@ public class PauseMenu extends Application {
 
 
       MenuController controller = loader.getController();
-      StateMananger.getInstance().init(controller);
 
       PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
       StateMananger.getInstance().setControls(pinUPControls);
@@ -98,12 +97,12 @@ public class PauseMenu extends Application {
       }
       else {
         GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-
-
         GameRepresentation game = client.getGameService().getGame(243);
-        controller.setGame(game, screen);
+        controller.setGame(game, screen, PopperScreen.GameInfo);
         stage.show();
       }
+
+      StateMananger.getInstance().init(controller);
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }

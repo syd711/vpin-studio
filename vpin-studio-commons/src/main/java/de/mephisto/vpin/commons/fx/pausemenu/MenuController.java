@@ -1,10 +1,8 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
@@ -61,17 +59,21 @@ public class MenuController implements Initializable {
   private ImageView screenImageView;
 
   private int selectionIndex = 0;
-  private List<PauseMenuItem> menuItems;
-  private List<?> activeModels;
+
+  private PopperScreen cardScreen;
+  private PopperScreen infoCardScreen;
+  private GameRepresentation game;
+
+  private List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setGame(GameRepresentation game, PopperScreen cardScreen) {
-    InputStream gameMediaItem = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
-    Image scoreImage = new Image(gameMediaItem);
-    screenImageView.setImage(scoreImage);
+  public void setGame(GameRepresentation game, PopperScreen cardScreen, PopperScreen infoCardScreen) {
+    this.game = game;
+    this.cardScreen = cardScreen;
+    this.infoCardScreen = infoCardScreen;
   }
 
   public void enterMenuItemSelection() {
@@ -85,17 +87,6 @@ public class MenuController implements Initializable {
 
     setLoadLabel("Loading...");
 
-    menuItems = new ArrayList<>();
-    PauseMenuItem item = new PauseMenuItem("Exit");
-    menuItems.add(item);
-    item = new PauseMenuItem("Highscores");
-    menuItems.add(item);
-    item = new PauseMenuItem("Instructions");
-    menuItems.add(item);
-    item = new PauseMenuItem("Statistics");
-    menuItems.add(item);
-
-    activeModels = menuItems; //TODO mpf
     Platform.runLater(() -> {
       loadMenuItems();
       initGameBarSelection();
@@ -132,7 +123,7 @@ public class MenuController implements Initializable {
       selectionIndex--;
     }
     else {
-      if (selectionIndex == (activeModels.size() - 1)) {
+      if (selectionIndex == (pauseMenuItems.size() - 1)) {
         return;
       }
       selectionIndex++;
@@ -159,7 +150,7 @@ public class MenuController implements Initializable {
 
   private void updateSelection(Node node) {
     PauseMenuItem menuItem = (PauseMenuItem) node.getUserData();
-    nameLabel.setText(menuItem.getName());
+    nameLabel.setText(menuItem.getDescription());
     System.out.println("Selected " + menuItem.getName());
   }
 
@@ -193,23 +184,39 @@ public class MenuController implements Initializable {
   }
 
   private void loadMenuItems() {
+    pauseMenuItems.clear();
+
+    InputStream gameMediaItem = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+    Image scoreImage = new Image(gameMediaItem);
+    screenImageView.setImage(scoreImage);
+
+    PauseMenuItem item = new PauseMenuItem("Exit", "Return to Game Selection", new Image(PauseMenu.class.getResourceAsStream("exit.png")));
+    pauseMenuItems.add(item);
+    item = new PauseMenuItem("Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+    pauseMenuItems.add(item);
+    item = new PauseMenuItem("Instructions", "Instruction Card or Media", new Image(PauseMenu.class.getResourceAsStream("infocard.png")));
+    pauseMenuItems.add(item);
+    item = new PauseMenuItem("Rules", "Table Rules", new Image(PauseMenu.class.getResourceAsStream("rules.png")));
+    pauseMenuItems.add(item);
+
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;
-    for (PauseMenuItem item : menuItems) {
-      menuItemsRow.getChildren().add(createItemFor(item));
+    for (PauseMenuItem pItem : pauseMenuItems) {
+      menuItemsRow.getChildren().add(createItemFor(pItem));
     }
 
-    if (!menuItems.isEmpty()) {
-      while (menuItemsRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
-        Label label = new Label();
-        label.setMinWidth(THUMBNAIL_SIZE);
-        menuItemsRow.getChildren().add(label);
-      }
+    while (menuItemsRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
+      Label label = new Label();
+      label.setMinWidth(THUMBNAIL_SIZE);
+      menuItemsRow.getChildren().add(label);
     }
   }
 
   private BorderPane createItemFor(PauseMenuItem menuItem) {
-    Image wheel = new Image(PauseMenu.class.getResourceAsStream("avatar-blank.png"));
+    Image wheel = menuItem.getImage();
+    if (wheel == null) {
+      wheel = new Image(PauseMenu.class.getResourceAsStream("avatar-blank.png"));
+    }
     String text = menuItem.getName();
     return createItem(wheel, text, menuItem);
   }
@@ -231,7 +238,7 @@ public class MenuController implements Initializable {
     }
     Label label = new Label(text);
     label.setStyle("-fx-font-size: 22px;-fx-text-fill: #444444;");
-    stackPane.getChildren().add(label);
+//    stackPane.getChildren().add(label);
     borderPane.setCenter(stackPane);
     borderPane.setCache(true);
     borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
