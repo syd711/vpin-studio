@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -50,6 +51,7 @@ public class OverlayWindowFX extends Application {
   private static OverlayWindowFX INSTANCE = null;
   private Stage maintenanceStage;
   private Stage highscoreCardStage;
+  private Stage pauseMenuStage;
   private HighscoreCardController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
@@ -69,7 +71,7 @@ public class OverlayWindowFX extends Application {
     }
   }
 
-  public void setVisible(boolean b) {
+  public void showOverlay(boolean b) {
     if (b) {
       try {
         PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
@@ -156,6 +158,21 @@ public class OverlayWindowFX extends Application {
       maintenanceStage.setFullScreen(true);
       maintenanceStage.show();
     }
+  }
+
+  public void showPauseMenu() {
+    BorderPane root = new BorderPane();
+    Screen screen = Screen.getPrimary();
+    final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+    scene.setFill(Color.TRANSPARENT);
+    scene.setCursor(Cursor.NONE);
+
+    pauseMenuStage = new Stage();
+    pauseMenuStage.setScene(scene);
+    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+    pauseMenuStage.setAlwaysOnTop(true);
+
+    PauseMenu.loadPauseMenu(pauseMenuStage);
   }
 
   public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {

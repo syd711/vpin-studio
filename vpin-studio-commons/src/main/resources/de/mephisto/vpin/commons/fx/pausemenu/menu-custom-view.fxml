@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="700.0" prefWidth="1200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuCustomViewController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <left>
+            <ImageView fx:id="wheelImage" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@rules.png" />
+               </image></ImageView>
+         </left>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </BorderPane.margin>
+               <children>
+                  <Label fx:id="nameLabel" text="Label" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="64.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+      <HBox prefHeight="500.0" prefWidth="200.0" spacing="24.0">
+         <children>
+            <VBox fx:id="stats1Col" prefHeight="200.0" prefWidth="300.0" spacing="24.0" />
+            <VBox fx:id="stats2Col" prefHeight="200.0" prefWidth="300.0" spacing="24.0" />
+            <VBox styleClass="subpanel">
+               <children>
+                  <Label text="Latest Scores" textFill="WHITE">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="26.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="stats3Col" prefHeight="200.0" prefWidth="500.0" spacing="24.0" />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,9 +18,12 @@ public class ServerUpdatePreProcessing {
   private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg");
 
   public static void execute() {
-    runResourcesCheck();
-    synchronizeNVRams();
-    LOG.info("Finished resource updates check.");
+    new Thread(() -> {
+      Thread.currentThread().setName("ServerUpdatePreProcessing");
+      runResourcesCheck();
+      synchronizeNVRams();
+      LOG.info("Finished resource updates check.");
+    }).start();
   }
 
   private static void runResourcesCheck() {

@@ -66,3 +66,20 @@
   -fx-text-box-border: #000000;
   -fx-control-inner-background: #000000;
 }
+
+.default-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+}
+
+.default-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 18px;
+    -fx-font-weight : bold;
+}
+
+.subpanel {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-color: #2a2a2a;
+}

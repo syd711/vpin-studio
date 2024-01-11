@@ -1,15 +1,18 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.MaintenanceController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
+import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
@@ -26,6 +29,7 @@ import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +67,9 @@ public class MenuController implements Initializable {
   @FXML
   private WebView webView;
 
+  @FXML
+  private BorderPane customView;
+
   private int selectionIndex = 0;
 
   private PopperScreen cardScreen;
@@ -71,13 +78,27 @@ public class MenuController implements Initializable {
 
   private List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
+  private MenuCustomViewController customViewController;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    webView.getEngine().setUserStyleSheetLocation(PauseMenu.class.getResource("web-style.css").toString());
+
+    try {
+      String resource = "menu-custom-view.fxml";
+      FXMLLoader loader = new FXMLLoader(MenuCustomViewController.class.getResource(resource));
+      Parent widgetRoot = loader.load();
+      customView.setCenter(widgetRoot);
+      customViewController = loader.getController();
+    } catch (IOException e) {
+      LOG.error("Failed to init custom controller: " + e.getMessage(), e);
+    }
   }
 
   public void setGame(GameRepresentation game, PopperScreen cardScreen) {
     this.game = game;
     this.cardScreen = cardScreen;
+    this.customViewController.setGame(game);
   }
 
   public void enterMenuItemSelection() {
@@ -157,15 +178,19 @@ public class MenuController implements Initializable {
     nameLabel.setText(activeSelection.getDescription());
     screenImageView.setVisible(false);
     webView.setVisible(false);
+    customView.setVisible(false);
 
-    if (activeSelection.getDataImage() != null) {
+    if(activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
+      customView.setVisible(true);
+    }
+    else if (activeSelection.getDataImage() != null) {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
     }
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);
       WebEngine engine = webView.getEngine();
-      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "&autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen></iframe>");
+      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "&autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
     }
   }
 

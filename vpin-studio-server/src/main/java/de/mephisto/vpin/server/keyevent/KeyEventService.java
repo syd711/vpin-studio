@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
@@ -70,7 +69,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         this.visible = !visible;
         Platform.runLater(() -> {
           LOG.info("Toggle show (Key " + overlayKey + ")");
-          OverlayWindowFX.getInstance().setVisible(visible);
+          OverlayWindowFX.getInstance().showOverlay(visible);
         });
       }
     }
@@ -101,7 +100,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
           //ignore
         }
         this.visible = !visible;
-        OverlayWindowFX.getInstance().setVisible(visible);
+        OverlayWindowFX.getInstance().showOverlay(visible);
       }
     });
   }

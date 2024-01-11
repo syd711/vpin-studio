@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.logging.Level;
 
-import static java.util.logging.Logger.*;
+import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
@@ -34,22 +34,25 @@ public class PauseMenu extends Application {
 
   public static VPinStudioClient client;
 
-  private final static boolean PRODUCTION_USE = !new File("./").getAbsolutePath().contains("workspace");
+  private static boolean PRODUCTION_USE = true;
 
   private static Stage stage;
 
   public static void main(String[] args) {
+    OverlayWindowFX.client = new VPinStudioClient("localhost");
+    PRODUCTION_USE = false;
     launch(args);
   }
 
   @Override
   public void start(Stage stage) {
-    PauseMenu.client = new VPinStudioClient("localhost");
-    loadUpdater(stage);
+    loadPauseMenu(stage);
   }
 
-  public static void loadUpdater(Stage stage) {
+  public static void loadPauseMenu(Stage stage) {
     PauseMenu.stage = stage;
+    client = new VPinStudioClient("localhost");
+
     try {
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
@@ -109,7 +112,7 @@ public class PauseMenu extends Application {
   }
 
   public static void exit() {
-    if(!PRODUCTION_USE) {
+    if (!PRODUCTION_USE) {
       System.exit(0);
     }
     else {

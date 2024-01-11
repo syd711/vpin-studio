@@ -29,6 +29,11 @@
                         <Insets top="50.0" />
                      </StackPane.margin>
                   </ImageView>
+                  <BorderPane fx:id="customView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0" prefWidth="1200.0">
+                     <StackPane.margin>
+                        <Insets top="40.0" />
+                     </StackPane.margin>
+                  </BorderPane>
                   <ImageView fx:id="screenImageView" fitHeight="675.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
                      <StackPane.margin>
                         <Insets bottom="10.0" />

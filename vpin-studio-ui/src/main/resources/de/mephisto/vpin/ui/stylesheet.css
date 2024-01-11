@@ -945,15 +945,15 @@
     -fx-base : #338800;
 }
 
-.default-text {
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size : 14px;
-}
-
 .default-headline {
     -fx-text-fill: #FFFFFF;
     -fx-font-size : 14px;
     -fx-font-weight : bold;
+}
+
+.default-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
 }
 
 .default-title {

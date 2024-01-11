@@ -1,6 +1,8 @@
-package de.mephisto.vpin.commons.fx.pausemenu.model;
+package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.scene.image.Image;
@@ -12,7 +14,7 @@ import java.util.List;
 public class PauseMenuItemsFactory {
   public static List<PauseMenuItem> createPauseMenuItems(GameRepresentation game, PopperScreen cardScreen) {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
-    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Exit", "Return to Game Selection", new Image(PauseMenu.class.getResourceAsStream("exit.png")));
+    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Exit", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("exit.png")));
     pauseMenuItems.add(item);
 
     item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
