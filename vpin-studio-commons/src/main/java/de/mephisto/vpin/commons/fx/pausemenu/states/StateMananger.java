@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 public class StateMananger implements NativeKeyListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
-  private MediaPlayer navPlayer;
-  private MediaPlayer enterPlayer;
-  private MediaPlayer backPlayer;
+  private final MediaPlayer navPlayer;
+  private final MediaPlayer enterPlayer;
+  private final MediaPlayer backPlayer;
 
   private MenuState activeState;
 
@@ -31,15 +31,12 @@ public class StateMananger implements NativeKeyListener {
   private int RIGHT;
   private int ENTER;
   private int BACK;
-  private MenuController menuController;
 
   public static StateMananger getInstance() {
     return INSTANCE;
   }
 
   private StateMananger() {
-
-    String s = PauseMenu.class.getResource("select.mp3").toExternalForm();
     Media media = new Media(PauseMenu.class.getResource("select.mp3").toExternalForm());
     navPlayer = new MediaPlayer(media);
     navPlayer.setOnEndOfMedia(() -> {
@@ -79,8 +76,7 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void init(MenuController controller) {
-    menuController = controller;
-    this.activeState = new MenuItemSelectionState(menuController);
+    this.activeState = new MenuItemSelectionState(controller);
   }
 
   public void handle(int keyCode) {
@@ -91,15 +87,18 @@ public class StateMananger implements NativeKeyListener {
     if (keyCode == LEFT) {
       navPlayer.play();
       this.activeState = activeState.left();
+      setInputBlocked(true, UIDefaults.SELECTION_SCALE_DURATION);
     }
     else if (keyCode == RIGHT) {
       navPlayer.play();
       this.activeState = activeState.right();
+      setInputBlocked(true, UIDefaults.SELECTION_SCALE_DURATION);
     }
     else if (keyCode == ENTER) {
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
+      setInputBlocked(true, UIDefaults.SELECTION_SCALE_DURATION);
     }
     else if (keyCode == BACK) {
       PauseMenu.exit();

@@ -1,10 +1,12 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -23,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +58,7 @@ public class MenuController implements Initializable {
   private Node footer;
 
   @FXML
-  private Node arrowRight;
-
-  @FXML
-  private Node arrowLeft;
+  private ImageView screenImageView;
 
   private int selectionIndex = 0;
   private List<PauseMenuItem> menuItems;
@@ -68,9 +68,10 @@ public class MenuController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void toggleInstall() {
-    baseSelector.setStyle("-fx-background-color: #33CC00;");
-    TransitionUtil.createInFader(bluePanel).play();
+  public void setGame(GameRepresentation game, PopperScreen cardScreen) {
+    InputStream gameMediaItem = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+    Image scoreImage = new Image(gameMediaItem);
+    screenImageView.setImage(scoreImage);
   }
 
   public void enterMenuItemSelection() {
@@ -102,26 +103,6 @@ public class MenuController implements Initializable {
       TransitionUtil.createOutFader(loadMask).play();
       StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
     });
-  }
-
-  private void enterMainWithArchive() {
-    blueLabel.setText("Archive");
-    setLoadLabel("");
-    resetGameRow();
-    TransitionUtil.createOutFader(menuItemsRow).play();
-    TransitionUtil.createInFader(bluePanel).play();
-  }
-
-  public void resetFooter() {
-    StateMananger.getInstance().setInputBlocked(true, FOOTER_ANIMATION_DURATION + 100);
-    if (footer.getTranslateY() != 0) {
-      TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, -FOOTER_HEIGHT).play();
-    }
-  }
-
-  public void enterMainMenu() {
-    resetFooter();
-    enterMainWithArchive();
   }
 
   public void setLoadLabel(String text) {
@@ -255,20 +236,5 @@ public class MenuController implements Initializable {
     borderPane.setCache(true);
     borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
     return borderPane;
-  }
-
-  public GameRepresentation getGameSelection() {
-    Node node = menuItemsRow.getChildren().get(selectionIndex);
-    return (GameRepresentation) node.getUserData();
-  }
-
-  public ArchiveDescriptorRepresentation getArchiveSelection() {
-    Node node = menuItemsRow.getChildren().get(selectionIndex);
-    return (ArchiveDescriptorRepresentation) node.getUserData();
-  }
-
-  public void setArrowsVisible(boolean b) {
-    arrowRight.setVisible(b);
-    arrowLeft.setVisible(b);
   }
 }

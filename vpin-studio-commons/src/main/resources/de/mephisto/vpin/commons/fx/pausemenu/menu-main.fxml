@@ -25,6 +25,10 @@
                         <Image url="@screen.png" />
                      </image>
                   </ImageView>
+                  <ImageView fx:id="screenImageView" fitHeight="675.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
+                     <StackPane.margin>
+                        <Insets bottom="50.0" />
+                     </StackPane.margin></ImageView>
                </children>
             </StackPane>
             <BorderPane fx:id="footer">

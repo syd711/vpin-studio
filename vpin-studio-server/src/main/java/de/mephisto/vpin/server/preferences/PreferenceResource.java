@@ -2,8 +2,11 @@ package de.mephisto.vpin.server.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +47,15 @@ public class PreferenceResource {
         }
         case PreferenceNames.SERVER_SETTINGS: {
           return preferencesService.getJsonPreference(key, ServerSettings.class);
+        }
+        case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
+          return preferencesService.getJsonPreference(key, CardSettings.class);
+        }
+        case PreferenceNames.TOURNAMENTS_SETTINGS: {
+          return preferencesService.getJsonPreference(key, TournamentSettings.class);
+        }
+        case PreferenceNames.DOF_SETTINGS: {
+          return preferencesService.getJsonPreference(key, DOFSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

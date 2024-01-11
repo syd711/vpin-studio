@@ -2,9 +2,12 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -46,7 +49,6 @@ public class PauseMenu extends Application {
   }
 
   public static void loadUpdater(Stage stage) {
-    GameRepresentation game = client.getGameService().getGame(243);
     PauseMenu.stage = stage;
     try {
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
@@ -89,11 +91,17 @@ public class PauseMenu extends Application {
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
 
+      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
       if (PRODUCTION_USE) {
         //TODO execute pause exe here
       }
       else {
         GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+
+
+        GameRepresentation game = client.getGameService().getGame(243);
+        controller.setGame(game, screen);
         stage.show();
       }
     } catch (Exception e) {
