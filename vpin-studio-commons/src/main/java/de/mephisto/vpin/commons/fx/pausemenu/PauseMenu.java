@@ -6,14 +6,18 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -22,7 +26,6 @@ import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -37,6 +40,7 @@ public class PauseMenu extends Application {
   private static boolean PRODUCTION_USE = true;
 
   private static Stage stage;
+  private static MenuController controller;
 
   public static void main(String[] args) {
     OverlayWindowFX.client = new VPinStudioClient("localhost");
@@ -46,11 +50,16 @@ public class PauseMenu extends Application {
 
   @Override
   public void start(Stage stage) {
-    loadPauseMenu(stage);
+    loadPauseMenu();
   }
 
-  public static void loadPauseMenu(Stage stage) {
-    PauseMenu.stage = stage;
+  public static void loadPauseMenu() {
+    Stage pauseMenuStage = new Stage();
+    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+    pauseMenuStage.setAlwaysOnTop(true);
+    PauseMenu.stage = pauseMenuStage;
+
+    Scene scene = null;
     client = new VPinStudioClient("localhost");
 
     try {
@@ -59,8 +68,6 @@ public class PauseMenu extends Application {
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       Parent root = loader.load();
-
-      Scene scene = null;
 
       int height = 1400;
       if (PRODUCTION_USE) {
@@ -82,41 +89,41 @@ public class PauseMenu extends Application {
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
 
-
-      MenuController controller = loader.getController();
-
-      PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
-      StateMananger.getInstance().setControls(pinUPControls);
+      controller = loader.getController();
+      StateMananger.getInstance().init(controller);
 
       GlobalScreen.registerNativeHook();
       java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
-
-      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
-      if (PRODUCTION_USE) {
-        //TODO execute pause exe here
-      }
-      else {
-        GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-        GameRepresentation game = client.getGameService().getGame(243);
-        controller.setGame(game, screen);
-        stage.show();
-      }
-
-      StateMananger.getInstance().init(controller);
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
 
+  public static void showPauseMenu() {
+    //re-assign key, because they might have been changed
+    PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
+    StateMananger.getInstance().setControls(pinUPControls);
+
+    //reload card settings to resolve actual target screen
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+
+    GameStatus status = client.getGameStatusService().getStatus();
+    GameRepresentation game = client.getGameService().getGame(status.getGameId());
+    controller.setGame(game, status, screen);
+
+    GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+    stage.show();
+  }
+
   public static void exit() {
+    GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
     if (!PRODUCTION_USE) {
       System.exit(0);
     }
     else {
-      GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
       stage.hide();
     }
   }

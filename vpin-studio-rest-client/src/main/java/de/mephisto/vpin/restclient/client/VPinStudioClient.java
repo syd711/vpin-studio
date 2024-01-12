@@ -19,9 +19,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
-import de.mephisto.vpin.restclient.games.GamesServiceClient;
-import de.mephisto.vpin.restclient.games.NVRamsServiceClient;
-import de.mephisto.vpin.restclient.games.RomServiceClient;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -35,7 +33,6 @@ import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
@@ -73,6 +70,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final DOFServiceClient dofServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final GamesServiceClient gamesServiceClient;
+  private final GameStatusServiceClient gameStatusServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
@@ -111,6 +109,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.dofServiceClient = new DOFServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
+    this.gameStatusServiceClient = new GameStatusServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
@@ -139,6 +138,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public GameStatusServiceClient getGameStatusService() {
+    return gameStatusServiceClient;
   }
 
   public TournamentsServiceClient getTournamentsService() {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -22,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -49,7 +49,7 @@ public class MenuCustomViewController implements Initializable {
   private MenuCustomTileEntryController tile3Controller;
   private MenuCustomTileEntryController tile4Controller;
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(GameRepresentation game, GameStatus status) {
     this.nameLabel.setText(game.getGameDisplayName());
 
     InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
@@ -61,7 +61,10 @@ public class MenuCustomViewController implements Initializable {
 
     AlxSummary alxSummary = PauseMenu.client.getAlxService().getAlxSummary();
     List<TableAlxEntry> entries = alxSummary.getEntries();
-//    tile1Controller.refresh(entries);
+    tile1Controller.refresh(TileFactory.toTotalGamesPlayedEntry(entries));
+    tile2Controller.refresh(TileFactory.toTotalScoresEntry(entries));
+    tile3Controller.refresh(TileFactory.toTotalTimeEntry(entries));
+    tile4Controller.refresh(TileFactory.toSessionDurationTile(status.getStarted()));
 
     ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getGameService().getRecentScoresByGame(3, game.getId());
     List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
@@ -82,9 +85,9 @@ public class MenuCustomViewController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    tile1Controller = TileFactory.createTotalTimeTile(stats1Col, Collections.emptyList());
-    tile2Controller = TileFactory.createTotalGamesPlayedTile(stats1Col, Collections.emptyList());
-    tile3Controller = TileFactory.createTotalScoresTile(stats2Col, Collections.emptyList());
-    tile4Controller = TileFactory.createTotalHighScoresTile(stats2Col, Collections.emptyList());
+    tile1Controller = TileFactory.createCustomTile(stats1Col);
+    tile2Controller = TileFactory.createCustomTile(stats1Col);
+    tile3Controller = TileFactory.createCustomTile(stats2Col);
+    tile4Controller = TileFactory.createCustomTile(stats2Col);
   }
 }

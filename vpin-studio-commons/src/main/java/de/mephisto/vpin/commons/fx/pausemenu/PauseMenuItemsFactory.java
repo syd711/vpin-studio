@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;

@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -10,25 +11,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
 public class TileFactory {
   private final static Logger LOG = LoggerFactory.getLogger(TileFactory.class);
 
-  public static MenuCustomTileEntryController createTotalTimeTile(Pane root, List<TableAlxEntry> entries) {
+  public static MenuCustomTileEntryController createCustomTile(Pane root) {
     try {
       FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
       Parent builtInRoot = loader.load();
       MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(toTotalTimeEntry(entries));
       root.getChildren().add(builtInRoot);
-      return  controller;
+      return controller;
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
     }
@@ -51,21 +46,8 @@ public class TileFactory {
 
     return new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted);
   }
+  //--------------------------------------------------------------------------------------------------------------------
 
-
-  public static MenuCustomTileEntryController createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(toTotalScoresEntry(entries));
-      root.getChildren().add(builtInRoot);
-      return  controller;
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-    return null;
-  }
 
   public static AlxTileEntry toTotalScoresEntry(List<TableAlxEntry> entries) {
     int total = 0;
@@ -74,77 +56,20 @@ public class TileFactory {
     }
     return new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total));
   }
+  //--------------------------------------------------------------------------------------------------------------------
 
-  public static MenuCustomTileEntryController createTotalHighScoresTile(Pane root, List<TableAlxEntry> entries) {
-    int total = 0;
-    for (TableAlxEntry entry : entries) {
-      total += entry.getHighscores();
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
-      root.getChildren().add(builtInRoot);
-      return  controller;
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-    return null;
+  public static AlxTileEntry toSessionDurationTile(Date startDate) {
+    String duration = DateUtil.formatDuration(startDate, new Date());
+    return new AlxTileEntry("Play Time", "(Current playtime of this table)", duration);
   }
 
-  public static MenuCustomTileEntryController createAvgWeekTimeTile(Pane root, List<TableAlxEntry> entries, Date start) {
-    int total = 0;
-    for (TableAlxEntry entry : entries) {
-      total += entry.getTimePlayedSecs();
-    }
+  //--------------------------------------------------------------------------------------------------------------------
 
-
-    Instant d1i = Instant.ofEpochMilli(start.getTime());
-    Instant d2i = Instant.ofEpochMilli(new Date().getTime());
-
-    LocalDateTime startDate = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
-    LocalDateTime endDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
-
-    long weeks = ChronoUnit.WEEKS.between(startDate, endDate);
-
-    long avgSeksPerWeek = total / weeks;
-    String time = (avgSeksPerWeek / 60) + " min";
-    if (avgSeksPerWeek / 60 / 60 > 0) {
-      time = (avgSeksPerWeek / 60 / 60) + " hrs";
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
-      root.getChildren().add(builtInRoot);
-      return  controller;
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  public static MenuCustomTileEntryController createTotalGamesPlayedTile(Pane root, List<TableAlxEntry> entries) {
+  public static AlxTileEntry toTotalGamesPlayedEntry(List<TableAlxEntry> entries) {
     int total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
     }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Games Played", "(The total number of table launches from Popper)", String.valueOf(total)));
-      root.getChildren().add(builtInRoot);
-      return controller;
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-    return null;
+    return new AlxTileEntry("Total Games Played", "(The total number of table launches from Popper)", String.valueOf(total));
   }
-
 }

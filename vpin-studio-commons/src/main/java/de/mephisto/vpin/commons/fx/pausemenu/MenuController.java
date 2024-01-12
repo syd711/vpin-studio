@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
@@ -26,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,16 +97,17 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(GameRepresentation game, PopperScreen cardScreen) {
+  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen) {
     this.game = game;
     this.cardScreen = cardScreen;
-    this.customViewController.setGame(game);
+    this.customViewController.setGame(game, gameStatus);
+    enterMenuItemSelection();
   }
 
-  public void enterMenuItemSelection() {
+  private void enterMenuItemSelection() {
     StateMananger.getInstance().setInputBlocked(true);
     resetGameRow();
-    blueLabel.setText("Archive Table");
+    blueLabel.setText("NOT USED");
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();

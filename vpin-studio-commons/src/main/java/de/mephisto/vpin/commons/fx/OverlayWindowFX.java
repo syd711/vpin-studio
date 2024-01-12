@@ -51,7 +51,6 @@ public class OverlayWindowFX extends Application {
   private static OverlayWindowFX INSTANCE = null;
   private Stage maintenanceStage;
   private Stage highscoreCardStage;
-  private Stage pauseMenuStage;
   private HighscoreCardController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
@@ -161,18 +160,7 @@ public class OverlayWindowFX extends Application {
   }
 
   public void showPauseMenu() {
-    BorderPane root = new BorderPane();
-    Screen screen = Screen.getPrimary();
-    final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
-    scene.setFill(Color.TRANSPARENT);
-    scene.setCursor(Cursor.NONE);
-
-    pauseMenuStage = new Stage();
-    pauseMenuStage.setScene(scene);
-    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
-    pauseMenuStage.setAlwaysOnTop(true);
-
-    PauseMenu.loadPauseMenu(pauseMenuStage);
+    PauseMenu.showPauseMenu();
   }
 
   public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
@@ -257,6 +245,7 @@ public class OverlayWindowFX extends Application {
     stage.setFullScreen(true);
     stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
+    PauseMenu.loadPauseMenu();
     latch.countDown();
   }
 }

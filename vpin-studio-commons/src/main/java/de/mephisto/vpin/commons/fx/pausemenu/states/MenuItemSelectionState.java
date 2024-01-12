@@ -11,7 +11,6 @@ public class MenuItemSelectionState extends MenuState{
 
   public MenuItemSelectionState(MenuController menuController) {
     this.menuController = menuController;
-    menuController.enterMenuItemSelection();
   }
 
   @Override
