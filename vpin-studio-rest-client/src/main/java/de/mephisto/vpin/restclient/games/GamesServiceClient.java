@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -221,8 +220,12 @@ public class GamesServiceClient extends VPinStudioClientService {
     return this.games.stream().filter(g -> g.getId() == gameId).findFirst().orElseGet(null);
   }
 
-  public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
+  public ScoreSummaryRepresentation getRecentScores(int count) {
     return getRestClient().get(API + "games/recent/" + count, ScoreSummaryRepresentation.class);
+  }
+
+  public ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId) {
+    return getRestClient().get(API + "games/recent/" + count + "/" + gameId, ScoreSummaryRepresentation.class);
   }
 
   public boolean resetHighscore(int gameId) {

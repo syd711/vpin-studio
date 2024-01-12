@@ -319,8 +319,8 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   @Override
-  public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
-    return getGameService().getRecentlyPlayedGames(count);
+  public ScoreSummaryRepresentation getRecentScores(int count) {
+    return getGameService().getRecentScores(count);
   }
 
   @Override

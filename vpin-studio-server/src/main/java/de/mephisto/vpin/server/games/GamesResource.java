@@ -74,6 +74,11 @@ public class GamesResource {
     return gameService.getRecentHighscores(count);
   }
 
+  @GetMapping("/recent/{count}/{gameId}")
+  public ScoreSummary getRecentHighscoresForGame(@PathVariable("count") int count, @PathVariable("gameId") int gameId) {
+    return gameService.getRecentHighscores(count, gameId);
+  }
+
   @GetMapping("/{id}")
   public Game getGame(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);

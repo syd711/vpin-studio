@@ -2,7 +2,8 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
-import de.mephisto.vpin.restclient.alx.AlxTileEntry;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -10,7 +11,6 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -42,7 +43,7 @@ public class MenuCustomViewController implements Initializable {
 
   @FXML
   private VBox stats3Col;
-
+  
   private MenuCustomTileEntryController tile1Controller;
   private MenuCustomTileEntryController tile2Controller;
   private MenuCustomTileEntryController tile3Controller;
@@ -58,7 +59,11 @@ public class MenuCustomViewController implements Initializable {
     Image image = new Image(imageStream);
     wheelImage.setImage(image);
 
-    ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getRecentlyPlayedGames(3);
+    AlxSummary alxSummary = PauseMenu.client.getAlxService().getAlxSummary();
+    List<TableAlxEntry> entries = alxSummary.getEntries();
+//    tile1Controller.refresh(entries);
+
+    ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getGameService().getRecentScoresByGame(3, game.getId());
     List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
     for (ScoreRepresentation score : scores) {
       try {
@@ -70,39 +75,16 @@ public class MenuCustomViewController implements Initializable {
 
         stats3Col.getChildren().add(row);
       } catch (IOException e) {
-        LOG.error("Failed to load tile: " + e.getMessage(), e);
+        LOG.error("Failed to load paused scores: " + e.getMessage(), e);
       }
     }
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      tile1Controller = loader.getController();
-      tile1Controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", "2323"));
-      stats1Col.getChildren().add(builtInRoot);
-
-      loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      builtInRoot = loader.load();
-      tile2Controller = loader.getController();
-      tile2Controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", "2323"));
-      stats1Col.getChildren().add(builtInRoot);
-
-      loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      builtInRoot = loader.load();
-      tile3Controller = loader.getController();
-      tile3Controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", "2323"));
-      stats2Col.getChildren().add(builtInRoot);
-
-      loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      builtInRoot = loader.load();
-      tile4Controller = loader.getController();
-      tile4Controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", "2323"));
-      stats2Col.getChildren().add(builtInRoot);
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
+    tile1Controller = TileFactory.createTotalTimeTile(stats1Col, Collections.emptyList());
+    tile2Controller = TileFactory.createTotalGamesPlayedTile(stats1Col, Collections.emptyList());
+    tile3Controller = TileFactory.createTotalScoresTile(stats2Col, Collections.emptyList());
+    tile4Controller = TileFactory.createTotalHighScoresTile(stats2Col, Collections.emptyList());
   }
 }

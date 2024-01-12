@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.alx;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,5 +18,10 @@ public class AlxResource {
   @GetMapping
   public AlxSummary getAlxSummary() {
     return analyticsService.getAlxSummary();
+  }
+
+  @GetMapping("/{gameId}")
+  public AlxSummary getAlxSummary(@PathVariable("gameId") int gameId) {
+    return analyticsService.getAlxSummary(gameId);
   }
 }

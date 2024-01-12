@@ -69,7 +69,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         limit = 8;
       }
 
-      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentlyPlayedGames(limit);
+      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentScores(limit);
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
 

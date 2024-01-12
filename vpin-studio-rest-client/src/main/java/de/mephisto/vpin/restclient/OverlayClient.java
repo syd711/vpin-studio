@@ -36,7 +36,7 @@ public interface OverlayClient {
 
   ByteArrayInputStream getAsset(AssetType assetType, String uuid);
 
-  ScoreSummaryRepresentation getRecentlyPlayedGames(int count);
+  ScoreSummaryRepresentation getRecentScores(int count);
 
   ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen);
 

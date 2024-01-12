@@ -306,6 +306,10 @@ public class GameService implements InitializingBean {
   }
 
   public ScoreSummary getRecentHighscores(int count) {
+    return getRecentHighscores(count, -1);
+  }
+
+  public ScoreSummary getRecentHighscores(int count, int gameId) {
     long start = System.currentTimeMillis();
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, null);
@@ -326,6 +330,11 @@ public class GameService implements InitializingBean {
 
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
+      //filter by game
+      if(gameId > 0 && version.getGameId() != gameId) {
+        continue;
+      }
+
       if (scoreFilter.isScoreFiltered(version)) {
         continue;
       }

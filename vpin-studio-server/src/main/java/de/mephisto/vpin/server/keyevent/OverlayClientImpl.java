@@ -202,7 +202,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ScoreSummaryRepresentation getRecentlyPlayedGames(int count) {
+  public ScoreSummaryRepresentation getRecentScores(int count) {
     try {
       ScoreSummary summary = gameService.getRecentHighscores(count);
       String s = mapper.writeValueAsString(summary);
