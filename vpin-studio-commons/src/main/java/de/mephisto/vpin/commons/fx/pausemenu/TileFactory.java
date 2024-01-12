@@ -22,6 +22,20 @@ public class TileFactory {
   private final static Logger LOG = LoggerFactory.getLogger(TileFactory.class);
 
   public static MenuCustomTileEntryController createTotalTimeTile(Pane root, List<TableAlxEntry> entries) {
+    try {
+      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
+      Parent builtInRoot = loader.load();
+      MenuCustomTileEntryController controller = loader.getController();
+      controller.refresh(toTotalTimeEntry(entries));
+      root.getChildren().add(builtInRoot);
+      return  controller;
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public static AlxTileEntry toTotalTimeEntry(List<TableAlxEntry> entries) {
     int total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
@@ -35,11 +49,16 @@ public class TileFactory {
       LOG.error("Error calculating total play time: " + e.getMessage());
     }
 
+    return new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted);
+  }
+
+
+  public static MenuCustomTileEntryController createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
     try {
       FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
       Parent builtInRoot = loader.load();
       MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
+      controller.refresh(toTotalScoresEntry(entries));
       root.getChildren().add(builtInRoot);
       return  controller;
     } catch (IOException e) {
@@ -48,25 +67,13 @@ public class TileFactory {
     return null;
   }
 
-  public static MenuCustomTileEntryController createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
+  public static AlxTileEntry toTotalScoresEntry(List<TableAlxEntry> entries) {
     int total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getScores();
     }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
-      Parent builtInRoot = loader.load();
-      MenuCustomTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
-      root.getChildren().add(builtInRoot);
-      return  controller;
-    } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
-    }
-    return null;
+    return new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total));
   }
-
 
   public static MenuCustomTileEntryController createTotalHighScoresTile(Pane root, List<TableAlxEntry> entries) {
     int total = 0;
