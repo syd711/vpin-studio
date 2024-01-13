@@ -64,11 +64,6 @@ public class PopperServiceResource {
     return popperService.getGameEmulators();
   }
 
-  @GetMapping("/displays")
-  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
-    return popperService.getPupPlayerDisplays();
-  }
-
   @GetMapping("/backglassemulators")
   public List<GameEmulator> getBackglassGameEmulators() {
     return popperService.getBackglassGameEmulators();

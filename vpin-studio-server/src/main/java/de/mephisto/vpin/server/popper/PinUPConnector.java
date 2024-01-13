@@ -1313,6 +1313,11 @@ public class PinUPConnector implements InitializingBean {
       iniConfiguration.setSeparatorUsedInInput("=");
 
       File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
+      if(!ini.exists()) {
+        LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
+        return result;
+      }
+
       FileReader fileReader = new FileReader(ini);
       try {
         iniConfiguration.read(fileReader);

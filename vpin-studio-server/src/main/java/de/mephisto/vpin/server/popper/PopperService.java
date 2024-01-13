@@ -416,11 +416,6 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getGameEmulators();
   }
 
-  @NonNull
-  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
-    return pinUPConnector.getPupPlayerDisplays();
-  }
-
   @Nullable
   public PinUPPlayerDisplay getPupPlayerDisplay(@NonNull PopperScreen screen) {
     List<PinUPPlayerDisplay> pupPlayerDisplays = pinUPConnector.getPupPlayerDisplays();
