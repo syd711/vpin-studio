@@ -50,6 +50,10 @@ jobs:
           java-version: '11'
           cache: 'maven'
 
+      - name: Run maven build for vpin mania rest client
+        working-directory: ./vpin-mania-rest-client
+        run: mvn clean install -DskipTests
+
       - name: Run maven build for github-project-downloader
         working-directory: ./github-project-downloader
         run: mvn clean install -DskipTests
@@ -61,10 +65,6 @@ jobs:
       - name: Run maven build for popper client
         working-directory: ./vpin-studio-popper-client
         run: mvn clean install
-
-      - name: Run maven build for vpin mania rest client
-        working-directory: ./vpin-mania-rest-client
-        run: mvn clean install -DskipTests
 
       - name: Cache local Maven repository
         uses: actions/cache@v2

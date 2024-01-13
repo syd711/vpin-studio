@@ -97,7 +97,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         if (player.isRegistered()) {
           ManiaAccountRepresentation update = maniaClient.getAccountClient().update(maniaAccount);
           if (update == null) {
-            update = maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+            update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
             player.setTournamentUserUuid(update.getUuid());
             client.getPlayerService().savePlayer(player);
           }
@@ -109,7 +109,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
         }
         else {
-          ManiaAccountRepresentation register = maniaClient.getAccountClient().register(maniaAccount, this.avatarFile, null);
+          ManiaAccountRepresentation register = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
           player.setTournamentUserUuid(register.getUuid());
         }
       }
