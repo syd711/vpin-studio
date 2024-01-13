@@ -24,5 +24,6 @@ As a result, your existing **"UI Settings" and "Server Settings"** in the prefer
 ### Bugfixes
 
 - Added ".apng" as valid file suffix for wheel drag and drops.
+- Fixed highscore card overlays frames: The larger upper and lower white areas of the pop-up should be gone now. This requires that all highscore cards are rendered using the size of the default assets (1280x720). If you have used one of the default backgrounds download a properly rescaled one from https://github.com/syd711/vpin-studio/tree/main/resources/backgrounds and place it in the same directory of your installation. 
 - Overlay: Fixed issue that when the overlay is shown on startup, it does not hide on key-press when no hotkey is defined.
 - MAME Settings: Fixed issue that the MAME cached was not updated on table scan (and no additional reload button available).
