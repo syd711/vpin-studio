@@ -16,6 +16,9 @@ import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -31,6 +35,37 @@ import java.io.IOException;
 import java.util.List;
 
 public class TableDialogs {
+
+  public static void directAssetUpload(Stage stage, GameRepresentation game, PopperScreen screen) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select Media");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
+
+    List<File> files = fileChooser.showOpenMultipleDialog(stage);
+    if (files != null && !files.isEmpty()) {
+      Platform.runLater(() -> {
+        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
+          "Popper Media Upload", files, "popperMedia", screen);
+        ProgressDialog.createProgressDialog(model);
+      });
+    }
+  }
+
+  public static void directBackglassUpload(Stage stage, GameRepresentation game) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select DirectB2S File");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s"));
+
+    File file = fileChooser.showOpenDialog(stage);
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+        ProgressDialog.createProgressDialog(model);
+      });
+    }
+  }
 
   public static boolean openPopperMediaAdminDialog(GameRepresentation game, PopperScreen screen) {
     Stage stage = Dialogs.createStudioDialogStage(TablePopperMediaDialogController.class, "dialog-popper-media-selector.fxml", "Asset Manager");
@@ -116,15 +151,6 @@ public class TableDialogs {
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
     controller.setFile(file, stage);
-    stage.showAndWait();
-
-    return controller.uploadFinished();
-  }
-
-  public static boolean openDirectB2SUploadDialog(GameRepresentation game, File file) {
-    Stage stage = Dialogs.createStudioDialogStage(DirectB2SUploadController.class, "dialog-directb2s-upload.fxml", "DirectB2S File Upload");
-    DirectB2SUploadController controller = (DirectB2SUploadController) stage.getUserData();
-    controller.setData(game, file);
     stage.showAndWait();
 
     return controller.uploadFinished();

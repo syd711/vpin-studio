@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -20,6 +21,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,9 +165,10 @@ public class TablesSidebarDirectB2SController implements Initializable {
   }
 
   @FXML
-  private void onUpload() {
+  private void onUpload(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     if (game.isPresent()) {
-      TableDialogs.openDirectB2SUploadDialog(game.get(), null);
+      TableDialogs.directBackglassUpload(stage, game.get());
     }
   }
 

@@ -22,5 +22,6 @@ As a result, your existing **"UI Settings" and "Server Settings"** in the prefer
 
 ### Bugfixes
 
+- Added ".apng" as valid file suffix for wheel drag and drops.
 - Overlay: Fixed issue that when the overlay is shown on startup, it does not hide on key-press when no hotkey is defined.
 - MAME Settings: Fixed issue that the MAME cached was not updated on table scan (and no additional reload button available).

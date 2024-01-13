@@ -243,6 +243,21 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+      TournamentSettings settings = client.getTournamentsService().getSettings();
+      tournamentsBtn.setVisible(settings.isEnabled());
+      if (!tournamentsBtn.isVisible()) {
+        try {
+          onTablesClick(null);
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
+  }
+
+  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
 
@@ -258,21 +273,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     if (Studio.maniaClient != null) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
-    }
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
-      TournamentSettings settings = client.getTournamentsService().getSettings();
-      tournamentsBtn.setVisible(settings.isEnabled());
-      if (!tournamentsBtn.isVisible()) {
-        try {
-          onTablesClick(null);
-        } catch (IOException e) {
-          //ignore
-        }
-      }
     }
   }
 }

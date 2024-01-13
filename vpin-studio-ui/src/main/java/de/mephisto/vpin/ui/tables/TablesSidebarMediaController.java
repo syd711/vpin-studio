@@ -431,8 +431,8 @@ public class TablesSidebarMediaController implements Initializable {
     screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
     screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Other2, "mp4", "png", "jpg"));
 
-    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "jpg"));
-    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Wheel, "png", "apng"));
+    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "apng", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Wheel, "png", "apng", "jpg"));
   }
 
   public void resetMedia() {
