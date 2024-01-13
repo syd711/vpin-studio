@@ -122,9 +122,7 @@ public class Studio extends Application {
 
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
-
-      ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
-      Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
+      createManiaClient();
       OverlayWindowFX.client = Studio.client;
 
       FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
@@ -177,6 +175,15 @@ public class Studio extends Application {
       stage.show();
     } catch (IOException e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
+    }
+  }
+
+  private static void createManiaClient() {
+    try {
+      ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
+      Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
+    } catch (Exception e) {
+      LOG.error("Failed to create mania client: " + e.getMessage());
     }
   }
 

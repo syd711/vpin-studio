@@ -1,11 +1,10 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.MaintenanceController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -27,7 +26,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,7 @@ public class MenuController implements Initializable {
   private Node bluePanel;
 
   @FXML
-  private Node baseSelector;
+  private Node rootBorderPane;
 
   @FXML
   private HBox menuItemsRow;
@@ -104,14 +102,16 @@ public class MenuController implements Initializable {
     enterMenuItemSelection();
   }
 
+  public void setVisible(boolean b) {
+    this.rootBorderPane.setVisible(b);
+  }
+
   private void enterMenuItemSelection() {
-    StateMananger.getInstance().setInputBlocked(true);
     resetGameRow();
-    blueLabel.setText("NOT USED");
+    blueLabel.setText("Loading...");
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();
-    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, FOOTER_HEIGHT).play();
 
     setLoadLabel("Loading...");
 
@@ -120,7 +120,6 @@ public class MenuController implements Initializable {
       initGameBarSelection();
 
       TransitionUtil.createOutFader(loadMask).play();
-      StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
     });
   }
 
@@ -131,6 +130,14 @@ public class MenuController implements Initializable {
 
   public void scrollGameBarRight() {
     scroll(false);
+  }
+
+  public boolean isAtEnd() {
+    return selectionIndex == (pauseMenuItems.size() -1);
+  }
+
+  public boolean isAtStart() {
+    return selectionIndex == 0;
   }
 
   public void scrollGameBarLeft() {

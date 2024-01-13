@@ -4,9 +4,9 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -255,8 +255,10 @@ public class NavigationController implements Initializable, StudioEventListener,
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
-    TournamentSettings settings = client.getTournamentsService().getSettings();
-    tournamentsBtn.setVisible(settings.isEnabled());
+    if (Studio.maniaClient != null) {
+      TournamentSettings settings = client.getTournamentsService().getSettings();
+      tournamentsBtn.setVisible(settings.isEnabled());
+    }
   }
 
   @Override
@@ -264,7 +266,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
-      if(!tournamentsBtn.isVisible()) {
+      if (!tournamentsBtn.isVisible()) {
         try {
           onTablesClick(null);
         } catch (IOException e) {

@@ -1,7 +1,5 @@
 package de.mephisto.vpin.restclient.assets;
 
-import de.mephisto.vpin.restclient.assets.AssetRepresentation;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -58,11 +56,17 @@ public class AssetServiceClient extends VPinStudioClientService {
 
     if (screen.equals(PopperScreen.Wheel)) {
       byte[] imageBytes = client.getImageCache().get(url);
+      if (imageBytes == null || imageBytes.length == 0) {
+        return null;
+      }
       return new ByteArrayInputStream(imageBytes);
     }
 
     byte[] bytes = getRestClient().readBinary(url);
-    return new ByteArrayInputStream(bytes);
+    if (bytes != null) {
+      return new ByteArrayInputStream(bytes);
+    }
+    return null;
   }
 
   public AssetRepresentation uploadAsset(File file, long id, int maxSize, AssetType assetType, FileUploadProgressListener listener) throws Exception {

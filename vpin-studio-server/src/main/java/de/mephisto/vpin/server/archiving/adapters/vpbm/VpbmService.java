@@ -168,7 +168,10 @@ public class VpbmService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    refreshConfig();
+    new Thread(()-> {
+      Thread.currentThread().setName("VpbmService Thread");
+      refreshConfig();
+    }).start();
   }
 
   private void refreshConfig() {

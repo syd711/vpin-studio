@@ -52,7 +52,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private boolean launchOverlayOnStartup = false;
   private String overlayKey;
   private String resetKey;
-  private Game activeGame;
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
@@ -73,6 +72,14 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         });
       }
     }
+
+//    String pauseKey = "F9";
+//    if (!StringUtils.isEmpty(pauseKey)) {
+//      KeyChecker keyChecker = new KeyChecker(pauseKey);
+//      if (keyChecker.matches(nativeKeyEvent)) {
+//        OverlayWindowFX.getInstance().togglePauseMenu();
+//      }
+//    }
 
     if (!StringUtils.isEmpty(resetKey)) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
@@ -107,22 +114,22 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    this.activeGame = event.getGame();
+
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    this.activeGame = null;
+
   }
 
   @Override
   public void popperExited() {
-    this.activeGame = null;
+
   }
 
   @Override
   public void popperRestarted() {
-    this.activeGame = null;
+
   }
 
   public void resetShutdownTimer() {

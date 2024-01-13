@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 
-public class MenuItemSelectionState extends MenuState{
+public class MenuItemSelectionState extends MenuState {
   private final MenuController menuController;
 
   public MenuItemSelectionState(MenuController menuController) {
@@ -28,7 +28,7 @@ public class MenuItemSelectionState extends MenuState{
   @Override
   MenuState enter() {
     PauseMenuItem item = menuController.getSelection();
-    if(item.getItemType().equals(PauseMenuItemTypes.exit)) {
+    if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
       PauseMenu.exit();
     }
     return this;

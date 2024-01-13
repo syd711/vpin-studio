@@ -1,5 +1,6 @@
-package de.mephisto.vpin.commons.fx.pausemenu;
+package de.mephisto.vpin.commons.fx.pausemenu.model;
 
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -41,7 +42,7 @@ public class PauseMenuItemsFactory {
     }
 
     item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "Additional Info or Help", new Image(PauseMenu.class.getResourceAsStream("help.png")));
-    item.setYouTubeUrl("https://www.youtube.com/embed/CZNNfFcwsLQ?si=y_U4h8CQSWb1bgvE");
+    item.setYouTubeUrl("https://www.youtube.com/embed/EHkNdf4JaEI?si=OjpWfYpwyXDLsa7Z");
     pauseMenuItems.add(item);
 
     return pauseMenuItems;

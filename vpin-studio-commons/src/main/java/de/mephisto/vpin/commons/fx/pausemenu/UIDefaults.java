@@ -9,9 +9,4 @@ public interface UIDefaults {
 
   int THUMBNAIL_SIZE = 240;
   int SCROLL_OFFSET = 120;
-
-  int FOOTER_ANIMATION_DURATION = 600;
-  int FOOTER_HEIGHT = 310;
-
-  int MAX_ROW_ITEMS = 9;
 }

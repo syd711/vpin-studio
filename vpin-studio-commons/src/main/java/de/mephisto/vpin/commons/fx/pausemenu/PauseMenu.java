@@ -10,6 +10,9 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -26,6 +29,8 @@ import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -33,19 +38,19 @@ import static java.util.logging.Logger.getLogger;
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
 
-  //do not change this title as it is used in popper as launch parameter
-
   public static VPinStudioClient client;
 
   private static boolean PRODUCTION_USE = true;
 
   private static Stage stage;
-  private static MenuController controller;
+  private static boolean visible = false;
+  private static boolean firstShow = true;
 
   public static void main(String[] args) {
     OverlayWindowFX.client = new VPinStudioClient("localhost");
     PRODUCTION_USE = false;
     launch(args);
+    PauseMenu.togglePauseMenu();
   }
 
   @Override
@@ -89,41 +94,115 @@ public class PauseMenu extends Application {
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
 
-      controller = loader.getController();
-      StateMananger.getInstance().init(controller);
+      StateMananger.getInstance().init(loader.getController());
 
       GlobalScreen.registerNativeHook();
       java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
+
+      if (!PRODUCTION_USE) {
+        togglePauseMenu();
+      }
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
 
-  public static void showPauseMenu() {
-    //re-assign key, because they might have been changed
-    PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
-    StateMananger.getInstance().setControls(pinUPControls);
+  public static void togglePauseMenu() {
+    if (!visible) {
+      GameStatus status = client.getGameStatusService().getStatus();
+      if (!status.isActive()) {
+        LOG.info("Skipped showing start menu: no game status found.");
+        return;
+      }
 
-    //reload card settings to resolve actual target screen
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+      //re-assign key, because they might have been changed
+      PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
+      StateMananger.getInstance().setControls(pinUPControls);
 
-    GameStatus status = client.getGameStatusService().getStatus();
-    GameRepresentation game = client.getGameService().getGame(status.getGameId());
-    controller.setGame(game, status, screen);
+      //reload card settings to resolve actual target screen
+      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
 
-    GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+      visible = true;
+      GameRepresentation game = client.getGameService().getGame(status.getGameId());
+      StateMananger.getInstance().setGame(game, status, screen);
+      if(firstShow) {
+        firstShow = false;
+        new Thread(() -> {
+//          System.out.println("force 1");
+//          toggleFocus();
+//          System.out.println("force 2");
+//          toggleFocus();
+//          System.out.println("force 3");
+//          toggleFocus();
+//          System.out.println("force 4");
+//          toggleFocus();
+          toFront();
+          toFront();
+          toFront();
+          toFront();
+          toFront();
+        }).start();
+        forceShow();
+      }
+      else {
+        Platform.runLater(() -> {
+          stage.toFront();
+        });
+        forceShow();
+      }
+    }
+    else {
+      exit();
+    }
+  }
+
+  private static void toFront() {
+    try {
+      Thread.sleep(1800);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    Platform.runLater(() -> {
+      stage.toFront();
+    });
+  }
+
+  private static void toggleFocus() {
+    try {
+      Thread.sleep(1500);
+      Platform.runLater(() -> {
+        stage.hide();
+      });
+      Thread.sleep(1500);
+      new Thread(() -> {
+        Platform.runLater(() -> {
+          forceShow();
+        });
+      }).start();
+    }
+    catch (Exception e) {
+      //ignore
+    }
+  }
+
+  private static void forceShow() {
+    Platform.runLater(() -> {
+      stage.toFront();
+    });
     stage.show();
   }
 
   public static void exit() {
-    GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
+    visible = false;
+    StateMananger.getInstance().exit();
     if (!PRODUCTION_USE) {
       System.exit(0);
     }
     else {
+      LOG.info("Exited pause menu");
       stage.hide();
     }
   }

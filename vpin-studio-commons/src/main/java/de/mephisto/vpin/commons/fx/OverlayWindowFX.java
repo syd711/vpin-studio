@@ -89,7 +89,8 @@ public class OverlayWindowFX extends Application {
       }
       stage.show();
       overlayController.refreshData();
-    } else {
+    }
+    else {
       stage.hide();
     }
   }
@@ -110,7 +111,8 @@ public class OverlayWindowFX extends Application {
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     if (screenBounds.getWidth() < 3000 && screenBounds.getWidth() > 2000) {
       resource = "wqhd";
-    } else if (screenBounds.getWidth() < 2000) {
+    }
+    else if (screenBounds.getWidth() < 2000) {
       resource = "hd";
     }
     return resource;
@@ -121,7 +123,8 @@ public class OverlayWindowFX extends Application {
       if (b) {
         maintenanceStage.setFullScreen(true);
         maintenanceStage.show();
-      } else {
+      }
+      else {
         maintenanceStage.hide();
       }
       return;
@@ -159,8 +162,10 @@ public class OverlayWindowFX extends Application {
     }
   }
 
-  public void showPauseMenu() {
-    PauseMenu.showPauseMenu();
+  public void togglePauseMenu() {
+    Platform.runLater(() -> {
+      PauseMenu.togglePauseMenu();
+    });
   }
 
   public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
@@ -197,7 +202,8 @@ public class OverlayWindowFX extends Application {
         }
 
         showHighscoreCard(notificationTime);
-      } else {
+      }
+      else {
         LOG.info("Skipping highscore card overlay, zero time set.");
       }
     } catch (Exception e) {
