@@ -3,7 +3,6 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
-import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
@@ -76,7 +75,7 @@ public class MenuController implements Initializable {
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
 
-  private List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
+  private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
   private MenuCustomViewController customViewController;
 
@@ -112,6 +111,8 @@ public class MenuController implements Initializable {
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();
+    //TODO 310
+//    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, 310).play();
 
     setLoadLabel("Loading...");
 

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -81,7 +81,7 @@
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -125,7 +125,12 @@
                         <Font size="14.0" />
                      </font>
                   </RadioButton>
-                  <Label styleClass="preference-description" text="The highscore card pop-up is determined through the generator's target screen." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Label styleClass="preference-description" text="The highscore card pop-up is determined through the generator's target screen." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Make sure that the target screen has a 16x9 format set." textFill="WHITE" />
+                     </children>
+                  </VBox>
                   <Label layoutX="295.0" layoutY="76.0" styleClass="preference-description" text="Position and size is calculated for the playfield, using the given rotation value." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <RadioButton fx:id="cardPosPlayfieldRadio" mnemonicParsing="false" text="Centered on Playfield" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>

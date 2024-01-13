@@ -1,5 +1,5 @@
 package de.mephisto.vpin.commons.fx;
 
-public interface UIFeatures {
+public interface Features {
   boolean TOURNAMENTS_ENABLED = false;
 }

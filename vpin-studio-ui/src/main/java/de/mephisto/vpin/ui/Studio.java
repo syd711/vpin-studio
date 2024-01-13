@@ -1,13 +1,12 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
@@ -31,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -133,7 +131,7 @@ public class Studio extends Application {
       Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
       double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
       double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-      if(position.getWidth() != -1) {
+      if (position.getWidth() != -1) {
         width = position.getWidth();
         height = position.getHeight();
       }
@@ -148,7 +146,7 @@ public class Studio extends Application {
       stage.initStyle(StageStyle.UNDECORATED);
 
 
-      if(position.getX() != -1) {
+      if (position.getX() != -1) {
         stage.setX(position.getX());
         stage.setY(position.getY());
       }
@@ -180,8 +178,10 @@ public class Studio extends Application {
 
   private static void createManiaClient() {
     try {
-      ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
-      Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
+      if (Features.TOURNAMENTS_ENABLED) {
+        ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
+        Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
+      }
     } catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());
     }

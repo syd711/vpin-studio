@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -270,7 +271,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
-    if (Studio.maniaClient != null) {
+    if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
     }

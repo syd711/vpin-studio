@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.fx.UIFeatures;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -297,7 +297,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     navBox = navigationBox;
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
-    tournamentGroup.setVisible(UIFeatures.TOURNAMENTS_ENABLED);
+    tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLabel.setText("VPin Studio Version " + Studio.getVersion());
