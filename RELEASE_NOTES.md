@@ -11,6 +11,7 @@ As a result, your existing **"UI Settings" and "Server Settings"** in the prefer
 - Table Overview: Changed hover states so that the font remains white (not blue anymore).
 - Studio Window: The size and location of the Studio window is now persisted and restored on the next launch.
 - File Dialogs: The last used folder location is now stored and used as initial directory for every new file selection dialog.
+- Upload Dialogs: For uploads that doesn't require any additional values, the file selection now opens immediately, e.g. Popper table assets and directb2s files.  
 - Added "Reload" button to MAME section, to invalidate the MAME settings cache.
 - Improved server start-up time a bit.
 - Re-worked the preferences for the highscore card pop-up:
