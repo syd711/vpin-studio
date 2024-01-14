@@ -114,9 +114,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private Button reloadBtn;
 
   @FXML
-  private Button downloadBtn;
-
-  @FXML
   private SplitMenuButton validateBtn;
 
   @FXML
@@ -178,8 +175,21 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @FXML
-  private void onAdd() {
-
+  private void onJoin() {
+    String tournamentToken = WidgetFactory.showInputDialog(Studio.stage, "Join Tournament", "Enter the token of the private tournament you want to join.",
+      "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
+    if (tournamentToken != null) {
+      ManiaTournamentRepresentation tournament = maniaClient.getTournamentClient().getTournament(tournamentToken);
+      if (tournament == null) {
+        WidgetFactory.showAlert(Studio.stage, "No tournament was found for this token.");
+      }
+      else if (TournamentHelper.isOwner(tournament)) {
+        WidgetFactory.showAlert(Studio.stage, "You are the owner of tournament \"" + tournament.getDisplayName() + "\".");
+      }
+      else {
+        TournamentDialogs.openTournamentDialog(tournament.getDisplayName(), tournament);
+      }
+    }
   }
 
   @FXML
@@ -391,7 +401,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     deleteBtn.setDisable(true);
     duplicateBtn.setDisable(true);
     finishBtn.setDisable(true);
-    downloadBtn.setDisable(true);
     reloadBtn.setDisable(true);
     browseBtn.setDisable(true);
 
@@ -490,7 +499,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     deleteBtn.setDisable(true);
     duplicateBtn.setDisable(true);
     reloadBtn.setDisable(true);
-    downloadBtn.setDisable(true);
     browseBtn.setDisable(true);
 
     boolean validTournamentSetupAvailable = isValidTournamentSetupAvailable();
@@ -507,7 +515,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       duplicateBtn.setDisable(disable || !isOwner);
       reloadBtn.setDisable(this.maniaAccount != null);
       addBtn.setDisable(this.maniaAccount != null);
-      downloadBtn.setDisable(disable || newSelection.getGame() != null);
       browseBtn.setDisable(this.maniaAccount != null);
     }
 
@@ -626,7 +633,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-          Label label = new Label("- Not Installed -");
+          Label label = new Label("- NOT INSTALLED -");
           label.getStyleClass().add("default-headline");
           Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
           if (game != null) {
@@ -655,15 +662,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     columnStatus.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue().getValue();
+      ManiaTournamentRepresentation tournament = value.getTournament();
       if (cellData.getValue().getChildren().isEmpty()) {
-        ManiaTournamentRepresentation tournament = value.getTournament();
         GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
         if (game != null) {
-          Label label = new Label("Installed");
+          Label label = new Label("INSTALLED");
           label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;");
           return new SimpleObjectProperty(label);
         }
-        Label label = new Label("Not Installed");
+        Label label = new Label("NOT INSTALLED");
         label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333;-fx-font-weight: bold;");
         return new SimpleObjectProperty(label);
       }
@@ -675,6 +682,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         else if (value.getTournament().isPlanned()) {
           status = "PLANNED";
         }
+
+        String visibility = tournament.getVisibility().equals(ManiaTournamentVisibility.publicTournament) ? "(public)" : "(private)";
+        status += "\n" + visibility;
 
         Label label = new Label(status);
         label.setStyle(getLabelCss(value));

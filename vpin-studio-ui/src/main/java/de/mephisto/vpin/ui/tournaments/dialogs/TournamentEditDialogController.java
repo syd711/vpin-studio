@@ -464,7 +464,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tournamentBadgeCombo.setItems(imageList);
     tournamentBadgeCombo.setCellFactory(c -> new TournamentImageCell(client));
     tournamentBadgeCombo.setButtonCell(new TournamentImageCell(client));
-    this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> validate());
+    this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tournament.setVisibility(newValue ? ManiaTournamentVisibility.privateTournament : ManiaTournamentVisibility.publicTournament);
+      validate();
+    });
 
     dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> tournament.setDashboardUrl(newValue));
 
@@ -515,7 +518,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {
       @Override
       public void onChanged(Change<? extends TournamentTreeModel> c) {
-        deleteTableBtn.setDisable(c == null || c.getList().isEmpty());
+        deleteTableBtn.setDisable(!TournamentHelper.isOwner(tournament) || c == null || c.getList().isEmpty());
       }
     });
 

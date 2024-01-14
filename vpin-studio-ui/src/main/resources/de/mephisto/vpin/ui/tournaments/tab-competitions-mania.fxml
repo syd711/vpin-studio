@@ -93,7 +93,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="addBtn" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" text="Join" textFill="WHITE">
+                  <Button fx:id="addBtn" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onJoin" text="Join" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -111,15 +111,6 @@
                             </graphic>
                         </Button>
                         <Separator layoutX="448.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="downloadBtn" layoutX="870.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Separator layoutX="514.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />

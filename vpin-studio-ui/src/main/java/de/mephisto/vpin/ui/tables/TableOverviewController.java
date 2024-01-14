@@ -6,11 +6,10 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
@@ -71,9 +70,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
-
-  @FXML
-  private TableColumn<GameRepresentation, Label> columnId;
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnDisplayName;
@@ -675,14 +671,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         label.setTooltip(tt);
         label.setGraphic(updateIcon);
       }
-      return new SimpleObjectProperty(label);
-    });
-
-    columnId.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      Label label = new Label(String.valueOf(value.getId()));
-      label.getStyleClass().add("default-text");
-      label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 

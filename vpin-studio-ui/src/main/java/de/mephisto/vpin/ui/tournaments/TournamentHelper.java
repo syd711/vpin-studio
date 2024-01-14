@@ -7,6 +7,15 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class TournamentHelper {
 
   public static boolean isOwner(ManiaTournamentRepresentation selectedTournament) {
-    return selectedTournament.getUuid() == null || selectedTournament.getCabinetId() == null || selectedTournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId());
+    //it's a new tournament
+    if (selectedTournament.getOwnerUuid() == null) {
+      return true;
+    }
+
+    if (selectedTournament.getCabinetId() != null && selectedTournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId())) {
+      return true;
+    }
+
+    return false;
   }
 }

@@ -155,8 +155,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (this.tournamentTreeModel.isPresent()) {
       Clipboard clipboard = Clipboard.getSystemClipboard();
       ClipboardContent content = new ClipboardContent();
-      String vpsTableUrl = VPS.getVpsTableUrl(this.tournamentTreeModel.get().getTournament().getUuid());
-      content.putString(vpsTableUrl);
+      content.putString(this.tournamentTreeModel.get().getTournament().getUuid());
       clipboard.setContent(content);
     }
   }
