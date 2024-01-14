@@ -49,9 +49,6 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   private TableView<PlayerRepresentation> tableView;
 
   @FXML
-  private TableColumn<PlayerRepresentation, Label> discordIdColumn;
-
-  @FXML
   private TableColumn<PlayerRepresentation, String> nameColumn;
 
   @FXML
@@ -218,16 +215,6 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    discordIdColumn.setCellValueFactory(cellData -> {
-      PlayerRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getDiscordId())) {
-        Label label = new Label();
-        label.setGraphic(WidgetFactory.createCheckIcon());
-        return new SimpleObjectProperty<>(label);
-      }
-      return null;
-    });
-
 
     tournamentColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
@@ -325,7 +312,6 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       adminColumn.setVisible(settings.isEnabled());
-      discordIdColumn.setVisible(settings.isEnabled());
       tournamentColumn.setVisible(settings.isEnabled());
     }
   }

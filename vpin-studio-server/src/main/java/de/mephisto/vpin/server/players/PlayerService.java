@@ -94,7 +94,6 @@ public class PlayerService {
     model.setDisplayName(player.getDisplayName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
-    model.setDiscordId(player.getDiscordId());
     model.setTournamentUserUuid(player.getTournamentUserUuid());
 
     Player updated = playerRepository.saveAndFlush(model);

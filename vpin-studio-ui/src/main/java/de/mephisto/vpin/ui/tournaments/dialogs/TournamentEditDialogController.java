@@ -1,9 +1,6 @@
 package de.mephisto.vpin.ui.tournaments.dialogs;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -37,6 +34,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -45,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -322,6 +321,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     if (!isOwner) {
       this.saveBtn.setText("Join Tournament");
     }
+    else if(isOwner && tournament.getUuid() != null) {
+      this.saveBtn.setText("Update Tournament");
+    }
 
     Platform.runLater(() -> {
       rootStack.getChildren().add(loadingOverlay);
@@ -380,6 +382,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
@@ -481,10 +484,19 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         return new SimpleObjectProperty(new GameCellContainer(game));
       }
 
+      HBox cell = new HBox(12);
+      cell.setAlignment(Pos.CENTER_LEFT);
+      Image gameIcon = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      ImageView imageView = new ImageView(gameIcon);
+      imageView.setPreserveRatio(true);
+      imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
+      cell.getChildren().add(imageView);
+
       Label label = new Label("Table not installed");
       label.setStyle("-fx-padding: 3 6 3 6;");
       label.getStyleClass().add("error-title");
-      return new SimpleObjectProperty(label);
+      cell.getChildren().add(label);
+      return new SimpleObjectProperty(cell);
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -522,7 +534,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   }
 
   static class TournamentImageCell extends ListCell<String> {
-
     private final VPinStudioClient client;
 
     public TournamentImageCell(VPinStudioClient client) {

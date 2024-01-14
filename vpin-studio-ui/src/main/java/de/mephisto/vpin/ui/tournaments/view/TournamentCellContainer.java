@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentCellContainer extends HBox {
@@ -21,8 +22,8 @@ public class TournamentCellContainer extends HBox {
   public TournamentCellContainer(ManiaTournamentRepresentation tournament) {
     super(6);
 
-    Image image = new Image(maniaClient.getTournamentClient().getBadgeUrl(tournament));
-    this.getChildren().add(AvatarFactory.create(image));
+    String badgeUrl = maniaClient.getTournamentClient().getBadgeUrl(tournament);
+    this.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(badgeUrl)));
 
     VBox entries = new VBox(3);
 

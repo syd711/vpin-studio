@@ -32,8 +32,6 @@ public class PlayerRepresentation {
 
   private boolean bot;
 
-  private String discordId;
-
   private boolean administrative;
 
   private String tournamentUserUuid;
@@ -58,14 +56,6 @@ public class PlayerRepresentation {
 
   public void setTournamentUserUuid(String tournamentUserUuid) {
     this.tournamentUserUuid = tournamentUserUuid;
-  }
-
-  public String getDiscordId() {
-    return discordId;
-  }
-
-  public void setDiscordId(String discordId) {
-    this.discordId = discordId;
   }
 
   public boolean isAdministrative() {

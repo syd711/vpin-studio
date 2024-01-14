@@ -54,9 +54,6 @@ public class PlayerDialogController implements Initializable, DialogController {
   private TextField initialsField;
 
   @FXML
-  private TextField discordIdText;
-
-  @FXML
   private CheckBox adminRoleCheckbox;
 
   @FXML
@@ -202,7 +199,6 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
-      discordIdText.setText(this.player.getDiscordId());
       adminRoleCheckbox.setSelected(player.isAdministrative());
       tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
       refreshAvatar();
@@ -248,9 +244,6 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
     this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
-
-    this.discordIdText.setText(player.getDiscordId());
-    this.discordIdText.textProperty().addListener((observable, oldValue, newValue) -> player.setDiscordId(newValue));
 
     TournamentSettings settings = client.getTournamentsService().getSettings();
     this.tournamentGroup.setVisible(settings.isEnabled());

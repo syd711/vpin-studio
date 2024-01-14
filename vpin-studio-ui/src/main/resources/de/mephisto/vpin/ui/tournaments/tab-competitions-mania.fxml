@@ -31,7 +31,7 @@
                         <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
                       <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
                         <TreeTableColumn fx:id="columnVPSTable" prefWidth="250.0" text="Table Data" />
-                        <TreeTableColumn fx:id="columnVPSVersion" prefWidth="300.0" text="Table Version" />
+                        <TreeTableColumn fx:id="columnVPSVersion" prefWidth="350.0" text="Table Version" />
                     </columns>
                   </TreeTableView>
                </children>
@@ -77,23 +77,6 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Button fx:id="addBtn" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
@@ -102,6 +85,23 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
+                  <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="addBtn" layoutX="533.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" text="Join" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />

@@ -86,7 +86,7 @@
                      <top>
                         <ToolBar BorderPane.alignment="CENTER">
                           <items>
-                              <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0" promptText="Filter for tournament names...">
+                              <TextField fx:id="searchText" prefHeight="30.0" prefWidth="336.0" promptText="Search tournaments...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

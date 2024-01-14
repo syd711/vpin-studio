@@ -11,11 +11,11 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
@@ -282,7 +282,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (t != null) {
       try {
         ManiaTournamentRepresentation selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
-        if(selectedTournament != null) {
+        if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           ManiaAccountRepresentation acc = defaultPlayer.toManiaAccount();
           maniaClient.getTournamentClient().addPlayer(selectedTournament, acc);
@@ -626,14 +626,14 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-          Label label = new Label("- not available anymore -");
+          Label label = new Label("- Not Installed -");
           label.getStyleClass().add("default-headline");
           Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
           if (game != null) {
             label = new Label(game.getGameDisplayName());
             label.getStyleClass().add("default-headline");
             ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-            if(gameMediaItem != null) {
+            if (gameMediaItem != null) {
               image = new Image(gameMediaItem);
             }
           }
@@ -655,17 +655,31 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     columnStatus.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue().getValue();
-      String status = "FINISHED";
-      if (value.getTournament().isActive()) {
-        status = "ACTIVE";
+      if (cellData.getValue().getChildren().isEmpty()) {
+        ManiaTournamentRepresentation tournament = value.getTournament();
+        GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
+        if (game != null) {
+          Label label = new Label("Installed");
+          label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;");
+          return new SimpleObjectProperty(label);
+        }
+        Label label = new Label("Not Installed");
+        label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333;-fx-font-weight: bold;");
+        return new SimpleObjectProperty(label);
       }
-      else if (value.getTournament().isPlanned()) {
-        status = "PLANNED";
-      }
+      else {
+        String status = "FINISHED";
+        if (value.getTournament().isActive()) {
+          status = "ACTIVE";
+        }
+        else if (value.getTournament().isPlanned()) {
+          status = "PLANNED";
+        }
 
-      Label label = new Label(status);
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
+        Label label = new Label(status);
+        label.setStyle(getLabelCss(value));
+        return new SimpleObjectProperty(label);
+      }
     });
 
     columnDate.setCellValueFactory(cellData -> {

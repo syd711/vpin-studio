@@ -244,6 +244,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         }
 
         pagingInfo.setText((from+1) + " to " + to + " of " + searchResult.getTotal());
+        pagingInfo.setVisible(searchResult.getTotal() > 0);
         previousBtn.setDisable(true);
         nextBtn.setDisable(true);
 

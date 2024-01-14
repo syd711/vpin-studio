@@ -50,8 +50,6 @@ public class Player {
 
   private String email;
 
-  private String discordId;
-
   private String tournamentUserUuid;
 
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
@@ -63,14 +61,6 @@ public class Player {
 
   public void setTournamentUserUuid(String tournamentUserUuid) {
     this.tournamentUserUuid = tournamentUserUuid;
-  }
-
-  public String getDiscordId() {
-    return discordId;
-  }
-
-  public void setDiscordId(String discordId) {
-    this.discordId = discordId;
   }
 
   public boolean isAdministrative() {
