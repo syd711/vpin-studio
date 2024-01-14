@@ -24,6 +24,7 @@ public class ImageCache extends VPinStudioClientService {
   public synchronized InputStream getCachedUrlImage(String imageUrl) {
     try {
       if (!imageCache.containsKey(imageUrl)) {
+        LOG.info("Loading cached image " + imageUrl);
         URL url = new URL(imageUrl);
         ByteArrayOutputStream bis = new ByteArrayOutputStream();
         InputStream is = null;

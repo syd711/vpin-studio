@@ -1,19 +1,24 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
+import java.awt.*;
+import java.net.URI;
 
 public class VpsTableContainer extends VBox {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsTableContainer.class);
   private final static int TITLE_WIDTH = 100;
 
   public VpsTableContainer(VpsTable item) {
@@ -56,6 +61,34 @@ public class VpsTableContainer extends VBox {
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 
-    row.setPadding(new Insets(3, 0,  6, 0));
+    row = new HBox(6);
+    Button button = new Button("Download Table");
+
+    button.setOnAction(event -> {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage());
+        }
+      }
+    });
+
+    FontIcon icon = new FontIcon("mdi2o-open-in-new");
+    icon.setIconSize(8);
+    icon.setIconColor(Paint.valueOf("#FFFFFF"));
+    button.setGraphic(icon);
+    button.setStyle("-fx-font-size: 12px;");
+    button.getStyleClass().add("external-component");
+
+    titleLabel = new Label("");
+    titleLabel.setPrefWidth(TITLE_WIDTH);
+    row.getChildren().addAll(titleLabel, button);
+
+
+    this.getChildren().add(row);
+
+    row.setPadding(new Insets(3, 0, 6, 0));
   }
 }

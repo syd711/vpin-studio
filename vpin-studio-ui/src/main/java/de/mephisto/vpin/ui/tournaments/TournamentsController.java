@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

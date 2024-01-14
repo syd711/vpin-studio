@@ -29,6 +29,7 @@ public class Game {
   private String version;
   private boolean disabled;
   private boolean updateAvailable;
+  private Date dateAdded;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -58,6 +59,14 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(Date dateAdded) {
+    this.dateAdded = dateAdded;
   }
 
   public String getExtVersion() {

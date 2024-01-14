@@ -61,6 +61,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,6 +108,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, String> columnPlaylists;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnDateAdded;
 
   @FXML
   private TableView<GameRepresentation> tableView;
@@ -178,6 +183,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private List<PlaylistRepresentation> playlists;
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
+  private SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -803,6 +809,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon(getIconColor(value)));
     });
 
+    columnDateAdded.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if(value.getDateAdded() != null) {
+        return new SimpleObjectProperty(dateAddedDateFormat.format(value.getDateAdded()));
+      }
+      return new SimpleObjectProperty<>("-");
+    });
+
     columnPlaylists.setSortable(false);
     columnPlaylists.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
@@ -846,6 +860,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           else if (column.equals(columnVersion)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVersion()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnDateAdded)) {
+            Collections.sort(tableView.getItems(), (o1, o2) -> {
+              Date date1 = o1.getDateAdded() == null ? new Date() : o1.getDateAdded();
+              Date date2 = o2.getDateAdded() == null ? new Date() : o2.getDateAdded();
+              return date1.compareTo(date2);
+            });
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

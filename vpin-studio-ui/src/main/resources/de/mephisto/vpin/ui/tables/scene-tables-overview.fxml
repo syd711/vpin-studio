@@ -44,6 +44,7 @@
                               <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                                         <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                         <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
+                              <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Date Added" />
                                     </columns>
                                 </TableView>
                             </children>

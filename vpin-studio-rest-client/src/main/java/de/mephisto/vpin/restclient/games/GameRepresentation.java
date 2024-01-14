@@ -23,6 +23,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private Date dateAdded;
   private String gameName;
   private String version;
   private long gameFileSize;
@@ -52,6 +53,14 @@ public class GameRepresentation {
   private String extVersion;
   private int emulatorId;
   private List<String> updates;
+
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(Date dateAdded) {
+    this.dateAdded = dateAdded;
+  }
 
   public List<String> getUpdates() {
     return updates;

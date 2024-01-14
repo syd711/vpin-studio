@@ -670,7 +670,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;");
           return new SimpleObjectProperty(label);
         }
-        Label label = new Label("NOT INSTALLED");
+        Label label = new Label("NOT\nINSTALLED");
         label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333;-fx-font-weight: bold;");
         return new SimpleObjectProperty(label);
       }
@@ -724,7 +724,17 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     treeTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (newSelection != null) {
-        refreshView(Optional.ofNullable(newSelection.getValue()));
+        Platform.runLater(() -> {
+          if (!tableStack.getChildren().contains(loadingOverlay)) {
+            tableStack.getChildren().add(loadingOverlay);
+          }
+          new Thread(() -> {
+            Platform.runLater(() -> {
+              refreshView(Optional.ofNullable(newSelection.getValue()));
+              tableStack.getChildren().remove(loadingOverlay);
+            });
+          }).start();
+        });
       }
       else {
         refreshView(Optional.empty());

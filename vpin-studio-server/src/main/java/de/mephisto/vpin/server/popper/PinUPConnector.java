@@ -521,8 +521,6 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, launchCustomVar);
-//      preparedStatement.setDate(7, new Date(new java.util.Date().getTime()));
-
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
@@ -1202,6 +1200,7 @@ public class PinUPConnector implements InitializingBean {
 
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
+    game.setDateAdded(rs.getDate("DateAdded"));
 
     game.setVersion(rs.getString("GAMEVER"));
 
