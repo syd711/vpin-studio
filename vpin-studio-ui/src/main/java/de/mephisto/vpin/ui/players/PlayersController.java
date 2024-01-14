@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -60,6 +61,9 @@ public class PlayersController implements Initializable, StudioFXController {
   @FXML
   private Label playerCountLabel;
 
+  @FXML
+  private TitledPane highscoresTitledPane;
+
   private BuiltInPlayersController builtInPlayersController;
   private DiscordPlayersController discordPlayersController;
 
@@ -73,6 +77,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
+    highscoresTitledPane.setText("Player Highscores");
     if (player.isPresent()) {
       PlayerRepresentation p = player.get();
       if (StringUtils.isEmpty(p.getInitials())) {
@@ -89,14 +94,14 @@ public class PlayersController implements Initializable, StudioFXController {
       new Thread(() -> {
         ScoreSummaryRepresentation playerScores = client.getPlayerService().getPlayerScores(p.getInitials());
         Platform.runLater(() -> {
+          highscoresTitledPane.setText("Player Highscores \"" + player.get().getName() + "\"");
           highscoreList.getChildren().removeAll(highscoreList.getChildren());
           if (playerScores.getScores().isEmpty()) {
             noScoreLabel.setVisible(true);
             noScoreLabel.setText("No scores found for this player.");
           }
           else {
-            noScoreLabel.setVisible(true);
-            noScoreLabel.setText("Highscores for player \"" + p.getName() + "\"");
+            noScoreLabel.setVisible(false);
             for (ScoreRepresentation playerScore : playerScores.getScores()) {
               GameRepresentation game = client.getGame(playerScore.getGameId());
               if (game == null) {
@@ -152,6 +157,7 @@ public class PlayersController implements Initializable, StudioFXController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     validationError.setVisible(false);
+    noScoreLabel.managedProperty().bindBidirectional(noScoreLabel.visibleProperty());
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));

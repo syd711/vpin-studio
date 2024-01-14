@@ -1,16 +1,16 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.ManiaHighscoreRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
-import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,11 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -85,10 +82,16 @@ public class TournamentsController implements Initializable, StudioFXController 
   private TitledPane tournamentMembersPane;
 
   @FXML
+  private TitledPane highscoresPane;
+
+  @FXML
   private TitledPane dashboardPane;
 
   @FXML
   private VBox membersBox;
+
+  @FXML
+  private VBox scoreList;
 
   @FXML
   private Button refreshBtn;
@@ -119,7 +122,7 @@ public class TournamentsController implements Initializable, StudioFXController 
 
   private TournamentsManiaController maniaController;
 
-  private Optional<TournamentTreeModel> tournamentTreeModel = Optional.empty();
+  private Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel = Optional.empty();
 
   private String lastDashboardUrl;
 
@@ -130,7 +133,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   @FXML
   private void onDiscordLink() {
     if (this.tournamentTreeModel.isPresent()) {
-      TournamentTreeModel treeModel = tournamentTreeModel.get();
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
       String link = tournament.getDiscordLink();
       if (!StringUtils.isEmpty(link)) {
@@ -156,7 +159,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (this.tournamentTreeModel.isPresent()) {
       Clipboard clipboard = Clipboard.getSystemClipboard();
       ClipboardContent content = new ClipboardContent();
-      content.putString(this.tournamentTreeModel.get().getTournament().getUuid());
+      content.putString(this.tournamentTreeModel.get().getValue().getTournament().getUuid());
       clipboard.setContent(content);
     }
   }
@@ -164,7 +167,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   @FXML
   private void onDashboardOpen() {
     if (this.tournamentTreeModel.isPresent()) {
-      TournamentTreeModel treeModel = tournamentTreeModel.get();
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
       String dashboardUrl = tournament.getDashboardUrl();
       if (!StringUtils.isEmpty(dashboardUrl)) {
@@ -186,27 +189,51 @@ public class TournamentsController implements Initializable, StudioFXController 
     setTournament(this.tournamentTreeModel);
   }
 
-  public void setTournament(Optional<TournamentTreeModel> model) {
-    if (!model.isEmpty()) {
-      TournamentTreeModel treeModel = model.get();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
-      if (this.tournamentTreeModel.isPresent() && this.tournamentTreeModel.get().getTournament().getUuid().equals(tournament.getUuid())) {
-        return;
-      }
-    }
-
+  public void setTournament(Optional<TreeItem<TournamentTreeModel>> model) {
     this.tournamentTreeModel = model;
     updateSelection(model);
   }
 
-  private void updateSelection(Optional<TournamentTreeModel> tournamentTreeModel) {
+  private void updateSelection(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
     checkTitledPanes(tournamentTreeModel);
     refreshUsers(tournamentTreeModel);
     refreshMetaData(tournamentTreeModel);
     refreshDashboard(tournamentTreeModel);
+    refreshHighscores(tournamentTreeModel);
   }
 
-  private void refreshMetaData(Optional<TournamentTreeModel> tournamentTreeModel) {
+  private void refreshHighscores(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
+    if(!metaDataPane.isExpanded()) {
+      return;
+    }
+
+    scoreList.getChildren().removeAll(scoreList.getChildren());
+    if (tournamentTreeModel.isPresent() && tournamentTreeModel.get().isLeaf()) {
+      TournamentTreeModel value = tournamentTreeModel.get().getValue();
+      VpsTable vpsTable = value.getVpsTable();
+      ManiaTournamentRepresentation tournament = value.getTournament();
+      List<ManiaHighscoreRepresentation> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getUuid());
+      if (highscores.isEmpty()) {
+        Label label = new Label("No scores found.");
+        label.getStyleClass().add("default-text");
+        scoreList.getChildren().add(label);
+      }
+      else {
+        Label label = new Label("Highscores for \"" + vpsTable.getDisplayName() + "\"");
+        label.getStyleClass().add("default-text");
+        scoreList.getChildren().add(label);
+        for (ManiaHighscoreRepresentation highscore : highscores) {
+
+        }
+      }
+    }
+  }
+
+  private void refreshMetaData(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
+    if(!metaDataPane.isExpanded()) {
+      return;
+    }
+
     copyTokenBtn.setDisable(tournamentTreeModel.isEmpty());
     discordLink.setText("-");
     dashboardLink.setText("-");
@@ -221,7 +248,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     avatarPane.getChildren().removeAll(avatarPane.getChildren());
 
     if (tournamentTreeModel.isPresent()) {
-      TournamentTreeModel treeModel = tournamentTreeModel.get();
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
       ManiaTournamentPlayer owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
@@ -234,22 +261,27 @@ public class TournamentsController implements Initializable, StudioFXController 
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
-      discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink()  : "-");
-      dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl()  : "-");
+      discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
+      dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl() : "-");
       descriptionLabel.setText(tournament.getDescription());
     }
   }
 
-  private void checkTitledPanes(Optional<TournamentTreeModel> model) {
-    membersBox.setDisable(model.isEmpty());
+  private void checkTitledPanes(Optional<TreeItem<TournamentTreeModel>> model) {
+    tournamentMembersPane.setDisable(model.isEmpty());
     metaDataPane.setDisable(model.isEmpty());
+    highscoresPane.setDisable(model.isEmpty());
     dashboardPane.setDisable(model.isEmpty());
   }
 
-  private void refreshDashboard(Optional<TournamentTreeModel> tournamentTreeModel) {
+  private void refreshDashboard(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
+    if(!metaDataPane.isExpanded()) {
+      return;
+    }
+
     String dashboardUrl = null;
     if (this.tournamentTreeModel.isPresent()) {
-      TournamentTreeModel treeModel = tournamentTreeModel.get();
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
       dashboardUrl = tournament.getDashboardUrl();
     }
@@ -268,13 +300,16 @@ public class TournamentsController implements Initializable, StudioFXController 
     }
   }
 
-  private void refreshUsers(Optional<TournamentTreeModel> model) {
+  private void refreshUsers(Optional<TreeItem<TournamentTreeModel>> model) {
+    if(!tournamentMembersPane.isExpanded()) {
+      return;
+    }
+
     refreshBtn.setDisable(model.isEmpty());
-    tournamentMembersPane.setDisable(model.isEmpty());
 
     membersBox.getChildren().removeAll(membersBox.getChildren());
     if (model.isPresent()) {
-      TournamentTreeModel treeModel = model.get();
+      TournamentTreeModel treeModel = model.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
       if (!tournament.isActive()) {
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
@@ -320,5 +355,10 @@ public class TournamentsController implements Initializable, StudioFXController 
     updateSelection(Optional.empty());
     accordion.setExpandedPane(metaDataPane);
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+
+    metaDataPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));
+    tournamentMembersPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));
+    highscoresPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));
+    dashboardPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));
   }
 }

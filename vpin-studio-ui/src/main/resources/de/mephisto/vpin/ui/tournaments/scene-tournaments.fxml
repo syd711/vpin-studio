@@ -52,7 +52,7 @@
          <children>
             <Accordion fx:id="accordion" prefWidth="600.0">
               <panes>
-                  <TitledPane fx:id="metaDataPane" text="Tournament Details">
+                  <TitledPane fx:id="metaDataPane" text="Details">
                      <content>
                         <VBox>
                            <children>
@@ -229,7 +229,20 @@
                         </VBox>
                      </content>
                   </TitledPane>
-                <TitledPane fx:id="tournamentMembersPane" expanded="false" text="Members">
+                  <TitledPane fx:id="highscoresPane" layoutX="10.0" layoutY="10.0" text="Highscores">
+                     <content>
+                        <ScrollPane hbarPolicy="NEVER">
+                           <content>
+                              <VBox fx:id="scoreList">
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </content>
+                  </TitledPane>
+                <TitledPane fx:id="tournamentMembersPane" expanded="false" text="Players">
                      <content>
                         <BorderPane>
                            <center>

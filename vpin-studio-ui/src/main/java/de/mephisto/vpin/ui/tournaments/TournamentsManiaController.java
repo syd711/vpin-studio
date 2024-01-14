@@ -237,9 +237,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onDownload() {
-    Optional<TournamentTreeModel> selection = getSelection();
+    Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
-      TournamentTreeModel tournamentTreeModel = selection.get();
+      TournamentTreeModel tournamentTreeModel = selection.get().getValue();
       String url = null;
       if (tournamentTreeModel.getVpsTableVersion() != null) {
         url = tournamentTreeModel.getVpsTableVersion().getUrls().get(0).getUrl();
@@ -265,9 +265,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onDuplicate() {
-    Optional<TournamentTreeModel> selection = getSelection();
+    Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
-      TournamentTreeModel model = selection.get();
+      TournamentTreeModel model = selection.get().getValue();
       ManiaTournamentRepresentation t = model.getTournament().cloneTournament();
       t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
       if (t != null) {
@@ -306,9 +306,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onEdit() {
-    Optional<TournamentTreeModel> selection = getSelection();
+    Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
-      TournamentTreeModel tournamentTreeModel = selection.get();
+      TournamentTreeModel tournamentTreeModel = selection.get().getValue();
       ManiaTournamentRepresentation t = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
       if (t != null) {
         try {
@@ -323,9 +323,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onDelete() {
-    Optional<TournamentTreeModel> selection = this.getSelection();
+    Optional<TreeItem<TournamentTreeModel>> selection = this.getSelection();
     if (selection.isPresent()) {
-      TournamentTreeModel tournamentTreeModel = selection.get();
+      TournamentTreeModel tournamentTreeModel = selection.get().getValue();
       ManiaTournamentRepresentation tournament = tournamentTreeModel.getTournament();
       boolean isOwner = TournamentHelper.isOwner(tournament);
       if (isOwner) {
@@ -482,13 +482,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     return status;
   }
 
-  private void refreshView(Optional<TournamentTreeModel> model) {
+  private void refreshView(Optional<TreeItem<TournamentTreeModel>> model) {
     tournamentsController.setTournament(model);
 
     validationError.setVisible(false);
     TournamentTreeModel newSelection = null;
     if (model.isPresent()) {
-      newSelection = model.get();
+      newSelection = model.get().getValue();
     }
 
     addBtn.setDisable(true);
@@ -508,8 +508,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
       createBtn.setDisable(disable);
       editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
-      validateBtn.setDisable(model.isEmpty() || model.get().getTournament().isFinished());
-      finishBtn.setDisable(disable || !isOwner || !model.get().getTournament().isActive());
+      validateBtn.setDisable(model.isEmpty() || model.get().getValue().getTournament().isFinished());
+      finishBtn.setDisable(disable || !isOwner || !model.get().getValue().getTournament().isActive());
 
       deleteBtn.setDisable(disable);
       duplicateBtn.setDisable(disable || !isOwner);
@@ -532,7 +532,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
     if (model.isPresent()) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tournaments", model.get().getTournament().getDisplayName()));
+      NavigationController.setBreadCrumb(Arrays.asList("Tournaments", model.get().getValue().getTournament().getDisplayName()));
     }
   }
 
@@ -550,10 +550,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     this.tournamentsController = tournamentsController;
   }
 
-  public Optional<TournamentTreeModel> getSelection() {
+  public Optional<TreeItem<TournamentTreeModel>> getSelection() {
     TreeItem<TournamentTreeModel> selectedItem = treeTableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      return Optional.of(selectedItem.getValue());
+      return Optional.of(selectedItem);
     }
     return Optional.empty();
   }
@@ -730,7 +730,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           }
           new Thread(() -> {
             Platform.runLater(() -> {
-              refreshView(Optional.ofNullable(newSelection.getValue()));
+              refreshView(Optional.ofNullable(newSelection));
               tableStack.getChildren().remove(loadingOverlay);
             });
           }).start();
