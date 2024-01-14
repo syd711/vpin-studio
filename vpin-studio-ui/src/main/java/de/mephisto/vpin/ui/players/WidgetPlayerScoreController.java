@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 public class WidgetPlayerScoreController extends WidgetController implements Initializable  {
 
   @FXML
-  private BorderPane root;
+  private StackPane rootStack;
 
   @FXML
   private ImageView wheelImageView;
@@ -76,5 +76,11 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
 
     String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
+
+    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
+    BackgroundImage myBI = new BackgroundImage(backgroundImage,
+      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+      BackgroundSize.DEFAULT);
+    rootStack.setBackground(new Background(myBI));
   }
 }

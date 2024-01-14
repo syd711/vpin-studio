@@ -1013,3 +1013,8 @@
     -fx-background-color: black;
     -fx-font-size: 14px;
 }
+
+.tile {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-radius: 4 4 4 4;
+}

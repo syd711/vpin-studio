@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
               try {
                 FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
-                BorderPane row = loader.load();
+                Pane row = loader.load();
                 row.setPrefWidth(600 - 48);
                 WidgetPlayerScoreController controller = loader.getController();
                 controller.setData(p, game, playerScore);
