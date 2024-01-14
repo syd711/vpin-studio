@@ -39,7 +39,7 @@ public class PreferenceResource {
   }
 
   @GetMapping("/json/{key}")
-  public JsonSettings<?> getJson(@PathVariable("key") String key) {
+  public JsonSettings getJson(@PathVariable("key") String key) {
     try {
       switch (key) {
         case PreferenceNames.UI_SETTINGS: {

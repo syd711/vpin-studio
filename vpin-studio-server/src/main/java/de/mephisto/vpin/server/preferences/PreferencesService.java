@@ -90,7 +90,7 @@ public class PreferencesService implements InitializingBean {
     return savePreference(values);
   }
 
-  public boolean savePreference(String key, JsonSettings<?> value) throws Exception {
+  public boolean savePreference(String key, JsonSettings value) throws Exception {
     String json = value.toJson();
     return savePreference(key, json);
   }
