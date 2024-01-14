@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
-public class UISettings extends JsonSettings<UISettings> {
+public class UISettings extends JsonSettings {
   private boolean hideVersions;
   private boolean hideVPSUpdates;
 

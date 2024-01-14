@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
-public class ServerSettings extends JsonSettings<ServerSettings> {
+public class ServerSettings extends JsonSettings {
   private boolean vpsAutoApplyToPopper;
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;

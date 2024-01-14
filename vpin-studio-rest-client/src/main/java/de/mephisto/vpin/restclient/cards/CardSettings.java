@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * card.useDirectB2S=true
  * popper.screen=Other2
  */
-public class CardSettings extends JsonSettings<CardSettings> {
+public class CardSettings extends JsonSettings {
   private final static Logger LOG = LoggerFactory.getLogger(CardSettings.class);
 
   private int cardAlphacompositeBlack = 33;

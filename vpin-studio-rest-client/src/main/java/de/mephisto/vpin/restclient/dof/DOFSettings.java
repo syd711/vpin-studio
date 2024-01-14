@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.dof;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
-public class DOFSettings extends JsonSettings<DOFSettings> {
+public class DOFSettings extends JsonSettings {
   private String apiKey;
   private String installationPath;
   private boolean validDOFFolder;

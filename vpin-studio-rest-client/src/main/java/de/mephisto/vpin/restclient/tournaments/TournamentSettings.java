@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.tournaments;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
-public class TournamentSettings extends JsonSettings<TournamentSettings> {
+public class TournamentSettings extends JsonSettings {
   private boolean enabled;
   private String defaultDiscordLink;
   private String defaultDashboardUrl;
