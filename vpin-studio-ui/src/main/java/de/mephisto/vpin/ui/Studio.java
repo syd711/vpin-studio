@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -108,72 +109,99 @@ public class Studio extends Application {
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     try {
-      Studio.stage = stage;
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      Stage splash = createSplash();
 
-      if (screenBounds.getWidth() > screenBounds.getHeight()) {
-        LOG.info("Window Mode: Landscape");
-      }
-      else {
-        LOG.info("Window Mode: Portrait");
-      }
+      Platform.runLater(() -> {
+        Studio.stage = stage;
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
-      //replace the OverlayFX client with the Studio one
-      Studio.client = client;
-      createManiaClient();
-      OverlayWindowFX.client = Studio.client;
+        if (screenBounds.getWidth() > screenBounds.getHeight()) {
+          LOG.info("Window Mode: Landscape");
+        }
+        else {
+          LOG.info("Window Mode: Portrait");
+        }
 
-      FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
-      Parent root = loader.load();
+        //replace the OverlayFX client with the Studio one
+        Studio.client = client;
+        createManiaClient();
+        OverlayWindowFX.client = Studio.client;
 
-      Rectangle position = LocalUISettings.getPosition();
+        FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
+        Parent root = null;
+        try {
+          root = loader.load();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
 
-      Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-      double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
-      double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-      if (position.getWidth() != -1) {
-        width = position.getWidth();
-        height = position.getHeight();
-      }
+        Rectangle position = LocalUISettings.getPosition();
 
-      Scene scene = new Scene(root, width, height);
-      scene.setFill(Paint.valueOf("#212529"));
-      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
-      stage.setScene(scene);
-      stage.setMinHeight(600);
-      stage.setMinWidth(600);
-      stage.setResizable(true);
-      stage.initStyle(StageStyle.UNDECORATED);
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
+        double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
+        if (position.getWidth() != -1) {
+          width = position.getWidth();
+          height = position.getHeight();
+        }
+
+        Scene scene = new Scene(root, width, height);
+        scene.setFill(Paint.valueOf("#212529"));
+        stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+        stage.setScene(scene);
+        stage.setMinHeight(600);
+        stage.setMinWidth(600);
+        stage.setResizable(true);
+        stage.initStyle(StageStyle.UNDECORATED);
 
 
-      if (position.getX() != -1) {
-        stage.setX(position.getX());
-        stage.setY(position.getY());
-      }
-      else {
-        stage.setX((screenBounds.getWidth() / 2) - (width / 2));
-        stage.setY((screenBounds.getHeight() / 2) - (height / 2));
-      }
+        if (position.getX() != -1) {
+          stage.setX(position.getX());
+          stage.setY(position.getY());
+        }
+        else {
+          stage.setX((screenBounds.getWidth() / 2) - (width / 2));
+          stage.setY((screenBounds.getHeight() / 2) - (height / 2));
+        }
 
 //      ResizeHelper.addResizeListener(stage);
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-      stage.setUserData(fxResizeHelper);
+        FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+        stage.setUserData(fxResizeHelper);
 
-      scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent ke) {
-          if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
-            Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
-            ke.consume();
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+          public void handle(KeyEvent ke) {
+            if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
+              Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
+              ke.consume();
+            }
           }
-        }
+        });
+
+        client.setErrorHandler(errorHandler);
+
+        stage.show();
+        splash.hide();
       });
 
-      client.setErrorHandler(errorHandler);
-
-      stage.show();
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
     }
+  }
+
+  private static Stage createSplash() throws Exception {
+
+    FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
+    StackPane root = loader.load();
+    Scene scene = new Scene(root, 600, 400);
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+    Stage stage = new Stage(StageStyle.UNDECORATED);
+    stage.setScene(scene);
+    stage.setX((screenBounds.getWidth() / 2) - (600 / 2));
+    stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
+    stage.setResizable(false);
+    stage.show();
+    return stage;
   }
 
   private static void createManiaClient() {

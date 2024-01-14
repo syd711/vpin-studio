@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+
+<StackPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.SplashScreenController">
+   <children>
+      <ImageView fitHeight="401.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@splash.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="versionLabel" text="Label" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <StackPane.margin>
+            <Insets bottom="27.0" left="19.0" />
+         </StackPane.margin>
+      </Label>
+   </children>
+</StackPane>
