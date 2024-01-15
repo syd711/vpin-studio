@@ -10,12 +10,21 @@ public class PauseMenuItem {
 
   private Image dataImage;
   private String youTubeUrl;
+  private String videoUrl;
 
   public PauseMenuItem(PauseMenuItemTypes itemType, String name, String description, Image image) {
     this.itemType = itemType;
     this.name = name;
     this.description = description;
     this.image = image;
+  }
+
+  public String getVideoUrl() {
+    return videoUrl;
+  }
+
+  public void setVideoUrl(String videoUrl) {
+    this.videoUrl = videoUrl;
   }
 
   public String getYouTubeUrl() {

@@ -15,12 +15,12 @@
             <children>
                 <Label fx:id="valueLabel" text="-" textFill="WHITE">
                     <font>
-                        <Font size="96.0" />
+                        <Font size="72.0" />
                     </font>
                 </Label>
             </children>
          <VBox.margin>
-            <Insets bottom="14.0" top="14.0" />
+            <Insets bottom="18.0" top="18.0" />
          </VBox.margin>
         </HBox>
     </children>

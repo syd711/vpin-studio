@@ -59,8 +59,12 @@ public class TileFactory {
   //--------------------------------------------------------------------------------------------------------------------
 
   public static AlxTileEntry toSessionDurationTile(Date startDate) {
-    String duration = DateUtil.formatDuration(startDate, new Date());
-    return new AlxTileEntry("Play Time", "(Current playtime of this table)", duration);
+    long durationMs = System.currentTimeMillis() - startDate.getTime();
+    long durationMin = durationMs/1000/60;
+    if(durationMin == 0) {
+      durationMin = 1;
+    }
+    return new AlxTileEntry("Play Time", "(Current playtime of this table)", durationMin + " min");
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -70,6 +74,6 @@ public class TileFactory {
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
     }
-    return new AlxTileEntry("Total Games Played", "(The total number of table launches from Popper)", String.valueOf(total));
+    return new AlxTileEntry("Total Games Played", "(Numer of launches from Popper)", String.valueOf(total));
   }
 }

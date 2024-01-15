@@ -14,6 +14,8 @@ public interface PreferenceNames {
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
   String HIGHSCORE_CARD_SETTINGS = "highscoreCardSettings";
 
+  String PAUSE_MENU_SETTINGS = "pauseMenuSettings";
+
   String IDLE_TIMEOUT = "idleTimeout";
   String AVATAR = "avatar";
   String RESET_KEY = "resetKey";

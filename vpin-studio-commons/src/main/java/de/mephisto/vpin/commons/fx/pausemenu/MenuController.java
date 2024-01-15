@@ -23,6 +23,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
@@ -62,6 +65,9 @@ public class MenuController implements Initializable {
 
   @FXML
   private ImageView screenImageView;
+
+  @FXML
+  private MediaView mediaView;
 
   @FXML
   private WebView webView;
@@ -188,6 +194,7 @@ public class MenuController implements Initializable {
     activeSelection = (PauseMenuItem) node.getUserData();
     nameLabel.setText(activeSelection.getDescription());
     screenImageView.setVisible(false);
+    mediaView.setVisible(false);
     webView.setVisible(false);
     customView.setVisible(false);
 
@@ -197,6 +204,16 @@ public class MenuController implements Initializable {
     else if (activeSelection.getDataImage() != null) {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
+    }
+    else if (activeSelection.getVideoUrl() != null) {
+      mediaView.setVisible(true);
+
+      Media media = new Media(activeSelection.getVideoUrl());
+      MediaPlayer mediaPlayer = new MediaPlayer(media);
+      mediaPlayer.setAutoPlay(true);
+      mediaPlayer.setCycleCount(-1);
+      mediaPlayer.setMute(true);
+      mediaView.setMediaPlayer(mediaPlayer);
     }
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);

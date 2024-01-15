@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
@@ -56,6 +57,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.DOF_SETTINGS: {
           return preferencesService.getJsonPreference(key, DOFSettings.class);
+        }
+        case PreferenceNames.PAUSE_MENU_SETTINGS: {
+          return preferencesService.getJsonPreference(key, PauseMenuSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

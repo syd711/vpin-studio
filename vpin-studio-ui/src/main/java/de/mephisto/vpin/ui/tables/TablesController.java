@@ -74,8 +74,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setInitialController("scene-tables.fxml", this, root);
-
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     EventManager.getInstance().addListener(this);
 
     try {

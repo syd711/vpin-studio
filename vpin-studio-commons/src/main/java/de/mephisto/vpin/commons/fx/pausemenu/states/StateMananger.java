@@ -36,6 +36,7 @@ public class StateMananger implements NativeKeyListener {
   private int BACK;
 
   private MenuController menuController;
+  private boolean running = false;
 
   public static StateMananger getInstance() {
     return INSTANCE;
@@ -103,6 +104,10 @@ public class StateMananger implements NativeKeyListener {
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
+    if(!running) {
+      return;
+    }
+
     Platform.runLater(() -> {
       handle(nativeKeyEvent.getRawCode());
       new Thread(() -> {
@@ -131,9 +136,11 @@ public class StateMananger implements NativeKeyListener {
   public void setGame(GameRepresentation game, GameStatus status, PopperScreen screen) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
     menuController.setGame(game, status, screen);
+    running = true;
   }
 
   public void exit() {
+    running = false;
     GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
   }
 }

@@ -101,8 +101,11 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<Integer> getUnknownGameIds() {
     try {
-      this.games.clear();
-      return Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
+      List<Integer> unknowns = Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
+      if(!unknowns.isEmpty()) {
+        this.games.clear();
+      }
+      return unknowns;
     } catch (Exception e) {
       LOG.error("Failed to read unknowns game ids: " + e.getMessage(), e);
     }

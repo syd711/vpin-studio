@@ -2,6 +2,9 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -17,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +40,12 @@ public class MenuCustomViewController implements Initializable {
   private Label nameLabel;
 
   @FXML
+  private Label versionLabel;
+
+  @FXML
+  private Label authorsLabel;
+
+  @FXML
   private VBox stats1Col;
 
   @FXML
@@ -43,7 +53,7 @@ public class MenuCustomViewController implements Initializable {
 
   @FXML
   private VBox stats3Col;
-  
+
   private MenuCustomTileEntryController tile1Controller;
   private MenuCustomTileEntryController tile2Controller;
   private MenuCustomTileEntryController tile3Controller;
@@ -51,6 +61,32 @@ public class MenuCustomViewController implements Initializable {
 
   public void setGame(GameRepresentation game, GameStatus status) {
     this.nameLabel.setText(game.getGameDisplayName());
+    this.versionLabel.setText("");
+    this.authorsLabel.setText("");
+
+    String extTableId = game.getExtTableId();
+    String extVersion = game.getExtTableVersionId();
+    if (!StringUtils.isEmpty(extTableId)) {
+      VpsTable tableById = VPS.getInstance().getTableById(extTableId);
+      if (tableById != null) {
+        VpsTableVersion version = tableById.getVersion(extVersion);
+        if (version != null) {
+          this.versionLabel.setText(version.getComment());
+          List<String> authors = version.getAuthors();
+          if (authors != null && !authors.isEmpty()) {
+            this.authorsLabel.setText(String.join(", ", authors));
+          }
+        }
+        else {
+          this.versionLabel.setText(tableById.getManufacturer() + " (" + tableById.getYear() + ")");
+          List<String> designers = tableById.getDesigners();
+          if (designers != null && !designers.isEmpty()) {
+            this.authorsLabel.setText(String.join(", ", designers));
+          }
+        }
+      }
+    }
+
 
     InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     if (imageStream == null) {
@@ -59,7 +95,7 @@ public class MenuCustomViewController implements Initializable {
     Image image = new Image(imageStream);
     wheelImage.setImage(image);
 
-    AlxSummary alxSummary = PauseMenu.client.getAlxService().getAlxSummary();
+    AlxSummary alxSummary = PauseMenu.client.getAlxService().getAlxSummary(game.getId());
     List<TableAlxEntry> entries = alxSummary.getEntries();
     tile1Controller.refresh(TileFactory.toTotalGamesPlayedEntry(entries));
     tile2Controller.refresh(TileFactory.toTotalScoresEntry(entries));
@@ -68,6 +104,7 @@ public class MenuCustomViewController implements Initializable {
 
     ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getGameService().getRecentScoresByGame(3, game.getId());
     List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
+    stats3Col.getChildren().removeAll(stats3Col.getChildren());
     for (ScoreRepresentation score : scores) {
       try {
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));

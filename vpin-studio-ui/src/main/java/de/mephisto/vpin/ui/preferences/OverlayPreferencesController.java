@@ -2,10 +2,13 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,7 +28,13 @@ public class OverlayPreferencesController implements Initializable {
   private ComboBox<String> overlayKeyCombo;
 
   @FXML
+  private ComboBox<String> pauseMenuKeyCombo;
+
+  @FXML
   private CheckBox showOverlayOnStartupCheckbox;
+
+  @FXML
+  private CheckBox pauseMenuCheckbox;
 
   @FXML
   private RadioButton radioA;
@@ -50,6 +59,7 @@ public class OverlayPreferencesController implements Initializable {
     List<String> keyNames = Keys.getKeyNames();
     keyNames.add(0, "");
     overlayKeyCombo.setItems(FXCollections.observableList(keyNames));
+    pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
 
     BindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
     BindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
@@ -118,5 +128,21 @@ public class OverlayPreferencesController implements Initializable {
         preview.getEngine().load(externalPageUrlValue);
       }
     }, 300));
+
+
+    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());
+    pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setUseOverlayKey(newValue);
+      pauseMenuKeyCombo.setDisable(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    pauseMenuKeyCombo.setValue(pauseMenuSettings.getKey());
+    pauseMenuKeyCombo.setDisable(pauseMenuCheckbox.isSelected());
+    pauseMenuKeyCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setKey(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
   }
 }

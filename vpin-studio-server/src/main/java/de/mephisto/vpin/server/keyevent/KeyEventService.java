@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
@@ -51,6 +51,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private ShutdownThread shutdownThread;
   private boolean launchOverlayOnStartup = false;
   private String overlayKey;
+  private boolean showPauseInsteadOfOverlay = false;
+  private String pauseKey;
   private String resetKey;
 
   @Override
@@ -68,18 +70,31 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         this.visible = !visible;
         Platform.runLater(() -> {
           LOG.info("Toggle show (Key " + overlayKey + ")");
-          OverlayWindowFX.getInstance().showOverlay(visible);
+          if (visible) {
+            OverlayWindowFX.getInstance().showOverlay(visible);
+          }
+          else if (showPauseInsteadOfOverlay) {
+            boolean vpxRunning = systemService.isVPXRunning();
+            if (vpxRunning) {
+              OverlayWindowFX.getInstance().togglePauseMenu();
+            }
+          }
         });
       }
     }
 
-//    String pauseKey = "F9";
-//    if (!StringUtils.isEmpty(pauseKey)) {
-//      KeyChecker keyChecker = new KeyChecker(pauseKey);
-//      if (keyChecker.matches(nativeKeyEvent)) {
-//        OverlayWindowFX.getInstance().togglePauseMenu();
-//      }
-//    }
+    if (!StringUtils.isEmpty(pauseKey) && !showPauseInsteadOfOverlay) {
+      KeyChecker keyChecker = new KeyChecker(pauseKey);
+      if (keyChecker.matches(nativeKeyEvent)) {
+        boolean vpxRunning = systemService.isVPXRunning();
+        if (vpxRunning) {
+          OverlayWindowFX.getInstance().togglePauseMenu();
+        }
+        else {
+          OverlayWindowFX.getInstance().exitPauseMenu();
+        }
+      }
+    }
 
     if (!StringUtils.isEmpty(resetKey)) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
@@ -179,26 +194,37 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
     preferenceChanged(PreferenceNames.OVERLAY_KEY, null, null);
     preferenceChanged(PreferenceNames.RESET_KEY, null, null);
+    preferenceChanged(PreferenceNames.PAUSE_MENU_SETTINGS, null, null);
 
     preferencesService.addChangeListener(this);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    switch (propertyName) {
-      case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
-        String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
-        this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
-        break;
+    try {
+      switch (propertyName) {
+        case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
+          String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
+          this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
+          break;
+        }
+        case PreferenceNames.OVERLAY_KEY: {
+          overlayKey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
+          break;
+        }
+        case PreferenceNames.RESET_KEY: {
+          resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
+          break;
+        }
+        case PreferenceNames.PAUSE_MENU_SETTINGS: {
+          PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+          showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
+          pauseKey = pauseMenuSettings.getKey();
+          break;
+        }
       }
-      case PreferenceNames.OVERLAY_KEY: {
-        overlayKey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
-        break;
-      }
-      case PreferenceNames.RESET_KEY: {
-        resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
-        break;
-      }
+    } catch (Exception e) {
+      LOG.error("Error updating KeyEventService settings: " + e.getMessage(), e);
     }
   }
 }

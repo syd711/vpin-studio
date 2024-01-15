@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-
 <StackPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.SplashScreenController">
    <children>
       <ImageView fitHeight="401.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
@@ -22,6 +21,14 @@
          <StackPane.margin>
             <Insets bottom="27.0" left="19.0" />
          </StackPane.margin>
+      </Label>
+      <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Label" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">
+         <StackPane.margin>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </StackPane.margin>
+         <font>
+            <Font name="System Italic" size="14.0" />
+         </font>
       </Label>
    </children>
 </StackPane>

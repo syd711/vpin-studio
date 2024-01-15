@@ -14,4 +14,8 @@ public class AlxServiceClient extends VPinStudioClientService {
   public AlxSummary getAlxSummary() {
     return getRestClient().get(API + "alx", AlxSummary.class);
   }
+
+  public AlxSummary getAlxSummary(int gameId) {
+    return getRestClient().get(API + "alx/" + gameId, AlxSummary.class);
+  }
 }

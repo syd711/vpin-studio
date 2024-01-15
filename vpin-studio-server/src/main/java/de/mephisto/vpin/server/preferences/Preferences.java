@@ -71,6 +71,8 @@ public class Preferences {
 
   private String highscoreCardSettings;
 
+  private String pauseMenuSettings;
+
   @Column(length = 1024)
   private String uiSettings;
 
@@ -121,6 +123,14 @@ public class Preferences {
 
   @Column(length = 8192)
   private String tournamentSettings;
+
+  public String getPauseMenuSettings() {
+    return pauseMenuSettings;
+  }
+
+  public void setPauseMenuSettings(String pauseMenuSettings) {
+    this.pauseMenuSettings = pauseMenuSettings;
+  }
 
   public String getTournamentSettings() {
     return tournamentSettings;

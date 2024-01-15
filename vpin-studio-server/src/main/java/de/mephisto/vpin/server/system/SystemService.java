@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
@@ -14,14 +13,12 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
-import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +35,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -328,6 +324,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
       .collect(Collectors.toList());
     return !filteredProceses.isEmpty();
+  }
+
+
+  public boolean isVPXRunning() {
+    List<ProcessHandle> allProcesses = ProcessHandle.allProcesses()
+      .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+    for (ProcessHandle p : allProcesses) {
+      String cmdName = p.info().command().get();
+      if (cmdName.contains("Visual Pinball") || cmdName.contains("VisualPinball") || cmdName.contains("VPinball")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean killPopper() {

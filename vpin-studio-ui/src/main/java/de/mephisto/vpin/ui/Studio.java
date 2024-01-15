@@ -179,6 +179,7 @@ public class Studio extends Application {
 
         client.setErrorHandler(errorHandler);
 
+        LOG.info("Init finished, showing Studio stage.");
         stage.show();
         splash.hide();
       });

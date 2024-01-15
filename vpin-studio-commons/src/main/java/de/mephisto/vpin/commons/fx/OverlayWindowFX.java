@@ -168,6 +168,12 @@ public class OverlayWindowFX extends Application {
     });
   }
 
+  public void exitPauseMenu() {
+    Platform.runLater(() -> {
+      PauseMenu.exit();
+    });
+  }
+
   public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
