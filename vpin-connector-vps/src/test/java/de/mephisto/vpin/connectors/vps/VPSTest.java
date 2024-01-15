@@ -1,7 +1,9 @@
 package de.mephisto.vpin.connectors.vps;
 
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -56,6 +58,22 @@ public class VPSTest {
     VpsTable tableById = vps.getTableById("43ma3WQK");
     assertNotNull(tables);
     assertNotNull(tableById);
+  }
+
+  @Test
+  public void testTutorials() {
+    VPS vps = VPS.getInstance();
+    List<VpsTable> tables = vps.getTables();
+    for (VpsTable table : tables) {
+      List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
+      if(tutorialFiles != null && !tutorialFiles.isEmpty()) {
+        System.out.println(table.getName());
+        for (VpsTutorialUrls tutorialFile : tutorialFiles) {
+          System.out.println(tutorialFile.getYoutubeId());
+        }
+
+      }
+    }
   }
 
   @Test

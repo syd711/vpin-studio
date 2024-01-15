@@ -22,6 +22,7 @@ public class VpsTable {
   private List<VpsAuthoredUrls> topperFiles;
   private List<VpsAuthoredUrls> wheelArtFiles;
   private List<VpsBackglassFile> b2sFiles;
+  private List<VpsTutorialUrls> tutorialFiles;
 
   private String ipdbUrl;
   private String manufacturer;
@@ -29,6 +30,14 @@ public class VpsTable {
   private String type;
   private int year;
   private long updatedAt;
+
+  public List<VpsTutorialUrls> getTutorialFiles() {
+    return tutorialFiles;
+  }
+
+  public void setTutorialFiles(List<VpsTutorialUrls> tutorialFiles) {
+    this.tutorialFiles = tutorialFiles;
+  }
 
   public List<String> getDesigners() {
     return designers;

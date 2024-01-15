@@ -117,8 +117,8 @@ public class MenuController implements Initializable {
     TransitionUtil.createOutFader(bluePanel).play();
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();
-    //TODO 310
-//    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, 310).play();
+    footer.setTranslateY(310);
+    //    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, 310).play();
 
     setLoadLabel("Loading...");
 
@@ -140,7 +140,7 @@ public class MenuController implements Initializable {
   }
 
   public boolean isAtEnd() {
-    return selectionIndex == (pauseMenuItems.size() -1);
+    return selectionIndex == (pauseMenuItems.size() - 1);
   }
 
   public boolean isAtStart() {
@@ -198,7 +198,7 @@ public class MenuController implements Initializable {
     webView.setVisible(false);
     customView.setVisible(false);
 
-    if(activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
+    if (activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
       customView.setVisible(true);
     }
     else if (activeSelection.getDataImage() != null) {
@@ -218,7 +218,7 @@ public class MenuController implements Initializable {
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);
       WebEngine engine = webView.getEngine();
-      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "&autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
+      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "?autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
     }
   }
 

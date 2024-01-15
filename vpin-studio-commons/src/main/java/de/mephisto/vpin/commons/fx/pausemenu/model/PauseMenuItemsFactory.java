@@ -1,10 +1,14 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.scene.image.Image;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,10 +31,23 @@ public class PauseMenuItemsFactory {
     loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card");
     loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules");
 
+    String extTableId = game.getExtTableId();
+    if (!StringUtils.isEmpty(extTableId)) {
+      VpsTable tableById = VPS.getInstance().getTableById(extTableId);
+      if (tableById != null) {
+        List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
+        if(tutorialFiles != null && !tutorialFiles.isEmpty()) {
+          for (VpsTutorialUrls tutorialFile : tutorialFiles) {
+            if(!StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
+              item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("help.png")));
+              item.setYouTubeUrl("https://www.youtube.com/embed/" + tutorialFile.getYoutubeId());
+              pauseMenuItems.add(item);
+            }
+          }
+        }
+      }
+    }
 
-    item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "Additional Info or Help", new Image(PauseMenu.class.getResourceAsStream("help.png")));
-    item.setYouTubeUrl("https://www.youtube.com/embed/EHkNdf4JaEI?si=OjpWfYpwyXDLsa7Z");
-    pauseMenuItems.add(item);
 
     return pauseMenuItems;
   }
