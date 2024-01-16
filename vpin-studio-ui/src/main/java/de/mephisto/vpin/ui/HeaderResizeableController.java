@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
@@ -82,11 +81,15 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onDragDone() {
-    debouncer.debounce("position", () -> {
-      int y = (int) stage.getY();
-      int x = (int) stage.getX();
-      LocalUISettings.saveLocation(x, y, (int) stage.getWidth(), (int) stage.getHeight());
-    }, 500);
+    if (titleLabel.getText() != null && !titleLabel.getText().contains("Launcher")) {
+      debouncer.debounce("position", () -> {
+        int y = (int) stage.getY();
+        int x = (int) stage.getX();
+        int width = (int) stage.getWidth();
+        int height = (int) stage.getHeight();
+        LocalUISettings.saveLocation(x, y, width, height);
+      }, 500);
+    }
   }
 
   @FXML

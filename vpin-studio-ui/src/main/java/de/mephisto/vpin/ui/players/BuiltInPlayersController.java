@@ -146,9 +146,10 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
           Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
-            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
-            tableView.getSelectionModel().clearSelection();
-            onReload();
+            //TODO mania
+//            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
+//            tableView.getSelectionModel().clearSelection();
+//            onReload();
           }
         }
         else {

@@ -31,15 +31,15 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
 
     VpsTutorialUrls that = (VpsTutorialUrls) o;
 
-    if (!Objects.equals(title, that.title)) return false;
-    return Objects.equals(youtubeId, that.youtubeId);
+    if (!title.equals(that.title)) return false;
+    return youtubeId.equals(that.youtubeId);
   }
 
   @Override
   public int hashCode() {
     int result = super.hashCode();
-    result = 31 * result + (title != null ? title.hashCode() : 0);
-    result = 31 * result + (youtubeId != null ? youtubeId.hashCode() : 0);
+    result = 31 * result + title.hashCode();
+    result = 31 * result + youtubeId.hashCode();
     return result;
   }
 }

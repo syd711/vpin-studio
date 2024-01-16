@@ -34,7 +34,7 @@ public class VpsTableDiff {
   }
 
   public List<VpsDiffTypes> getDifferences() {
-    if(differences == null) {
+    if (differences == null) {
       differences = new ArrayList<>();
 
       if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
@@ -73,9 +73,8 @@ public class VpsTableDiff {
         differences.add(VpsDiffTypes.b2s);
       }
 
-      VpsDiffTypes diffTypes = diffTables(oldTable.getTableFiles(), newTable.getTableFiles());
-      if (diffTypes != null) {
-        differences.add(diffTypes);
+      if (diffTutorials(oldTable.getTutorialFiles(), newTable.getTutorialFiles())) {
+        differences.add(VpsDiffTypes.tutorial);
       }
 
 //    if (!newTable.getFeatures().stream().filter(item -> !oldTable.getFeatures().contains(item)).collect(Collectors.toList()).isEmpty()) {
@@ -107,22 +106,56 @@ public class VpsTableDiff {
     return null;
   }
 
+  private boolean diffTutorials(List<VpsTutorialUrls> oldUrls, List<VpsTutorialUrls> newUrls) {
+    if ((newUrls == null || newUrls.isEmpty()) && (oldUrls == null || oldUrls.isEmpty())) {
+      return false;
+    }
+
+    if (newUrls != null && !newUrls.isEmpty() && (oldUrls == null || oldUrls.isEmpty())) {
+      return true;
+    }
+
+    if (newUrls == null || newUrls.isEmpty()) {
+      return true;
+    }
+
+    for (VpsTutorialUrls newUrl : newUrls) {
+      if (!oldUrls.contains(newUrl)) {
+        return true;
+      }
+    }
+
+    for (VpsTutorialUrls oldUrl : oldUrls) {
+      if (!newUrls.contains(oldUrl)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean diffUrls(List<? extends VpsAuthoredUrls> oldUrls, List<? extends VpsAuthoredUrls> newUrls) {
     if ((newUrls == null || newUrls.isEmpty()) && (oldUrls == null || oldUrls.isEmpty())) {
       return false;
     }
 
-    if (newUrls != null && oldUrls != null) {
-      for (VpsAuthoredUrls newUrl : newUrls) {
-        if (!oldUrls.contains(newUrl)) {
-          return true;
-        }
-      }
+    if (newUrls != null && !newUrls.isEmpty() && (oldUrls == null || oldUrls.isEmpty())) {
+      return true;
+    }
 
-      for (VpsAuthoredUrls oldUrl : oldUrls) {
-        if (!newUrls.contains(oldUrl)) {
-          return true;
-        }
+    if (newUrls == null || newUrls.isEmpty()) {
+      return true;
+    }
+
+
+    for (VpsAuthoredUrls newUrl : newUrls) {
+      if (!oldUrls.contains(newUrl)) {
+        return true;
+      }
+    }
+
+    for (VpsAuthoredUrls oldUrl : oldUrls) {
+      if (!newUrls.contains(oldUrl)) {
+        return true;
       }
     }
     return false;

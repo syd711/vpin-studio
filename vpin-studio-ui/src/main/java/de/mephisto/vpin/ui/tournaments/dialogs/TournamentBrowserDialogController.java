@@ -179,13 +179,14 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       });
     }, 300));
 
-    avatarColumn.setCellValueFactory(cellData -> {
-      ManiaTournamentSearchResultItem value = cellData.getValue();
-      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
-      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
-      return new SimpleObjectProperty<>(imageView);
-    });
+    //TODO mania
+//    avatarColumn.setCellValueFactory(cellData -> {
+//      ManiaTournamentSearchResultItem value = cellData.getValue();
+//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
+//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+//      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
+//      return new SimpleObjectProperty<>(imageView);
+//    });
 
     nameColumn.setCellValueFactory(cellData -> {
       ManiaTournamentSearchResultItem value = cellData.getValue();
@@ -258,8 +259,9 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         new Thread(() -> {
           Platform.runLater(() -> {
             for (ManiaTournamentSearchResultItem result : results) {
-              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
-              client.getCachedUrlImage(avatarUrl);
+              //TODO mania
+//              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
+//              client.getCachedUrlImage(avatarUrl);
             }
             tableView.setItems(FXCollections.observableList(results));
             if (!results.isEmpty()) {
@@ -290,7 +292,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     if (selection.isPresent()) {
       ManiaTournamentSearchResultItem item = selection.get();
 
-      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
+      //TODO mania
+//      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
 
       nameLabel.setText(item.getDisplayName());
       startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
@@ -304,9 +307,10 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       }
 
       ownerLabel.setText(item.getOwnerName());
-      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
-      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-      avatarPane.getChildren().add(imageView);
+      //TODO mania
+//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
+//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+//      avatarPane.getChildren().add(imageView);
     }
   }
 

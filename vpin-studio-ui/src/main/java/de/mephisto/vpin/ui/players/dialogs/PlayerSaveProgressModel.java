@@ -115,7 +115,8 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       }
       else {
         if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-          maniaClient.getAccountClient().deleteAccount(player.getTournamentUserUuid());
+//          maniaClient.getAccountClient().deleteAccount(player.getTournamentUserUuid());
+          //TODO mania
           player.setTournamentUserUuid(null);
         }
       }

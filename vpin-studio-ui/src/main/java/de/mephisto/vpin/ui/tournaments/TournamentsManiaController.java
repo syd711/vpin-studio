@@ -179,7 +179,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     String tournamentToken = WidgetFactory.showInputDialog(Studio.stage, "Join Tournament", "Enter the token of the private tournament you want to join.",
       "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
     if (tournamentToken != null) {
-      ManiaTournamentRepresentation tournament = maniaClient.getTournamentClient().getTournament(tournamentToken);
+      ManiaTournamentRepresentation tournament = maniaClient.getTournamentClient().lookupTournament(tournamentToken);
       if (tournament == null) {
         WidgetFactory.showAlert(Studio.stage, "No tournament was found for this token.");
       }
@@ -295,7 +295,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           ManiaAccountRepresentation acc = defaultPlayer.toManiaAccount();
-          maniaClient.getTournamentClient().addPlayer(selectedTournament, acc);
+          maniaClient.getTournamentClient().addMember(selectedTournament, acc);
           onReload();
         }
       } catch (Exception e) {
@@ -361,7 +361,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       help, help2);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       treeTableView.getSelectionModel().clearSelection();
-      maniaClient.getTournamentClient().deleteTournament(tournament.getUuid());
+      maniaClient.getTournamentClient().deleteTournament(tournament.getId());
       onReload(Optional.empty());
     }
   }
@@ -454,11 +454,12 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
     if (validConfig) {
-      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
-      if (account == null) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
-      }
-      validConfig = account != null;
+      //TODO mania
+//      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
+//      if (account == null) {
+//        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
+//      }
+//      validConfig = account != null;
     }
     return validConfig;
   }

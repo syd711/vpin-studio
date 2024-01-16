@@ -8,7 +8,7 @@ public class TournamentHelper {
 
   public static boolean isOwner(ManiaTournamentRepresentation selectedTournament) {
     //it's a new tournament
-    if (selectedTournament.getOwnerUuid() == null) {
+    if (selectedTournament.getUuid() == null) {
       return true;
     }
 

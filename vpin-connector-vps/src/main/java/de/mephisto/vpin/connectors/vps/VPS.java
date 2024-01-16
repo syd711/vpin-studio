@@ -294,7 +294,7 @@ public class VPS {
 
     for (VpsTable table : selectedTables) {
       VpsTable oldTable = old.getTableById(table.getId());
-      if (oldTable != null && table.getUpdatedAt() != oldTable.getUpdatedAt()) {
+      if (oldTable != null) {
         VpsTableDiff tableDiff = new VpsTableDiff(table, oldTable);
         if (!tableDiff.getDifferences().isEmpty()) {
           diff.add(tableDiff);

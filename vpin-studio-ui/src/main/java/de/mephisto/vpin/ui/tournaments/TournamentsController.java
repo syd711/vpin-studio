@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.ManiaHighscoreRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentPlayer;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
 import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -212,7 +212,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
       VpsTable vpsTable = value.getVpsTable();
       ManiaTournamentRepresentation tournament = value.getTournament();
-      List<ManiaHighscoreRepresentation> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getUuid());
+      List<ManiaHighscoreRepresentation> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
       if (highscores.isEmpty()) {
         Label label = new Label("No scores found.");
         label.getStyleClass().add("default-text");
@@ -250,7 +250,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       ManiaTournamentRepresentation tournament = treeModel.getTournament();
-      ManiaTournamentPlayer owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
+      TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
       ownerLabel.setText(owner.getDisplayName());
       nameLabel.setText(tournament.getDisplayName());
@@ -315,12 +315,12 @@ public class TournamentsController implements Initializable, StudioFXController 
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
       }
       else {
-        List<ManiaTournamentPlayer> memberList = maniaClient.getTournamentClient().getTournamentPlayers(tournament);
+        List<TournamentMember> memberList = maniaClient.getTournamentClient().getTournamentMembers(tournament);
         if (memberList.isEmpty()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No players have joined this tournament yet."));
         }
         else {
-          for (ManiaTournamentPlayer player : memberList) {
+          for (TournamentMember player : memberList) {
             try {
               FXMLLoader loader = new FXMLLoader(TournamentPlayerController.class.getResource("tournament-player.fxml"));
               Parent playerPanel = loader.load();

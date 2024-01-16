@@ -1,13 +1,11 @@
 package de.mephisto.vpin.connectors.vps;
 
-import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
-import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
+import de.mephisto.vpin.connectors.vps.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,18 +33,21 @@ public class VPSTest {
   public void testDiff2() {
     VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
     VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+
     assertNotNull(vpsNew);
     assertNotNull(vpsOld);
     assertFalse(vpsNew.getTables().isEmpty());
     assertFalse(vpsOld.getTables().isEmpty());
 
-    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld, Arrays.asList("kGBkVb-v"));
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
     for (VpsTableDiff diffEntry : diff) {
-      if(diffEntry.getId().equals("DY3wUlic")) {
-        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+      if (!diffEntry.getDifferences().contains(VpsDiffTypes.tutorial)) {
+        continue;
       }
+
+      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
     }
   }
 
@@ -66,7 +67,7 @@ public class VPSTest {
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
       List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
-      if(tutorialFiles != null && !tutorialFiles.isEmpty()) {
+      if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
         System.out.println(table.getName());
         for (VpsTutorialUrls tutorialFile : tutorialFiles) {
           System.out.println(tutorialFile.getYoutubeId());
@@ -114,7 +115,7 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     for (String entry : entries) {
       List<VpsTable> vpsTables = vps.find(entry.trim());
-      if(vpsTables.isEmpty()) {
+      if (vpsTables.isEmpty()) {
         System.out.println(entry);
       }
       assertFalse(vpsTables.isEmpty(), "No entry found for \"" + entry + "\"");
