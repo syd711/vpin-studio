@@ -88,6 +88,17 @@ public class OverlayWindowFX extends Application {
         LOG.error("Failed to init dashboard: " + e.getMessage(), e);
       }
       stage.show();
+      stage.toFront();
+      new Thread(() -> {
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+        Platform.runLater(() -> {
+          stage.toFront();
+        });
+      }).start();
       overlayController.refreshData();
     }
     else {

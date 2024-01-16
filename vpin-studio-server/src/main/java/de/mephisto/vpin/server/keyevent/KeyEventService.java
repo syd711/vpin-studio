@@ -47,7 +47,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   @Autowired
   private JobQueue queue;
 
-  private boolean visible;
+  private boolean overlayVisible;
   private ShutdownThread shutdownThread;
   private boolean launchOverlayOnStartup = false;
   private String overlayKey;
@@ -64,20 +64,27 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     shutdownThread.notifyKeyEvent();
 
+    //always hide the overlay on any key press
+    if (overlayVisible) {
+      this.overlayVisible = false;
+      Platform.runLater(() -> {
+        OverlayWindowFX.getInstance().showOverlay(false);
+      });
+      return;
+    }
+
     if (!StringUtils.isEmpty(overlayKey)) {
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) || visible) {
-        this.visible = !visible;
+      if (keyChecker.matches(nativeKeyEvent) || overlayVisible) {
+        this.overlayVisible = !overlayVisible;
         Platform.runLater(() -> {
-          LOG.info("Toggle show (Key " + overlayKey + ")");
-          if (visible) {
-            OverlayWindowFX.getInstance().showOverlay(visible);
+          LOG.info("Toggle show (Key " + overlayKey + ") / showing: " + overlayVisible);
+          boolean vpxRunning = systemService.isVPXRunning();
+          if (showPauseInsteadOfOverlay && vpxRunning) {
+            OverlayWindowFX.getInstance().togglePauseMenu();
           }
-          else if (showPauseInsteadOfOverlay) {
-            boolean vpxRunning = systemService.isVPXRunning();
-            if (vpxRunning) {
-              OverlayWindowFX.getInstance().togglePauseMenu();
-            }
+          else {
+            OverlayWindowFX.getInstance().showOverlay(overlayVisible);
           }
         });
       }
@@ -121,8 +128,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         } catch (InterruptedException e) {
           //ignore
         }
-        this.visible = !visible;
-        OverlayWindowFX.getInstance().showOverlay(visible);
+        this.overlayVisible = !overlayVisible;
+        OverlayWindowFX.getInstance().showOverlay(overlayVisible);
       }
     });
   }

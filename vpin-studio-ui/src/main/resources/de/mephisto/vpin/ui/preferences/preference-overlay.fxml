@@ -151,7 +151,13 @@
             </Label>
             <VBox styleClass="info-container">
                <children>
-                  <Label text="Label" />
+                  <Label styleClass="default-text" text="Attention: If you are using the GL version of Visual Pinball, the pause menu will open with some stuttering.">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="17.0" layoutY="17.0" styleClass="default-text" text="Because this version doesn't give up it's focus so easily, I had to work around it." />
+                  <Label layoutX="17.0" layoutY="37.0" styleClass="default-text" text="I hope this will get better with a future version of Visual Pinball X." />
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

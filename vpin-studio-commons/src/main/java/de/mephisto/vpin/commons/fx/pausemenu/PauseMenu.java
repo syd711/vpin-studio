@@ -11,16 +11,11 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -45,6 +40,16 @@ public class PauseMenu extends Application {
   private static Stage stage;
   private static boolean visible = false;
   private static boolean firstShow = true;
+
+  private static Robot robot;
+
+  static {
+    try {
+      robot = new Robot();
+    } catch (AWTException e) {
+      LOG.error("Failed to create robot: " + e.getMessage(), e);
+    }
+  }
 
   public static void main(String[] args) {
     OverlayWindowFX.client = new VPinStudioClient("localhost");
@@ -110,7 +115,10 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu() {
+    System.out.println(visible);
     if (!visible) {
+      togglePauseKey(0);
+
       GameStatus status = client.getGameStatusService().getStatus();
       if (!status.isActive()) {
         LOG.info("Skipped showing start menu: no game status found.");
@@ -128,7 +136,7 @@ public class PauseMenu extends Application {
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
       StateMananger.getInstance().setGame(game, status, screen);
-      if(firstShow) {
+      if (firstShow) {
         firstShow = false;
         new Thread(() -> {
 //          System.out.println("force 1");
@@ -142,8 +150,8 @@ public class PauseMenu extends Application {
           toFront();
           toFront();
           toFront();
-          toFront();
-          toFront();
+//          toFront();
+//          toFront();
         }).start();
         forceShow();
       }
@@ -161,7 +169,7 @@ public class PauseMenu extends Application {
 
   private static void toFront() {
     try {
-      Thread.sleep(1800);
+      Thread.sleep(2500);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -172,7 +180,7 @@ public class PauseMenu extends Application {
 
   private static void toggleFocus() {
     try {
-      Thread.sleep(1500);
+      Thread.sleep(1000);
       Platform.runLater(() -> {
         stage.hide();
       });
@@ -182,8 +190,7 @@ public class PauseMenu extends Application {
           forceShow();
         });
       }).start();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       //ignore
     }
   }
@@ -204,6 +211,20 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Exited pause menu");
       stage.hide();
+    }
+    new Thread(()-> {
+      togglePauseKey(1000);
+    }).start();
+  }
+
+  private static void togglePauseKey(long delay) {
+    try {
+      Thread.sleep(delay);
+      robot.keyPress(KeyEvent.VK_P);
+      Thread.sleep(100);
+      robot.keyRelease(KeyEvent.VK_P);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -310,7 +311,10 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+    adminColumn.setVisible(Features.TOURNAMENTS_ENABLED);
+    tournamentColumn.setVisible(Features.TOURNAMENTS_ENABLED);
+
+    if (Features.TOURNAMENTS_ENABLED && PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       adminColumn.setVisible(settings.isEnabled());
       tournamentColumn.setVisible(settings.isEnabled());
