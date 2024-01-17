@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.ManiaHighscoreRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.TableScore;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
+import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -134,7 +134,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   private void onDiscordLink() {
     if (this.tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      Tournament tournament = treeModel.getTournament();
       String link = tournament.getDiscordLink();
       if (!StringUtils.isEmpty(link)) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -168,7 +168,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   private void onDashboardOpen() {
     if (this.tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      Tournament tournament = treeModel.getTournament();
       String dashboardUrl = tournament.getDashboardUrl();
       if (!StringUtils.isEmpty(dashboardUrl)) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -211,8 +211,8 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (tournamentTreeModel.isPresent() && tournamentTreeModel.get().isLeaf()) {
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
       VpsTable vpsTable = value.getVpsTable();
-      ManiaTournamentRepresentation tournament = value.getTournament();
-      List<ManiaHighscoreRepresentation> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
+      Tournament tournament = value.getTournament();
+      List<TableScore> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
       if (highscores.isEmpty()) {
         Label label = new Label("No scores found.");
         label.getStyleClass().add("default-text");
@@ -222,7 +222,7 @@ public class TournamentsController implements Initializable, StudioFXController 
         Label label = new Label("Highscores for \"" + vpsTable.getDisplayName() + "\"");
         label.getStyleClass().add("default-text");
         scoreList.getChildren().add(label);
-        for (ManiaHighscoreRepresentation highscore : highscores) {
+        for (TableScore highscore : highscores) {
 
         }
       }
@@ -249,14 +249,14 @@ public class TournamentsController implements Initializable, StudioFXController 
 
     if (tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      Tournament tournament = treeModel.getTournament();
       TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
       ownerLabel.setText(owner.getDisplayName());
       nameLabel.setText(tournament.getDisplayName());
-      visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(ManiaTournamentVisibility.publicTournament) ? "public" : "private");
+      visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(TournamentVisibility.publicTournament) ? "public" : "private");
       uuidLabel.setText(tournament.getUuid());
-      avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getUuid()))));
+      avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
@@ -282,7 +282,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     String dashboardUrl = null;
     if (this.tournamentTreeModel.isPresent()) {
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      Tournament tournament = treeModel.getTournament();
       dashboardUrl = tournament.getDashboardUrl();
     }
     dashboardBtn.setDisable(dashboardUrl == null);
@@ -310,7 +310,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     membersBox.getChildren().removeAll(membersBox.getChildren());
     if (model.isPresent()) {
       TournamentTreeModel treeModel = model.get().getValue();
-      ManiaTournamentRepresentation tournament = treeModel.getTournament();
+      Tournament tournament = treeModel.getTournament();
       if (!tournament.isActive()) {
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
       }

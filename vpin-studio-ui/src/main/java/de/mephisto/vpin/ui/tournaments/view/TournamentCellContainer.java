@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.util.AvatarFactory;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -19,7 +19,7 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class TournamentCellContainer extends HBox {
   private final static int TITLE_WIDTH = 60;
 
-  public TournamentCellContainer(ManiaTournamentRepresentation tournament) {
+  public TournamentCellContainer(Tournament tournament) {
     super(6);
 
     String badgeUrl = maniaClient.getTournamentClient().getBadgeUrl(tournament);

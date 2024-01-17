@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tournaments;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentEditDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -11,16 +11,16 @@ import javafx.stage.Stage;
 
 public class TournamentDialogs {
 
-  public static ManiaTournamentRepresentation openTournamentDialog(@NonNull String title, @NonNull ManiaTournamentRepresentation tournamentRepresentation) {
+  public static Tournament openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentEditDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentEditDialogController controller = (TournamentEditDialogController) stage.getUserData();
-    controller.setTournament(tournamentRepresentation);
+    controller.setTournament(tournament);
     stage.showAndWait();
 
     return controller.getTournament();
   }
 
-  public static ManiaTournamentRepresentation openTournamentBrowserDialog() {
+  public static Tournament openTournamentBrowserDialog() {
     Stage stage = Dialogs.createStudioDialogStage(TournamentBrowserDialogController.class, "dialog-tournament-browser.fxml", "Tournament Browser");
     TournamentBrowserDialogController controller = (TournamentBrowserDialogController) stage.getUserData();
     stage.showAndWait();

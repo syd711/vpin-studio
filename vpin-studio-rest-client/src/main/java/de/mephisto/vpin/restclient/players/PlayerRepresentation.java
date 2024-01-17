@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.players;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -41,8 +41,8 @@ public class PlayerRepresentation {
   }
 
   @NonNull
-  public ManiaAccountRepresentation toManiaAccount() {
-    ManiaAccountRepresentation account = new ManiaAccountRepresentation();
+  public Account toManiaAccount() {
+    Account account = new Account();
     account.setCabinetId(SystemUtil.getBoardSerialNumber());
     account.setInitials(this.getInitials());
     account.setDisplayName(this.getName());
