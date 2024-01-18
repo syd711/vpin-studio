@@ -443,13 +443,13 @@ public class WidgetFactory {
     }
   }
 
-  public static void addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
     boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
 
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
-      return;
+      return null;
     }
 
     boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
@@ -473,11 +473,13 @@ public class WidgetFactory {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
+      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
     }
+
+    return null;
   }
 
   public static class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {

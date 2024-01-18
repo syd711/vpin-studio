@@ -84,6 +84,7 @@ public class MenuController implements Initializable {
   private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
   private MenuCustomViewController customViewController;
+  private Node currentSelection;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -179,18 +180,36 @@ public class MenuController implements Initializable {
     //scroll whole game row
     Transition t4 = TransitionUtil.createTranslateByXTransition(menuItemsRow, SELECTION_SCALE_DURATION, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE);
 
-    final Node updatedNode = menuItemsRow.getChildren().get(selectionIndex);
-    Transition t5 = TransitionUtil.createTranslateByXTransition(updatedNode, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
-    Transition t6 = TransitionUtil.createScaleTransition(updatedNode, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION);
-    Transition t7 = TransitionUtil.createTranslateByYTransition(updatedNode, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET);
+    Node oldSelection = currentSelection;
+    currentSelection = menuItemsRow.getChildren().get(selectionIndex);
+    Transition t5 = TransitionUtil.createTranslateByXTransition(currentSelection, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
+    Transition t6 = TransitionUtil.createScaleTransition(currentSelection, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION);
+    Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET);
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.play();
 
-    updateSelection(updatedNode);
+    updateSelection(oldSelection, currentSelection);
   }
 
-  private void updateSelection(Node node) {
+  private void updateSelection(Node oldNode, Node node) {
+    if (oldNode != null) {
+      PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
+      if (activeSelection.getYouTubeUrl() != null) {
+        webView.setVisible(true);
+        WebEngine engine = webView.getEngine();
+        engine.loadContent("");
+      }
+      else if (activeSelection.getVideoUrl() != null) {
+        try {
+          mediaView.getMediaPlayer().stop();
+          mediaView.getMediaPlayer().dispose();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+
     activeSelection = (PauseMenuItem) node.getUserData();
     nameLabel.setText(activeSelection.getDescription());
     screenImageView.setVisible(false);
@@ -218,7 +237,8 @@ public class MenuController implements Initializable {
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);
       WebEngine engine = webView.getEngine();
-      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "?autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
+//      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "?autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
+      engine.load(activeSelection.getYouTubeUrl());
     }
   }
 
@@ -248,7 +268,7 @@ public class MenuController implements Initializable {
     TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
     TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
-    updateSelection(child);
+    updateSelection(null, child);
   }
 
   public void resetGameRow() {

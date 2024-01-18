@@ -11,6 +11,8 @@ import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +30,8 @@ public class PauseMenuItemsFactory {
       pauseMenuItems.add(item);
     }
 
-    loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card");
-    loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules");
+    loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+    loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
 
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
@@ -39,8 +41,8 @@ public class PauseMenuItemsFactory {
         if(tutorialFiles != null && !tutorialFiles.isEmpty()) {
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
             if(!StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
-              item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("help.png")));
-              item.setYouTubeUrl("https://www.youtube.com/embed/" + tutorialFile.getYoutubeId());
+              item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
+              item.setYouTubeUrl("https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=0");
               pauseMenuItems.add(item);
             }
           }
@@ -52,23 +54,21 @@ public class PauseMenuItemsFactory {
     return pauseMenuItems;
   }
 
-  private static void loadPopperMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, PopperScreen screen, String title, String text) {
+  private static void loadPopperMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, PopperScreen screen, String title, String text, String pictureImage, String videoImage) {
     List<GameMediaItemRepresentation> mediaItems = game.getGameMedia().getMediaItems(screen);
     for (GameMediaItemRepresentation mediaItem : mediaItems) {
-
       String mimeType = mediaItem.getMimeType();
       String baseType = mimeType.split("/")[0];
       if (baseType.equals("image")) {
-        PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream("infocard.png")));
-        String url = PauseMenu.client.getURL(mediaItem.getUri());
+        PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(pictureImage)));
         InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
         Image scoreImage = new Image(imageStream);
         item.setDataImage(scoreImage);
         pauseMenuItems.add(item);
       }
       else if (baseType.equals("video")) {
-        PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream("infocard.png")));
-        String url = PauseMenu.client.getURL(mediaItem.getUri());
+        PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(videoImage)));
+        String url = PauseMenu.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
         item.setVideoUrl(url);
         pauseMenuItems.add(item);
       }

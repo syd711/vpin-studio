@@ -15,6 +15,8 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -105,6 +107,20 @@ public class MenuCustomViewController implements Initializable {
     ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getGameService().getRecentScoresByGame(3, game.getId());
     List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
     stats3Col.getChildren().removeAll(stats3Col.getChildren());
+
+    stats3Col.setAlignment(Pos.CENTER);
+
+    if (scores.isEmpty()) {
+      Label noScoresLabel = new Label("No scores found.");
+      noScoresLabel.setStyle("-fx-font-size: 20px;-fx-text-fill: #FFFFFF;");
+      noScoresLabel.setPadding(new Insets(50, 0, 0, 0));
+      stats3Col.getChildren().add(noScoresLabel);
+
+      Label info = new Label("(Note that this list may be filtered.)");
+      info.setStyle("-fx-font-size:16px;-fx-text-fill: #FFFFFF;");
+      stats3Col.getChildren().add(info);
+    }
+
     for (ScoreRepresentation score : scores) {
       try {
         FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));

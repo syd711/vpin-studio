@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +23,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private final boolean dialogRendering;
 
   private GameMediaItemRepresentation mediaItem;
+  private MediaView mediaView;
 
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType, boolean portraitMode) {
     super(parent, url);
@@ -68,7 +69,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     mediaPlayer.setOnError(() -> {
       LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
 
-      if(retryCounter < 5) {
+      if (retryCounter < 5) {
         retryCounter++;
         Platform.runLater(() -> {
           super.disposeMedia();
@@ -85,7 +86,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       }
     });
 
-    MediaView mediaView = new MediaView(mediaPlayer);
+    mediaView = new MediaView(mediaPlayer);
     mediaView.setUserData(mediaItem);
     mediaView.setPreserveRatio(true);
 
@@ -96,7 +97,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         mediaView.setRotate(90);
       }
       else {
-        this.scalePlayfieldForSidebar(mediaView);
+        this.scalePlayfieldForSidebar();
       }
     }
     else if (PopperScreen.Loading.equals(screen)) {
@@ -106,7 +107,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         mediaView.setRotate(90);
       }
       else {
-        this.scaleLoadingForSidebar(mediaView);
+        this.scaleLoadingForSidebar();
       }
     }
     else {
@@ -118,7 +119,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     parent.setCenter(this);
   }
 
-  private void scalePlayfieldForSidebar(MediaView mediaView) {
+  private void scalePlayfieldForSidebar() {
     mediaView.setFitWidth(250);
     if (!portraitMode) {
       mediaView.rotateProperty().set(90);
@@ -129,13 +130,24 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
   }
 
-  private void scaleLoadingForSidebar(MediaView mediaView) {
+  private void scaleLoadingForSidebar() {
     mediaView.setFitWidth(150);
     if (!portraitMode) {
       mediaView.rotateProperty().set(90);
       mediaView.setFitWidth(70);
       mediaView.setX(0);
       mediaView.setY(0);
+    }
+  }
+
+  public void scaleForDialog(String screen) {
+    if (PopperScreen.PlayField.name().equals(screen) || PopperScreen.Loading.name().equals(screen)) {
+      mediaView.setFitWidth(parent.getPrefWidth() - 300);
+      mediaView.setFitHeight(parent.getPrefHeight() - 300);
+    }
+    else {
+      mediaView.setFitWidth(parent.getPrefWidth() - 12);
+      mediaView.setFitHeight(parent.getPrefHeight() - 50);
     }
   }
 }

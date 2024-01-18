@@ -7,6 +7,7 @@
 - Improved "Players" section: Added default background image for score items.
 - Added fancy splash screen.
 - Added "Tutorials" to the virtual-pinball-spreadsheet change listener: While not visible in the Studio itself, this change type is now also emitted by the Discord bot if used.
+- Added "Pause" menu: The menu can be configured in the preferences section "Overlay & Pause Menu" (former "Overlay").
 
 ### Bugfixes
 

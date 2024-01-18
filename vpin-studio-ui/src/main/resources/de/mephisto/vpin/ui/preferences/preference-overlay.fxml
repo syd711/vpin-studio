@@ -157,7 +157,11 @@
                      </font>
                   </Label>
                   <Label layoutX="17.0" layoutY="17.0" styleClass="default-text" text="Because this version doesn't give up it's focus so easily, I had to work around it." />
-                  <Label layoutX="17.0" layoutY="37.0" styleClass="default-text" text="I hope this will get better with a future version of Visual Pinball X." />
+                  <Label layoutX="17.0" layoutY="57.0" text="Make sure to have the pause key of VPX bound to &quot;P&quot;." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

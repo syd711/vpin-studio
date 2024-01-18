@@ -40,7 +40,7 @@
                      <StackPane.margin>
                         <Insets bottom="10.0" />
                      </StackPane.margin></ImageView>
-                  <WebView fx:id="webView" maxHeight="730.0" maxWidth="1200.0" prefHeight="730.0" prefWidth="1200.0">
+                  <WebView fx:id="webView" maxHeight="750.0" maxWidth="1230.0" prefHeight="750.0" prefWidth="1230.0">
                      <StackPane.margin>
                         <Insets top="40.0" />
                      </StackPane.margin>

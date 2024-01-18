@@ -41,7 +41,6 @@ public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
 
   public static final CountDownLatch latch = new CountDownLatch(1);
-  private Stage stage;
 
   private BorderPane root;
 
@@ -49,8 +48,11 @@ public class OverlayWindowFX extends Application {
   private OverlayController overlayController;
 
   private static OverlayWindowFX INSTANCE = null;
+
+  private Stage overlayStage;
   private Stage maintenanceStage;
   private Stage highscoreCardStage;
+
   private HighscoreCardController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
@@ -87,8 +89,8 @@ public class OverlayWindowFX extends Application {
       } catch (IOException e) {
         LOG.error("Failed to init dashboard: " + e.getMessage(), e);
       }
-      stage.show();
-      stage.toFront();
+      overlayStage.show();
+      overlayStage.toFront();
       new Thread(() -> {
         try {
           Thread.sleep(1000);
@@ -96,13 +98,13 @@ public class OverlayWindowFX extends Application {
           throw new RuntimeException(e);
         }
         Platform.runLater(() -> {
-          stage.toFront();
+          overlayStage.toFront();
         });
       }).start();
       overlayController.refreshData();
     }
     else {
-      stage.hide();
+      overlayStage.hide();
     }
   }
 
@@ -250,7 +252,7 @@ public class OverlayWindowFX extends Application {
   public void start(Stage primaryStage) throws Exception {
     INSTANCE = this;
 
-    this.stage = primaryStage;
+    this.overlayStage = primaryStage;
     Platform.setImplicitExit(false);
 
     root = new BorderPane();
@@ -259,14 +261,14 @@ public class OverlayWindowFX extends Application {
     scene.setCursor(Cursor.NONE);
 
     Rectangle2D bounds = screen.getVisualBounds();
-    stage.setX(bounds.getMinX());
-    stage.setY(bounds.getMinY());
+    overlayStage.setX(bounds.getMinX());
+    overlayStage.setY(bounds.getMinY());
 
-    stage.setScene(scene);
-    stage.setFullScreenExitHint("");
-    stage.setAlwaysOnTop(true);
-    stage.setFullScreen(true);
-    stage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
+    overlayStage.setScene(scene);
+    overlayStage.setFullScreenExitHint("");
+    overlayStage.setAlwaysOnTop(true);
+    overlayStage.setFullScreen(true);
+    overlayStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
     PauseMenu.loadPauseMenu();
     latch.countDown();

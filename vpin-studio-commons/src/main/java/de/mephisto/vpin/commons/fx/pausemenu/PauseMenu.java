@@ -115,7 +115,6 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu() {
-    System.out.println(visible);
     if (!visible) {
       togglePauseKey(0);
 
@@ -139,14 +138,6 @@ public class PauseMenu extends Application {
       if (firstShow) {
         firstShow = false;
         new Thread(() -> {
-//          System.out.println("force 1");
-//          toggleFocus();
-//          System.out.println("force 2");
-//          toggleFocus();
-//          System.out.println("force 3");
-//          toggleFocus();
-//          System.out.println("force 4");
-//          toggleFocus();
           toFront();
           toFront();
           toFront();
@@ -178,23 +169,6 @@ public class PauseMenu extends Application {
     });
   }
 
-  private static void toggleFocus() {
-    try {
-      Thread.sleep(1000);
-      Platform.runLater(() -> {
-        stage.hide();
-      });
-      Thread.sleep(1500);
-      new Thread(() -> {
-        Platform.runLater(() -> {
-          forceShow();
-        });
-      }).start();
-    } catch (Exception e) {
-      //ignore
-    }
-  }
-
   private static void forceShow() {
     Platform.runLater(() -> {
       stage.toFront();
@@ -203,7 +177,6 @@ public class PauseMenu extends Application {
   }
 
   public static void exit() {
-    visible = false;
     StateMananger.getInstance().exit();
     if (!PRODUCTION_USE) {
       System.exit(0);
@@ -212,13 +185,21 @@ public class PauseMenu extends Application {
       LOG.info("Exited pause menu");
       stage.hide();
     }
-    new Thread(()-> {
-      togglePauseKey(1000);
-    }).start();
+
+    if (visible) {
+      new Thread(() -> {
+        togglePauseKey(1000);
+      }).start();
+    }
+    visible = false;
   }
 
   private static void togglePauseKey(long delay) {
     try {
+      if (!PRODUCTION_USE) {
+        return;
+      }
+
       Thread.sleep(delay);
       robot.keyPress(KeyEvent.VK_P);
       Thread.sleep(100);

@@ -265,7 +265,11 @@ public class VPS {
         LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
         for (VpsSheetChangedListener listener : listeners) {
           listener.vpsSheetChanged(diff);
+          LOG.info("Notified VPS change listener \"" + listener.getClass().getName() + "\"");
         }
+      }
+      else {
+        LOG.info("VPS had no changing, skipped update listeners.");
       }
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());

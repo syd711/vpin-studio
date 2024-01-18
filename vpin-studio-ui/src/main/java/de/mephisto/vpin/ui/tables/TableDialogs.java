@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -305,11 +307,7 @@ public class TableDialogs {
     Stage owner = Studio.stage;
     BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
 
-    if (item.getScreen().equals(PopperScreen.PlayField.name()) || item.getScreen().equals(PopperScreen.Loading.name())) {
-      mediaView.rotateProperty().set(90);
-    }
-
-    WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
+    AssetMediaPlayer assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
     final Stage stage = WidgetFactory.createStage();
     stage.initModality(Modality.WINDOW_MODAL);
     stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
@@ -322,6 +320,13 @@ public class TableDialogs {
         stage.close();
       }
     });
+
+
+    if (assetMediaPlayer instanceof VideoMediaPlayer) {
+      VideoMediaPlayer player = (VideoMediaPlayer) assetMediaPlayer;
+      player.scaleForDialog(item.getScreen());
+    }
+
     stage.showAndWait();
   }
 }
