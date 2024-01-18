@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tournaments;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.apache.commons.io.IOUtils;
@@ -16,18 +16,18 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class TournamentCreationProgressModel extends ProgressModel<ManiaTournamentRepresentation> {
+public class TournamentCreationProgressModel extends ProgressModel<Tournament> {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentCreationProgressModel.class);
-  private List<ManiaTournamentRepresentation> tournaments;
-  private final ManiaAccountRepresentation account;
+  private List<Tournament> tournaments;
+  private final Account account;
   private final byte[] badge;
   private File badgeFile;
 
-  private Iterator<ManiaTournamentRepresentation> iterator;
+  private Iterator<Tournament> iterator;
 
-  public TournamentCreationProgressModel(ManiaTournamentRepresentation tournamentRepresentation, ManiaAccountRepresentation account, byte[] badge) {
-    super("Creating Tournament \"" + tournamentRepresentation.getDisplayName() + "\"");
-    this.tournaments = Arrays.asList(tournamentRepresentation);
+  public TournamentCreationProgressModel(Tournament tournament, Account account, byte[] badge) {
+    super("Creating Tournament \"" + tournament.getDisplayName() + "\"");
+    this.tournaments = Arrays.asList(tournament);
     this.account = account;
     this.badge = badge;
     this.iterator = this.tournaments.iterator();
@@ -54,7 +54,7 @@ public class TournamentCreationProgressModel extends ProgressModel<ManiaTourname
   }
 
   @Override
-  public ManiaTournamentRepresentation getNext() {
+  public Tournament getNext() {
     return iterator.next();
   }
 
@@ -64,12 +64,12 @@ public class TournamentCreationProgressModel extends ProgressModel<ManiaTourname
   }
 
   @Override
-  public String nextToString(ManiaTournamentRepresentation game) {
+  public String nextToString(Tournament game) {
     return "Saving Tournament";
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, ManiaTournamentRepresentation next) {
+  public void processNext(ProgressResultModel progressResultModel, Tournament next) {
     try {
       badgeFile = File.createTempFile("avatar", ".png");
       badgeFile.deleteOnExit();
@@ -78,8 +78,8 @@ public class TournamentCreationProgressModel extends ProgressModel<ManiaTourname
       IOUtils.write(badge, out);
       out.close();
 
-      ManiaTournamentRepresentation maniaTournamentRepresentation = maniaClient.getTournamentClient().create(next, account, badgeFile);
-      progressResultModel.getResults().add(maniaTournamentRepresentation);
+      Tournament tournament = maniaClient.getTournamentClient().create(next, account, badgeFile);
+      progressResultModel.getResults().add(tournament);
     } catch (Exception e) {
       LOG.error("Error creating tournament: " + e.getMessage(), e);
       progressResultModel.getResults().add(e.getMessage());

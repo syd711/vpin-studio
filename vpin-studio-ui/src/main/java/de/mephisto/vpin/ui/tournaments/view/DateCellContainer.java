@@ -1,22 +1,18 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.text.DateFormat;
 
-import static de.mephisto.vpin.ui.Studio.maniaClient;
-
 public class DateCellContainer extends VBox {
   private final static int TITLE_WIDTH = 80;
 
-  public DateCellContainer(ManiaTournamentRepresentation tournament) {
+  public DateCellContainer(Tournament tournament) {
     super(6);
 
     HBox row = new HBox(6);

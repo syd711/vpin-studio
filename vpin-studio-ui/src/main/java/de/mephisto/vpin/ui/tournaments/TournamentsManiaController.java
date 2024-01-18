@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -141,7 +141,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private ObservableList<TournamentTreeModel> data;
   private TournamentsController tournamentsController;
   private WaitOverlayController loaderController;
-  private ManiaAccountRepresentation maniaAccount;
+  private Account maniaAccount;
   private File tournamentBadgeFile;
 
 
@@ -179,7 +179,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     String tournamentToken = WidgetFactory.showInputDialog(Studio.stage, "Join Tournament", "Enter the token of the private tournament you want to join.",
       "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
     if (tournamentToken != null) {
-      ManiaTournamentRepresentation tournament = maniaClient.getTournamentClient().lookupTournament(tournamentToken);
+      Tournament tournament = null;//TODO mania maniaClient.getTournamentClient().lookupTournament(tournamentToken);
       if (tournament == null) {
         WidgetFactory.showAlert(Studio.stage, "No tournament was found for this token.");
       }
@@ -194,9 +194,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onCreate() {
-    ManiaTournamentRepresentation t = new ManiaTournamentRepresentation();
+    Tournament t = new Tournament();
     t.setDisplayName("New Tournament (Season 1)");
-    t.setVisibility(ManiaTournamentVisibility.publicTournament);
+    t.setVisibility(TournamentVisibility.publicTournament);
     Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
     t.setEndDate(end);
     t.setStartDate(DateUtil.today());
@@ -218,8 +218,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
           if (!progressDialog.getResults().isEmpty()) {
             Object o = progressDialog.getResults().get(0);
-            if (o instanceof ManiaTournamentRepresentation) {
-              ManiaTournamentRepresentation newT = (ManiaTournamentRepresentation) o;
+            if (o instanceof Tournament) {
+              Tournament newT = (Tournament) o;
               Platform.runLater(() -> {
                 onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null))));
               });
@@ -268,7 +268,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel model = selection.get().getValue();
-      ManiaTournamentRepresentation t = model.getTournament().cloneTournament();
+      Tournament t = model.getTournament().cloneTournament();
       t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
       if (t != null) {
         try {
@@ -288,13 +288,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private void onBrowse() {
-    ManiaTournamentRepresentation t = TournamentDialogs.openTournamentBrowserDialog();
+    Tournament t = TournamentDialogs.openTournamentBrowserDialog();
     if (t != null) {
       try {
-        ManiaTournamentRepresentation selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
+        Tournament selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          ManiaAccountRepresentation acc = defaultPlayer.toManiaAccount();
+          Account acc = defaultPlayer.toManiaAccount();
           maniaClient.getTournamentClient().addMember(selectedTournament, acc);
           onReload();
         }
@@ -309,7 +309,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get().getValue();
-      ManiaTournamentRepresentation t = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
+      Tournament t = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
       if (t != null) {
         try {
           t = maniaClient.getTournamentClient().update(t);
@@ -326,7 +326,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Optional<TreeItem<TournamentTreeModel>> selection = this.getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get().getValue();
-      ManiaTournamentRepresentation tournament = tournamentTreeModel.getTournament();
+      Tournament tournament = tournamentTreeModel.getTournament();
       boolean isOwner = TournamentHelper.isOwner(tournament);
       if (isOwner) {
         deleteTournament(tournament);
@@ -337,7 +337,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
   }
 
-  private void unsubscribeTournament(ManiaTournamentRepresentation tournament) {
+  private void unsubscribeTournament(Tournament tournament) {
     String remainingDayMsg = tournament.remainingDays() == 1 ? "The tournament is active for another day." :
       "The tournament is still active for another " + tournament.remainingDays() + " days.";
     String help = "You are a member of this tournament. The tournament information will not be shown anymore.";
@@ -352,7 +352,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
   }
 
-  private void deleteTournament(ManiaTournamentRepresentation tournament) {
+  private void deleteTournament(Tournament tournament) {
     String remainingDayMsg = tournament.remainingDays() == 1 ? "The tournament is active for another day." :
       "The tournament is still active for another " + tournament.remainingDays() + " days.";
     String help = remainingDayMsg;
@@ -455,7 +455,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
     if (validConfig) {
       //TODO mania
-//      ManiaAccountRepresentation account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
+//      Account account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
 //      if (account == null) {
 //        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
 //      }
@@ -473,7 +473,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private String getLabelCss(TournamentTreeModel model) {
     String status = "";
-    ManiaTournamentRepresentation tournament = model.getTournament();
+    Tournament tournament = model.getTournament();
     if (tournament.isActive()) {
       status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;";
     }
@@ -560,10 +560,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   private TreeItem<TournamentTreeModel> loadTreeModel() {
-    List<ManiaTournamentRepresentation> tournaments = maniaClient.getTournamentClient().getTournaments();
+    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
     LOG.info("Loaded " + tournaments.size() + " tournaments.");
     TreeItem<TournamentTreeModel> root = new TreeItem<>(new TournamentTreeModel(null, null, null, null));
-    for (ManiaTournamentRepresentation tournament : tournaments) {
+    for (Tournament tournament : tournaments) {
       if (!tournament.getDisplayName().toLowerCase().contains(textfieldSearch.getText().toLowerCase())) {
         continue;
       }
@@ -663,7 +663,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     columnStatus.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue().getValue();
-      ManiaTournamentRepresentation tournament = value.getTournament();
+      Tournament tournament = value.getTournament();
       if (cellData.getValue().getChildren().isEmpty()) {
         GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
         if (game != null) {
@@ -684,7 +684,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           status = "PLANNED";
         }
 
-        String visibility = tournament.getVisibility().equals(ManiaTournamentVisibility.publicTournament) ? "(public)" : "(private)";
+        String visibility = tournament.getVisibility().equals(TournamentVisibility.publicTournament) ? "(public)" : "(private)";
         status += "\n" + visibility;
 
         Label label = new Label(status);

@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,8 +34,8 @@ public class TournamentPlayerController extends WidgetController implements Init
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(ManiaTournamentRepresentation tournament, TournamentMember member) {
-    Image image = new Image(maniaClient.getAccountClient().getAvatarUrl(member.getUuid()));
+  public void setData(Tournament tournament, TournamentMember member) {
+    Image image = new Image(maniaClient.getAccountClient().getAvatarUrl(member.getAccountUuid()));
     userImageView.setImage(image);
     CommonImageUtil.setClippedImage(userImageView, (int) (image.getWidth() / 2));
 

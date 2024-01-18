@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -15,7 +15,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TournamentTreeModel {
-  private final ManiaTournamentRepresentation tournament;
+  private final Tournament tournament;
   private final VpsTableVersion vpsTableVersion;
   private final VpsTable vpsTable;
   private final GameRepresentation game;
@@ -31,7 +31,7 @@ public class TournamentTreeModel {
     }
   }
 
-  public static TreeItem<TournamentTreeModel> create(ManiaTournamentRepresentation tournament) {
+  public static TreeItem<TournamentTreeModel> create(Tournament tournament) {
     TreeItem<TournamentTreeModel> tournamentNode = new TreeItem<>(new TournamentTreeModel(tournament, null, null, null));
     List<String> tableIdList = tournament.getTableIdList();
     for (String s : tableIdList) {
@@ -57,7 +57,7 @@ public class TournamentTreeModel {
     return tournamentNode;
   }
 
-  public TournamentTreeModel(ManiaTournamentRepresentation tournament, GameRepresentation game, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
+  public TournamentTreeModel(Tournament tournament, GameRepresentation game, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
     this.tournament = tournament;
     this.vpsTable = vpsTable;
     this.vpsTableVersion = vpsTableVersion;
@@ -85,7 +85,7 @@ public class TournamentTreeModel {
     return vpsTable;
   }
 
-  public ManiaTournamentRepresentation getTournament() {
+  public Tournament getTournament() {
     return tournament;
   }
 

@@ -818,6 +818,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
               }
             }
           }
+          else {
+            LOG.info("VPS update emitting canceled, no target channel set.");
+          }
         }
       } catch (Exception e) {
         LOG.error("Failed to push Discord notifications for VPS updates: " + e.getMessage(), e);

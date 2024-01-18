@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResultItem;
+import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import javafx.scene.control.Label;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TournamentSearchTableSummary extends VBox {
 
-  public TournamentSearchTableSummary(ManiaTournamentSearchResultItem item) {
+  public TournamentSearchTableSummary(TournamentSearchResultItem item) {
     super(3);
     List<String> tableIdList = item.getTableIdList();
     int count = 0;

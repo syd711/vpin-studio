@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.ManiaAccountRepresentation;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -93,9 +93,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       }
 
       if (tournamentPlayer) {
-        ManiaAccountRepresentation maniaAccount = player.toManiaAccount();
+        Account maniaAccount = player.toManiaAccount();
         if (player.isRegistered()) {
-          ManiaAccountRepresentation update = maniaClient.getAccountClient().update(maniaAccount);
+          Account update = maniaClient.getAccountClient().update(maniaAccount);
           if (update == null) {
             update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
             player.setTournamentUserUuid(update.getUuid());
@@ -109,7 +109,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
         }
         else {
-          ManiaAccountRepresentation register = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
+          Account register = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
           player.setTournamentUserUuid(register.getUuid());
         }
       }

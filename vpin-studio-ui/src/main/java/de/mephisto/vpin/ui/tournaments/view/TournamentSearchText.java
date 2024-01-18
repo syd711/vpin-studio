@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentSearchResultItem;
+import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class TournamentSearchText extends VBox {
 
-  public TournamentSearchText(ManiaTournamentSearchResultItem item) {
+  public TournamentSearchText(TournamentSearchResultItem item) {
     super(3);
 
     Label titleLabel = new Label(item.getDisplayName());

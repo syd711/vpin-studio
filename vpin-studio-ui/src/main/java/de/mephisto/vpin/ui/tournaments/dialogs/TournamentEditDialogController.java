@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentRepresentation;
-import de.mephisto.vpin.connectors.mania.model.ManiaTournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -150,7 +150,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   @FXML
   private TableColumn<TournamentTreeModel, String> vpsTableVersionColumn;
 
-  private ManiaTournamentRepresentation tournament;
+  private Tournament tournament;
 
   private List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
@@ -267,9 +267,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.tournament = null;
   }
 
-  public void setTournament(ManiaTournamentRepresentation selectedTournament) {
+  public void setTournament(Tournament selectedTournament) {
     this.tournament = selectedTournament;
-    this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(ManiaTournamentVisibility.privateTournament));
+    this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(TournamentVisibility.privateTournament));
 
     boolean isOwner = TournamentHelper.isOwner(selectedTournament);
     boolean editable = isOwner && !selectedTournament.isActive();
@@ -465,7 +465,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tournamentBadgeCombo.setCellFactory(c -> new TournamentImageCell(client));
     tournamentBadgeCombo.setButtonCell(new TournamentImageCell(client));
     this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      tournament.setVisibility(newValue ? ManiaTournamentVisibility.privateTournament : ManiaTournamentVisibility.publicTournament);
+      tournament.setVisibility(newValue ? TournamentVisibility.privateTournament : TournamentVisibility.publicTournament);
       validate();
     });
 
@@ -532,7 +532,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
   }
 
-  public ManiaTournamentRepresentation getTournament() {
+  public Tournament getTournament() {
     return tournament;
   }
 
