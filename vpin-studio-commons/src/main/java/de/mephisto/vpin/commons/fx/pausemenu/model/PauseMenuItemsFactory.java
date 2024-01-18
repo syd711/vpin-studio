@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -61,8 +62,8 @@ public class PauseMenuItemsFactory {
       String baseType = mimeType.split("/")[0];
       if (baseType.equals("image")) {
         PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(pictureImage)));
-        InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
-        Image scoreImage = new Image(imageStream);
+        String url = PauseMenu.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
+        Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
         item.setDataImage(scoreImage);
         pauseMenuItems.add(item);
       }
