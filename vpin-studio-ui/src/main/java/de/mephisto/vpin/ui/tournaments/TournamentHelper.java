@@ -12,9 +12,10 @@ public class TournamentHelper {
       return true;
     }
 
-    if (selectedTournament.getCabinetId() != null && selectedTournament.getCabinetId().equals(client.getTournamentsService().getConfig().getCabinetId())) {
-      return true;
-    }
+    //TODO mania
+//    if (selectedTournament.getCabinetId() > 0 && selectedTournament.getCabinetId()  client.getTournamentsService().getConfig().getSystemId())) {
+//      return true;
+//    }
 
     return false;
   }

@@ -1,14 +1,12 @@
 package de.mephisto.vpin.server.tournaments;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.File;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -33,9 +29,9 @@ public class TournamentsService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
-  public ManiaServiceConfig getConfig() {
-    ManiaServiceConfig config = new ManiaServiceConfig();
-    config.setCabinetId(SystemUtil.getBoardSerialNumber());
+  public TournamentConfig getConfig() {
+    TournamentConfig config = new TournamentConfig();
+    config.setSystemId(SystemUtil.getBoardSerialNumber());
     config.setUrl(maniaHost);
     return config;
   }

@@ -43,7 +43,6 @@ public class PlayerRepresentation {
   @NonNull
   public Account toManiaAccount() {
     Account account = new Account();
-    account.setCabinetId(SystemUtil.getBoardSerialNumber());
     account.setInitials(this.getInitials());
     account.setDisplayName(this.getName());
     account.setUuid(this.getTournamentUserUuid());

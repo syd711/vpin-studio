@@ -1,15 +1,14 @@
 package de.mephisto.vpin.restclient.tournaments;
 
-import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*********************************************************************************************************************
- * Tournamens
+ * Tournaments
  ********************************************************************************************************************/
 public class TournamentsServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsServiceClient.class);
@@ -20,8 +19,8 @@ public class TournamentsServiceClient extends VPinStudioClientService {
     this.preferencesServiceClient = preferencesServiceClient;
   }
 
-  public ManiaServiceConfig getConfig() {
-    return getRestClient().get(API + "tournaments/config", ManiaServiceConfig.class);
+  public TournamentConfig getConfig() {
+    return getRestClient().get(API + "tournaments/config", TournamentConfig.class);
   }
 
   public TournamentSettings getSettings() {
