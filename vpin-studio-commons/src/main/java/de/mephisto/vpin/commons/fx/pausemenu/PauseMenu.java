@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -39,7 +40,6 @@ public class PauseMenu extends Application {
 
   private static Stage stage;
   private static boolean visible = false;
-  private static boolean firstShow = true;
 
   private static Robot robot;
 
@@ -135,23 +135,14 @@ public class PauseMenu extends Application {
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
       StateMananger.getInstance().setGame(game, status, screen);
-      if (firstShow) {
-        firstShow = false;
-        new Thread(() -> {
-          toFront();
-          toFront();
-          toFront();
-//          toFront();
-//          toFront();
-        }).start();
-        forceShow();
-      }
-      else {
-        Platform.runLater(() -> {
-          stage.toFront();
-        });
-        forceShow();
-      }
+      stage.getScene().setCursor(Cursor.NONE);
+      new Thread(() -> {
+        toFront();
+        toFront();
+        toFront();
+        toFront();
+      }).start();
+      forceShow();
     }
     else {
       exit();
@@ -161,11 +152,14 @@ public class PauseMenu extends Application {
   private static void toFront() {
     try {
       Thread.sleep(2500);
+      stage.getScene().setCursor(null);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
     Platform.runLater(() -> {
-      stage.toFront();
+      if(visible) {
+        stage.toFront();
+      }
     });
   }
 

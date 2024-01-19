@@ -28,8 +28,10 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.URL;
@@ -236,10 +238,32 @@ public class MenuController implements Initializable {
     }
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);
+
+      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
       WebEngine engine = webView.getEngine();
-//      engine.loadContent("<iframe width=\"100%\" height=\"100%\" src=\"" + activeSelection.getYouTubeUrl() + "?autoplay=1\" title=\"YouTube video player\" frameborder=\"0\" scrolling=\"no\" allow=\"autoplay; clipboard-write; encrypted-media; gyroscope\" allowfullscreen></iframe>");
+
+//      try {
+//        byte[] byteArray = IOUtils.toByteArray(PauseMenu.class.getResourceAsStream("video.html"));
+//        String html = new String(byteArray);
+//        engine.loadContent(html);
+//
+//        Document document = engine.getDocument();
+//        org.w3c.dom.Node iframe = document.getElementsByTagName("iframe").item(0);
+//        System.out.println(iframe.getOwnerDocument());
+//      } catch (IOException e) {
+//        throw new RuntimeException(e);
+//      }
       engine.load(activeSelection.getYouTubeUrl());
     }
+  }
+
+  public void reset() {
+    this.screenImageView.setImage(null);
+    this.mediaView.setMediaPlayer(null);
+    this.mediaView.setVisible(false);
+    this.webView.setVisible(false);
+    this.webView.getEngine().load(null);
+    LOG.info("Reset pause menu media items.");
   }
 
   public PauseMenuItem getSelection() {
