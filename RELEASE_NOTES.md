@@ -11,6 +11,7 @@
 
 - Fixed virtual-pinball-spreadsheet change listener: Changes have been pre-filtered by the *updateDate* inside the VPS data, but this field is not necessarily updated when data has changed. So this check has been removed.
 - Fixed window size: The size of the launcher was used for the actual Studio window size too, when the "Disconnect" action has been used.
-- Blind fix for file uploads: Added a blind fix for issues when using the upload table dialog. It's related to the latest feature of saving the last folder location, but I couldn't reproduce it yet. 
+- Blind fix for file uploads: Added a blind fix for issues when using the upload table dialog. It's related to the latest feature of saving the last folder location, but I couldn't reproduce it yet.
+- Fixed overlay focus issue: Added a lazy "to-front" call for the overlay window which should fix the problem of the window hidden behinde the Popper table selector.
 
 
