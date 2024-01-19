@@ -3,10 +3,11 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.ManiaServiceConfig;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
+import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
@@ -208,8 +209,8 @@ public class Studio extends Application {
   private static void createManiaClient() {
     try {
       if (Features.TOURNAMENTS_ENABLED) {
-        ManiaServiceConfig config = Studio.client.getTournamentsService().getConfig();
-        Studio.maniaClient = new VPinManiaClient(config.getUrl(), config.getCabinetId());
+        TournamentConfig config = Studio.client.getTournamentsService().getConfig();
+        Studio.maniaClient = new VPinManiaClient(config.getUrl(), SystemUtil.getBoardSerialNumber());
       }
     } catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());
