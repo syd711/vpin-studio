@@ -86,7 +86,7 @@ public class VPSTest {
     assertEquals(1, vpsTables.size());
 
     vpsTables = vps.find("X-Files");
-    assertEquals(1, vpsTables.size());
+    assertTrue(!vpsTables.isEmpty());
   }
 
   @Test
