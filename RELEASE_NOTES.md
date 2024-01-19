@@ -11,6 +11,7 @@
 
 ### Bugfixes
 
-- Fixed virtual-pinball-spreadsheet change listener: Changes have been pre-filtered by the *updateDate* inside the VPS data, but this field is not necessarily updated when data has changed. So this check has been removed. 
+- Fixed virtual-pinball-spreadsheet change listener: Changes have been pre-filtered by the *updateDate* inside the VPS data, but this field is not necessarily updated when data has changed. So this check has been removed.
+- Fixed window size: The size of the launcher was used for the actual Studio window size too, when the "Disconnect" action has been used.
 
 
