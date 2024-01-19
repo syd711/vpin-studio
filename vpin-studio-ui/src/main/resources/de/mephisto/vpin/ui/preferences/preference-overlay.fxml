@@ -19,7 +19,7 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Overlay &amp; Pause Menu">
+            <Label styleClass="preference-subtitle" text="Overlay">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -129,7 +129,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label text="You can use this feld to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+                  <Label text="You can use this field to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
                   <WebView fx:id="preview" prefHeight="380.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Label layoutX="10.0" layoutY="147.0" prefHeight="20.0" styleClass="preference-label" text="External Page Preview:" textFill="WHITE" GridPane.rowIndex="6" GridPane.valignment="TOP">
                      <font>
@@ -142,77 +142,6 @@
                </opaqueInsets>
                <VBox.margin>
                   <Insets />
-               </VBox.margin>
-            </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Pause Menu Preferences">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <VBox styleClass="info-container">
-               <children>
-                  <Label styleClass="default-text" text="Attention: If you are using the GL version of Visual Pinball, the pause menu will open with some stuttering.">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="17.0" layoutY="17.0" styleClass="default-text" text="Be patient, it will appear." />
-                  <Label layoutX="17.0" layoutY="57.0" text="Make sure to have the pause key of VPX bound to &quot;P&quot;." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-               </padding>
-            </VBox>
-            <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="579.1999755859375" minWidth="350.0" prefWidth="557.6" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.199951171875" minWidth="1.6000244140625455" prefWidth="23.200000000000045" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <CheckBox fx:id="pauseMenuCheckbox" mnemonicParsing="false" text="Show pause menu instead of overlay" textFill="WHITE" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label styleClass="preference-label" text="Pause Menu Key:" textFill="WHITE" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="pauseMenuKeyCombo" prefHeight="30.0" prefWidth="158.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <Label styleClass="checkbox-description" text="When the overlay key is pressed for a paused game," textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="checkbox-description" text="the pause menu will be shown. This saves one key binding." textFill="WHITE" />
-                     </children>
-                     <padding>
-                        <Insets bottom="12.0" />
-                     </padding>
-                  </VBox>
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <VBox.margin>
-                  <Insets top="6.0" />
                </VBox.margin>
             </GridPane>
          </children>
