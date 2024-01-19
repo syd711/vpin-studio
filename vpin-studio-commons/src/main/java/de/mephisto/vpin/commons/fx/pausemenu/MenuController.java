@@ -238,8 +238,6 @@ public class MenuController implements Initializable {
     }
     else if (activeSelection.getYouTubeUrl() != null) {
       webView.setVisible(true);
-
-      System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
       WebEngine engine = webView.getEngine();
 
 //      try {
