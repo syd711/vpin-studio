@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 
 public class MenuItemSelectionState extends MenuState {
   private final MenuController menuController;
@@ -30,6 +31,9 @@ public class MenuItemSelectionState extends MenuState {
     PauseMenuItem item = menuController.getSelection();
     if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
       PauseMenu.exit();
+    }
+    else if (item.getYouTubeUrl() != null) {
+      menuController.showYouTubeVideo(item);
     }
     return this;
   }

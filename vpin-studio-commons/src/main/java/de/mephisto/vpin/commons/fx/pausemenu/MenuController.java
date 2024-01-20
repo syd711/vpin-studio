@@ -4,8 +4,10 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.utils.FXUtil;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
@@ -28,14 +30,13 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -80,6 +81,7 @@ public class MenuController implements Initializable {
   private int selectionIndex = 0;
 
   private PopperScreen cardScreen;
+  private PinUPPlayerDisplay screenDisplay;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
 
@@ -103,9 +105,10 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen) {
+  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay) {
     this.game = game;
     this.cardScreen = cardScreen;
+    this.screenDisplay = screenDisplay;
     this.customViewController.setGame(game, gameStatus);
     enterMenuItemSelection();
   }
@@ -139,7 +142,13 @@ public class MenuController implements Initializable {
   }
 
   public void scrollGameBarRight() {
+    resetBrowser();
     scroll(false);
+  }
+
+  public void scrollGameBarLeft() {
+    resetBrowser();
+    scroll(true);
   }
 
   public boolean isAtEnd() {
@@ -148,10 +157,6 @@ public class MenuController implements Initializable {
 
   public boolean isAtStart() {
     return selectionIndex == 0;
-  }
-
-  public void scrollGameBarLeft() {
-    scroll(true);
   }
 
   private void scroll(boolean left) {
@@ -222,10 +227,6 @@ public class MenuController implements Initializable {
     if (activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
       customView.setVisible(true);
     }
-    else if (activeSelection.getDataImage() != null) {
-      screenImageView.setVisible(true);
-      screenImageView.setImage(activeSelection.getDataImage());
-    }
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);
 
@@ -237,9 +238,8 @@ public class MenuController implements Initializable {
       mediaView.setMediaPlayer(mediaPlayer);
     }
     else if (activeSelection.getYouTubeUrl() != null) {
-      webView.setVisible(true);
-      WebEngine engine = webView.getEngine();
-
+//      webView.setVisible(true);
+//      WebEngine engine = webView.getEngine();
 //      try {
 //        byte[] byteArray = IOUtils.toByteArray(PauseMenu.class.getResourceAsStream("video.html"));
 //        String html = new String(byteArray);
@@ -251,11 +251,19 @@ public class MenuController implements Initializable {
 //      } catch (IOException e) {
 //        throw new RuntimeException(e);
 //      }
-      engine.load(activeSelection.getYouTubeUrl());
+//      engine.load(activeSelection.getYouTubeUrl());
+      screenImageView.setVisible(true);
+      screenImageView.setImage(activeSelection.getDataImage());
+      LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
+    }
+    else if (activeSelection.getDataImage() != null) {
+      screenImageView.setVisible(true);
+      screenImageView.setImage(activeSelection.getDataImage());
     }
   }
 
   public void reset() {
+    this.resetBrowser();
     this.screenImageView.setImage(null);
     this.mediaView.setMediaPlayer(null);
     this.mediaView.setVisible(false);
@@ -345,5 +353,29 @@ public class MenuController implements Initializable {
     borderPane.setCache(true);
     borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
     return borderPane;
+  }
+
+  public void showYouTubeVideo(PauseMenuItem item) {
+    try {
+      int x = screenDisplay.getX();
+      int y = screenDisplay.getY();
+      int width = screenDisplay.getWidth();
+      int height = screenDisplay.getHeight();
+      List<String> cmds = Arrays.asList("\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
+        "--app=\"data:text/html,<html><body><script>window.moveTo(" + x + "," + y + ");window.resizeTo(" + width + "," + height + ");window.location='" + item.getYouTubeUrl() + "';</script></body></html>\"");
+      SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
+      executor.executeCommandAsync();
+    } catch (Exception e) {
+      LOG.error("Failed to show YT video: " + e.getMessage(), e);
+    }
+  }
+
+  public void resetBrowser() {
+    try {
+      SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/F", "/IM", "chrome.exe", "/T"), false);
+      exit.executeCommand();
+    } catch (Exception e) {
+      LOG.error("Failed to exit browser: " + e.getMessage());
+    }
   }
 }

@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.TableManagerSettings;
+import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
@@ -92,6 +92,12 @@ public class PopperServiceResource {
   @GetMapping("/tabledetails/{gameId}")
   public TableDetails getTableDetails(@PathVariable("gameId") int gameId) {
     return popperService.getTableDetails(gameId);
+  }
+
+  @GetMapping("/screen/{name}")
+  public PinUPPlayerDisplay getScreen(@PathVariable("name") String name) {
+    PopperScreen screen = PopperScreen.valueOf(name);
+    return popperService.getPupPlayerDisplay(screen);
   }
 
   @PutMapping("/tabledetails/autofill/{gameId}/{mode}")

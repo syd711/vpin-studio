@@ -35,6 +35,9 @@ public enum PopperScreen {
     if (GameHelp.name().equalsIgnoreCase(name)) {
       return GameHelp;
     }
+    if (BackGlass.name().equalsIgnoreCase(name)) {
+      return BackGlass;
+    }
     return null;
   }
 

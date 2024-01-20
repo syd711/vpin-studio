@@ -58,6 +58,10 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     return gameEmulators.get(0);
   }
 
+  public PinUPPlayerDisplay getScreenDisplay(PopperScreen screen) {
+    return getRestClient().get(API + "popper/screen/" + screen.name(), PinUPPlayerDisplay.class);
+  }
+
   public List<GameEmulatorRepresentation> getGameEmulators() {
     return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
   }

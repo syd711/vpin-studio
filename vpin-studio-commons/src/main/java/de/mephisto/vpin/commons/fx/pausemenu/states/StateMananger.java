@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
@@ -133,9 +134,9 @@ public class StateMananger implements NativeKeyListener {
     BACK = pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT);
   }
 
-  public void setGame(GameRepresentation game, GameStatus status, PopperScreen screen) {
+  public void setGame(GameRepresentation game, GameStatus status, PopperScreen screen, PinUPPlayerDisplay screenDisplay) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-    menuController.setGame(game, status, screen);
+    menuController.setGame(game, status, screen, screenDisplay);
     running = true;
   }
 

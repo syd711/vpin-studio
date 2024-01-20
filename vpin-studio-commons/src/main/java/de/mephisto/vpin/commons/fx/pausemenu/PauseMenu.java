@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -168,9 +169,11 @@ public class PauseMenu extends Application {
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
 
+      PinUPPlayerDisplay screenDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
+
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
-      StateMananger.getInstance().setGame(game, status, screen);
+      StateMananger.getInstance().setGame(game, status, screen, screenDisplay);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
         toFront();

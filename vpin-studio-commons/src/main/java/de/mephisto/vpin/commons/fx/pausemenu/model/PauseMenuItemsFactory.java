@@ -44,6 +44,9 @@ public class PauseMenuItemsFactory {
             if(!StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
               item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
               item.setYouTubeUrl("https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1");
+              String url = "https://img.youtube.com/vi/" + tutorialFile.getYoutubeId() + "/0.jpg";
+              Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
+              item.setDataImage(scoreImage);
               pauseMenuItems.add(item);
             }
           }
