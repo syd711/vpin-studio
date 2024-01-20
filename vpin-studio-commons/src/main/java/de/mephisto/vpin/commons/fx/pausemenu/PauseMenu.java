@@ -14,8 +14,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -67,7 +65,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
-//    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
 
@@ -88,21 +86,29 @@ public class PauseMenu extends Application {
           root.setTranslateY(0);
           root.setTranslateX(0);
           root.setRotate(-90);
-          stage.setY(0);
+          stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
           stage.setX(screenBounds.getWidth() / 2 / 2);
-          scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+          double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+          if (max > 2560) {
+            stage.setX(stage.getX() + 600);
+            root.setTranslateX(400);
+          }
+          else if (max > 2000) {
+            root.setTranslateX(400);
+          }
+          scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
         }
         else {
           LOG.info("Window Mode: Portrait");
           root.setTranslateY(0);
-          root.setTranslateX((screenBounds.getWidth()-root.getPrefWidth()) / 2);
-          stage.setX(0);
+          root.setTranslateX(0);
+          stage.setX((screenBounds.getWidth() - root.getPrefWidth()) / 2);
           stage.setY(screenBounds.getHeight() / 2 / 2);
-          System.out.println(screenBounds.getWidth() + "/" + screenBounds.getHeight());
-          System.out.println(root.getPrefWidth() + "/" + root.getPrefHeight());
-          System.out.println((screenBounds.getWidth()-root.getPrefWidth()) / 2);
-          scalePauseMenuStage(root, screenBounds);
-          scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+          double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+          if (max > 2560) {
+            root.setTranslateY(400);
+          }
+          scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
         }
       }
       else {
@@ -111,6 +117,7 @@ public class PauseMenu extends Application {
         stage.setY((screenBounds.getHeight() / 2) - (height / 2));
       }
 
+      scalePauseMenuStage(root, screenBounds);
       scene.setFill(Color.TRANSPARENT);
       stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
       stage.setScene(scene);
@@ -133,11 +140,11 @@ public class PauseMenu extends Application {
   private static void scalePauseMenuStage(BorderPane root, Rectangle2D screenBounds) {
     double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
     double scaling = 1;
-    if(max > 2560) {
+    if (max > 2560) {
       scaling = 1.4;
     }
-    else if(max < 2000) {
-      scaling = 0.8;
+    else if (max < 2000) {
+      scaling = 0.7;
     }
     root.setScaleX(scaling);
     root.setScaleY(scaling);
@@ -186,7 +193,7 @@ public class PauseMenu extends Application {
       throw new RuntimeException(e);
     }
     Platform.runLater(() -> {
-      if(visible) {
+      if (visible) {
         stage.toFront();
       }
     });

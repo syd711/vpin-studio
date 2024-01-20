@@ -141,7 +141,9 @@ public class StateMananger implements NativeKeyListener {
 
   public void exit() {
     running = false;
-    menuController.reset();
+    Platform.runLater(()-> {
+      menuController.reset();
+    });
     GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
   }
 }
