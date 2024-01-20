@@ -176,37 +176,16 @@ public class PauseMenu extends Application {
       StateMananger.getInstance().setGame(game, status, screen, screenDisplay);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
-        toFront();
-        toFront();
-        toFront();
-        toFront();
+        OverlayWindowFX.toFront(stage, visible);
+        OverlayWindowFX.toFront(stage, visible);
+        OverlayWindowFX.toFront(stage, visible);
+        OverlayWindowFX.toFront(stage, visible);
       }).start();
-      forceShow();
+      OverlayWindowFX.forceShow(stage);
     }
     else {
       exit();
     }
-  }
-
-  private static void toFront() {
-    try {
-      Thread.sleep(2500);
-      stage.getScene().setCursor(null);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    Platform.runLater(() -> {
-      if (visible) {
-        stage.toFront();
-      }
-    });
-  }
-
-  private static void forceShow() {
-    Platform.runLater(() -> {
-      stage.toFront();
-    });
-    stage.show();
   }
 
   public static void exit() {

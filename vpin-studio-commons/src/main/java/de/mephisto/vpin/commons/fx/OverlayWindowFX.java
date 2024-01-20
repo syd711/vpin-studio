@@ -53,6 +53,8 @@ public class OverlayWindowFX extends Application {
   private Stage maintenanceStage;
   private Stage highscoreCardStage;
 
+  private boolean overlayVisible = false;
+
   private HighscoreCardController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
@@ -72,8 +74,9 @@ public class OverlayWindowFX extends Application {
     }
   }
 
-  public void showOverlay(boolean b) {
-    if (b) {
+  public void showOverlay(boolean visible) {
+    overlayVisible = visible;
+    if (visible) {
       try {
         PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
         String value = preference.getValue();
@@ -89,23 +92,41 @@ public class OverlayWindowFX extends Application {
       } catch (IOException e) {
         LOG.error("Failed to init dashboard: " + e.getMessage(), e);
       }
-      overlayStage.show();
-      overlayStage.toFront();
       new Thread(() -> {
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        Platform.runLater(() -> {
-          overlayStage.toFront();
-        });
+        OverlayWindowFX.toFront(overlayStage, overlayVisible);
+        OverlayWindowFX.toFront(overlayStage, overlayVisible);
+        OverlayWindowFX.toFront(overlayStage, overlayVisible);
+        OverlayWindowFX.toFront(overlayStage, overlayVisible);
       }).start();
+      OverlayWindowFX.forceShow(overlayStage);
+
       overlayController.refreshData();
     }
     else {
       overlayStage.hide();
     }
+  }
+
+
+  public static void forceShow(Stage stage) {
+    Platform.runLater(() -> {
+      stage.toFront();
+    });
+    stage.show();
+  }
+
+  public static void toFront(Stage stage, boolean visible) {
+    try {
+      Thread.sleep(2500);
+      stage.getScene().setCursor(null);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    Platform.runLater(() -> {
+      if (visible) {
+        stage.toFront();
+      }
+    });
   }
 
   private static String resolveDashboard(String value) {
