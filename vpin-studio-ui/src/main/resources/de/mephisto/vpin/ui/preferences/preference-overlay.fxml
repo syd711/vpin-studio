@@ -129,7 +129,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label text="You can use this feld to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+                  <Label text="You can use this field to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
                   <WebView fx:id="preview" prefHeight="380.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Label layoutX="10.0" layoutY="147.0" prefHeight="20.0" styleClass="preference-label" text="External Page Preview:" textFill="WHITE" GridPane.rowIndex="6" GridPane.valignment="TOP">
                      <font>

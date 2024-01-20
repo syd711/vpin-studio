@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.players;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 
