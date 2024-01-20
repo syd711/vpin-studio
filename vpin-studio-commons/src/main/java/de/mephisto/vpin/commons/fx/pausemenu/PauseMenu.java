@@ -14,9 +14,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -65,7 +67,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
-    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+//    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
 
@@ -77,16 +79,31 @@ public class PauseMenu extends Application {
 
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
-      Parent root = loader.load();
+      BorderPane root = loader.load();
 
       int height = 1400;
       if (PRODUCTION_USE) {
-        root.setRotate(-90);
-        root.setTranslateY(0);
-        root.setTranslateX(0);
-        scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
-        stage.setY(0);
-        stage.setX(screenBounds.getWidth() / 2 / 2);
+        if (screenBounds.getWidth() > screenBounds.getHeight()) {
+          LOG.info("Window Mode: Landscape");
+          root.setTranslateY(0);
+          root.setTranslateX(0);
+          root.setRotate(-90);
+          stage.setY(0);
+          stage.setX(screenBounds.getWidth() / 2 / 2);
+          scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+        }
+        else {
+          LOG.info("Window Mode: Portrait");
+          root.setTranslateY(0);
+          root.setTranslateX((screenBounds.getWidth()-root.getPrefWidth()) / 2);
+          stage.setX(0);
+          stage.setY(screenBounds.getHeight() / 2 / 2);
+          System.out.println(screenBounds.getWidth() + "/" + screenBounds.getHeight());
+          System.out.println(root.getPrefWidth() + "/" + root.getPrefHeight());
+          System.out.println((screenBounds.getWidth()-root.getPrefWidth()) / 2);
+          scalePauseMenuStage(root, screenBounds);
+          scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+        }
       }
       else {
         scene = new Scene(root, screenBounds.getWidth(), height);
@@ -97,7 +114,6 @@ public class PauseMenu extends Application {
       scene.setFill(Color.TRANSPARENT);
       stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
       stage.setScene(scene);
-      stage.initStyle(StageStyle.TRANSPARENT);
 
       StateMananger.getInstance().init(loader.getController());
 
@@ -114,15 +130,28 @@ public class PauseMenu extends Application {
     }
   }
 
+  private static void scalePauseMenuStage(BorderPane root, Rectangle2D screenBounds) {
+    double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+    double scaling = 1;
+    if(max > 2560) {
+      scaling = 1.4;
+    }
+    else if(max < 2000) {
+      scaling = 0.8;
+    }
+    root.setScaleX(scaling);
+    root.setScaleY(scaling);
+  }
+
   public static void togglePauseMenu() {
     if (!visible) {
-      togglePauseKey(0);
-
       GameStatus status = client.getGameStatusService().getStatus();
       if (!status.isActive()) {
         LOG.info("Skipped showing start menu: no game status found.");
         return;
       }
+
+      togglePauseKey(0);
 
       //re-assign key, because they might have been changed
       PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();

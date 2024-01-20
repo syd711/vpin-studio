@@ -13,7 +13,7 @@
 <?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="2200.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
+<BorderPane fx:id="rootBorderPane" maxHeight="2000.0" maxWidth="2200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="2200.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
    <center>
       <StackPane styleClass="root" BorderPane.alignment="CENTER">
          <children>
