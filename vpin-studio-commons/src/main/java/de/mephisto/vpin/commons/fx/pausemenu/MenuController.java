@@ -233,7 +233,7 @@ public class MenuController implements Initializable {
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(true);
       mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(true);
+      mediaPlayer.setMute(false);
       mediaView.setMediaPlayer(mediaPlayer);
     }
     else if (activeSelection.getYouTubeUrl() != null) {

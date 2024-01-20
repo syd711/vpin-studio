@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
+<style>
+    .ytp-chrome-bottom,
+    .ytp-chrome-top {
+        background-color: #333;
+        color: #fff;
+    }
+
+    .ytp-spinner {
+     display: none !important;
+    }
+</style>
+
 <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
 <div id="player"></div>
 
@@ -29,10 +41,7 @@
 
     // 4. The API will call this function when the video player is ready.
     function onPlayerReady(event) {
-      window.setTimeout( function() {
         event.target.playVideo();
-        document.getElementsByClassName('ytp-spinner')[0].style.visibility = 'hidden';
-      }, 2000);
     }
 
     // 5. The API calls this function when the player's state changes.

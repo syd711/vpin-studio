@@ -55,6 +55,7 @@ public class VPSTest {
   public void testTableLoading() {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
+    System.out.println(tables.size());
     assertFalse(tables.isEmpty());
     VpsTable tableById = vps.getTableById("43ma3WQK");
     assertNotNull(tables);
