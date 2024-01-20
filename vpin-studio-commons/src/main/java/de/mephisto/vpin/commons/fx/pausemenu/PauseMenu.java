@@ -39,7 +39,7 @@ public class PauseMenu extends Application {
 
   private static boolean PRODUCTION_USE = true;
 
-  private static Stage stage;
+  public static Stage stage;
   private static boolean visible = false;
 
   private static Robot robot;

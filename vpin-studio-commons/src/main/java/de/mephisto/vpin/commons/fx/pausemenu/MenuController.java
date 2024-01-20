@@ -33,6 +33,7 @@ import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -361,6 +362,12 @@ public class MenuController implements Initializable {
       int y = screenDisplay.getY();
       int width = screenDisplay.getWidth();
       int height = screenDisplay.getHeight();
+      File chromeExe = new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
+      if (!chromeExe.exists()) {
+        LOG.error("Chrome installation not found: " + chromeExe.getAbsolutePath());
+        return;
+      }
+
       List<String> cmds = Arrays.asList("\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
         "--app=\"data:text/html,<html><body><script>window.moveTo(" + x + "," + y + ");window.resizeTo(" + width + "," + height + ");window.location='" + item.getYouTubeUrl() + "';</script></body></html>\"");
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
