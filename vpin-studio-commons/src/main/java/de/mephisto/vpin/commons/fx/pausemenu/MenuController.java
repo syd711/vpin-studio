@@ -365,6 +365,7 @@ public class MenuController implements Initializable {
         "--app=\"data:text/html,<html><body><script>window.moveTo(" + x + "," + y + ");window.resizeTo(" + width + "," + height + ");window.location='" + item.getYouTubeUrl() + "';</script></body></html>\"");
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
       executor.executeCommandAsync();
+      LOG.info(String.join(" ", cmds));
     } catch (Exception e) {
       LOG.error("Failed to show YT video: " + e.getMessage(), e);
     }
@@ -372,7 +373,7 @@ public class MenuController implements Initializable {
 
   public void resetBrowser() {
     try {
-      SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/F", "/IM", "chrome.exe", "/T"), false);
+      SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", "chrome.exe"), false);
       exit.executeCommand();
     } catch (Exception e) {
       LOG.error("Failed to exit browser: " + e.getMessage());

@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 
 public class MenuItemSelectionState extends MenuState {
   private final MenuController menuController;

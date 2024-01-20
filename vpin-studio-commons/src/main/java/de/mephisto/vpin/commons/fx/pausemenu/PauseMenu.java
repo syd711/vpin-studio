@@ -212,7 +212,9 @@ public class PauseMenu extends Application {
   public static void exit() {
     StateMananger.getInstance().exit();
     if (!PRODUCTION_USE) {
-      System.exit(0);
+      Platform.runLater(() -> {
+        System.exit(0);
+      });
     }
     else {
       LOG.info("Exited pause menu");
