@@ -128,12 +128,17 @@ public class PreferencesService implements InitializingBean {
     }
   }
 
-  public <T> T getJsonPreference(String key, Class<T> jsonSettings) throws Exception {
-    Object preferenceValue = getPreferenceValue(key);
-    if(preferenceValue != null) {
-      return JsonSettings.fromJson(jsonSettings, (String)preferenceValue);
+  public <T> T getJsonPreference(String key, Class<T> jsonSettings) {
+    try {
+      Object preferenceValue = getPreferenceValue(key);
+      if(preferenceValue != null) {
+        return JsonSettings.fromJson(jsonSettings, (String)preferenceValue);
+      }
+      return jsonSettings.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
     }
-    return jsonSettings.getDeclaredConstructor().newInstance();
+    return null;
   }
 
   @Override

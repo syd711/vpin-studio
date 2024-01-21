@@ -43,6 +43,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox keepDisplayNamesCheckbox;
 
+  @FXML
+  private CheckBox launchPopperCheckbox;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Date startupTime = client.getSystemService().getStartupTime();
@@ -87,6 +90,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
     keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setVpxKeepDisplayNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    launchPopperCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
+    launchPopperCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setLaunchPopperOnExit(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }

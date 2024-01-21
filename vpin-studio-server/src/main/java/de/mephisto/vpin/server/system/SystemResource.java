@@ -2,8 +2,11 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,6 +39,9 @@ public class SystemResource {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @GetMapping("/startupTime")
   public Date startupTime() {
@@ -76,7 +82,10 @@ public class SystemResource {
       String url = request.getRequestURL().toString();
       boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
       if (remote) {
-        systemService.restartPopper();
+        ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+        if (serverSettings.isLaunchPopperOnExit()) {
+          systemService.restartPopper();
+        }
       }
     }
     return b;
