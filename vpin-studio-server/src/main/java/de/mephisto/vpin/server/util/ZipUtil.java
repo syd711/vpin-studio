@@ -89,7 +89,9 @@ public class ZipUtil {
         }
       }
       fileInputStream.close();
-      zis.closeEntry();
+      if(!written) {
+        zis.closeEntry();
+      }
       zis.close();
     } catch (Exception e) {
       LOG.error("Unzipping of " + targetFile.getAbsolutePath() + " failed: " + e.getMessage(), e);

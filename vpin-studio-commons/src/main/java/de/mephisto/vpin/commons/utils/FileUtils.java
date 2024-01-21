@@ -25,19 +25,22 @@ public class FileUtils {
     }
   }
 
-  public static boolean rename(File file, String name) {
+  public static boolean renameWithBaseName(File file, String name) {
     if (file.exists()) {
       String suffix = FilenameUtils.getExtension(file.getName());
       String updatedName = name + "." + suffix;
-      if (file.renameTo(new File(file.getParentFile(), updatedName))) {
-        LOG.info("Renamed " + file.getName() + " to " + updatedName);
+      File newFile = new File(file.getParentFile(), updatedName);
+      if (file.renameTo(newFile)) {
+        LOG.info("Renamed \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
+        return true;
       }
-      else {
-        LOG.warn("Renaming " + file.getName() + " to " + updatedName + " failed.");
-        return false;
-      }
+
+      LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed.");
+      return false;
     }
-    return true;
+
+    LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to new base name \"" + name + "\" failed, the file does not exist.");
+    return false;
   }
 
   public static boolean delete(@Nullable File file) {

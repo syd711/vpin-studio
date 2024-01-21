@@ -17,6 +17,14 @@ public class PupPackAnalyzer {
   private boolean canceled = false;
 
   public String analyze(File archiveFile, List<String> romNames, ProgressResultModel progressResultModel) {
+    if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
+      return analyzeZip(archiveFile, romNames, progressResultModel);
+    }
+
+    return null;
+  }
+
+  private String analyzeZip(File archiveFile, List<String> romNames, ProgressResultModel progressResultModel) {
     boolean foundFolderMatchingRom = false;
     boolean screensPupFound = false;
     try {
@@ -79,7 +87,7 @@ public class PupPackAnalyzer {
     }
 
     if (!foundFolderMatchingRom) {
-      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ",  romNames) + "\".");
+      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ", romNames) + "\".");
     }
 
     return null;

@@ -76,7 +76,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select PUP Pack");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("PUP Pack", "*.zip"));
+        new FileChooser.ExtensionFilter("PUP Pack", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
