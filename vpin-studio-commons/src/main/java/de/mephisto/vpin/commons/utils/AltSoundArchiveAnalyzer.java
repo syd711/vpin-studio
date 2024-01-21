@@ -13,10 +13,16 @@ public class AltSoundArchiveAnalyzer {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundArchiveAnalyzer.class);
 
   public static String analyze(@NonNull File file) {
+    if (file.getName().toLowerCase().endsWith(".zip")) {
+      return analyzeZip(file);
+    }
+    return null;
+  }
+
+  private static String analyzeZip(@NonNull File file) {
     int audioCount = 0;
     boolean altSoundFound = false;
     try {
-      byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();

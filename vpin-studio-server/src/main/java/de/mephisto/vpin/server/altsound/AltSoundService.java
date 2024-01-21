@@ -10,7 +10,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -97,7 +96,7 @@ public class AltSoundService implements InitializingBean {
     return false;
   }
 
-  public JobExecutionResult installAltSound(Game game, File out) {
+  public JobExecutionResult installAltSound(Game game, File archive) {
     File altSoundFolder = game.getAltSoundFolder();
     if (altSoundFolder != null) {
       LOG.info("Extracting archive to " + altSoundFolder.getAbsolutePath());
@@ -107,8 +106,8 @@ public class AltSoundService implements InitializingBean {
         }
       }
 
-      AltSoundUtil.unzip(out, altSoundFolder);
-      if (!out.delete()) {
+      AltSoundUtil.unpack(archive, altSoundFolder);
+      if (!archive.delete()) {
         return JobExecutionResultFactory.error("Failed to delete temporary file.");
       }
       setAltSoundEnabled(game, true);

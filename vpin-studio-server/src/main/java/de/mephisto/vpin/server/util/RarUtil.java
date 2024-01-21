@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.util;
 
-import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

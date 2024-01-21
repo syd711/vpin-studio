@@ -104,7 +104,8 @@ public class AltSoundResource {
         return JobExecutionResultFactory.error("No game found for alt sound upload.");
       }
 
-      File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
+      String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+      File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
       return altSoundService.installAltSound(game, out);
