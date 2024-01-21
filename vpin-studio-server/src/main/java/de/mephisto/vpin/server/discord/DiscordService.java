@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.connectors.discord.Permissions.*;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, VpsSheetChangedListener, ApplicationContextAware {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
   public static final int MAX_VPS_ENTRIES = 24;
 
@@ -748,86 +748,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return status;
   }
 
-
-  @Override
-  public void vpsSheetChanged(List<VpsTableDiff> diff) {
-    new Thread(() -> {
-      Thread.currentThread().setName("VPS Discord Notifier");
-      try {
-        if (!diff.isEmpty()) {
-          LOG.info("Discord bot is emitting VPS table diff for " + diff.size() + " changes.");
-
-          String serverId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
-          String vpsChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_VPS_CHANNEL_ID);
-          boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_VPS_TABLE_FILTER_ENABLED);
-
-          List<VpsTableDiff> filtered = new ArrayList<>(diff);
-          if (!StringUtils.isEmpty(vpsChannelId) && !StringUtils.isEmpty(serverId)) {
-            if (filterEnabled) {
-              filtered.clear();
-
-              GameService gameService = applicationContext.getBean(GameService.class);
-              List<Game> knownGames = gameService.getKnownGames();
-
-              for (VpsTableDiff tableDiff : diff) {
-                Optional<Game> first = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).findFirst();
-                if (first.isPresent()) {
-                  filtered.add(tableDiff);
-                }
-              }
-            }
-
-            if (filtered.size() > 10) {
-              int counter = 0;
-              Map<String, String> entries = new HashMap<>();
-              for (VpsTableDiff tableDiff : filtered) {
-                counter++;
-
-                List<VpsDiffTypes> differences = tableDiff.getDifferences();
-                if (differences.isEmpty()) {
-                  continue;
-                }
-
-                String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
-                entries.put(tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]", value);
-
-                if (entries.size() > MAX_VPS_ENTRIES) {
-                  discordClient.sendVpsUpdateSummary(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries, filterEnabled);
-                  counter = 0;
-                  entries.clear();
-                }
-              }
-
-              if (!entries.isEmpty()) {
-                discordClient.sendVpsUpdateSummary(Long.parseLong(serverId), Long.parseLong(vpsChannelId), "VPS Update Summary", entries, filterEnabled);
-              }
-            }
-            else {
-              for (VpsTableDiff tableDiff : filtered) {
-                List<VpsDiffTypes> differences = tableDiff.getDifferences();
-                if (differences.isEmpty()) {
-                  continue;
-                }
-                String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
-                Map<String, String> entries = new HashMap<>();
-
-                entries.put("Change Log:", value);
-                discordClient.sendVpsUpdateFull(Long.parseLong(serverId), Long.parseLong(vpsChannelId),
-                  "VPS Update for \"" + tableDiff.getDisplayName() + "\"",
-                  tableDiff.getLastModified(), tableDiff.getImgUrl(), tableDiff.getGameLink(), entries);
-              }
-            }
-          }
-          else {
-            LOG.info("VPS update emitting canceled, no target channel set.");
-          }
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to push Discord notifications for VPS updates: " + e.getMessage(), e);
-      }
-    }).start();
-  }
-
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
@@ -836,7 +756,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   @Override
   public void afterPropertiesSet() {
     try {
-      VPS.getInstance().addChangeListener(this);
       preferencesService.addChangeListener(this);
       this.recreateDiscordClient();
       this.clearCache();

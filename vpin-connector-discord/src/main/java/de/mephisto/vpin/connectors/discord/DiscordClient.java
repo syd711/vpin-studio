@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -15,11 +14,8 @@ import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -415,66 +411,6 @@ public class DiscordClient {
         }
         Message complete = textChannel.sendMessage(msg).addFiles(FileUpload.fromData(image, name)).setEmbeds(embed.build()).complete();
         this.messageCacheById.put(complete.getIdLong(), complete);
-        return complete.getIdLong();
-      }
-      else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
-      }
-    }
-    else {
-      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
-    }
-    return -1;
-  }
-
-  public void sendVpsUpdateFull(long serverId, long channelId, String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
-    Guild guild = getGuild(serverId);
-    if (guild != null) {
-      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
-      if (textChannel != null) {
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(title);
-        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
-        embed.setImage(imgUrl);
-        Set<Map.Entry<String, String>> entries = fields.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-          embed.addField(entry.getKey(), entry.getValue(), false);
-        }
-        embed.setColor(Color.GREEN);
-
-        textChannel.sendMessage("").addActionRow(
-          Button.link(gameLink, "Table")).setEmbeds(embed.build()).queue();
-      }
-      else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
-      }
-    }
-    else {
-      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
-    }
-  }
-
-  public long sendVpsUpdateSummary(long serverId, long channelId, String title, Map<String, String> values, boolean filtered) {
-    Guild guild = getGuild(serverId);
-    if (guild != null) {
-      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
-      if (textChannel != null) {
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(title);
-        if(filtered) {
-          embed.setDescription("**Your tables received updates:**");
-        }
-        else {
-          embed.setDescription("**The following tables have updates:**");
-        }
-
-        Set<Map.Entry<String, String>> entries = values.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-          embed.addField(entry.getKey(), entry.getValue(), false);
-        }
-        embed.setColor(Color.GREEN);
-
-        Message complete = textChannel.sendMessage("").setEmbeds(embed.build()).complete();
         return complete.getIdLong();
       }
       else {
