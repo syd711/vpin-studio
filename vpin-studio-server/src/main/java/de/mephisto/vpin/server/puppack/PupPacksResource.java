@@ -101,10 +101,10 @@ public class PupPacksResource {
         return JobExecutionResultFactory.error("No game found for PUP pack upload.");
       }
 
-      File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
-      LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
-      return pupPacksService.installPupPack(game, out);
+      File pupArchive = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
+      LOG.info("Uploading " + pupArchive.getAbsolutePath());
+      UploadUtil.upload(file, pupArchive);
+      return pupPacksService.installPupPack(game, pupArchive);
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "PUP pack upload failed: " + e.getMessage());
     }

@@ -136,7 +136,7 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public JobExecutionResult installPupPack(Game game, File out) {
+  public JobExecutionResult installPupPack(Game game, File pupArchive) {
     File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
       return JobExecutionResultFactory.error("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
@@ -149,11 +149,11 @@ public class PupPacksService implements InitializingBean {
       }
     }
 
-    PupPackInstallerJob job = new PupPackInstallerJob(this, out, pupVideosFolder, game);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, pupArchive, pupVideosFolder, game);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
     jobDescriptor.setTitle("Installing PUP pack for \"" + game.getGameDisplayName() + "\"");
-    jobDescriptor.setDescription("Unzipping " + out.getName());
+    jobDescriptor.setDescription("Unzipping " + pupArchive.getName());
     jobDescriptor.setJob(job);
     jobDescriptor.setStatus(job.getStatus());
 

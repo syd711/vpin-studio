@@ -12,21 +12,21 @@ import java.io.File;
 public class PupPackInstallerJob implements Job {
 
   private final PupPacksService pupPacksService;
-  private final File out;
+  private final File pupArchive;
   private final File pupVideosFolder;
   private final Game game;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File out, @NonNull File pupVideosFolder, @NonNull Game game) {
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupArchive, @NonNull File pupVideosFolder, @NonNull Game game) {
     this.pupPacksService = pupPacksService;
-    this.out = out;
+    this.pupArchive = pupArchive;
     this.pupVideosFolder = pupVideosFolder;
     this.game = game;
   }
 
   @Override
   public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unzip(out, pupVideosFolder, game.getRom(), game.getTableName());
-    if (!out.delete() && unzip.getError() == null) {
+    JobExecutionResult unzip = PupPackUtil.unzip(pupArchive, pupVideosFolder, game.getRom(), game.getTableName());
+    if (!pupArchive.delete() && unzip.getError() == null) {
       return JobExecutionResultFactory.error("Failed to delete temporary file.");
     }
 
