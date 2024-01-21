@@ -67,7 +67,7 @@ public class RarUtil {
             throw new IOException("Failed to create directory " + parent);
           }
 
-          if (entryName.endsWith(name)) {
+          if (entryName.toLowerCase().endsWith(name.toLowerCase())) {
             RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
             RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
             ExtractOperationResult result = item.extractSlow(fos);

@@ -8,7 +8,11 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,17 +86,36 @@ public class DirectB2SResource {
         LOG.error("No game found for upload.");
         return JobExecutionResultFactory.error("No game found for upload.");
       }
-      File out = game.getDirectB2SFile();
-      if (out.exists() && !out.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete " + out.getAbsolutePath());
+      File directB2SFile = game.getDirectB2SFile();
+      if (directB2SFile.exists() && !directB2SFile.delete()) {
+        return JobExecutionResultFactory.error("Failed to delete " + directB2SFile.getAbsolutePath());
       }
 
-      LOG.info("Uploading " + out.getAbsolutePath());
-      boolean upload = UploadUtil.upload(file, out);
+      String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+      if (StringUtils.isEmpty(suffix)) {
+        throw new UnsupportedOperationException("The uploaded file has no valid suffix \"" + suffix + "\"");
+      }
+
+      File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
+      LOG.info("Uploading " + tempFile.getAbsolutePath());
+
+      boolean upload = UploadUtil.upload(file, tempFile);
       if (!upload) {
         return JobExecutionResultFactory.error("Upload failed, check logs for details.");
       }
+
+      if (suffix.equalsIgnoreCase("directb2s")) {
+        FileUtils.copyFile(tempFile, directB2SFile);
+      }
+      else if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("zip")) {
+        PackageUtil.unpackTargetFile(tempFile, directB2SFile, ".directb2s");
+      }
+      else {
+        throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");
+      }
     } catch (Exception e) {
+      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     return JobExecutionResultFactory.empty();

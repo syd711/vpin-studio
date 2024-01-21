@@ -239,7 +239,7 @@ public class ZipUtil {
         }
         else {
           String name = zipEntry.getName();
-          if (name.endsWith(suffix)) {
+          if (name.toLowerCase().endsWith(suffix.toLowerCase())) {
             fileFound = name;
             while (fileFound.contains("/")) {
               fileFound = fileFound.substring(fileFound.indexOf("/") + 1);

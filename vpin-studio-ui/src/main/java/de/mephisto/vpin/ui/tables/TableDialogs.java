@@ -58,7 +58,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s"));
+      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {

@@ -23,6 +23,7 @@ The "Pause" menu can be configured in the preferences section "Overlay & Pause M
 
 ### Bugfixes
 
-- Fixed overlay focus issue for VPX GL: Added repetitive focusing so that the overlay will appear for Visual Pinball X GL version too. 
+- Fixed overlay focus issue for VPX GL: Added repetitive focusing so that the overlay will appear for Visual Pinball X GL version too.
+- Fixed VPX file renaming.
 
 
