@@ -12,13 +12,13 @@ import java.util.List;
 public class StudioFileChooser {
   private final static Logger LOG = LoggerFactory.getLogger(StudioFileChooser.class);
 
-  private final FileChooser fileChooser;
+  private FileChooser fileChooser;
 
   public StudioFileChooser() {
-    fileChooser = new FileChooser();
     try {
+      fileChooser = new FileChooser();
       File lastFolderSelection = LocalUISettings.getLastFolderSelection();
-      if (lastFolderSelection != null && !lastFolderSelection.isFile()) {
+      if (lastFolderSelection != null && lastFolderSelection.exists() && !lastFolderSelection.isFile()) {
         fileChooser.setInitialDirectory(lastFolderSelection);
       }
     } catch (Exception e) {
@@ -35,15 +35,17 @@ public class StudioFileChooser {
   }
 
   public File showOpenDialog(Stage stage) {
-    File file = fileChooser.showOpenDialog(stage);
     try {
+      File file = fileChooser.showOpenDialog(stage);
       if (file != null) {
         LocalUISettings.saveLastFolderLocation(file);
       }
+
+      return file;
     } catch (Exception e) {
       LOG.error("Error saving file location: " + e.getMessage(), e);
     }
-    return file;
+    return null;
   }
 
   public List<File> showOpenMultipleDialog(Stage stage) {

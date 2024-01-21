@@ -7,5 +7,6 @@
 ### Bugfixes
 
 - Removed obsolete "Service" preferences menu entry which has been resolved in the entry "Server Settings".
+- Fixed folder/file selection for non-existing folders.
 
 
