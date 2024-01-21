@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.BeforeAll;

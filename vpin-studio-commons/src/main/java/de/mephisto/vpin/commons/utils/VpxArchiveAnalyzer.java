@@ -14,8 +14,14 @@ public class VpxArchiveAnalyzer {
 
   public final static String VPX_SUFFIX = ".vpx";
 
-
   public static String analyze(@NonNull File file) {
+    if(file.getName().toLowerCase().endsWith(".zip")) {
+      return analyzeZip(file);
+    }
+    return null;
+  }
+
+  private static String analyzeZip(@NonNull File file) {
     boolean entryFound = false;
     try {
       byte[] buffer = new byte[1024];

@@ -2,9 +2,9 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -12,8 +12,8 @@ import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
-import de.mephisto.vpin.server.util.ZipUtil;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -198,13 +198,13 @@ public class GamesResource {
 
 
       File uploadFile = null;
-      if (suffix != null && suffix.equalsIgnoreCase("zip")) {
+      if (suffix != null && (suffix.equalsIgnoreCase("zip") || (suffix.equalsIgnoreCase("rar")))) {
         try {
           File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
           UploadUtil.upload(file, tempFile);
-          String fileNameToExtract = ZipUtil.contains(tempFile, ".vpx");
+          String fileNameToExtract = PackageUtil.contains(tempFile, ".vpx");
           if (fileNameToExtract == null) {
-            throw new IOException("No VPX file found in zip file");
+            throw new IOException("No VPX file found in archive file " + tempFile.getAbsolutePath());
           }
           File targetFile = new File(gameEmulator.getTablesFolder(), fileNameToExtract);
           if (keepExistingFilename) {
@@ -215,11 +215,11 @@ public class GamesResource {
             uploadFile = FileUtils.uniqueFile(targetFile);
             LOG.info("New target file is \"" + uploadFile.getAbsolutePath() + "\"");
           }
-          LOG.info("Unzipping archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
-          ZipUtil.unzipTargetFile(tempFile, uploadFile, fileNameToExtract);
+          LOG.info("Extracting archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
+          PackageUtil.unpackTargetFile(tempFile, uploadFile, fileNameToExtract);
         } catch (Exception e) {
-          LOG.error("Upload of zip vpx file failed: " + e.getMessage(), e);
-          throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of zipped VPX file failed: " + e.getMessage());
+          LOG.error("Upload of vpx archive file failed: " + e.getMessage(), e);
+          throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of packaged VPX file failed: " + e.getMessage());
         }
       }
       else {
