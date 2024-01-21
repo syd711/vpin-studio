@@ -14,16 +14,19 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableAssetSearch;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -100,6 +103,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @FXML
   private Button renameBtn;
+
+  @FXML
+  private Button downloadAssetBtn;
 
   @FXML
   private Button folderBtn;
@@ -213,6 +219,28 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     TableDialogs.directAssetUpload(stage, game, screen);
     refreshTableMediaView();
+  }
+
+  @FXML
+  private void onAssetDownload(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    GameMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      StudioFolderChooser chooser = new StudioFolderChooser();
+      chooser.setTitle("Select Download Folder");
+      File targetFolder = chooser.showOpenDialog(stage);
+      if (targetFolder != null && targetFolder.exists() && targetFolder.isDirectory()) {
+        File asset = new File(targetFolder, selectedItem.getName());
+        File uniqueTarget = FileUtils.uniqueFile(asset);
+
+        Platform.runLater(() -> {
+          DownloadJobDescriptor job = new DownloadJobDescriptor(selectedItem.getUri() + "/" + URLEncoder.encode(selectedItem.getName(), Charset.defaultCharset()), uniqueTarget);
+          job.setTitle("Download of \"" + uniqueTarget.getName() + "\"");
+          job.setDescription("Downloading targetFolder \"" + uniqueTarget.getName() + "\"");
+          JobPoller.getInstance().queueJob(job);
+        });
+      }
+    }
   }
 
   @FXML
@@ -440,6 +468,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
     this.deleteBtn.setDisable(true);
     this.renameBtn.setDisable(true);
+    this.downloadAssetBtn.setDisable(true);
     this.addToPlaylistBtn.setDisable(true);
     this.addToPlaylistBtn.setVisible(false);
 
@@ -509,6 +538,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
         deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
+        downloadAssetBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
           Label label = new Label("No media selected");

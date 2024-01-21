@@ -246,7 +246,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" />
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
                                                    </graphic>
                                                    <HBox.margin>
                                                       <Insets bottom="3.0" />
@@ -270,7 +270,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
@@ -279,7 +279,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" iconSize="18" />
                                              </graphic>
                                           </Button>
                                       </items>
@@ -351,12 +351,20 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="Update the ROM name for this table." />
@@ -371,7 +379,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -380,7 +388,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
@@ -388,7 +396,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
@@ -396,7 +404,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
                                              </graphic>
                                           </Button>
                                        </items>
@@ -435,7 +443,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
                                  </graphic>
                               </Button>
                            </children>
