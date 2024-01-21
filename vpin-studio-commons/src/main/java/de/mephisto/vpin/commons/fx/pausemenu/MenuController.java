@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
@@ -373,6 +374,8 @@ public class MenuController implements Initializable {
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
       executor.executeCommandAsync();
       LOG.info(String.join(" ", cmds));
+
+      OverlayWindowFX.toFront(PauseMenu.stage, true);
     } catch (Exception e) {
       LOG.error("Failed to show YT video: " + e.getMessage(), e);
     }

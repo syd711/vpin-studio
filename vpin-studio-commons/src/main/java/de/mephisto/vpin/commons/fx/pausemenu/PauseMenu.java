@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -198,6 +201,14 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Exited pause menu");
       stage.hide();
+
+      try {
+        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("sendKeys.bat", "Visual Pinball Player", ""));
+        executor.setDir(new File("./resources"));
+        executor.executeCommand();
+      } catch (Exception e) {
+        LOG.error("Failed to execute focus command: " + e.getMessage(), e);
+      }
     }
 
     if (visible) {
