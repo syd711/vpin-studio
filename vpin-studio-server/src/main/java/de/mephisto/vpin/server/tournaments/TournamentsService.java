@@ -47,12 +47,7 @@ public class TournamentsService implements InitializingBean {
   }
 
   public TournamentSettings getSettings() {
-    try {
-      return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
-    } catch (Exception e) {
-      LOG.error("Getting tournament settings failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Get of settings failed: " + e.getMessage());
-    }
+    return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
   }
 
   @Override

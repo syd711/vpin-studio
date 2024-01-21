@@ -6,6 +6,15 @@ public class ServerSettings extends JsonSettings {
   private boolean vpsAutoApplyToPopper;
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
+  private boolean launchPopperOnExit = true;
+
+  public boolean isLaunchPopperOnExit() {
+    return launchPopperOnExit;
+  }
+
+  public void setLaunchPopperOnExit(boolean launchPopperOnExit) {
+    this.launchPopperOnExit = launchPopperOnExit;
+  }
 
   public boolean isVpsAutoApplyToPopper() {
     return vpsAutoApplyToPopper;
