@@ -19,11 +19,12 @@ The "Pause" menu can be configured in the preferences section "Overlay & Pause M
 - Added "Download" button inside the asset manager dialog to download assets from your cabinet's Popper media folders to your local PC (might come in handy from time to time).
 - Added "Tutorials" to the virtual-pinball-spreadsheet change listener: While not visible in the Studio itself, this change type is now also emitted by the Discord bot if used.
 - Removed VPS update notifications from the user's Discord bot. Please follow the VPS-Bot channel instead.
-- Added RAR support for uploads of: ALTSound packages, VPX files and PUP Packs.
+- Added RAR support for uploads of: ALTSound packages, VPX files, DirectB2S files and PUP Packs.
+- Added Zip support for uploads of: DirectB2S files.
 
 ### Bugfixes
 
 - Fixed overlay focus issue for VPX GL: Added repetitive focusing so that the overlay will appear for Visual Pinball X GL version too.
-- Fixed VPX file renaming.
+- Fixed VPX file renaming. 
 
 
