@@ -4,10 +4,12 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.utils.FXUtil;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
@@ -81,7 +83,7 @@ public class MenuController implements Initializable {
 
   private PopperScreen cardScreen;
   private PinUPPlayerDisplay screenDisplay;
-  private UISettings uiSettings;
+  private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
 
@@ -105,11 +107,11 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, UISettings uiSettings) {
+  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.screenDisplay = screenDisplay;
-    this.uiSettings = uiSettings;
+    this.pauseMenuSettings = pauseMenuSettings;
     this.customViewController.setGame(game, gameStatus);
     enterMenuItemSelection();
   }
@@ -239,22 +241,16 @@ public class MenuController implements Initializable {
       mediaView.setMediaPlayer(mediaPlayer);
     }
     else if (activeSelection.getYouTubeUrl() != null) {
-//      webView.setVisible(true);
-//      WebEngine engine = webView.getEngine();
-//      try {
-//        byte[] byteArray = IOUtils.toByteArray(PauseMenu.class.getResourceAsStream("video.html"));
-//        String html = new String(byteArray);
-//        engine.loadContent(html);
-//
-//        Document document = engine.getDocument();
-//        org.w3c.dom.Node iframe = document.getElementsByTagName("iframe").item(0);
-//        System.out.println(iframe.getOwnerDocument());
-//      } catch (IOException e) {
-//        throw new RuntimeException(e);
-//      }
-//      engine.load(activeSelection.getYouTubeUrl());
-      screenImageView.setVisible(true);
-      screenImageView.setImage(activeSelection.getDataImage());
+      if (!pauseMenuSettings.isUseInternalBrowser()) {
+        screenImageView.setVisible(true);
+        screenImageView.setImage(activeSelection.getDataImage());
+      }
+      else {
+        webView.setVisible(true);
+        WebEngine engine = webView.getEngine();
+        engine.load(activeSelection.getYouTubeUrl());
+      }
+
       LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
     }
     else if (activeSelection.getDataImage() != null) {
@@ -357,10 +353,14 @@ public class MenuController implements Initializable {
   }
 
   public void showYouTubeVideo(PauseMenuItem item) {
-    ChromeLauncher.showYouTubeVideo(screenDisplay, item.getYouTubeUrl());
+    if (!pauseMenuSettings.isUseInternalBrowser()) {
+      ChromeLauncher.showYouTubeVideo(screenDisplay, item.getYouTubeUrl());
+    }
   }
 
   public void resetBrowser() {
-    ChromeLauncher.exitBrowser();
+    if (!pauseMenuSettings.isUseInternalBrowser()) {
+      ChromeLauncher.exitBrowser();
+    }
   }
 }

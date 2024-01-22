@@ -37,6 +37,9 @@ public class OverlayPreferencesController implements Initializable {
   private CheckBox pauseMenuCheckbox;
 
   @FXML
+  private CheckBox userInternalBrowserCheckbox;
+
+  @FXML
   private RadioButton radioA;
 
   @FXML
@@ -135,6 +138,12 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
       pauseMenuKeyCombo.setDisable(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    userInternalBrowserCheckbox.setSelected(pauseMenuSettings.isUseInternalBrowser());
+    userInternalBrowserCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setUseInternalBrowser(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 

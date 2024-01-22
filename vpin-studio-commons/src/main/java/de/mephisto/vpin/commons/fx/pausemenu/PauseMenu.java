@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -174,11 +174,11 @@ public class PauseMenu extends Application {
       PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
 
       PinUPPlayerDisplay screenDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
-      StateMananger.getInstance().setGame(game, status, screen, screenDisplay, uiSettings);
+      StateMananger.getInstance().setGame(game, status, screen, screenDisplay, pauseMenuSettings);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
         OverlayWindowFX.toFront(stage, visible);
