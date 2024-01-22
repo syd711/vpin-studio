@@ -1,15 +1,14 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -34,11 +33,9 @@ import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -84,6 +81,7 @@ public class MenuController implements Initializable {
 
   private PopperScreen cardScreen;
   private PinUPPlayerDisplay screenDisplay;
+  private UISettings uiSettings;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
 
@@ -107,10 +105,11 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay) {
+  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, UISettings uiSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.screenDisplay = screenDisplay;
+    this.uiSettings = uiSettings;
     this.customViewController.setGame(game, gameStatus);
     enterMenuItemSelection();
   }
@@ -358,35 +357,10 @@ public class MenuController implements Initializable {
   }
 
   public void showYouTubeVideo(PauseMenuItem item) {
-    try {
-      int x = screenDisplay.getX();
-      int y = screenDisplay.getY();
-      int width = screenDisplay.getWidth();
-      int height = screenDisplay.getHeight();
-      File chromeExe = new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
-      if (!chromeExe.exists()) {
-        LOG.error("Chrome installation not found: " + chromeExe.getAbsolutePath());
-        return;
-      }
-
-      List<String> cmds = Arrays.asList("\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
-        "--app=\"data:text/html,<html><body><script>window.moveTo(" + x + "," + y + ");window.resizeTo(" + width + "," + height + ");window.location='" + item.getYouTubeUrl() + "';</script></body></html>\"");
-      SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
-      executor.executeCommandAsync();
-      LOG.info(String.join(" ", cmds));
-
-      OverlayWindowFX.toFront(PauseMenu.stage, true);
-    } catch (Exception e) {
-      LOG.error("Failed to show YT video: " + e.getMessage(), e);
-    }
+    ChromeLauncher.showYouTubeVideo(screenDisplay, item.getYouTubeUrl());
   }
 
   public void resetBrowser() {
-    try {
-      SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", "chrome.exe"), false);
-      exit.executeCommand();
-    } catch (Exception e) {
-      LOG.error("Failed to exit browser: " + e.getMessage());
-    }
+    ChromeLauncher.exitBrowser();
   }
 }

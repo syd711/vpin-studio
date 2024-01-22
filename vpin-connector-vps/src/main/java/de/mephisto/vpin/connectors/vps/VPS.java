@@ -269,7 +269,7 @@ public class VPS {
         }
       }
       else {
-        LOG.info("VPS had no changing, skipped update listeners.");
+        LOG.info("VPS had no changes, skipped update listeners.");
       }
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());
