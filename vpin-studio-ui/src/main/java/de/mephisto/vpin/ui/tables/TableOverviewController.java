@@ -31,6 +31,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,7 +62,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -811,7 +811,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnDateAdded.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if(value.getDateAdded() != null) {
+      if (value.getDateAdded() != null) {
         return new SimpleObjectProperty(dateAddedDateFormat.format(value.getDateAdded()));
       }
       return new SimpleObjectProperty<>("-");
@@ -999,13 +999,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return row;
       });
 
-
-//    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X, EmulatorTypes.PINBALL_FX3, EmulatorTypes.FUTURE_PINBALL)));
-//    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList("", EmulatorTypes.VISUAL_PINBALL_X)));
-//    emulatorTypeCombo.setItems(FXCollections.observableList(Arrays.asList(EmulatorTypes.VISUAL_PINBALL_X)));
-//    emulatorTypeCombo.valueProperty().setValue(EmulatorTypes.VISUAL_PINBALL_X);
-//    emulatorTypeCombo.valueProperty().addListener((observable, oldValue, newValue) -> onReload());
-
+    tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+      @Override
+      public void handle(KeyEvent event) {
+        String text = event.getText();
+        for (GameRepresentation game : data) {
+          if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
+            tableView.getSelectionModel().clearSelection();
+            tableView.getSelectionModel().select(game);
+            tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
+            break;
+          }
+        }
+      }
+    });
   }
 
   private void filterGames(List<GameRepresentation> games) {

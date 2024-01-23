@@ -245,6 +245,11 @@ public class VPS {
       in.close();
       fileOutputStream.close();
 
+      long oldSize = 0;
+      if(getVpsDbFile().exists()) {
+        oldSize = getVpsDbFile().length();
+      }
+
       if (getVpsDbFile().exists() && !getVpsDbFile().delete()) {
         LOG.error("Failed to delete vpsdb.json");
       }
@@ -253,7 +258,7 @@ public class VPS {
         return diff;
       }
 
-      LOG.info("Written " + getVpsDbFile().getAbsolutePath());
+      LOG.info("Written " + getVpsDbFile().getAbsolutePath() + ", (" + oldSize + " vs " + getVpsDbFile().length() + " bytes)");
 
 
       VPS newInstance = loadInstance(null);

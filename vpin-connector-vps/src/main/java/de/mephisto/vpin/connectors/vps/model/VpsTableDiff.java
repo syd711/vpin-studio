@@ -10,7 +10,6 @@ import java.util.Optional;
 public class VpsTableDiff {
   private final VpsTable oldTable;
   private final VpsTable newTable;
-  private List<VpsDiffTypes> differences;
 
   public VpsTableDiff(VpsTable newTable, VpsTable oldTable) {
     this.oldTable = oldTable;
@@ -34,53 +33,57 @@ public class VpsTableDiff {
   }
 
   public List<VpsDiffTypes> getDifferences() {
-    if (differences == null) {
-      differences = new ArrayList<>();
+    List<VpsDiffTypes> differences = new ArrayList<>();
 
-      if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
-        differences.add(VpsDiffTypes.altSound);
-      }
+    if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
+      differences.add(VpsDiffTypes.altSound);
+    }
 
-      if (diffUrls(oldTable.getAltColorFiles(), newTable.getAltColorFiles())) {
-        differences.add(VpsDiffTypes.altColor);
-      }
+    if (diffUrls(oldTable.getAltColorFiles(), newTable.getAltColorFiles())) {
+      differences.add(VpsDiffTypes.altColor);
+    }
 
-      if (diffUrls(oldTable.getPovFiles(), newTable.getPovFiles())) {
-        differences.add(VpsDiffTypes.pov);
-      }
+    if (diffUrls(oldTable.getPovFiles(), newTable.getPovFiles())) {
+      differences.add(VpsDiffTypes.pov);
+    }
 
-      if (diffUrls(oldTable.getRomFiles(), newTable.getRomFiles())) {
-        differences.add(VpsDiffTypes.rom);
-      }
+    if (diffUrls(oldTable.getRomFiles(), newTable.getRomFiles())) {
+      differences.add(VpsDiffTypes.rom);
+    }
 
-      if (diffUrls(oldTable.getTopperFiles(), newTable.getTopperFiles())) {
-        differences.add(VpsDiffTypes.topper);
-      }
+    if (diffUrls(oldTable.getTopperFiles(), newTable.getTopperFiles())) {
+      differences.add(VpsDiffTypes.topper);
+    }
 
-      if (diffUrls(oldTable.getSoundFiles(), newTable.getSoundFiles())) {
-        differences.add(VpsDiffTypes.sound);
-      }
+    if (diffUrls(oldTable.getSoundFiles(), newTable.getSoundFiles())) {
+      differences.add(VpsDiffTypes.sound);
+    }
 
-      if (diffUrls(oldTable.getPupPackFiles(), newTable.getPupPackFiles())) {
-        differences.add(VpsDiffTypes.pupPack);
-      }
+    if (diffUrls(oldTable.getPupPackFiles(), newTable.getPupPackFiles())) {
+      differences.add(VpsDiffTypes.pupPack);
+    }
 
-      if (diffUrls(oldTable.getWheelArtFiles(), newTable.getWheelArtFiles())) {
-        differences.add(VpsDiffTypes.wheel);
-      }
+    if (diffUrls(oldTable.getWheelArtFiles(), newTable.getWheelArtFiles())) {
+      differences.add(VpsDiffTypes.wheel);
+    }
 
-      if (diffUrls(oldTable.getB2sFiles(), newTable.getB2sFiles())) {
-        differences.add(VpsDiffTypes.b2s);
-      }
+    if (diffUrls(oldTable.getB2sFiles(), newTable.getB2sFiles())) {
+      differences.add(VpsDiffTypes.b2s);
+    }
 
-      if (diffTutorials(oldTable.getTutorialFiles(), newTable.getTutorialFiles())) {
-        differences.add(VpsDiffTypes.tutorial);
-      }
+    if (diffTutorials(oldTable.getTutorialFiles(), newTable.getTutorialFiles())) {
+      differences.add(VpsDiffTypes.tutorial);
+    }
+
+    VpsDiffTypes diff = diffTables(oldTable.getTableFiles(), newTable.getTableFiles());
+    if (diff != null) {
+      differences.add(diff);
+    }
+
 
 //    if (!newTable.getFeatures().stream().filter(item -> !oldTable.getFeatures().contains(item)).collect(Collectors.toList()).isEmpty()) {
 //      differences.add(VpsDiffTypes.feature);
 //    }
-    }
 
     return differences;
   }

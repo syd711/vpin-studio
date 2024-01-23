@@ -52,6 +52,28 @@ public class VPSTest {
   }
 
   @Test
+  public void testDiff3() throws Exception {
+    VPS vpsNew = VPS.loadInstance(new FileInputStream(new File("C:\\Users\\matth\\AppData\\Roaming\\JetBrains\\IdeaIC2023.2\\scratches\\vpsdb.json")));
+    VPS vpsOld = VPS.loadInstance(new FileInputStream(new File("E:\\Development\\workspace\\vpin-studio\\resources/vpsdb.json")));
+
+    assertNotNull(vpsNew);
+    assertNotNull(vpsOld);
+    assertFalse(vpsNew.getTables().isEmpty());
+    assertFalse(vpsOld.getTables().isEmpty());
+
+    List<VpsTableDiff> diff = vpsNew.diff(vpsOld, Arrays.asList("IItQ56T8b1"));
+    System.out.println(diff.size());
+    assertFalse(diff.isEmpty());
+    for (VpsTableDiff diffEntry : diff) {
+      if (!diffEntry.getDifferences().contains(VpsDiffTypes.tutorial)) {
+        continue;
+      }
+
+      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+    }
+  }
+
+  @Test
   public void testTableLoading() {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
