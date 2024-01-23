@@ -4,13 +4,13 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -107,7 +107,7 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(GameRepresentation game, GameStatus gameStatus, PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.screenDisplay = screenDisplay;
@@ -127,8 +127,6 @@ public class MenuController implements Initializable {
     TransitionUtil.createInFader(menuItemsRow).play();
     TransitionUtil.createInFader(loadMask).play();
     footer.setTranslateY(310);
-    //    TransitionUtil.createTranslateByYTransition(footer, FOOTER_ANIMATION_DURATION, 310).play();
-
     setLoadLabel("Loading...");
 
     Platform.runLater(() -> {

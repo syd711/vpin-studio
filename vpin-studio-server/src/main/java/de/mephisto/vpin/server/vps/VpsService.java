@@ -203,10 +203,10 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       try {
         List<Game> collect = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
         for (Game game : collect) {
-          LOG.info("Updating update list for \"" + game.getGameDisplayName() + "\"");
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
             String value = tableDiff.getDifferences().stream().map(Enum::name).collect(Collectors.joining(","));
+            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + value + ")");
             gameDetails.setUpdates(value);
             gameDetailsRepository.saveAndFlush(gameDetails);
           }

@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,7 +172,10 @@ public class PauseMenu extends Application {
 
       //reload card settings to resolve actual target screen
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      PopperScreen screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+      PopperScreen screen = null;
+      if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+        screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+      }
 
       PinUPPlayerDisplay screenDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
       PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);

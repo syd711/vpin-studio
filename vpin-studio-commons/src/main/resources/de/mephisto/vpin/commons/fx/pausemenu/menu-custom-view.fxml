@@ -57,7 +57,7 @@
                         <Insets bottom="26.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox fx:id="stats3Col" prefHeight="200.0" prefWidth="500.0" spacing="24.0" />
+                  <VBox fx:id="stats3Col" prefHeight="200.0" prefWidth="500.0" spacing="12.0" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
