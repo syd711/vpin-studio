@@ -306,18 +306,19 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
       LOG.error("Error updating table for table details: " + e.getMessage());
     }
 
+    //rename game filename which results in renaming VPX related files
     if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
       if (de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getGameFile(), name)) {
-        if(game.getDirectB2SFile().exists()) {
+        if (game.getDirectB2SFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getDirectB2SFile(), name);
         }
 
-        if(game.getPOVFile().exists()) {
+        if (game.getPOVFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getPOVFile(), name);
         }
 
-        if(game.getResFile().exists()) {
+        if (game.getResFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getResFile(), name);
         }
         LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
@@ -330,6 +331,10 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
       }
     }
 
+    //rename the game name, which results in renaming all assets
+    if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
+      renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
+    }
     return updatedTableDetails;
   }
 
@@ -400,26 +405,26 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     }
   }
 
-//  public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {
-//    PopperScreen[] values = PopperScreen.values();
-//    int assetRenameCounter = 0;
-//    for (PopperScreen screen : values) {
-//      List<GameMediaItem> gameMediaItems = game.getGameMedia().getMediaItems(screen);
-//      for (GameMediaItem gameMediaItem : gameMediaItems) {
-//        File gameMediaFile = gameMediaItem.getFile();
-//        if (gameMediaFile.exists()) {
-//          if (de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(gameMediaFile, newBaseName)) {
-//            assetRenameCounter++;
-//            LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
-//          }
-//          else {
-//            LOG.warn("[" + screen + "] Renaming PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
-//          }
-//        }
-//      }
-//    }
-//    LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
-//  }
+  public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {
+    PopperScreen[] values = PopperScreen.values();
+    int assetRenameCounter = 0;
+    for (PopperScreen screen : values) {
+      List<GameMediaItem> gameMediaItems = game.getGameMedia().getMediaItems(screen);
+      for (GameMediaItem gameMediaItem : gameMediaItems) {
+        File gameMediaFile = gameMediaItem.getFile();
+        if (gameMediaFile.exists()) {
+          if (de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(gameMediaFile, newBaseName)) {
+            assetRenameCounter++;
+            LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
+          }
+          else {
+            LOG.warn("[" + screen + "] Renaming PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
+          }
+        }
+      }
+    }
+    LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
+  }
 
   public PopperCustomOptions getCustomOptions() {
     return pinUPConnector.getCustomOptions();

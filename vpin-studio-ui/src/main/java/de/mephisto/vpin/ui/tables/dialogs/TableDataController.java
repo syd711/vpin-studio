@@ -38,6 +38,9 @@ public class TableDataController implements Initializable, DialogController {
   private Label titleLabel;
 
   @FXML
+  private Label databaseIdLabel;
+
+  @FXML
   private TextField gameName;
 
   @FXML
@@ -338,8 +341,9 @@ public class TableDataController implements Initializable, DialogController {
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
 
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
-
+    databaseIdLabel.setText(String.valueOf(game.getId()));
     gameName.setText(tableDetails.getGameName());
+    gameName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameName(newValue));
     gameFileName.setText(tableDetails.getGameFileName());
     gameFileName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameFileName(newValue));
     gameDisplayName.setText(tableDetails.getGameDisplayName());
