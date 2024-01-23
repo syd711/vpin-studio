@@ -1,10 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.connectors.discord.*;
-import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
-import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
@@ -13,7 +9,6 @@ import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.players.Player;
@@ -32,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -3,7 +3,7 @@ package de.mephisto.vpin.vps;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
+import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -61,21 +61,21 @@ public class VPSBot implements VpsSheetChangedListener {
     }).start();
   }
 
-  public List<VpsTableDiff> sync() {
+  public List<VpsDiffer> sync() {
     LOG.info("Sync has been triggered.");
-    List<VpsTableDiff> download = VPS.getInstance().download();
+    List<VpsDiffer> download = VPS.getInstance().download();
     return download;
   }
 
   @Override
-  public void vpsSheetChanged(List<VpsTableDiff> diff) {
+  public void vpsSheetChanged(List<VpsDiffer> diff) {
     new Thread(() -> {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
         if (!diff.isEmpty()) {
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
-          for (VpsTableDiff tableDiff : diff) {
+          for (VpsDiffer tableDiff : diff) {
             counter++;
 
             List<VpsDiffTypes> differences = tableDiff.getDifferences();

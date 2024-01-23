@@ -21,10 +21,10 @@ public class VPSTest {
     assertFalse(vpsNew.getTables().isEmpty());
     assertFalse(vpsOld.getTables().isEmpty());
 
-    List<VpsTableDiff> diff = vpsNew.diff(vpsOld);
+    List<VpsDiffer> diff = vpsNew.diff(vpsOld);
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
-    for (VpsTableDiff diffEntry : diff) {
+    for (VpsDiffer diffEntry : diff) {
       System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
     }
   }
@@ -39,10 +39,10 @@ public class VPSTest {
     assertFalse(vpsNew.getTables().isEmpty());
     assertFalse(vpsOld.getTables().isEmpty());
 
-    List<VpsTableDiff> diff = vpsNew.diff(vpsOld, Arrays.asList("kGBkVb-v"));
+    List<VpsDiffer> diff = vpsNew.diff(vpsOld, Arrays.asList("kGBkVb-v"));
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
-    for (VpsTableDiff diffEntry : diff) {
+    for (VpsDiffer diffEntry : diff) {
       if (!diffEntry.getDifferences().contains(VpsDiffTypes.tutorial)) {
         continue;
       }
@@ -78,7 +78,7 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     vps.addChangeListener(new VpsSheetChangedListener() {
       @Override
-      public void vpsSheetChanged(List<VpsTableDiff> diff) {
+      public void vpsSheetChanged(List<VpsDiffer> diff) {
         System.out.println(diff.size());
       }
     });

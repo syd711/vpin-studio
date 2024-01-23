@@ -1,17 +1,17 @@
-package de.mephisto.vpin.connectors.vps.model;
+package de.mephisto.vpin.connectors.vps;
 
-import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public class VpsTableDiff {
+public class VpsDiffer {
   private final VpsTable oldTable;
   private final VpsTable newTable;
 
-  public VpsTableDiff(VpsTable newTable, VpsTable oldTable) {
+  public VpsDiffer(VpsTable newTable, VpsTable oldTable) {
     this.oldTable = oldTable;
     this.newTable = newTable;
   }
@@ -89,15 +89,23 @@ public class VpsTableDiff {
   }
 
   private VpsDiffTypes diffTables(List<VpsTableVersion> oldFiles, List<VpsTableVersion> newFiles) {
-    if (oldFiles != null && newFiles == null) {
+    if (oldFiles == null && newFiles == null) {
+      return null;
+    }
+
+    if (newFiles == null || oldFiles == null) {
       return VpsDiffTypes.tables;
     }
 
-    for (VpsTableVersion newTable : newFiles) {
-      Optional<VpsTableVersion> first = oldFiles.stream().filter(t -> t.getId().equals(newTable.getId())).findFirst();
-      if (first.isPresent()) {
-        VpsTableVersion vpsTableFile = first.get();
-        if (!String.valueOf(vpsTableFile.getVersion()).equals(newTable.getVersion())) {
+    for (VpsTableVersion newVersionFile : newFiles) {
+      Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t -> t.getId().equals(newVersionFile.getId())).findFirst();
+      if (versionInOtherList.isPresent()) {
+        VpsTableVersion version = versionInOtherList.get();
+        if(version.getVersion() == null && newVersionFile.getVersion() == null) {
+          continue;
+        }
+
+        if (!String.valueOf(version.getVersion()).equals(newVersionFile.getVersion())) {
           return VpsDiffTypes.tableNewVersion;
         }
       }

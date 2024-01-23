@@ -224,8 +224,8 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public List<VpsTableDiff> download() {
-    List<VpsTableDiff> diff = new ArrayList<>();
+  public List<VpsDiffer> download() {
+    List<VpsDiffer> diff = new ArrayList<>();
     try {
       LOG.info("Downloading " + VPS.URL);
       java.net.URL url = new URL(VPS.URL);
@@ -289,12 +289,12 @@ public class VPS {
     this.tables = loadTables(null);
   }
 
-  public List<VpsTableDiff> diff(VPS old) {
+  public List<VpsDiffer> diff(VPS old) {
     return diff(old, Collections.emptyList());
   }
 
-  public List<VpsTableDiff> diff(VPS old, List<String> filteredTableIds) {
-    List<VpsTableDiff> diff = new ArrayList<>();
+  public List<VpsDiffer> diff(VPS old, List<String> filteredTableIds) {
+    List<VpsDiffer> diff = new ArrayList<>();
     List<VpsTable> selectedTables = this.tables;
     if (!filteredTableIds.isEmpty()) {
       selectedTables = this.tables.stream().filter(t -> filteredTableIds.contains(t.getId())).collect(Collectors.toList());
@@ -303,14 +303,14 @@ public class VPS {
     for (VpsTable table : selectedTables) {
       VpsTable oldTable = old.getTableById(table.getId());
       if (oldTable != null) {
-        VpsTableDiff tableDiff = new VpsTableDiff(table, oldTable);
+        VpsDiffer tableDiff = new VpsDiffer(table, oldTable);
         if (!tableDiff.getDifferences().isEmpty()) {
           diff.add(tableDiff);
         }
       }
     }
 
-    Collections.sort(diff, Comparator.comparing(VpsTableDiff::getDisplayName));
+    Collections.sort(diff, Comparator.comparing(VpsDiffer::getDisplayName));
     return diff;
   }
 }

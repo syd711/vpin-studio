@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.vps;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableDiff;
+import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
@@ -194,12 +194,12 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   @Override
-  public void vpsSheetChanged(List<VpsTableDiff> diff) {
+  public void vpsSheetChanged(List<VpsDiffer> diff) {
     LOG.info("Updating VPS diff messages queue for " + diff.size() + " updates.");
     GameService gameService = applicationContext.getBean(GameService.class);
     List<Game> knownGames = gameService.getKnownGames();
 
-    for (VpsTableDiff tableDiff : diff) {
+    for (VpsDiffer tableDiff : diff) {
       try {
         List<Game> collect = knownGames.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
         for (Game game : collect) {
