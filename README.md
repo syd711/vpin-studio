@@ -22,6 +22,10 @@ Please see:
 
 https://github.com/syd711/vpin-studio/wiki#getting-started
 
+## Discord
+
+You have feedback or want to report a bug? Join the VPin Studio Discord server:
+https://discord.com/invite/69YqHYd3wD
 
 ## How To Update
 
