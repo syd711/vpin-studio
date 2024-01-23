@@ -20,10 +20,10 @@ The "Pause" menu can be configured in the preferences section "Overlay & Pause M
 - Removed VPS update notifications from the user's Discord bot. Please follow the VPS-Bot channel instead.
 - Added RAR support for uploads of: ALTSound packages, VPX files, DirectB2S files and PUP Packs.
 - Added Zip support for uploads of: DirectB2S files.
+- Added type-ahead/key-navigation for the table list: After the table overview has been launched, you can immediately enter the name of the table you wish to work on. You can enter more than one letter.
 
 ### Bugfixes
 
 - Fixed overlay focus issue for VPX GL: Added repetitive focusing so that the overlay will appear for Visual Pinball X GL version too.
 - Fixed VPX file renaming. 
-
-
+- Fixed various issues in the VPS differences calculation.

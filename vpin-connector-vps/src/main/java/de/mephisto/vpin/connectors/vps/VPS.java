@@ -260,14 +260,11 @@ public class VPS {
 
       LOG.info("Written " + getVpsDbFile().getAbsolutePath() + ", (" + oldSize + " vs " + getVpsDbFile().length() + " bytes)");
 
-
       VPS newInstance = loadInstance(null);
       diff.addAll(newInstance.diff(this));
       LOG.info("VPS updated with " + diff.size() + " updates.");
-      VPS.instance = newInstance;
-
       if (!diff.isEmpty()) {
-        LOG.info("VPS download detected " + diff.size() + " changes, notifiying listeners...");
+        LOG.info("VPS download detected " + diff.size() + " changes, notifying " + listeners.size() + " listeners...");
         for (VpsSheetChangedListener listener : listeners) {
           listener.vpsSheetChanged(diff);
           LOG.info("Notified VPS change listener \"" + listener.getClass().getName() + "\"");
@@ -276,6 +273,8 @@ public class VPS {
       else {
         LOG.info("VPS had no changes, skipped update listeners.");
       }
+
+      this.tables = newInstance.tables;
     } catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());
     }

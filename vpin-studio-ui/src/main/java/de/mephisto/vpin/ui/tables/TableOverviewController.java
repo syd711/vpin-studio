@@ -185,6 +185,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private boolean showVpsUpdates = true;
   private SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+  private long lastKeyInputTime = System.currentTimeMillis();
+  private String lastKeyInput = "";
+
   // Add a public no-args constructor
   public TableOverviewController() {
   }
@@ -625,6 +628,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");
+
+        Platform.runLater(() -> {
+          tableView.requestFocus();
+        });
       });
     }).start();
   }
@@ -999,10 +1006,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return row;
       });
 
+
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
         String text = event.getText();
+
+        long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
+        if (timeDiff > 800) {
+          lastKeyInputTime = System.currentTimeMillis();
+          lastKeyInput = text;
+        }
+        else {
+          lastKeyInputTime = System.currentTimeMillis();
+          lastKeyInput = lastKeyInput + text;
+          text = lastKeyInput;
+        }
+
         for (GameRepresentation game : data) {
           if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
             tableView.getSelectionModel().clearSelection();
