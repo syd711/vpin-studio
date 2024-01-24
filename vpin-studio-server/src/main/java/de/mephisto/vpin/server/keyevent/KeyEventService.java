@@ -181,6 +181,20 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     new VPinStudioServerTray();
     LOG.info("Application tray created.");
 
+    try {
+      InetAddress localHost = InetAddress.getLocalHost();
+      LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
+    } catch (UnknownHostException e) {
+      //
+    }
+
+    preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
+    preferenceChanged(PreferenceNames.OVERLAY_KEY, null, null);
+    preferenceChanged(PreferenceNames.RESET_KEY, null, null);
+    preferenceChanged(PreferenceNames.PAUSE_MENU_SETTINGS, null, null);
+
+    preferencesService.addChangeListener(this);
+
     boolean pinUPRunning = popperService.isPinUPRunning();
     if (pinUPRunning) {
       popperLaunched();
@@ -189,21 +203,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       LOG.info("Added VPin service popper status listener.");
       popperService.addPopperStatusChangeListener(this);
     }
-
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
-
-    try {
-      InetAddress localHost = InetAddress.getLocalHost();
-      LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
-    } catch (UnknownHostException e) {
-      //
-    }
-    preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
-    preferenceChanged(PreferenceNames.OVERLAY_KEY, null, null);
-    preferenceChanged(PreferenceNames.RESET_KEY, null, null);
-    preferenceChanged(PreferenceNames.PAUSE_MENU_SETTINGS, null, null);
-
-    preferencesService.addChangeListener(this);
   }
 
   @Override
@@ -213,6 +213,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
           String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
           this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
+          LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
           break;
         }
         case PreferenceNames.OVERLAY_KEY: {
