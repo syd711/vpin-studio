@@ -6,7 +6,7 @@ public interface UIDefaults {
   String DEFAULT_COMPETITION_NAME = "My next competition";
   String MANAGER_TITLE = "VPin Studio Table Manager";
 
-  String DISCORD_INVITE_LINK = "https://discord.gg/69YqHYd3wD";
+  String DISCORD_INVITE_LINK = "https://discord.gg/AMPwvAZHvy";
 
   int DEFAULT_AVATARSIZE = 70;
 
