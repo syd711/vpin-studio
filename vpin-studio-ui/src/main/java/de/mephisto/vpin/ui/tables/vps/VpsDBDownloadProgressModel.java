@@ -8,11 +8,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,7 +50,7 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      VPS.getInstance().download();
+      VPS.getInstance().update();
       VPS.getInstance().reload();
     } catch (Exception e) {
       LOG.error("VPS database download failed: " + e.getMessage(), e);

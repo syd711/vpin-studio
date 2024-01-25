@@ -51,7 +51,7 @@ public enum VpsDiffTypes {
         return "Tutorial added";
       }
       case tableNew: {
-        return "New table variant added";
+        return "New table added";
       }
       case tableNewVersion: {
         return "Table version updated";

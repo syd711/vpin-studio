@@ -17,11 +17,11 @@ public class VpsDiffer {
   }
 
   public String getId() {
-    return oldTable.getId();
+    return newTable.getId();
   }
 
   public String getImgUrl() {
-    return this.oldTable.getTableFiles().get(0).getImgUrl();
+    return this.newTable.getTableFiles().get(0).getImgUrl();
   }
 
   public String getGameLink() {
@@ -34,6 +34,10 @@ public class VpsDiffer {
 
   public List<VpsDiffTypes> getDifferences() {
     List<VpsDiffTypes> differences = new ArrayList<>();
+    if (oldTable == null) {
+      differences.add(VpsDiffTypes.tableNew);
+      return differences;
+    }
 
     if (diffUrls(oldTable.getAltSoundFiles(), newTable.getAltSoundFiles())) {
       differences.add(VpsDiffTypes.altSound);
@@ -101,15 +105,14 @@ public class VpsDiffer {
       Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t -> t.getId().equals(newVersionFile.getId())).findFirst();
       if (versionInOtherList.isPresent()) {
         VpsTableVersion version = versionInOtherList.get();
-        if(version.getVersion() == null && newVersionFile.getVersion() == null) {
+        if (version.getVersion() == null && newVersionFile.getVersion() == null) {
           continue;
         }
 
         if (!String.valueOf(version.getVersion()).equals(newVersionFile.getVersion())) {
           return VpsDiffTypes.tableNewVersion;
         }
-      }
-      else {
+      } else {
         return VpsDiffTypes.tableNew;
       }
     }

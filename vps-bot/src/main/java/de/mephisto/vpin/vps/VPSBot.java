@@ -50,7 +50,7 @@ public class VPSBot implements VpsSheetChangedListener {
     new Thread(() -> {
       Thread.currentThread().setName("VPS Sync Thread");
       while (true) {
-        sync();
+        VPS.getInstance().update();
         try {
           LOG.info("Waiting 60 minutes");
           TimeUnit.MINUTES.sleep(60);
@@ -59,12 +59,6 @@ public class VPSBot implements VpsSheetChangedListener {
         }
       }
     }).start();
-  }
-
-  public List<VpsDiffer> sync() {
-    LOG.info("Sync has been triggered.");
-    List<VpsDiffer> download = VPS.getInstance().download();
-    return download;
   }
 
   @Override

@@ -1178,7 +1178,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void initialize(URL url, ResourceBundle resourceBundle) {
     new Thread(() -> {
       try {
-        VPS.getInstance().download();
+        VPS.getInstance().update();
       } catch (Exception e) {
         LOG.error("VPS update failed: " + e.getMessage(), e);
       }

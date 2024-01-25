@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +20,7 @@ public class VPSTest {
     assertFalse(vpsNew.getTables().isEmpty());
     assertFalse(vpsOld.getTables().isEmpty());
 
-    List<VpsDiffer> diff = vpsNew.diff(vpsOld);
+    List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
     System.out.println(diff.size());
     assertFalse(diff.isEmpty());
     for (VpsDiffer diffEntry : diff) {
@@ -29,27 +28,6 @@ public class VPSTest {
     }
   }
 
-  @Test
-  public void testDiff2() {
-    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
-    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
-
-    assertNotNull(vpsNew);
-    assertNotNull(vpsOld);
-    assertFalse(vpsNew.getTables().isEmpty());
-    assertFalse(vpsOld.getTables().isEmpty());
-
-    List<VpsDiffer> diff = vpsNew.diff(vpsOld, Arrays.asList("kGBkVb-v"));
-    System.out.println(diff.size());
-    assertFalse(diff.isEmpty());
-    for (VpsDiffer diffEntry : diff) {
-      if (!diffEntry.getDifferences().contains(VpsDiffTypes.tutorial)) {
-        continue;
-      }
-
-      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
-    }
-  }
 
 //  @Test
 //  public void testDiff3() throws Exception {
@@ -82,7 +60,7 @@ public class VPSTest {
         System.out.println(diff.size());
       }
     });
-    vps.download();
+    vps.update();
   }
 
   @Test
