@@ -20,7 +20,7 @@
          <content>
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="PINUP POPPER SETTINGS" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="PINUP POPPER PREFERENCES" textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Custom Options" />
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="These are settings that you can tweak behind the scenes of PinUP Popper." textFill="WHITE">
                      <VBox.margin>

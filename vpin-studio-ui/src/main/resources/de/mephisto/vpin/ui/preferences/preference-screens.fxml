@@ -14,7 +14,7 @@
    <center>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label prefHeight="32.0" prefWidth="310.0" styleClass="preference-title" text="PINUP POPPER SETTINGS" textFill="WHITE" />
+            <Label prefHeight="32.0" prefWidth="310.0" styleClass="preference-title" text="PINUP POPPER PREFERENCES" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Screens">
                <VBox.margin>
                   <Insets />

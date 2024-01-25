@@ -71,7 +71,7 @@
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol" />
                         <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
                         <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
-                        <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER SETTINGS">
+                        <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="10.0" styleClass="preference-section" text="PINUP POPPER PREFERENCES">
                            <font>
                               <Font size="13.0" />
                            </font>
