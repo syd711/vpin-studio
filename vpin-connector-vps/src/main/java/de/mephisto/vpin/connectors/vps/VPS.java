@@ -3,10 +3,7 @@ package de.mephisto.vpin.connectors.vps;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
-import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.connectors.vps.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -291,11 +288,14 @@ public class VPS {
   }
 
   public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
+    LOG.info("Differing " + oldTables.size() + " old tables against " + newTables.size() + " new tables.");
     List<VpsDiffer> diff = new ArrayList<>();
     for (VpsTable newTable : newTables) {
       Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
       VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
-      if (!tableDiff.getDifferences().isEmpty()) {
+      List<VpsDiffTypes> differences = tableDiff.getDifferences();
+      if (!differences.isEmpty()) {
+        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + differences.stream().map(Enum::name).collect(Collectors.joining(", ")));
         diff.add(tableDiff);
       }
     }
