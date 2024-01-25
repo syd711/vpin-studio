@@ -1,9 +1,9 @@
 package de.mephisto.vpin.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -29,7 +29,8 @@ public class VPSBot implements VpsSheetChangedListener {
 
   private final JDA jda;
   private final VPSDiscordListenerAdapter listenerAdapter;
-  private final long botId;
+  private Date lastUpdate = new Date();
+  private int totalDiffCount = 0;
 
   public VPSBot() throws InterruptedException {
     this.listenerAdapter = new VPSDiscordListenerAdapter(this);
@@ -44,7 +45,6 @@ public class VPSBot implements VpsSheetChangedListener {
       .build();
     jda.awaitReady();
 
-    this.botId = jda.getSelfUser().getIdLong();
     VPS.getInstance().addChangeListener(this);
 
     new Thread(() -> {
@@ -69,10 +69,13 @@ public class VPSBot implements VpsSheetChangedListener {
 
   @Override
   public void vpsSheetChanged(List<VpsDiffer> diff) {
+    LOG.info("VPS Bot emitting " + diff.size() + " updates");
     new Thread(() -> {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
         if (!diff.isEmpty()) {
+          lastUpdate = new Date();
+
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
           for (VpsDiffer tableDiff : diff) {
@@ -80,6 +83,7 @@ public class VPSBot implements VpsSheetChangedListener {
 
             List<VpsDiffTypes> differences = tableDiff.getDifferences();
             if (differences.isEmpty()) {
+              LOG.info("Skipped updated for \"" + tableDiff.getDisplayName() + "\", no updates found.");
               continue;
             }
 
@@ -93,6 +97,10 @@ public class VPSBot implements VpsSheetChangedListener {
               entries.clear();
             }
           }
+
+          if (!entries.isEmpty()) {
+            sendVpsUpdateSummary("VPS Update Summary", entries);
+          }
         }
       } catch (Exception e) {
         LOG.error("Failed to push Discord notifications for VPS updates: " + e.getMessage(), e);
@@ -100,40 +108,9 @@ public class VPSBot implements VpsSheetChangedListener {
     }).start();
   }
 
-//  private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
-//    long serverId = 1099008746711175288l;
-//    long vpsChannelId = 1198307431181193296l;
-//    Guild guild = getGuild(serverId);
-//    if (guild != null) {
-//      TextChannel textChannel = jda.getChannelById(TextChannel.class, vpsChannelId);
-//      if (textChannel != null) {
-//        EmbedBuilder embed = new EmbedBuilder();
-//        embed.setTitle(title);
-//        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
-//        try {
-//          embed.setImage(imgUrl);
-//        } catch (Exception e) {
-//          LOG.info("Failed to attach image: '" + imgUrl + "' " + e.getMessage());
-//        }
-//        Set<Map.Entry<String, String>> entries = fields.entrySet();
-//        for (Map.Entry<String, String> entry : entries) {
-//          embed.addField(entry.getKey(), entry.getValue(), false);
-//        }
-//        embed.setColor(Color.GREEN);
-//
-//        textChannel.sendMessage("").addActionRow(
-//          Button.link(gameLink, "Table")).setEmbeds(embed.build()).queue();
-//      }
-//      else {
-//        LOG.error("No discord channel found.");
-//      }
-//    }
-//    else {
-//      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
-//    }
-//  }
-
   public long sendVpsUpdateSummary(String title, Map<String, String> values) {
+    totalDiffCount += values.size();
+
     long serverId = Long.parseLong(System.getenv("VPS_BOT_SERVER"));
     long vpsChannelId = Long.parseLong(System.getenv("VPS_BOT_CHANNEL"));
     Guild guild = getGuild(serverId);
@@ -167,5 +144,9 @@ public class VPSBot implements VpsSheetChangedListener {
   public void shutdown() {
     jda.shutdownNow();
     LOG.info("VPS bot shutdown.");
+  }
+
+  public String getStatus() {
+    return "Last Update: " + DateFormat.getDateTimeInstance().format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
   }
 }

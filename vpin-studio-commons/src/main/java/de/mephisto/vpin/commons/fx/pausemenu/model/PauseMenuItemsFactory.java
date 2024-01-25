@@ -21,7 +21,7 @@ import java.util.List;
 public class PauseMenuItemsFactory {
   public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @Nullable PopperScreen cardScreen) {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
-    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Exit", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("exit.png")));
+    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
     item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));

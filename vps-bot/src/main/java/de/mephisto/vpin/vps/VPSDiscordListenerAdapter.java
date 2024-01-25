@@ -24,6 +24,7 @@ public class VPSDiscordListenerAdapter extends ListenerAdapter {
   public void onReady(ReadyEvent event) {
 
   }
+
   /******************** Listener Methods ******************************************************************************/
 
 
@@ -35,15 +36,20 @@ public class VPSDiscordListenerAdapter extends ListenerAdapter {
 
     Message message = event.getMessage();
     String content = message.getContentRaw();
-    if(content.trim().equals("/reload")) {
+    if (content.trim().equals("/reload")) {
       List<VpsDiffer> sync = this.bot.sync();
       MessageChannel channel = event.getChannel();
-      if(sync != null) {
+      if (sync != null) {
         channel.sendMessage("Synchronization successful, found " + sync.size() + " update(s).").complete();
       }
       else {
         channel.sendMessage("Command failed, try again later.").complete();
       }
+    }
+    else if (content.trim().equals("/status")) {
+      String status = this.bot.getStatus();
+      MessageChannel channel = event.getChannel();
+      channel.sendMessage(status).complete();
     }
   }
 }
