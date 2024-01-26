@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.AltSoundArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.DirectB2SArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -31,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,8 +66,14 @@ public class TableDialogs {
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
-        ProgressDialog.createProgressDialog(model);
+        String analyze = DirectB2SArchiveAnalyzer.analyze(file);
+        if(!StringUtils.isEmpty(analyze)) {
+          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
+        }
+        else {
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+          ProgressDialog.createProgressDialog(model);
+        }
       });
     }
   }
