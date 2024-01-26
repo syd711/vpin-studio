@@ -132,6 +132,11 @@
             <version>3.16.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding</artifactId>
+            <version>16.02-2.01</version>
+        </dependency>
     </dependencies>
 
     <build>

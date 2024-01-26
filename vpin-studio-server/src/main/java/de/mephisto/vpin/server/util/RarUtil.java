@@ -36,6 +36,10 @@ public class RarUtil {
           }
         }
       }
+
+      inArchive.close();
+      randomAccessFileStream.close();
+      randomAccessFile.close();
       return fileFound;
     } catch (Exception e) {
       LOG.error("Failed to check rar file \"" + archiveFile.getAbsolutePath() + "\": " + e.getMessage(), e);

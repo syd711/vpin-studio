@@ -23,6 +23,7 @@ open module de.mephisto.vpin.commons {
   requires jnativehook;
   requires java.logging;
   requires de.mephisto.vpin.connectors.vps;
+  requires sevenzipjbinding;
 
   exports de.mephisto.vpin.commons;
   exports de.mephisto.vpin.commons.fx;
