@@ -28,6 +28,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,6 @@ public class Studio extends Application {
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
     Locale.setDefault(Locale.ENGLISH);
-
     StudioUpdatePreProcessing.execute();
 
     Studio.errorHandler = e -> {

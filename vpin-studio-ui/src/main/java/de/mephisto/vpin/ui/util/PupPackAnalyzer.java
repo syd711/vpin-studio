@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.fx.Features;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,72 @@ public class PupPackAnalyzer {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
       return analyzeZip(archiveFile, romNames, progressResultModel);
     }
+    if (Features.RAR_ENABLED && archiveFile.getName().toLowerCase().endsWith(".rar")) {
+      return analyzeRar(archiveFile, romNames, progressResultModel);
+    }
+
+    return null;
+  }
+
+  private String analyzeRar(File archiveFile, List<String> romNames, ProgressResultModel progressResultModel) {
+//    boolean foundFolderMatchingRom = false;
+//    boolean screensPupFound = false;
+//    int count = 0;
+//    try {
+//      RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
+//      RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
+//      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+//      int totalCount = inArchive.getNumberOfItems();
+//
+//      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+//        count++;
+//        String name = item.getPath();
+//
+//        double progress = count * 100 / totalCount;
+//        progressResultModel.setProgress(progress / 100);
+//
+//        if (item.isFolder()) {
+//          if (!foundFolderMatchingRom) {
+//            String folderName = name;
+//            if (folderName.contains("/")) {
+//              String[] segments = folderName.split("/");
+//              folderName = segments[segments.length - 1];
+//            }
+//
+//            for (String romName : romNames) {
+//              if (!StringUtils.isEmpty(romName) && folderName.equals(romName)) {
+//                foundFolderMatchingRom = true;
+//                LOG.info("Found matching ROM \"" + romName + "\" in pup pack archive.");
+//                break;
+//              }
+//            }
+//          }
+//        }
+//        else {
+//          if (name.contains("screens.pup")) {
+//            screensPupFound = true;
+//          }
+//        }
+//
+//        if (screensPupFound && foundFolderMatchingRom) {
+//          break;
+//        }
+//      }
+//
+//      inArchive.close();
+//      randomAccessFileStream.close();
+//      randomAccessFile.close();
+//    } catch (Exception e) {
+//      return "Reading of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage();
+//    }
+//
+//    if (!screensPupFound) {
+//      progressResultModel.getResults().add("The selected file is not a valid PUP pack.");
+//    }
+//
+//    if (!foundFolderMatchingRom) {
+//      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ", romNames) + "\".");
+//    }
 
     return null;
   }

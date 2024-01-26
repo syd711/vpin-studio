@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.commons.fx.Features;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -21,7 +22,7 @@ public class AltSoundArchiveAnalyzer {
     if (file.getName().toLowerCase().endsWith(".zip")) {
       return analyzeZip(file);
     }
-    else if (file.getName().toLowerCase().endsWith(".rar")) {
+    else if (Features.RAR_ENABLED && file.getName().toLowerCase().endsWith(".rar")) {
       return analyzeRar(file);
     }
     return null;
