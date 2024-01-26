@@ -323,8 +323,11 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
+      Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
       ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
-      Image image = new Image(gameMediaItem);
+      if(gameMediaItem != null) {
+        image = new Image(gameMediaItem);
+      }
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
       view.setSmooth(true);

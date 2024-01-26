@@ -70,7 +70,8 @@ public class PinUPConnector implements InitializingBean {
     for (GameEmulator value : values) {
       if (value.getNvramFolder().exists()) {
         return value;
-      } else {
+      }
+      else {
         LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
@@ -262,48 +263,114 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public void saveTableDetails(int id, TableDetails manifest) {
-    int sqlVersion = getSqlVersion();
+    Connection connect = this.connect();
+    try {
+      StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
+      List<Object> params = new ArrayList<>();
 
-    importManifestValue(id, "EMUID", manifest.getEmulatorId());
-    importManifestValue(id, "GameName", manifest.getGameName());
-    importManifestValue(id, "GameDisplay", manifest.getGameDisplayName());
-    importManifestValue(id, "GameFileName", manifest.getGameFileName());
-    importManifestValue(id, "GameTheme", manifest.getGameTheme());
-    importManifestValue(id, "Notes", manifest.getNotes());
-    importManifestValue(id, "GameYear", manifest.getGameYear());
-    importManifestValue(id, "ROM", manifest.getRomName());
-    importManifestValue(id, "Manufact", manifest.getManufacturer());
-    importManifestValue(id, "NumPlayers", manifest.getNumberOfPlayers());
-    importManifestValue(id, "TAGS", manifest.getTags());
-    importManifestValue(id, "Category", manifest.getCategory());
-    importManifestValue(id, "Author", manifest.getAuthor());
-    importManifestValue(id, "sysVolume", manifest.getVolume());
-    importManifestValue(id, "LaunchCustomVar", manifest.getLaunchCustomVar());
-    importManifestValue(id, "GKeepDisplays", manifest.getKeepDisplays());
-    importManifestValue(id, "GameRating", manifest.getGameRating());
-    importManifestValue(id, "ALTEXE", manifest.getAltLaunchExe());
-    importManifestValue(id, "GameType", manifest.getGameType() != null ? manifest.getGameType().name() : null);
-    importManifestValue(id, "GAMEVER", manifest.getGameVersion());
-    importManifestValue(id, "DOFStuff", manifest.getDof());
-    importManifestValue(id, "IPDBNum", manifest.getIPDBNum());
-    importManifestValue(id, "AltRunMode", manifest.getAltRunMode());
-    importManifestValue(id, "WebLinkURL", manifest.getUrl());
-    importManifestValue(id, "DesignedBy", manifest.getDesignedBy());
-    importManifestValue(id, "Visible", manifest.getStatus());
-    importManifestValue(id, "CUSTOM2", manifest.getCustom2());
-    importManifestValue(id, "CUSTOM3", manifest.getCustom3());
+      int sqlVersion = getSqlVersion();
 
-    //check for popper DB update 1.5
-    if (sqlVersion >= 64) {
-      importManifestValue(id, "WEBGameID", manifest.getWebGameId());
-      importManifestValue(id, "ROMALT", manifest.getRomAlt());
-      importManifestValue(id, "ISMOD", manifest.isMod());
-      importManifestValue(id, "WebLink2URL", manifest.getWebLink2Url());
-      importManifestValue(id, "TourneyID", manifest.getTourneyId());
-      importManifestValue(id, "CUSTOM4", manifest.getCustom4());
-      importManifestValue(id, "CUSTOM5", manifest.getCustom5());
+      stmtBuilder.append("'EMUID' = ?, ");
+      params.add(manifest.getEmulatorId());
+      stmtBuilder.append("'GameName' = ?, ");
+      params.add(manifest.getGameName());
+      stmtBuilder.append("'GameDisplay' = ?, ");
+      params.add(manifest.getGameDisplayName());
+      stmtBuilder.append("'GameFileName' = ?, ");
+      params.add(manifest.getGameFileName());
+      stmtBuilder.append("'GameTheme' = ?, ");
+      params.add(manifest.getGameTheme());
+      stmtBuilder.append("'Notes' = ?, ");
+      params.add(manifest.getNotes());
+      stmtBuilder.append("'GameYear' = ?, ");
+      params.add(manifest.getGameYear());
+      stmtBuilder.append("'ROM' = ?, ");
+      params.add(manifest.getRomName());
+      stmtBuilder.append("'Manufact' = ?, ");
+      params.add(manifest.getManufacturer());
+      stmtBuilder.append("'NumPlayers' = ?, ");
+      params.add(manifest.getNumberOfPlayers());
+      stmtBuilder.append("'TAGS' = ?, ");
+      params.add(manifest.getTags());
+      stmtBuilder.append("'Category' = ?, ");
+      params.add(manifest.getCategory());
+      stmtBuilder.append("'Author' = ?, ");
+      params.add(manifest.getAuthor());
+      stmtBuilder.append("'sysVolume' = ?, ");
+      params.add(manifest.getVolume());
+      stmtBuilder.append("'LaunchCustomVar' = ?, ");
+      params.add(manifest.getLaunchCustomVar());
+      stmtBuilder.append("'GKeepDisplays' = ?, ");
+      params.add(manifest.getKeepDisplays());
+      stmtBuilder.append("'GameRating' = ?, ");
+      params.add(manifest.getGameRating());
+      stmtBuilder.append("'ALTEXE' = ?, ");
+      params.add(manifest.getAltLaunchExe());
+      stmtBuilder.append("'GameType' = ?, ");
+      params.add(manifest.getGameType() != null ? manifest.getGameType().name() : null);
+      stmtBuilder.append("'GAMEVER' = ?, ");
+      params.add(manifest.getGameVersion());
+      stmtBuilder.append("'DOFStuff' = ?, ");
+      params.add(manifest.getDof());
+      stmtBuilder.append("'IPDBNum' = ?, ");
+      params.add(manifest.getIPDBNum());
+      stmtBuilder.append("'AltRunMode' = ?, ");
+      params.add(manifest.getAltRunMode());
+      stmtBuilder.append("'WebLinkURL' = ?, ");
+      params.add(manifest.getUrl());
+      stmtBuilder.append("'DesignedBy' = ?, ");
+      params.add(manifest.getDesignedBy());
+      stmtBuilder.append("'Visible' = ?, ");
+      params.add(manifest.getStatus());
+      stmtBuilder.append("'CUSTOM2' = ?, ");
+      params.add(manifest.getCustom2());
+      stmtBuilder.append("'CUSTOM3' = ?, ");
+      params.add(manifest.getCustom3());
 
-      importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
+      //check for popper DB update 1.5
+      if (sqlVersion >= 64) {
+        stmtBuilder.append("'WEBGameID' = ?, ");
+        params.add(manifest.getWebGameId());
+        stmtBuilder.append("'ROMALT' = ?, ");
+        params.add(manifest.getRomAlt());
+        stmtBuilder.append("'ISMOD' = ?, ");
+        params.add(manifest.isMod());
+        stmtBuilder.append("'WebLink2URL' = ?, ");
+        params.add(manifest.getWebLink2Url());
+        stmtBuilder.append("'TourneyID' = ?, ");
+        params.add(manifest.getTourneyId());
+        stmtBuilder.append("'CUSTOM4' = ?, ");
+        params.add(manifest.getCustom4());
+        stmtBuilder.append("'CUSTOM5' = ?, ");
+        params.add(manifest.getCustom5());
+
+        importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
+      }
+
+      stmtBuilder.append("DateUpdated=? WHERE GameID=?");
+
+      String stmt = stmtBuilder.toString();
+      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+      int index = 1;
+      for (Object param : params) {
+        preparedStatement.setObject(index, param);
+        index++;
+      }
+
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+
+      preparedStatement.setObject(index, ts);
+      index++;
+
+      preparedStatement.setInt(index, id);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to save table details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
     }
   }
 
@@ -614,7 +681,8 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        } else {
+        }
+        else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
       }
@@ -657,7 +725,8 @@ public class PinUPConnector implements InitializingBean {
 
         if (sqlPlaylist) {
           playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
-        } else {
+        }
+        else {
           playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
         }
 
@@ -820,6 +889,7 @@ public class PinUPConnector implements InitializingBean {
     }
     return result;
   }
+
   @NonNull
   public List<TableAlxEntry> getAlxData(int gameId) {
     Connection connect = this.connect();
@@ -1261,30 +1331,6 @@ public class PinUPConnector implements InitializingBean {
     throw new UnsupportedOperationException("Failed to determine emulator id for '" + name + "'");
   }
 
-  private void importManifestValue(int gameId, String field, Object value) {
-    if (value == null) {
-      return;
-    }
-
-    Connection connect = this.connect();
-    try {
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
-
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=?, DateUpdated=? WHERE GameID=?");
-      preparedStatement.setObject(1, value);
-      preparedStatement.setObject(2, ts);
-      preparedStatement.setInt(3, gameId);
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-    } catch (Exception e) {
-      LOG.error("Failed to update game manifest value'" + field + "' (" + value + "):" + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
-    }
-  }
-
   private void importGameExtraValues(int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
     Connection connect = this.connect();
     try {
@@ -1312,7 +1358,7 @@ public class PinUPConnector implements InitializingBean {
       iniConfiguration.setSeparatorUsedInInput("=");
 
       File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
-      if(!ini.exists()) {
+      if (!ini.exists()) {
         LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
         return result;
       }
@@ -1412,10 +1458,12 @@ public class PinUPConnector implements InitializingBean {
           if (!found) {
             LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
           }
-        } else {
+        }
+        else {
           LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
         }
-      } else {
+      }
+      else {
         String path = String.valueOf(pathEntry.values().iterator().next());
         if (path.contains("\"")) {
           path = path.substring(1);

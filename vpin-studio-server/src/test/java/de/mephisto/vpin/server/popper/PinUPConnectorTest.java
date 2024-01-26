@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.EmulatorType;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +34,17 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
       assertTrue(connector.deleteGame(l));
     }
     assertTrue(l > 0);
+  }
+
+  @Test
+  public void testTableInfo() {
+    Game gameByFilename = connector.getGameByFilename(EM_TABLE_NAME);
+    TableDetails tableDetails = connector.getTableDetails(gameByFilename.getId());
+    String uuid = UUID.randomUUID().toString();
+    tableDetails.setAuthor(uuid);
+    connector.saveTableDetails(gameByFilename.getId(), tableDetails);
+    TableDetails tableDetailsUpdated = connector.getTableDetails(gameByFilename.getId());
+    assertEquals(tableDetailsUpdated.getAuthor(), uuid);
   }
 
   @Test

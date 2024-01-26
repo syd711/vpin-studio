@@ -53,7 +53,7 @@ public class PauseMenu extends Application {
     try {
       robot = new Robot();
     } catch (AWTException e) {
-      LOG.error("Failed to create robot: " + e.getMessage(), e);
+      LOG.error("Failed to create robot: " + e.getMessage());
     }
   }
 
