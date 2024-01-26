@@ -107,7 +107,7 @@ public class LauncherController implements Initializable {
   private void onHelp() {
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
-        Desktop.getDesktop().browse(new URI("https://github.com/syd711/vpin-studio/wiki/FAQ"));
+        Desktop.getDesktop().browse(new URI("https://github.com/syd711/vpin-studio/wiki/Troubleshooting"));
       } catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
