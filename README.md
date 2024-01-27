@@ -6,9 +6,17 @@ and their media configuration.
 
 <img src="documentation/tables/tables.png" width="800" />
 
+## Download
+
+Download the latest installer from the [releases section](https://github.com/syd711/vpin-studio/releases).
+Scroll down to the "Assets" section, expand it and download the "Full Installer" for the initial installation on your cabinet.
+Download the "Client Installer" if you wish to connect to your cabinet (running the VPin Studio Server) with another Windows PC.
+
+<img src="documentation/download-how-to.png" width="800" />
+
 ## Installation
 
-Download the latest installer from the [releases section](https://github.com/syd711/vpin-studio/releases). 
+ 
 
 In general, the VPin Studio has a client/server architecture,
 supporting the configuration of multiple VPins with one client.
