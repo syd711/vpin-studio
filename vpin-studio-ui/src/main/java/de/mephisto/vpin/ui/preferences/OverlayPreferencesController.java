@@ -62,7 +62,7 @@ public class OverlayPreferencesController implements Initializable {
     List<String> keyNames = Keys.getKeyNames();
     keyNames.add(0, "");
     overlayKeyCombo.setItems(FXCollections.observableList(keyNames));
-//    pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
+    pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
 
     BindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
     BindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);

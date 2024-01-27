@@ -181,7 +181,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>2.9.0</version>
+      <version>2.11.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -197,7 +197,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>2.9.0</version>
+      <version>2.11.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -213,7 +213,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>2.9.0</version>
+      <version>2.11.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -229,7 +229,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>2.9.0</version>
+      <version>2.11.1</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -339,6 +339,42 @@
           <comments>Java Native Access (JNA) is licensed under the LGPL, version 2.1 or
         later, or the Apache License, version 2.0. You can freely decide which
         license you want to apply to the project.</comments>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.sevenzipjbinding</groupId>
+      <artifactId>sevenzipjbinding</artifactId>
+      <version>16.02-2.01</version>
+      <licenses>
+        <license>
+          <name>LGPL</name>
+          <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+          <distribution>repo</distribution>
+          <file>lgpl - lgpl-2.1.html</file>
+        </license>
+        <license>
+          <name>unRAR restriction</name>
+          <url>http://www.7-zip.org/license.txt</url>
+          <file>unrar restriction - license.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.sevenzipjbinding</groupId>
+      <artifactId>sevenzipjbinding-all-windows</artifactId>
+      <version>16.02-2.01</version>
+      <licenses>
+        <license>
+          <name>LGPL</name>
+          <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+          <distribution>repo</distribution>
+          <file>lgpl - lgpl-2.1.html</file>
+        </license>
+        <license>
+          <name>unRAR restriction</name>
+          <url>http://www.7-zip.org/license.txt</url>
+          <file>unrar restriction - license.txt</file>
         </license>
       </licenses>
     </dependency>
