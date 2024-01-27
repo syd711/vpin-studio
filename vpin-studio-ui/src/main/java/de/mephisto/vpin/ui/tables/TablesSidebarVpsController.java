@@ -408,6 +408,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (!doFilter || !game.get().isPovAvailable()) {
       addSection(dataRoot, "POV", vpsTable.getPovFiles());
     }
+
+    TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", vpsTable.getTutorialFiles());
   }
 
   public static void addSection(VBox dataRoot, String title, List<? extends VpsAuthoredUrls> urls) {
@@ -439,6 +441,31 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         }
       }
     }
+
+    if (!entries.isEmpty()) {
+      addSectionHeader(dataRoot, title);
+      dataRoot.getChildren().addAll(entries);
+    }
+  }
+
+  public static void addTutorialsSection(VBox dataRoot, String title, List<VpsTutorialUrls> urls) {
+    if (urls == null || urls.isEmpty()) {
+      return;
+    }
+
+    List<Node> entries = new ArrayList<>();
+    for (VpsTutorialUrls authoredUrl : urls) {
+      String youtubeId = authoredUrl.getYoutubeId();
+      if (youtubeId != null) {
+        String version = authoredUrl.getVersion();
+        long updatedAt = authoredUrl.getUpdatedAt();
+        List<String> authors = authoredUrl.getAuthors();
+
+        String url = "https://www.youtube.com/watch?v=" + youtubeId;
+        entries.add(new VpsEntry(version, authors, url, updatedAt));
+      }
+    }
+
 
     if (!entries.isEmpty()) {
       addSectionHeader(dataRoot, title);

@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentEditDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.vps.VPSTableSelectorDialogController;
-import de.mephisto.vpin.ui.vps.VpsSelection;
+import de.mephisto.vpin.ui.vps.dialogs.VPSTableSelectorDialogController;
+import de.mephisto.vpin.ui.vps.containers.VpsSelection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.stage.Stage;
 

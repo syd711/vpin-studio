@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.vps;
+package de.mephisto.vpin.ui.vps.containers;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;

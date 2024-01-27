@@ -22,6 +22,9 @@ public class VpsUtil {
       return "Dropbox";
     }
 
+    if (url.contains("youtube.")) {
+      return "YT";
+    }
 
     return "Ext";
   }
@@ -47,6 +50,10 @@ public class VpsUtil {
       return "mdi2o-open-in-new";
     }
 
+    if (abb.equals("YT")) {
+      return "mdi2y-youtube";
+    }
+
     return "mdi2o-open-in-new";
   }
 
@@ -65,6 +72,10 @@ public class VpsUtil {
 
     if (abb.equals("Mega")) {
       return "#e53e3e";
+    }
+
+    if (abb.equals("YT")) {
+      return "#ff4e45";
     }
 
     return "#718096";

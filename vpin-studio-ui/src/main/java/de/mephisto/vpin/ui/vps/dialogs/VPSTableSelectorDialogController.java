@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.vps;
+package de.mephisto.vpin.ui.vps.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import de.mephisto.vpin.ui.vps.containers.VpsSelection;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;

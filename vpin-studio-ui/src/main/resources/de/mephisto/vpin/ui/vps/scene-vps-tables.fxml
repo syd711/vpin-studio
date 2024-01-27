@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane fx:id="tableStack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesController">
+    <children>
+        <BorderPane styleClass="base-component">
+            <center>
+                <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                    <columns>
+                  <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="Installed" />
+                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="Versions" />
+                  <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                  <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                  <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ROM" />
+                  <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Topper Media" />
+                  <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="POV" />
+                  <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                  <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
+                  <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Tutorial" />
+                    </columns>
+                </TableView>
+            </center>
+         <top>
+            <ToolBar BorderPane.alignment="CENTER">
+              <items>
+                  <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="215.0" promptText="Search Table...">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="editBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit Table" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="Open on VPS.net">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+              </items>
+            </ToolBar>
+         </top>
+         <bottom>
+            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="countLabel" layoutX="1164.0" layoutY="13.0" text="Label" />
+               </children>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </HBox>
+         </bottom>
+        </BorderPane>
+    </children>
+</StackPane>

@@ -1174,6 +1174,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return status;
   }
 
+  public void setSelection(GameRepresentation game) {
+    tablesController.getTabPane().getSelectionModel().select(0);
+    this.tableView.getSelectionModel().clearSelection();
+    this.tableView.getSelectionModel().select(game);
+    this.tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     new Thread(() -> {

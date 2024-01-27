@@ -1,9 +1,7 @@
-package de.mephisto.vpin.ui.vps;
+package de.mephisto.vpin.ui.vps.containers;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

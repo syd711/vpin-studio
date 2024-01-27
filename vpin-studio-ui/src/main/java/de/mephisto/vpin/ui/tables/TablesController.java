@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -11,6 +11,8 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
+import de.mephisto.vpin.ui.vps.VpsTablesController;
+import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -36,6 +38,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   private TableOverviewController tableOverviewController;
   private RepositoryController repositoryController;
+  private VpsTablesController vpsTablesController;
 
   @FXML
   private BorderPane root;
@@ -53,6 +56,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab tableRepositoryTab;
 
   @FXML
+  private Tab vpsTablesTab;
+
+  @FXML
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
@@ -60,6 +66,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private AlxController alxController; //fxml magic! Not unused
+
+  @FXML
+  private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
 
   @FXML
   private StackPane editorRootStack;
@@ -107,12 +116,26 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
 
+    try {
+      FXMLLoader loader = new FXMLLoader(VpsTablesController.class.getResource("scene-vps-tables.fxml"));
+      Parent repositoryRoot = loader.load();
+      vpsTablesController = loader.getController();
+      vpsTablesController.setRootController(this);
+      vpsTablesTab.setContent(repositoryRoot);
+    } catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+
+
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       refreshTabSelection(t1);
     });
 
+    sidePanelRoot = root.getRight();
+
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
+    vpsTablesSidebarController.setVisible(false);
   }
 
   private void refreshTabSelection(Number t1) {
@@ -121,29 +144,32 @@ public class TablesController implements Initializable, StudioFXController, Stud
         NavigationController.setBreadCrumb(Arrays.asList("Tables"));
         tablesSideBarController.setVisible(true);
         repositorySideBarController.setVisible(false);
+        vpsTablesSidebarController.setVisible(false);
         tableOverviewController.initSelection();
-        if(sidePanelRoot != null) {
-          root.setRight(sidePanelRoot);
-        }
-
+        root.setRight(sidePanelRoot);
       }
       else if (t1.intValue() == 1) {
+        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
+        tablesSideBarController.setVisible(false);
+        repositorySideBarController.setVisible(false);
+        vpsTablesSidebarController.setVisible(true);
+        root.setRight(sidePanelRoot);
+      }
+      else if (t1.intValue() == 2) {
         NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
         tablesSideBarController.setVisible(false);
         repositorySideBarController.setVisible(false);
-        if(sidePanelRoot == null) {
-          sidePanelRoot = root.getRight();
-        }
+        vpsTablesSidebarController.setVisible(false);
         root.setRight(null);
+
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
         tablesSideBarController.setVisible(false);
         repositorySideBarController.setVisible(true);
+        vpsTablesSidebarController.setVisible(false);
         repositoryController.initSelection();
-        if(sidePanelRoot != null) {
-          root.setRight(sidePanelRoot);
-        }
+        root.setRight(sidePanelRoot);
       }
     });
   }
@@ -158,6 +184,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public TableOverviewController getTableOverviewController() {
     return tableOverviewController;
+  }
+
+  public VpsTablesSidebarController getVpsTablesSidebarController() {
+    return vpsTablesSidebarController;
   }
 
   @Override
@@ -219,6 +249,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     Platform.runLater(() -> {
       this.tableOverviewController.onReload();
     });
+  }
+
+  public TabPane getTabPane() {
+    return tabPane;
   }
 
   @Override

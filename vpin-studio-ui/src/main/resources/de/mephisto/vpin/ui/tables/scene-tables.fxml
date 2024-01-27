@@ -26,9 +26,17 @@
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-card-list" iconSize="18" />
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
                                 </Tab>
+                        <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
+                           </graphic>
+                        </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
                                     <content>
                                         <BorderPane />
@@ -60,6 +68,7 @@
             <children>
                 <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
                 <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
+                <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>
                 <Insets bottom="7.0" right="7.0" />
