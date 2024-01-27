@@ -164,7 +164,7 @@ public class PINemHiService implements InitializingBean {
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
-      LOG.info("Auto-started " + PROCESS_NAME);
+      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
     try {

@@ -261,7 +261,7 @@ public class Preferences {
   }
 
   public boolean getPinemhiAutoStartEnabled() {
-    return pinVolAutoStartEnabled;
+    return pinemhiAutoStartEnabled;
   }
 
   public void setPinemhiAutoStartEnabled(boolean enabled) {
