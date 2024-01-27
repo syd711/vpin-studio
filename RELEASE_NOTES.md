@@ -2,6 +2,8 @@
 
 ### Changes
 
+- Added "Emulator" column to table overview. The column is hidden by default and must be enabled in the UI settings.
+
 ### Bugfixes
 
 - Fixed size issues and missing scroll bars in the highscore card designer.

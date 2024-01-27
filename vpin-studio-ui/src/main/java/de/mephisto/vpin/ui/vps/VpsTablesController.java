@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.Keys;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -320,7 +321,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShiftDown() || event.isShortcutDown()) {
+        if (Keys.isSpecial(event)) {
           return;
         }
 

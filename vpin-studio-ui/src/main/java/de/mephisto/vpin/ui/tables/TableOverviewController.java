@@ -1031,7 +1031,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShiftDown() || event.isShortcutDown()) {
+        if (Keys.isSpecial(event)) {
           return;
         }
 
