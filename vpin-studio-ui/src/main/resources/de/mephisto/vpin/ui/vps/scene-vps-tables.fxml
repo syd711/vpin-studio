@@ -31,6 +31,7 @@
                   <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
                   <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                   <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Tutorial" />
+                  <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Updated" />
                     </columns>
                 </TableView>
             </center>

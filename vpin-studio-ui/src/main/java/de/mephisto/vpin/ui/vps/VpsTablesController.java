@@ -35,6 +35,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
 
@@ -82,6 +83,9 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @FXML
   private TableColumn<VpsTable, String> tutorialColumn;
+
+  @FXML
+  private TableColumn<VpsTable, String> updatedColumn;
 
   @FXML
   private StackPane tableStack;
@@ -149,6 +153,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     new Thread(() -> {
       getInstance().reload();
       vpsTables = getInstance().getTables();
+      Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterTables(vpsTables));
@@ -287,6 +292,12 @@ public class VpsTablesController implements Initializable, StudioEventListener {
         return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
       }
       return new SimpleStringProperty("");
+    });
+
+    updatedColumn.setVisible(false);
+    updatedColumn.setCellValueFactory(cellData -> {
+      VpsTable value = cellData.getValue();
+      return new SimpleStringProperty(DateFormat.getDateInstance().format(new Date(value.getUpdatedAt())));
     });
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
