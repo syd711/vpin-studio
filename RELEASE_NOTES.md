@@ -23,6 +23,7 @@ The "Pause" menu can be configured in the preferences section "Overlay & Pause M
 The tables section now has an additional view called "VPS Tables".
 It shows you an overview of all existing VPX tables available on the virtual-pinball-spreadsheet.net and shows an indicator which ones you already have.
 
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/vps-tables.png" width="700" />
 
 
 ### VPS Bot is online!
