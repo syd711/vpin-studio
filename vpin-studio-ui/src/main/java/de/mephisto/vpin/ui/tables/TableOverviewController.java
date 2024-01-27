@@ -6,9 +6,11 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -70,7 +72,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation> {
+public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation>, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   @FXML
@@ -78,6 +80,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnVersion;
+
+  @FXML
+  private TableColumn<GameRepresentation, Label> columnEmulator;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnVPS;
@@ -670,6 +675,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return new SimpleObjectProperty(label);
     });
 
+    columnEmulator.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(value.getEmulatorId());
+      Label label = new Label(gameEmulator.getName());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
+      return new SimpleObjectProperty(label);
+    });
+
     columnVersion.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getVersion());
@@ -872,6 +886,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             }
             return true;
           }
+          else if (column.equals(columnEmulator)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getEmulatorId()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
           else if (column.equals(columnDateAdded)) {
             Collections.sort(tableView.getItems(), (o1, o2) -> {
               Date date1 = o1.getDateAdded() == null ? new Date() : o1.getDateAdded();
@@ -1010,6 +1031,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
+        if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShiftDown() || event.isShortcutDown()) {
+          return;
+        }
+
         String text = event.getText();
 
         long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
@@ -1244,8 +1269,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view4.setFitHeight(18);
     tableEditBtn.setGraphic(view4);
 
+    preferencesChanged(PreferenceNames.UI_SETTINGS, null);
+    client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
     });
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.UI_SETTINGS)) {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
+    }
   }
 }

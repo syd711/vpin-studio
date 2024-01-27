@@ -160,7 +160,7 @@
                            </font>
                         </Label>
                         <Label layoutX="17.0" layoutY="17.0" styleClass="default-text" text="Be patient, it will appear." />
-                        <Label layoutX="17.0" layoutY="57.0" text="Make sure to have the pause key of VPX bound to &quot;P&quot;." textFill="WHITE">
+                        <Label layoutX="17.0" layoutY="57.0" text="Make sure to have the pause key of VPX bound to &quot;P&quot;. The menu will only work with VPX 10.8." textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

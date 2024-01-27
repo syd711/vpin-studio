@@ -11,6 +11,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PauseMenuItemsFactory {
+  private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
+
   public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @Nullable PopperScreen cardScreen) {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
@@ -52,7 +56,9 @@ public class PauseMenuItemsFactory {
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
             if (!StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
               item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
-              item.setYouTubeUrl("https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1");
+              String ytUrl = "https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1";
+              item.setYouTubeUrl(ytUrl);
+              LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
               String url = "https://img.youtube.com/vi/" + tutorialFile.getYoutubeId() + "/0.jpg";
               Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
               item.setDataImage(scoreImage);
@@ -60,6 +66,9 @@ public class PauseMenuItemsFactory {
             }
           }
         }
+      }
+      else {
+        LOG.warn("The table \"" + game.getGameDisplayName() + "\" is not mapped against VPS, no additional tutorials links will be loaded.");
       }
     }
 

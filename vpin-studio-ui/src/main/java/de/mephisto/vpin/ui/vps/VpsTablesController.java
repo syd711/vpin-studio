@@ -320,6 +320,10 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
+        if (event.isControlDown() || event.isAltDown() || event.isMetaDown() || event.isShiftDown() || event.isShortcutDown()) {
+          return;
+        }
+
         String text = event.getText();
 
         long timeDiff = System.currentTimeMillis() - lastKeyInputTime;

@@ -37,7 +37,7 @@ public class TriggersPup {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to load for " + triggersPupFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to load for " + triggersPupFile.getAbsolutePath() + ": " + e.getMessage());
     } finally {
       if (in != null) {
         try {

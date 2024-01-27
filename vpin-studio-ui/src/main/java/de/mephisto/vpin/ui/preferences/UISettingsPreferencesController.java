@@ -49,6 +49,9 @@ public class UISettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox uiHideVPSUpdates;
 
+  @FXML
+  private CheckBox uiHideEmuColCheckbox;
+
   private Tile avatar;
 
   @FXML
@@ -100,6 +103,13 @@ public class UISettingsPreferencesController implements Initializable {
     uiHideVPSUpdates.setSelected(uiSettings.isHideVPSUpdates());
     uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVPSUpdates(t1);
+      PreferencesController.markDirty();
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    uiHideEmuColCheckbox.setSelected(uiSettings.isHideEmulatorColumn());
+    uiHideEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideEmulatorColumn(t1);
       PreferencesController.markDirty();
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });

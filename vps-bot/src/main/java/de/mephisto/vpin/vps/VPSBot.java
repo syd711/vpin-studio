@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +125,11 @@ public class VPSBot implements VpsSheetChangedListener {
         embed.setColor(Color.GREEN);
 
         Message complete = textChannel.sendMessage("").setEmbeds(embed.build()).complete();
-        return complete.getIdLong();
+        long idLong = complete.getIdLong();
+        LOG.info("Message completed, sending crosspost next.");
+        Message complete1 = textChannel.crosspostMessageById(idLong).complete();
+        LOG.info("Crossposted message completed.");
+        return idLong;
       }
       else {
         LOG.error("No text channel found: '" + vpsChannelId + "'");

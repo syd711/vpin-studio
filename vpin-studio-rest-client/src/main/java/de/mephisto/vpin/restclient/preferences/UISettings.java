@@ -12,6 +12,16 @@ public class UISettings extends JsonSettings {
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
 
+  private boolean hideEmulatorColumn = true;
+
+  public boolean isHideEmulatorColumn() {
+    return hideEmulatorColumn;
+  }
+
+  public void setHideEmulatorColumn(boolean hideEmulatorColumn) {
+    this.hideEmulatorColumn = hideEmulatorColumn;
+  }
+
   public boolean isHideVersions() {
     return hideVersions;
   }
