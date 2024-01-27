@@ -17,6 +17,23 @@ The "Pause" menu can be configured in the preferences section "Overlay & Pause M
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="700" />
 
+
+### New "VPS Tables" View
+
+The tables section now has an additional view called "VPS Tables".
+It shows you an overview of all existing VPX tables available on the virtual-pinball-spreadsheet.net and shows an indicator which ones you already have.
+
+
+
+### VPS Bot is online!
+
+The "VPS Updates" bot is now online! Never miss a VPS update again. The bot will post updates for the latest changes that have been made on virtual-pinball-spreadsheet.net.
+Press the "Follow" button if you wish to see these notifications on your own Discord server.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/bot.png" width="700" />
+
+
+
 ### Other Changes
 
 - Added "Download" button inside the asset manager dialog to download assets from your cabinet's Popper media folders to your local PC (might come in handy from time to time).

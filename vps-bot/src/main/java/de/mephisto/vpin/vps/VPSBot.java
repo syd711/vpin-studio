@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -108,8 +109,10 @@ public class VPSBot implements VpsSheetChangedListener {
     long serverId = Long.parseLong(System.getenv("VPS_BOT_SERVER"));
     long vpsChannelId = Long.parseLong(System.getenv("VPS_BOT_CHANNEL"));
     Guild guild = getGuild(serverId);
+    LOG.info("Sending update to server " + guild);
     if (guild != null) {
-      TextChannel textChannel = jda.getChannelById(TextChannel.class, vpsChannelId);
+      NewsChannel textChannel = jda.getNewsChannelById(vpsChannelId);
+      LOG.info("Sending update to channel " + textChannel + " (" + vpsChannelId + ")");
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(title);
@@ -123,6 +126,9 @@ public class VPSBot implements VpsSheetChangedListener {
 
         Message complete = textChannel.sendMessage("").setEmbeds(embed.build()).complete();
         return complete.getIdLong();
+      }
+      else {
+        LOG.error("No text channel found: '" + vpsChannelId + "'");
       }
     }
     else {
