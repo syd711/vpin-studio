@@ -14,10 +14,6 @@ Download the "Client Installer" if you wish to connect to your cabinet (running 
 
 <img src="documentation/download-how-to.png" width="800" />
 
-## Installation
-
- 
-
 In general, the VPin Studio has a client/server architecture,
 supporting the configuration of multiple VPins with one client.
 That's why every release comes with two different installers:
