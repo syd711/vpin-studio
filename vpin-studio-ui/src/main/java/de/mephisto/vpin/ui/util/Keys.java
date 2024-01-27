@@ -29,7 +29,6 @@ public class Keys {
     KeyEvent.VK_M,
     KeyEvent.VK_N,
     KeyEvent.VK_O,
-    KeyEvent.VK_P,
     KeyEvent.VK_Q,
     KeyEvent.VK_R,
     KeyEvent.VK_S,
