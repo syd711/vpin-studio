@@ -52,7 +52,7 @@ public class CardGenerationPreferencesController implements Initializable {
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
     BindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
 
-    BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 10);
+    BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 30);
 
     cardPosPlayfieldRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
