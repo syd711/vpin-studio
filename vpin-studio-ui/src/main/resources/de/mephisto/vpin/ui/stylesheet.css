@@ -945,6 +945,17 @@
     -fx-base : #338800;
 }
 
+.folder-component {
+    -fx-text-fill: #000000;
+    -fx-base : #CC9933;
+}
+
+
+.link-component {
+    -fx-text-fill: #000000;
+    -fx-base : #3399FF;
+}
+
 .default-headline {
     -fx-text-fill: #FFFFFF;
     -fx-font-size : 14px;

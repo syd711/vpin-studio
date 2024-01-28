@@ -35,7 +35,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" text="󰐊" />
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" text="󰐊" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="Launch VPX with the selected table." />

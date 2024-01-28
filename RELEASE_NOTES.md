@@ -6,6 +6,7 @@
 - Increased possible time to show the highscore card on startup to 30 seconds.
 - Renamed "Tables" tab to "VPX Tables".
 - Replaced tab icon of "Tables" and "VPS Tables" for a better understanding which tables are shown.
+- Replaced version info label in the preferences footer with a link button to show the release notes again.
 
 ### Bugfixes
 

@@ -150,8 +150,11 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </Hyperlink>
-                  <Label fx:id="versionLabel" styleClass="version-label" text="Label" />
-                  <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label" />
+                  <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
+                  <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">
+                     <VBox.margin>
+                        <Insets right="5.0" />
+                     </VBox.margin></Label>
                </children>
             </VBox>
          </bottom>

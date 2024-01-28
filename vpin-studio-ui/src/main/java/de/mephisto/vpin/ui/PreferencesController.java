@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -27,6 +29,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class PreferencesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
@@ -35,7 +39,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private Label versionLabel;
+  private Hyperlink versionLink;
 
   @FXML
   private Label hostLabel;
@@ -119,6 +123,11 @@ public class PreferencesController implements Initializable, StudioEventListener
       dirty = false;
       EventManager.getInstance().notifyPreferenceChanged();
     }
+  }
+
+  @FXML
+  private void onVersionLInk(ActionEvent event) {
+    Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
   }
 
   @FXML
@@ -300,7 +309,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
-    versionLabel.setText("VPin Studio Version " + Studio.getVersion());
+    versionLink.setText("VPin Studio Version " + Studio.getVersion());
+    versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
     hostLabel.setText(System.getProperty("os.name"));
 
     EventManager.getInstance().addListener(this);

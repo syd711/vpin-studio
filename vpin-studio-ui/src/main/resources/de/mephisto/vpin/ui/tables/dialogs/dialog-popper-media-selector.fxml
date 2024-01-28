@@ -334,12 +334,12 @@
                                  <top>
                                     <ToolBar BorderPane.alignment="CENTER">
                                        <items>
-                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="external-component" text="Open Folder" textFill="WHITE">
+                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" text="Open Folder" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="12" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="PinUP Popper Setup" />

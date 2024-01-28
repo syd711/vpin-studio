@@ -70,12 +70,12 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="external-component">
+                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="Open VPX tables folder" />
@@ -97,12 +97,12 @@
                             <right>
                         <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                                      <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="external-component">
+                                      <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="folder-component">
                                           <font>
                                               <Font size="10.0" />
                                           </font>
                                           <graphic>
-                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                           </graphic>
                                           <tooltip>
                                               <Tooltip text="DirectB2S Folder" />
@@ -134,12 +134,12 @@
                      <right>
                         <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="external-component">
+                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="folder-component">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open DMD folder" />
@@ -160,12 +160,12 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="external-component">
+                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="folder-component">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
                                                 <Tooltip text="Open PUP pack folder" />
@@ -184,12 +184,12 @@
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <right>
-                        <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="external-component" BorderPane.alignment="CENTER">
+                        <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="folder-component" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="10.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="ALT Sound Folder" />
@@ -205,12 +205,12 @@
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <right>
-                        <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="external-component" BorderPane.alignment="CENTER">
+                        <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component" BorderPane.alignment="CENTER">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="ALT Color Folder" />
+                              <Tooltip text="Open ALT Color Folder" />
                            </tooltip>
                            <font>
                               <Font size="10.0" />
@@ -232,15 +232,15 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onTables" styleClass="external-component">
+                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Point Of View (POV)" />
+                                                <Tooltip text="Open Point Of View (POV) folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
@@ -261,12 +261,12 @@
                             <right>
                         <HBox spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
                            <children>
-                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="external-component">
+                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="ALT Color Folder" />
+                                    <Tooltip text="Open ALT Color Folder" />
                                  </tooltip>
                                  <font>
                                     <Font size="10.0" />
@@ -347,12 +347,12 @@
                         <Label text="Virtual Pinball Spreadsheet" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="external-component" BorderPane.alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="10.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
