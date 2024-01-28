@@ -3,6 +3,9 @@
 ### Changes
 
 - Added "Emulator" column to table overview. The column is hidden by default and must be enabled in the UI settings.
+- Increased possible time to show the highscore card on startup to 30 seconds.
+- Renamed "Tables" tab to "VPX Tables".
+- Replaced tab icon of "Tables" and "VPS Tables" for a better understanding which tables are shown.
 
 ### Bugfixes
 

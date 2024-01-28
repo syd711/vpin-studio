@@ -27,8 +27,6 @@ public class HighscorePreferencesController implements Initializable {
   @FXML
   private CheckBox filterCheckbox;
 
-  private List<String> allowList = new ArrayList<>();
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     PreferenceEntryRepresentation entry = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_TITLES);

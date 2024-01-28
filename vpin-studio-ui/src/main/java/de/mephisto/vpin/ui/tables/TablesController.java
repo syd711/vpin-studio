@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -22,6 +23,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
@@ -136,6 +139,18 @@ public class TablesController implements Initializable, StudioFXController, Stud
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
+
+    Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
+    ImageView view = new ImageView(image);
+    view.setFitWidth(18);
+    view.setFitHeight(18);
+    vpsTablesTab.setGraphic(view);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("vpx.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setFitWidth(18);
+    view2.setFitHeight(18);
+    tablesTab.setGraphic(view2);
   }
 
   private void refreshTabSelection(Number t1) {

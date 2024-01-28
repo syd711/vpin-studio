@@ -21,7 +21,7 @@
                     <children>
                         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
-                                <Tab fx:id="tablesTab" closable="false" text=" Tables">
+                                <Tab fx:id="tablesTab" closable="false" text="VPX Tables">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
