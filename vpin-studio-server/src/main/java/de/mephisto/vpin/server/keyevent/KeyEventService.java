@@ -128,7 +128,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         } catch (InterruptedException e) {
           //ignore
         }
-        this.overlayVisible = !overlayVisible;
+        this.overlayVisible = true;
         OverlayWindowFX.getInstance().showOverlay(overlayVisible);
       }
     });

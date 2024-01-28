@@ -75,6 +75,10 @@ public class OverlayWindowFX extends Application {
   }
 
   public void showOverlay(boolean visible) {
+    if(overlayVisible && visible) {
+      return;
+    }
+
     overlayVisible = visible;
     if (visible) {
       try {
