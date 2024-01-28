@@ -130,7 +130,7 @@ public class PupPackAnalyzer {
           }
         }
         else {
-          if (name.contains("screens.pup")) {
+          if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
             screensPupFound = true;
           }
         }

@@ -24,4 +24,6 @@
 - Fixed "chrome.exe" system command where possible white spaces have not been escaped (incl. improved logging).
 - Fixed "Pause Key" dropdown, that wasn't filled with any values.
 - Fixed "Show Overlay on Startup" (Hopefully this time, guys!).
-- Fixed possible error in update script of the server restart (thanks @m-oster for this!);
+- Fixed possible error in update script of the server restart (thanks @m-oster for this!).
+- Fixed error in PUP pack analyzer for PUP packs that are marked as "scriptonly".
+- Fixed error in loading PUP packs with images only.
