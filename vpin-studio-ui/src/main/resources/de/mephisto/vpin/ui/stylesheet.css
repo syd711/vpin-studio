@@ -941,17 +941,20 @@
 }
 
 .external-component {
+    -fx-font-color: #FFFFFF;
     -fx-text-fill: #FFFFFF;
     -fx-base : #338800;
 }
 
 .folder-component {
+    -fx-font-color: #000000;
     -fx-text-fill: #000000;
     -fx-base : #CC9933;
 }
 
 
 .link-component {
+    -fx-font-color: #000000;
     -fx-text-fill: #000000;
     -fx-base : #3399FF;
 }

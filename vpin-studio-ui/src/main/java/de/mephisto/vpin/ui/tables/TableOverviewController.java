@@ -1269,6 +1269,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view4.setFitHeight(18);
     tableEditBtn.setGraphic(view4);
 
+    columnEmulator.setVisible(false);
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {

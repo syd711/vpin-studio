@@ -289,6 +289,13 @@ public class Game {
     return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
+
+  @NonNull
+  @JsonIgnore
+  public File getIniFile() {
+    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+  }
+
   @NonNull
   @JsonIgnore
   public File getResFile() {

@@ -334,7 +334,7 @@
                                  <top>
                                     <ToolBar BorderPane.alignment="CENTER">
                                        <items>
-                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -342,7 +342,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="PinUP Popper Setup" />
+                                                <Tooltip text="Open PinUP Popper system folder for this asset type" />
                                              </tooltip>
                                           </Button>
                                           <Separator layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

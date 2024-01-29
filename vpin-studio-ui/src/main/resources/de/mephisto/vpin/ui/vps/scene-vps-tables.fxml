@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -61,13 +62,17 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="Open on VPS.net">
+                  <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" textFill="WHITE">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <tooltip>
+                        <Tooltip text="Open table information on VPS." />
+                     </tooltip>
                   </Button>
               </items>
             </ToolBar>

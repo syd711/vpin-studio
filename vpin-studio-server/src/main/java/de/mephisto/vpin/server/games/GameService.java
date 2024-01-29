@@ -2,10 +2,10 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -24,6 +24,7 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -90,6 +91,9 @@ public class GameService implements InitializingBean {
   @Autowired
   private PlayerService playerService;
 
+  @Autowired
+  private SystemService systemService;
+
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
@@ -120,9 +124,16 @@ public class GameService implements InitializingBean {
   @SuppressWarnings("unused")
   public List<Game> getKnownGames() {
     List<Game> games = new ArrayList<>(pinUPConnector.getGames());
+    boolean killedPopper = false;
     for (Game game : games) {
       GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
       if (gameDetails != null) {
+        if (!killedPopper) {
+          LOG.info("New games have been found, automatically killing popper to release locks.");
+          systemService.killPopper();
+          killedPopper = true;
+        }
+
         applyGameDetails(game, gameDetails, false);
       }
     }
@@ -331,7 +342,7 @@ public class GameService implements InitializingBean {
     //check if the actual game still exists
     for (Score version : allHighscoreVersions) {
       //filter by game
-      if(gameId > 0 && version.getGameId() != gameId) {
+      if (gameId > 0 && version.getGameId() != gameId) {
         continue;
       }
 

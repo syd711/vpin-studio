@@ -29,7 +29,7 @@
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <VBox prefHeight="700.0">
+            <VBox prefHeight="710.0">
                <children>
                   <TabPane>
                      <VBox.margin>
@@ -43,7 +43,8 @@
                                     <GridPane vgap="3.0">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -246,6 +247,34 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
+                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini)" wrapText="true" />
+                                             </tooltip>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="Changing the game name will also rename all media assets linked to this table." wrapText="true" />
+                                             </tooltip>
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin>
+                                          </Label>
                   
                         
                   
@@ -268,7 +297,8 @@
                                     <GridPane vgap="3.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" prefWidth="500.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -393,6 +423,20 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
+                                          <Button mnemonicParsing="false" onAction="#onUrlProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                             </tooltip>
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin>
+                                          </Button>
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -416,8 +460,8 @@
                                     </Label>
                                     <GridPane>
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="234.400048828125" minWidth="10.0" prefWidth="182.399951171875" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="579.4000488281249" minWidth="10.0" prefWidth="579.4000488281249" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="234.400048828125" minWidth="10.0" prefWidth="137.60003967285155" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="547.9999603271483" minWidth="450.0" prefWidth="547.9999603271483" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -595,7 +639,8 @@
                                     <GridPane vgap="3.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -713,6 +758,20 @@
                                              </font>
                                           </Label>
                                           <TextArea fx:id="gPlayLog" editable="false" layoutX="171.0" layoutY="455.0" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                          <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                             </tooltip>
+                                             <GridPane.margin>
+                                                <Insets left="3.0" />
+                                             </GridPane.margin>
+                                          </Button>
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

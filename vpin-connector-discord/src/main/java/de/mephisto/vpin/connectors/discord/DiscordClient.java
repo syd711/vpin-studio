@@ -203,25 +203,29 @@ public class DiscordClient {
     if (pinnedMessagesCache.containsKey(channelId)) {
       return new ArrayList<>(pinnedMessagesCache.get(channelId).getMessages());
     }
-    Guild guild = getGuild(serverId);
-    if (guild != null) {
-      TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-      if (channel != null) {
-        long start = System.currentTimeMillis();
-        List<Message> complete = channel.retrievePinnedMessages().complete();
-        for (Message message : complete) {
-          this.messageCacheById.put(message.getIdLong(), message);
-        }
+    try {
+      Guild guild = getGuild(serverId);
+      if (guild != null) {
+        TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+        if (channel != null) {
+          long start = System.currentTimeMillis();
+          List<Message> complete = channel.retrievePinnedMessages().complete();
+          for (Message message : complete) {
+            this.messageCacheById.put(message.getIdLong(), message);
+          }
 
-        LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
-        List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
-        pinnedMessagesCache.put(channelId, new PinnedMessages());
-        pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
-        return collect;
+          LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
+          List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
+          pinnedMessagesCache.put(channelId, new PinnedMessages());
+          pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
+          return collect;
+        }
+        else {
+          LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
+        }
       }
-      else {
-        LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
-      }
+    } catch (Exception e) {
+      LOG.error("Error reading pinned messages: " + e.getMessage(), e);
     }
     return Collections.emptyList();
   }

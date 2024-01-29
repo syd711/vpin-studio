@@ -33,9 +33,9 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component">
+                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />

@@ -64,7 +64,20 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <ScrollPane maxHeight="600.0" minHeight="400.0">
+                  <Label layoutX="10.0" layoutY="58.0" styleClass="preference-description" text="Rename the &quot;Game Name&quot; in the &quot;Table Data&quot; dialog after the import " textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="92.0" styleClass="preference-description" text="if you have already assets in the screen folders of PinUP Popper for this table." textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ScrollPane maxHeight="500.0" minHeight="500.0">
                      <content>
                         <VBox fx:id="tableBox" />
                      </content>

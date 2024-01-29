@@ -2,21 +2,27 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,6 +203,38 @@ public class TableDataController implements Initializable, DialogController {
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private GameRepresentation game;
   private TableDetails tableDetails;
+
+  @FXML
+  private void onWeblinkProperty() {
+    String text = this.webLink.getText();
+    if(!StringUtils.isEmpty(text) && text.startsWith("http")) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(text));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onUrlProperty() {
+    String text = this.url.getText();
+    if(!StringUtils.isEmpty(text) && text.startsWith("http")) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(text));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage());
+        }
+      }
+    }
+  }
+
+
 
   @FXML
   private void onSaveClick(ActionEvent e) {

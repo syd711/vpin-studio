@@ -321,6 +321,10 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
         if (game.getResFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getResFile(), name);
         }
+
+        if (game.getIniFile().exists()) {
+          de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getIniFile(), name);
+        }
         LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
       }
       else {

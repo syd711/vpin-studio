@@ -711,11 +711,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
     screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.BackGlass, "mp4", "png", "jpg"));
 
-    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "png", "jpg"));
-    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameInfo, "png", "jpg"));
+    screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameInfo, "mp4", "png", "jpg"));
 
-    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "png", "jpg"));
-    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameHelp, "png", "jpg"));
+    screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "mp4", "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameHelp, "mp4", "png", "jpg"));
 
     screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
     screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Menu, "mp4", "png", "jpg"));
@@ -726,8 +726,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
     screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Other2, "mp4", "png", "jpg"));
 
-    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "jpg"));
-    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Wheel, "png", "apng"));
+    screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "apng", "png", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Wheel, "apng", "png", "apng"));
 
   }
 

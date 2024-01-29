@@ -81,12 +81,12 @@ public class PinUPConnector implements InitializingBean {
   private void initVisualPinballXScripts(Emulator emulator) {
     String emulatorName = emulator.getName();
     String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
-    if (emulatorStartupScript != null && !emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
+    if (!emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
       emulatorStartupScript = emulatorStartupScript + "\n\n" + CURL_COMMAND_TABLE_START;
       this.updateScript(emulatorName, "LaunchScript", emulatorStartupScript);
     }
     String emulatorExitScript = this.getEmulatorExitScript(emulatorName);
-    if (emulatorExitScript != null && !emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
+    if (!emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
       emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
       this.updateScript(emulatorName, "PostScript", emulatorExitScript);
     }
@@ -1188,9 +1188,9 @@ public class PinUPConnector implements InitializingBean {
     return result;
   }
 
-  @Nullable
+  @NonNull
   public String getEmulatorStartupScript(@NonNull String emuName) {
-    String script = null;
+    String script = "";
     Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
@@ -1198,6 +1198,9 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(LAUNCH_SCRIPT);
+      if (script == null) {
+        script = "";
+      }
       rs.close();
       statement.close();
     } catch (SQLException e) {
@@ -1208,9 +1211,9 @@ public class PinUPConnector implements InitializingBean {
     return script;
   }
 
-  @Nullable
+  @NonNull
   public String getEmulatorExitScript(@NonNull String emuName) {
-    String script = null;
+    String script = "";
     Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
@@ -1218,6 +1221,9 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(POST_SCRIPT);
+      if(script == null) {
+        script = "";
+      }
       rs.close();
       statement.close();
     } catch (SQLException e) {
