@@ -183,6 +183,8 @@ public class TableUploadController implements Initializable, DialogController {
       emulatorCombo.setValue(gameEmulator);
     }
     else {
+      this.uploadAndReplaceRadio.setDisable(true);
+      this.uploadAndCloneRadio.setDisable(true);
       this.gameId = -1;
     }
   }

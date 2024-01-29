@@ -199,6 +199,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem dmdUploadItem;
 
   @FXML
+  private MenuItem pupPackUploadItem;
+
+  @FXML
   private MenuItem povItem;
 
   private Parent tablesLoadingOverlay;
@@ -243,6 +246,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onRomsUpload() {
     TablesSidebarScriptDataController.onRomUploads(tablesController.getTablesSideBarController());
+  }
+
+
+  @FXML
+  private void onPupPackUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
+      }
+    }
   }
 
   @FXML
@@ -1229,6 +1244,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
     altColorUploadItem.setDisable(disable);
     altSoundUploadItem.setDisable(disable);
+    pupPackUploadItem.setDisable(disable);
     dmdUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
