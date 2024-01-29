@@ -31,7 +31,7 @@ public class RomService {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if (Emulator.isVisualPinball(game.getEmulator().getName(), game.getEmulator().getDisplayName(), game.getEmulator().getDescription())) {
+    if (Emulator.isVisualPinball(game.getEmulator().getName(), game.getEmulator().getDisplayName(), game.getEmulator().getDescription(), game.getEmulator().getGameExt())) {
       if (game.getGameFile().exists()) {
         return VPXFileScanner.scan(game.getGameFile());
       }

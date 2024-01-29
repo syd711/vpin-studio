@@ -42,6 +42,7 @@ public class GameRepresentation {
   private List<Integer> ignoredValidations;
   private String highscoreType;
   private boolean povAvailable;
+  private boolean iniAvailable;
   private boolean selected;
   private boolean romRequired;
   private String assets;
@@ -220,6 +221,14 @@ public class GameRepresentation {
 
   public void setPovAvailable(boolean povAvailable) {
     this.povAvailable = povAvailable;
+  }
+
+  public boolean isIniAvailable() {
+    return iniAvailable;
+  }
+
+  public void setIniAvailable(boolean iniAvailable) {
+    this.iniAvailable = iniAvailable;
   }
 
   public String getTableName() {

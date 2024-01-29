@@ -192,7 +192,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
 
   private File getDestDirForEntry(ZipEntry entry) {
     String name = entry.getName();
-    if (Emulator.isVisualPinball(name, null, null)) {
+    if (Emulator.isVisualPinball(name, null, null, null)) {
       return emulator.getInstallationFolder().getParentFile();
     }
     else if (name.startsWith("PinUPSystem")) {

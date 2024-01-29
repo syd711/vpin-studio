@@ -42,6 +42,7 @@ public class GameEmulator {
   private final int id;
   private final boolean visible;
   private final String vpxExeName;
+  private final String gameExt;
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
@@ -50,6 +51,7 @@ public class GameEmulator {
     this.displayName = emulator.getDisplayName();
     this.vpxExeName = emulator.getVpxExeName();
     this.visible = emulator.isVisible();
+    this.gameExt = emulator.getGamesExt();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
@@ -81,6 +83,10 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+  }
+
+  public String getGameExt() {
+    return gameExt;
   }
 
   public String getDisplayName() {

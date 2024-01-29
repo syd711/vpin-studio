@@ -327,6 +327,10 @@ public class Game {
     return this.getPOVFile().exists();
   }
 
+  public boolean isIniAvailable() {
+    return this.getIniFile().exists();
+  }
+
   public void setGameFile(@NonNull File gameFile) {
     this.gameFile = gameFile;
   }
