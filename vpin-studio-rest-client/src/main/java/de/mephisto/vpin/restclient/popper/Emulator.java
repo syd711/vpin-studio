@@ -120,10 +120,10 @@ public class Emulator {
   }
 
   public boolean isVisualPinball() {
-    return isVisualPinball(this.name, this.displayName, this.description);
+    return isVisualPinball(this.name, this.displayName, this.description, this.gamesExt);
   }
 
-  public static boolean isVisualPinball(String name, String displayName, String description) {
+  public static boolean isVisualPinball(String name, String displayName, String description, String gamesExt) {
     if (matchesVPX(name)) {
       return true;
     }
@@ -133,7 +133,7 @@ public class Emulator {
     if (matchesVPX(description)) {
       return true;
     }
-    return false;
+    return String.valueOf(gamesExt).toLowerCase().contains("vpx");
   }
 
   private static boolean matchesVPX(String name) {
