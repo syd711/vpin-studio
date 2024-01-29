@@ -57,7 +57,7 @@ public class DMDUploadController implements Initializable, DialogController {
   private void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
-      result = false;
+      result = true;
       stage.close();
 
       Platform.runLater(() -> {

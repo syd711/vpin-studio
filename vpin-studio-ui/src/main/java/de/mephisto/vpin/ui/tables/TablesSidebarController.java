@@ -87,6 +87,9 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPaneAltColor;
 
   @FXML
+  private TitledPane titledPaneAltSound;
+
+  @FXML
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
@@ -679,5 +682,33 @@ public class TablesSidebarController implements Initializable {
 
   public void setVisible(boolean b) {
     tableAccordion.setVisible(b);
+  }
+
+  public TitledPane getTitledPanePov() {
+    return titledPanePov;
+  }
+
+  public TitledPane getTitledPaneAudio() {
+    return titledPaneAudio;
+  }
+
+  public TitledPane getTitledPaneDirectB2s() {
+    return titledPaneDirectB2s;
+  }
+
+  public TitledPane getTitledPanePUPPack() {
+    return titledPanePUPPack;
+  }
+
+  public TitledPane getTitledPaneDMD() {
+    return titledPaneDMD;
+  }
+
+  public TitledPane getTitledPaneAltColor() {
+    return titledPaneAltColor;
+  }
+
+  public TitledPane getTitledPaneAltSound() {
+    return titledPaneAltSound;
   }
 }

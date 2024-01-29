@@ -166,7 +166,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button backupBtn;
 
   @FXML
-  private Button uploadTableBtn;
+  private SplitMenuButton uploadTableBtn;
 
   @FXML
   private Button reloadBtn;
@@ -182,6 +182,24 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private StackPane tableStack;
+
+  @FXML
+  private MenuItem backglassUploadItem;
+
+  @FXML
+  private MenuItem romsUploadItem;
+
+  @FXML
+  private MenuItem altSoundUploadItem;
+
+  @FXML
+  private MenuItem altColorUploadItem;
+
+  @FXML
+  private MenuItem dmdUploadItem;
+
+  @FXML
+  private MenuItem povItem;
 
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
@@ -199,6 +217,66 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
+
+  @FXML
+  private void onAltSoundUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.openAltSoundUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneAltSound().setExpanded(true);
+      }
+    }
+  }
+
+  @FXML
+  private void onAltColorUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
+      }
+    }
+  }
+
+  @FXML
+  private void onRomsUpload() {
+    TablesSidebarScriptDataController.onRomUploads(tablesController.getTablesSideBarController());
+  }
+
+  @FXML
+  private void onBackglassUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.directBackglassUpload(stage, selectedItems.get(0));
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
+      }
+    }
+  }
+
+  @FXML
+  private void onDMDUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.openDMDUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
+      }
+    }
+  }
+
+  @FXML
+  private void onPOVUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.openPovUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0));
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
+      }
+    }
+  }
 
   @FXML
   private void onMediaEdit() {
@@ -1149,6 +1227,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void onChanged(Change<? extends GameRepresentation> c) {
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
+    altColorUploadItem.setDisable(disable);
+    altSoundUploadItem.setDisable(disable);
+    dmdUploadItem.setDisable(disable);
+    povItem.setDisable(disable);
+    backglassUploadItem.setDisable(disable);
+
+
     validateBtn.setDisable(disable);
     deleteBtn.setDisable(c.getList().isEmpty());
     backupBtn.setDisable(true);

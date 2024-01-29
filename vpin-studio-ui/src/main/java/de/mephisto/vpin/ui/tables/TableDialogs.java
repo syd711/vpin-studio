@@ -57,7 +57,7 @@ public class TableDialogs {
     }
   }
 
-  public static void directBackglassUpload(Stage stage, GameRepresentation game) {
+  public static boolean directBackglassUpload(Stage stage, GameRepresentation game) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
@@ -75,7 +75,9 @@ public class TableDialogs {
           ProgressDialog.createProgressDialog(model);
         }
       });
+      return true;
     }
+    return false;
   }
 
   public static boolean openPopperMediaAdminDialog(GameRepresentation game, PopperScreen screen) {

@@ -4,6 +4,10 @@
 
 - Added link buttons to the link fields in the table data dialog.
 - Added help icons for the fields "Game Name" and "Game File Name" in the table data dialog with hints about the renaming that results out of changing this fields.
+- Added all possible uploads into one split-button menu. This way, the you don't have to search for the uploads buttons in the different sections anymore.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/upload-button.png" width="400" />
+
 
 ### Bugfixes
 

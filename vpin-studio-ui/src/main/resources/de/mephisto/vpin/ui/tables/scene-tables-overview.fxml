@@ -5,7 +5,9 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -192,17 +194,49 @@
                               <Tooltip text="Import existing VPX files into PinUP Popper" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="uploadTableBtn" layoutX="493.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableUpload" textFill="WHITE">
+                        <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
+                          <items>
+                            <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="Upload ROMs">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                            <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="Upload Backglass">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color Files">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="Upload ALT Sound Pack">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload POV File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                          </items>
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                           </graphic>
                            <tooltip>
                               <Tooltip text="Upload VPX files to PinUP Popper" />
                            </tooltip>
-                        </Button>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </SplitMenuButton>
                                 <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                                     <font>
                                         <Font size="14.0" />
