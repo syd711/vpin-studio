@@ -32,7 +32,7 @@ public class ChromeLauncher {
       File profileFolder = new File("./resources/menu-profile");
       profileFolder.mkdirs();
 
-      List<String> cmds = Arrays.asList(chromeExe.getAbsolutePath(),
+      List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
         "--app=\"data:text/html,<html><body><script>window.resizeTo(" + width + "," + height + ");window.location='" + url + "';</script></body></html>\"",
         "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
       LOG.info("Chrome Command: " + String.join(" ", cmds));
