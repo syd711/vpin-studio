@@ -146,11 +146,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-      .stream()
-      .filter(g ->
-        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(g ->
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+        .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -250,7 +250,7 @@ public class GameService implements InitializingBean {
           success = false;
         }
 
-        if(!mameService.deleteOptions(game.getRom(), game.getTableName())) {
+        if (!mameService.deleteOptions(game.getRom(), game.getTableName())) {
           success = false;
         }
       }
@@ -272,15 +272,26 @@ public class GameService implements InitializingBean {
           success = false;
         }
 
-        PopperScreen[] values = PopperScreen.values();
-        for (PopperScreen originalScreenValue : values) {
-          List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
-          for (GameMediaItem mediaItem : gameMediaItem) {
-            File mediaFile = mediaItem.getFile();
-            if (!mediaFile.delete() && success) {
-              success = false;
+        //only delete the popper assets, if there is no other game with the same "Game Name".
+        List<Game> allOtherTables = this.pinUPConnector.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
+        List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
+
+        if (duplicateGameNameTables.isEmpty()) {
+          PopperScreen[] values = PopperScreen.values();
+          for (PopperScreen originalScreenValue : values) {
+            List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+            for (GameMediaItem mediaItem : gameMediaItem) {
+              File mediaFile = mediaItem.getFile();
+              if (!mediaFile.delete()) {
+                success = false;
+              } else {
+                LOG.warn("Failed to delete \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+              }
             }
           }
+        }
+        else {
+          LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
         }
       }
 
@@ -308,10 +319,7 @@ public class GameService implements InitializingBean {
   }
 
   /**
-   * Retursn the current highscore for the given game
-   *
-   * @param gameId
-   * @return
+   * Returns the current highscore for the given game
    */
   public ScoreSummary getScores(int gameId) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
@@ -320,9 +328,6 @@ public class GameService implements InitializingBean {
 
   /**
    * Returns a complete list of highscore versions
-   *
-   * @param gameId
-   * @return
    */
   public ScoreList getScoreHistory(int gameId) {
     return highscoreService.getScoreHistory(gameId);
@@ -343,8 +348,7 @@ public class GameService implements InitializingBean {
 
     if (!filterEnabled || buildInPlayers.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
-    }
-    else {
+    } else {
 
       for (Player buildInPlayer : buildInPlayers) {
         allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(buildInPlayer.getInitials()));
@@ -377,11 +381,6 @@ public class GameService implements InitializingBean {
     return summary;
   }
 
-  /**
-   * Returns true if game details are available
-   *
-   * @param gameId the game to scan
-   */
   @Nullable
   public Game scanGame(int gameId) {
     Game game = null;
@@ -392,15 +391,13 @@ public class GameService implements InitializingBean {
         highscoreService.scanScore(game);
 
         return getGame(gameId);
-      }
-      else {
+      } else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
     } catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
-      }
-      else {
+      } else {
         LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
       }
     }
@@ -488,8 +485,7 @@ public class GameService implements InitializingBean {
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());
-    }
-    else {
+    } else {
       game.setRom(gameDetails.getRomName());
     }
 
@@ -509,8 +505,7 @@ public class GameService implements InitializingBean {
       String[] split = updates.split(",");
       List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
       game.setUpdates(collect);
-    }
-    else {
+    } else {
       game.setUpdates(Collections.emptyList());
     }
 

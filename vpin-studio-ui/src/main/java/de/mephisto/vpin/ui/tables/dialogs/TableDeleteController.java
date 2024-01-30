@@ -178,11 +178,11 @@ public class TableDeleteController implements Initializable, DialogController {
             hasNonSelectedVariant = true;
             this.validationContainer.setVisible(true);
             this.validationTitle.setVisible(true);
+            break;
           }
         }
       }
     }
-
 
     this.deleteAllCheckbox.setDisable(hasNonSelectedVariant);
     pupPackCheckbox.setDisable(hasNonSelectedVariant);
