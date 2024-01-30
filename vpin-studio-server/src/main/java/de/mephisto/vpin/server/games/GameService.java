@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -93,6 +94,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private MameService mameService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -193,6 +197,10 @@ public class GameService implements InitializingBean {
         if (!FileUtils.delete(game.getResFile())) {
           success = false;
         }
+
+        if (!FileUtils.delete(game.getIniFile())) {
+          success = false;
+        }
       }
 
       if (descriptor.isDeleteDirectB2s()) {
@@ -239,6 +247,10 @@ public class GameService implements InitializingBean {
 
       if (descriptor.isDeleteCfg()) {
         if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
+          success = false;
+        }
+
+        if(!mameService.deleteOptions(game.getRom(), game.getTableName())) {
           success = false;
         }
       }

@@ -79,6 +79,15 @@ public class WinRegistry {
     }
   }
 
+  public static void deleteKey(@NonNull String key) {
+    try {
+      Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, key);
+      LOG.info("Deleted key " + key + "\\" + key);
+    } catch (Exception e) {
+      LOG.info("Deletion failed for registry path '" + key + "\\" + key + ": " + e.getMessage());
+    }
+  }
+
   public static int getIntValue(@NonNull String path, @NonNull String key) {
     try {
       return Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, path, key);

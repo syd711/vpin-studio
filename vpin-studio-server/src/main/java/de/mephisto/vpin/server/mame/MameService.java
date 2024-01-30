@@ -102,6 +102,13 @@ public class MameService implements InitializingBean {
     return getOptions(rom);
   }
 
+  public boolean deleteOptions(String rom, String tableName) {
+    WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + rom);
+    WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + tableName);
+    this.clearCache();
+    return true;
+  }
+
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
   }

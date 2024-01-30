@@ -185,7 +185,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="198.0" text="Delete Mame Config File" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <Label layoutX="10.0" layoutY="198.0" text="Delete Mame Settings" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
