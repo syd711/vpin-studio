@@ -102,6 +102,8 @@ public class PopperMediaResource implements InitializingBean {
       GameMedia gameMedia = game.getGameMedia();
       GameMediaItem gameMediaItem = gameMedia.getDefaultMediaItem(popperScreen);
       if (!StringUtils.isEmpty(name)) {
+        name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+        name = name.replaceAll("\\+", "%2B");
         name = URLDecoder.decode(name, Charset.defaultCharset());
         gameMediaItem = gameMedia.getMediaItem(popperScreen, name);
       }

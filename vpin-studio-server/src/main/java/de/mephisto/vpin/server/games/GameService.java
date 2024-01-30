@@ -133,13 +133,14 @@ public class GameService implements InitializingBean {
     for (Game game : games) {
       GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
       if (gameDetails != null) {
+        applyGameDetails(game, gameDetails, false);
+      }
+      else {
         if (!killedPopper) {
           LOG.info("New games have been found, automatically killing popper to release locks.");
           systemService.killPopper();
           killedPopper = true;
         }
-
-        applyGameDetails(game, gameDetails, false);
       }
     }
     return games;

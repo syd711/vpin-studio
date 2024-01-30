@@ -49,12 +49,9 @@ public class GameMedia {
     }
 
     List<GameMediaItem> gameMediaItems = media.get(screen.name());
-    if (media.isEmpty()) {
-      return null;
-    }
-
     for (GameMediaItem gameMediaItem : gameMediaItems) {
-      if (gameMediaItem.getName().equalsIgnoreCase(name)) {
+      //TODO mpf
+      if (gameMediaItem.getName().equalsIgnoreCase(name) || gameMediaItem.getName().replaceAll(" ",  "+").equalsIgnoreCase(name)) {
         return gameMediaItem;
       }
     }

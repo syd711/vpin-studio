@@ -14,6 +14,7 @@
 
 ### Bugfixes
 
+- Added file name validators to "Table Data" input fields "Game Name" and "File Name".
 - Fixed missing re-styling of some link buttons that were still green instead of blue.
 - Fixed possible database lock when Popper is running and Studio is started with new tables detected.
 - Added missing .mp4 and .apng file formats to the list of possible drag and drop files for the assets dialog.
@@ -23,4 +24,5 @@
 - Fixed Table Upload dialog: "Upload and Replace" and "Upload and Clone" options are disabled when opened without a table selection.
 - Fixed unzip error during updates by switching from 7z archives to "real" zip files.
 - Fixed error for the **chrome.exe** call, caused by missing quotes. 
+- Fixed broken Popper asset downloads for tables with renamed "Game Name".
 - Fixed erroneous VPS update indicators for PUP packs, POV, ALT sound and ALT color (how emberassing - copy and paste isn't for beginners :-/).

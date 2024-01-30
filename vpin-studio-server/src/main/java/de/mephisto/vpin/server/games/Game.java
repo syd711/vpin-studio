@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -17,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -238,9 +239,10 @@ public class Game {
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseFilename = getGameName();
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
-
-    if (mediaFiles != null && mediaFiles.length > 0) {
-      return Arrays.asList(mediaFiles);
+    if (mediaFiles != null) {
+      Pattern p  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{2,2}\\.[a-zA-Z]*");
+      return Arrays.stream(mediaFiles).filter(f -> FilenameUtils.getBaseName(f.getName()).equalsIgnoreCase(baseFilename) || p.matcher(f.getName()).matches())
+          .collect(Collectors.toList());
     }
     return Collections.emptyList();
   }

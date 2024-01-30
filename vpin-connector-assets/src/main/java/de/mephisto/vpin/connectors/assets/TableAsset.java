@@ -71,14 +71,6 @@ public class TableAsset {
     return FilenameUtils.getExtension(getName());
   }
 
-  public String toAssetName(String gameDisplayName) {
-    if (name.contains(".")) {
-      String extension = name.substring(name.lastIndexOf(".") + 1);
-      return gameDisplayName + "." + extension;
-    }
-    return gameDisplayName;
-  }
-
   @Override
   public String toString() {
     return name + "  [" + this.emulator + "/" + this.author + "/]";

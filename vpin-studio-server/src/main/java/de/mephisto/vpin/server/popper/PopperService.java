@@ -309,21 +309,21 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     //rename game filename which results in renaming VPX related files
     if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-      if (de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getGameFile(), name)) {
+      if (de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
         if (game.getDirectB2SFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getDirectB2SFile(), name);
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
         }
 
         if (game.getPOVFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getPOVFile(), name);
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
         }
 
         if (game.getResFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getResFile(), name);
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
         }
 
         if (game.getIniFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(game.getIniFile(), name);
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
         }
         LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
       }
@@ -417,7 +417,7 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
       for (GameMediaItem gameMediaItem : gameMediaItems) {
         File gameMediaFile = gameMediaItem.getFile();
         if (gameMediaFile.exists()) {
-          if (de.mephisto.vpin.commons.utils.FileUtils.renameWithBaseName(gameMediaFile, newBaseName)) {
+          if (de.mephisto.vpin.commons.utils.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
             assetRenameCounter++;
             LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
           }

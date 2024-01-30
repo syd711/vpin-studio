@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
@@ -207,7 +208,7 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private void onWeblinkProperty() {
     String text = this.webLink.getText();
-    if(!StringUtils.isEmpty(text) && text.startsWith("http")) {
+    if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
@@ -222,7 +223,7 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private void onUrlProperty() {
     String text = this.url.getText();
-    if(!StringUtils.isEmpty(text) && text.startsWith("http")) {
+    if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
@@ -235,7 +236,6 @@ public class TableDataController implements Initializable, DialogController {
   }
 
 
-
   @FXML
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -243,11 +243,9 @@ public class TableDataController implements Initializable, DialogController {
     String value = "";
     if (useEmuDefaultsCheckbox.isSelected()) {
       //nothing, empty value for defaults
-    }
-    else if (hideAllCheckbox.isSelected()) {
+    } else if (hideAllCheckbox.isSelected()) {
       value = "NONE";
-    }
-    else {
+    } else {
       List<String> result = new ArrayList<>();
       if (topperCheckbox.isSelected()) result.add("" + 0);
       if (dmdCheckbox.isSelected()) result.add("" + 1);
@@ -285,7 +283,7 @@ public class TableDataController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -381,9 +379,23 @@ public class TableDataController implements Initializable, DialogController {
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
     databaseIdLabel.setText(String.valueOf(game.getId()));
     gameName.setText(tableDetails.getGameName());
-    gameName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameName(newValue));
+    gameName.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (FileUtils.isValidFilename(newValue)) {
+        tableDetails.setGameName(newValue);
+      }
+      else {
+        gameName.setText(oldValue);
+      }
+    });
     gameFileName.setText(tableDetails.getGameFileName());
-    gameFileName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameFileName(newValue));
+    gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
+      if (FileUtils.isValidFilename(newValue)) {
+        tableDetails.setGameFileName(newValue);
+      }
+      else {
+        gameFileName.setText(oldValue);
+      }
+    });
     gameDisplayName.setText(tableDetails.getGameDisplayName());
     gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
     gameTheme.setText(tableDetails.getGameTheme());
@@ -414,8 +426,7 @@ public class TableDataController implements Initializable, DialogController {
     gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.length() > 0) {
         tableDetails.setGameYear(Integer.parseInt(newValue));
-      }
-      else {
+      } else {
         tableDetails.setGameYear(0);
       }
     });
@@ -505,11 +516,9 @@ public class TableDataController implements Initializable, DialogController {
     String keepDisplays = tableDetails.getKeepDisplays();
     if (StringUtils.isEmpty(keepDisplays)) {
       useEmuDefaultsCheckbox.setSelected(true);
-    }
-    else if (keepDisplays.equalsIgnoreCase("NONE")) {
+    } else if (keepDisplays.equalsIgnoreCase("NONE")) {
       hideAllCheckbox.setSelected(true);
-    }
-    else {
+    } else {
       String[] split = keepDisplays.split(",");
       for (String screen : split) {
         if (StringUtils.isEmpty(screen)) {
@@ -572,8 +581,7 @@ public class TableDataController implements Initializable, DialogController {
       } catch (NumberFormatException e) {
         LOG.error("Failed to set valume: " + e.getMessage());
       }
-    }
-    else {
+    } else {
       volumeSlider.setValue(100);
     }
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> tableDetails.setVolume(String.valueOf(t1.intValue())));
