@@ -505,7 +505,7 @@
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>a</argument>
-                                <argument>-t7z</argument>
+                                <argument>-tzip</argument>
                                 <argument>VPin-Studio.zip</argument>
                                 <argument>VPin-Studio.exe</argument>
                             </arguments>
@@ -523,7 +523,7 @@
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>a</argument>
-                                <argument>-t7z</argument>
+                                <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client.zip</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio.sh</argument>
@@ -542,7 +542,7 @@
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>a</argument>
-                                <argument>-t7z</argument>
+                                <argument>-tzip</argument>
                                 <argument>VPin-Studio-Server.zip</argument>
                                 <argument>VPin-Studio-Server.exe</argument>
                             </arguments>
