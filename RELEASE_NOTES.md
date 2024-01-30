@@ -17,7 +17,9 @@
 - Fixed missing re-styling of some link buttons that were still green instead of blue.
 - Fixed possible database lock when Popper is running and Studio is started with new tables detected.
 - Added missing .mp4 and .apng file formats to the list of possible drag and drop files for the assets dialog.
+- //TODO Fixed table deletion: Added additional check so that when a table is deleted, the linked Popper assets are no longer deleted too, when these are shared with another table.
+- //TODO Fixed table deletion: When a table is deleted, the customized competition wheel icons are deleted now too.
 - Improved emulator start/exit script analysis when writing the required "curl" calls for the VPin Studio server.
 - Fixed Table Upload dialog: "Upload and Replace" and "Upload and Clone" options are disabled when opened without a table selection.
-- Fixed error for the chrome.exe call, caused by missing quotes. 
+- Fixed error for the **chrome.exe** call, caused by missing quotes. 
 - Fixed erroneous VPS update indicators for PUP packs, POV, ALT sound and ALT color (how emberassing - copy and paste isn't for beginners :-/).

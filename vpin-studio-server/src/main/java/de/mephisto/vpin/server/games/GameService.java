@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -282,6 +283,12 @@ public class GameService implements InitializingBean {
             List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
             for (GameMediaItem mediaItem : gameMediaItem) {
               File mediaFile = mediaItem.getFile();
+
+              if (originalScreenValue.equals(PopperScreen.Wheel)) {
+                WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
+                augmenter.deAugment();
+              }
+
               if (!mediaFile.delete()) {
                 success = false;
               } else {
@@ -289,8 +296,7 @@ public class GameService implements InitializingBean {
               }
             }
           }
-        }
-        else {
+        } else {
           LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
         }
       }
