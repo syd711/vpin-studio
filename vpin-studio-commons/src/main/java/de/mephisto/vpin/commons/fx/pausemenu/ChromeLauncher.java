@@ -1,12 +1,15 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,8 +38,25 @@ public class ChromeLauncher {
       List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
         "--app=\"data:text/html,<html><body><script>window.resizeTo(" + width + "," + height + ");window.location='" + url + "';</script></body></html>\"",
         "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
-      LOG.info("Chrome Command: " + String.join(" ", cmds));
+      String commandString = String.join(" ", cmds);
+      LOG.info("Chrome Command: " + commandString);
+
+//      File cmdfile = new File(SystemInfo.RESOURCES, "chrome-launcher.bat");
+//      if(cmdfile.exists()) {
+//        if(!cmdfile.delete()) {
+//          LOG.error("Failed to delete chrome launcher file");
+//        }
+//      }
+//
+//      String logCommand = commandString + " >> chrome-launcher.log";
+//
+//      FileOutputStream out = new FileOutputStream(cmdfile);
+//      IOUtils.write(commandString, out);
+//      out.close();
+
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
+      executor.setDir(chromeExe.getParentFile());
+      executor.enableLogging(true);
       executor.executeCommandAsync();
       LOG.info(String.join(" ", cmds));
 

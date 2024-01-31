@@ -7,6 +7,7 @@
 - //TODO WinRegistry MAME settings can now be deleted together with (or without) the table.
 - //TODO ".ini" files are now deleted together the table file.
 - Added help icons for the fields "Game Name" and "Game File Name" in the table data dialog with hints about the renaming that results out of changing this fields.
+- Added ".ini" file info to the "POV" column. I don't know what the current status is regarding both files, but they share one column for now. 
 - Added all possible uploads into one split-button menu. This way, you don't have to search for the uploads buttons in the different sections anymore.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/upload-buttons.png" width="300" />

@@ -253,6 +253,12 @@ public class VPReg {
 
           String scoreString = new String(scoreContent, StandardCharsets.UTF_8);
           scoreString = scoreString.replace("\0", "");
+          while(scoreString.contains(".")) {
+            scoreString = scoreString.substring(0, scoreString.indexOf("."));
+          }
+          while(scoreString.contains(",")) {
+            scoreString = scoreString.substring(0, scoreString.indexOf("."));
+          }
 
           VPRegScoreEntry score = new VPRegScoreEntry();
           score.setBase64Score(new Base64Encoder().encode(scoreContent));
