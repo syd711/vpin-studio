@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
 
    <right>
       <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -321,6 +321,11 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </BorderPane>
+                                    <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

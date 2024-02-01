@@ -50,6 +50,8 @@ public class CardGraphics {
   private final boolean RAW_HIGHSCORE;
   private final boolean USE_DIRECTB2S;
   private final boolean GRAY_SCALE;
+  private final boolean TRANSPARENT_BACKGROUND;
+  private final boolean RENDER_TABLE_NAME;
 
   private final int BLUR_PIXELS;
 
@@ -90,6 +92,9 @@ public class CardGraphics {
     GRAY_SCALE = cardSettings.isCardGrayScale();
 
     BLUR_PIXELS = cardSettings.getCardBlur();
+
+    TRANSPARENT_BACKGROUND = cardSettings.getTransparentBackground();
+    RENDER_TABLE_NAME = cardSettings.getRenderTableName();
   }
 
   public BufferedImage draw() throws Exception {
@@ -106,7 +111,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -114,8 +119,7 @@ public class CardGraphics {
     if (croppedDefaultPicture == null || !USE_DIRECTB2S) {
       BufferedImage sImage = ImageUtil.loadImage(sourceImage);
       backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
-    }
-    else {
+    } else {
       try {
         backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
       } catch (Exception e) {
@@ -161,16 +165,19 @@ public class CardGraphics {
     g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
 
     g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
-    String tableName = game.getGameDisplayName();
-    int width = g.getFontMetrics().stringWidth(tableName);
-    int tableNameY = titleY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
-    g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
+
+    int tableNameY = titleY;
+    if (RENDER_TABLE_NAME) {
+      String tableName = game.getGameDisplayName();
+      tableNameY = tableNameY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
+      int width = g.getFontMetrics().stringWidth(tableName);
+      g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
+    }
 
     if (RAW_HIGHSCORE) {
       int yStart = tableNameY + TABLE_FONT_SIZE;
       renderRawScore(game, image.getHeight(), image.getWidth(), g, yStart);
-    }
-    else {
+    } else {
       renderScorelist(game, g, title, tableNameY);
     }
   }
@@ -232,8 +239,7 @@ public class CardGraphics {
     int fontSize = remainingHeight / lines.length;
     if (fontSize > SCORE_FONT_SIZE) {
       fontSize = SCORE_FONT_SIZE;
-    }
-    else if (fontSize < 20) {
+    } else if (fontSize < 20) {
       fontSize = 20;
     }
     g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, fontSize));
@@ -275,8 +281,7 @@ public class CardGraphics {
       x = (remainingXSpace - wheelWidth) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
       x = x + wheelWidth + PADDING;
-    }
-    else {
+    } else {
       x = (remainingWidth - columnsWidth) / 2;
     }
 
@@ -366,8 +371,7 @@ public class CardGraphics {
           result.add(textBlock);
         }
         textBlock = new TextBlock(g);
-      }
-      else {
+      } else {
         textBlock.addLine(line);
       }
     }

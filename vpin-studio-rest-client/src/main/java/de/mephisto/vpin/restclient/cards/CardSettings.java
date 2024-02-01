@@ -63,10 +63,28 @@ public class CardSettings extends JsonSettings {
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
+  private boolean transparentBackground = false;
+  private boolean renderTableName = true;
 
   //do not delete
   public CardSettings() {
 
+  }
+
+  public boolean getTransparentBackground() {
+    return transparentBackground;
+  }
+
+  public void setTransparentBackground(boolean transparentBackground) {
+    this.transparentBackground = transparentBackground;
+  }
+
+  public boolean getRenderTableName() {
+    return renderTableName;
+  }
+
+  public void setRenderTableName(boolean renderTableName) {
+    this.renderTableName = renderTableName;
   }
 
   public boolean isNotificationOnPopperScreen() {
