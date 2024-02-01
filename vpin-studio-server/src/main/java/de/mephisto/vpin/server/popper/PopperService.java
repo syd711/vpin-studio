@@ -417,6 +417,11 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
       for (GameMediaItem gameMediaItem : gameMediaItems) {
         File gameMediaFile = gameMediaItem.getFile();
         if (gameMediaFile.exists()) {
+          if (screen.equals(PopperScreen.Wheel)) {
+            WheelAugmenter augmenter = new WheelAugmenter(gameMediaFile);
+            augmenter.deAugment();
+          }
+
           if (de.mephisto.vpin.commons.utils.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
             assetRenameCounter++;
             LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
