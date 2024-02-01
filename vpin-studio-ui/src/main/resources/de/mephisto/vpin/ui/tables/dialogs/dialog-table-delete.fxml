@@ -4,12 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -44,167 +40,79 @@
          <children>
             <BorderPane>
                <center>
-                  <VBox>
+                  <VBox spacing="12.0">
                      <children>
-                        <GridPane vgap="3.0">
-                          <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.5999755859375" minWidth="10.0" prefWidth="36.8000244140625" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="562.4000129699707" minWidth="10.0" prefWidth="526.3999755859375" />
-                          </columnConstraints>
-                          <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="60.0" valignment="TOP" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <VBox>
                            <children>
-                              <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="Every table will be added to the first playlist that is found." />
-                                 </tooltip>
-                              </Label>
-                              <Label text="Delete directb2s File" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <children>
-                                    <Label text="Remove from PinUP Popper">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label styleClass="preference-description" text="All files are kept, only the database entry in PinUP Popper will be deleted." />
-                                 </children>
-                              </VBox>
-                              <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="15.0" text="Delete Game Files (.vpx, .pov, .res):" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="45.0" text="Delete PUP Pack" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="106.0" text="Delete Flex/Ultra DMD Files" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="137.0" text="Delete Highscores" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                 <children>
-                                    <Label text="Delete Music Files">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="4.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Label styleClass="preference-description" text="Only subfolders of VPX's &quot;music&quot; folder will be deleted." />
-                                 </children>
-                              </VBox>
-                              <CheckBox fx:id="dmdCheckbox" layoutX="233.0" layoutY="106.0" mnemonicParsing="false" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="highscoreCheckbox" layoutX="233.0" layoutY="137.0" mnemonicParsing="false" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="musicCheckbox" layoutX="233.0" layoutY="168.0" mnemonicParsing="false" GridPane.rowIndex="11">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <GridPane.margin>
-                                    <Insets bottom="42.0" />
-                                 </GridPane.margin>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="198.0" text="Delete &quot;altsound&quot; Files" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="altSoundCheckbox" layoutX="233.0" layoutY="198.0" mnemonicParsing="false" GridPane.rowIndex="8">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="228.0" text="Delete &quot;altcolor&quot; Files" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="altColorCheckbox" layoutX="233.0" layoutY="228.0" mnemonicParsing="false" GridPane.rowIndex="9">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="76.0" text="Delete All" textFill="WHITE" GridPane.columnIndex="1">
+                              <CheckBox fx:id="deleteAllCheckbox" mnemonicParsing="false" text="Delete All">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
-                              </Label>
-                              <CheckBox fx:id="deleteAllCheckbox" layoutX="233.0" layoutY="168.0" mnemonicParsing="false">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="198.0" text="Delete Mame Settings" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="mameConfigCheckbox" layoutX="233.0" layoutY="198.0" mnemonicParsing="false" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="popperCheckbox" mnemonicParsing="false" selected="true" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets bottom="20.0" />
-                                 </padding>
-                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="All files are kept, only the database entry in PinUP Popper will be deleted." />
                            </children>
-                        </GridPane>
+                        </VBox>
+                        <CheckBox fx:id="popperCheckbox" mnemonicParsing="false" selected="true" text="Remove from PinUP Popper">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game Files (.vpx, .pov, .res, .ini)">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete directb2s File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" text="Delete PUP Pack">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="Delete Flex/Ultra DMD Files">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="mameConfigCheckbox" mnemonicParsing="false" text="Delete Mame Settings">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="altSoundCheckbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="165.0" text="Delete &quot;altsound&quot; Files">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="altColorCheckbox" mnemonicParsing="false" text="Delete &quot;altcolor&quot; Files">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <VBox>
+                           <children>
+                              <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Delete Music Files">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="Only subfolders of VPX's &quot;music&quot; folder will be deleted." />
+                           </children>
+                        </VBox>
                      </children>
                      <BorderPane.margin>
                         <Insets />
@@ -225,10 +133,13 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
                <bottom>
-                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="   Yes, I know what I'm doing!" BorderPane.alignment="TOP_LEFT">
+                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing!" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
+                     <BorderPane.margin>
+                        <Insets top="24.0" />
+                     </BorderPane.margin>
                   </CheckBox>
                </bottom>
             </BorderPane>

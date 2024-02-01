@@ -107,6 +107,6 @@ public class PopperServiceResource {
 
   @PostMapping("/tabledetails/{gameId}")
   public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails tableDetails) {
-    return popperService.saveTableDetails(tableDetails, gameId);
+    return popperService.saveTableDetails(tableDetails, gameId, true);
   }
 }

@@ -305,7 +305,7 @@ public class GameService implements InitializingBean {
       Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
       byId.ifPresent(asset -> assetRepository.delete(asset));
 
-      LOG.info("Deleted " + game.getGameDisplayName());
+      LOG.info("Deleted \"" + game.getGameDisplayName() + "\"");
     }
     return success;
   }

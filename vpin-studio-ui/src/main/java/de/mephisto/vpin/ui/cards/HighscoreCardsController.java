@@ -133,6 +133,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private Accordion accordion;
 
+  @FXML
+  private CheckBox renderTableNameCheckbox;
+
   private ObservedProperties properties;
 
   private List<String> ignoreList = new ArrayList<>();
@@ -289,6 +292,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "cardUseDirectB2S");
       BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "cardGrayScale");
+      BindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
 
       imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);

@@ -216,7 +216,11 @@ public class GamesResource {
             LOG.info("New target file is \"" + uploadFile.getAbsolutePath() + "\"");
           }
           LOG.info("Extracting archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
+          uploadFile.getParentFile().mkdirs();
           PackageUtil.unpackTargetFile(tempFile, uploadFile, fileNameToExtract);
+          if(uploadFile.delete()) {
+            LOG.info("Deleted VPX archive file " + uploadFile.getAbsolutePath());
+          }
         } catch (Exception e) {
           LOG.error("Upload of vpx archive file failed: " + e.getMessage(), e);
           throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of packaged VPX file failed: " + e.getMessage());
@@ -225,6 +229,7 @@ public class GamesResource {
       else {
         File originalFile = new File(gameEmulator.getTablesFolder(), originalFilename);
         uploadFile = FileUtils.uniqueFile(originalFile);
+        uploadFile.getParentFile().mkdirs();
         UploadUtil.upload(file, uploadFile);
       }
 
@@ -250,10 +255,10 @@ public class GamesResource {
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
             tableDetails.setGameFileName(uploadFile.getName());
             if (!keepExistingDisplayName) {
-              tableDetails.setGameDisplayName(originalFilename);
+              tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
             tableDetails.setGameVersion(""); //reset version to re-apply the newer one
-            popperService.saveTableDetails(tableDetails, gameId);
+            popperService.saveTableDetails(tableDetails, gameId, false);
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
@@ -267,20 +272,22 @@ public class GamesResource {
               String originalName = FilenameUtils.getBaseName(file.getOriginalFilename());
               Game importedGame = gameService.scanGame(importedGameId);
 
-              //update table details after new entry creation
+              //update table details after new entry creation, but DO NOT TOUCH the game name
               TableDetails tableDetails = popperService.getTableDetails(gameId);
               tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
-              tableDetails.setGameName(originalName);
               tableDetails.setGameVersion(""); //reset version to re-apply the newer one
-              popperService.saveTableDetails(tableDetails, importedGameId);
+              popperService.saveTableDetails(tableDetails, importedGameId, false);
+              LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
+
               if (importedGame != null) {
                 vpsService.autofill(importedGame, true);
               }
 
               //clone popper media
               Game original = getGame(gameId);
+              LOG.info("Cloning Popper assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
               popperService.cloneGameMedia(original, importedGame);
 
               //clone additional files
