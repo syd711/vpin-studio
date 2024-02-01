@@ -850,6 +850,7 @@ public class PinUPConnector implements InitializingBean {
         e.setDescription(rs.getString("Description"));
         e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
         e.setLaunchScript(rs.getString("LaunchScript"));
+        e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
         result.add(e);
       }
