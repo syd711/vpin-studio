@@ -595,7 +595,7 @@ public class PinUPConnector implements InitializingBean {
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + gameFileName + "'");
+      LOG.info("Added game entry for '" + gameName + "' / '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);

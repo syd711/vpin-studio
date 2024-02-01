@@ -255,10 +255,10 @@ public class GamesResource {
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
             tableDetails.setGameFileName(uploadFile.getName());
             if (!keepExistingDisplayName) {
-              tableDetails.setGameDisplayName(originalFilename);
+              tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
             tableDetails.setGameVersion(""); //reset version to re-apply the newer one
-            popperService.saveTableDetails(tableDetails, gameId);
+            popperService.saveTableDetails(tableDetails, gameId, false);
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
@@ -272,20 +272,22 @@ public class GamesResource {
               String originalName = FilenameUtils.getBaseName(file.getOriginalFilename());
               Game importedGame = gameService.scanGame(importedGameId);
 
-              //update table details after new entry creation
+              //update table details after new entry creation, but DO NOT TOUCH the game name
               TableDetails tableDetails = popperService.getTableDetails(gameId);
               tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
-              tableDetails.setGameName(originalName);
               tableDetails.setGameVersion(""); //reset version to re-apply the newer one
-              popperService.saveTableDetails(tableDetails, importedGameId);
+              popperService.saveTableDetails(tableDetails, importedGameId, false);
+              LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
+
               if (importedGame != null) {
                 vpsService.autofill(importedGame, true);
               }
 
               //clone popper media
               Game original = getGame(gameId);
+              LOG.info("Cloning Popper assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
               popperService.cloneGameMedia(original, importedGame);
 
               //clone additional files
