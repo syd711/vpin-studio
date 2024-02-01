@@ -22,7 +22,6 @@ public class DMDBundleAnalyzer {
       int totalCount = zf.size();
       zf.close();
 
-      byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
@@ -36,12 +35,10 @@ public class DMDBundleAnalyzer {
         progressResultModel.setProgress(progress / 100);
 
         if (zipEntry.isDirectory()) {
-          if (!folderFound) {
-            String folderName = name;
-            if (folderName.contains(DMDPackageTypes.FlexDMD.name()) || folderName.contains(DMDPackageTypes.UltraDMD.name())) {
-              LOG.info("Found DMD folder in DMD archive.");
-              folderFound = true;
-            }
+          String folderName = name.toLowerCase();
+          if (name.endsWith("DMD") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+            LOG.info("Found DMD folder in DMD archive: " + folderName);
+            folderFound = true;
           }
         }
         zis.closeEntry();
