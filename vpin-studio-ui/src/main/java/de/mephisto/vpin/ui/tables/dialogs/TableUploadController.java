@@ -80,17 +80,17 @@ public class TableUploadController implements Initializable, DialogController {
       result = true;
       try {
         TableUploadDescriptor descriptor = TableUploadDescriptor.upload;
-        if(uploadAndImportRadio.isSelected()) {
+        if (uploadAndImportRadio.isSelected()) {
           descriptor = TableUploadDescriptor.uploadAndImport;
         }
         else if (uploadAndReplaceRadio.isSelected()) {
           descriptor = TableUploadDescriptor.uploadAndReplace;
         }
-        else if(uploadAndCloneRadio.isSelected()) {
+        else if (uploadAndCloneRadio.isSelected()) {
           descriptor = TableUploadDescriptor.uploadAndClone;
         }
 
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
@@ -112,14 +112,14 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+      new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     uploadBtn.setDisable(true);
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
 
-      if(suffix.equalsIgnoreCase("zip")) {
+      if (suffix.equalsIgnoreCase("zip")) {
         this.fileBtn.setDisable(true);
         this.cancelBtn.setDisable(true);
 
@@ -162,6 +162,12 @@ public class TableUploadController implements Initializable, DialogController {
     emulatorCombo.setValue(emulatorRepresentation);
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulatorRepresentation = t1;
+      if (this.game != null) {
+        boolean sameEmulator = t1.getId() == game.getEmulatorId();
+        uploadAndImportRadio.setSelected(true);
+        uploadAndReplaceRadio.setDisable(!sameEmulator);
+        uploadAndCloneRadio.setDisable(!sameEmulator);
+      }
     });
 
     ToggleGroup toggleGroup = new ToggleGroup();
@@ -174,7 +180,7 @@ public class TableUploadController implements Initializable, DialogController {
   public void setGame(GameRepresentation game) {
     this.game = game;
 
-    if(game != null) {
+    if (game != null) {
       this.gameId = game.getId();
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
