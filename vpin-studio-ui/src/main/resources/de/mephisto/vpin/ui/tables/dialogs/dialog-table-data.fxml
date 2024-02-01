@@ -48,9 +48,9 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -65,7 +65,7 @@
                                           <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="1">
+                                          <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -73,12 +73,12 @@
                                                 <Tooltip text="Every table will be added to the first playlist that is found." />
                                              </tooltip>
                                           </Label>
-                                          <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                          <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="3">
+                                          <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -88,7 +88,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -118,12 +118,12 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="gameName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <TextField fx:id="gameName" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -159,7 +159,7 @@
                                              </font>
                                           </TextField>
                                           <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                                          <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -247,7 +247,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
@@ -261,7 +261,7 @@
                                                 <Insets left="3.0" />
                                              </GridPane.margin>
                                           </Label>
-                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
