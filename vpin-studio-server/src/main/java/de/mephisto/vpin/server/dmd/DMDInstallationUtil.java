@@ -25,7 +25,7 @@ public class DMDInstallationUtil {
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
           String folderName = zipEntry.getName().toLowerCase();
-          if (zipEntry.getName().endsWith("DMD") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+          if (folderName.endsWith("dmd") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
             dmdFolder = new File(tablesFolder, folderName);
             dmdFolder.mkdirs();
             LOG.info("Created/Found DMD folder \"" + dmdFolder.getAbsolutePath() + "\"");

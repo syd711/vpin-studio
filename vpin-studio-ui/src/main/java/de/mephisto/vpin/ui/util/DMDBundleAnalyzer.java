@@ -36,7 +36,7 @@ public class DMDBundleAnalyzer {
 
         if (zipEntry.isDirectory()) {
           String folderName = name.toLowerCase();
-          if (name.endsWith("DMD") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+          if (folderName.endsWith("dmd") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
             LOG.info("Found DMD folder in DMD archive: " + folderName);
             folderFound = true;
           }

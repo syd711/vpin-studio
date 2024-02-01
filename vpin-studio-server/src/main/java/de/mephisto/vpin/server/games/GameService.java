@@ -252,9 +252,9 @@ public class GameService implements InitializingBean {
           success = false;
         }
 
-        if (!mameService.deleteOptions(game.getRom(), game.getTableName())) {
-          success = false;
-        }
+//        if (!mameService.deleteOptions(game.getRom(), game.getTableName())) {
+//          success = false;
+//        }
       }
 
 
