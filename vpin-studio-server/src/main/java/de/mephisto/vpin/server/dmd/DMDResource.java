@@ -67,6 +67,8 @@ public class DMDResource {
       }
 
       File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
+      out.deleteOnExit();
+
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
       return dmdService.installDMDPackage(game, out);
