@@ -55,7 +55,7 @@ public class CopyArchiveToRepositoryDialogController implements Initializable, D
       }
     } catch (Exception e) {
       LOG.error("Copy to repository failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Copying archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(stage, "Copying archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     } finally {
       stage.close();
     }

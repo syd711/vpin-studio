@@ -103,3 +103,4 @@ yarn-error.log*
 /resources/backglassdesigner/Projects/**
 /config/settings.properties
 /resources/menu-profile/
+/resources/chrome-launcher.bat

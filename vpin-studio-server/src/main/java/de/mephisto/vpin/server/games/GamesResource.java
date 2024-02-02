@@ -218,9 +218,6 @@ public class GamesResource {
           LOG.info("Extracting archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
           uploadFile.getParentFile().mkdirs();
           PackageUtil.unpackTargetFile(tempFile, uploadFile, fileNameToExtract);
-          if(uploadFile.delete()) {
-            LOG.info("Deleted VPX archive file " + uploadFile.getAbsolutePath());
-          }
         } catch (Exception e) {
           LOG.error("Upload of vpx archive file failed: " + e.getMessage(), e);
           throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of packaged VPX file failed: " + e.getMessage());

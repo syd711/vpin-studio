@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
@@ -29,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableDataController.class);
@@ -204,6 +208,7 @@ public class TableDataController implements Initializable, DialogController {
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private GameRepresentation game;
   private TableDetails tableDetails;
+  private String initialVpxFileName = null;
 
   @FXML
   private void onWeblinkProperty() {
@@ -235,17 +240,51 @@ public class TableDataController implements Initializable, DialogController {
     }
   }
 
+  private String findDuplicate(String updated) {
+    GameList importableTables = client.getPinUPPopperService().getImportableTables();
+    List<GameListItem> items = importableTables.getItems();
+    for (GameListItem item : items) {
+      String name = item.getName();
+      if (name.equalsIgnoreCase(updated)) {
+        return name;
+      }
+    }
+
+    List<GameRepresentation> gamesCached = client.getGameService().getGamesCached();
+    for (GameRepresentation gameRepresentation : gamesCached) {
+      if (gameRepresentation.getId() != this.game.getId() && gameRepresentation.getGameFileName().trim().equalsIgnoreCase(updated)) {
+        return gameRepresentation.getGameFileName();
+      }
+    }
+    return null;
+  }
 
   @FXML
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
+    String updatedGameFileName = tableDetails.getGameFileName();
+    if(!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+      updatedGameFileName = updatedGameFileName + ".vpx";
+    }
+
+    if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
+      String duplicate = findDuplicate(updatedGameFileName);
+      if(duplicate != null) {
+        WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
+        return;
+      }
+    }
+
+
     String value = "";
     if (useEmuDefaultsCheckbox.isSelected()) {
       //nothing, empty value for defaults
-    } else if (hideAllCheckbox.isSelected()) {
+    }
+    else if (hideAllCheckbox.isSelected()) {
       value = "NONE";
-    } else {
+    }
+    else {
       List<String> result = new ArrayList<>();
       if (topperCheckbox.isSelected()) result.add("" + 0);
       if (dmdCheckbox.isSelected()) result.add("" + 1);
@@ -283,7 +322,7 @@ public class TableDataController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -374,6 +413,7 @@ public class TableDataController implements Initializable, DialogController {
 
   public void setGame(GameRepresentation game) {
     this.game = game;
+    this.initialVpxFileName = game.getGameFileName();
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
 
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
@@ -426,7 +466,8 @@ public class TableDataController implements Initializable, DialogController {
     gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.length() > 0) {
         tableDetails.setGameYear(Integer.parseInt(newValue));
-      } else {
+      }
+      else {
         tableDetails.setGameYear(0);
       }
     });
@@ -516,9 +557,11 @@ public class TableDataController implements Initializable, DialogController {
     String keepDisplays = tableDetails.getKeepDisplays();
     if (StringUtils.isEmpty(keepDisplays)) {
       useEmuDefaultsCheckbox.setSelected(true);
-    } else if (keepDisplays.equalsIgnoreCase("NONE")) {
+    }
+    else if (keepDisplays.equalsIgnoreCase("NONE")) {
       hideAllCheckbox.setSelected(true);
-    } else {
+    }
+    else {
       String[] split = keepDisplays.split(",");
       for (String screen : split) {
         if (StringUtils.isEmpty(screen)) {
@@ -581,7 +624,8 @@ public class TableDataController implements Initializable, DialogController {
       } catch (NumberFormatException e) {
         LOG.error("Failed to set valume: " + e.getMessage());
       }
-    } else {
+    }
+    else {
       volumeSlider.setValue(100);
     }
     volumeSlider.valueProperty().addListener((observableValue, number, t1) -> tableDetails.setVolume(String.valueOf(t1.intValue())));

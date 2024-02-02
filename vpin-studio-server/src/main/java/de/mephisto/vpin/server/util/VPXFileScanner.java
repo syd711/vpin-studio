@@ -165,7 +165,7 @@ public class VPXFileScanner {
         if (hsFileName.equals(".txt")) {
           return;
         }
-        if (hsFileName.endsWith("LUT.txt") ||  hsFileName.toLowerCase().contains("debug") || hsFileName.contains("/")) {
+        if (hsFileName.endsWith("LUT.txt") || hsFileName.toLowerCase().contains("debug") || hsFileName.contains("/")) {
           return;
         }
 
@@ -221,7 +221,9 @@ public class VPXFileScanner {
    */
   private static void lineSearchRom(@NonNull ScanResult result, @NonNull String line) {
     if (!StringUtils.isEmpty(result.getRom())) {
-      return;
+      if (!line.toLowerCase().startsWith("const cgamename")) {
+        return;
+      }
     }
 
     int patternMatch = matchesPatterns(romNamePatternList, line);

@@ -385,7 +385,8 @@
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>*.dll</include>
-                                        <include>*.bat</include>
+                                        <include>sendKeys.bat</include>
+                                        <include>update-runtime.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>maintenance.jpg</include>
                                         <include>competition-bg-default.png</include>
