@@ -10,8 +10,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,32 +52,51 @@ public class DMDService implements InitializingBean {
 
   @Nullable
   public DMDPackage getDMDPackage(@NonNull Game game) {
-    String rom = game.getRom();
-    String tableName = game.getTableName();
+    String rom = String.valueOf(game.getRom());
+    String tableName = String.valueOf(game.getTableName());
 
-    List<String> folderNames = Arrays.asList(rom + "." + DMDPackageTypes.FlexDMD.name(),
-      rom + "." + DMDPackageTypes.UltraDMD.name(),
-      tableName + "." + DMDPackageTypes.FlexDMD.name(),
-      tableName + "." + DMDPackageTypes.UltraDMD.name());
+    List<String> folderNames = Arrays.asList(rom.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
+      rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
+      tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
+      tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
 
     File dmdFolder = null;
-    for (String folderName : folderNames) {
-      dmdFolder = new File(game.getEmulator().getTablesFolder(), folderName);
-      if (dmdFolder.exists()) {
+    File[] subFolders = game.getEmulator().getTablesFolder().listFiles(File::isDirectory);
+    for (File folder : subFolders) {
+      if (folderNames.contains(folder.getName().toLowerCase())) {
+        dmdFolder = folder;
+        break;
+      }
+      String name = folder.getName().toLowerCase();
+      if (!StringUtils.isEmpty(game.getRom()) && name.contains(game.getRom().toLowerCase()) && name.contains("dmd")) {
+        dmdFolder = folder;
+        break;
+      }
 
+      if (!StringUtils.isEmpty(game.getTableName()) && name.contains(game.getTableName().toLowerCase()) && name.contains("dmd")) {
+        dmdFolder = folder;
         break;
       }
     }
 
-    if (!dmdFolder.exists()) {
+    if (dmdFolder == null) {
       return null;
+    }
+
+    String folderName = dmdFolder.getName().toLowerCase();
+    DMDPackageTypes packageTypes = DMDPackageTypes.Unknown;
+    if (folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase())) {
+      packageTypes = DMDPackageTypes.FlexDMD;
+    }
+    else if (folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+      packageTypes = DMDPackageTypes.UltraDMD;
     }
 
     DMDPackage dmdPackage = new DMDPackage();
     File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
     if (dmdFiles != null && dmdFiles.length > 0) {
       dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
-      dmdPackage.setDmdPackageTypes(dmdFolder.getName().contains(DMDPackageTypes.FlexDMD.name()) ? DMDPackageTypes.FlexDMD : DMDPackageTypes.UltraDMD);
+      dmdPackage.setDmdPackageTypes(packageTypes);
       dmdPackage.setName(dmdFolder.getName());
       dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));
       Arrays.stream(dmdFiles).forEach(f -> dmdPackage.setSize(dmdPackage.getSize() + f.length()));

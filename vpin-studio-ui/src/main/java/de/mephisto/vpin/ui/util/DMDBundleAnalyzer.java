@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class DMDBundleAnalyzer {
 
         if (zipEntry.isDirectory()) {
           String folderName = name.toLowerCase();
-          if (folderName.endsWith("dmd") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+          if (StringUtils.endsWithIgnoreCase(folderName, "dmd/") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
             LOG.info("Found DMD folder in DMD archive: " + folderName);
             folderFound = true;
           }

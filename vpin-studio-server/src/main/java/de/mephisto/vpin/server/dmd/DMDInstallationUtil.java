@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class DMDInstallationUtil {
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
           String folderName = zipEntry.getName().toLowerCase();
-          if (folderName.endsWith("dmd") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
+          if (StringUtils.endsWithIgnoreCase(folderName, "dmd/") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
             dmdFolder = new File(tablesFolder, folderName);
             dmdFolder.mkdirs();
             LOG.info("Created/Found DMD folder \"" + dmdFolder.getAbsolutePath() + "\"");
