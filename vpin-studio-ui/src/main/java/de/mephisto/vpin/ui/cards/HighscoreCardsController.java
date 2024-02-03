@@ -16,6 +16,8 @@ import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,8 +27,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +74,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private CheckBox grayScaleCheckbox;
+
+  @FXML
+  private CheckBox transparentBackgroundCheckbox;
 
   @FXML
   private ColorPicker fontColorSelector;
@@ -171,6 +176,10 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       stage.heightProperty().addListener((obs, oldVal, newVal) -> {
 
       });
+
+      if(!tableCombo.getItems().isEmpty()) {
+        tableCombo.setValue(tableCombo.getItems().get(0));
+      }
     } catch (Exception e) {
       LOG.error("Failed to init highscores: " + e.getMessage(), e);
     }
@@ -181,9 +190,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
-        new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-        new FileChooser.ExtensionFilter("PNG", "*.png"));
+      new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
+      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+      new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
@@ -292,6 +301,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "cardUseDirectB2S");
       BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "cardGrayScale");
+      BindingUtil.bindCheckbox(transparentBackgroundCheckbox, properties, "transparentBackground");
       BindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
 
       imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
@@ -313,6 +323,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       BindingUtil.bindSpinner(marginTopSpinner, properties, "cardPadding");
       BindingUtil.bindSpinner(wheelImageSpinner, properties, "cardHighscoresRowPaddingLeft");
       BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "cardHighscoresRowseparator");
+
+      transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          updateTransparencySettings(newValue);
+        }
+      });
+      updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
 
       BindingUtil.bindCheckbox(renderRawHighscore, properties, "cardRawHighscore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -346,6 +364,26 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     refreshPreview(Optional.ofNullable(value), false);
 
     accordion.setExpandedPane(backgroundSettingsPane);
+  }
+
+  private void updateTransparencySettings(Boolean newValue) {
+    grayScaleCheckbox.setDisable(newValue);
+    useDirectB2SCheckbox.setDisable(newValue);
+    blurSlider.setDisable(newValue);
+    brightenSlider.setDisable(newValue);
+    darkenSlider.setDisable(newValue);
+    backgroundImageCombo.setDisable(newValue);
+
+    if (newValue) {
+      Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+        BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+        BackgroundSize.DEFAULT);
+      imageCenter.setBackground(new Background(myBI));
+    }
+    else {
+      imageCenter.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+    }
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {

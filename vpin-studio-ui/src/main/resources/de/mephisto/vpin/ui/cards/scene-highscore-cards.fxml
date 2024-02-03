@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
 
    <right>
       <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -38,9 +38,14 @@
                            <content>
                              <VBox styleClass="accordion-container">
                                 <children>
+                                    <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                    <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
                                       <VBox.margin>
-                                         <Insets />
+                                         <Insets top="12.0" />
                                       </VBox.margin>
                                       <font>
                                          <Font size="14.0" />

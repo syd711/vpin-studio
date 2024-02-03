@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_HEIGHT;
+import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_SIZE;
+
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
@@ -98,6 +101,34 @@ public class CardGraphics {
   }
 
   public BufferedImage draw() throws Exception {
+    BufferedImage backgroundImage = getBackgroundImage();
+
+    if(!TRANSPARENT_BACKGROUND) {
+      if (BLUR_PIXELS > 0) {
+        backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
+      }
+
+      if (GRAY_SCALE) {
+        backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
+      }
+
+      float alphaWhite = cardSettings.getCardAlphacompositeWhite();
+      float alphaBlack = cardSettings.getCardAlphacompositeBlack();
+      ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
+    }
+
+    renderCardData(backgroundImage, game);
+    int borderWidth = cardSettings.getCardBorderWidth();
+    ImageUtil.drawBorder(backgroundImage, borderWidth);
+
+    return backgroundImage;
+  }
+
+  private BufferedImage getBackgroundImage() throws IOException {
+    if(TRANSPARENT_BACKGROUND) {
+      return new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    }
+
     File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
     File sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".jpg");
     if (!sourceImage.exists()) {
@@ -128,23 +159,6 @@ public class CardGraphics {
         backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
     }
-
-
-    if (BLUR_PIXELS > 0) {
-      backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
-    }
-
-    if (GRAY_SCALE) {
-      backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
-    }
-
-    float alphaWhite = cardSettings.getCardAlphacompositeWhite();
-    float alphaBlack = cardSettings.getCardAlphacompositeBlack();
-    ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
-    renderCardData(backgroundImage, game);
-
-    int borderWidth = cardSettings.getCardBorderWidth();
-    ImageUtil.drawBorder(backgroundImage, borderWidth);
 
     return backgroundImage;
   }

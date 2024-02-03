@@ -31,6 +31,7 @@ public class DefaultPictureService {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultPictureService.class);
 
   public final static int DEFAULT_MEDIA_SIZE = 1280;
+  public final static int DEFAULT_MEDIA_HEIGHT = 720;
   private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
 
   @Autowired
