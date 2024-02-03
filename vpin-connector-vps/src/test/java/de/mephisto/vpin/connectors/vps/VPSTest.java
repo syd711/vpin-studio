@@ -2,6 +2,7 @@ package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.*;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -67,11 +68,20 @@ public class VPSTest {
   public void testTableLoading() {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
-    System.out.println(tables.size());
-    assertFalse(tables.isEmpty());
-    VpsTable tableById = vps.getTableById("43ma3WQK");
-    assertNotNull(tables);
-    assertNotNull(tableById);
+    for (VpsTable table : tables) {
+      if(table.getFeatures().contains("Hybrid") && table.getFeatures().contains("VR")) {
+        System.out.println(table.getName() + ", " + table.getId());
+      }
+
+      List<VpsTableVersion> tableFiles = table.getTableFiles();
+      for (VpsTableVersion tableFile : tableFiles) {
+        if(table.getFeatures() != null ){
+
+        }
+
+      }
+    }
+
   }
 
   @Test

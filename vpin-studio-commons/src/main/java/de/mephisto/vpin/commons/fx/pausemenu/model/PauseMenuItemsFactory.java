@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -18,12 +19,13 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @Nullable PopperScreen cardScreen) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable PopperScreen cardScreen) {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
@@ -53,8 +55,13 @@ public class PauseMenuItemsFactory {
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
+          String authorAllowList = pauseMenuSettings.getAuthorAllowList() == null ? "" : pauseMenuSettings.getAuthorAllowList();
+          List<String> authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
+
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
-            if (!StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
+            boolean excludeTutorial = excludeTutorial(authorNames, tutorialFile);
+
+            if (!excludeTutorial && !StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
               item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
               String ytUrl = "https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1";
               item.setYouTubeUrl(ytUrl);
@@ -74,6 +81,23 @@ public class PauseMenuItemsFactory {
 
 
     return pauseMenuItems;
+  }
+
+  private static boolean excludeTutorial(List<String> authorAllowList, VpsTutorialUrls tutorialFile) {
+    if(authorAllowList.isEmpty()) {
+      return false;
+    }
+
+    List<String> authors = tutorialFile.getAuthors();
+    if (!authorAllowList.isEmpty()) {
+      for (String author : authors) {
+        if(authorAllowList.contains(author.toLowerCase())) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   private static void loadPopperMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, PopperScreen screen, String title, String text, String pictureImage, String videoImage) {

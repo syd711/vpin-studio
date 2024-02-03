@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -244,14 +243,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void tableChanged(int id, String rom) {
-    if (StringUtils.isEmpty(rom)) {
-      if (id > 0) {
-        this.tableOverviewController.reload(id);
-      }
+  public void tableChanged(int id, String rom, String gameName) {
+    if (id > 0 ) {
+      this.tableOverviewController.reload(id);
     }
-    else {
-      this.tableOverviewController.reload(rom);
+
+    if (!StringUtils.isEmpty(rom)) {
+      this.tableOverviewController.reloadByRom(rom);
+    }
+    if (!StringUtils.isEmpty(gameName)) {
+      this.tableOverviewController.reloadByGameName(rom);
     }
   }
 

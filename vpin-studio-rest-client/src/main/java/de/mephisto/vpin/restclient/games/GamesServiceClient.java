@@ -5,10 +5,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +73,17 @@ public class GamesServiceClient extends VPinStudioClientService {
     return result;
   }
 
+  public List<GameRepresentation> getGamesByGameName(String gameName) {
+    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> result = new ArrayList<>();
+    for (GameRepresentation gameRepresentation : gameList) {
+      if (gameRepresentation.getGameName().equalsIgnoreCase(gameName)) {
+        result.add(gameRepresentation);
+      }
+    }
+    return result;
+  }
+
 
   public List<ValidationState> getRomValidations(int gameId) {
     return Arrays.asList(getRestClient().get(API + "games/validations/rom/" + gameId, ValidationState[].class));
@@ -102,7 +113,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   public List<Integer> getUnknownGameIds() {
     try {
       List<Integer> unknowns = Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
-      if(!unknowns.isEmpty()) {
+      if (!unknowns.isEmpty()) {
         this.games.clear();
       }
       return unknowns;

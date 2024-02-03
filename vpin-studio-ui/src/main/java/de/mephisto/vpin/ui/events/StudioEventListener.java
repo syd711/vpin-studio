@@ -10,7 +10,7 @@ public interface StudioEventListener {
 
   }
 
-  default void tableChanged(int id, @Nullable String rom) {
+  default void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
 
   }
 

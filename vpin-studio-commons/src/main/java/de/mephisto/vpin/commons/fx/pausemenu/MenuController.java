@@ -107,6 +107,10 @@ public class MenuController implements Initializable {
     }
   }
 
+  public PauseMenuSettings getPauseMenuSettings() {
+    return pauseMenuSettings;
+  }
+
   public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
@@ -302,7 +306,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, cardScreen));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, cardScreen));
 
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;

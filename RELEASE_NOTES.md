@@ -4,10 +4,12 @@
 
 - Added link buttons to the link fields in the table data dialog.
 - Added missing automatic .ini file renaming when the "Game File Name" is renamed.
-- //TODO WinRegistry MAME settings can now be deleted together with (or without) the table.
 - .ini files are now deleted together the table file.
 - Added help icons for the fields "Game Name" and "Game File Name" in the table data dialog with hints about the renaming that results out of changing this fields.
-- Added .ini file info to the "POV" column. (I don't know what the current status is regarding both files, but they share one column for now.) 
+- Added .ini file info to the "POV" column. (I don't know what the current status is regarding both files, but they share one column for now.)
+- Removed the mini-preview-iframe in the overlay settings for external page and replaced it with an "open" button. (The CPU consumption of the internal browser is just too ridiculous.)
+- Added "Kiosk" mode for pause menu videos: The YouTube videos will play in full-screen mode on the backglass when Chrome is used.
+- Added "Autoplay" flag for pause menu videos: If you are having issues playing video, use the "Autoplay" flag so that you don't have to press "Start" for launching videos.
 - Added all possible uploads into one split-button menu. This way, you don't have to search for the uploads buttons in the different sections anymore.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/upload-buttons.png" width="300" />
@@ -15,7 +17,8 @@
 
 ### Bugfixes
 
-- Added file name validators to "Table Data" input fields "Game Name" and "File Name".
+- Added input validators to "Table Data" input fields "Game Name" and "File Name" (Only valid symbols are allowed there).
+- Added VPX file name validator for the "Table Data" dialog (previous renaming errors caused by an existing file with the same name were ignored silently before).
 - Fixed missing re-styling of some link buttons that were still green instead of blue.
 - Fixed possible database lock when Popper is running and Studio is started with new tables detected.
 - Added missing .mp4 and .apng file formats to the list of possible drag and drop files for the assets dialog.
@@ -29,7 +32,10 @@
 - Fixed uploads and detection of DMD packages: The file check for the DMD packages is not case-sensitive anymore (flexDMD vs. FlexDMD vs flexdmd, the Futurama problem) and also accepts "similar" folders as DMD package. E.g. folders like "cyberracedmd" is now also detected as DMD package.
 - Fixed parsing of _VPReg.stg_ scores that have a decimal point (just...why???).
 - Fixed broken Popper asset downloads for tables where the "Game Name" was changed.
-- Fixed erroneous VPS update indicators in the table overview for PUP packs, POV, ALT sound and ALT color (how emberassing - copy and paste isn't for beginners :-/).
-- Fixed checkboxes in deletion dialog, so that the text can they are selectable through text-clicks too.
+- Fixed erroneous VPS update indicators in the table overview for PUP packs, POV, ALT sound and ALT color (how embarrassing - copy and paste isn't for beginners :-/).
+- Fixed checkboxes in deletion dialog, so that the text can they are selectable through "on-text"-clicks too.
 - Fixed VPX file scanning: When there is an actual "const cGameName..." line, the ROM value of this line should be used, no matter what other values have been read before. This fixes also the highscore detection of some tables, e.g. "cyberrace". 
-//TODO validate  filename in popper data dialog 
+ 
+### Known Issues
+
+There are still issues with the pause menu. I am aware of these and additional fixes will come.

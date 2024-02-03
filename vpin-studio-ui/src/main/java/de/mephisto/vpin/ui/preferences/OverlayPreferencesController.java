@@ -1,29 +1,38 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import de.mephisto.vpin.ui.util.ScreenModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.web.WebView;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
 
 public class OverlayPreferencesController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(OverlayPreferencesController.class);
+
   @FXML
   private ComboBox<String> overlayKeyCombo;
 
@@ -52,10 +61,30 @@ public class OverlayPreferencesController implements Initializable {
   private RadioButton radioD;
 
   @FXML
-  private WebView preview;
+  private CheckBox autoplayCheckbox;
+
+  @FXML
+  private TextField videoAuthorsAllowList;
+
+  @FXML
+  private Button externalPageButton;
 
   @FXML
   private TextField externalPageUrl;
+
+  @FXML
+  private void onOpenExternalPage() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    String url = this.externalPageUrl.getText();
+    boolean open = url != null && url.startsWith(url);
+    if (open && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(url));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -115,21 +144,9 @@ public class OverlayPreferencesController implements Initializable {
 
     String externalPageUrlValue = client.getPreferenceService().getPreference(PreferenceNames.OVERLAY_PAGE_URL).getValue();
     externalPageUrl.setText(externalPageUrlValue);
-    preview.setZoom(0.25);
-    preview.setVisible(false);
-    preview.getEngine().setUserStyleSheetLocation(OverlayWindowFX.class.getResource("web-style.css").toString());
-    if (!StringUtils.isEmpty(externalPageUrlValue)) {
-      preview.setVisible(true);
-      preview.getEngine().load(externalPageUrlValue);
-    }
 
     externalPageUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.OVERLAY_PAGE_URL, () -> {
       client.getPreferenceService().setPreference(PreferenceNames.OVERLAY_PAGE_URL, t1);
-      preview.setVisible(!StringUtils.isEmpty(externalPageUrlValue));
-
-      if (!StringUtils.isEmpty(externalPageUrlValue)) {
-        preview.getEngine().load(externalPageUrlValue);
-      }
     }, 300));
 
 
@@ -147,11 +164,23 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
+    autoplayCheckbox.setSelected(pauseMenuSettings.isAutoplay());
+    autoplayCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setAutoplay(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
     pauseMenuKeyCombo.setValue(pauseMenuSettings.getKey());
     pauseMenuKeyCombo.setDisable(pauseMenuCheckbox.isSelected());
     pauseMenuKeyCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setKey(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
+
+    videoAuthorsAllowList.setText(pauseMenuSettings.getAuthorAllowList());
+    videoAuthorsAllowList.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.PAUSE_MENU_SETTINGS, () -> {
+      pauseMenuSettings.setAuthorAllowList(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    }, 300));
   }
 }

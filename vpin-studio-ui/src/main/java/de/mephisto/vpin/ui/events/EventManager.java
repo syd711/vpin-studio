@@ -48,9 +48,13 @@ public class EventManager {
    * @param rom     the ROM name of the table
    */
   public void notifyTableChange(int tableId, @Nullable String rom) {
+    notifyTableChange(tableId, rom, null);
+  }
+
+  public void notifyTableChange(int tableId, @Nullable String rom, @Nullable String gameName) {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.tableChanged(tableId, rom);
+        listener.tableChanged(tableId, rom, gameName);
       }
     }).start();
   }

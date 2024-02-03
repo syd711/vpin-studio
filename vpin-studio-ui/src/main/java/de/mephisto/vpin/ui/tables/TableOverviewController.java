@@ -528,8 +528,30 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     TableDialogs.openDismissAllDialog(game);
   }
 
-  public void reload(String rom) {
+  public void reloadByRom(String rom) {
     List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+    Platform.runLater(() -> {
+      GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+      tableView.getSelectionModel().clearSelection();
+
+      for (GameRepresentation g : gamesByRom) {
+        GameRepresentation refreshedGame = client.getGameService().getGame(g.getId());
+        int index = data.indexOf(refreshedGame);
+        if (index != -1) {
+          data.remove(index);
+          data.add(index, refreshedGame);
+        }
+      }
+
+      if (selection != null) {
+        tableView.getSelectionModel().select(selection);
+      }
+      tableView.refresh();
+    });
+  }
+
+  public void reloadByGameName(String gameName) {
+    List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
     Platform.runLater(() -> {
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
       tableView.getSelectionModel().clearSelection();

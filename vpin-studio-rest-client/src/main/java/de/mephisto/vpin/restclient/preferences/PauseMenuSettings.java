@@ -6,6 +6,33 @@ public class PauseMenuSettings extends JsonSettings {
   private String key;
   private boolean useOverlayKey;
   private boolean useInternalBrowser = false;
+  private boolean autoplay = true;
+  private String authorAllowList;
+  private int videoScreen;
+
+  public int getVideoScreen() {
+    return videoScreen;
+  }
+
+  public void setVideoScreen(int videoScreen) {
+    this.videoScreen = videoScreen;
+  }
+
+  public boolean isAutoplay() {
+    return autoplay;
+  }
+
+  public void setAutoplay(boolean autoplay) {
+    this.autoplay = autoplay;
+  }
+
+  public String getAuthorAllowList() {
+    return authorAllowList;
+  }
+
+  public void setAuthorAllowList(String authorAllowList) {
+    this.authorAllowList = authorAllowList;
+  }
 
   public boolean isUseInternalBrowser() {
     return useInternalBrowser;

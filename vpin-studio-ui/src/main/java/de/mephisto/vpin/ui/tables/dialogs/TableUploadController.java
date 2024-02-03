@@ -166,7 +166,6 @@ public class TableUploadController implements Initializable, DialogController {
         boolean sameEmulator = t1.getId() == game.getEmulatorId();
         uploadAndImportRadio.setSelected(true);
         uploadAndReplaceRadio.setDisable(!sameEmulator);
-        uploadAndCloneRadio.setDisable(!sameEmulator);
       }
     });
 

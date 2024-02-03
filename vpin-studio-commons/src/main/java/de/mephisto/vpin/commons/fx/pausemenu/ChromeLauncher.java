@@ -35,33 +35,43 @@ public class ChromeLauncher {
       File profileFolder = new File("./resources/menu-profile");
       profileFolder.mkdirs();
 
+      String resizing = "";
+      boolean resize = false;
+      if (resize) {
+        resizing = "window.resizeTo(" + width + "," + height + ")";
+      }
+
       List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
-        "--app=\"data:text/html,<html><body><script>window.resizeTo(" + width + "," + height + ");window.location='" + url + "';</script></body></html>\"",
-        "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
+        "--app=\"data:text/html,<html><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
+        "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required", "--kiosk");
       String commandString = String.join(" ", cmds);
       LOG.info("Chrome Command: " + commandString);
 
-      File cmdfile = new File(SystemInfo.RESOURCES, "chrome-launcher.bat");
-      File logfile = new File(SystemInfo.RESOURCES, "chrome-launcher.log");
-      if (cmdfile.exists()) {
-        if (!cmdfile.delete()) {
-          LOG.error("Failed to delete chrome launcher file");
-        }
-      }
-      if (logfile.exists()) {
-        if (!logfile.delete()) {
-          LOG.error("Failed to delete chrome log file");
-        }
-      }
+//      File cmdfile = new File(SystemInfo.RESOURCES, "chrome-launcher.bat");
+//      File logfile = new File(SystemInfo.RESOURCES, "chrome-launcher.log");
+//      if (cmdfile.exists()) {
+//        if (!cmdfile.delete()) {
+//          LOG.error("Failed to delete chrome launcher file");
+//        }
+//      }
+//      if (logfile.exists()) {
+//        if (!logfile.delete()) {
+//          LOG.error("Failed to delete chrome log file");
+//        }
+//      }
+//
+//      String logCommand = commandString + " >> chrome-launcher.log";
+//
+//      FileOutputStream out = new FileOutputStream(cmdfile);
+//      IOUtils.write(logCommand, out);
+//      out.close();
+//
+//      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("chrome-launcher.bat"));
+//      executor.setDir(new File(SystemInfo.RESOURCES));
 
-      String logCommand = commandString + " >> chrome-launcher.log";
 
-      FileOutputStream out = new FileOutputStream(cmdfile);
-      IOUtils.write(logCommand, out);
-      out.close();
-
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("chrome-launcher.bat"));
-      executor.setDir(new File(SystemInfo.RESOURCES));
+      SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
+      executor.setDir(chromeExe.getParentFile());
       executor.enableLogging(true);
       executor.executeCommandAsync();
       LOG.info(String.join(" ", cmds));

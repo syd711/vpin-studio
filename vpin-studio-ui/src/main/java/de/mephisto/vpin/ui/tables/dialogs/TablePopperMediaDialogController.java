@@ -296,7 +296,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
         try {
           client.getPinUPPopperService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
-          EventManager.getInstance().notifyTableChange(game.getId(), null);
+          EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
           onReload();
         } catch (Exception e) {
           LOG.error("Renaming table asset failed: " + e.getMessage(), e);
@@ -412,7 +412,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (tableAsset != null) {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(screen, game, tableAsset, append));
       refreshTableMediaView();
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
+      EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
   }
 
@@ -635,6 +635,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @Override
   public void onDialogCancel() {
     EventManager.getInstance().removeListener(this);
+    EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
   }
 
 
