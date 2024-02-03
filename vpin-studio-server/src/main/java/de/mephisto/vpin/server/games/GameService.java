@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -148,11 +149,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-        .stream()
-        .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-        .collect(Collectors.toList());
+      .stream()
+      .filter(g ->
+        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+      .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -252,9 +253,12 @@ public class GameService implements InitializingBean {
           success = false;
         }
 
-//        if (!mameService.deleteOptions(game.getRom(), game.getTableName())) {
-//          success = false;
-//        }
+        List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getRom()));
+        if (gamesByRom.size() == 1) {
+          if (!mameService.deleteOptions(game.getRom())) {
+            success = false;
+          }
+        }
       }
 
 
@@ -292,12 +296,14 @@ public class GameService implements InitializingBean {
 
               if (!mediaFile.delete()) {
                 success = false;
-              } else {
+              }
+              else {
                 LOG.warn("Failed to delete \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
               }
             }
           }
-        } else {
+        }
+        else {
           LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
         }
       }
@@ -355,7 +361,8 @@ public class GameService implements InitializingBean {
 
     if (!filterEnabled || buildInPlayers.isEmpty()) {
       allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(null));
-    } else {
+    }
+    else {
 
       for (Player buildInPlayer : buildInPlayers) {
         allHighscoreVersions.addAll(highscoreService.getAllHighscoreVersions(buildInPlayer.getInitials()));
@@ -398,13 +405,15 @@ public class GameService implements InitializingBean {
         highscoreService.scanScore(game);
 
         return getGame(gameId);
-      } else {
+      }
+      else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
     } catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
-      } else {
+      }
+      else {
         LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
       }
     }
@@ -464,10 +473,8 @@ public class GameService implements InitializingBean {
       String scannedRomName = scanResult.getRom();
       String scannedTableName = scanResult.getTableName();
 
-      if (!StringUtils.isEmpty(scannedRomName)) {
-        if (!StringUtils.isEmpty(tableDetails.getRomName())) {
-          scannedRomName = tableDetails.getRomName();
-        }
+      if (StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+        scannedRomName = tableDetails.getRomName();
       }
 
       if (StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
@@ -492,7 +499,8 @@ public class GameService implements InitializingBean {
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
       game.setRomAlias(gameDetails.getRomName());
-    } else {
+    }
+    else {
       game.setRom(gameDetails.getRomName());
     }
 
@@ -512,7 +520,8 @@ public class GameService implements InitializingBean {
       String[] split = updates.split(",");
       List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
       game.setUpdates(collect);
-    } else {
+    }
+    else {
       game.setUpdates(Collections.emptyList());
     }
 
@@ -572,6 +581,23 @@ public class GameService implements InitializingBean {
       cardService.generateCard(updated, false);
     }
     return updated;
+  }
+
+  public void resetUpdate(int gameId, VpsDiffTypes diffType) {
+    try {
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+      String updates = gameDetails.getUpdates();
+      if (updates != null) {
+        List<String> existingUpdates = new ArrayList<>(Arrays.asList(updates.split(",")));
+        existingUpdates.remove(diffType.name());
+        updates = String.join(",", existingUpdates);
+        gameDetails.setUpdates(updates);
+        gameDetailsRepository.saveAndFlush(gameDetails);
+        LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates + "\n");
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
+    }
   }
 
   @Override

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
@@ -260,6 +261,9 @@ public class GamesResource {
             Game game = gameService.scanGame(gameId);
             if (game != null) {
               vpsService.autofill(game, true);
+              gameService.resetUpdate(game.getId(), VpsDiffTypes.tables);
+              gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
+              gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
             }
             break;
           }

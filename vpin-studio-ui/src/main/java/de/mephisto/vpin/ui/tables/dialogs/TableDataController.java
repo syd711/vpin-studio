@@ -205,10 +205,33 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private ComboBox<String> launcherCombo;
 
+  @FXML
+  private TabPane tabPane;
+
+  @FXML
+  private Button applyAltRomBtn;
+
+  @FXML
+  private Button applyRomBtn;
+
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private GameRepresentation game;
   private TableDetails tableDetails;
   private String initialVpxFileName = null;
+
+  @FXML
+  private void onRomApply() {
+    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getRom())) {
+      romName.setText(game.getRom());
+    }
+  }
+
+  @FXML
+  private void onAltRomApply() {
+    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getTableName())) {
+      altRomName.setText(game.getTableName());
+    }
+  }
 
   @FXML
   private void onWeblinkProperty() {
@@ -264,13 +287,13 @@ public class TableDataController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     String updatedGameFileName = tableDetails.getGameFileName();
-    if(!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+    if (!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
     }
 
     if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
       String duplicate = findDuplicate(updatedGameFileName);
-      if(duplicate != null) {
+      if (duplicate != null) {
         WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
         return;
       }
@@ -411,7 +434,7 @@ public class TableDataController implements Initializable, DialogController {
 
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(GameRepresentation game, int tab) {
     this.game = game;
     this.initialVpxFileName = game.getGameFileName();
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
@@ -472,8 +495,13 @@ public class TableDataController implements Initializable, DialogController {
       }
     });
 
+    applyRomBtn.setDisable(true);
     romName.setText(tableDetails.getRomName());
     romName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setRomName(newValue));
+    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getRom())) {
+      romName.setPromptText(game.getRom() + " (scanned value)");
+      applyRomBtn.setDisable(false);
+    }
 
     manufacturer.setText(tableDetails.getManufacturer());
     manufacturer.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
@@ -641,8 +669,13 @@ public class TableDataController implements Initializable, DialogController {
     custom5.setText(tableDetails.getCustom5());
     custom5.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom5(newValue));
 
+    applyAltRomBtn.setDisable(true);
     altRomName.setText(tableDetails.getRomAlt());
     altRomName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setRomAlt(newValue));
+    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getTableName())) {
+      romName.setPromptText(game.getTableName() + " (scanned value)");
+      applyAltRomBtn.setDisable(false);
+    }
 
     webDbId.setText(tableDetails.getWebGameId());
     webDbId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebGameId(newValue));
@@ -667,6 +700,8 @@ public class TableDataController implements Initializable, DialogController {
 
     gNotes.setText(tableDetails.getgNotes());
     gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
+
+    tabPane.getSelectionModel().select(tab);
   }
 
   public static class TableStatus {

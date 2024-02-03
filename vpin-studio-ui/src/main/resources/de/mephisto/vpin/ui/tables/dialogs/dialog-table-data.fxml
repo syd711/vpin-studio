@@ -31,7 +31,7 @@
          <center>
             <VBox prefHeight="710.0">
                <children>
-                  <TabPane>
+                  <TabPane fx:id="tabPane">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -40,7 +40,7 @@
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <GridPane vgap="3.0">
+                                    <GridPane hgap="3.0" vgap="3.0">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
@@ -275,6 +275,11 @@
                                                 <Insets left="3.0" />
                                              </GridPane.margin>
                                           </Label>
+                                          <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
                   
                         
                   
@@ -294,7 +299,7 @@
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <GridPane vgap="3.0">
+                                    <GridPane hgap="3.0" vgap="3.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
@@ -434,7 +439,7 @@
                                                 <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
                                              </tooltip>
                                              <GridPane.margin>
-                                                <Insets left="3.0" />
+                                                <Insets />
                                              </GridPane.margin>
                                           </Button>
                                        </children>
@@ -636,7 +641,7 @@
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <GridPane vgap="3.0">
+                                    <GridPane hgap="3.0" vgap="3.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
@@ -769,8 +774,13 @@
                                                 <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
                                              </tooltip>
                                              <GridPane.margin>
-                                                <Insets left="3.0" />
+                                                <Insets />
                                              </GridPane.margin>
+                                          </Button>
+                                          <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
                                           </Button>
                                        </children>
                                        <padding>

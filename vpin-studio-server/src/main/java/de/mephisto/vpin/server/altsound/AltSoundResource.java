@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -108,7 +109,9 @@ public class AltSoundResource {
       File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
-      return altSoundService.installAltSound(game, out);
+      JobExecutionResult jobExecutionResult = altSoundService.installAltSound(game, out);
+      gameService.resetUpdate(gameId, VpsDiffTypes.altSound);
+      return jobExecutionResult;
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
     }

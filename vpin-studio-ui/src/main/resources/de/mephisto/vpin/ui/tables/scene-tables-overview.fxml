@@ -265,28 +265,24 @@
                               <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                            </tooltip>
                         </Button>
-                        <Button fx:id="scanBtn" layoutX="592.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTablesScan" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+                          <items>
+                            <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                          </items>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Scans the selected tables to extract metadata" />
                            </tooltip>
-                        </Button>
-                        <Button fx:id="scanAllBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTablesScanAll" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Run table scan for all tables" />
-                           </tooltip>
-                        </Button>
+                        </SplitMenuButton>
                                 <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <Button fx:id="playBtn" layoutX="703.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" textFill="WHITE">
                                     <font>

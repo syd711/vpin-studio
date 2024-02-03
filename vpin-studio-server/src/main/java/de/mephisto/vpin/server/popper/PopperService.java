@@ -101,22 +101,16 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return list;
   }
 
-  public JobExecutionResult importTables(GameList list) {
-    List<GameListItem> items = list.getItems();
-    int count = 0;
-    for (GameListItem item : items) {
-      GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
-      File tableFile = new File(emulator.getTablesFolder(), item.getName());
-      if (tableFile.exists()) {
-        int result = importVPXGame(tableFile, true, -1, item.getEmuId());
-        if (result > 0) {
-          gameService.scanGame(result);
-          count++;
-        }
+  public JobExecutionResult importTable(GameListItem item) {
+    GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
+    File tableFile = new File(emulator.getTablesFolder(), item.getName());
+    if (tableFile.exists()) {
+      int result = importVPXGame(tableFile, true, -1, item.getEmuId());
+      if (result > 0) {
+        gameService.scanGame(result);
       }
     }
-
-    return JobExecutionResultFactory.ok("Imported " + count + " tables", -1);
+    return JobExecutionResultFactory.ok("Imported " + item.getName(), -1);
   }
 
   public int importVPXGame(File file, boolean importToPopper, int playListId, int emuId) {
@@ -135,7 +129,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     for (PopperStatusChangeListener listener : this.listeners) {
       if (started) {
         listener.tableLaunched(event);
-      } else {
+      }
+      else {
         listener.tableExited(event);
       }
     }
@@ -241,11 +236,13 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
               }
             }
           }
-        } else {
+        }
+        else {
           fillTableInfoWithVpxData(game, tableDetails, overwrite);
         }
       }
-    } else {
+    }
+    else {
       fillTableInfoWithVpxData(game, tableDetails, overwrite);
     }
 
@@ -328,7 +325,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
           de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
         }
         LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
-      } else {
+      }
+      else {
         //revert to old value
         updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
         pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
@@ -426,7 +424,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
           if (de.mephisto.vpin.commons.utils.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
             assetRenameCounter++;
             LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
-          } else {
+          }
+          else {
             LOG.warn("[" + screen + "] Renaming PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
           }
         }

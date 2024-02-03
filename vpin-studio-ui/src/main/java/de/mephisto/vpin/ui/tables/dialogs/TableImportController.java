@@ -2,12 +2,15 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -53,17 +56,24 @@ public class TableImportController implements Initializable, DialogController {
       return;
     }
 
-    this.onCancelClick(e);
-    try {
-      JobExecutionResult jobExecutionResult = client.getPinUPPopperService().importTables(importList);
-      if (!jobExecutionResult.isErrorneous()) {
-        EventManager.getInstance().notifyJobFinished(JobType.TABLE_IMPORT);
+    Platform.runLater(() -> {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(Studio.stage, new TableImportProgressModel(importList));
+      List<Object> results = progressDialog.getResults();
+      for (Object result : results) {
+        JobExecutionResult jobResult = (JobExecutionResult) result;
+        if (jobResult.isErrorneous()) {
+          LOG.error("Table import failed: " + jobResult.getError());
+          WidgetFactory.showAlert(Studio.stage, "Table Import Failed", "One ore more imports failed", jobResult.getMessage());
+          break;
+        }
       }
-    } catch (Exception ex) {
-      LOG.error("Table import failed: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Table Import Failed", ex.getMessage());
-    }
+      EventManager.getInstance().notifyJobFinished(JobType.TABLE_IMPORT);
+    });
+
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
   }
+
 
   @FXML
   private void onCancelClick(ActionEvent e) {

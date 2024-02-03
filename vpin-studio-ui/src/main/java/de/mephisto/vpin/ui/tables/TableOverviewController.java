@@ -148,10 +148,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button deleteBtn;
 
   @FXML
-  private Button scanBtn;
+  private SplitMenuButton scanBtn;
 
   @FXML
-  private Button scanAllBtn;
+  private MenuItem scanAllBtn;
 
   @FXML
   private Button playBtn;

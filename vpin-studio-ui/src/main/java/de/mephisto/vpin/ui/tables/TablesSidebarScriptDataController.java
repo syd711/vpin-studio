@@ -321,38 +321,40 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onTableNameEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Alternative ROM Name", "Enter Alternative ROM Name",
-      "Enter the value for the \"Alternative ROM Name\" (or \"TableName\" property).",
-      "The value is configured for some tables and used during highscore extraction.",
-      gameRepresentation.getTableName());
-    if (tableName != null) {
-      gameRepresentation.setTableName(tableName);
-      try {
-        Studio.client.getGameService().saveGame(gameRepresentation);
-        tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
-      } catch (Exception e) {
-        LOG.error("Saving tablename failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Saving tablename failed: " + e.getMessage());
-      }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-    }
+    TableDialogs.openTableDataDialog(gameRepresentation, 3);
+//    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Alternative ROM Name", "Enter Alternative ROM Name",
+//      "Enter the value for the \"Alternative ROM Name\" (or \"TableName\" property).",
+//      "The value is configured for some tables and used during highscore extraction.",
+//      gameRepresentation.getTableName());
+//    if (tableName != null) {
+//      gameRepresentation.setTableName(tableName);
+//      try {
+//        Studio.client.getGameService().saveGame(gameRepresentation);
+//        tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
+//      } catch (Exception e) {
+//        LOG.error("Saving tablename failed: " + e.getMessage(), e);
+//        WidgetFactory.showAlert(Studio.stage, "Saving tablename failed: " + e.getMessage());
+//      }
+//      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+//    }
   }
 
   @FXML
   private void onRomEdit() {
     GameRepresentation gameRepresentation = game.get();
-    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
-    if (romName != null) {
-      gameRepresentation.setRom(romName);
-      try {
-        Studio.client.getGameService().saveGame(gameRepresentation);
-        this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
-      } catch (Exception e) {
-        LOG.info("Error saving updated ROM name: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error saving updated ROM name: " + e.getMessage());
-      }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-    }
+    TableDialogs.openTableDataDialog(gameRepresentation, 0);
+//    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
+//    if (romName != null) {
+//      gameRepresentation.setRom(romName);
+//      try {
+//        Studio.client.getGameService().saveGame(gameRepresentation);
+//        this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
+//      } catch (Exception e) {
+//        LOG.info("Error saving updated ROM name: " + e.getMessage(), e);
+//        WidgetFactory.showAlert(Studio.stage, "Error saving updated ROM name: " + e.getMessage());
+//      }
+//      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+//    }
   }
 
   @FXML

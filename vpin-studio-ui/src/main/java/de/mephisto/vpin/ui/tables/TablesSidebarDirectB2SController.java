@@ -378,11 +378,11 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
       skipGIFrames.setDisable(tableData.getIlluminations() == 0);
       skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
-      skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue().getId() == 2);
+      skipLEDFrames.setDisable(tableData.getIlluminations() == 0 || usedLEDType.getValue() == null || usedLEDType.getValue().getId() == 2);
       skipLampFrames.setDisable(tableData.getIlluminations() == 0);
 
-      glowing.setDisable(usedLEDType.getValue().getId() == 2);
-      lightBulbOn.setDisable(usedLEDType.getValue().getId() == 2);
+      glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
+      lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
 
       this.saveEnabled = true;
     }

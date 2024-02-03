@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -114,6 +115,7 @@ public class VPXResource {
       out.deleteOnExit();
       out.delete();
 
+      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
       return JobExecutionResultFactory.empty();
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());

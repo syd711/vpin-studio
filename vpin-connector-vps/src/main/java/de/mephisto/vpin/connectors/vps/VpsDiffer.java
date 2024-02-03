@@ -35,7 +35,7 @@ public class VpsDiffer {
   public List<VpsDiffTypes> getDifferences() {
     List<VpsDiffTypes> differences = new ArrayList<>();
     if (oldTable == null) {
-      differences.add(VpsDiffTypes.tableNew);
+      differences.add(VpsDiffTypes.tableNewVPX);
       return differences;
     }
 
@@ -110,10 +110,16 @@ public class VpsDiffer {
         }
 
         if (!String.valueOf(version.getVersion()).equals(newVersionFile.getVersion())) {
-          return VpsDiffTypes.tableNewVersion;
+          if(newVersionFile.getTableFormat() != null && newVersionFile.getTableFormat().equals("FP")) {
+            return VpsDiffTypes.tableNewVersionFP;
+          }
+          return VpsDiffTypes.tableNewVersionVPX;
         }
       } else {
-        return VpsDiffTypes.tableNew;
+        if(newVersionFile.getTableFormat() != null && newVersionFile.getTableFormat().equals("FP")) {
+          return VpsDiffTypes.tableNewFP;
+        }
+        return VpsDiffTypes.tableNewVPX;
       }
     }
 

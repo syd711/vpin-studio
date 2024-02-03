@@ -11,7 +11,11 @@ public enum VpsDiffTypes {
   wheel,
   tables,
   tableNew,
+  tableNewVPX,
+  tableNewFP,
   tableNewVersion,
+  tableNewVersionVPX,
+  tableNewVersionFP,
   topper,
   tutorial,
   feature,
@@ -51,10 +55,22 @@ public enum VpsDiffTypes {
         return "Tutorial added";
       }
       case tableNew: {
-        return "New table added";
+        return "New table added (VPX)";
+      }
+      case tableNewVPX: {
+        return "New table added (VPX)";
+      }
+      case tableNewVersionVPX: {
+        return "Table version updated (VPX)";
       }
       case tableNewVersion: {
-        return "Table version updated";
+        return "Table version updated (VPX)";
+      }
+      case tableNewFP: {
+        return "New table added (FP)";
+      }
+      case tableNewVersionFP: {
+        return "Table version updated (FP)";
       }
       case topper: {
         return "Topper";

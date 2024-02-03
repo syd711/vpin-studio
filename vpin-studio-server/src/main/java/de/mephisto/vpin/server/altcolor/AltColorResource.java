@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altcolor;
 
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -65,7 +66,9 @@ public class AltColorResource {
       File out = File.createTempFile(name, "." + ext);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
-      return altColorService.installAltColor(game, out);
+      JobExecutionResult jobExecutionResult = altColorService.installAltColor(game, out);
+      gameService.resetUpdate(gameId, VpsDiffTypes.altColor);
+      return jobExecutionResult;
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT color upload failed: " + e.getMessage());
     }
@@ -73,7 +76,7 @@ public class AltColorResource {
 
   private AltColor getAltColor(@NonNull Game game) {
     AltColor altColor = altColorService.getAltColor(game);
-    if(altColor != null) {
+    if (altColor != null) {
       altColor.setValidationStates(validationService.validateAltColor(game));
     }
     return altColor;

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -45,8 +46,8 @@ public class PopperServiceResource {
   }
 
   @PostMapping("/import")
-  public JobExecutionResult importTables(@RequestBody GameList resourceList) {
-    return popperService.importTables(resourceList);
+  public JobExecutionResult importTable(@RequestBody GameListItem item) {
+    return popperService.importTable(item);
   }
 
   @GetMapping("/pincontrol/{screen}")

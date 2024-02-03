@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
@@ -114,6 +115,7 @@ public class DirectB2SResource {
       else {
         throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");
       }
+      gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());

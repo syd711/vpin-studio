@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.client.CommandOption;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
@@ -105,7 +106,9 @@ public class PupPacksResource {
       File pupArchive = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
       LOG.info("Uploading " + pupArchive.getAbsolutePath());
       UploadUtil.upload(file, pupArchive);
-      return pupPacksService.installPupPack(game, pupArchive);
+      JobExecutionResult jobExecutionResult = pupPacksService.installPupPack(game, pupArchive);
+      gameService.resetUpdate(gameId, VpsDiffTypes.pupPack);
+      return jobExecutionResult;
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "PUP pack upload failed: " + e.getMessage());
     }

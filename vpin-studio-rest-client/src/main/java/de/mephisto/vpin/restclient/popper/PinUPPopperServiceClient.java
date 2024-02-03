@@ -5,11 +5,8 @@ import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameList;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +32,9 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "popper/imports", GameList.class);
   }
 
-  public JobExecutionResult importTables(GameList list) throws Exception {
+  public JobExecutionResult importTable(GameListItem item) throws Exception {
     try {
-      return getRestClient().post(API + "popper/import", list, JobExecutionResult.class);
+      return getRestClient().post(API + "popper/import", item, JobExecutionResult.class);
     } catch (Exception e) {
       LOG.error("Failed importing tables: " + e.getMessage(), e);
       throw e;
