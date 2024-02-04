@@ -367,23 +367,25 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   }
 
   private void updateTransparencySettings(Boolean newValue) {
-    grayScaleCheckbox.setDisable(newValue);
-    useDirectB2SCheckbox.setDisable(newValue);
-    blurSlider.setDisable(newValue);
-    brightenSlider.setDisable(newValue);
-    darkenSlider.setDisable(newValue);
-    backgroundImageCombo.setDisable(newValue);
+    Platform.runLater(() -> {
+      grayScaleCheckbox.setDisable(newValue);
+      useDirectB2SCheckbox.setDisable(newValue);
+      blurSlider.setDisable(newValue);
+      brightenSlider.setDisable(newValue);
+      darkenSlider.setDisable(newValue);
+      backgroundImageCombo.setDisable(newValue);
 
-    if (newValue) {
-      Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
-      BackgroundImage myBI = new BackgroundImage(backgroundImage,
-        BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-      imageCenter.setBackground(new Background(myBI));
-    }
-    else {
-      imageCenter.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
-    }
+      if (newValue) {
+        Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
+        BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+        imageCenter.setBackground(new Background(myBI));
+      }
+      else {
+        imageCenter.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+      }
+    });
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {
@@ -471,5 +473,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @Override
   public void onViewActivated() {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
+    onTableRefresh();
   }
 }
