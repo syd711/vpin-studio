@@ -57,7 +57,7 @@ abstract public class AssetMediaPlayer extends BorderPane {
         executor.shutdownNow();
         LOG.info("Disposed " + this.url);
       } catch (Exception e) {
-        LOG.warn("Error disposing media view: " + e.getMessage());
+        LOG.info("Disposing media view: " + e.getMessage());
       }
     }
     else {
