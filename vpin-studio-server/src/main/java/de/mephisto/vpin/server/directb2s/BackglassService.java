@@ -37,10 +37,15 @@ public class BackglassService {
 
   public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {
     Game game = gameService.getGame(gameId);
-    File settingsXml = game.getEmulator().getB2STableSettingsXml();
-    B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
-    tableSettingsSerializer.serialize(settings);
-    return settings;
+    try {
+      File settingsXml = game.getEmulator().getB2STableSettingsXml();
+      B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
+      tableSettingsSerializer.serialize(settings);
+      return settings;
+    } catch (VPinStudioException e) {
+      LOG.error("Failed to save table settings for \"" + game.getGameDisplayName() + "\": " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public DirectB2STableSettings getTableSettings(int gameId) {

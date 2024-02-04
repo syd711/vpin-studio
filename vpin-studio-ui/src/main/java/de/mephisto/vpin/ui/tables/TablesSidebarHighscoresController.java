@@ -120,6 +120,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
+    vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
   }
 
   @FXML
