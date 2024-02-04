@@ -16,8 +16,11 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/cards/transparent-cards.png" width="600" />
 
+- Disabled auto-apply of VPS data to the Popper database. The action must be separated from the "auto-fix" for finding the matching VPS table.
+
 ### Bugfixes
 
+- Fixed DMD uploads (finally): The last hotfix did lowercase the target folder and ignored subfolders. Both issues have been fixed.
 - Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.
 - Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
 - Corrected error message text when a client is connecting to a server with a newer version.

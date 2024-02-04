@@ -78,7 +78,8 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           }
         }
 
-        notifyVpsTableDataChangeListeners(game);
+        //TODO
+//        notifyVpsTableDataChangeListeners(game);
       }
       LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
       return true;
