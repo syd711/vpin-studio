@@ -12,9 +12,15 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/apply-rom-name.png" width="300" />
 
+- Added the option to render highscore cards with a transparent background.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/cards/transparent-cards.png" width="600" />
 
 ### Bugfixes
 
+- Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.
+- Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
+- Corrected error message text when a client is connecting to a server with a newer version.
 - Fixed possible error for some backglasses preventing them from being uploaded.
 - Fixed MAME deletion: The registry key are not deleted (finally) and the "Mame" section is disabled when no registry entry is available for the table.  
  

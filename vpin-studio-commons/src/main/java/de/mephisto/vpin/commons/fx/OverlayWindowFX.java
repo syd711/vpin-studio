@@ -17,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -224,6 +225,7 @@ public class OverlayWindowFX extends Application {
         }
 
         BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: transparent;");
         Screen screen = Screen.getPrimary();
         final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
         scene.setFill(Color.TRANSPARENT);

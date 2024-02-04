@@ -103,7 +103,7 @@ public class CardGraphics {
   public BufferedImage draw() throws Exception {
     BufferedImage backgroundImage = getBackgroundImage();
 
-    if(!TRANSPARENT_BACKGROUND) {
+    if (!TRANSPARENT_BACKGROUND) {
       if (BLUR_PIXELS > 0) {
         backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
       }
@@ -125,8 +125,15 @@ public class CardGraphics {
   }
 
   private BufferedImage getBackgroundImage() throws IOException {
-    if(TRANSPARENT_BACKGROUND) {
-      return new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    if (TRANSPARENT_BACKGROUND) {
+      BufferedImage bufferedImage = new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
+      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+      g2.setBackground(new Color(0, true));
+      g2.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+      g2.dispose();
+      return bufferedImage;
     }
 
     File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
@@ -142,7 +149,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -150,7 +157,8 @@ public class CardGraphics {
     if (croppedDefaultPicture == null || !USE_DIRECTB2S) {
       BufferedImage sImage = ImageUtil.loadImage(sourceImage);
       backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
-    } else {
+    }
+    else {
       try {
         backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
       } catch (Exception e) {
@@ -191,7 +199,8 @@ public class CardGraphics {
     if (RAW_HIGHSCORE) {
       int yStart = tableNameY + TABLE_FONT_SIZE;
       renderRawScore(game, image.getHeight(), image.getWidth(), g, yStart);
-    } else {
+    }
+    else {
       renderScorelist(game, g, title, tableNameY);
     }
   }
@@ -253,7 +262,8 @@ public class CardGraphics {
     int fontSize = remainingHeight / lines.length;
     if (fontSize > SCORE_FONT_SIZE) {
       fontSize = SCORE_FONT_SIZE;
-    } else if (fontSize < 20) {
+    }
+    else if (fontSize < 20) {
       fontSize = 20;
     }
     g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, fontSize));
@@ -295,7 +305,8 @@ public class CardGraphics {
       x = (remainingXSpace - wheelWidth) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
       x = x + wheelWidth + PADDING;
-    } else {
+    }
+    else {
       x = (remainingWidth - columnsWidth) / 2;
     }
 
@@ -385,7 +396,8 @@ public class CardGraphics {
           result.add(textBlock);
         }
         textBlock = new TextBlock(g);
-      } else {
+      }
+      else {
         textBlock.addLine(line);
       }
     }

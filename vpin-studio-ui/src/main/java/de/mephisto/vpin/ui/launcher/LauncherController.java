@@ -196,7 +196,7 @@ public class LauncherController implements Initializable {
 
     if (serverVersion != null) {
       if (!serverVersion.equals(clientVersion)) {
-        WidgetFactory.showAlert(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update to version " + clientVersion + ".");
+        WidgetFactory.showAlert(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please start the updater.");
       }
 
       stage.close();

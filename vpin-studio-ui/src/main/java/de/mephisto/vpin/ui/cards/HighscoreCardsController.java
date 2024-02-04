@@ -448,6 +448,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
           Platform.runLater(() -> {
             imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
             previewStack.getChildren().remove(waitOverlay);
+            updateTransparencySettings(this.transparentBackgroundCheckbox.isSelected());
           });
 
         }).start();

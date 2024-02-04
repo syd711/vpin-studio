@@ -454,7 +454,7 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan) {
+  private synchronized void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan) {
     if (gameDetails == null) {
       gameDetails = gameDetailsRepository.findByPupId(game.getId());
     }

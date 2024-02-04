@@ -167,6 +167,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         tablesSideBarController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
+        vpsTablesController.refresh(vpsTablesController.getSelection());
         root.setRight(sidePanelRoot);
       }
       else if (t1.intValue() == 2) {
