@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -25,18 +26,29 @@ public class DMDInstallationUtil {
 
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
-          String folderName = zipEntry.getName().toLowerCase();
+          String name = zipEntry.getName();
+          String folderName = name.toLowerCase();
           if (StringUtils.endsWithIgnoreCase(folderName, "dmd/") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
-            dmdFolder = new File(tablesFolder, folderName);
+            dmdFolder = new File(tablesFolder, name);
             dmdFolder.mkdirs();
             LOG.info("Created/Found DMD folder \"" + dmdFolder.getAbsolutePath() + "\"");
           }
+          else if (dmdFolder != null && name.contains(dmdFolder.getName())) {
+            File newFolder = new File(dmdFolder, name.substring(name.indexOf(dmdFolder.getName()) + dmdFolder.getName().length() + 1));
+            if (!newFolder.mkdirs()) {
+              fileInputStream.close();
+              zis.closeEntry();
+              zis.close();
+
+              throw new IOException("Failed to create directory " + newFolder.getAbsolutePath());
+            }
+          }
         }
-        else if (dmdFolder != null) {
+        else if (dmdFolder != null && zipEntry.getName().contains(dmdFolder.getName())) {
           String name = zipEntry.getName();
           // fix for Windows-created archives
           if (name.contains("/")) {
-            name = name.substring(name.lastIndexOf("/") + 1);
+            name = name.substring(name.indexOf(dmdFolder.getName()) + dmdFolder.getName().length() + 1);
           }
 
           File target = new File(dmdFolder, name);
