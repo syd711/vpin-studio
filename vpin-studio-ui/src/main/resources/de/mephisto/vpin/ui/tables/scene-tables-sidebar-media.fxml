@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMediaController">
+<BorderPane fx:id="mediaRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMediaController">
     <center>
         <ScrollPane fitToWidth="true" styleClass="accordion-container" BorderPane.alignment="CENTER">
             <content>

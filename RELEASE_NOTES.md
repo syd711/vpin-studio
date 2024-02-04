@@ -4,6 +4,7 @@
 
 - VPS update flags are now resetted for the following uploads: backglass, table replacements, altsound, altcolor, puppack and pov files/archives.
 - The "Table Import" dialog now provides a progress bar, so that the user gets feedback about the progress when a bunch of tables is installed at once.
+- The media preview is now pausing when the window does not have the focus anymore (saving CPU usage here).
 - Moved "Scan All" button into a split-menu button since it not likely to be used that often.
 - Simplified "ROM" and "Alt. ROM Name" fields (hopefully): 
   - When these values are available in Popper, Popper values are always preferred.

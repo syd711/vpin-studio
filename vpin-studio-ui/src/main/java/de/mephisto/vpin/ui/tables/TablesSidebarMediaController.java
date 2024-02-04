@@ -12,8 +12,11 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +41,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   @FXML
   private Pane mediaRootPane;
+
+  @FXML
+  private BorderPane mediaRoot;
 
   @FXML
   private BorderPane screenTopper;
@@ -514,5 +522,22 @@ public class TablesSidebarMediaController implements Initializable {
     screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
     screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
     screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
+
+    Studio.stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+      try {
+        List<MediaView> mediaViews = JFXHelper.getMediaPlayers(mediaRoot);
+        for (MediaView mediaView : mediaViews) {
+          MediaPlayer mediaPlayer = mediaView.getMediaPlayer();
+          if(newValue) {
+            mediaPlayer.play();
+          }
+          else {
+            mediaPlayer.pause();
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to update focus state of media players: " + e.getMessage());
+      }
+    });
   }
 }
