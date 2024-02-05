@@ -146,4 +146,9 @@ public class Emulator {
       || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALL.toLowerCase())
       || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALLX.toLowerCase());
   }
+
+  @Override
+  public String toString() {
+    return "Emulator \"" + this.name + "\" (EMUID #" + this.id + ")";
+  }
 }
