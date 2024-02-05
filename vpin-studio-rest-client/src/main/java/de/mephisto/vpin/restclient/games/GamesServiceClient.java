@@ -84,11 +84,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     return result;
   }
 
-
-  public List<ValidationState> getRomValidations(int gameId) {
-    return Arrays.asList(getRestClient().get(API + "games/validations/rom/" + gameId, ValidationState[].class));
-  }
-
   public List<ValidationState> getValidations(int gameId) {
     return Arrays.asList(getRestClient().get(API + "games/validations/" + gameId, ValidationState[].class));
   }

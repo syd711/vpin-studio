@@ -39,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TableDialogs {
 
   public static void directAssetUpload(Stage stage, GameRepresentation game, PopperScreen screen) {
@@ -56,6 +58,24 @@ public class TableDialogs {
       });
     }
   }
+
+  public static void onRomUploads(TablesSidebarController tablesSidebarController) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        boolean uploaded = TableDialogs.openRomUploadDialog();
+        if (uploaded) {
+          tablesSidebarController.getTablesController().onReload();
+        }
+      }
+    }
+    else {
+      boolean uploaded = TableDialogs.openRomUploadDialog();
+      if (uploaded) {
+        tablesSidebarController.getTablesController().onReload();
+      }
+    }
+  }
+
 
   public static boolean directBackglassUpload(Stage stage, GameRepresentation game) {
     StudioFileChooser fileChooser = new StudioFileChooser();

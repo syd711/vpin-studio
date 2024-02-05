@@ -245,7 +245,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onRomsUpload() {
-    TablesSidebarScriptDataController.onRomUploads(tablesController.getTablesSideBarController());
+    TableDialogs.onRomUploads(tablesController.getTablesSideBarController());
   }
 
 

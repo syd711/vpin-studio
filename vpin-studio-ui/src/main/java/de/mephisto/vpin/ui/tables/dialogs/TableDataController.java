@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -10,6 +11,8 @@ import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TableScanProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,6 +55,19 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private Label databaseIdLabel;
+
+  @FXML
+  private TextField scannedHighscoreFileName;
+
+  @FXML
+  private TextField scannedRomName;
+
+  @FXML
+  private TextField scannedAltRomName;
+
+  @FXML
+  private Button openHsFileBtn;
+
 
   @FXML
   private TextField gameName;
@@ -214,6 +232,9 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private Button applyRomBtn;
 
+  @FXML
+  private Button applyHsBtn;
+
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private GameRepresentation game;
   private TableDetails tableDetails;
@@ -221,16 +242,24 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private void onRomApply() {
-    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getRom())) {
-      romName.setText(game.getRom());
-    }
+    romName.setText(scannedRomName.getText());
   }
 
   @FXML
   private void onAltRomApply() {
-    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getTableName())) {
-      altRomName.setText(game.getTableName());
-    }
+    altRomName.setText(scannedAltRomName.getText());
+  }
+
+  @FXML
+  private void onHsApply() {
+
+  }
+
+  @FXML
+  private void onTableScan() {
+    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));
+    this.game = client.getGame(this.game.getId());
+    refreshScannedValues();
   }
 
   @FXML
@@ -245,6 +274,17 @@ public class TableDataController implements Initializable, DialogController {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
+    }
+  }
+
+  @FXML
+  private void onEMHighscore() {
+    GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.getEmulatorId());
+    File folder = new File(emulatorRepresentation.getUserDirectory());
+    try {
+      Desktop.getDesktop().open(folder);
+    } catch (IOException e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.getHsFileName() + "\": " + e.getMessage());
     }
   }
 
@@ -343,6 +383,8 @@ public class TableDataController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    openHsFileBtn.setVisible(client.getSystemService().isLocal());
+
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
       apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
@@ -701,7 +743,49 @@ public class TableDataController implements Initializable, DialogController {
     gNotes.setText(tableDetails.getgNotes());
     gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
 
+    scannedRomName.setText(game.getRom());
+    scannedRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
+      game.setRom(newValue);
+      applyRomBtn.setDisable(StringUtils.isEmpty(newValue));
+      if (StringUtils.isEmpty(romName.getText())) {
+        romName.setPromptText(newValue + " (scanned value)");
+      }
+    });
+    applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
+
+    scannedAltRomName.setText(game.getTableName());
+    scannedAltRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
+      game.setTableName(newValue);
+      applyAltRomBtn.setDisable(StringUtils.isEmpty(newValue));
+      if (StringUtils.isEmpty(altRomName.getText())) {
+        altRomName.setPromptText(newValue + " (scanned value)");
+      }
+    });
+    applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
+
+    scannedHighscoreFileName.setText(game.getHsFileName());
+    scannedHighscoreFileName.textProperty().addListener((observableValue, oldValue, newValue) -> {
+      game.setHsFileName(newValue);
+      applyHsBtn.setDisable(StringUtils.isEmpty(newValue));
+    });
+    applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
+
+
     tabPane.getSelectionModel().select(tab);
+  }
+
+  private void refreshScannedValues() {
+    scannedRomName.setText(game.getRom());
+    applyRomBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+
+    scannedAltRomName.setText(game.getTableName());
+    applyAltRomBtn.setDisable(StringUtils.isEmpty(game.getTableName()));
+
+    scannedHighscoreFileName.setText(game.getHsFileName());
+    if (StringUtils.isEmpty(game.getHsFileName()) && !StringUtils.isEmpty(game.getTableName())) {
+      scannedHighscoreFileName.setPromptText(game.getTableName());
+    }
+    applyHsBtn.setDisable(StringUtils.isEmpty(game.getHsFileName()));
   }
 
   public static class TableStatus {

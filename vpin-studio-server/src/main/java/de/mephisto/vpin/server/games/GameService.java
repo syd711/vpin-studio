@@ -541,10 +541,6 @@ public class GameService implements InitializingBean {
     game.setValidationState(validate.get(0));
   }
 
-  public List<ValidationState> getRomValidations(Game game) {
-    return gameValidator.validateRom(game);
-  }
-
   public List<ValidationState> validate(Game game) {
     return gameValidator.validate(game, false);
   }

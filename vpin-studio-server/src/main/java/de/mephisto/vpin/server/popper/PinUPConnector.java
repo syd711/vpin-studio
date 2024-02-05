@@ -37,6 +37,7 @@ public class PinUPConnector implements InitializingBean {
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
+  public static final int DB_VERSION = 64;
   private String dbFilePath;
 
   @Autowired
@@ -234,7 +235,7 @@ public class PinUPConnector implements InitializingBean {
         manifest.getLauncherList().addAll(altExeList);
 
         //check for popper DB update 1.5
-        if (sqlVersion >= 64) {
+        if (sqlVersion >= DB_VERSION) {
           manifest.setWebGameId(rs.getString("WEBGameID"));
           manifest.setRomAlt(rs.getString("ROMALT"));
           manifest.setMod(rs.getInt("ISMOD") == 1);
@@ -328,7 +329,7 @@ public class PinUPConnector implements InitializingBean {
       params.add(manifest.getCustom3());
 
       //check for popper DB update 1.5
-      if (sqlVersion >= 64) {
+      if (sqlVersion >= DB_VERSION) {
         stmtBuilder.append("'WEBGameID' = ?, ");
         params.add(manifest.getWebGameId());
         stmtBuilder.append("'ROMALT' = ?, ");

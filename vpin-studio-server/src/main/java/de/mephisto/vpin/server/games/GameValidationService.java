@@ -270,22 +270,6 @@ public class GameValidationService implements InitializingBean {
     return result;
   }
 
-  public List<ValidationState> validateRom(Game game) {
-    List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_ROM)) {
-      if (StringUtils.isEmpty(game.getRom())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_ROM));
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && game.isRomRequired()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
-      }
-    }
-    return result;
-  }
-
   public List<ValidationState> validateAltColor(Game game) {
     if (game.getAltColorType() == null || game.getAltColorType().equals(AltColorTypes.mame)) {
       return Collections.emptyList();
