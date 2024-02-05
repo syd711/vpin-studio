@@ -24,28 +24,28 @@ public class HighscoreMonitoringService {
   private Thread monitorThread;
 
   public void startMonitoring(@NonNull Game game) {
-//    if(monitorThread != null) {
-//      running.set(false);
-//    }
-//
-//    File highscoreFile = game.getHighscoreFile();
-//    if (highscoreFile == null) {
-//      LOG.info("Cancelled highscore monitoring, no highscore type set.");
-//      return;
-//    }
-//
-//    if (highscoreFile.exists()) {
-//      LOG.info("Cancelled highscore monitoring, highscore file\"" + highscoreFile.getAbsolutePath() + "\" does not exist.");
-//      return;
-//    }
-//
-//    startMonitor(highscoreFile, game);
+    if(monitorThread != null) {
+      running.set(false);
+    }
+
+    File highscoreFile = game.getHighscoreFile();
+    if (highscoreFile == null) {
+      LOG.info("Cancelled highscore monitoring, no highscore type set.");
+      return;
+    }
+
+    if (highscoreFile.exists()) {
+      LOG.info("Cancelled highscore monitoring, highscore file\"" + highscoreFile.getAbsolutePath() + "\" does not exist.");
+      return;
+    }
+
+    startMonitor(highscoreFile, game);
   }
 
   public void stopMonitoring() {
-//    if (monitorThread != null) {
-//      this.running.set(false);
-//    }
+    if (monitorThread != null) {
+      this.running.set(false);
+    }
   }
 
   private void startMonitor(@NonNull File highscoreFile, @NonNull Game game) {
