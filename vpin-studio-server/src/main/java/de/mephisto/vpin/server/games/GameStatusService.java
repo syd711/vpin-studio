@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.server.highscores.monitoring.HighscoreMonitoringService;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
 import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
@@ -16,7 +17,10 @@ public class GameStatusService implements PopperStatusChangeListener, Initializi
   @Autowired
   private PopperService popperService;
 
-  private GameStatus status = new GameStatus();
+  @Autowired
+  private HighscoreMonitoringService highscoreMonitoringService;
+
+  private final GameStatus status = new GameStatus();
 
   public GameStatus getStatus() {
     return status;
@@ -26,11 +30,13 @@ public class GameStatusService implements PopperStatusChangeListener, Initializi
   public void tableLaunched(TableStatusChangedEvent event) {
     status.setStarted(new Date());
     status.setGameId(event.getGame().getId());
+    highscoreMonitoringService.startMonitoring(event.getGame());
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     status.setGameId(event.getGame().getId());
+    highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
@@ -41,11 +47,13 @@ public class GameStatusService implements PopperStatusChangeListener, Initializi
   @Override
   public void popperExited() {
     status.setGameId(-1);
+    highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
   public void popperRestarted() {
     status.setGameId(-1);
+    highscoreMonitoringService.stopMonitoring();
   }
 
   @Override

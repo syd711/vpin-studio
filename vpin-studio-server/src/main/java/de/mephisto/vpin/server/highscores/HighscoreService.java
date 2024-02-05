@@ -336,11 +336,17 @@ public class HighscoreService implements InitializingBean {
     return highscore;
   }
 
+  //TODO rename
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game) {
-    HighscoreMetadata highscoreMetadata = highscoreResolver.readHighscore(game);
+    HighscoreMetadata highscoreMetadata = readHighscore(game);
     updateHighscore(game, highscoreMetadata);
     return highscoreMetadata;
+  }
+
+  @NonNull
+  public HighscoreMetadata readHighscore(@NonNull Game game) {
+    return highscoreResolver.readHighscore(game);
   }
 
   /**
