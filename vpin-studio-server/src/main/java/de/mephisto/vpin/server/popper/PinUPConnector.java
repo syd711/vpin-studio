@@ -1223,7 +1223,7 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(POST_SCRIPT);
-      if(script == null) {
+      if (script == null) {
         script = "";
       }
       rs.close();
@@ -1430,14 +1430,18 @@ public class PinUPConnector implements InitializingBean {
 
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
-      if (!emulator.isVisualPinball()) {
-        continue;
-      }
+      try {
+        if (!isValidVPXEmulator(emulator)) {
+          continue;
+        }
 
-      GameEmulator gameEmulator = new GameEmulator(emulator);
-      emulators.put(emulator.getId(), gameEmulator);
-      initVisualPinballXScripts(emulator);
-      LOG.info("Loaded Emulator: " + gameEmulator);
+        GameEmulator gameEmulator = new GameEmulator(emulator);
+        emulators.put(emulator.getId(), gameEmulator);
+        initVisualPinballXScripts(emulator);
+        LOG.info("Loaded Emulator: " + gameEmulator);
+      } catch (Exception e) {
+        LOG.error("Emulator initialization failed: " + e.getMessage(), e);
+      }
     }
     LOG.info("Finished Popper scripts configuration check.");
 
@@ -1485,5 +1489,33 @@ public class PinUPConnector implements InitializingBean {
         }
       }
     }
+  }
+
+  private static boolean isValidVPXEmulator(Emulator emulator) {
+    if (!emulator.isVisualPinball()) {
+      return false;
+    }
+
+    if(!emulator.isVisible()) {
+      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirGames())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirRoms())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirMedia())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
+      return false;
+    }
+
+    return true;
   }
 }

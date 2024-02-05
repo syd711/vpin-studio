@@ -69,19 +69,10 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
-      if(table.getFeatures().contains("Hybrid") && table.getFeatures().contains("VR")) {
-        System.out.println(table.getName() + ", " + table.getId());
-      }
-
-      List<VpsTableVersion> tableFiles = table.getTableFiles();
-      for (VpsTableVersion tableFile : tableFiles) {
-        if(table.getFeatures() != null ){
-
-        }
-
+      if(table.getFeatures() == null) {
+        System.out.println(table.getDisplayName());
       }
     }
-
   }
 
   @Test

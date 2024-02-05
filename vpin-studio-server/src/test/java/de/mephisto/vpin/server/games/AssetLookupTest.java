@@ -14,30 +14,29 @@ public class AssetLookupTest {
 
   @Test
   public void testMediaLookup() {
-    String baseName = "abc";
-    Pattern plainMatcher  = Pattern.compile(baseName + "\\d{0,2}\\.[a-zA-Z]*");
-    Pattern screenMatcher  = Pattern.compile(baseName + "\\d{0,2}\\(.*\\)\\.[a-zA-Z]*");
+    String baseName = "abc (2001)";
+    Pattern plainMatcher  = Pattern.compile(Pattern.quote(baseName) + "\\d{0,2}\\.[a-zA-Z0-9]*");
+    Pattern screenMatcher  = Pattern.compile(Pattern.quote(baseName) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
 
-    List<String> matches = Arrays.asList("abc.png", "abc.apng", "abc01.png", "abc99.png");
+    List<String> matches = Arrays.asList(baseName + ".apng", baseName + "01.png", baseName + "99.mp3");
     for (String name : matches) {
-      assertTrue(plainMatcher.matcher(name).matches());
+      assertTrue(plainMatcher.matcher(name).matches(), "test failed for '" + name + "'");
     }
 
-    List<String> nonMatches = Arrays.asList("abcd.png", "abcd01.apng", "abcd-99.png");
+    List<String> nonMatches = Arrays.asList(baseName + "d.png", baseName + "d01.apng", baseName+ "d-99.png", baseName + "-(9).mp3");
     for (String name : nonMatches) {
       assertFalse(plainMatcher.matcher(name).matches());
     }
 
-    List<String> screenMatches = Arrays.asList("abc(Screen).png", "abc(Screen 3).apng", "abc01(Screen 3).png", "abc99(Screen 3).png");
+    List<String> screenMatches = Arrays.asList(baseName+ "(Screen).png", baseName + "(Screen 3).apng", baseName+ "01(SCREEN3).mp4", baseName+ "99(Screen 3).png", baseName+ "99(Screen 3).mp4");
     for (String name : screenMatches) {
       assertTrue(FilenameUtils.getBaseName(name).equalsIgnoreCase(baseName) || screenMatcher.matcher(name).matches());
     }
 
 
-    List<String> nonMatchesScreen = Arrays.asList("abcd(Screen).png", "abcd01(Screen 3).apng", "abcd-99 (Screen 3).png");
+    List<String> nonMatchesScreen = Arrays.asList(baseName + "d(Screen).png",  baseName+ "cd01(Screen 3).apng", baseName+ "d-99 (Screen 3).png", baseName + "cd-99 (Screen 3).mp4");
     for (String name : nonMatchesScreen) {
       assertFalse(screenMatcher.matcher(name).matches());
     }
-
   }
 }

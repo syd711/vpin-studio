@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
-  public final static String URL = "https://fraesh.github.io/vps-db/vpsdb.json";
+  public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
   public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
 
   private static ObjectMapper objectMapper;
@@ -208,8 +208,9 @@ public class VPS {
       }
 
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
+
       return Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures().contains(VpsFeatures.VPX))
+          .filter(t -> t.getFeatures() != null && t.getFeatures().contains(VpsFeatures.VPX))
           .collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);
