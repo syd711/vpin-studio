@@ -47,7 +47,7 @@ class HighscoreResolver {
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
   @NonNull
-  public HighscoreMetadata readHighscore(Game game) {
+  public synchronized HighscoreMetadata readHighscore(Game game) {
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
