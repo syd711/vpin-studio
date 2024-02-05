@@ -240,9 +240,9 @@ public class Game {
     String baseFilename = getGameName();
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
     if (mediaFiles != null) {
-      Pattern p  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{2,2}\\.[a-zA-Z]*");
-      return Arrays.stream(mediaFiles).filter(f -> FilenameUtils.getBaseName(f.getName()).equalsIgnoreCase(baseFilename) || p.matcher(f.getName()).matches())
-          .collect(Collectors.toList());
+      Pattern plainMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z]*");
+      Pattern screenMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z]*");
+      return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getAbsolutePath()).matches()).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
