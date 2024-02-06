@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FileUtils;
@@ -85,6 +86,25 @@ public class VPXResource {
     return vpxService.delete(gameService.getGame(id));
   }
 
+  @PostMapping("/music/upload")
+  public Boolean uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
+    try {
+      if (file == null) {
+        LOG.error("Music upload request did not contain a file object.");
+        return false;
+      }
+
+      String name = file.getName();
+      File out = File.createTempFile(name, ".zip");
+      out.deleteOnExit();
+
+      LOG.info("Uploading " + out.getAbsolutePath());
+      UploadUtil.upload(file, out);
+      return vpxService.installMusic(out);
+    } catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
+    }
+  }
 
   @PostMapping("/pov/upload")
   public JobExecutionResult povUpload(@RequestParam(value = "file", required = false) MultipartFile file,

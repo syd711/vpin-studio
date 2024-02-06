@@ -178,6 +178,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button vpsResetBtn;
 
   @FXML
+  private Button musicUploadBtn;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
@@ -246,6 +249,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onRomsUpload() {
     TableDialogs.onRomUploads(tablesController.getTablesSideBarController());
+  }
+
+
+  @FXML
+  private void onMusicUpload() {
+    TableDialogs.onMusicUploads(tablesController.getTablesSideBarController());
   }
 
 

@@ -4,7 +4,9 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.dmd.DMDInstallationUtil;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,6 +35,9 @@ public class VPXService {
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   public POV getPOV(Game game) {
     try {
@@ -215,5 +220,10 @@ public class VPXService {
     }
     LOG.error("No game found reading checksum of " + game.getGameDisplayName());
     return null;
+  }
+
+  public Boolean installMusic(File out) {
+    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder());
+    return true;
   }
 }

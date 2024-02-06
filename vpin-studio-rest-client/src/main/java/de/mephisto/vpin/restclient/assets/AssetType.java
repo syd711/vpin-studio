@@ -11,6 +11,7 @@ public enum AssetType {
   DMD_PACK,
   POPPER_MEDIA,
   ROM,
+  MUSIC,
   POV,
   ARCHIVE,
   DEFAULT_BACKGROUND,
