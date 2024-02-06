@@ -121,7 +121,7 @@ public class PupPackAnalyzer {
             }
 
             for (String romName : romNames) {
-              if (!StringUtils.isEmpty(romName) && folderName.equals(romName)) {
+              if (!StringUtils.isEmpty(romName) && (folderName.equals(romName) || zipEntry.getName().startsWith(romName + "/"))) {
                 foundFolderMatchingRom = true;
                 LOG.info("Found matching ROM \"" + romName + "\" in pup pack archive.");
                 break;
