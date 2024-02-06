@@ -4,15 +4,16 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -46,6 +47,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox launchPopperCheckbox;
 
+  @FXML
+  private ComboBox<String> mappingHsFileNameCombo;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Date startupTime = client.getSystemService().getStartupTime();
@@ -73,6 +77,14 @@ public class ServerSettingsPreferencesController implements Initializable {
 
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
+    List<String> hsFileNameMappingFields = Arrays.asList("CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    mappingHsFileNameCombo.setItems(FXCollections.observableList(hsFileNameMappingFields));
+    mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
+    mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      serverSettings.setMappingHsFileName(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
 
     autoApplyVPSCheckbox.setSelected(serverSettings.isVpsAutoApplyToPopper());
     autoApplyVPSCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

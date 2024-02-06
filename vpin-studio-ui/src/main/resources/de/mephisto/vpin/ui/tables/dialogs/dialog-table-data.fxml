@@ -63,6 +63,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
                                                 <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="5">
@@ -95,7 +96,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Label styleClass="preference-description" text="Determines the base name for all assets added for this table." />
                                                    </children>
                                                 </VBox>
                                                 <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
@@ -181,7 +181,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
                                                 <Label styleClass="default-text" text="ROM Name:">
@@ -214,6 +214,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
+                                                <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                              </children>
                                           </GridPane>
                                           <Label styleClass="default-title" text="Scanned Values" textFill="WHITE">

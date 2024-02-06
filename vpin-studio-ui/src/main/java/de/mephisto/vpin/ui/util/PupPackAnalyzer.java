@@ -154,7 +154,7 @@ public class PupPackAnalyzer {
     }
 
     if (!foundFolderMatchingRom) {
-      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ", romNames) + "\".");
+      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(" or ", romNames) + "\".");
     }
 
     return null;

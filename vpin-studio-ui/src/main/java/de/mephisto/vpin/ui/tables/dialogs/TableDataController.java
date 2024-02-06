@@ -3,12 +3,14 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
@@ -234,6 +236,9 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private Button applyHsBtn;
+
+  @FXML
+  private Label hsMappingLabel;
 
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private GameRepresentation game;
@@ -479,6 +484,8 @@ public class TableDataController implements Initializable, DialogController {
   public void setGame(GameRepresentation game, int tab) {
     this.game = game;
     this.initialVpxFileName = game.getGameFileName();
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
 
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
@@ -770,6 +777,14 @@ public class TableDataController implements Initializable, DialogController {
     });
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
 
+    String mappingHsField = serverSettings.getMappingHsFileName();
+    hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
+
+//    switch (mappingHsField) {
+//      case "CUSTOM2": {
+//
+//      }
+//    }
 
     tabPane.getSelectionModel().select(tab);
   }

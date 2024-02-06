@@ -7,6 +7,15 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean launchPopperOnExit = true;
+  private String mappingHsFileName = "CUSTOM5";
+
+  public String getMappingHsFileName() {
+    return mappingHsFileName;
+  }
+
+  public void setMappingHsFileName(String mappingHsFileName) {
+    this.mappingHsFileName = mappingHsFileName;
+  }
 
   public boolean isLaunchPopperOnExit() {
     return launchPopperOnExit;
