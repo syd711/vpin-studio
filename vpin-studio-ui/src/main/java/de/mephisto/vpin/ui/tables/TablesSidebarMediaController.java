@@ -529,10 +529,14 @@ public class TablesSidebarMediaController implements Initializable {
         for (MediaView mediaView : mediaViews) {
           MediaPlayer mediaPlayer = mediaView.getMediaPlayer();
           if(newValue) {
-            mediaPlayer.play();
+            if(mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
+              mediaPlayer.play();
+            }
           }
           else {
-            mediaPlayer.pause();
+            if(mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+              mediaPlayer.pause();
+            }
           }
         }
       } catch (Exception e) {
