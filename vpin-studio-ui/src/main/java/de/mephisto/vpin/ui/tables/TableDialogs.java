@@ -47,13 +47,13 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
+        new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
 
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-          "Popper Media Upload", files, "popperMedia", screen);
+            "Popper Media Upload", files, "popperMedia", screen);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -67,12 +67,18 @@ public class TableDialogs {
           tablesSidebarController.getTablesController().onReload();
         }
       }
-    }
-    else {
+    } else {
       boolean uploaded = TableDialogs.openRomUploadDialog();
       if (uploaded) {
         tablesSidebarController.getTablesController().onReload();
       }
+    }
+  }
+
+  public static void onMusicUploads(TablesSidebarController tablesSidebarController) {
+    boolean uploaded = TableDialogs.openMusicUploadDialog();
+    if (uploaded) {
+      tablesSidebarController.getTablesController().onReload();
     }
   }
 
@@ -81,16 +87,15 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String analyze = DirectB2SArchiveAnalyzer.analyze(file);
-        if(!StringUtils.isEmpty(analyze)) {
+        if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        }
-        else {
+        } else {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
           ProgressDialog.createProgressDialog(model);
         }
@@ -301,6 +306,14 @@ public class TableDialogs {
   public static boolean openRomUploadDialog() {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openMusicUploadDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
+    MusicUploadController controller = (MusicUploadController) stage.getUserData();
     stage.showAndWait();
 
     return controller.uploadFinished();

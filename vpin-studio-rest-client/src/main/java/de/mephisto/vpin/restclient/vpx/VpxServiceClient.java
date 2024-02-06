@@ -126,6 +126,16 @@ public class VpxServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public boolean uploadMusic(File file, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "vpx/music/upload";
+      return Boolean.TRUE.equals(createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.MUSIC, listener), Boolean.class).getBody());
+    } catch (Exception e) {
+      LOG.error("Music upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public JobExecutionResult uploadPov(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";

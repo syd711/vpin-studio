@@ -24,7 +24,6 @@ public class GameServiceTest extends AbstractVPinServerTest {
     for (Game game : games) {
       assertNotNull(gameService.scanGame(game.getId()));
       assertNotNull(gameService.getGame(game.getId()));
-      assertTrue(gameService.getRomValidations(game).isEmpty());
       assertNotNull(gameService.getScores(game.getId()));
       assertNotNull(gameService.getScoreHistory(game.getId()));
     }

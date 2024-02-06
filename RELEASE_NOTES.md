@@ -1,4 +1,4 @@
-## Hotfix
+## Release Notes
 
 ### Changes
 
@@ -6,6 +6,7 @@
 - The "Table Import" dialog now provides a progress bar, so that the user gets feedback about the progress when a bunch of tables is installed at once.
 - The media preview is now pausing when the window does not have the focus anymore (saving CPU usage here).
 - Moved "Scan All" button into a split-menu button since it not likely to be used that often.
+- Added option to upload "Music" archives. The upload accepts any zip with audio files (with or without "Music" folder in it.). I think we have all mandatory uploads then, right?
 - Simplified "ROM" and "Alt. ROM Name" fields (hopefully): 
   - When these values are available in Popper, Popper values are always preferred.
   - When these values are empty in Popper, the scanned value will be used as fallback.
@@ -20,6 +21,8 @@
 
 ### Bugfixes
 
+- Upload menu items sorted alphabetical now.
+- Fixed PUP pack analyzer: The analyzer did deny a PUP pack when the ROM named folder was on the root level of a zip.
 - Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.
 - Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
 - Corrected error message text when a client is connecting to a server with a newer version.
