@@ -199,13 +199,13 @@ public class TablesSidebarPopperController implements Initializable {
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableDataDialog(this.game.get());
+        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
       }
       return;
     }
 
-    TableDialogs.openTableDataDialog(this.game.get());
+    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
     this.refreshView(this.game);
   }
 

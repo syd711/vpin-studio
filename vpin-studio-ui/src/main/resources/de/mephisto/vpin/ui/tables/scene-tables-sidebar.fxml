@@ -85,7 +85,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PinUP Popper Table Settings" BorderPane.alignment="CENTER" />
+                                <Label text="PinUP Popper Table Data" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>

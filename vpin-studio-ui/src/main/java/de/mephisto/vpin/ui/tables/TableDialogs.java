@@ -212,14 +212,14 @@ public class TableDialogs {
     return controller.tableDeleted();
   }
 
-  public static void openTableDataDialog(GameRepresentation game) {
-    openTableDataDialog(game, 0);
+  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
+    openTableDataDialog(overviewController, game, 0);
   }
 
-  public static void openTableDataDialog(GameRepresentation game, int tab) {
+  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
     Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data");
     TableDataController controller = (TableDataController) stage.getUserData();
-    controller.setGame(game, tab);
+    controller.setGame(overviewController, game, tab);
     stage.showAndWait();
   }
 

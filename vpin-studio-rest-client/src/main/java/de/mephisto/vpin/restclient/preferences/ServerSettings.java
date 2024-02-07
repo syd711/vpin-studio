@@ -3,11 +3,28 @@ package de.mephisto.vpin.restclient.preferences;
 import de.mephisto.vpin.restclient.JsonSettings;
 
 public class ServerSettings extends JsonSettings {
-  private boolean vpsAutoApplyToPopper;
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean launchPopperOnExit = true;
   private String mappingHsFileName = "CUSTOM5";
+  private String mappingVpsTableId = "WEBGameID";
+  private String mappingVpsTableVersionId = "CUSTOM3";
+
+  public String getMappingVpsTableId() {
+    return mappingVpsTableId;
+  }
+
+  public void setMappingVpsTableId(String mappingVpsTableId) {
+    this.mappingVpsTableId = mappingVpsTableId;
+  }
+
+  public String getMappingVpsTableVersionId() {
+    return mappingVpsTableVersionId;
+  }
+
+  public void setMappingVpsTableVersionId(String mappingVpsTableVersionId) {
+    this.mappingVpsTableVersionId = mappingVpsTableVersionId;
+  }
 
   public String getMappingHsFileName() {
     return mappingHsFileName;
@@ -23,14 +40,6 @@ public class ServerSettings extends JsonSettings {
 
   public void setLaunchPopperOnExit(boolean launchPopperOnExit) {
     this.launchPopperOnExit = launchPopperOnExit;
-  }
-
-  public boolean isVpsAutoApplyToPopper() {
-    return vpsAutoApplyToPopper;
-  }
-
-  public void setVpsAutoApplyToPopper(boolean vpsAutoApplyToPopper) {
-    this.vpsAutoApplyToPopper = vpsAutoApplyToPopper;
   }
 
   public boolean isVpxKeepFileNames() {

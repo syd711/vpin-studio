@@ -42,22 +42,32 @@
                                  <content>
                                     <VBox>
                                        <children>
-                                          <Label layoutX="22.0" layoutY="355.0" styleClass="default-title" text="Table Details" textFill="WHITE">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
+                                          <BorderPane>
                                              <VBox.margin>
                                                 <Insets bottom="6.0" />
                                              </VBox.margin>
-                                          </Label>
+                                             <left>
+                                                <Label styleClass="default-title" text="Table Details" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </left>
+                                             <right>
+                                                <Label fx:id="databaseIdLabel" alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="default-text" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </right>
+                                          </BorderPane>
                                           <GridPane hgap="3.0" vgap="3.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="430.0" prefWidth="430.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" />
                                             </columnConstraints>
                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -66,7 +76,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="5">
+                                                <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -74,22 +84,22 @@
                                                       <Tooltip text="Every table will be added to the first playlist that is found." />
                                                    </tooltip>
                                                 </Label>
-                                                <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="3">
+                                                <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="4">
+                                                <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="5">
+                                                <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                    <children>
                                                       <TextField fx:id="gameName">
                                                          <font>
@@ -98,43 +108,33 @@
                                                       </TextField>
                                                    </children>
                                                 </VBox>
-                                                <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                                <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Game Version:" GridPane.rowIndex="2">
+                                                <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Game Version:" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                                <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                                <Label text="Status:" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Label text="Status:" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label layoutX="22.0" layoutY="61.0" styleClass="default-text" text="Popper Database Id:" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label fx:id="databaseIdLabel" layoutX="22.0" layoutY="28.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" />
+                                                <Label GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                    <graphic>
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
@@ -148,7 +148,7 @@
                                                       <Insets left="3.0" />
                                                    </GridPane.margin>
                                                 </Label>
-                                                <Label GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                <Label GridPane.columnIndex="2" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -162,6 +162,14 @@
                                                       <Insets left="3.0" />
                                                    </GridPane.margin>
                                                 </Label>
+                                                <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
                         
                               
                         
@@ -175,7 +183,7 @@
                                           <GridPane hgap="3.0" vgap="3.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="430.0" prefWidth="430.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -226,21 +234,23 @@
                                              </VBox.margin>
                                           </Label>
                                           <Label layoutX="22.0" layoutY="464.0" styleClass="preference-description" text="This section shows several values extracted from the VPX script by the VPin Studio Server." />
-                                          <Label styleClass="preference-description" text="The values are used as fallback but will be overwritten when the table is scanned again.">
+                                          <Label styleClass="preference-description" text="The values are used as fallback for the matching Popper fields.">
                                              <VBox.margin>
-                                                <Insets bottom="6.0" />
+                                                <Insets />
                                              </VBox.margin>
                                           </Label>
+                                          <Label layoutX="22.0" layoutY="461.0" styleClass="preference-description" text="You can edit them, but they will be overwritten if the table is scanned again." />
                                           <GridPane hgap="3.0" vgap="3.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="430.0" minWidth="363.99990234374997" prefWidth="430.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
                                                 <Label styleClass="default-text" text="Scanned ROM Name:">
@@ -253,42 +263,16 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <VBox GridPane.columnIndex="1">
-                                                   <children>
-                                                      <VBox>
-                                                         <children>
-                                                            <TextField fx:id="scannedRomName">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="The value is used as fallback when &quot;ROM Name&quot; is not set.">
-                                                               <VBox.margin>
-                                                                  <Insets bottom="6.0" top="3.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                         </children>
-                                                      </VBox>
-                                                   </children>
-                                                </VBox>
-                                                <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                   <children>
-                                                      <VBox>
-                                                         <children>
-                                                            <TextField fx:id="scannedAltRomName">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <Label styleClass="preference-description" text="The value is used as fallback when &quot;Alt. ROM Name&quot; is not set.">
-                                                               <VBox.margin>
-                                                                  <Insets bottom="6.0" top="3.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                         </children>
-                                                      </VBox>
-                                                   </children>
-                                                </VBox>
+                                                <TextField fx:id="scannedRomName" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <TextField fx:id="scannedAltRomName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
                                                 <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Scanned Score .txt File Name:" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
@@ -308,12 +292,12 @@
                                                                   <Insets top="3.0" />
                                                                </VBox.margin>
                                                             </Label>
-                                                            <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="The &quot;Alt. ROM Name&quot; is used as additional fallback filename." />
+                                                            <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="The &quot;Alt. ROM Name&quot; is used as additional fallback file name." />
                                                          </children>
                                                       </VBox>
                                                    </children>
                                                 </VBox>
-                                                <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2">
+                                                <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Copy" GridPane.columnIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -321,7 +305,7 @@
                                                       <Tooltip prefWidth="300.0" text="Apply scanned ROM name to Popper field &quot;ROM Name&quot; to this save value permanently." wrapText="true" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Copy" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -329,33 +313,50 @@
                                                       <Tooltip prefWidth="300.0" text="Apply scanned alternative ROM name to Popper field &quot;Alternative ROM Name&quot; to save this value permanently." wrapText="true" />
                                                    </tooltip>
                                                 </Button>
-                                                <HBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                <BorderPane GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets top="1.0" />
                                                    </GridPane.margin>
-                                                   <children>
-                                                      <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="Apply">
+                                                   <top>
+                                                      <HBox spacing="6.0" BorderPane.alignment="CENTER">
+                                                         <children>
+                                                            <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="Copy">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="Apply scanned highscore file name to Popper to save this value permanently." wrapText="true" />
+                                                               </tooltip>
+                                                            </Button>
+                                                            <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="folder-component">
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                                               </tooltip>
+                                                               <HBox.margin>
+                                                                  <Insets top="1.0" />
+                                                               </HBox.margin>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                   </top>
+                                                   <bottom>
+                                                      <Button mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                                                         </graphic>
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
-                                                         <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="Apply scanned highscore file name to Popper to save this value permanently." wrapText="true" />
-                                                         </tooltip>
                                                       </Button>
-                                                      <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="folder-component">
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
-                                                         </tooltip>
-                                                         <HBox.margin>
-                                                            <Insets top="1.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
+                                                   </bottom>
+                                                </BorderPane>
                                              </children>
+                                             <VBox.margin>
+                                                <Insets top="12.0" />
+                                             </VBox.margin>
                                           </GridPane>
                                        </children>
                                        <padding>
@@ -369,13 +370,13 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Info">
+                        <Tab closable="false" text="Meta Data">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
                                     <VBox>
                                        <children>
-                                          <Label styleClass="default-title" text="Additional Information" textFill="WHITE">
+                                          <Label styleClass="default-title" text="Meta Data Information" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -974,7 +975,7 @@
                                     </GridPane>
                                  </children>
                                  <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="15.0" />
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
                               </VBox>
                            </content>
@@ -992,8 +993,36 @@
                <BorderPane.margin>
                   <Insets bottom="6.0" />
                </BorderPane.margin>
-               <top>
-                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+               <right>
+                  <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection." wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection." wrapText="true" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+               </right>
+               <left>
+                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -1001,33 +1030,26 @@
                         <Insets bottom="12.0" />
                      </BorderPane.margin>
                   </Label>
-               </top>
+               </left>
             </BorderPane>
          </top>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <bottom>
-            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+            <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onTableScan" styleClass="default-button" text="Scan Table">
-                     <HBox.margin>
-                        <Insets right="24.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
                 <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                      <HBox.margin>
-                        <Insets right="12.0" />
+                        <Insets right="6.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+                  <Button fx:id="applyBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Apply">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>
+                  <Button fx:id="saveBtn1" defaultButton="true" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
                </children>
                <BorderPane.margin>
                   <Insets left="12.0" top="12.0" />

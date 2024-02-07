@@ -127,16 +127,17 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="498.0" styleClass="preference-description" text="This section lets you define the database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="498.0" styleClass="preference-description" text="This section lets you select the PinUP Popper database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="180.8000732421875" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="127.6" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="442.8" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="243.19996032714843" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="125.60004882812501" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="388.799951171875" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
@@ -146,6 +147,20 @@
                   </Label>
                   <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
                   <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2" />
+                  <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="VP-Spreadsheet Table Version Id:" textFill="WHITE" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                </children>
                <VBox.margin>
                   <Insets top="6.0" />
@@ -157,21 +172,6 @@
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
-            <CheckBox fx:id="autoApplyVPSCheckbox" mnemonicParsing="false" text="Auto apply Virtual-Pinball-Spreadsheet and VPX table data to PinUP game details." textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Label styleClass="checkbox-description" text="When enabled, the selected VPS table, the VPS table version and the VPX table info values will be" textFill="WHITE" />
-            <Label styleClass="checkbox-description" text="automatically applied to the PinUP Popper game details and overwrite existing values." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="474.0" styleClass="checkbox-description" text="(Careful! This will also overwrite the table version stored in Popper and reset the version update indicator.)" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
             <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filenames when replacing tables." textFill="WHITE">
                <font>
                   <Font size="14.0" />

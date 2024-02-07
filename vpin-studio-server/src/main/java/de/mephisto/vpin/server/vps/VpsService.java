@@ -44,13 +44,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
-  private List<VpsTableDataChangedListener> listeners = new ArrayList<>();
-
   public VpsService() {
-  }
-
-  public void addVpsTableDataChangeListener(@NonNull VpsTableDataChangedListener listener) {
-    this.listeners.add(listener);
   }
 
   public boolean autofill(Game game, boolean overwrite) {
@@ -77,9 +71,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
             saveExternalTableVersionId(game, version.getId());
           }
         }
-
-        //TODO
-//        notifyVpsTableDataChangeListeners(game);
       }
       LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
       return true;
@@ -164,6 +155,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
     return null;
   }
 
+  //TODO save to popper
   public boolean saveExternalTableVersionId(Game game, String vpsId) throws Exception {
     if (vpsId.equals("null")) {
       game.setExtTableVersionId(null);
@@ -172,15 +164,14 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       game.setExtTableVersionId(vpsId);
     }
     (applicationContext.getBean(GameService.class)).save(game);
-    notifyVpsTableDataChangeListeners(game);
     return true;
   }
 
+  //TODO save to popper with mapping!
   public boolean saveExternalTableId(Game game, String vpsId) throws Exception {
     game.setExtTableId(vpsId);
     game.setExtTableVersionId(null);
     (applicationContext.getBean(GameService.class)).save(game);
-    notifyVpsTableDataChangeListeners(game);
     return true;
   }
 
@@ -215,12 +206,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       } catch (Exception e) {
         LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
       }
-    }
-  }
-
-  private void notifyVpsTableDataChangeListeners(Game game) {
-    for (VpsTableDataChangedListener listener : this.listeners) {
-      listener.tableDataChanged(game);
     }
   }
 

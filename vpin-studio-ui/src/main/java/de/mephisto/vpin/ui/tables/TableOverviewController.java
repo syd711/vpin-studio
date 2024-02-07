@@ -344,11 +344,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(selectedItems);
+          TableDialogs.openTableDataDialog(this, selectedItems);
         }
         return;
       }
-      TableDialogs.openTableDataDialog(selectedItems);
+      TableDialogs.openTableDataDialog(this, selectedItems);
     }
   }
 
@@ -1421,6 +1421,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
+    }
+  }
+
+  public void selectPrevious() {
+    int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
+    if (!tableView.getItems().isEmpty() && selectedIndex > 0) {
+      tableView.getSelectionModel().clearSelection();
+      tableView.getSelectionModel().select((selectedIndex - 1));
+    }
+  }
+
+  public void selectNext() {
+    int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
+    if (!tableView.getItems().isEmpty() && (selectedIndex+1) < tableView.getItems().size() ) {
+      tableView.getSelectionModel().clearSelection();
+      tableView.getSelectionModel().select((selectedIndex + 1));
     }
   }
 }

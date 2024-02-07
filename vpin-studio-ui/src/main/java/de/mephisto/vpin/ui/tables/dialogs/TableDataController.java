@@ -13,8 +13,13 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,10 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -57,6 +60,9 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private Label databaseIdLabel;
+
+  @FXML
+  private TextField highscoreFileName;
 
   @FXML
   private TextField scannedHighscoreFileName;
@@ -240,10 +246,72 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private Label hsMappingLabel;
 
+  @FXML
+  private Button prevButton;
+
+  @FXML
+  private Button nextButton;
+
+  @FXML
+  private Button fixVersionBtn;
+
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
+  private TableOverviewController overviewController;
   private GameRepresentation game;
   private TableDetails tableDetails;
   private String initialVpxFileName = null;
+
+  @FXML
+  private void onVersionFix() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
+      + game.getVersion() + "\" with the VPS table version \"" +
+      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
+      td.setGameVersion(game.getExtVersion());
+      try {
+        client.getPinUPPopperService().saveTableDetails(td, game.getId());
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      } catch (Exception ex) {
+        LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onNext(ActionEvent e) {
+    overviewController.selectNext();
+    GameRepresentation selection = overviewController.getSelection();
+    if (selection != null && !selection.equals(this.game)) {
+      int index = this.tabPane.getSelectionModel().getSelectedIndex();
+      Platform.runLater(() -> {
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
+      });
+
+      Platform.runLater(() -> {
+        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+      });
+    }
+  }
+
+  @FXML
+  private void onPrevious(ActionEvent e) {
+    overviewController.selectPrevious();
+    GameRepresentation selection = overviewController.getSelection();
+    if (selection != null && !selection.equals(this.game)) {
+      int index = this.tabPane.getSelectionModel().getSelectedIndex();
+      Platform.runLater(() -> {
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        stage.close();
+      });
+
+      Platform.runLater(() -> {
+        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+      });
+    }
+  }
 
   @FXML
   private void onRomApply() {
@@ -257,7 +325,7 @@ public class TableDataController implements Initializable, DialogController {
 
   @FXML
   private void onHsApply() {
-
+    highscoreFileName.setText(scannedHighscoreFileName.getText());
   }
 
   @FXML
@@ -328,9 +396,18 @@ public class TableDataController implements Initializable, DialogController {
   }
 
   @FXML
+  private void onApplyClick(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    doSave(stage, false);
+  }
+
+  @FXML
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    doSave(stage, true);
+  }
 
+  private void doSave(Stage stage, boolean closeDialog) {
     String updatedGameFileName = tableDetails.getGameFileName();
     if (!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
@@ -371,7 +448,9 @@ public class TableDataController implements Initializable, DialogController {
     tableDetails.setKeepDisplays(value);
 
     try {
-      stage.close();
+      if (closeDialog) {
+        stage.close();
+      }
       tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(this.tableDetails, game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     } catch (Exception ex) {
@@ -481,15 +560,18 @@ public class TableDataController implements Initializable, DialogController {
 
   }
 
-  public void setGame(GameRepresentation game, int tab) {
+  public void setGame(TableOverviewController overviewController, GameRepresentation game, int tab) {
+    this.overviewController = overviewController;
     this.game = game;
     this.initialVpxFileName = game.getGameFileName();
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    this.titleLabel.setText("Table Data of '" + game.getGameDisplayName() + "'");
+    this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
+
+    this.titleLabel.setText(game.getGameDisplayName());
 
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
-    databaseIdLabel.setText(String.valueOf(game.getId()));
+    databaseIdLabel.setText("(ID: " + game.getId() + ")  ");
     gameName.setText(tableDetails.getGameName());
     gameName.textProperty().addListener((observable, oldValue, newValue) -> {
       if (FileUtils.isValidFilename(newValue)) {
@@ -770,23 +852,79 @@ public class TableDataController implements Initializable, DialogController {
     });
     applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
 
+
+    String mappingHsField = serverSettings.getMappingHsFileName();
     scannedHighscoreFileName.setText(game.getHsFileName());
     scannedHighscoreFileName.textProperty().addListener((observableValue, oldValue, newValue) -> {
       game.setHsFileName(newValue);
       applyHsBtn.setDisable(StringUtils.isEmpty(newValue));
+      if (StringUtils.isEmpty(highscoreFileName.getText())) {
+        highscoreFileName.setPromptText(newValue + " (scanned value)");
+      }
     });
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-
-    String mappingHsField = serverSettings.getMappingHsFileName();
     hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
 
-//    switch (mappingHsField) {
-//      case "CUSTOM2": {
-//
-//      }
-//    }
+    switch (mappingHsField) {
+      case "CUSTOM2": {
+        highscoreFileName.setText(tableDetails.getCustom2());
+        break;
+      }
+      case "CUSTOM3": {
+        highscoreFileName.setText(tableDetails.getCustom3());
+        break;
+      }
+      case "CUSTOM4": {
+        highscoreFileName.setText(tableDetails.getCustom4());
+        break;
+      }
+      case "CUSTOM5": {
+        highscoreFileName.setText(tableDetails.getCustom5());
+        break;
+      }
+    }
+    refreshHsMappingField(mappingHsField, highscoreFileName.getText());
+
+    if (StringUtils.isEmpty(highscoreFileName.getText()) && !StringUtils.isEmpty(game.getHsFileName())) {
+      highscoreFileName.setPromptText(game.getHsFileName() + " (scanned value)");
+    }
+    highscoreFileName.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        refreshHsMappingField(mappingHsField, newValue);
+      }
+    });
 
     tabPane.getSelectionModel().select(tab);
+  }
+
+  private void refreshVpsTableIdField(String vpsTableIdField, String value) {
+
+  }
+
+  private void refreshHsMappingField(String mappingHsField, String value) {
+    switch (mappingHsField) {
+      case "CUSTOM2": {
+        custom2.setText(value);
+        custom2.setDisable(true);
+        break;
+      }
+      case "CUSTOM3": {
+        custom3.setText(value);
+        custom3.setDisable(true);
+        break;
+      }
+      case "CUSTOM4": {
+        custom4.setText(value);
+        custom4.setDisable(true);
+        break;
+      }
+      case "CUSTOM5": {
+        custom5.setText(value);
+        custom5.setDisable(true);
+        break;
+      }
+    }
   }
 
   private void refreshScannedValues() {

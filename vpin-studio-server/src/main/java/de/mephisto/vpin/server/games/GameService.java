@@ -524,10 +524,6 @@ public class GameService implements InitializingBean {
     else {
       game.setUpdates(Collections.emptyList());
     }
-
-    if (initialScan) {
-      vpsService.autofill(game, true);
-    }
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
@@ -562,14 +558,6 @@ public class GameService implements InitializingBean {
     }
 
     gameDetailsRepository.saveAndFlush(gameDetails);
-
-    Game original = getGame(game.getId());
-    //TODO check rom name import vs. scan
-    //check if there is mismatch in the ROM name, overwrite popper value
-    if (original != null && !StringUtils.isEmpty(original.getRom()) && !StringUtils.isEmpty(game.getRom()) && !original.getRom().equalsIgnoreCase(game.getRom())) {
-      pinUPConnector.updateRom(game, game.getRom());
-    }
-
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
     Game updated = getGame(game.getId());
     if (romChanged) {

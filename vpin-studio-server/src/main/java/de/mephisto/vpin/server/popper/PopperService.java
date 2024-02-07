@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -11,7 +10,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -19,14 +17,12 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vps.VpsTableDataChangedListener;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,7 +37,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PopperService implements InitializingBean, VpsTableDataChangedListener {
+public class PopperService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
@@ -168,6 +164,7 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     }
   }
 
+  //TODO autofill
   @NonNull
   public TableDetails autofillTableDetails(Game game, boolean overwrite) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
@@ -471,20 +468,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   }
 
   @Override
-  public void tableDataChanged(@NotNull Game game) {
-    try {
-      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      boolean autoApply = serverSettings.isVpsAutoApplyToPopper();
-      autofillTableDetails(game, autoApply);
-    } catch (Exception e) {
-      LOG.error("Failed to execute auto-filling of game details: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyPopperExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
-    vpsService.addVpsTableDataChangeListener(this);
   }
 }

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,9 +37,6 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Spinner<Integer> idleSpinner;
 
   @FXML
-  private CheckBox autoApplyVPSCheckbox;
-
-  @FXML
   private CheckBox keepNamesCheckbox;
 
   @FXML
@@ -49,6 +47,12 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<String> mappingHsFileNameCombo;
+
+  @FXML
+  private ComboBox<String> mappingVpsTableIdCombo;
+
+  @FXML
+  private ComboBox<String> mappingVpsVersionIdCombo;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -83,15 +87,27 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingHsFileName(newValue);
+      PreferencesController.markDirty();
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    autoApplyVPSCheckbox.setSelected(serverSettings.isVpsAutoApplyToPopper());
-    autoApplyVPSCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      serverSettings.setVpsAutoApplyToPopper(t1);
+    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    mappingVpsTableIdCombo.setItems(FXCollections.observableList(tableIdFields));
+    mappingVpsTableIdCombo.setValue(serverSettings.getMappingVpsTableId());
+    mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      serverSettings.setMappingVpsTableId(newValue);
+      PreferencesController.markDirty();
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
+    List<String> vpsTableVersionFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    mappingVpsVersionIdCombo.setItems(FXCollections.observableList(vpsTableVersionFields));
+    mappingVpsVersionIdCombo.setValue(serverSettings.getMappingVpsTableVersionId());
+    mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      serverSettings.setMappingVpsTableVersionId(newValue);
+      PreferencesController.markDirty();
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

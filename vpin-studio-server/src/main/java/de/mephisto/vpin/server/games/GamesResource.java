@@ -251,7 +251,6 @@ public class GamesResource {
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
-              vpsService.autofill(game, true);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tables);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
@@ -272,10 +271,6 @@ public class GamesResource {
               tableDetails.setGameVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId, false);
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
-
-              if (importedGame != null) {
-                vpsService.autofill(importedGame, true);
-              }
 
               //clone popper media
               Game original = getGame(gameId);

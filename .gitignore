@@ -104,3 +104,4 @@ yarn-error.log*
 /config/settings.properties
 /resources/menu-profile/
 /resources/chrome-launcher.bat
+/resources/vpsdb.json.tmp
