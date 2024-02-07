@@ -124,7 +124,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     }
   }
 
-  //TODO exclusion dialog not finished
+  //TODO exclusion dialog for selection files not finished, e.g. skip or not to skip mame mappings
   private void run(boolean simulate, List<String> exclusions) {
     textArea.setText("");
     Platform.runLater(() -> {

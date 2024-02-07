@@ -233,7 +233,7 @@ public class GamesResource {
             if (importedGameId >= 0) {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
-                vpsService.autofill(game, true);
+                vpsService.autoMatch(game, true);
               }
             }
             return true;

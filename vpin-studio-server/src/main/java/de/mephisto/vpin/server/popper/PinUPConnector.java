@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -28,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PinUPConnector implements InitializingBean {
+public class PinUPConnector implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
@@ -43,7 +47,12 @@ public class PinUPConnector implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
+  private int sqlVersion = DB_VERSION;
+  private ServerSettings serverSettings;
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
@@ -169,8 +178,6 @@ public class PinUPConnector implements InitializingBean {
 
   @NonNull
   public TableDetails getTableDetails(int id) {
-    int sqlVersion = this.getSqlVersion();
-
     Connection connect = connect();
     TableDetails manifest = null;
     List<String> altExeList = getAltExeList();
@@ -200,6 +207,7 @@ public class PinUPConnector implements InitializingBean {
         }
 
         manifest.setRomName(rs.getString("ROM"));
+        manifest.setRomAlt(rs.getString("ROMALT"));
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
         if (rs.wasNull()) {
@@ -237,7 +245,7 @@ public class PinUPConnector implements InitializingBean {
         //check for popper DB update 1.5
         if (sqlVersion >= DB_VERSION) {
           manifest.setWebGameId(rs.getString("WEBGameID"));
-          manifest.setRomAlt(rs.getString("ROMALT"));
+
           manifest.setMod(rs.getInt("ISMOD") == 1);
           manifest.setWebLink2Url(rs.getString("WebLink2URL"));
           manifest.setTourneyId(rs.getString("TourneyID"));
@@ -269,8 +277,6 @@ public class PinUPConnector implements InitializingBean {
       StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
       List<Object> params = new ArrayList<>();
 
-      int sqlVersion = getSqlVersion();
-
       stmtBuilder.append("'EMUID' = ?, ");
       params.add(manifest.getEmulatorId());
       stmtBuilder.append("'GameName' = ?, ");
@@ -287,6 +293,8 @@ public class PinUPConnector implements InitializingBean {
       params.add(manifest.getGameYear());
       stmtBuilder.append("'ROM' = ?, ");
       params.add(manifest.getRomName());
+      stmtBuilder.append("'ROMALT' = ?, ");
+      params.add(manifest.getRomAlt());
       stmtBuilder.append("'Manufact' = ?, ");
       params.add(manifest.getManufacturer());
       stmtBuilder.append("'NumPlayers' = ?, ");
@@ -332,8 +340,6 @@ public class PinUPConnector implements InitializingBean {
       if (sqlVersion >= DB_VERSION) {
         stmtBuilder.append("'WEBGameID' = ?, ");
         params.add(manifest.getWebGameId());
-        stmtBuilder.append("'ROMALT' = ?, ");
-        params.add(manifest.getRomAlt());
         stmtBuilder.append("'ISMOD' = ?, ");
         params.add(manifest.isMod());
         stmtBuilder.append("'WebLink2URL' = ?, ");
@@ -454,7 +460,7 @@ public class PinUPConnector implements InitializingBean {
       rs.close();
       statement.close();
     } catch (SQLException e) {
-      LOG.error("Failed to read startup script: " + e.getMessage(), e);
+      LOG.warn("Failed to PinUP Popper Database version: " + e.getMessage() + ", using legacy database schema.", e);
     } finally {
       this.disconnect(connect);
     }
@@ -1272,6 +1278,14 @@ public class PinUPConnector implements InitializingBean {
 
     String rom = rs.getString("ROM");
     game.setRom(rom);
+    String tableName = rs.getString("ALTROM");
+    game.setTableName(tableName);
+
+    //TODO add VPS ids here
+    if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
+      String highscoreFilename = rs.getString(serverSettings.getMappingHsFileName());
+      game.setHsFileName(highscoreFilename);
+    }
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
@@ -1423,10 +1437,47 @@ public class PinUPConnector implements InitializingBean {
     return result;
   }
 
+  private static boolean isValidVPXEmulator(Emulator emulator) {
+    if (!emulator.isVisualPinball()) {
+      return false;
+    }
+
+    if (!emulator.isVisible()) {
+      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirGames())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirRoms())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirMedia())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+  }
+
   @Override
   public void afterPropertiesSet() {
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+
+    sqlVersion = this.getSqlVersion();
 
     List<Emulator> ems = this.getEmulators();
     for (Emulator emulator : ems) {
@@ -1489,33 +1540,8 @@ public class PinUPConnector implements InitializingBean {
         }
       }
     }
-  }
 
-  private static boolean isValidVPXEmulator(Emulator emulator) {
-    if (!emulator.isVisualPinball()) {
-      return false;
-    }
-
-    if(!emulator.isVisible()) {
-      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirGames())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirRoms())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirMedia())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
-      return false;
-    }
-
-    return true;
+    preferencesService.addChangeListener(this);
+    this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
   }
 }
