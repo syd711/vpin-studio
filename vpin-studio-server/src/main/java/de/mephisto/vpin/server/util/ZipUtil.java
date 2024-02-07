@@ -204,7 +204,7 @@ public class ZipUtil {
               fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.close();
-            LOG.info("Written \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
+            LOG.info("Unzipped \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
           }
         }
         zis.closeEntry();

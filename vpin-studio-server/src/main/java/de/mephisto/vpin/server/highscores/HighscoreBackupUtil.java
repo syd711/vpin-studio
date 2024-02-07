@@ -200,7 +200,7 @@ public class HighscoreBackupUtil {
         return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
-        File target = new File(gameEmulator.getInstallationFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(gameEmulator.getUserFolder(), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {

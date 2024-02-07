@@ -355,13 +355,13 @@ public class MenuController implements Initializable {
   }
 
   public void showYouTubeVideo(PauseMenuItem item) {
-    if (!pauseMenuSettings.isUseInternalBrowser()) {
+    if (pauseMenuSettings != null && !pauseMenuSettings.isUseInternalBrowser()) {
       ChromeLauncher.showYouTubeVideo(screenDisplay, item.getYouTubeUrl());
     }
   }
 
   public void resetBrowser() {
-    if (!pauseMenuSettings.isUseInternalBrowser()) {
+    if (pauseMenuSettings!= null && !pauseMenuSettings.isUseInternalBrowser()) {
       ChromeLauncher.exitBrowser();
     }
   }

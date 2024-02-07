@@ -37,6 +37,7 @@ Additionally, the copying of VP-spreadsheet data into PinUP Popper has been move
 ### Bugfixes
 
 - Upload menu items sorted alphabetical now.
+- Fixed restoring of textfile based highscores.
 - Fixed PUP pack analyzer: The analyzer did deny a PUP pack when the ROM named folder was on the root level of a zip.
 - Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.
 - Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
