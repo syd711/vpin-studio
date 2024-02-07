@@ -21,7 +21,7 @@ public class VpsResource {
 
   @GetMapping("/autofill/{gameId}/{overwrite}")
   public boolean autofill(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
-    return vpsService.autofill(gameService.getGame(gameId), overwrite);
+    return vpsService.autoMatch(gameService.getGame(gameId), overwrite);
   }
 
   @PutMapping("/table/{gameId}/{vpsId}")

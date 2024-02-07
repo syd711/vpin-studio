@@ -526,7 +526,7 @@ public class GameService implements InitializingBean {
     }
 
     if (initialScan) {
-      vpsService.autofill(game, true);
+      vpsService.autoMatch(game, true);
     }
     vpsService.applyVersionInfo(game);
 

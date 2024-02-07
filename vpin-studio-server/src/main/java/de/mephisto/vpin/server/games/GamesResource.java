@@ -233,7 +233,7 @@ public class GamesResource {
             if (importedGameId >= 0) {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
-                vpsService.autofill(game, true);
+                vpsService.autoMatch(game, true);
               }
             }
             return true;
@@ -251,7 +251,7 @@ public class GamesResource {
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
-              vpsService.autofill(game, true);
+              vpsService.autoMatch(game, true);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tables);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
@@ -274,7 +274,7 @@ public class GamesResource {
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
 
               if (importedGame != null) {
-                vpsService.autofill(importedGame, true);
+                vpsService.autoMatch(importedGame, true);
               }
 
               //clone popper media
