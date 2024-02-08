@@ -259,7 +259,14 @@
                            </tooltip>
                                 </Button>
                                 <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <Button fx:id="validateBtn" layoutX="692.0" layoutY="11.0" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                          <items>
+                            <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                          </items>
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -269,7 +276,7 @@
                            <tooltip>
                               <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
                            </tooltip>
-                        </Button>
+                        </SplitMenuButton>
                         <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
                           <items>
                             <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">

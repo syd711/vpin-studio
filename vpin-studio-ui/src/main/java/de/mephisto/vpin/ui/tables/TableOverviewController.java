@@ -139,7 +139,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button tableEditBtn;
 
   @FXML
-  private Button validateBtn;
+  private SplitMenuButton validateBtn;
+
+  @FXML
+  private MenuItem validateAllBtn;
 
   @FXML
   private Button assetManagerBtn;
@@ -509,19 +512,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onValidate() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-validate table \"" + game.getGameDisplayName() + "\"?",
-      "This will reset the dismissed validations for this table too.", null);
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      game.setIgnoredValidations(null);
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    TableDialogs.openValidationDialog(new ArrayList<>(selectedItems), false);
+  }
 
-      try {
-        client.getGameService().saveGame(game);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    }
+  @FXML
+  private void onValidateAll() {
+    TableDialogs.openValidationDialog(games, true);
   }
 
   @FXML
@@ -952,7 +949,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
-      if (!value.getIgnoredValidations().contains(-1)) {
+      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {
           return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
         }
@@ -1288,7 +1285,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     backglassUploadItem.setDisable(disable);
 
 
-    validateBtn.setDisable(disable);
+    validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
     backupBtn.setDisable(true);
     playBtn.setDisable(disable);

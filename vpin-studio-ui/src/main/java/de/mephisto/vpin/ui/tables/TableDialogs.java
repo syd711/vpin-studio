@@ -27,6 +27,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -38,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -317,6 +319,29 @@ public class TableDialogs {
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static boolean openValidationDialog(List<GameRepresentation> selectedItems, boolean reload) {
+    if(selectedItems.isEmpty()) {
+      return false;
+    }
+    String title = "Re-validate " + selectedItems.size() + " tables?";
+    if(selectedItems.size() == 1) {
+      title = "Re-validate table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title ,
+        "This will reset the dismissed validations for this table too.", null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      title = "Re-validating " + selectedItems.size() + " tables";
+      if(selectedItems.size() == 1) {
+        title = "Re-validating table \"" + selectedItems.get(0).getGameDisplayName() +  "\"";
+      }
+
+      ProgressDialog.createProgressDialog(new TableValidateProgressModel(title, selectedItems, reload));
+      return true;
+    }
+    return false;
   }
 
   public static boolean openAliasMappingDialog(GameRepresentation game, String alias, String rom) {
