@@ -39,8 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -895,6 +895,7 @@ public class TableDataController implements Initializable, DialogController {
       }
     });
 
+    refreshFieldsForSqlVersion();
     tabPane.getSelectionModel().select(tab);
   }
 
@@ -924,6 +925,22 @@ public class TableDataController implements Initializable, DialogController {
         custom5.setDisable(true);
         break;
       }
+    }
+  }
+
+  private void refreshFieldsForSqlVersion() {
+    if(!tableDetails.isPopper15()) {
+      webDbId.setDisable(true);
+      webDbId.setPromptText("Not available in your PinUP Popper version.");
+      webLink.setDisable(true);
+      webLink.setPromptText("Not available in your PinUP Popper version.");
+      tourneyId.setDisable(true);
+      tourneyId.setPromptText("Not available in your PinUP Popper version.");
+      modCheckbox.setDisable(true);
+      custom4.setDisable(true);
+      custom4.setPromptText("Not available in your PinUP Popper version.");
+      custom5.setDisable(true);
+      custom5.setPromptText("Not available in your PinUP Popper version.");
     }
   }
 
