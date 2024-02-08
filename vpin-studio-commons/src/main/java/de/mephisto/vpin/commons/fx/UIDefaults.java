@@ -10,5 +10,7 @@ public interface UIDefaults {
 
   int DEFAULT_AVATARSIZE = 70;
 
+  int DB_VERSION = 64;
+
   int TOURNAMENT_BROWSER_PAGE_SIZE = 20;
 }

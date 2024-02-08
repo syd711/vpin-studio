@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
       <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -299,7 +299,7 @@
                   <Tooltip text="Reset VPS updates indicators in the overview for this table." />
                </tooltip>
             </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
+            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Match" textFill="WHITE">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
                      <graphic>
@@ -316,6 +316,9 @@
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+               </tooltip>
             </SplitMenuButton>
             <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />
             <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Resources" textFill="WHITE">
