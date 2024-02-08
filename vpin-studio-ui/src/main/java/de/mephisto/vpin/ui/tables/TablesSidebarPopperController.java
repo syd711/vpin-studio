@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
+import de.mephisto.vpin.ui.tables.dialogs.models.TableStatus;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
@@ -301,7 +302,7 @@ public class TablesSidebarPopperController implements Initializable {
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
 
       if (tableDetails.getStatus() > 0) {
-        Optional<TableDataController.TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+        Optional<TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
         }

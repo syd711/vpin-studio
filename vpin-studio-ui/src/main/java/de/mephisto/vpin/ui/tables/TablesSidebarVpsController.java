@@ -99,10 +99,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button copyTableVersionBtn;
 
   @FXML
-  private SplitMenuButton autoFillBtn;
+  private Button openTableBtn;
 
   @FXML
-  private Button openTableBtn;
+  private SplitMenuButton autoFillBtn;
 
   @FXML
   private Label entriesLabel;
@@ -145,14 +145,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       String vpsTableUrl = VPS.getVpsTableUrl(this.game.get().getExtTableId());
       content.putString(vpsTableUrl);
       clipboard.setContent(content);
-
-//      Notifications.create()
-//        .darkStyle()
-//        .position(Pos.BOTTOM_LEFT)
-//        .title("Copied VPS Table URL " + vpsTableUrl)
-////        .graphic(new Rectangle(600, 400, Color.GREEN))
-//        .hideAfter(Duration.seconds(3))
-//        .show();
     }
   }
 
@@ -207,20 +199,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   @FXML
-  private void onVpsReset() {
-    try {
-      if (!this.game.isEmpty()) {
-        GameRepresentation gameRepresentation = this.game.get();
-        gameRepresentation.setUpdates(Collections.emptyList());
-        client.getGameService().saveGame(gameRepresentation);
-        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-      }
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
-    }
-  }
-
-  @FXML
   private void onTableOpen() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
@@ -232,6 +210,20 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         LOG.error("Failed to open link: " + e.getMessage());
         ipdbLink.setDisable(true);
       }
+    }
+  }
+
+  @FXML
+  private void onVpsReset() {
+    try {
+      if (!this.game.isEmpty()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        gameRepresentation.setUpdates(Collections.emptyList());
+        client.getGameService().saveGame(gameRepresentation);
+        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+      }
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
     }
   }
 

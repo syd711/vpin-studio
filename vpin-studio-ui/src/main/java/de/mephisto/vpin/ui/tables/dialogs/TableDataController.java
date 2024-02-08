@@ -3,6 +3,10 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
@@ -16,6 +20,9 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
+import de.mephisto.vpin.ui.tables.dialogs.models.TableStatus;
+import de.mephisto.vpin.ui.util.AutoCompleteTextField;
+import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,6 +36,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,10 +50,11 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableDataController implements Initializable, DialogController {
+public class TableDataController implements Initializable, DialogController, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
   private final static Logger LOG = LoggerFactory.getLogger(TableDataController.class);
 
   private final static TableStatus STATUS_DISABLED = new TableStatus(0, "InActive (Disabled)");
@@ -226,7 +236,7 @@ public class TableDataController implements Initializable, DialogController {
   private CheckBox helpCheckbox;
 
   @FXML
-  private ComboBox<TableDataController.TableStatus> statusCombo;
+  private ComboBox<TableStatus> statusCombo;
 
   @FXML
   private ComboBox<String> launcherCombo;
@@ -255,17 +265,83 @@ public class TableDataController implements Initializable, DialogController {
   @FXML
   private Button fixVersionBtn;
 
+
+  @FXML
+  private TextField nameField;
+
+  @FXML
+  private Button openBtn;
+
+  @FXML
+  private Button copyTableBtn;
+
+  @FXML
+  private Button copyTableVersionBtn;
+
+  @FXML
+  private Button openTableBtn;
+
+  @FXML
+  private ComboBox<VpsTableVersion> tableVersionsCombo;
+  private AutoCompleteTextField autoCompleteNameField;
+
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private TableDetails tableDetails;
   private String initialVpxFileName = null;
 
+
+  @FXML
+  private void onCopyTable() {
+    //TODO wrong id access
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    String vpsTableUrl = VPS.getVpsTableUrl(this.game.getExtTableId());
+    content.putString(vpsTableUrl);
+    clipboard.setContent(content);
+  }
+
+  @FXML
+  private void onCopyTableVersion() {
+    //TODO wrong id access
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    content.putString(VPS.getVpsTableUrl(this.game.getExtTableId(), this.game.getExtTableVersionId()));
+    clipboard.setContent(content);
+  }
+
+  @FXML
+  private void onOpen() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(VPS.getVpsTableUrl(game.getExtTableId())));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onTableOpen() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        VpsTableVersion value = this.tableVersionsCombo.getValue();
+        VpsUrl vpsUrl = value.getUrls().get(0);
+        desktop.browse(new URI(vpsUrl.getUrl()));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
+
   @FXML
   private void onVersionFix() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-      + game.getVersion() + "\" with the VPS table version \"" +
-      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+        + game.getVersion() + "\" with the VPS table version \"" +
+        game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
       td.setGameVersion(game.getExtVersion());
@@ -471,7 +547,7 @@ public class TableDataController implements Initializable, DialogController {
 
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -896,6 +972,7 @@ public class TableDataController implements Initializable, DialogController {
     });
 
     refreshFieldsForSqlVersion();
+    refreshVpsStatus();
     tabPane.getSelectionModel().select(tab);
   }
 
@@ -928,8 +1005,19 @@ public class TableDataController implements Initializable, DialogController {
     }
   }
 
+  private void refreshVpsStatus() {
+    openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    openTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
+    copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
+
+    List<VpsTable> tables = VPS.getInstance().getTables();
+    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+  }
+
   private void refreshFieldsForSqlVersion() {
-    if(!tableDetails.isPopper15()) {
+    if (!tableDetails.isPopper15()) {
       webDbId.setDisable(true);
       webDbId.setPromptText("Not available in your PinUP Popper version.");
       webLink.setDisable(true);
@@ -958,41 +1046,39 @@ public class TableDataController implements Initializable, DialogController {
     applyHsBtn.setDisable(StringUtils.isEmpty(game.getHsFileName()));
   }
 
-  public static class TableStatus {
-    public final int value;
-    public final String label;
+  @Override
+  public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
+    openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    copyTableVersionBtn.setDisable(newValue == null);
 
-    TableStatus(int value, String label) {
-      this.value = value;
-      this.label = label;
+    if (newValue != null) {
+      copyTableVersionBtn.setDisable(false);
+      //TODO wrong access
+      String existingValueId = this.game.getExtTableVersionId();
+      String newValueId = newValue.getId();
+      if (existingValueId == null || !existingValueId.equals(newValueId)) {
+        //TODO dont
+        client.getVpsService().saveVersion(this.game.getId(), newValueId);
+        EventManager.getInstance().notifyTableChange(this.game.getId(), null);
+      }
     }
-
-    public int getValue() {
-      return value;
+    else {
+      //TODO dont
+      client.getVpsService().saveVersion(this.game.getId(), null);
+      EventManager.getInstance().notifyTableChange(this.game.getId(), null);
     }
-
-    public String getLabel() {
-      return label;
+  }
+  @Override
+  public void onChange(String value) {
+    this.tableVersionsCombo.valueProperty().removeListener(this);
+    List<VpsTable> tables = VPS.getInstance().getTables();
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+    if (selectedEntry.isPresent()) {
+      VpsTable vpsTable = selectedEntry.get();
+      //TODO dont!!!
+//      client.getVpsService().saveTable(this.game.get().getId(), vpsTable.getId());
     }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof TableStatus)) return false;
-
-      TableStatus that = (TableStatus) o;
-
-      return value == that.value;
-    }
-
-    @Override
-    public int hashCode() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return label;
-    }
+    this.tableVersionsCombo.valueProperty().addListener(this);
+    EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 }
