@@ -64,11 +64,20 @@ public class CardSettings extends JsonSettings {
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
   private boolean transparentBackground = false;
+  private int transparentPercentage = 0;
   private boolean renderTableName = true;
 
   //do not delete
   public CardSettings() {
 
+  }
+
+  public int getTransparentPercentage() {
+    return transparentPercentage;
+  }
+
+  public void setTransparentPercentage(int transparentPercentage) {
+    this.transparentPercentage = transparentPercentage;
   }
 
   public boolean getTransparentBackground() {

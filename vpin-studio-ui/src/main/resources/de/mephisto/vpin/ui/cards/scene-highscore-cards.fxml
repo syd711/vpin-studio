@@ -43,6 +43,19 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <Label layoutX="22.0" layoutY="184.0" text="Alpha Percentage:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Slider fx:id="alphaPercentageSpinner" layoutX="22.0" layoutY="204.0">
+                                       <padding>
+                                          <Insets bottom="12.0" top="6.0" />
+                                       </padding>
+                                    </Slider>
                                    <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
                                       <VBox.margin>
                                          <Insets top="12.0" />

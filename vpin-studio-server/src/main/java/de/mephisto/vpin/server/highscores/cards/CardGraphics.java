@@ -54,6 +54,7 @@ public class CardGraphics {
   private final boolean USE_DIRECTB2S;
   private final boolean GRAY_SCALE;
   private final boolean TRANSPARENT_BACKGROUND;
+  private final int TRANSPARENT_PERCENTAGE;
   private final boolean RENDER_TABLE_NAME;
 
   private final int BLUR_PIXELS;
@@ -97,6 +98,7 @@ public class CardGraphics {
     BLUR_PIXELS = cardSettings.getCardBlur();
 
     TRANSPARENT_BACKGROUND = cardSettings.getTransparentBackground();
+    TRANSPARENT_PERCENTAGE = cardSettings.getTransparentPercentage();
     RENDER_TABLE_NAME = cardSettings.getRenderTableName();
   }
 
@@ -129,7 +131,9 @@ public class CardGraphics {
       BufferedImage bufferedImage = new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-      g2.setBackground(new Color(0, true));
+
+      int value = 255 - (255 * TRANSPARENT_PERCENTAGE / 100);
+      g2.setBackground(new Color(0, 0, 0, value));
       g2.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
       g2.dispose();

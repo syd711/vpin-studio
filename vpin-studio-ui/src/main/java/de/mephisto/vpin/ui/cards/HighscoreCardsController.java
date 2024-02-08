@@ -109,6 +109,9 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private Spinner<Integer> rowSeparatorSpinner;
 
   @FXML
+  private Slider alphaPercentageSpinner;
+
+  @FXML
   private CheckBox renderRawHighscore;
 
   @FXML
@@ -320,6 +323,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       BindingUtil.bindSlider(darkenSlider, properties, "cardAlphacompositeBlack");
       BindingUtil.bindSlider(blurSlider, properties, "cardBlur");
       BindingUtil.bindSlider(borderSlider, properties, "cardBorderWidth");
+      BindingUtil.bindSlider(alphaPercentageSpinner, properties, "transparentPercentage");
       BindingUtil.bindSpinner(marginTopSpinner, properties, "cardPadding");
       BindingUtil.bindSpinner(wheelImageSpinner, properties, "cardHighscoresRowPaddingLeft");
       BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "cardHighscoresRowseparator");
@@ -374,6 +378,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       brightenSlider.setDisable(newValue);
       darkenSlider.setDisable(newValue);
       backgroundImageCombo.setDisable(newValue);
+      alphaPercentageSpinner.setDisable(!newValue);
 
       if (newValue) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));

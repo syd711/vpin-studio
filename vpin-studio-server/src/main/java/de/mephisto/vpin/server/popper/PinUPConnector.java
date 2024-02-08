@@ -1278,7 +1278,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
     String rom = rs.getString("ROM");
     game.setRom(rom);
-    String tableName = rs.getString("ALTROM");
+    String tableName = rs.getString("ROMALT");
     game.setTableName(tableName);
 
     //TODO add VPS ids here
