@@ -7,6 +7,15 @@ import java.util.List;
 public class SystemSummary {
   private String pinupSystemDirectory;
   private ArchiveType archiveType;
+  private boolean popper15;
+
+  public boolean isPopper15() {
+    return popper15;
+  }
+
+  public void setPopper15(boolean popper15) {
+    this.popper15 = popper15;
+  }
 
   public ArchiveType getArchiveType() {
     return archiveType;

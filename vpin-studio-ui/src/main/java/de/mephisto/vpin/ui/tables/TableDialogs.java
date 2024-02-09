@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.AltSoundArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.DirectB2SArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -14,13 +15,16 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -38,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -214,8 +219,55 @@ public class TableDialogs {
     return controller.tableDeleted();
   }
 
+  public static void openAutoFillAll() {
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getGamesCached().size() + " tables?",
+      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.", null, "Overwrite existing data", false);
+    if (!result.isApplyClicked()) {
+      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked(), false));
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  public static TableDetails openAutoFill(GameRepresentation game, boolean simulate) {
+    if(simulate) {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), true, simulate));
+      if(!progressDialog.getResults().isEmpty()) {
+        return (TableDetails) progressDialog.getResults().get(0);
+      }
+      return null;
+    }
+
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
+      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.", null, "Overwrite existing data", false);
+    if (!result.isApplyClicked()) {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked(), simulate));
+      if(!progressDialog.getResults().isEmpty()) {
+        return (TableDetails) progressDialog.getResults().get(0);
+      }
+    }
+    return null;
+  }
+
+  public static void openAutoMatchAll() {
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getGamesCached().size() + " tables?",
+      "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+    if (!result.isApplyClicked()) {
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  public static void openAutoMatch(GameRepresentation game) {
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
+      "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+    if (!result.isApplyClicked()) {
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), result.isChecked()));
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
-    openTableDataDialog(overviewController, game, 0);
+    openTableDataDialog(overviewController, game, TableDataController.lastTab);
   }
 
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {

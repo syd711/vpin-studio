@@ -6,17 +6,9 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean launchPopperOnExit = true;
-  private String mappingHsFileName = "CUSTOM5";
-  private String mappingVpsTableId = "WEBGameID";
+  private String mappingHsFileName = "MediaSearch";
+  private String mappingVpsTableId = "CUSTOM2";
   private String mappingVpsTableVersionId = "CUSTOM3";
-
-  public String getMappingVpsTableId() {
-    return mappingVpsTableId;
-  }
-
-  public void setMappingVpsTableId(String mappingVpsTableId) {
-    this.mappingVpsTableId = mappingVpsTableId;
-  }
 
   public String getMappingVpsTableVersionId() {
     return mappingVpsTableVersionId;
@@ -24,6 +16,14 @@ public class ServerSettings extends JsonSettings {
 
   public void setMappingVpsTableVersionId(String mappingVpsTableVersionId) {
     this.mappingVpsTableVersionId = mappingVpsTableVersionId;
+  }
+
+  public String getMappingVpsTableId() {
+    return mappingVpsTableId;
+  }
+
+  public void setMappingVpsTableId(String mappingVpsTableId) {
+    this.mappingVpsTableId = mappingVpsTableId;
   }
 
   public String getMappingHsFileName() {

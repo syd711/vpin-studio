@@ -6,17 +6,11 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -46,19 +40,10 @@ public class PopperService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
   private PinUPConnector pinUPConnector;
 
   @Autowired
   private VPXService vpxService;
-
-  @Autowired
-  private VpsService vpsService;
-
-  @Autowired
-  private PreferencesService preferencesService;
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
@@ -67,8 +52,6 @@ public class PopperService implements InitializingBean {
   public PinUPControls getPinUPControls() {
     return pinUPConnector.getControls();
   }
-
-  private GameRepresentation activeGame;
 
   @SuppressWarnings("unused")
   public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
@@ -95,18 +78,6 @@ public class PopperService implements InitializingBean {
       }
     }
     return list;
-  }
-
-  public JobExecutionResult importTable(GameListItem item) {
-    GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
-    File tableFile = new File(emulator.getTablesFolder(), item.getName());
-    if (tableFile.exists()) {
-      int result = importVPXGame(tableFile, true, -1, item.getEmuId());
-      if (result > 0) {
-        gameService.scanGame(result);
-      }
-    }
-    return JobExecutionResultFactory.ok("Imported " + item.getName(), -1);
   }
 
   public int importVPXGame(File file, boolean importToPopper, int playListId, int emuId) {
@@ -164,9 +135,8 @@ public class PopperService implements InitializingBean {
     }
   }
 
-  //TODO autofill
   @NonNull
-  public TableDetails autofillTableDetails(Game game, boolean overwrite) {
+  public TableDetails autoFill(Game game, boolean overwrite, boolean simulate) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
@@ -243,8 +213,14 @@ public class PopperService implements InitializingBean {
       fillTableInfoWithVpxData(game, tableDetails, overwrite);
     }
 
-    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
-    LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+    if(simulate) {
+      LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+    else {
+      pinUPConnector.saveTableDetails(game.getId(), tableDetails);
+      LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+
     return tableDetails;
   }
 
@@ -282,20 +258,10 @@ public class PopperService implements InitializingBean {
     }
     pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
 
-    //start renaming
-    try {
-      if (!String.valueOf(game.getRom()).equals(String.valueOf(updatedTableDetails.getRomName())) && !StringUtils.isEmpty(updatedTableDetails.getRomName())) {
-        game.setRom(updatedTableDetails.getRomName());
-        gameService.save(game);
-      }
+    String existingRom = String.valueOf(oldDetails.getRomName());
+    boolean romChanged = !String.valueOf(updatedTableDetails.getRomName()).equalsIgnoreCase(existingRom);
+    System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Rom change stuff");
 
-      if (!String.valueOf(game.getTableName()).equals(String.valueOf(updatedTableDetails.getRomAlt())) && !StringUtils.isEmpty(updatedTableDetails.getRomAlt())) {
-        game.setTableName(updatedTableDetails.getRomAlt());
-        gameService.save(game);
-      }
-    } catch (Exception e) {
-      LOG.error("Error updating table for table details: " + e.getMessage());
-    }
 
     //for upload and replace, we do not need any renaming
     if (!renamingChecks) {
@@ -465,6 +431,10 @@ public class PopperService implements InitializingBean {
   @Nullable
   public GameEmulator getGameEmulator(int id) {
     return pinUPConnector.getGameEmulator(id);
+  }
+
+  public int getVersion() {
+    return pinUPConnector.getSqlVersion();
   }
 
   @Override

@@ -235,6 +235,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         manifest.setAltRunMode(rs.getString("AltRunMode"));
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
+        manifest.setMediaSearch(rs.getString("MediaSearch"));
+        manifest.setSpecial(rs.getString("Special"));
 
         manifest.setAltLaunchExe(rs.getString("ALTEXE"));
 
@@ -271,87 +273,91 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return manifest;
   }
 
-  public void saveTableDetails(int id, TableDetails manifest) {
+  public void saveTableDetails(int id, TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
       List<Object> params = new ArrayList<>();
 
       stmtBuilder.append("'EMUID' = ?, ");
-      params.add(manifest.getEmulatorId());
+      params.add(tableDetails.getEmulatorId());
       stmtBuilder.append("'GameName' = ?, ");
-      params.add(manifest.getGameName());
+      params.add(tableDetails.getGameName());
       stmtBuilder.append("'GameDisplay' = ?, ");
-      params.add(manifest.getGameDisplayName());
+      params.add(tableDetails.getGameDisplayName());
       stmtBuilder.append("'GameFileName' = ?, ");
-      params.add(manifest.getGameFileName());
+      params.add(tableDetails.getGameFileName());
       stmtBuilder.append("'GameTheme' = ?, ");
-      params.add(manifest.getGameTheme());
+      params.add(tableDetails.getGameTheme());
       stmtBuilder.append("'Notes' = ?, ");
-      params.add(manifest.getNotes());
+      params.add(tableDetails.getNotes());
       stmtBuilder.append("'GameYear' = ?, ");
-      params.add(manifest.getGameYear());
+      params.add(tableDetails.getGameYear());
       stmtBuilder.append("'ROM' = ?, ");
-      params.add(manifest.getRomName());
+      params.add(tableDetails.getRomName());
       stmtBuilder.append("'ROMALT' = ?, ");
-      params.add(manifest.getRomAlt());
+      params.add(tableDetails.getRomAlt());
       stmtBuilder.append("'Manufact' = ?, ");
-      params.add(manifest.getManufacturer());
+      params.add(tableDetails.getManufacturer());
       stmtBuilder.append("'NumPlayers' = ?, ");
-      params.add(manifest.getNumberOfPlayers());
+      params.add(tableDetails.getNumberOfPlayers());
       stmtBuilder.append("'TAGS' = ?, ");
-      params.add(manifest.getTags());
+      params.add(tableDetails.getTags());
       stmtBuilder.append("'Category' = ?, ");
-      params.add(manifest.getCategory());
+      params.add(tableDetails.getCategory());
       stmtBuilder.append("'Author' = ?, ");
-      params.add(manifest.getAuthor());
+      params.add(tableDetails.getAuthor());
       stmtBuilder.append("'sysVolume' = ?, ");
-      params.add(manifest.getVolume());
+      params.add(tableDetails.getVolume());
       stmtBuilder.append("'LaunchCustomVar' = ?, ");
-      params.add(manifest.getLaunchCustomVar());
+      params.add(tableDetails.getLaunchCustomVar());
       stmtBuilder.append("'GKeepDisplays' = ?, ");
-      params.add(manifest.getKeepDisplays());
+      params.add(tableDetails.getKeepDisplays());
       stmtBuilder.append("'GameRating' = ?, ");
-      params.add(manifest.getGameRating());
+      params.add(tableDetails.getGameRating());
       stmtBuilder.append("'ALTEXE' = ?, ");
-      params.add(manifest.getAltLaunchExe());
+      params.add(tableDetails.getAltLaunchExe());
       stmtBuilder.append("'GameType' = ?, ");
-      params.add(manifest.getGameType() != null ? manifest.getGameType().name() : null);
+      params.add(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : null);
       stmtBuilder.append("'GAMEVER' = ?, ");
-      params.add(manifest.getGameVersion());
+      params.add(tableDetails.getGameVersion());
       stmtBuilder.append("'DOFStuff' = ?, ");
-      params.add(manifest.getDof());
+      params.add(tableDetails.getDof());
       stmtBuilder.append("'IPDBNum' = ?, ");
-      params.add(manifest.getIPDBNum());
+      params.add(tableDetails.getIPDBNum());
       stmtBuilder.append("'AltRunMode' = ?, ");
-      params.add(manifest.getAltRunMode());
+      params.add(tableDetails.getAltRunMode());
       stmtBuilder.append("'WebLinkURL' = ?, ");
-      params.add(manifest.getUrl());
+      params.add(tableDetails.getUrl());
       stmtBuilder.append("'DesignedBy' = ?, ");
-      params.add(manifest.getDesignedBy());
+      params.add(tableDetails.getDesignedBy());
       stmtBuilder.append("'Visible' = ?, ");
-      params.add(manifest.getStatus());
+      params.add(tableDetails.getStatus());
       stmtBuilder.append("'CUSTOM2' = ?, ");
-      params.add(manifest.getCustom2());
+      params.add(tableDetails.getCustom2());
       stmtBuilder.append("'CUSTOM3' = ?, ");
-      params.add(manifest.getCustom3());
+      params.add(tableDetails.getCustom3());
+      stmtBuilder.append("'MediaSearch' = ?, ");
+      params.add(tableDetails.getMediaSearch());
+      stmtBuilder.append("'Special' = ?, ");
+      params.add(tableDetails.getSpecial());
 
       //check for popper DB update 1.5
       if (sqlVersion >= DB_VERSION) {
         stmtBuilder.append("'WEBGameID' = ?, ");
-        params.add(manifest.getWebGameId());
+        params.add(tableDetails.getWebGameId());
         stmtBuilder.append("'ISMOD' = ?, ");
-        params.add(manifest.isMod());
+        params.add(tableDetails.isMod());
         stmtBuilder.append("'WebLink2URL' = ?, ");
-        params.add(manifest.getWebLink2Url());
+        params.add(tableDetails.getWebLink2Url());
         stmtBuilder.append("'TourneyID' = ?, ");
-        params.add(manifest.getTourneyId());
+        params.add(tableDetails.getTourneyId());
         stmtBuilder.append("'CUSTOM4' = ?, ");
-        params.add(manifest.getCustom4());
+        params.add(tableDetails.getCustom4());
         stmtBuilder.append("'CUSTOM5' = ?, ");
-        params.add(manifest.getCustom5());
+        params.add(tableDetails.getCustom5());
 
-        importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
+        importGameExtraValues(id, tableDetails.getgLog(), tableDetails.getgNotes(), tableDetails.getgPlayLog(), tableDetails.getgDetails());
       }
 
       stmtBuilder.append("DateUpdated=? WHERE GameID=?");
@@ -1298,6 +1304,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
     File vpxFile = new File(emulator.getTablesFolder(), gameFileName);
     game.setGameFile(vpxFile);
+
+    game.setExtTableId(rs.getString(serverSettings.getMappingVpsTableId()));
+    game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableId()));
+    game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
 
     return game;
   }

@@ -6,12 +6,14 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -47,6 +49,9 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
+  @Autowired
+  private PopperService popperService;
+
   private ServerSettings serverSettings;
 
   public VpsService() {
@@ -54,13 +59,17 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   public boolean autoMatch(Game game, boolean overwrite) {
     try {
+      TableDetails tableDetails = popperService.getTableDetails(game.getId());
+      String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+      String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
+
       String term = game.getGameDisplayName();
       List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
       if (!vpsTables.isEmpty()) {
         VpsTable vpsTable = vpsTables.get(0);
 
         if (StringUtils.isEmpty(game.getExtTableId()) || overwrite) {
-          saveExternalTableId(game, vpsTable.getId());
+          tableDetails.setMappedValue(mappingVpsTableId, vpsTable.getId());
         }
 
         TableInfo tableInfo = vpxService.getTableInfo(game);
@@ -73,10 +82,12 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
           if (version != null) {
             LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
-            saveExternalTableVersionId(game, version.getId());
+            tableDetails.setMappedValue(mappingVpsTableVersionId, version.getId());
           }
         }
       }
+
+      popperService.saveTableDetails(tableDetails, game.getId(), false);
       LOG.info("Finished auto-match for \"" + game.getGameDisplayName() + "\"");
       return true;
     } catch (Exception e) {
@@ -149,22 +160,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       return null;
     }
     return tableVersion;
-  }
-
-  public boolean saveExternalTableVersionId(Game game, String vpsId) throws Exception {
-    if (vpsId.equals("null")) {
-      vpsId = null;
-    }
-    (applicationContext.getBean(GameService.class)).save(game);
-    return true;
-  }
-
-  //TODO save to popper with mapping!
-  public boolean saveExternalTableId(Game game, String vpsId) throws Exception {
-    game.setExtTableId(vpsId);
-    game.setExtTableVersionId(null);
-    (applicationContext.getBean(GameService.class)).save(game);
-    return true;
   }
 
   @Override

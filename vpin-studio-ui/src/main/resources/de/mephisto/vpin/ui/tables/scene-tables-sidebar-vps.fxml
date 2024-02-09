@@ -158,7 +158,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
+                                          <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                              </graphic>
@@ -193,7 +193,7 @@
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <children>
                                           <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
-                                          <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
+                                          <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                              </graphic>
@@ -299,9 +299,9 @@
                   <Tooltip text="Reset VPS updates indicators in the overview for this table." />
                </tooltip>
             </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Match" textFill="WHITE">
+            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Fill All">
                      <graphic>
                         <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
                            <font>

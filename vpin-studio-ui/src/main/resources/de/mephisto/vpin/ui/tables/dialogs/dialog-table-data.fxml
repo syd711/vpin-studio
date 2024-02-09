@@ -5,9 +5,11 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -22,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" prefWidth="777.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="777.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -376,14 +378,42 @@
                                  <content>
                                     <VBox>
                                        <children>
-                                          <Label styleClass="default-title" text="Meta Data Information" textFill="WHITE">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
+                                          <BorderPane>
                                              <VBox.margin>
                                                 <Insets bottom="6.0" />
                                              </VBox.margin>
-                                          </Label>
+                                             <left>
+                                                <Label styleClass="default-title" text="Meta Data Information" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </left>
+                                             <right>
+                                                <SplitMenuButton mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                   <items>
+                                                      <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                         <graphic>
+                                                            <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </FontIcon>
+                                                         </graphic>
+                                                      </MenuItem>
+                                                   </items>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+                                                   </tooltip>
+                                                </SplitMenuButton>
+                                             </right>
+                                          </BorderPane>
                                           <GridPane hgap="3.0" vgap="3.0">
                                              <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
@@ -555,6 +585,32 @@
                                                 <Insets bottom="6.0" top="24.0" />
                                              </VBox.margin>
                                           </Label>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                             <children>
+                                                <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
+                                                   <items>
+                                                      <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Match All">
+                                                         <graphic>
+                                                            <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </FontIcon>
+                                                         </graphic>
+                                                      </MenuItem>
+                                                   </items>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+                                                   </tooltip>
+                                                </SplitMenuButton>
+                                             </children>
+                                          </HBox>
                                           <GridPane hgap="3.0" vgap="3.0">
                                              <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
@@ -603,7 +659,7 @@
                                                 </Label>
                                                 <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2">
                                                    <children>
-                                                      <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
+                                                      <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
                                                          <graphic>
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                                          </graphic>
@@ -614,7 +670,7 @@
                                                             <Insets />
                                                          </HBox.margin>
                                                       </Button>
-                                                      <Button fx:id="copyTableBtn" mnemonicParsing="false" onAction="#onCopyTable">
+                                                      <Button fx:id="copyTableBtn" mnemonicParsing="false" onAction="#onCopyTableId">
                                                          <graphic>
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                                          </graphic>
@@ -629,7 +685,7 @@
                                                 </HBox>
                                                 <HBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                    <children>
-                                                      <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
+                                                      <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
                                                          <graphic>
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                                          </graphic>
@@ -657,6 +713,9 @@
                                                    </children>
                                                 </HBox>
                                              </children>
+                                             <VBox.margin>
+                                                <Insets top="6.0" />
+                                             </VBox.margin>
                                           </GridPane>
                                        </children>
                                        <padding>
@@ -1160,7 +1219,7 @@
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="saveBtn1" defaultButton="true" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save" />
+                  <Button fx:id="saveBtn1" defaultButton="true" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save &amp; Close" />
                </children>
                <BorderPane.margin>
                   <Insets left="12.0" top="12.0" />

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -30,9 +32,17 @@ public class PopperServiceResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   @GetMapping("/custompoptions")
   public PopperCustomOptions getCustomOptions() {
     return popperService.getCustomOptions();
+  }
+
+  @GetMapping("/version")
+  public int getVersion() {
+    return popperService.getVersion();
   }
 
   @PostMapping("/custompoptions")
@@ -47,7 +57,15 @@ public class PopperServiceResource {
 
   @PostMapping("/import")
   public JobExecutionResult importTable(@RequestBody GameListItem item) {
-    return popperService.importTable(item);
+    GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
+    File tableFile = new File(emulator.getTablesFolder(), item.getName());
+    if (tableFile.exists()) {
+      int result = popperService.importVPXGame(tableFile, true, -1, item.getEmuId());
+      if (result > 0) {
+        gameService.scanGame(result);
+      }
+    }
+    return JobExecutionResultFactory.ok("Imported " + item.getName(), -1);
   }
 
   @GetMapping("/pincontrol/{screen}")
@@ -101,9 +119,11 @@ public class PopperServiceResource {
     return popperService.getPupPlayerDisplay(screen);
   }
 
-  @PutMapping("/tabledetails/autofill/{gameId}/{mode}")
-  public TableDetails autofill(@PathVariable("gameId") int gameId, @PathVariable("mode") int mode) {
-    return popperService.autofillTableDetails(gameService.getGame(gameId), mode == 1);
+  @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}/{simulate}")
+  public TableDetails autofill(@PathVariable("gameId") int gameId,
+                               @PathVariable("overwrite") boolean overwrite,
+                               @PathVariable("simulate") boolean simulate) {
+    return popperService.autoFill(gameService.getGame(gameId), overwrite, simulate);
   }
 
   @PostMapping("/tabledetails/{gameId}")

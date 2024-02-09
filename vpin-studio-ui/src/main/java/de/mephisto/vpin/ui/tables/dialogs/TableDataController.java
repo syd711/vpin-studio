@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -15,12 +16,14 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.models.TableStatus;
+import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -64,6 +67,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE));
   public final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public static int lastTab = 0;
 
   @FXML
   private Label titleLabel;
@@ -270,7 +274,10 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextField nameField;
 
   @FXML
-  private Button openBtn;
+  private Button openVpsTableBtn;
+
+  @FXML
+  private Button openVpsTableVersionBtn;
 
   @FXML
   private Button copyTableBtn;
@@ -278,8 +285,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private Button copyTableVersionBtn;
 
-  @FXML
-  private Button openTableBtn;
 
   @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
@@ -290,33 +295,104 @@ public class TableDataController implements Initializable, DialogController, Aut
   private GameRepresentation game;
   private TableDetails tableDetails;
   private String initialVpxFileName = null;
+  private ServerSettings serverSettings;
+
+  @FXML
+  private void onAutoMatch() {
+    List<VpsTable> vpsTables = VPS.getInstance().find(game.getGameDisplayName(), game.getRom());
+    if (!vpsTables.isEmpty()) {
+      VpsTable vpsTable = vpsTables.get(0);
+      setMappedFieldValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
+      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
+
+      TableInfo tableInfo = client.getVpxService().getTableInfo(game);
+      String tableVersion = null;
+      if (tableInfo != null) {
+        tableVersion = tableInfo.getTableVersion();
+      }
+
+      VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
+      if (version != null) {
+        setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
+        tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
+      }
+
+      autoCompleteNameField.setText(vpsTable.getDisplayName());
+      refreshVersionsCombo(vpsTable);
+      tableVersionsCombo.setValue(version);
+
+      openVpsTableVersionBtn.setDisable(false);
+      copyTableVersionBtn.setDisable(false);
+    }
+  }
+
+  @FXML
+  private void onAutoMatchAll() {
+    TableDialogs.openAutoMatchAll();
+  }
+
+  @FXML
+  private void onAutoFill() {
+    TableDetails td = TableDialogs.openAutoFill(this.game, true);
+    if (td != null) {
+      gameTypeCombo.setValue(td.getGameType());
+      gameTheme.setText(td.getGameTheme());
+      gameYear.setText("" + td.getGameYear());
+      manufacturer.setText(td.getManufacturer());
+      author.setText(td.getAuthor());
+      category.setText(td.getCategory());
+      if (td.getNumberOfPlayers() != null) {
+        numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
+      }
+      if (td.getGameRating() != null) {
+        gameRating.getValueFactory().setValue(td.getGameRating());
+      }
+      IPDBNum.setText(td.getIPDBNum());
+      url.setText(td.getUrl());
+      designedBy.setText(td.getDesignedBy());
+      tags.setText(td.getTags());
+      notes.setText(td.getNotes());
+      gameVersion.setText(td.getGameVersion());
+    }
+  }
+
+  @FXML
+  private void onAutoFillAll() {
+    TableDialogs.openAutoFillAll();
+  }
 
 
   @FXML
-  private void onCopyTable() {
-    //TODO wrong id access
+  private void onCopyTableId() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
-    String vpsTableUrl = VPS.getVpsTableUrl(this.game.getExtTableId());
+    String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId));
     content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }
 
   @FXML
   private void onCopyTableVersion() {
-    //TODO wrong id access
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
-    content.putString(VPS.getVpsTableUrl(this.game.getExtTableId(), this.game.getExtTableVersionId()));
+    String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+    String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
+    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId) + "#" + tableDetails.getMappedValue(mappingVpsTableVersionId));
+    content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }
 
   @FXML
-  private void onOpen() {
+  private void onVpsTableOpen() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
-        desktop.browse(new URI(VPS.getVpsTableUrl(game.getExtTableId())));
+        String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+        String mappedValue = tableDetails.getMappedValue(mappingVpsTableId);
+        if (!StringUtils.isEmpty(mappedValue)) {
+          desktop.browse(new URI(VPS.getVpsTableUrl(mappedValue)));
+        }
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
@@ -324,13 +400,15 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   @FXML
-  private void onTableOpen() {
+  private void onVpsTableVersionOpen() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         VpsTableVersion value = this.tableVersionsCombo.getValue();
-        VpsUrl vpsUrl = value.getUrls().get(0);
-        desktop.browse(new URI(vpsUrl.getUrl()));
+        if (value != null) {
+          VpsUrl vpsUrl = value.getUrls().get(0);
+          desktop.browse(new URI(vpsUrl.getUrl()));
+        }
       } catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
@@ -340,8 +418,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onVersionFix() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-        + game.getVersion() + "\" with the VPS table version \"" +
-        game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+      + game.getVersion() + "\" with the VPS table version \"" +
+      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
       td.setGameVersion(game.getExtVersion());
@@ -360,14 +438,14 @@ public class TableDataController implements Initializable, DialogController, Aut
     overviewController.selectNext();
     GameRepresentation selection = overviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
-      int index = this.tabPane.getSelectionModel().getSelectedIndex();
+      TableDataController.lastTab = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+        TableDialogs.openTableDataDialog(this.overviewController, selection, TableDataController.lastTab);
       });
     }
   }
@@ -473,12 +551,14 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onApplyClick(ActionEvent e) {
+    TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     doSave(stage, false);
   }
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     doSave(stage, true);
   }
@@ -537,17 +617,22 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
+    tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
+
     openHsFileBtn.setVisible(client.getSystemService().isLocal());
 
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -633,14 +718,17 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void onDialogCancel() {
-
+    TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
   }
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, int tab) {
+    TableDataController.lastTab = tab;
+    tabPane.getSelectionModel().select(tab);
+
     this.overviewController = overviewController;
     this.game = game;
     this.initialVpxFileName = game.getGameFileName();
-    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
 
@@ -704,7 +792,14 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     applyRomBtn.setDisable(true);
     romName.setText(tableDetails.getRomName());
-    romName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setRomName(newValue));
+    romName.textProperty().addListener((observable, oldValue, newValue) -> {
+      tableDetails.setRomName(newValue);
+      romName.setPromptText("");
+      if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getRom())) {
+        romName.setPromptText(game.getRom() + " (scanned value)");
+      }
+    });
+
     if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getRom())) {
       romName.setPromptText(game.getRom() + " (scanned value)");
       applyRomBtn.setDisable(false);
@@ -737,6 +832,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (tableDetails.getGameRating() != null) {
       gameRating.getValueFactory().setValue(tableDetails.getGameRating());
     }
+
     gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameRating(Integer.parseInt(String.valueOf(newValue))));
 
     dof.setText(tableDetails.getDof());
@@ -878,9 +974,16 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     applyAltRomBtn.setDisable(true);
     altRomName.setText(tableDetails.getRomAlt());
-    altRomName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setRomAlt(newValue));
+    altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
+      tableDetails.setRomAlt(newValue);
+      altRomName.setPromptText("");
+      if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getTableName())) {
+        altRomName.setPromptText(game.getTableName() + " (scanned value)");
+      }
+    });
+
     if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getTableName())) {
-      romName.setPromptText(game.getTableName() + " (scanned value)");
+      altRomName.setPromptText(game.getTableName() + " (scanned value)");
       applyAltRomBtn.setDisable(false);
     }
 
@@ -911,8 +1014,9 @@ public class TableDataController implements Initializable, DialogController, Aut
     scannedRomName.setText(game.getRom());
     scannedRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
       game.setRom(newValue);
+      romName.setPromptText("");
       applyRomBtn.setDisable(StringUtils.isEmpty(newValue));
-      if (StringUtils.isEmpty(romName.getText())) {
+      if (!StringUtils.isEmpty(newValue)) {
         romName.setPromptText(newValue + " (scanned value)");
       }
     });
@@ -921,6 +1025,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     scannedAltRomName.setText(game.getTableName());
     scannedAltRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
       game.setTableName(newValue);
+      altRomName.setPromptText("");
       applyAltRomBtn.setDisable(StringUtils.isEmpty(newValue));
       if (StringUtils.isEmpty(altRomName.getText())) {
         altRomName.setPromptText(newValue + " (scanned value)");
@@ -941,79 +1046,122 @@ public class TableDataController implements Initializable, DialogController, Aut
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
     hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
 
-    switch (mappingHsField) {
-      case "CUSTOM2": {
-        highscoreFileName.setText(tableDetails.getCustom2());
-        break;
-      }
-      case "CUSTOM3": {
-        highscoreFileName.setText(tableDetails.getCustom3());
-        break;
-      }
-      case "CUSTOM4": {
-        highscoreFileName.setText(tableDetails.getCustom4());
-        break;
-      }
-      case "CUSTOM5": {
-        highscoreFileName.setText(tableDetails.getCustom5());
-        break;
-      }
-    }
-    refreshHsMappingField(mappingHsField, highscoreFileName.getText());
+    //highscore mapping
+    String hsFileName = tableDetails.getMappedValue(mappingHsField);
+    highscoreFileName.setText(hsFileName);
 
+    setMappedFieldValue(mappingHsField, highscoreFileName.getText());
     if (StringUtils.isEmpty(highscoreFileName.getText()) && !StringUtils.isEmpty(game.getHsFileName())) {
       highscoreFileName.setPromptText(game.getHsFileName() + " (scanned value)");
     }
     highscoreFileName.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        refreshHsMappingField(mappingHsField, newValue);
+        setMappedFieldValue(mappingHsField, newValue);
       }
     });
 
     refreshFieldsForSqlVersion();
-    refreshVpsStatus();
+    initVpsStatus();
     tabPane.getSelectionModel().select(tab);
   }
 
-  private void refreshVpsTableIdField(String vpsTableIdField, String value) {
-
-  }
-
-  private void refreshHsMappingField(String mappingHsField, String value) {
-    switch (mappingHsField) {
+  private void setMappedFieldValue(String field, String value) {
+    switch (field) {
+      case "WEBGameID": {
+        webDbId.setText(value);
+        webDbId.setDisable(true);
+        webDbId.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        break;
+      }
       case "CUSTOM2": {
         custom2.setText(value);
         custom2.setDisable(true);
+        custom2.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         break;
       }
       case "CUSTOM3": {
         custom3.setText(value);
         custom3.setDisable(true);
+        custom3.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         break;
       }
       case "CUSTOM4": {
         custom4.setText(value);
         custom4.setDisable(true);
+        custom4.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         break;
       }
       case "CUSTOM5": {
         custom5.setText(value);
         custom5.setDisable(true);
+        custom5.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         break;
       }
     }
   }
 
-  private void refreshVpsStatus() {
-    openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-    openTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
+  private void initVpsStatus() {
+    openVpsTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    openVpsTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
     copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
-
     List<VpsTable> tables = VPS.getInstance().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    //vps mapping
+    String vpsTableMappingField = serverSettings.getMappingVpsTableId();
+    String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
+
+    String vpsTableId = tableDetails.getMappedValue(vpsTableMappingField);
+    if (StringUtils.isEmpty(vpsTableId)) {
+      vpsTableId = game.getExtTableId();
+      tableDetails.setMappedValue(vpsTableMappingField, vpsTableId);
+    }
+
+    String vpsTableVersionId = tableDetails.getMappedValue(vpsTableVersionMappingField);
+    if (StringUtils.isEmpty(vpsTableVersionId)) {
+      vpsTableVersionId = game.getExtTableVersionId();
+      tableDetails.setMappedValue(vpsTableVersionMappingField, vpsTableVersionId);
+    }
+
+    VpsTable tableById = null;
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      tableById = VPS.getInstance().getTableById(vpsTableId);
+      if (tableById != null) {
+        autoCompleteNameField.setText(tableById.getDisplayName());
+      }
+    }
+
+    refreshVersionsCombo(tableById);
+
+    if (tableById != null && !StringUtils.isEmpty(vpsTableVersionId)) {
+      VpsTableVersion tableVersion = tableById.getVersion(vpsTableVersionId);
+      if (tableVersion != null) {
+        tableVersionsCombo.setValue(tableVersion);
+      }
+
+      openVpsTableVersionBtn.setDisable(tableVersion == null);
+      copyTableVersionBtn.setDisable(tableVersion == null);
+    }
+
+    setMappedFieldValue(vpsTableMappingField, vpsTableId);
+    setMappedFieldValue(vpsTableVersionMappingField, vpsTableVersionId);
+  }
+
+  private void refreshVersionsCombo(VpsTable tableById) {
+    if (tableById != null) {
+      List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(VpsFeatures.VPX));
+      if (!tableFiles.isEmpty()) {
+        tableVersionsCombo.setItems(FXCollections.emptyObservableList());
+        tableFiles.add(0, null);
+        tableVersionsCombo.setItems(FXCollections.observableList(tableFiles));
+      }
+    }
+    else {
+      tableVersionsCombo.setItems(FXCollections.emptyObservableList());
+    }
   }
 
   private void refreshFieldsForSqlVersion() {
@@ -1048,26 +1196,13 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
-    openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
 
-    if (newValue != null) {
-      copyTableVersionBtn.setDisable(false);
-      //TODO wrong access
-      String existingValueId = this.game.getExtTableVersionId();
-      String newValueId = newValue.getId();
-      if (existingValueId == null || !existingValueId.equals(newValueId)) {
-        //TODO dont
-        client.getVpsService().saveVersion(this.game.getId(), newValueId);
-        EventManager.getInstance().notifyTableChange(this.game.getId(), null);
-      }
-    }
-    else {
-      //TODO dont
-      client.getVpsService().saveVersion(this.game.getId(), null);
-      EventManager.getInstance().notifyTableChange(this.game.getId(), null);
-    }
+    String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
+    setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
   }
+
   @Override
   public void onChange(String value) {
     this.tableVersionsCombo.valueProperty().removeListener(this);
@@ -1075,10 +1210,15 @@ public class TableDataController implements Initializable, DialogController, Aut
     Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
-      //TODO dont!!!
-//      client.getVpsService().saveTable(this.game.get().getId(), vpsTable.getId());
+
+      String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+      setMappedFieldValue(mappingVpsTableId, vpsTable.getId());
     }
+
+    openVpsTableVersionBtn.setDisable(true);
+    copyTableVersionBtn.setDisable(true);
+
+    refreshVersionsCombo(selectedEntry.orElseGet(null));
     this.tableVersionsCombo.valueProperty().addListener(this);
-    EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 }

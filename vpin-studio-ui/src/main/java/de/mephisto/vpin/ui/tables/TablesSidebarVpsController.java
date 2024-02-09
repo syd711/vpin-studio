@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
@@ -10,6 +9,7 @@ import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -90,7 +90,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private CheckBox filterCheckbox;
 
   @FXML
-  private Button openBtn;
+  private Button openTableBtn;
 
   @FXML
   private Button copyTableBtn;
@@ -99,7 +99,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button copyTableVersionBtn;
 
   @FXML
-  private Button openTableBtn;
+  private Button openTableVersionBtn;
 
   @FXML
   private SplitMenuButton autoFillBtn;
@@ -130,6 +130,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private AutoCompleteTextField autoCompleteNameField;
 
   private ValidationState validationState;
+  private ServerSettings serverSettings;
 
 
   // Add a public no-args constructor
@@ -160,21 +161,15 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
 
   @FXML
-  private void onAutoFill() {
-    ProgressDialog.createProgressDialog(new TableVpsDataAutoFillProgressModel(Arrays.asList(this.game.get()), true));
-    EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+  private void onAutoMatch() {
+    if (this.game.isPresent()) {
+      TableDialogs.openAutoFill(this.game.get(), false);
+    }
   }
 
   @FXML
-  private void onAutoFillAll() {
-    if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table type and version for all " + client.getGameService().getGamesCached().size() + " tables?",
-        "Cancel", "Continue", "The tablename and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing assignments", false);
-      if (!result.isApplyClicked()) {
-        ProgressDialog.createProgressDialog(new TableVpsDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
-        EventManager.getInstance().notifyTablesChanged();
-      }
-    }
+  private void onAutoMatchAll() {
+    TableDialogs.openAutoMatchAll();
   }
 
   @FXML
@@ -256,15 +251,21 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void onChange(String value) {
-    this.tableVersionsCombo.valueProperty().removeListener(this);
-    List<VpsTable> tables = VPS.getInstance().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
-    if (selectedEntry.isPresent()) {
-      VpsTable vpsTable = selectedEntry.get();
-      client.getVpsService().saveTable(this.game.get().getId(), vpsTable.getId());
+    try {
+      this.tableVersionsCombo.valueProperty().removeListener(this);
+      List<VpsTable> tables = VPS.getInstance().getTables();
+      Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+      if (selectedEntry.isPresent()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        VpsTable vpsTable = selectedEntry.get();
+        gameRepresentation.setExtTableId(vpsTable.getId());
+        client.getGameService().saveGame(gameRepresentation);
+      }
+      this.tableVersionsCombo.valueProperty().addListener(this);
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    } catch (Exception e) {
+      LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
     }
-    this.tableVersionsCombo.valueProperty().addListener(this);
-    EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
   }
 
 
@@ -286,7 +287,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     playersLabel.setText("-");
     updatedLabel.setText("-");
     ipdbLink.setText("");
-    openBtn.setDisable(true);
+    openTableVersionBtn.setDisable(true);
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(g.isEmpty());
@@ -296,7 +297,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       GameRepresentation game = g.get();
       vpsResetBtn.setDisable(game.getUpdates().isEmpty());
 
-      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+      String vpsTableId = game.getExtTableId();
+      String vpsTableVersionId = game.getExtTableVersionId();
+
+      if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsTableVersionId)) {
         PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
         List<String> csvValue = entry.getCSVValue();
         if (!csvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
@@ -309,17 +313,17 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         }
       }
 
-      openBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-      openTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
-      copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-      copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
+      openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableId));
+      openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
+      copyTableBtn.setDisable(StringUtils.isEmpty(vpsTableId));
+      copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
-      if (!StringUtils.isEmpty(game.getExtTableId())) {
-        VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());
+      if (!StringUtils.isEmpty(vpsTableId)) {
+        VpsTable tableById = VPS.getInstance().getTableById(vpsTableId);
         if (tableById != null) {
           refreshTableView(tableById);
-          if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-            VpsTableVersion version = tableById.getVersion(game.getExtTableVersionId());
+          if (!StringUtils.isEmpty(vpsTableVersionId)) {
+            VpsTableVersion version = tableById.getVersion(vpsTableVersionId);
             tableVersionsCombo.setValue(version);
           }
         }
@@ -493,33 +497,45 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
-    openTableBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    openTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
 
-    if (newValue != null) {
-      copyTableVersionBtn.setDisable(false);
-      String existingValueId = this.game.get().getExtTableVersionId();
-      String newValueId = newValue.getId();
-      if (existingValueId == null || !existingValueId.equals(newValueId)) {
-        client.getVpsService().saveVersion(this.game.get().getId(), newValueId);
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    if (this.game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = this.game.get();
+        if (newValue != null) {
+          copyTableVersionBtn.setDisable(false);
+          String existingValueId = this.game.get().getExtTableVersionId();
+          String newValueId = newValue.getId();
+          if (existingValueId == null || !existingValueId.equals(newValueId)) {
+            gameRepresentation.setExtVersion(newValueId);
+            client.getGameService().saveGame(gameRepresentation);
+            EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+          }
+        }
+        else {
+          gameRepresentation.setExtVersion(null);
+          client.getGameService().saveGame(gameRepresentation);
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to save VPS version: " + e.getMessage(), e);
       }
     }
-    else {
-      client.getVpsService().saveVersion(this.game.get().getId(), null);
-      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-    }
+
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
+
     vpsResetBtn.managedProperty().bindBidirectional(vpsResetBtn.visibleProperty());
     detailsBox.managedProperty().bindBidirectional(detailsBox.visibleProperty());
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
     vpsResetBtn.setVisible(false);
-    openTableBtn.setDisable(true);
+    openTableVersionBtn.setDisable(true);
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
 
@@ -552,6 +568,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       this.vpsResetBtn.setVisible(!uiSettings.isHideVPSUpdates());
+    }
+    else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 }

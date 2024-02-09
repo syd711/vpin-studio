@@ -1,15 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.dialogs.models.TableStatus;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -213,39 +211,17 @@ public class TablesSidebarPopperController implements Initializable {
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for \"" + game.get().getGameDisplayName() + "\"?",
-        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
-        "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplyClicked()) {
-        try {
-          boolean checked = result.isChecked();
-          client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId(), checked);
-          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-        }
+      TableDetails td = TableDialogs.openAutoFill(this.game.get(), false);
+      if (td != null) {
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
       }
     }
   }
 
   @FXML
   private void onAutoFillAll() {
-    if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for all " + client.getGameService().getGamesCached().size() + " tables?",
-        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
-        "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplyClicked()) {
-        try {
-          boolean checked = result.isChecked();
-          ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
-          EventManager.getInstance().notifyTablesChanged();
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-        }
-      }
-    }
+    TableDialogs.openAutoFillAll();
   }
-
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;

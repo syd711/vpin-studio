@@ -41,6 +41,8 @@ public class TableDetails {
   private String altLaunchExe;
   private String custom2;
   private String custom3;
+  private String special;
+  private String mediaSearch;
 
   //1.5 values
   private String custom4;
@@ -56,6 +58,86 @@ public class TableDetails {
   private String gNotes;
   private String gLog;
   private String gPlayLog;
+
+
+  public void setMappedValue(String key, String value) {
+    switch (key) {
+      case "WEBGameID": {
+        this.webGameId = value;
+        break;
+      }
+      case "CUSTOM2": {
+        custom2 = value;
+        break;
+      }
+      case "CUSTOM3": {
+        custom3 = value;
+        break;
+      }
+      case "CUSTOM4": {
+        custom4 = value;
+        break;
+      }
+      case "CUSTOM5": {
+        custom5 = value;
+        break;
+      }
+      case "Special": {
+        special = value;
+        break;
+      }
+      case "MediaSearch": {
+        mediaSearch = value;
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Invalid popper mapping field " + key);
+      }
+    }
+  }
+
+  public String getMappedValue(String key) {
+    switch (key) {
+      case "WEBGameID": {
+        return webGameId;
+      }
+      case "CUSTOM2": {
+        return custom2;
+      }
+      case "CUSTOM3": {
+        return custom3;
+      }
+      case "CUSTOM4": {
+        return custom4;
+      }
+      case "CUSTOM5": {
+        return custom5;
+      }
+      case "Special": {
+        return special;
+      }
+      case "MediaSearch": {
+        return mediaSearch;
+      }
+    }
+    throw new UnsupportedOperationException("Invalid popper mapping field " + key);
+  }
+
+  public String getSpecial() {
+    return special;
+  }
+
+  public void setSpecial(String special) {
+    this.special = special;
+  }
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
+  }
 
   public boolean isMod() {
     return mod;
