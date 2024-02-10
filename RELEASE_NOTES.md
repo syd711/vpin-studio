@@ -13,3 +13,4 @@
 - Corrected error message text when a client is connecting to a server with a newer version.
 - MAME deletion: The registry key are now deleted (finally) and the "Mame" section is disabled when no registry entry is available for the table.
 - MAME refresh: Fixed issue where the registry entries of the selected table have been resetted on "Reload" pressed.
+- Fixed concurrent database access errors for new tables: The detection of new tables has been moved before the loading of the main Studio UI.
