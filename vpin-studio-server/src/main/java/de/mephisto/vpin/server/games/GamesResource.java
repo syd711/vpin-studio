@@ -233,7 +233,10 @@ public class GamesResource {
             if (importedGameId >= 0) {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
-                vpsService.autoMatch(game, true);
+                TableDetails tableDetails = vpsService.autoMatch(game, true);
+                if(tableDetails != null) {
+                  popperService.autoFill(game, tableDetails, true, false);
+                }
               }
             }
             return true;

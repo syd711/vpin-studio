@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.vps;
 
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ public class VpsResource {
   private GameService gameService;
 
   @GetMapping("/automatch/{gameId}/{overwrite}")
-  public boolean autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+  public TableDetails autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
     return vpsService.autoMatch(gameService.getGame(gameId), overwrite);
   }
 }

@@ -56,7 +56,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   public VpsService() {
   }
 
-  public boolean autoMatch(Game game, boolean overwrite) {
+  public TableDetails autoMatch(Game game, boolean overwrite) {
     try {
       TableDetails tableDetails = popperService.getTableDetails(game.getId());
       String mappingVpsTableId = serverSettings.getMappingVpsTableId();
@@ -88,11 +88,11 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
       popperService.saveTableDetails(tableDetails, game.getId(), false);
       LOG.info("Finished auto-match for \"" + game.getGameDisplayName() + "\"");
-      return true;
+      return tableDetails;
     } catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);
     }
-    return false;
+    return null;
   }
 
   /**
