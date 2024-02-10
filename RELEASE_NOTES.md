@@ -6,9 +6,11 @@
 
 ### Bugfixes
 
-- Fixed DMD uploads (finally...hopefully): The last hotfix did lowercase the target folder and ignored subfolders. Both issues have been fixed.
-- Disabled auto-apply of VPS data to the Popper database for now. The action must be separated from the "auto-fix" action for finding the matching VPS table. The impact is not obvious. I'll come up with a better UI here soon.
-- Fixed possible error for some backglasses preventing them from being uploaded.
-- The VPSaveEdit button in the highscores section is not shown anymore when working from remote.
-- Fixed error in emulator detection: Additional checks have been added here, e.g. if the media folder and ROM folder is set. Even though Popper says they are optional, please set them for now. Check the server log file, if your emulator is missing.
-- Fixed error in the regular expression for detecting PinUP Popper assets (the error came with the last update).
+- Upload menu items sorted alphabetical now.
+- Fixed restoring of textfile based highscores.
+- Fixed PUP pack analyzer: The analyzer did deny a PUP pack when the ROM named folder was on the root level of a zip.
+- Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.
+- Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
+- Corrected error message text when a client is connecting to a server with a newer version.
+- MAME deletion: The registry key are now deleted (finally) and the "Mame" section is disabled when no registry entry is available for the table.
+- MAME refresh: Fixed issue where the registry entries of the selected table have been resetted on "Reload" pressed.
