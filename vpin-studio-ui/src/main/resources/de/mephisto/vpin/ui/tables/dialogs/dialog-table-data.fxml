@@ -390,7 +390,7 @@
                                                 </Label>
                                              </left>
                                              <right>
-                                                <SplitMenuButton mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
                                                    <items>
                                                       <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
                                                          <graphic>
@@ -585,7 +585,7 @@
                                                 <Insets bottom="6.0" top="24.0" />
                                              </VBox.margin>
                                           </Label>
-                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="12.0">
                                              <children>
                                                 <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
                                                    <items>
@@ -609,6 +609,11 @@
                                                       <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
                                                    </tooltip>
                                                 </SplitMenuButton>
+                                                <CheckBox fx:id="autoFillCheckbox" layoutX="161.0" layoutY="15.0" mnemonicParsing="false" text="Auto-Fill on Selection" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
                                              </children>
                                           </HBox>
                                           <GridPane hgap="3.0" vgap="3.0">
@@ -939,6 +944,61 @@
                                                    </children>
                                                 </HBox>
                                                 <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                                                <Label fx:id="hintCustom2" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom3" layoutX="667.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom4" layoutX="667.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom5" layoutX="667.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintWebId" layoutX="667.0" layoutY="251.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
                                              </children>
                                           </GridPane>
                                        </children>
@@ -1174,7 +1234,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
@@ -1185,7 +1245,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
                            </tooltip>
                         </Button>
                      </children>
@@ -1214,7 +1274,7 @@
                         <Insets right="6.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="applyBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Apply">
+                  <Button fx:id="applyBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

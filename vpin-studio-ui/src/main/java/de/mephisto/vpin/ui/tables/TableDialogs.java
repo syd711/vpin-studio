@@ -224,25 +224,17 @@ public class TableDialogs {
       "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
       "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked(), false));
+      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }
 
-  public static TableDetails openAutoFill(GameRepresentation game, boolean simulate) {
-    if(simulate) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), true, simulate));
-      if(!progressDialog.getResults().isEmpty()) {
-        return (TableDetails) progressDialog.getResults().get(0);
-      }
-      return null;
-    }
-
+  public static TableDetails openAutoFill(GameRepresentation game) {
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
       "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
       "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked(), simulate));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked()));
       if(!progressDialog.getResults().isEmpty()) {
         return (TableDetails) progressDialog.getResults().get(0);
       }
@@ -275,7 +267,7 @@ public class TableDialogs {
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
     Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data");
     TableDataController controller = (TableDataController) stage.getUserData();
-    controller.setGame(overviewController, game, tab);
+    controller.setGame(stage, overviewController, game, tab);
     stage.showAndWait();
   }
 

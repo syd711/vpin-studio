@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.popper.TableDetails;
@@ -30,7 +30,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -198,7 +197,9 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
   }
 
   @Override

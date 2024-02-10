@@ -18,14 +18,12 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
 
   private final boolean overwrite;
   private Iterator<GameRepresentation> gameIterator;
-  private final boolean simulate;
 
-  public TableDataAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite, boolean simulate) {
+  public TableDataAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite) {
     super("Auto-Fill Table Data");
     this.overwrite = overwrite;
     this.games = games;
     this.gameIterator = games.iterator();
-    this.simulate = simulate;
   }
 
   @Override
@@ -56,7 +54,7 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      TableDetails tableDetails = client.getPinUPPopperService().autoFillTableDetails(next.getId(), overwrite, simulate);
+      TableDetails tableDetails = client.getPinUPPopperService().autoFillTableDetails(next.getId(), overwrite);
       progressResultModel.addProcessed(tableDetails);
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);

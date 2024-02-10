@@ -211,7 +211,7 @@ public class TablesSidebarPopperController implements Initializable {
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      TableDetails td = TableDialogs.openAutoFill(this.game.get(), false);
+      TableDetails td = TableDialogs.openAutoFill(this.game.get());
       if (td != null) {
         EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
       }

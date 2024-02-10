@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -34,6 +35,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -41,6 +43,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -269,6 +273,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private Button fixVersionBtn;
 
+  @FXML
+  private SplitMenuButton autoFillBtn;
 
   @FXML
   private TextField nameField;
@@ -285,6 +291,19 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private Button copyTableVersionBtn;
 
+  @FXML
+  private Label hintCustom2;
+  @FXML
+  private Label hintCustom3;
+  @FXML
+  private Label hintCustom4;
+  @FXML
+  private Label hintCustom5;
+  @FXML
+  private Label hintWebId;
+
+  @FXML
+  private CheckBox autoFillCheckbox;
 
   @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
@@ -295,7 +314,12 @@ public class TableDataController implements Initializable, DialogController, Aut
   private GameRepresentation game;
   private TableDetails tableDetails;
   private String initialVpxFileName = null;
+
+  private UISettings uiSettings;
   private ServerSettings serverSettings;
+
+  private Scene scene;
+  private Stage stage;
 
   @FXML
   private void onAutoMatch() {
@@ -333,26 +357,31 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onAutoFill() {
-    TableDetails td = TableDialogs.openAutoFill(this.game, true);
-    if (td != null) {
-      gameTypeCombo.setValue(td.getGameType());
-      gameTheme.setText(td.getGameTheme());
-      gameYear.setText("" + td.getGameYear());
-      manufacturer.setText(td.getManufacturer());
-      author.setText(td.getAuthor());
-      category.setText(td.getCategory());
-      if (td.getNumberOfPlayers() != null) {
-        numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
+    try {
+      LOG.info("Auto-fill table version " + tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId()));
+      TableDetails td = client.getPinUPPopperService().autoFillTableDetails(game.getId(), tableDetails);
+      if (td != null) {
+        gameTypeCombo.setValue(td.getGameType());
+        gameTheme.setText(td.getGameTheme());
+        gameYear.setText("" + td.getGameYear());
+        manufacturer.setText(td.getManufacturer());
+        author.setText(td.getAuthor());
+        category.setText(td.getCategory());
+        if (td.getNumberOfPlayers() != null) {
+          numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
+        }
+        if (td.getGameRating() != null) {
+          gameRating.getValueFactory().setValue(td.getGameRating());
+        }
+        IPDBNum.setText(td.getIPDBNum());
+        url.setText(td.getUrl());
+        designedBy.setText(td.getDesignedBy());
+        tags.setText(td.getTags());
+        notes.setText(td.getNotes());
+        gameVersion.setText(td.getGameVersion());
       }
-      if (td.getGameRating() != null) {
-        gameRating.getValueFactory().setValue(td.getGameRating());
-      }
-      IPDBNum.setText(td.getIPDBNum());
-      url.setText(td.getUrl());
-      designedBy.setText(td.getDesignedBy());
-      tags.setText(td.getTags());
-      notes.setText(td.getNotes());
-      gameVersion.setText(td.getGameVersion());
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
     }
   }
 
@@ -440,7 +469,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (selection != null && !selection.equals(this.game)) {
       TableDataController.lastTab = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
-        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
       });
 
@@ -457,7 +485,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (selection != null && !selection.equals(this.game)) {
       int index = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
-        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         stage.close();
       });
 
@@ -624,6 +651,12 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    hintCustom2.setVisible(false);
+    hintCustom3.setVisible(false);
+    hintCustom4.setVisible(false);
+    hintCustom5.setVisible(false);
+    hintWebId.setVisible(false);
+
 
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
@@ -721,14 +754,34 @@ public class TableDataController implements Initializable, DialogController, Aut
     TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
   }
 
-  public void setGame(TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {
+    serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    this.stage = stage;
+    this.scene = stage.getScene();
+
+    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+      if (t.getCode() == KeyCode.PAGE_UP) {
+        onPrevious(null);
+      }
+      if (t.getCode() == KeyCode.PAGE_DOWN) {
+        onNext(null);
+      }
+    });
+
+    autoFillCheckbox.setSelected(uiSettings.isAutoFill());
+    autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      uiSettings.setAutoFill(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
     TableDataController.lastTab = tab;
     tabPane.getSelectionModel().select(tab);
 
     this.overviewController = overviewController;
     this.game = game;
     this.initialVpxFileName = game.getGameFileName();
-    serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
 
@@ -1072,30 +1125,35 @@ public class TableDataController implements Initializable, DialogController, Aut
         webDbId.setText(value);
         webDbId.setDisable(true);
         webDbId.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        hintWebId.setVisible(true);
         break;
       }
       case "CUSTOM2": {
         custom2.setText(value);
         custom2.setDisable(true);
         custom2.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        hintCustom2.setVisible(true);
         break;
       }
       case "CUSTOM3": {
         custom3.setText(value);
         custom3.setDisable(true);
         custom3.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        hintCustom3.setVisible(true);
         break;
       }
       case "CUSTOM4": {
         custom4.setText(value);
         custom4.setDisable(true);
         custom4.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        hintCustom4.setVisible(true);
         break;
       }
       case "CUSTOM5": {
         custom5.setText(value);
         custom5.setDisable(true);
         custom5.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        hintCustom5.setVisible(true);
         break;
       }
     }
@@ -1202,10 +1260,16 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
     setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
+    tableDetails.setMappedValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
+
+    if (autoFillCheckbox.isSelected()) {
+      onAutoFill();
+    }
   }
 
   /**
    * Change listener for the vps table name
+   *
    * @param value the text field value
    */
   @Override

@@ -14,6 +14,16 @@ public class UISettings extends JsonSettings {
 
   private boolean hideEmulatorColumn = true;
 
+  private boolean autoFill;
+
+  public boolean isAutoFill() {
+    return autoFill;
+  }
+
+  public void setAutoFill(boolean autoFill) {
+    this.autoFill = autoFill;
+  }
+
   public boolean isHideEmulatorColumn() {
     return hideEmulatorColumn;
   }

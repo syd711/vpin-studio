@@ -121,9 +121,15 @@ public class PopperServiceResource {
 
   @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}/{simulate}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
-                               @PathVariable("overwrite") boolean overwrite,
-                               @PathVariable("simulate") boolean simulate) {
-    return popperService.autoFill(gameService.getGame(gameId), overwrite, simulate);
+                               @PathVariable("overwrite") boolean overwrite) {
+    TableDetails tableDetails = pinUPConnector.getTableDetails(gameId);
+    return popperService.autoFill(gameService.getGame(gameId), tableDetails, overwrite, false);
+  }
+
+  @PostMapping("/tabledetails/autofillsimulate/{gameId}")
+  public TableDetails autofill(@PathVariable("gameId") int gameId,
+                               @RequestBody TableDetails tableDetails) {
+    return popperService.autoFill(gameService.getGame(gameId), tableDetails, true, true);
   }
 
   @PostMapping("/tabledetails/{gameId}")

@@ -163,7 +163,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @FXML
   private void onAutoMatch() {
     if (this.game.isPresent()) {
-      TableDialogs.openAutoFill(this.game.get(), false);
+      TableDialogs.openAutoMatch(this.game.get());
     }
   }
 

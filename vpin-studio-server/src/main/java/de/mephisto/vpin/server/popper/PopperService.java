@@ -3,13 +3,18 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -31,7 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PopperService implements InitializingBean {
+public class PopperService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
@@ -44,6 +49,11 @@ public class PopperService implements InitializingBean {
 
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private PreferencesService preferencesService;
+
+  private ServerSettings serverSettings;
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
@@ -136,10 +146,12 @@ public class PopperService implements InitializingBean {
   }
 
   @NonNull
-  public TableDetails autoFill(Game game, boolean overwrite, boolean simulate) {
-    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-    if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
+    String vpsTableId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableId());
+    String vpsTableVersionId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
+
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      VpsTable vpsTable = VPS.getInstance().getTableById(vpsTableId);
       if (vpsTable != null) {
         if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && vpsTable.getYear() > 0) {
           tableDetails.setGameYear(vpsTable.getYear());
@@ -179,8 +191,8 @@ public class PopperService implements InitializingBean {
           }
         }
 
-        if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-          VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+        if (!StringUtils.isEmpty(vpsTableVersionId)) {
+          VpsTableVersion tableVersion = vpsTable.getVersion(vpsTableVersionId);
           if (tableVersion != null) {
             if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableVersion.getVersion())) {
               tableDetails.setGameVersion(tableVersion.getVersion());
@@ -202,6 +214,7 @@ public class PopperService implements InitializingBean {
                 tableDetails.setTags(String.join(", ", tableVersion.getFeatures()));
               }
             }
+            LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
           }
         }
         else {
@@ -213,7 +226,7 @@ public class PopperService implements InitializingBean {
       fillTableInfoWithVpxData(game, tableDetails, overwrite);
     }
 
-    if(simulate) {
+    if (simulate) {
       LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
     }
     else {
@@ -441,5 +454,14 @@ public class PopperService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyPopperExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
   }
 }

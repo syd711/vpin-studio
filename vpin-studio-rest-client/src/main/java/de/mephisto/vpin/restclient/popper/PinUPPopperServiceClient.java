@@ -101,11 +101,20 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails autoFillTableDetails(int gameId, boolean checked, boolean simulate) throws Exception {
+  public TableDetails autoFillTableDetails(int gameId, boolean overwrite) throws Exception {
     try {
-      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId + "/" + checked + "/" + simulate, Collections.emptyMap(), TableDetails.class);
+      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId + "/" + overwrite, Collections.emptyMap(), TableDetails.class);
     } catch (Exception e) {
       LOG.error("Failed autofilling table details: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails) throws Exception {
+    try {
+      return getRestClient().post(API + "popper/tabledetails/autofillsimulate/" + gameId, tableDetails, TableDetails.class);
+    } catch (Exception e) {
+      LOG.error("Failed simulating autofilling table details: " + e.getMessage(), e);
       throw e;
     }
   }
