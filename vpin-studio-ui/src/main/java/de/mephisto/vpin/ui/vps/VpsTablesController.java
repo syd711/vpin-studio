@@ -371,11 +371,13 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     return false;
   }
 
-  private void refresh(Optional<VpsTable> newSelection) {
-    NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-    if (newSelection.isPresent()) {
-      VpsTable selection = newSelection.get();
-      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", selection.getDisplayName()));
+  public void refresh(Optional<VpsTable> newSelection) {
+    if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 1) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
+      if (newSelection.isPresent()) {
+        VpsTable selection = newSelection.get();
+        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", selection.getDisplayName()));
+      }
     }
 
     editBtn.setDisable(true);

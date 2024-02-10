@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TablesSidebarMameController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
 
@@ -104,15 +106,18 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onReload() {
+    saveDisabled = true;
     this.reloadBtn.setDisable(true);
+    client.getMameService().clearCache();
 
     Platform.runLater(() -> {
       new Thread(() -> {
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
           this.refreshView(this.game);
+          this.reloadBtn.setDisable(false);
+          saveDisabled = false;
         });
       }).start();
     });
@@ -125,7 +130,7 @@ public class TablesSidebarMameController implements Initializable {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
         try {
-          GameEmulatorRepresentation emulatorRepresentation = Studio.client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
           File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
           if (!file.exists()) {
             file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
@@ -145,7 +150,7 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onApplyDefaults() {
-    MameOptions defaultOptions = Studio.client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
     saveDisabled = true;
     skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
@@ -178,7 +183,7 @@ public class TablesSidebarMameController implements Initializable {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
-    mameBtn.setDisable(!Studio.client.getSystemService().isLocal());
+    mameBtn.setDisable(!client.getSystemService().isLocal());
 
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
@@ -238,8 +243,8 @@ public class TablesSidebarMameController implements Initializable {
       setInputDisabled(!romSet);
 
       if (romSet) {
-        options = Studio.client.getMameService().getOptions(game.getRom());
-        setInputDisabled(options == null);
+        options = client.getMameService().getOptions(game.getRom());
+        setInputDisabled(options == null || !options.isExistInRegistry());
 
         if (options != null) {
           skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());
@@ -302,7 +307,7 @@ public class TablesSidebarMameController implements Initializable {
     options.setSoundMode(soundMode.isSelected());
 
     try {
-      Studio.client.getMameService().saveOptions(options);
+      client.getMameService().saveOptions(options);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     } catch (Exception e) {
       LOG.error("Failed to save mame settings: " + e.getMessage(), e);

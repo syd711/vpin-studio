@@ -2,11 +2,10 @@
 
 ### Change
 
-- Updated to the new Virtual Pinball Spreadsheet database URL.
+- Updated Virtual Pinball Backup Manager 1.14. This only applied to the installer, but you can update to VPBM 1.14 in your preferences.
 
 ### Bugfixes
 
-- Upload menu items sorted alphabetical now.
 - Fixed restoring of textfile based highscores.
 - Fixed PUP pack analyzer: The analyzer did deny a PUP pack when the ROM named folder was on the root level of a zip.
 - Fixed initial breadcrumb path which was showing the initial VPS tables selection, not the one from the table overview.

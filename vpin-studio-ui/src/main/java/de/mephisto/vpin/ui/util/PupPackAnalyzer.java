@@ -121,7 +121,7 @@ public class PupPackAnalyzer {
             }
 
             for (String romName : romNames) {
-              if (!StringUtils.isEmpty(romName) && folderName.equals(romName)) {
+              if (!StringUtils.isEmpty(romName) && (folderName.equals(romName) || zipEntry.getName().startsWith(romName + "/"))) {
                 foundFolderMatchingRom = true;
                 LOG.info("Found matching ROM \"" + romName + "\" in pup pack archive.");
                 break;
@@ -154,7 +154,7 @@ public class PupPackAnalyzer {
     }
 
     if (!foundFolderMatchingRom) {
-      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(", ", romNames) + "\".");
+      progressResultModel.getResults().add("Selected PUP pack is not applicable for names \"" + String.join(" or ", romNames) + "\".");
     }
 
     return null;
