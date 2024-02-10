@@ -221,7 +221,8 @@ public class TableDialogs {
 
   public static void openAutoFillAll() {
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getGamesCached().size() + " tables?",
-      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.", null, "Overwrite existing data", false);
+      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
+      "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
       ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked(), false));
       EventManager.getInstance().notifyTablesChanged();
@@ -238,7 +239,8 @@ public class TableDialogs {
     }
 
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
-      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.", null, "Overwrite existing data", false);
+      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
+      "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked(), simulate));
       if(!progressDialog.getResults().isEmpty()) {

@@ -14,7 +14,7 @@ The "Table Data" is now "the one" dialog to rule them all. It consolidates the 4
 - Virtual Pinball Spreadsheet data
 - VPX file inner info section
 
-**It wasn't obvious where data was stored before and when exactly what value is used or preferred.**
+**It wasn't obvious where data was stored before and when exactly what value is used or preferred.1**
 From now on, **the values inside the PinUP Popper database will be the single source of truth and are always preferred over the scanned table values**.
 As a result from this, large parts of the "Script Section" have been resolved into the "Table Data" dialog (and moved lower to the bottom) and the "Popper Popper Table Data" section has been re-ordered.
 
@@ -51,3 +51,4 @@ Even if you table scan resolved the correct ROM name of a table.
 - Fixed window layout issue where the minimize/maximize/close buttons have been moved out of the toolbar.
 - Corrected error message text when a client is connecting to a server with a newer version.
 - Fixed MAME deletion: The registry key are not deleted (finally) and the "Mame" section is disabled when no registry entry is available for the table.  
+- Fixed MAME refresh: The registry entry of the selected table has been resetted on "Reload" pressed.

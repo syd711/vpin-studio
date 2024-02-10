@@ -1306,7 +1306,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     game.setGameFile(vpxFile);
 
     game.setExtTableId(rs.getString(serverSettings.getMappingVpsTableId()));
-    game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableId()));
+    game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableVersionId()));
     game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
 
     return game;

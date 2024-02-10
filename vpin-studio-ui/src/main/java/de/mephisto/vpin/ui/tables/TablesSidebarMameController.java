@@ -106,6 +106,7 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onReload() {
+    saveDisabled = true;
     this.reloadBtn.setDisable(true);
     client.getMameService().clearCache();
 
@@ -114,8 +115,9 @@ public class TablesSidebarMameController implements Initializable {
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
           this.refreshView(this.game);
+          this.reloadBtn.setDisable(false);
+          saveDisabled = false;
         });
       }).start();
     });

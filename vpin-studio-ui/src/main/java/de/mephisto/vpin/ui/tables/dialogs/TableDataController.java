@@ -1146,6 +1146,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       copyTableVersionBtn.setDisable(tableVersion == null);
     }
 
+    tableVersionsCombo.valueProperty().addListener(this);
     setMappedFieldValue(vpsTableMappingField, vpsTableId);
     setMappedFieldValue(vpsTableVersionMappingField, vpsTableVersionId);
   }
@@ -1203,6 +1204,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
   }
 
+  /**
+   * Change listener for the vps table name
+   * @param value the text field value
+   */
   @Override
   public void onChange(String value) {
     this.tableVersionsCombo.valueProperty().removeListener(this);
