@@ -2,7 +2,7 @@
 
 ### Change
 
-- Updated Virtual Pinball Backup Manager 1.14. This only applied to the installer, but you can update to VPBM 1.14 in your preferences.
+- Updated Virtual Pinball Backup Manager 1.14. This is only applied to the installer, but you can update to VPBM 1.14 in your preferences.
 
 ### Bugfixes
 
