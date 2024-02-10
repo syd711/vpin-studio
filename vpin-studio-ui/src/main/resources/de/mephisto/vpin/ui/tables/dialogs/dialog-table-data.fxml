@@ -409,7 +409,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+                                                      <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
                                                    </tooltip>
                                                 </SplitMenuButton>
                                              </right>
