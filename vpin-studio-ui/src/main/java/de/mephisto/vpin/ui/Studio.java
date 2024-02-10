@@ -9,9 +9,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.ui.launcher.LauncherController;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.FXResizeHelper;
-import de.mephisto.vpin.ui.util.LocalUISettings;
+import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -34,8 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
@@ -127,6 +129,11 @@ public class Studio extends Application {
         createManiaClient();
         OverlayWindowFX.client = Studio.client;
 
+        List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
+        if (!unknownGameIds.isEmpty()) {
+          ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+        }
+
         FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
         Parent root = null;
         try {
@@ -178,8 +185,6 @@ public class Studio extends Application {
         });
 
         client.setErrorHandler(errorHandler);
-
-        LOG.info("Init finished, showing Studio stage.");
         stage.show();
         splash.hide();
       });

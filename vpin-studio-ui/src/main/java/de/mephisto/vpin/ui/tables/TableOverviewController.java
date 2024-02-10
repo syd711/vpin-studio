@@ -705,15 +705,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-        List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
-        if (!unknownGameIds.isEmpty()) {
-          reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload-alert"));
-          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
-          if (!progressDialog.isCancelled()) {
-            reloadBtn.setGraphic(WidgetFactory.createIcon("mdi2r-reload"));
-          }
-        }
-
         games = client.getGameService().getKnownGames();
         filterGames(games);
 
