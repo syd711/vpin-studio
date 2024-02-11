@@ -131,6 +131,7 @@ public class Studio extends Application {
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (!unknownGameIds.isEmpty()) {
+          LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
           ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
         }
 

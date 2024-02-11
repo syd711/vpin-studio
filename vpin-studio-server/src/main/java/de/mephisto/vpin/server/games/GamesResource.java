@@ -122,6 +122,7 @@ public class GamesResource {
 
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
+    LOG.info("Client initiated game scan for " + pupId);
     return gameService.scanGame(pupId);
   }
 
