@@ -259,18 +259,24 @@
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
+                                                   <GridPane.margin>
+                                                      <Insets top="3.0" />
+                                                   </GridPane.margin>
                                                 </Label>
                                                 <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Scanned Alt. ROM Name:" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
+                                                   <GridPane.margin>
+                                                      <Insets top="3.0" />
+                                                   </GridPane.margin>
                                                 </Label>
-                                                <TextField fx:id="scannedRomName" GridPane.columnIndex="1">
+                                                <TextField fx:id="scannedRomName" editable="false" GridPane.columnIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                                <TextField fx:id="scannedAltRomName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <TextField fx:id="scannedAltRomName" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -279,12 +285,15 @@
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
+                                                   <GridPane.margin>
+                                                      <Insets top="3.0" />
+                                                   </GridPane.margin>
                                                 </Label>
                                                 <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <children>
                                                       <VBox>
                                                          <children>
-                                                            <TextField fx:id="scannedHighscoreFileName">
+                                                            <TextField fx:id="scannedHighscoreFileName" editable="false">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>

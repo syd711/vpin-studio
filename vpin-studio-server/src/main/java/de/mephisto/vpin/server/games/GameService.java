@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -23,7 +22,6 @@ import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -45,7 +43,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GameService implements InitializingBean, PreferenceChangedListener {
+public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   @Autowired
@@ -101,7 +99,6 @@ public class GameService implements InitializingBean, PreferenceChangedListener 
 
   @Autowired
   private MameService mameService;
-  private ServerSettings serverSettings;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -495,28 +492,35 @@ public class GameService implements InitializingBean, PreferenceChangedListener 
       LOG.info("Created GameDetails for " + game.getGameDisplayName());
     }
 
-    //use the script ROM name to check if it is an original or a mapping
-    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), gameDetails.getRomName());
+
+    //only apply legacy table name if the Popper fields are empty
+    if (StringUtils.isEmpty(game.getTableName())) {
+      game.setTableName(gameDetails.getTableName());
+    }
+
+    if (StringUtils.isEmpty(game.getRom())) {
+      game.setRom(gameDetails.getRomName());
+    }
+
+    //check alias
+    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
     if (!StringUtils.isEmpty(originalRom)) {
       game.setRom(originalRom);
-      game.setRomAlias(gameDetails.getRomName());
-    }
-    else {
-      game.setRom(gameDetails.getRomName());
+      game.setRomAlias(game.getRom());
     }
 
     game.setNvOffset(gameDetails.getNvOffset());
 
-    if(StringUtils.isEmpty(game.getHsFileName())) {
+    //only apply legacy highscore name if the Popper fields are empty
+    if (StringUtils.isEmpty(game.getHsFileName())) {
       game.setHsFileName(gameDetails.getHsFileName());
     }
-    game.setTableName(gameDetails.getTableName());
 
     //only apply legacy VPS data if the Popper fields are empty
-    if(StringUtils.isEmpty(game.getExtTableId())) {
+    if (StringUtils.isEmpty(game.getExtTableId())) {
       game.setExtTableId(gameDetails.getExtTableId());
     }
-    if(StringUtils.isEmpty(game.getExtTableVersionId())) {
+    if (StringUtils.isEmpty(game.getExtTableVersionId())) {
       game.setExtTableVersionId(gameDetails.getExtTableVersionId());
     }
 
@@ -554,35 +558,13 @@ public class GameService implements InitializingBean, PreferenceChangedListener 
 
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    String existingRom = String.valueOf(gameDetails.getRomName());
-    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(existingRom);
-
-    gameDetails.setRomName(game.getRom());
-    gameDetails.setHsFileName(game.getHsFileName());
-    gameDetails.setTableName(game.getTableName());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
-
-//    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-//    tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), game.getExtTableId());
-//    tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), game.getExtTableVersionId());
-//    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
-//
-//    //reset legacy values
-//    gameDetails.setExtTableId(null);
-//    gameDetails.setExtTableVersionId(null);
-
     if (game.getUpdates() != null) {
       gameDetails.setUpdates(String.join(",", game.getUpdates()));
     }
-
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
-    Game updated = getGame(game.getId());
-    if (romChanged) {
-      highscoreService.scanScore(updated);
-      cardService.generateCard(updated, false);
-    }
-    return updated;
+    return getGame(game.getId());
   }
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {
@@ -604,14 +586,6 @@ public class GameService implements InitializingBean, PreferenceChangedListener 
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
-  }
 
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    }
   }
 }

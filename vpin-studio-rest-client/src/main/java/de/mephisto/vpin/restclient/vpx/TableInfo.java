@@ -25,16 +25,16 @@ public class TableInfo {
 
   }
 
-  public TableInfo(Map<String, String> values) {
-    this.tableName = values.get("TableName");
-    this.authorWebSite = values.get("AuthorWebSite");
-    this.authorName = values.get("AuthorName");
-    this.tableBlurb = values.get("TableBlurb");
-    this.tableRules = values.get("TableRules");
-    this.tableVersion = values.get("TableVersion");
-    this.authorEmail = values.get("AuthorEmail");
-    this.releaseDate = values.get("ReleaseDate");
-    this.tableDescription = values.get("TableDescription");
+  public TableInfo(Map<String, Object> values) {
+    this.tableName = (String) values.get("TableName");
+    this.authorWebSite = (String) values.get("AuthorWebSite");
+    this.authorName = (String) values.get("AuthorName");
+    this.tableBlurb = (String) values.get("TableBlurb");
+    this.tableRules = (String) values.get("TableRules");
+    this.tableVersion = (String) values.get("TableVersion");
+    this.authorEmail = (String) values.get("AuthorEmail");
+    this.releaseDate = (String) values.get("ReleaseDate");
+    this.tableDescription = (String) values.get("TableDescription");
   }
 
   public String getTableName() {

@@ -1065,37 +1065,14 @@ public class TableDataController implements Initializable, DialogController, Aut
     gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
 
     scannedRomName.setText(game.getRom());
-    scannedRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-      game.setRom(newValue);
-      romName.setPromptText("");
-      applyRomBtn.setDisable(StringUtils.isEmpty(newValue));
-      if (!StringUtils.isEmpty(newValue)) {
-        romName.setPromptText(newValue + " (scanned value)");
-      }
-    });
     applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
 
     scannedAltRomName.setText(game.getTableName());
-    scannedAltRomName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-      game.setTableName(newValue);
-      altRomName.setPromptText("");
-      applyAltRomBtn.setDisable(StringUtils.isEmpty(newValue));
-      if (StringUtils.isEmpty(altRomName.getText())) {
-        altRomName.setPromptText(newValue + " (scanned value)");
-      }
-    });
     applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
 
 
     String mappingHsField = serverSettings.getMappingHsFileName();
     scannedHighscoreFileName.setText(game.getHsFileName());
-    scannedHighscoreFileName.textProperty().addListener((observableValue, oldValue, newValue) -> {
-      game.setHsFileName(newValue);
-      applyHsBtn.setDisable(StringUtils.isEmpty(newValue));
-      if (StringUtils.isEmpty(highscoreFileName.getText())) {
-        highscoreFileName.setPromptText(newValue + " (scanned value)");
-      }
-    });
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
     hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
 

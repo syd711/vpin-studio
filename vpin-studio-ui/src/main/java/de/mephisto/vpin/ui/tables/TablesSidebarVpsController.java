@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -8,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -210,15 +210,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onVpsReset() {
-    try {
-      if (!this.game.isEmpty()) {
-        GameRepresentation gameRepresentation = this.game.get();
-        gameRepresentation.setUpdates(Collections.emptyList());
-        client.getGameService().saveGame(gameRepresentation);
-        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-      }
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
+    if (!this.game.isEmpty()) {
+      GameRepresentation gameRepresentation = this.game.get();
+      TableActions.onVpsReset(Arrays.asList(gameRepresentation));
     }
   }
 
@@ -258,8 +252,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         VpsTable vpsTable = selectedEntry.get();
-        gameRepresentation.setExtTableId(vpsTable.getId());
-        client.getGameService().saveGame(gameRepresentation);
+
+        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
+        tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
+        client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
       }
       this.tableVersionsCombo.valueProperty().addListener(this);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -503,19 +499,17 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (this.game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = this.game.get();
+        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
+        copyTableVersionBtn.setDisable(newValue == null);
+
+        String updatedId = null;
         if (newValue != null) {
-          copyTableVersionBtn.setDisable(false);
-          String existingValueId = this.game.get().getExtTableVersionId();
-          String newValueId = newValue.getId();
-          if (existingValueId == null || !existingValueId.equals(newValueId)) {
-            gameRepresentation.setExtVersion(newValueId);
-            client.getGameService().saveGame(gameRepresentation);
-            EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-          }
+          updatedId = newValue.getId();
         }
-        else {
-          gameRepresentation.setExtVersion(null);
-          client.getGameService().saveGame(gameRepresentation);
+        String oldVersionValue = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
+        if (!String.valueOf(oldValue).equals(oldVersionValue)) {
+          tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), updatedId);
+          client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         }
       } catch (Exception e) {

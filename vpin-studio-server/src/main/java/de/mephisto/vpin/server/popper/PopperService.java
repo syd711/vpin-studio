@@ -274,7 +274,16 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     String existingRom = String.valueOf(oldDetails.getRomName());
     boolean romChanged = !String.valueOf(updatedTableDetails.getRomName()).equalsIgnoreCase(existingRom);
     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Rom change stuff");
-
+//    String existingRom = String.valueOf(gameDetails.getRomName());
+//    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(existingRom);
+//    gameDetailsRepository.saveAndFlush(gameDetails);
+//    LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
+//    Game updated = getGame(game.getId());
+//    if (romChanged) {
+//      highscoreService.scanScore(updated);
+//      cardService.generateCard(updated, false);
+//    }
+//    return updated;
 
     //for upload and replace, we do not need any renaming
     if (!renamingChecks) {

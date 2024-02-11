@@ -329,16 +329,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onVpsReset() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    try {
-      List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList());
-      for (GameRepresentation gameRepresentation : collect) {
-        gameRepresentation.setUpdates(Collections.emptyList());
-        client.getGameService().saveGame(gameRepresentation);
-        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-      }
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS updates information: " + e.getMessage());
-    }
+    TableActions.onVpsReset(selectedItems);
   }
 
   @FXML
@@ -473,15 +464,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onTablesScan() {
     List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
-    String title = "Re-scan selected tables?";
+    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
     if (selectedItems.size() == 1) {
-      title = "Re-scan table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
+      GameRepresentation gameRepresentation = selectedItems.get(0);
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
     }
-
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-      "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+    else {
       this.onReload();
     }
   }
@@ -490,7 +478,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onTablesScanAll() {
     String title = "Re-scan all " + games.size() + " tables?";
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-      "Re-scanning will overwrite some of the existing metadata properties.", null, "Start Scan");
+      "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.clearCache();
       ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", this.games));
@@ -1422,7 +1410,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void selectNext() {
     int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-    if (!tableView.getItems().isEmpty() && (selectedIndex+1) < tableView.getItems().size() ) {
+    if (!tableView.getItems().isEmpty() && (selectedIndex + 1) < tableView.getItems().size()) {
       tableView.getSelectionModel().clearSelection();
       tableView.getSelectionModel().select((selectedIndex + 1));
     }

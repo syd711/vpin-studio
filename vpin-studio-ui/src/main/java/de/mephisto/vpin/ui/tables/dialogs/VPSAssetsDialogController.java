@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
@@ -96,8 +95,6 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     if (!vpsTables.isEmpty()) {
       VpsTable vpsTable = vpsTables.get(0);
       refreshTableView(vpsTable);
-
-      saveExternalTableId(vpsTable.getId());
     }
   }
 
@@ -132,18 +129,6 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     }
   }
 
-  private void saveExternalTableId(String id) {
-    try {
-      if (!id.equals(game.getExtTableId())) {
-        game.setExtTableId(id);
-        Studio.client.getGameService().saveGame(game);
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to set external game id: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error updating external game reference: " + e.getMessage());
-    }
-  }
-
   @Override
   public void onChange(String value) {
     List<VpsTable> tables = VPS.getInstance().getTables();
@@ -151,7 +136,6 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
-      saveExternalTableId(vpsTable.getId());
     }
   }
 

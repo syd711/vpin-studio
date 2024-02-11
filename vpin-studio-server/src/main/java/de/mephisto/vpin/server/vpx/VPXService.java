@@ -142,7 +142,7 @@ public class VPXService {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
-          Map<String, String> values = VPXUtil.readTableInfo(gameFile);
+          Map<String, Object> values = VPXUtil.readTableInfo(gameFile);
           if(values != null) {
             return new TableInfo(values);
           }

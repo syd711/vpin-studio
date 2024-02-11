@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
       <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -301,7 +301,7 @@
             </Button>
             <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Fill All">
+                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Match All">
                      <graphic>
                         <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
                            <font>
@@ -321,7 +321,7 @@
                </tooltip>
             </SplitMenuButton>
             <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />
-            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Resources" textFill="WHITE">
+            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Assets" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

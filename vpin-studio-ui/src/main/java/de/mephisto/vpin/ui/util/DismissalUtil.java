@@ -70,17 +70,4 @@ public class DismissalUtil {
     }
     EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
   }
-
-  private static void dismissAll(GameRepresentation game) {
-    List<Integer> ignoredValidations = new ArrayList<>();
-    ignoredValidations.add(-1);
-    game.setIgnoredValidations(ignoredValidations);
-
-    try {
-      client.getGameService().saveGame(game);
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, e.getMessage());
-    }
-    EventManager.getInstance().notifyTableChange(game.getId(), null);
-  }
 }

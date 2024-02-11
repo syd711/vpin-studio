@@ -252,11 +252,21 @@ public class TableDialogs {
   }
 
   public static void openAutoMatch(GameRepresentation game) {
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
-      "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
-    if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), result.isChecked()));
-      EventManager.getInstance().notifyTablesChanged();
+    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        onOpenAutoMatch(game);
+      }
+      return;
+    }
+    onOpenAutoMatch(game);
+  }
+
+  private static void onOpenAutoMatch(GameRepresentation game) {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
+      "This will overwrite the existing mapping.", "This action will overwrite the Popper fields configured for the VPS table and version IDs.", "Auto-Match");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true));
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 

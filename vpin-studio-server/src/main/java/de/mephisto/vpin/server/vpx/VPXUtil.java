@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPXUtil {
@@ -35,8 +36,8 @@ public class VPXUtil {
     }
   }
 
-  public static Map<String, String> readTableInfo(@NonNull File file) throws Exception {
-    Map<String, String> result = new HashMap<>();
+  public static Map<String, Object> readTableInfo(@NonNull File file) throws Exception {
+    Map<String, Object> result = new HashMap<>();
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(file, true);
@@ -60,7 +61,12 @@ public class VPXUtil {
 
         Byte[] bytes = collect.toArray(new Byte[collect.size()]);
         byte[] primitive = ArrayUtils.toPrimitive(bytes);
-        result.put(infoEntry, new String(primitive));
+        if (infoEntry.equals("Screenshot")) {
+          result.put(infoEntry, primitive);
+        }
+        else {
+          result.put(infoEntry, new String(primitive, StandardCharsets.UTF_8));
+        }
       }
     } catch (Exception e) {
       LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
