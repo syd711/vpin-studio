@@ -85,10 +85,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    List<String> hsFileNameMappingFields = Arrays.asList("MediaSearch", "Special", "CUSTOM2", "CUSTOM3");
-    if(dbVersion >= UIDefaults.DB_VERSION) {
-      hsFileNameMappingFields= Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
-    }
+    List<String> hsFileNameMappingFields =  Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingHsFileNameCombo.setItems(FXCollections.observableList(hsFileNameMappingFields));
     mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -97,10 +94,7 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    List<String> tableIdFields = Arrays.asList("MediaSearch", "Special", "CUSTOM2", "CUSTOM3");
-    if(dbVersion >= UIDefaults.DB_VERSION) {
-      tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
-    }
+    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingVpsTableIdCombo.setItems(FXCollections.observableList(tableIdFields));
     mappingVpsTableIdCombo.setValue(serverSettings.getMappingVpsTableId());
     mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -109,10 +103,7 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    List<String> vpsTableVersionFields = Arrays.asList("MediaSearch", "Special", "CUSTOM2", "CUSTOM3");
-    if(dbVersion >= UIDefaults.DB_VERSION) {
-      vpsTableVersionFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
-    }
+    List<String> vpsTableVersionFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingVpsVersionIdCombo.setItems(FXCollections.observableList(vpsTableVersionFields));
     mappingVpsVersionIdCombo.setValue(serverSettings.getMappingVpsTableVersionId());
     mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {

@@ -26,13 +26,44 @@ public class VPReg {
   public static final String HIGH_SCORE = "HighScore";
 
   private final File vpregFile;
-  private final String rom;
-  private final String tablename;
+  private String rom;
+  private String tablename;
+
+
+  public VPReg(File vpregFile) {
+    this.vpregFile = vpregFile;
+  }
 
   public VPReg(File vpregFile, String rom, String tablename) {
     this.vpregFile = vpregFile;
     this.rom = rom;
     this.tablename = tablename;
+  }
+
+  public List<String> getEntries() {
+    List<String> result = new ArrayList<>();
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(vpregFile, false);
+      DirectoryEntry root = fs.getRoot();
+      if (root != null) {
+        Iterator<Entry> entries = root.getEntries();
+        while (entries.hasNext()) {
+          result.add(entries.next().getName());
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to read VPReg: " + e.getMessage());
+    } finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        } catch (IOException e) {
+          //ignore
+        }
+      }
+    }
+    return result;
   }
 
   public boolean containsGame() {
@@ -253,10 +284,10 @@ public class VPReg {
 
           String scoreString = new String(scoreContent, StandardCharsets.UTF_8);
           scoreString = scoreString.replace("\0", "");
-          while(scoreString.contains(".")) {
+          while (scoreString.contains(".")) {
             scoreString = scoreString.substring(0, scoreString.indexOf("."));
           }
-          while(scoreString.contains(",")) {
+          while (scoreString.contains(",")) {
             scoreString = scoreString.substring(0, scoreString.indexOf("."));
           }
 

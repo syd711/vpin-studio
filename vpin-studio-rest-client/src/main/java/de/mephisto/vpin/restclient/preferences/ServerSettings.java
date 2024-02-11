@@ -6,9 +6,9 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean launchPopperOnExit = true;
-  private String mappingHsFileName = "MediaSearch";
   private String mappingVpsTableId = "CUSTOM2";
   private String mappingVpsTableVersionId = "CUSTOM3";
+  private String mappingHsFileName = "CUSTOM4";
 
   public String getMappingVpsTableVersionId() {
     return mappingVpsTableVersionId;

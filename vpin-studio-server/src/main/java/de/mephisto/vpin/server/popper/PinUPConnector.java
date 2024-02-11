@@ -207,7 +207,6 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         }
 
         manifest.setRomName(rs.getString("ROM"));
-        manifest.setRomAlt(rs.getString("ROMALT"));
         manifest.setManufacturer(rs.getString("Manufact"));
         manifest.setNumberOfPlayers(rs.getInt("NumPlayers"));
         if (rs.wasNull()) {
@@ -247,7 +246,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         //check for popper DB update 1.5
         if (sqlVersion >= DB_VERSION) {
           manifest.setWebGameId(rs.getString("WEBGameID"));
-
+          manifest.setRomAlt(rs.getString("ROMALT"));
           manifest.setMod(rs.getInt("ISMOD") == 1);
           manifest.setWebLink2Url(rs.getString("WebLink2URL"));
           manifest.setTourneyId(rs.getString("TourneyID"));
@@ -295,8 +294,6 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       params.add(tableDetails.getGameYear());
       stmtBuilder.append("'ROM' = ?, ");
       params.add(tableDetails.getRomName());
-      stmtBuilder.append("'ROMALT' = ?, ");
-      params.add(tableDetails.getRomAlt());
       stmtBuilder.append("'Manufact' = ?, ");
       params.add(tableDetails.getManufacturer());
       stmtBuilder.append("'NumPlayers' = ?, ");
@@ -346,6 +343,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       if (sqlVersion >= DB_VERSION) {
         stmtBuilder.append("'WEBGameID' = ?, ");
         params.add(tableDetails.getWebGameId());
+        stmtBuilder.append("'ROMALT' = ?, ");
+        params.add(tableDetails.getRomAlt());
         stmtBuilder.append("'ISMOD' = ?, ");
         params.add(tableDetails.isMod());
         stmtBuilder.append("'WebLink2URL' = ?, ");

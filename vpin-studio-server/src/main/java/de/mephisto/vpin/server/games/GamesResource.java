@@ -3,8 +3,10 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -89,6 +91,11 @@ public class GamesResource {
     return game;
   }
 
+  @GetMapping("/details/{id}")
+  public GameDetailsRepresentation getGameDetails(@PathVariable("id") int id) {
+    return gameService.getGameDetails(id);
+  }
+
   @GetMapping("/validations/{id}")
   public List<ValidationState> getAllValidations(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -101,6 +108,11 @@ public class GamesResource {
   @GetMapping("/scores/{id}")
   public ScoreSummary getScores(@PathVariable("id") int id) {
     return gameService.getScores(id);
+  }
+
+  @GetMapping("/highscorefiles/{id}")
+  public HighscoreFiles getHighscoreFiles(@PathVariable("id") int id) {
+    return gameService.getHighscoreFiles(id);
   }
 
   @GetMapping("/scorehistory/{id}")
@@ -234,7 +246,7 @@ public class GamesResource {
               Game game = gameService.scanGame(importedGameId);
               if (game != null) {
                 TableDetails tableDetails = vpsService.autoMatch(game, true);
-                if(tableDetails != null) {
+                if (tableDetails != null) {
                   popperService.autoFill(game, tableDetails, true, false);
                 }
               }

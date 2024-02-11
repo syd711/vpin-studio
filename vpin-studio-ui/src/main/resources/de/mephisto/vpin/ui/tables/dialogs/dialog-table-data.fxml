@@ -186,6 +186,7 @@
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" />
                                             </columnConstraints>
                                             <rowConstraints>
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -204,11 +205,6 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="romName" GridPane.columnIndex="1">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <TextField fx:id="altRomName" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
@@ -219,12 +215,9 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="highscoreFileName" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <ComboBox fx:id="romName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" />
+                                                <ComboBox fx:id="highscoreFileName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                              </children>
                                           </GridPane>
                                           <Label styleClass="default-title" text="Scanned Values" textFill="WHITE">
@@ -241,7 +234,7 @@
                                                 <Insets />
                                              </VBox.margin>
                                           </Label>
-                                          <Label layoutX="22.0" layoutY="461.0" styleClass="preference-description" text="You can edit them, but they will be overwritten if the table is scanned again." />
+                                          <Label layoutX="22.0" layoutY="461.0" styleClass="preference-description" text="Click &quot;Apply&quot; to save them to the PinUP Popper database." />
                                           <GridPane hgap="3.0" vgap="3.0">
                                             <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
@@ -308,7 +301,7 @@
                                                       </VBox>
                                                    </children>
                                                 </VBox>
-                                                <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Copy" GridPane.columnIndex="2">
+                                                <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -316,7 +309,7 @@
                                                       <Tooltip prefWidth="300.0" text="Apply scanned ROM name to Popper field &quot;ROM Name&quot; to this save value permanently." wrapText="true" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Copy" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -331,7 +324,7 @@
                                                    <top>
                                                       <HBox spacing="6.0" BorderPane.alignment="CENTER">
                                                          <children>
-                                                            <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="Copy">
+                                                            <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="Apply">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>

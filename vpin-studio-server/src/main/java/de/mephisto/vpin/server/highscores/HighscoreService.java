@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,30 @@ public class HighscoreService implements InitializingBean {
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
+
+  public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
+    HighscoreFiles highscoreFiles = new HighscoreFiles();
+
+    VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
+    highscoreFiles.setVpRegEntries(reg.getEntries());
+
+    File userFolder = game.getEmulator().getUserFolder();
+    if(userFolder.exists()) {
+      File[] files = userFolder.listFiles((dir, name) -> name.endsWith(".txt"));
+      if (files != null) {
+        highscoreFiles.setTextFiles(Arrays.stream(files).map(File::getName).collect(Collectors.toList()));
+      }
+    }
+
+    File nvramFolder = game.getEmulator().getNvramFolder();
+    if(nvramFolder.exists()) {
+      File[] files = nvramFolder.listFiles((dir, name) -> name.endsWith(".nv"));
+      if (files != null) {
+        highscoreFiles.setNvRams(Arrays.stream(files).map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList()));
+      }
+    }
+    return highscoreFiles;
+  }
 
   public boolean resetHighscore(@NonNull Game game) {
     try {
@@ -432,7 +459,6 @@ public class HighscoreService implements InitializingBean {
       else {
         LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
         if (!changedPositions.isEmpty()) {
-
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
             Score oldScore = oldScores.get(changedPosition - 1);

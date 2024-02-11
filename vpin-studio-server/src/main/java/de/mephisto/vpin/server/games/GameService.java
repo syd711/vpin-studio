@@ -3,7 +3,10 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
@@ -429,6 +432,16 @@ public class GameService implements InitializingBean {
     return null;
   }
 
+  @Nullable
+  public GameDetailsRepresentation getGameDetails(int gameId) {
+    GameDetailsRepresentation details = new GameDetailsRepresentation();
+    GameDetails ref = gameDetailsRepository.findByPupId(gameId);
+    details.setRomName(ref.getRomName());
+    details.setHsFileName(ref.getHsFileName());
+    details.setTableName(ref.getTableName());
+    return details;
+  }
+
   @SuppressWarnings("unused")
   public List<Game> getActiveGameInfos() {
     List<Integer> gameIdsFromPlaylists = this.pinUPConnector.getGameIdsFromPlaylists();
@@ -582,6 +595,11 @@ public class GameService implements InitializingBean {
     } catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
     }
+  }
+
+  public HighscoreFiles getHighscoreFiles(int id) {
+    Game game = getGame(id);
+    return highscoreService.getHighscoreFiles(game);
   }
 
   @Override

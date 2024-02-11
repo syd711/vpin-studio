@@ -46,3 +46,5 @@ Even if you table scan resolved the correct ROM name of a table.
 ### Bugfixes
 
 - Upload menu items sorted alphabetical now.
+- Added missing labels for "Audio" and "Audio Launch" in the Popper media section.
+- Maximizing the window will now work for the active screen.

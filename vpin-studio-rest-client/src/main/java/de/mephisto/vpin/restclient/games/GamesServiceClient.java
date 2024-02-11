@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -193,6 +194,14 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public GameRepresentation scanGame(int gameId) {
     return getRestClient().get(API + "games/scan/" + gameId, GameRepresentation.class);
+  }
+
+  public HighscoreFiles getHighscoreFiles(int gameId) {
+    return getRestClient().get(API + "games/highscorefiles/" + gameId, HighscoreFiles.class);
+  }
+
+  public GameDetailsRepresentation getGameDetails(int gameId) {
+    return getRestClient().get(API + "games/details/" + gameId, GameDetailsRepresentation.class);
   }
 
   public GameRepresentation saveGame(GameRepresentation game) throws Exception {
