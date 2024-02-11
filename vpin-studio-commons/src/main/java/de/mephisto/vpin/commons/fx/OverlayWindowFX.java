@@ -259,7 +259,7 @@ public class OverlayWindowFX extends Application {
 
   private void showHighscoreCard(int notificationTime) {
     highscoreCardStage.show();
-//    TransitionUtil.createInFader(highscoreCardController.getRoot(), 500).play();
+    TransitionUtil.createInFader(highscoreCardController.getRoot(), 500).play();
     new Thread(() -> {
       try {
         Thread.sleep(notificationTime * 1000);
