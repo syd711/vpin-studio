@@ -25,7 +25,7 @@ public class HighscoreMonitoringService {
 
   public void startMonitoring(@NonNull Game game) {
     if(monitorThread != null) {
-      running.set(false);
+      stopMonitoring();
     }
 
     File highscoreFile = game.getHighscoreFile();
@@ -33,9 +33,8 @@ public class HighscoreMonitoringService {
       LOG.info("Cancelled highscore monitoring, no highscore type set.");
       return;
     }
-
-    if (highscoreFile.exists()) {
-      LOG.info("Cancelled highscore monitoring, highscore file\"" + highscoreFile.getAbsolutePath() + "\" does not exist.");
+    if (!highscoreFile.exists()) {
+      LOG.info("Cancelled highscore monitoring, highscore file \"" + highscoreFile.getAbsolutePath() + "\" does not exist.");
       return;
     }
 
@@ -53,7 +52,7 @@ public class HighscoreMonitoringService {
     monitorThread = new Thread(() -> {
       try {
         Thread.currentThread().setName("Highscore Monitor Thread (" + highscoreFile.getName() + ")");
-        HighscoreMetadata initialData = highscoreService.readHighscore(game);
+        LOG.info("Launched \"Highscore Monitor Thread (" + highscoreFile.getName() + ")\"");
 
         final Path path = highscoreFile.getParentFile().toPath();
         try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
@@ -64,7 +63,7 @@ public class HighscoreMonitoringService {
               //we only register "ENTRY_MODIFY" so the context is always a Path.
               final Path changed = (Path) event.context();
               if (changed.endsWith(highscoreFile.getName())) {
-                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed");
+                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
               }
             }
             // reset the key
@@ -80,5 +79,6 @@ public class HighscoreMonitoringService {
         LOG.info(Thread.currentThread().getName() + " terminated.");
       }
     });
+    monitorThread.start();
   }
 }
