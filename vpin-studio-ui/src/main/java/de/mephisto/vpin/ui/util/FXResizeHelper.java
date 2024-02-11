@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -63,26 +64,37 @@ public class FXResizeHelper {
    * with heigth and width. Otherwise it will be maximized to fullscreen.
    */
   public void switchWindowedMode(MouseEvent e) {
+    ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(e.getScreenX(), e.getScreenY(), 1, 1);
+    Screen screen = screensForRectangle.get(0);
+
     if (mIsMaximized) {
       STAGE.setY(mYStore);
       STAGE.setX(mXStore);
       STAGE.setWidth(mWidthStore);
       STAGE.setHeight(mHeightStore);
-    } else {
+    }
+    else {
       mXStore = STAGE.getX();
       mYStore = STAGE.getY();
       mWidthStore = STAGE.getWidth();
       mHeightStore = STAGE.getHeight();
 
-      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
-      GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-      Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(defaultConfiguration);
+      if (screen.equals(Screen.getPrimary())) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
+        GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
+        Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(defaultConfiguration);
+        STAGE.setY(screenInsets.top);
+        STAGE.setX(screenInsets.left);
+      }
+      else {
+        STAGE.setX(screen.getBounds().getMinX());
+        STAGE.setY(screen.getBounds().getMinY());
+      }
 
-      STAGE.setY(screenInsets.top);
-      STAGE.setX(screenInsets.left);
-      STAGE.setWidth(SCREEN_WIDTH);
-      STAGE.setHeight(SCREEN_HEIGHT);
+
+      STAGE.setWidth(screen.getVisualBounds().getWidth());
+      STAGE.setHeight(screen.getVisualBounds().getHeight());
     }
     mIsMaximized = !mIsMaximized;
   }

@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
 import de.mephisto.vpin.ui.util.LocalUISettings;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
@@ -43,6 +46,8 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private BorderPane header;
+
+  private static MouseEvent event;
 
   @FXML
   private void onMouseClick(MouseEvent e) {
@@ -95,7 +100,7 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
-    helper.switchWindowedMode(null);
+    helper.switchWindowedMode(event);
   }
 
   @FXML
@@ -122,5 +127,12 @@ public class HeaderResizeableController implements Initializable {
     stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+
+    header.setOnMouseMoved(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        HeaderResizeableController.event = event;
+      }
+    });
   }
 }
