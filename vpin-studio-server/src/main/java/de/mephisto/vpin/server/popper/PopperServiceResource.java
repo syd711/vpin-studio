@@ -119,7 +119,7 @@ public class PopperServiceResource {
     return popperService.getPupPlayerDisplay(screen);
   }
 
-  @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}/{simulate}")
+  @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
                                @PathVariable("overwrite") boolean overwrite) {
     TableDetails tableDetails = pinUPConnector.getTableDetails(gameId);

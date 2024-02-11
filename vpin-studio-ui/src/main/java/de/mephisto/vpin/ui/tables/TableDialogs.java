@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.utils.AltSoundArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.DirectB2SArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -12,9 +11,9 @@ import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -54,13 +53,13 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
+      new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
 
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-            "Popper Media Upload", files, "popperMedia", screen);
+          "Popper Media Upload", files, "popperMedia", screen);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -74,7 +73,8 @@ public class TableDialogs {
           tablesSidebarController.getTablesController().onReload();
         }
       }
-    } else {
+    }
+    else {
       boolean uploaded = TableDialogs.openRomUploadDialog();
       if (uploaded) {
         tablesSidebarController.getTablesController().onReload();
@@ -94,7 +94,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
+      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
@@ -102,7 +102,8 @@ public class TableDialogs {
         String analyze = DirectB2SArchiveAnalyzer.analyze(file);
         if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        } else {
+        }
+        else {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
           ProgressDialog.createProgressDialog(model);
         }
@@ -235,7 +236,7 @@ public class TableDialogs {
       "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked()));
-      if(!progressDialog.getResults().isEmpty()) {
+      if (!progressDialog.getResults().isEmpty()) {
         return (TableDetails) progressDialog.getResults().get(0);
       }
     }
@@ -268,6 +269,18 @@ public class TableDialogs {
       ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true));
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
+  }
+
+  public static boolean openScanAllDialog(List<GameRepresentation> games) {
+    String title = "Re-scan all " + games.size() + " tables?";
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
+      "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.clearCache();
+      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", games));
+      return true;
+    }
+    return false;
   }
 
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
@@ -378,20 +391,20 @@ public class TableDialogs {
   }
 
   public static boolean openValidationDialog(List<GameRepresentation> selectedItems, boolean reload) {
-    if(selectedItems.isEmpty()) {
+    if (selectedItems.isEmpty()) {
       return false;
     }
     String title = "Re-validate " + selectedItems.size() + " tables?";
-    if(selectedItems.size() == 1) {
+    if (selectedItems.size() == 1) {
       title = "Re-validate table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
     }
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title ,
-        "This will reset the dismissed validations for this table too.", null);
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
+      "This will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       title = "Re-validating " + selectedItems.size() + " tables";
-      if(selectedItems.size() == 1) {
-        title = "Re-validating table \"" + selectedItems.get(0).getGameDisplayName() +  "\"";
+      if (selectedItems.size() == 1) {
+        title = "Re-validating table \"" + selectedItems.get(0).getGameDisplayName() + "\"";
       }
 
       ProgressDialog.createProgressDialog(new TableValidateProgressModel(title, selectedItems, reload));

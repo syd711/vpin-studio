@@ -76,7 +76,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
-        "This will re-generate the existing default background.", null, "Yes, generate background");
+        "This will re-generate the existing default background.", null, "Generate Background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().regenerateGameAssets(g.getId());
         this.refreshView(this.game);

@@ -211,12 +211,9 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onScanAll() {
-    if (this.game.isPresent()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan all " + client.getGameService().getGamesCached().size() + " tables?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", client.getGameService().getGamesCached()));
-        EventManager.getInstance().notifyTablesChanged();
-      }
+    boolean scanned = TableDialogs.openScanAllDialog(client.getGameService().getGamesCached());
+    if (scanned) {
+      EventManager.getInstance().notifyTablesChanged();
     }
   }
 

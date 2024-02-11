@@ -305,7 +305,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "cardUseDirectB2S");
       BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "cardGrayScale");
       BindingUtil.bindCheckbox(transparentBackgroundCheckbox, properties, "transparentBackground");
-      BindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
+//      BindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
+      renderTableNameCheckbox.setSelected(properties.getProperty("renderTableName", false));
+      renderTableNameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          properties.set("renderTableName", String.valueOf(newValue));
+        }
+      });
 
       imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);

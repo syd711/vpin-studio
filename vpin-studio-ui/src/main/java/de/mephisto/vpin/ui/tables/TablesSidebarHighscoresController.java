@@ -286,13 +286,6 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
       }
 
-      ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());
-      hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
-      if (!scoreHistory.getScores().isEmpty()) {
-        Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);
-        scoreGraph.setCenter(highscoresGraphTile);
-      }
-
       if (metadata != null) {
         backupBtn.setDisable(metadata.getType() == null);
         restoreBtn.setDisable(metadata.getType() == null && (highscoreBackups == null || highscoreBackups.isEmpty()));
@@ -341,6 +334,17 @@ public class TablesSidebarHighscoresController implements Initializable {
 
           formattedScoreLabel.setFont(WidgetController.getScoreFontText());
           formattedScoreLabel.setText(builder.toString());
+        }
+      }
+
+      ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());
+      hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
+      if (!scoreHistory.getScores().isEmpty()) {
+        Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);
+        try {
+          scoreGraph.setCenter(highscoresGraphTile);
+        } catch (Exception e) {
+          //ignore
         }
       }
     }
