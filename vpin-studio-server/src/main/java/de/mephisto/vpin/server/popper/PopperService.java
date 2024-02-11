@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -52,6 +54,12 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private CardService cardService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   private ServerSettings serverSettings;
 
@@ -271,22 +279,9 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     }
     pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
 
-    String existingRom = String.valueOf(oldDetails.getRomName());
-    boolean romChanged = !String.valueOf(updatedTableDetails.getRomName()).equalsIgnoreCase(existingRom);
-    System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Rom change stuff");
-//    String existingRom = String.valueOf(gameDetails.getRomName());
-//    boolean romChanged = !String.valueOf(game.getRom()).equalsIgnoreCase(existingRom);
-//    gameDetailsRepository.saveAndFlush(gameDetails);
-//    LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
-//    Game updated = getGame(game.getId());
-//    if (romChanged) {
-//      highscoreService.scanScore(updated);
-//      cardService.generateCard(updated, false);
-//    }
-//    return updated;
-
     //for upload and replace, we do not need any renaming
     if (!renamingChecks) {
+      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
       return updatedTableDetails;
     }
 
@@ -323,7 +318,22 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
       renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
     }
+
+    runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
     return updatedTableDetails;
+  }
+
+  public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
+    String existingRom = String.valueOf(oldDetails.getRomName());
+    boolean romChanged = !String.valueOf(newDetails.getRomName()).equalsIgnoreCase(existingRom);
+
+    String existingHsName = String.valueOf(oldDetails.getMappedValue(serverSettings.getMappingHsFileName()));
+    boolean hsChanged = !String.valueOf(newDetails.getMappedValue(serverSettings.getMappingHsFileName())).equalsIgnoreCase(existingHsName);
+    if (romChanged || hsChanged) {
+      LOG.info("Game highscore data fields have been changed, triggering score check.");
+      highscoreService.scanScore(game);
+      cardService.generateCard(game, false);
+    }
   }
 
   public boolean restart() {

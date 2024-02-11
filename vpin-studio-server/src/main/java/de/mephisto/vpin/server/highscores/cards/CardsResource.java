@@ -46,13 +46,13 @@ public class CardsResource {
   }
 
   @GetMapping("/generate/{gameId}")
-  public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
+  public boolean generateCards(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     return cardService.generateCard(game, false);
   }
 
   @GetMapping("/generatesample/{gameId}")
-  public boolean generateSampleCard(@PathVariable("gameId") int gameId) throws Exception {
+  public boolean generateSampleCard(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     return cardService.generateCard(game, true);
   }

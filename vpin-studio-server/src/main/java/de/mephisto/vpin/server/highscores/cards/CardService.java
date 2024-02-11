@@ -58,7 +58,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
-  public boolean generateCard(Game game, boolean generateSampleCard) throws Exception {
+  public boolean generateCard(Game game, boolean generateSampleCard) {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
@@ -98,8 +98,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         LOG.info("Skipped card generation for " + game.getGameDisplayName() + ", no scores found.");
       }
     } catch (Exception e) {
-      LOG.error("Failed to generate overlay: " + e.getMessage(), e);
-      throw e;
+      LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
     }
     return false;
   }
@@ -122,11 +121,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   @Override
   public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
-    try {
-      generateCard(game, false);
-    } catch (Exception e) {
-      LOG.error("Error updating card after highscore change event: " + e.getMessage(), e);
-    }
+    generateCard(game, false);
   }
 
   @Override

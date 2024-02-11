@@ -987,7 +987,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             return true;
           }
           else if (column.equals(columnVersion)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVersion()));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getVersion())));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

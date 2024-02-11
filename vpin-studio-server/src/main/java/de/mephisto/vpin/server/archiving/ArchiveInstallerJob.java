@@ -69,11 +69,7 @@ public class ArchiveInstallerJob implements Job {
       result = tableInstallerAdapter.installTable();
       if (StringUtils.isEmpty(result.getError())) {
         Game game = gameService.getGame(result.getGameId());
-        try {
-          cardService.generateCard(game, false);
-        } catch (Exception e) {
-          //ignore
-        }
+        cardService.generateCard(game, false);
       }
       return result;
     } catch (Exception e) {
