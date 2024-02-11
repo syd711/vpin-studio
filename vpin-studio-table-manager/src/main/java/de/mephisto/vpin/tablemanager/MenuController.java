@@ -150,7 +150,7 @@ public class MenuController implements Initializable {
     setLoadLabel("Loading...");
 
     new Thread(() -> {
-      games = Menu.client.getGameService().getGames();
+      games = Menu.client.getGameService().getKnownGames();
       activeModels = games; //TODO mpf
       Platform.runLater(() -> {
         loadGameItems();

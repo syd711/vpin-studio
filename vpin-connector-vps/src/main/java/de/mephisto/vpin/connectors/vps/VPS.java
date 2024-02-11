@@ -289,6 +289,11 @@ public class VPS {
   }
 
   public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
+    if(oldTables == null || newTables == null) {
+      LOG.info("Skipping VPS diff, because lists are empty.");
+      return Collections.emptyList();
+    }
+
     LOG.info("Differing " + oldTables.size() + " old tables against " + newTables.size() + " new tables.");
     List<VpsDiffer> diff = new ArrayList<>();
     for (VpsTable newTable : newTables) {

@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -402,7 +401,7 @@ public class GameService implements InitializingBean {
   public Game scanGame(int gameId) {
     Game game = null;
     try {
-      game = getGame(gameId);
+      game = pinUPConnector.getGame(gameId);
       if (game != null) {
         applyGameDetails(game, null, true);
         highscoreService.scanScore(game);
@@ -473,7 +472,6 @@ public class GameService implements InitializingBean {
     }
 
     if (gameDetails == null || forceScan) {
-      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
       ScanResult scanResult = romService.scanGameFile(game);
 
       if (gameDetails == null) {
@@ -484,6 +482,7 @@ public class GameService implements InitializingBean {
       String scannedRomName = scanResult.getRom();
       String scannedTableName = scanResult.getTableName();
 
+      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
       if (StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
@@ -502,7 +501,7 @@ public class GameService implements InitializingBean {
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
-      LOG.info("Created GameDetails for " + game.getGameDisplayName());
+      LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
     }
 
 
