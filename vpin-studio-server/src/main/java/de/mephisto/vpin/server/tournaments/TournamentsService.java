@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.tournaments;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
@@ -52,9 +53,11 @@ public class TournamentsService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    String cabinetId = SystemUtil.getBoardSerialNumber();
-    maniaClient = new VPinManiaClient(maniaHost, cabinetId);
-    LOG.info("VPin Mania client created for host " + maniaHost);
+    if (Features.TOURNAMENTS_ENABLED) {
+      String cabinetId = SystemUtil.getBoardSerialNumber();
+      maniaClient = new VPinManiaClient(maniaHost, cabinetId);
+      LOG.info("VPin Mania client created for host " + maniaHost);
+    }
   }
 
   @VisibleForTesting

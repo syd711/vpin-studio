@@ -43,5 +43,4 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.tournaments;
   exports de.mephisto.vpin.restclient.preferences;
   exports de.mephisto.vpin.restclient.vps;
-  exports de.mephisto.vpin.restclient.scoring;
 }

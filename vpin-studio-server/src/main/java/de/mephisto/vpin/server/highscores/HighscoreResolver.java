@@ -26,16 +26,10 @@ class HighscoreResolver {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
   public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
-  private List<String> supportedRoms;
   private final SystemService systemService;
 
   public HighscoreResolver(@NonNull SystemService systemService) {
     this.systemService = systemService;
-    this.loadSupportedScores();
-  }
-
-  private void loadSupportedScores() {
-    this.supportedRoms = systemService.getScoringDatabase().getSupportedNvRams();
   }
 
   /**
@@ -157,7 +151,8 @@ class HighscoreResolver {
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
-      if (!this.supportedRoms.contains(nvRamName)) {
+      List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
+      if (!supportedNvRams.contains(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
         LOG.info(msg);
         metadata.setStatus(msg);

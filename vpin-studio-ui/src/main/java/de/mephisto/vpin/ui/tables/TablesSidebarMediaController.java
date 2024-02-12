@@ -276,7 +276,7 @@ public class TablesSidebarMediaController implements Initializable {
       String screen = id.substring(id.lastIndexOf("_") + 1);
       PopperScreen popperScreen = PopperScreen.valueOf(screen);
 
-      TableDialogs.openPopperMediaAdminDialog(game.get(), popperScreen);
+      TableDialogs.openTableAssetsDialog(tablesSidebarController.getTablesController(), game.get(), popperScreen);
     }
   }
 

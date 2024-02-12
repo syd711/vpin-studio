@@ -461,7 +461,12 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" BorderPane.alignment="CENTER" />
+            <HBox spacing="6.0">
+               <children>
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Table Data Manager" />
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" />
+               </children>
+            </HBox>
          </right>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" />

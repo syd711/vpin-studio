@@ -218,12 +218,12 @@
                                                 <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                 <ComboBox fx:id="romName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" />
                                                 <ComboBox fx:id="highscoreFileName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <HBox fx:id="romStatusBox" alignment="CENTER_LEFT" GridPane.columnIndex="2">
+                                                <HBox fx:id="romStatusBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                                    <padding>
                                                       <Insets left="3.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox fx:id="hsFileStatusBox" alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                <HBox fx:id="hsFileStatusBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                    <padding>
                                                       <Insets left="3.0" />
                                                    </padding>
@@ -301,7 +301,7 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <Label styleClass="preference-description" text="Important for tables that store highscores in .txt files.">
+                                                            <Label styleClass="preference-description" text="Used by tables that store highscores in .txt files.">
                                                                <VBox.margin>
                                                                   <Insets top="3.0" />
                                                                </VBox.margin>
@@ -1279,24 +1279,29 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <bottom>
-            <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-               <children>
-                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-                     <HBox.margin>
-                        <Insets right="6.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="applyBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="saveBtn1" defaultButton="true" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save &amp; Close" />
-               </children>
+            <BorderPane BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="12.0" top="12.0" />
                </BorderPane.margin>
-            </HBox>
+               <center>
+                  <HBox alignment="BASELINE_RIGHT" spacing="6.0">
+                     <children>
+                      <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                           <HBox.margin>
+                              <Insets right="6.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button defaultButton="true" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
+                        <Button fx:id="applyBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="saveBtn1" defaultButton="true" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save &amp; Close" />
+                     </children>
+                  </HBox>
+               </center>
+            </BorderPane>
          </bottom>
       </BorderPane>
    </center>

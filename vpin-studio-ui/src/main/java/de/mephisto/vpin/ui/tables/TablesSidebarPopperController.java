@@ -199,18 +199,15 @@ public class TablesSidebarPopperController implements Initializable {
 
   @FXML
   private void onTableEdit() {
-    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get(), serverSettings, uiSettings);
+        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
       }
       return;
     }
 
-    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get(), serverSettings, uiSettings);
+    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
     this.refreshView(this.game);
   }
 

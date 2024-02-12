@@ -17,12 +17,15 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableAssetSearch;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -154,13 +157,25 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private BorderPane screenAudioLaunch;
 
 
+  private TableOverviewController overviewController;
   private GameRepresentation game;
+  private ServerSettings serverSettings;
+  private UISettings uiSettings;
   private PopperScreen screen;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
   private Node lastHover;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
+
+
+  @FXML
+  private void onDataManager(ActionEvent e) {
+    this.onCancel(e);
+    Platform.runLater(() -> {
+      TableDialogs.openTableDataDialog(overviewController, this.game);
+    });
+  }
 
   @FXML
   private void onVPSAssets() {
@@ -478,7 +493,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     tablesCombo.getItems().addAll(gameRepresentations);
     tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
       searchField.setText("");
-      this.setGame(t1, this.screen);
+      this.setGame(overviewController, t1, this.screen);
     });
 
     searchField.setOnKeyPressed(ke -> {
@@ -639,8 +654,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   }
 
 
-  public void setGame(GameRepresentation game, PopperScreen screen) {
+  public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+    this.overviewController = overviewController;
     this.game = game;
+    this.serverSettings = overviewController.getServerSettings();
+    this.uiSettings = overviewController.getUISettings();
     this.screen = screen;
     this.tablesCombo.setValue(game);
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));

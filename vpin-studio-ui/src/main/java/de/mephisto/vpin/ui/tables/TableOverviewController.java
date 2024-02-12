@@ -311,7 +311,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
-    TableDialogs.openPopperMediaAdminDialog(selectedItems, PopperScreen.BackGlass);
+    TableDialogs.openTableAssetsDialog(this, selectedItems, PopperScreen.BackGlass);
   }
 
   @FXML
@@ -341,11 +341,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems, serverSettings, uiSettings);
+          TableDialogs.openTableDataDialog(this, selectedItems);
         }
         return;
       }
-      TableDialogs.openTableDataDialog(this, selectedItems, serverSettings, uiSettings);
+      TableDialogs.openTableDataDialog(this, selectedItems);
     }
   }
 
@@ -1418,5 +1418,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tableView.getSelectionModel().clearSelection();
       tableView.getSelectionModel().select((selectedIndex + 1));
     }
+  }
+
+  public ServerSettings getServerSettings() {
+    return this.serverSettings;
+  }
+
+  public UISettings getUISettings() {
+    return this.uiSettings;
   }
 }

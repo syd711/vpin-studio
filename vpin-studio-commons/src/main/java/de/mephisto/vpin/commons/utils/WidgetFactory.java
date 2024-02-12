@@ -180,6 +180,14 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createUnsupportedIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("bi-x-circle");
+    return fontIcon;
+  }
+
   public static FontIcon createExclamationIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);

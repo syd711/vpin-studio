@@ -508,12 +508,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public ScoringDB getScoringDatabase() {
     if (db == null) {
-      loadDB();
+      db = new ScoringDB();
     }
     return db;
   }
 
-  private void loadDB() {
+  private void loadingScoringDB() {
     FileInputStream in = null;
     try {
       in = new FileInputStream(getScoringDBFile());
@@ -549,6 +549,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       this.shutdown();
       return;
     }
+
+    new Thread(() -> {
+      Thread.currentThread().setName("ScoringDB Updater");
+      this.loadingScoringDB();
+    }).start();
 
     initBaseFolders();
     initVPinTableManagerIcon();
