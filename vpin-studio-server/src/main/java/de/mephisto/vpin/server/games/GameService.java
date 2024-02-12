@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -151,11 +152,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-      .stream()
-      .filter(g ->
-        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(g ->
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+        .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -599,6 +600,23 @@ public class GameService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     return highscoreService.getHighscoreFiles(game);
+  }
+
+  public List<Integer> filterGames(FilterSettings filterSettings) {
+    List<Game> knownGames = getKnownGames();
+    List<Integer> result = new ArrayList<>();
+    for (Game game : knownGames) {
+      if (filterSettings.isMissingAssets() && gameValidator.hasMissingAssets(game)) {
+        result.add(game.getId());
+      }
+      else if (filterSettings.isVersionUpdates() && game.isUpdateAvailable()) {
+        result.add(game.getId());
+      }
+      else if (filterSettings.isVpsUpdates() && !game.getUpdates().isEmpty()) {
+        result.add(game.getId());
+      }
+    }
+    return result;
   }
 
   @Override

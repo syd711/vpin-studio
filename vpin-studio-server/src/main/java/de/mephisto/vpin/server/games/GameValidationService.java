@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 
@@ -402,6 +403,26 @@ public class GameValidationService implements InitializingBean {
     }
 
     return true;
+  }
+
+  public boolean hasMissingAssets(Game game) {
+    List<ValidationState> states = validate(game, false);
+    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.contains(CODE_NO_AUDIO)
+        || codes.contains(CODE_NO_AUDIO_LAUNCH)
+        || codes.contains(CODE_NO_APRON)
+        || codes.contains(CODE_NO_INFO)
+        || codes.contains(CODE_NO_HELP)
+        || codes.contains(CODE_NO_TOPPER)
+        || codes.contains(CODE_NO_BACKGLASS)
+        || codes.contains(CODE_NO_DMD)
+        || codes.contains(CODE_NO_PLAYFIELD)
+        || codes.contains(CODE_NO_LOADING)
+        || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      return true;
+    }
+    return false;
   }
 
   @Override
