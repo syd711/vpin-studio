@@ -68,7 +68,7 @@ public class SystemResource {
   }
 
 
-  @GetMapping
+  @GetMapping("/scoringdb")
   public ScoringDB get() {
     return systemService.getScoringDatabase();
   }

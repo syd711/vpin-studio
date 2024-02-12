@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -330,6 +331,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private Scene scene;
   private Stage stage;
+  private ScoringDB scoringDB;
 
   @FXML
   private void onAutoMatch() {
@@ -462,8 +464,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onVersionFix() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-      + game.getVersion() + "\" with the VPS table version \"" +
-      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+        + game.getVersion() + "\" with the VPS table version \"" +
+        game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
       td.setGameVersion(game.getExtVersion());
@@ -681,7 +683,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -774,6 +776,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.game = game;
     this.serverSettings = serverSettings;
     this.uiSettings = uiSettings;
+    scoringDB = client.getSystemService().getScoringDatabase();
     gameDetails = client.getGameService().getGameDetails(game.getId());
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
@@ -1155,6 +1158,14 @@ public class TableDataController implements Initializable, DialogController, Aut
           romStatusBox.getChildren().add(l);
         }
       }
+
+      //check ROM name validity
+      if (!scoringDB.getSupportedNvRams().contains(rom)) {
+        Label l = new Label();
+        l.setGraphic(WidgetFactory.createExclamationIcon());
+        l.setTooltip(new Tooltip("This ROM is currently not supported by the the highscore parser."));
+        romStatusBox.getChildren().add(l);
+      }
     }
 
     String hsName = this.getEffectiveHighscoreFilename();
@@ -1183,7 +1194,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
     else {
       String altRom = getEffectiveTableName();
-      if(!StringUtils.isEmpty(altRom)) {
+      if (!StringUtils.isEmpty(altRom)) {
         if (highscoreFileName.getItems().contains(altRom + ".txt")) {
           Label l = new Label();
           l.setGraphic(WidgetFactory.createCheckIcon());
@@ -1350,7 +1361,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       highscoreFileName.setPromptText(gameDetails.getTableName() + " (scanned value)");
     }
     scannedHighscoreFileName.setPromptText("");
-    if(StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
+    if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
       scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt");
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(gameDetails.getHsFileName()));
