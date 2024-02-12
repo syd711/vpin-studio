@@ -887,6 +887,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
         romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
       }
+      refreshStatusIcons();
     });
 
     if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
@@ -1069,6 +1070,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
         altRomName.setPromptText(gameDetails.getTableName() + " (scanned value)");
       }
+      refreshStatusIcons();
     });
 
     if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
@@ -1124,6 +1126,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         setMappedFieldValue(mappingHsField, newValue);
+        refreshStatusIcons();
       }
     });
 
