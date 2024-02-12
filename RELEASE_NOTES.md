@@ -31,6 +31,7 @@ Even if you table scan resolved the correct ROM name of a table.
 
 ### Other Changes
 
+- Improved navigation between the Table Data Manager and the Table Asset Manager, including previous and next button.
 - Added "Invalidate All" as split-button to the "Invalidate" button in the overview toolbar.
 - VPS update flags are now resetted for the following uploads: backglass, table replacements, altsound, altcolor, puppack and pov files/archives.
 - The automatic writing from mapped VPS data to PinUP popper has been removed again for: initial scans, table replacements and clones.
