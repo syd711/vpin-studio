@@ -159,8 +159,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   private TableOverviewController overviewController;
   private GameRepresentation game;
-  private ServerSettings serverSettings;
-  private UISettings uiSettings;
   private PopperScreen screen;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
@@ -168,6 +166,25 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
+
+
+  @FXML
+  private void onNext(ActionEvent e) {
+    overviewController.selectNext();
+    GameRepresentation selection = overviewController.getSelection();
+    if (selection != null && !selection.equals(this.game)) {
+      this.tablesCombo.setValue(selection);
+    }
+  }
+
+  @FXML
+  private void onPrevious(ActionEvent e) {
+    overviewController.selectPrevious();
+    GameRepresentation selection = overviewController.getSelection();
+    if (selection != null && !selection.equals(this.game)) {
+      this.tablesCombo.setValue(selection);
+    }
+  }
 
   @FXML
   private void onDataManager(ActionEvent e) {
@@ -657,8 +674,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
-    this.serverSettings = overviewController.getServerSettings();
-    this.uiSettings = overviewController.getUISettings();
     this.screen = screen;
     this.tablesCombo.setValue(game);
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
