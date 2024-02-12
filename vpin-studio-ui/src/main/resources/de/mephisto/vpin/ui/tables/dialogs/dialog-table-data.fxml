@@ -218,6 +218,16 @@
                                                 <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                 <ComboBox fx:id="romName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" />
                                                 <ComboBox fx:id="highscoreFileName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <HBox fx:id="romStatusBox" alignment="CENTER_LEFT" GridPane.columnIndex="2">
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox fx:id="hsFileStatusBox" alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </HBox>
                                              </children>
                                           </GridPane>
                                           <Label styleClass="default-title" text="Scanned Values" textFill="WHITE">

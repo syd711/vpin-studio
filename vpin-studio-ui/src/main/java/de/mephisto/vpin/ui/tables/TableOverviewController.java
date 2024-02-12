@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -219,6 +220,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+  private UISettings uiSettings;
+  private ServerSettings serverSettings;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -338,11 +341,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems);
+          TableDialogs.openTableDataDialog(this, selectedItems, serverSettings, uiSettings);
         }
         return;
       }
-      TableDialogs.openTableDataDialog(this, selectedItems);
+      TableDialogs.openTableDataDialog(this, selectedItems, serverSettings, uiSettings);
     }
   }
 
@@ -1382,6 +1385,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnEmulator.setVisible(false);
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
+    preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
+
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
@@ -1391,8 +1396,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
+    }
+    else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 

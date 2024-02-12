@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -43,6 +44,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,6 +71,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE));
   public final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public static final String UNPLAYED_STATUS_ICON = "bi-check2-circle";
   public static int lastTab = 0;
 
   @FXML
@@ -304,6 +307,12 @@ public class TableDataController implements Initializable, DialogController, Aut
   private CheckBox autoFillCheckbox;
 
   @FXML
+  private HBox hsFileStatusBox;
+
+  @FXML
+  private HBox romStatusBox;
+
+  @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -479,7 +488,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, TableDataController.lastTab);
+        TableDialogs.openTableDataDialog(this.overviewController, selection, serverSettings, uiSettings, TableDataController.lastTab);
       });
     }
   }
@@ -495,7 +504,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+        TableDialogs.openTableDataDialog(this.overviewController, selection, serverSettings, uiSettings, index);
       });
     }
   }
@@ -761,10 +770,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
   }
 
-  public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {
-    serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+  public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, ServerSettings serverSettings, UISettings uiSettings, int tab) {
+    this.game = game;
+    this.serverSettings = serverSettings;
+    this.uiSettings = uiSettings;
     gameDetails = client.getGameService().getGameDetails(game.getId());
+    tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
     HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
     List<String> availableRoms = new ArrayList<>(highscoreFiles.getNvRams());
@@ -778,6 +789,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     availableHsFiles.add(0, null);
     highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
 
+    refreshStatusIcons();
+    refreshScannedValues();
 
     this.stage = stage;
     this.scene = stage.getScene();
@@ -801,14 +814,13 @@ public class TableDataController implements Initializable, DialogController, Aut
     tabPane.getSelectionModel().select(tab);
 
     this.overviewController = overviewController;
-    this.game = game;
     this.initialVpxFileName = game.getGameFileName();
 
     this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
 
     this.titleLabel.setText(game.getGameDisplayName());
 
-    tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+
     databaseIdLabel.setText("(ID: " + game.getId() + ")  ");
     gameName.setText(tableDetails.getGameName());
     gameName.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -1117,6 +1129,95 @@ public class TableDataController implements Initializable, DialogController, Aut
     tabPane.getSelectionModel().select(tab);
   }
 
+  private void refreshStatusIcons() {
+    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    String hsType = game.getHighscoreType();
+
+    String rom = this.getEffectiveRom();
+    romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
+    if (!String.valueOf(hsType).equals(HighscoreType.EM.name()) && !StringUtils.isEmpty(rom)) {
+      if (romName.getItems().contains(rom)) {
+        Label l = new Label();
+        l.setGraphic(WidgetFactory.createCheckIcon());
+        l.setTooltip(new Tooltip("A matching highscore entry has been found for this ROM name."));
+        romStatusBox.getChildren().add(l);
+      }
+      else if (StringUtils.isEmpty(getEffectiveHighscoreFilename())) {
+        Label l = new Label();
+        if (played) {
+          l.setGraphic(WidgetFactory.createExclamationIcon());
+          l.setTooltip(new Tooltip("Table has been played, but no nv-RAM file or entry in VPReg.stg has been found."));
+          romStatusBox.getChildren().add(l);
+        }
+        else {
+          l.setGraphic(WidgetFactory.createIcon(UNPLAYED_STATUS_ICON));
+          l.setTooltip(new Tooltip("No nv-RAM file or entry in VPReg.stg has been found, but the table has not been played yet."));
+          romStatusBox.getChildren().add(l);
+        }
+      }
+    }
+
+    String hsName = this.getEffectiveHighscoreFilename();
+    hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
+    if (!StringUtils.isEmpty(hsName)) {
+      if (highscoreFileName.getItems().contains(hsName)) {
+        Label l = new Label();
+        l.setGraphic(WidgetFactory.createCheckIcon());
+        l.setTooltip(new Tooltip("A matching highscore file has been found."));
+        hsFileStatusBox.getChildren().add(l);
+      }
+      else {
+        //txt not found
+        Label l = new Label();
+        if (played) {
+          l.setGraphic(WidgetFactory.createExclamationIcon());
+          l.setTooltip(new Tooltip("Table has been played, but text file has been found for this name."));
+          hsFileStatusBox.getChildren().add(l);
+        }
+        else {
+          l.setGraphic(WidgetFactory.createIcon(UNPLAYED_STATUS_ICON));
+          l.setTooltip(new Tooltip("No text file has been found for this name, but the table has not been played yet."));
+          hsFileStatusBox.getChildren().add(l);
+        }
+      }
+    }
+    else {
+      String altRom = getEffectiveTableName();
+      if(!StringUtils.isEmpty(altRom)) {
+        if (highscoreFileName.getItems().contains(altRom + ".txt")) {
+          Label l = new Label();
+          l.setGraphic(WidgetFactory.createCheckIcon());
+          l.setTooltip(new Tooltip("A matching highscore file has been found (using \"" + altRom + "\"as fallback."));
+          hsFileStatusBox.getChildren().add(l);
+        }
+      }
+    }
+  }
+
+  private String getEffectiveRom() {
+    String rom = tableDetails.getRomName();
+    if (StringUtils.isEmpty(rom)) {
+      rom = gameDetails.getRomName();
+    }
+    return rom;
+  }
+
+  private String getEffectiveHighscoreFilename() {
+    String hs = tableDetails.getMappedValue(serverSettings.getMappingHsFileName());
+    if (StringUtils.isEmpty(hs)) {
+      hs = gameDetails.getHsFileName();
+    }
+    return hs;
+  }
+
+  private String getEffectiveTableName() {
+    String rom = tableDetails.getRomAlt();
+    if (StringUtils.isEmpty(rom)) {
+      rom = gameDetails.getTableName();
+    }
+    return rom;
+  }
+
   private void setMappedFieldValue(String field, String value) {
     switch (field) {
       case "WEBGameID": {
@@ -1246,7 +1347,11 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     scannedHighscoreFileName.setText(gameDetails.getHsFileName());
     if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-      scannedHighscoreFileName.setPromptText(gameDetails.getTableName());
+      highscoreFileName.setPromptText(gameDetails.getTableName() + " (scanned value)");
+    }
+    scannedHighscoreFileName.setPromptText("");
+    if(StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
+      scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt");
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(gameDetails.getHsFileName()));
   }

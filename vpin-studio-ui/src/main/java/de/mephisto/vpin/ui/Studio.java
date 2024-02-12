@@ -202,6 +202,7 @@ public class Studio extends Application {
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.UNDECORATED);
+    stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
     stage.setScene(scene);
     stage.setX((screenBounds.getWidth() / 2) - (600 / 2));
     stage.setY((screenBounds.getHeight() / 2) - (400 / 2));

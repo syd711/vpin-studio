@@ -15,6 +15,8 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -283,14 +285,14 @@ public class TableDialogs {
     return false;
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
-    openTableDataDialog(overviewController, game, TableDataController.lastTab);
+  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, ServerSettings serverSettings, UISettings uiSettings) {
+    openTableDataDialog(overviewController, game, serverSettings, uiSettings, TableDataController.lastTab);
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
-    Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data");
+  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, ServerSettings serverSettings, UISettings uiSettings, int tab) {
+    Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager");
     TableDataController controller = (TableDataController) stage.getUserData();
-    controller.setGame(stage, overviewController, game, tab);
+    controller.setGame(stage, overviewController, game, serverSettings, uiSettings, tab);
     stage.showAndWait();
   }
 

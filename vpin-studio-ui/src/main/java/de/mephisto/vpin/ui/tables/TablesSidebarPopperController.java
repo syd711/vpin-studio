@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
@@ -196,15 +199,18 @@ public class TablesSidebarPopperController implements Initializable {
 
   @FXML
   private void onTableEdit() {
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
+        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get(), serverSettings, uiSettings);
         this.refreshView(this.game);
       }
       return;
     }
 
-    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
+    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get(), serverSettings, uiSettings);
     this.refreshView(this.game);
   }
 
