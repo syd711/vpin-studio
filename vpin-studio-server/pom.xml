@@ -392,6 +392,7 @@
                                         <include>competition-bg-default.png</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
+                                        <include>scoringdb.json</include>
                                         <include>vpsdb.json</include>
                                     </includes>
                                     <excludes>

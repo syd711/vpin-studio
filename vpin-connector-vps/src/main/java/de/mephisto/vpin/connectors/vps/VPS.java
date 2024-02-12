@@ -19,7 +19,7 @@ public class VPS {
   public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
   public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
 
-  private static ObjectMapper objectMapper;
+  private static final ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();

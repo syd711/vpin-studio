@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -64,6 +65,12 @@ public class SystemResource {
   @ResponseBody
   public SystemSummary info() {
     return systemService.getSystemSummary();
+  }
+
+
+  @GetMapping
+  public ScoringDB get() {
+    return systemService.getScoringDatabase();
   }
 
   @GetMapping("/shutdown")

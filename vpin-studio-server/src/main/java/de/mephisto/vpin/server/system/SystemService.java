@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.system;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
@@ -7,6 +10,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -33,11 +37,13 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +51,15 @@ import java.util.stream.Collectors;
 @Service
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
+
+  public static String SCORING_DB_NAME = "scoringdb.json";
+  private static final ObjectMapper objectMapper;
+
+  static {
+    objectMapper = new ObjectMapper();
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
 
   public final static int SERVER_PORT = RestClient.PORT;
 
@@ -65,6 +80,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
+
+  private ScoringDB db;
 
   private ApplicationContext context;
 
@@ -489,6 +506,40 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return folder;
   }
 
+  public ScoringDB getScoringDatabase() {
+    if (db == null) {
+      loadDB();
+    }
+    return db;
+  }
+
+  private void loadDB() {
+    FileInputStream in = null;
+    try {
+      in = new FileInputStream(getScoringDBFile());
+      db = objectMapper.readValue(in, ScoringDB.class);
+      LOG.info("Loaded " + db + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(getScoringDBFile().lastModified())));
+    } catch (Exception e) {
+      db = new ScoringDB();
+      LOG.error("Failed to load scoring DB json: " + e.getMessage(), e);
+    } finally {
+      try {
+        in.close();
+      } catch (IOException e) {
+        //ignore
+      }
+    }
+  }
+
+  private static File getScoringDBFile() {
+    return new File(SystemInfo.RESOURCES, SCORING_DB_NAME);
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext context) throws BeansException {
+    this.context = context;
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (!available(port)) {
@@ -507,10 +558,5 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
 
     logSystemInfo();
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext context) throws BeansException {
-    this.context = context;
   }
 }

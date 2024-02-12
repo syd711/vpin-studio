@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg", "sendKeys.bat");
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg", "sendKeys.bat", SystemService.SCORING_DB_NAME);
 
   public static void execute() {
     new Thread(() -> {

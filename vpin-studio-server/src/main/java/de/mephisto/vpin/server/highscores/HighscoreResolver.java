@@ -35,12 +35,7 @@ class HighscoreResolver {
   }
 
   private void loadSupportedScores() {
-    try {
-      String roms = readPINemHiStatus("-lr");
-      this.supportedRoms = Arrays.asList(roms.split("\n"));
-    } catch (Exception e) {
-      LOG.error("Failed to load supported rom names from PINemHi: " + e.getMessage(), e);
-    }
+    this.supportedRoms = systemService.getScoringDatabase().getSupportedNvRams();
   }
 
   /**
