@@ -213,9 +213,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private MenuItem povItem;
 
-  @FXML
-  private VBox filterPanel;
-
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
@@ -227,6 +224,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private String lastKeyInput = "";
   private UISettings uiSettings;
   private ServerSettings serverSettings;
+
+  private TableFilterController tableFilterController;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -342,7 +341,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onFilter() {
-    TransitionUtil.createTranslateByXTransition(filterPanel, 300, 200);
+    tableFilterController.toggle();
   }
 
   @FXML
@@ -1345,6 +1344,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
+    } catch (IOException e) {
+      LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableFilterController.class.getResource("table-filter.fxml"));
+      loader.load();
+      tableFilterController = loader.getController();
+      tableFilterController.setTableController(this);
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }

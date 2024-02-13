@@ -334,6 +334,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Scene scene;
   private Stage stage;
   private ScoringDB scoringDB;
+  private HighscoreFiles highscoreFiles;
 
   @FXML
   private void onAssetManager(ActionEvent e) {
@@ -789,8 +790,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     scoringDB = client.getSystemService().getScoringDatabase();
     gameDetails = client.getGameService().getGameDetails(game.getId());
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+    highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
-    HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
     List<String> availableRoms = new ArrayList<>(highscoreFiles.getNvRams());
     availableRoms.addAll(highscoreFiles.getVpRegEntries());
     Collections.sort(availableRoms);
@@ -1139,7 +1140,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       onHighscoreFilenameUpdate(newValue, mappingHsField);
     });
 
-    refreshFieldsForSqlVersion();
     initVpsStatus();
     tabPane.getSelectionModel().select(tab);
   }
@@ -1182,6 +1182,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     String hsType = game.getHighscoreType();
 
     String rom = this.getEffectiveRom();
+    String tableName = this.getEffectiveTableName();
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     if (!String.valueOf(hsType).equals(HighscoreType.EM.name()) && !StringUtils.isEmpty(rom)) {
       if (romName.getItems().contains(rom)) {
@@ -1194,7 +1195,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         if (played) {
           Label l = new Label();
           l.setGraphic(WidgetFactory.createExclamationIcon());
-          l.setTooltip(new Tooltip("Table has been played, but no nv-RAM file or entry in VPReg.stg has been found."));
+          l.setTooltip(new Tooltip("Table has been played, but no nv-RAM file or VPReg.stg entry has been found."));
           romStatusBox.getChildren().add(l);
         }
         else {
@@ -1207,7 +1208,11 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (!scoringDB.getSupportedNvRams().contains(rom)) {
+    if (played
+        && !scoringDB.getSupportedNvRams().contains(rom)
+        && !scoringDB.getSupportedNvRams().contains(tableName)
+        && !highscoreFiles.getVpRegEntries().contains(rom)
+        && !highscoreFiles.getVpRegEntries().contains(tableName)) {
       Label l = new Label();
       l.setGraphic(WidgetFactory.createUnsupportedIcon());
       l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
@@ -1376,22 +1381,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
     else {
       tableVersionsCombo.setItems(FXCollections.emptyObservableList());
-    }
-  }
-
-  private void refreshFieldsForSqlVersion() {
-    if (!tableDetails.isPopper15()) {
-      webDbId.setDisable(true);
-      webDbId.setPromptText("Not available in your PinUP Popper version.");
-      webLink.setDisable(true);
-      webLink.setPromptText("Not available in your PinUP Popper version.");
-      tourneyId.setDisable(true);
-      tourneyId.setPromptText("Not available in your PinUP Popper version.");
-      modCheckbox.setDisable(true);
-      custom4.setDisable(true);
-      custom4.setPromptText("Not available in your PinUP Popper version.");
-      custom5.setDisable(true);
-      custom5.setPromptText("Not available in your PinUP Popper version.");
     }
   }
 
