@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -17,7 +18,6 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.*;
-import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
@@ -69,9 +69,6 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
-
-  @Autowired
-  private CardService cardService;
 
   @Autowired
   private AssetRepository assetRepository;
@@ -603,18 +600,41 @@ public class GameService implements InitializingBean {
   }
 
   public List<Integer> filterGames(FilterSettings filterSettings) {
-    List<Game> knownGames = getKnownGames();
     List<Integer> result = new ArrayList<>();
+    List<Game> knownGames = getKnownGames();
     for (Game game : knownGames) {
-      if (filterSettings.isMissingAssets() && gameValidator.hasMissingAssets(game)) {
-        result.add(game.getId());
+      if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
+        continue;
       }
-      else if (filterSettings.isVersionUpdates() && game.isUpdateAvailable()) {
-        result.add(game.getId());
+      if (filterSettings.isWithAltSound() && !game.isAltSoundAvailable()) {
+        continue;
       }
-      else if (filterSettings.isVpsUpdates() && !game.getUpdates().isEmpty()) {
-        result.add(game.getId());
+      if (filterSettings.isWithAltColor() && game.getAltColorType() == null) {
+        continue;
       }
+      if (filterSettings.isWithBackglass() && !game.getDirectB2SFile().exists()) {
+        continue;
+      }
+      if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
+        continue;
+      }
+      if (filterSettings.isVpsUpdates() && game.getUpdates().isEmpty()) {
+        continue;
+      }
+      if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
+        continue;
+      }
+      if (filterSettings.isMissingAssets() && !gameValidator.hasMissingAssets(game)) {
+        continue;
+      }
+
+      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+      boolean played = (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
+      if (filterSettings.isNotPlayed() && !played) {
+        continue;
+      }
+
+      result.add(game.getId());
     }
     return result;
   }

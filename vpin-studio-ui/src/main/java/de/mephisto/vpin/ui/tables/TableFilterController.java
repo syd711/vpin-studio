@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,39 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private VBox filterPanel;
+
+  @FXML
+  private CheckBox missingAssetsCheckBox;
+
+  @FXML
+  private CheckBox vpsUpdatesCheckBox;
+
+  @FXML
+  private CheckBox versionUpdatesCheckBox;
+
+  @FXML
+  private CheckBox notPlayedCheckBox;
+
+  @FXML
+  private CheckBox noHighscoreSettingsCheckBox;
+
+  @FXML
+  private CheckBox noHighscoreSupportCheckBox;
+
+  @FXML
+  private CheckBox withBackglassCheckBox;
+
+  @FXML
+  private CheckBox withPupPackCheckBox;
+
+  @FXML
+  private CheckBox withAltSoundCheckBox;
+
+  @FXML
+  private CheckBox withAltColorCheckBox;
+
+  @FXML
+  private CheckBox withPovIniCheckBox;
 
   private TableOverviewController tableOverviewController;
 
