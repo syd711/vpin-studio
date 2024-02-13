@@ -214,9 +214,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem povItem;
 
   @FXML
-  private VBox filterPanel;
-
-  @FXML
   private Button filterBtn;
 
   private Parent tablesLoadingOverlay;
@@ -230,6 +227,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private String lastKeyInput = "";
   private UISettings uiSettings;
   private ServerSettings serverSettings;
+
+  private TableFilterController tableFilterController;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -345,15 +344,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onFilter() {
-    if(filterPanel.isVisible()) {
-      filterPanel.setPrefWidth(0);
-      filterPanel.setVisible(false);
-
-    }
-    else {
-      filterPanel.setPrefWidth(200);
-      filterPanel.setVisible(true);
-    }
+    tableFilterController.toggle();
   }
 
   @FXML
@@ -1343,8 +1334,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.filterPanel.setVisible(false);
-    this.filterPanel.setPrefWidth(0);
     new Thread(() -> {
       try {
         VPS.getInstance().update();
@@ -1360,6 +1349,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       ctrl.setLoadingMessage("Loading Tables...");
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableFilterController.class.getResource("scene-tables-overview-filter.fxml"));
+      loader.load();
+      tableFilterController = loader.getController();
+      tableFilterController.setTableController(this);
+    } catch (IOException e) {
+      LOG.error("Failed to load loading filter: " + e.getMessage());
     }
 
 
@@ -1441,6 +1439,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tableView.getSelectionModel().clearSelection();
       tableView.getSelectionModel().select((selectedIndex + 1));
     }
+  }
+
+  public StackPane getTableStack() {
+    return this.tableStack;
   }
 
   public ServerSettings getServerSettings() {

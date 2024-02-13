@@ -243,6 +243,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     this.tableVersionsCombo.valueProperty().addListener(this);
   }
 
+  /**
+   * Table name change
+   * @param value
+   */
   @Override
   public void onChange(String value) {
     try {
@@ -354,6 +358,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         tableVersionsCombo.show();
         tableVersionsCombo.hide();
       });
+    }
+    else {
+      tableVersionsCombo.setItems(FXCollections.emptyObservableList());
     }
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());
