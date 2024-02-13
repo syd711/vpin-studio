@@ -348,7 +348,7 @@
                         </ToolBar>
                     </top>
                <left>
-                  <VBox fx:id="filterPanel" prefWidth="0.0" BorderPane.alignment="CENTER">
+                  <VBox fx:id="filterPanel" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>

@@ -216,6 +216,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private VBox filterPanel;
 
+  @FXML
+  private Button filterBtn;
+
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
@@ -342,7 +345,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onFilter() {
-    TransitionUtil.createTranslateByXTransition(filterPanel, 300, 200);
+    if(filterPanel.isVisible()) {
+      filterPanel.setPrefWidth(0);
+      filterPanel.setVisible(false);
+
+    }
+    else {
+      filterPanel.setPrefWidth(200);
+      filterPanel.setVisible(true);
+    }
   }
 
   @FXML
@@ -1332,6 +1343,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.filterPanel.setVisible(false);
+    this.filterPanel.setPrefWidth(0);
     new Thread(() -> {
       try {
         VPS.getInstance().update();
