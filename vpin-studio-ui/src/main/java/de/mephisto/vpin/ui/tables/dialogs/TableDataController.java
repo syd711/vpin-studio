@@ -74,7 +74,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE));
   public final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
   public static final String UNPLAYED_STATUS_ICON = "bi-check2-circle";
-  public static final String UNSUPPORTED_STATUS_ICON = "mdi2l-list-status";
   public static int lastTab = 0;
 
   @FXML
