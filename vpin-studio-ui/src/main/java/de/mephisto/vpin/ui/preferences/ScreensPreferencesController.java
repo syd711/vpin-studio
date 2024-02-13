@@ -45,7 +45,7 @@ public class ScreensPreferencesController implements Initializable {
     prefs.put(PreferenceNames.IGNORED_MEDIA, value);
     Studio.client.getPreferenceService().setPreferences(prefs);
 
-    PreferencesController.markDirty();
+    PreferencesController.markDirty(PreferenceType.serverSettings);
   }
 
   @Override

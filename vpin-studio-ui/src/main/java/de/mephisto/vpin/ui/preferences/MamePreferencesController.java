@@ -75,7 +75,7 @@ public class MamePreferencesController implements Initializable {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
     }
 
-    PreferencesController.markDirty();
+    PreferencesController.markDirty(PreferenceType.serverSettings);
   }
 
   @Override

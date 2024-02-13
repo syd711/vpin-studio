@@ -39,7 +39,7 @@ public class HighscorePreferencesController implements Initializable {
 
     titlesField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.HIGHSCORE_TITLES, () -> {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_TITLES, t1);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.serverSettings);
     }, 500));
 
 

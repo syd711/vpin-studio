@@ -83,7 +83,7 @@ public class UISettingsPreferencesController implements Initializable {
       uiSettings.setHideVPXStartInfo(false);
 
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
-      EventManager.getInstance().notifyPreferenceChanged();
+      EventManager.getInstance().notifyPreferenceChanged(PreferenceType.uiSettings);
     }
   }
 
@@ -96,21 +96,21 @@ public class UISettingsPreferencesController implements Initializable {
     uiShowVersion.setSelected(uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVersions(t1);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     uiHideVPSUpdates.setSelected(uiSettings.isHideVPSUpdates());
     uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVPSUpdates(t1);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     uiHideEmuColCheckbox.setSelected(uiSettings.isHideEmulatorColumn());
     uiHideEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideEmulatorColumn(t1);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -72,7 +73,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private static VBox navBox;
 
-  private static boolean dirty = false;
+  private static PreferenceType dirtyPreferenceType = null;
 
   private static String lastScreen = "preference-settings-ui.fxml";
 
@@ -80,8 +81,8 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   }
 
-  public static void markDirty() {
-    dirty = true;
+  public static void markDirty(PreferenceType preferenceType) {
+    PreferencesController.dirtyPreferenceType = preferenceType;
   }
 
   public static void open() {
@@ -119,9 +120,10 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     NavigationController.refreshControllerCache();
 
-    if (dirty) {
-      dirty = false;
-      EventManager.getInstance().notifyPreferenceChanged();
+    if (dirtyPreferenceType != null) {
+      PreferenceType preferenceType = dirtyPreferenceType;
+      dirtyPreferenceType = null;
+      EventManager.getInstance().notifyPreferenceChanged(preferenceType);
     }
   }
 

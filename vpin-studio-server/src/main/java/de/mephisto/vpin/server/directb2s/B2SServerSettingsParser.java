@@ -64,10 +64,10 @@ public class B2SServerSettingsParser extends DefaultHandler {
 //        settings.setDefaultStartMode(Integer.parseInt(node.getTextContent().trim()));
 //        break;
 //      }
-//      case "DisableFuzzyMatching": {
-//        settings.setDisableFuzzyMatching(Integer.parseInt(node.getTextContent().trim()) == 1);
-//        break;
-//      }
+      case "DisableFuzzyMatching": {
+        settings.setDisableFuzzyMatching(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
 //      case "IsLampsStateLogOn": {
 //        settings.setLampsStateLogOn(Integer.parseInt(node.getTextContent().trim()) == 1);
 //        break;

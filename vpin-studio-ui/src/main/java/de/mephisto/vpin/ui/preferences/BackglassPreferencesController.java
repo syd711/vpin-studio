@@ -27,6 +27,9 @@ public class BackglassPreferencesController implements Initializable {
   private CheckBox backglassMissingCheckbox;
 
   @FXML
+  private CheckBox fuzzyMatchingCheckbox;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private DirectB2ServerSettings serverSettings;
@@ -62,6 +65,12 @@ public class BackglassPreferencesController implements Initializable {
       saveSettings();
     });
 
+    fuzzyMatchingCheckbox.setSelected(serverSettings.isDisableFuzzyMatching());
+    fuzzyMatchingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      serverSettings.setDisableFuzzyMatching(newValue);
+      saveSettings();
+    });
+
     saveEnabled = true;
   }
 
@@ -70,6 +79,7 @@ public class BackglassPreferencesController implements Initializable {
     serverSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
     backglassMissingCheckbox.setSelected(serverSettings.isShowStartupError());
     pluginsCheckbox.setSelected(serverSettings.isPluginsOn());
+    fuzzyMatchingCheckbox.setSelected(serverSettings.isDisableFuzzyMatching());
     saveEnabled = true;
   }
 

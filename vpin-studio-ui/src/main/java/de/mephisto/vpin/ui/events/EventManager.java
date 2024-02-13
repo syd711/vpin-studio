@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.events;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -90,10 +91,10 @@ public class EventManager {
     }).start();
   }
 
-  public void notifyPreferenceChanged() {
+  public void notifyPreferenceChanged(PreferenceType preferenceType) {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
-        listener.preferencesChanged();
+        listener.preferencesChanged(preferenceType);
       }
     }).start();
   }

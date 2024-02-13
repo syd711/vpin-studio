@@ -90,7 +90,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingHsFileName(newValue);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.serverSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
@@ -99,7 +99,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsTableIdCombo.setValue(serverSettings.getMappingVpsTableId());
     mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableId(newValue);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.serverSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
@@ -108,7 +108,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsVersionIdCombo.setValue(serverSettings.getMappingVpsTableVersionId());
     mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableVersionId(newValue);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.serverSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 

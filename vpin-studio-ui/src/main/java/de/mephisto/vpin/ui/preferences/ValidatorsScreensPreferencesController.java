@@ -43,7 +43,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
     Studio.client.getPreferenceService().setPreferences(prefs);
-    PreferencesController.markDirty();
+    PreferencesController.markDirty(PreferenceType.serverSettings);
   }
 
 

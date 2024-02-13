@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
@@ -245,7 +246,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
-    if (id > 0 ) {
+    if (id > 0) {
       this.tableOverviewController.reload(id);
     }
 
@@ -262,10 +263,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void preferencesChanged() {
-    Platform.runLater(() -> {
-      this.tableOverviewController.onReload();
-    });
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings)) {
+      Platform.runLater(() -> {
+        this.tableOverviewController.onReload();
+      });
+    }
   }
 
   public TabPane getTabPane() {
@@ -274,6 +277,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tablesChanged() {
-    preferencesChanged();
+    preferencesChanged(PreferenceType.uiSettings);
   }
 }
