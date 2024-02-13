@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -54,6 +55,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -211,6 +213,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private MenuItem povItem;
 
+  @FXML
+  private VBox filterPanel;
+
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
@@ -333,6 +338,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void onVpsReset() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     TableActions.onVpsReset(selectedItems);
+  }
+
+  @FXML
+  private void onFilter() {
+    TransitionUtil.createTranslateByXTransition(filterPanel, 300, 200);
   }
 
   @FXML

@@ -1203,15 +1203,15 @@ public class TableDataController implements Initializable, DialogController, Aut
           l.setTooltip(new Tooltip("No nv-RAM file or entry in VPReg.stg has been found, but the table has not been played yet."));
           romStatusBox.getChildren().add(l);
         }
-
-        //check ROM name validity
-        if (!scoringDB.getSupportedNvRams().contains(rom)) {
-          Label l = new Label();
-          l.setGraphic(WidgetFactory.createUnsupportedIcon());
-          l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
-          romStatusBox.getChildren().add(l);
-        }
       }
+    }
+
+    //check ROM name validity
+    if (!scoringDB.getSupportedNvRams().contains(rom)) {
+      Label l = new Label();
+      l.setGraphic(WidgetFactory.createUnsupportedIcon());
+      l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
+      romStatusBox.getChildren().add(l);
     }
 
     String hsName = this.getEffectiveHighscoreFilename();
