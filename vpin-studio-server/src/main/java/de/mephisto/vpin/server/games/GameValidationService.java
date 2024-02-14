@@ -405,8 +405,15 @@ public class GameValidationService implements InitializingBean {
     return true;
   }
 
-  public boolean hasMissingAssets(Game game) {
-    List<ValidationState> states = validate(game, false);
+  public boolean hasNoVpsMapping(List<ValidationState> states) {
+    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.contains(CODE_VPS_MAPPING_MISSING)) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean hasMissingAssets(List<ValidationState> states) {
     List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
     if (codes.contains(CODE_NO_AUDIO)
         || codes.contains(CODE_NO_AUDIO_LAUNCH)

@@ -4,6 +4,7 @@ public class FilterSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
   private boolean vpsUpdates;
+  private boolean noVpsMapping;
   private boolean versionUpdates;
   private boolean notPlayed;
   private boolean noHighscoreSettings;
@@ -14,6 +15,14 @@ public class FilterSettings {
   private boolean withAltColor;
   private boolean withPovIni;
   private int gameStatus = -1;
+
+  public boolean isNoVpsMapping() {
+    return noVpsMapping;
+  }
+
+  public void setNoVpsMapping(boolean noVpsMapping) {
+    this.noVpsMapping = noVpsMapping;
+  }
 
   public int getEmulatorId() {
     return emulatorId;

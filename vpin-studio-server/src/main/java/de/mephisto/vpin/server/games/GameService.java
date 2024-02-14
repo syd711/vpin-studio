@@ -607,7 +607,6 @@ public class GameService implements InitializingBean {
       if (filterSettings.getEmulatorId() >= 0 && filterSettings.getEmulatorId() != game.getEmulatorId()) {
         continue;
       }
-
       if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
         continue;
       }
@@ -620,6 +619,9 @@ public class GameService implements InitializingBean {
       if (filterSettings.isWithBackglass() && !game.getDirectB2SFile().exists()) {
         continue;
       }
+      if (filterSettings.isWithPupPack() && game.getPupPack() == null) {
+        continue;
+      }
       if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
         continue;
       }
@@ -629,7 +631,12 @@ public class GameService implements InitializingBean {
       if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
         continue;
       }
-      if (filterSettings.isMissingAssets() && !gameValidator.hasMissingAssets(game)) {
+
+      List<ValidationState> states = validate(game);
+      if (filterSettings.isMissingAssets() && !gameValidator.hasMissingAssets(states)) {
+        continue;
+      }
+      if (filterSettings.isNoVpsMapping() && !gameValidator.hasNoVpsMapping(states)) {
         continue;
       }
 

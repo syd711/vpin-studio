@@ -3,20 +3,29 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
+import de.mephisto.vpin.ui.tables.models.TableStatus;
+import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -27,6 +36,9 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private VBox filterPanel;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -67,7 +79,11 @@ public class TableFilterController implements Initializable {
   @FXML
   private VBox titlePaneRoot;
 
+  @FXML
+  private ComboBox<TableStatus> statusCombo;
+
   private boolean visible = false;
+  private boolean updatesDisabled = false;
   private FilterSettings filterSettings;
   private TableOverviewController tableOverviewController;
 
@@ -75,6 +91,7 @@ public class TableFilterController implements Initializable {
   @FXML
   private void onReset() {
     updateSettings(new FilterSettings());
+    applyFilter();
   }
 
   public void setTableController(TableOverviewController tableOverviewController) {
@@ -82,20 +99,35 @@ public class TableFilterController implements Initializable {
     this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
     this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
     filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
-    titlePaneRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
+//    titlePaneRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
+
+    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        System.out.println(newValue);
+      }
+    });
   }
 
+  @FXML
   public void toggle() {
-    if(!visible) {
+    if (!visible) {
       visible = true;
       filterRoot.setVisible(true);
-      TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, 250);
-      translateByXTransition.play();
+      TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, 250);
+      filterTransition.play();
     }
     else {
       visible = false;
-      filterRoot.setVisible(true);
       TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, -250);
+      translateByXTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+        @Override
+        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+          if (newValue == Animation.Status.STOPPED) {
+            filterRoot.setVisible(false);
+          }
+        }
+      });
       translateByXTransition.play();
     }
   }
@@ -103,6 +135,20 @@ public class TableFilterController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     filterRoot.setVisible(false);
+
+    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getPinUPPopperService().getGameEmulators());
+    gameEmulators.add(0, null);
+    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+    emulatorCombo.setItems(emulators);
+    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+      if (t1 == null) {
+        filterSettings.setEmulatorId(-1);
+      }
+      else {
+        filterSettings.setEmulatorId(t1.getId());
+      }
+      applyFilter();
+    });
 
     filterSettings = new FilterSettings();
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
@@ -160,9 +206,24 @@ public class TableFilterController implements Initializable {
       filterSettings.setWithPovIni(newValue);
       applyFilter();
     });
+
+    List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES_15);
+    statuses.add(0, null);
+    statusCombo.setItems(FXCollections.observableList(statuses));
+    statusCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        filterSettings.setGameStatus(-1);
+      }
+      else {
+        filterSettings.setGameStatus(newValue.getValue());
+      }
+      applyFilter();
+    });
   }
 
   private void updateSettings(FilterSettings filterSettings) {
+    updatesDisabled = true;
+    emulatorCombo.setValue(null);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
     versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
@@ -174,12 +235,18 @@ public class TableFilterController implements Initializable {
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
     withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
+    updatesDisabled = false;
   }
 
   private void applyFilter() {
+    if (updatesDisabled) {
+      return;
+    }
+
     try {
       List<Integer> integers = client.getGameService().filterGames(this.filterSettings);
       tableOverviewController.setFilterIds(integers);
+      tableOverviewController.onReload();//TODO
     } catch (Exception e) {
       LOG.error("Error filtering tables: " + e.getMessage());
       WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
