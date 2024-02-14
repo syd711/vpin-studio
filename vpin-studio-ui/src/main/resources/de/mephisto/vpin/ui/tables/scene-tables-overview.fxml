@@ -31,24 +31,28 @@
                                 <Insets bottom="6.0" />
                             </BorderPane.margin>
                             <children>
-                                <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                    <columns>
-                                        <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="50.0" style="-fx-alignment: CENTER;" text="Status" />
-                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                              <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
-                              <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="VPS Updates" />
-                              <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
-                                        <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
-                                        <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                                        <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="64.0" style="-fx-alignment: CENTER;" text="POV/INI" />
-                                        <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
-                              <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />
-                                        <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
-                                        <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
-                                        <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="180.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
-                              <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Date Added" />
-                                    </columns>
-                                </TableView>
+                        <StackPane fx:id="tableStack2">
+                           <children>
+                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                          <columns>
+                                              <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="50.0" style="-fx-alignment: CENTER;" text="Status" />
+                                              <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                    <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
+                                    <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="VPS Updates" />
+                                    <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
+                                              <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                                              <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                              <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="64.0" style="-fx-alignment: CENTER;" text="POV/INI" />
+                                              <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                                    <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />
+                                              <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                              <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
+                                              <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="180.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                                    <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Date Added" />
+                                          </columns>
+                                      </TableView>
+                           </children>
+                        </StackPane>
                             </children>
                         </StackPane>
                     </center>

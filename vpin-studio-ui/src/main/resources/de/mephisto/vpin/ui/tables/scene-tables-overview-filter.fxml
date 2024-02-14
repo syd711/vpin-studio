@@ -1,6 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController" />
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
+   <children>
+      <TitledPane animated="false" collapsible="false" text="Filter">
+         <content>
+            <VBox fx:id="titlePaneRoot" minHeight="150.0">
+               <children>
+                  <HBox alignment="CENTER_RIGHT">
+                     <children>
+                        <Hyperlink onAction="#onReset" text="Reset All">
+                           <HBox.margin>
+                              <Insets top="-9.0" />
+                           </HBox.margin>
+                        </Hyperlink>
+                     </children>
+                  </HBox>
+                  <Label styleClass="default-title" text="Popper Asset Filters">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Table Assets">
+                     <VBox.margin>
+                        <Insets top="-6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="21.0" layoutY="21.0" styleClass="default-title" text="Table Asset Filters">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass Available">
+                     <VBox.margin>
+                        <Insets top="-6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="withPupPackCheckBox" layoutX="21.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="PUP Pack Available" />
+                  <CheckBox fx:id="withPovIniCheckBox" layoutX="21.0" layoutY="176.0" mnemonicParsing="false" styleClass="preference-checkbox" text="INI/POV File Available" />
+                  <CheckBox fx:id="withAltColorCheckBox" layoutX="21.0" layoutY="215.0" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Color Available" />
+                  <CheckBox fx:id="withAltSoundCheckBox" layoutX="21.0" layoutY="253.0" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Sound Available" />
+                  <Label layoutX="21.0" layoutY="21.0" styleClass="default-title" text="Configuration Filters">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="noHighscoreSettingsCheckBox" layoutX="21.0" layoutY="356.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Highscore Settings">
+                     <VBox.margin>
+                        <Insets top="-6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="vpsUpdatesCheckBox" layoutX="21.0" layoutY="181.0" mnemonicParsing="false" styleClass="preference-checkbox" text="VPS Updates Available">
+                     <VBox.margin>
+                        <Insets top="-6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="versionUpdatesCheckBox" layoutX="21.0" layoutY="365.0" mnemonicParsing="false" styleClass="preference-checkbox" text="New Version Available" />
+                  <CheckBox fx:id="notPlayedCheckBox" layoutX="21.0" layoutY="317.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Not Played Yet" />
+                  <CheckBox fx:id="noHighscoreSupportCheckBox" layoutX="21.0" layoutY="394.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
+               </children>
+            </VBox>
+         </content>
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TitledPane>
+   </children>
+</VBox>

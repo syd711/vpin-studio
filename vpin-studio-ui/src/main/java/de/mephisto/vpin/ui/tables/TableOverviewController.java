@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -55,7 +54,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -193,6 +191,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private StackPane tableStack;
 
   @FXML
+  private StackPane tableStack2;
+
+  @FXML
   private MenuItem backglassUploadItem;
 
   @FXML
@@ -229,6 +230,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private ServerSettings serverSettings;
 
   private TableFilterController tableFilterController;
+  private List<Integer> filteredIds = new ArrayList<>();
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -492,7 +494,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onTablesScanAll() {
     boolean scanned = TableDialogs.openScanAllDialog(this.games);
-    if(scanned) {
+    if (scanned) {
       this.onReload();
     }
   }
@@ -698,7 +700,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.vpsResetBtn.setDisable(true);
 
     tableView.setVisible(false);
-    tableStack.getChildren().add(tablesLoadingOverlay);
+    tableStack2.getChildren().add(tablesLoadingOverlay);
 
     new Thread(() -> {
 
@@ -723,7 +725,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           tableView.getSelectionModel().select(0);
         }
 
-        tableStack.getChildren().remove(tablesLoadingOverlay);
+        tableStack2.getChildren().remove(tablesLoadingOverlay);
 
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
@@ -1185,6 +1187,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     PlaylistRepresentation playlist = playlistCombo.getValue();
 
     for (GameRepresentation game : games) {
+      if (!filteredIds.isEmpty() && !filteredIds.contains(game.getId())) {
+        continue;
+      }
+
       if (playlist != null && !playlist.getGameIds().contains(game.getId())) {
         continue;
       }
@@ -1445,11 +1451,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return this.tableStack;
   }
 
+  public TableView getTableView() {
+    return this.tableView;
+  }
+
   public ServerSettings getServerSettings() {
     return this.serverSettings;
   }
 
   public UISettings getUISettings() {
     return this.uiSettings;
+  }
+
+  public void setFilterIds(List<Integer> filteredIds) {
+    this.filteredIds = filteredIds;
   }
 }

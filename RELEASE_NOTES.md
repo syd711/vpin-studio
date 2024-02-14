@@ -2,9 +2,9 @@
 
 ### Table Data Management
 
-**I make separate note here because these are more or less breaking changes, but they all affect the table data management.**
+**I make a separate note here because these are more or less breaking changes, but they all affect the table data management.**
 
-**tltr:** Check the updated "Table Data" dialog and the new "Server Settings" in detail with all descriptions!
+**tltr:** Checkout the brand new "Table Data Manager" (edit table) and the new "Server Settings" in detail with all descriptions!
 
 Sorry for the wallpaper here, but it's a bigger change and long overdue. So here we go:
 
@@ -31,6 +31,7 @@ Even if you table scan resolved the correct ROM name of a table.
 
 ### Other Changes
 
+- Added checkbox to enable fuzzy lookup logic for the backglass server in the "Backglass Server" preferences.
 - Improved navigation between the Table Data Manager and the Table Asset Manager, including previous and next button.
 - Added "Invalidate All" as split-button to the "Invalidate" button in the overview toolbar.
 - VPS update flags are now resetted for the following uploads: backglass, table replacements, altsound, altcolor, puppack and pov files/archives.
