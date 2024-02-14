@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.games;
 
 public class FilterSettings {
+  private int emulatorId = -1;
   private boolean missingAssets;
   private boolean vpsUpdates;
   private boolean versionUpdates;
@@ -12,13 +13,21 @@ public class FilterSettings {
   private boolean withAltSound;
   private boolean withAltColor;
   private boolean withPovIni;
-  private GameStatus gameStatus;
+  private int gameStatus = -1;
 
-  public GameStatus getGameStatus() {
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
+  }
+
+  public int getGameStatus() {
     return gameStatus;
   }
 
-  public void setGameStatus(GameStatus gameStatus) {
+  public void setGameStatus(int gameStatus) {
     this.gameStatus = gameStatus;
   }
 

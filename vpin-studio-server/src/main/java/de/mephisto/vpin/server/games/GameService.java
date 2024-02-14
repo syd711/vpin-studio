@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDataUtil;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -603,6 +604,10 @@ public class GameService implements InitializingBean {
     List<Integer> result = new ArrayList<>();
     List<Game> knownGames = getKnownGames();
     for (Game game : knownGames) {
+      if (filterSettings.getEmulatorId() >= 0 && filterSettings.getEmulatorId() != game.getEmulatorId()) {
+        continue;
+      }
+
       if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
         continue;
       }
@@ -632,6 +637,20 @@ public class GameService implements InitializingBean {
       boolean played = (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
       if (filterSettings.isNotPlayed() && !played) {
         continue;
+      }
+
+      if (filterSettings.getGameStatus() >= 0 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
+        continue;
+      }
+
+      if (played && filterSettings.isNoHighscoreSupport()) {
+        ScoringDB scoringDB = systemService.getScoringDatabase();
+        if (!StringUtils.isEmpty(game.getRom()) && !scoringDB.getSupportedNvRams().contains(game.getRom())) {
+          continue;
+        }
+        if (!StringUtils.isEmpty(game.getHsFileName()) && game.getHighscoreTextFile().exists()) {
+          continue;
+        }
       }
 
       result.add(game.getId());

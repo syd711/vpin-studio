@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDataUtil;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -1180,8 +1181,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
     String hsType = game.getHighscoreType();
 
-    String rom = this.getEffectiveRom();
-    String tableName = this.getEffectiveTableName();
+    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
+    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     if (!String.valueOf(hsType).equals(HighscoreType.EM.name()) && !StringUtils.isEmpty(rom)) {
       if (romName.getItems().contains(rom)) {
@@ -1190,7 +1193,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         l.setTooltip(new Tooltip("A matching highscore entry has been found for this ROM name."));
         romStatusBox.getChildren().add(l);
       }
-      else if (StringUtils.isEmpty(getEffectiveHighscoreFilename())) {
+      else if (StringUtils.isEmpty(hsName)) {
         if (played) {
           Label l = new Label();
           l.setGraphic(WidgetFactory.createExclamationIcon());
@@ -1218,7 +1221,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       romStatusBox.getChildren().add(l);
     }
 
-    String hsName = this.getEffectiveHighscoreFilename();
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
     if (!StringUtils.isEmpty(hsName)) {
       if (highscoreFileName.getItems().contains(hsName)) {
@@ -1243,7 +1245,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
     else {
-      String altRom = getEffectiveTableName();
+      String altRom = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
       if (!StringUtils.isEmpty(altRom)) {
         if (highscoreFileName.getItems().contains(altRom + ".txt")) {
           Label l = new Label();
@@ -1253,30 +1255,6 @@ public class TableDataController implements Initializable, DialogController, Aut
         }
       }
     }
-  }
-
-  private String getEffectiveRom() {
-    String rom = tableDetails.getRomName();
-    if (StringUtils.isEmpty(rom)) {
-      rom = gameDetails.getRomName();
-    }
-    return rom;
-  }
-
-  private String getEffectiveHighscoreFilename() {
-    String hs = tableDetails.getMappedValue(serverSettings.getMappingHsFileName());
-    if (StringUtils.isEmpty(hs)) {
-      hs = gameDetails.getHsFileName();
-    }
-    return hs;
-  }
-
-  private String getEffectiveTableName() {
-    String rom = tableDetails.getRomAlt();
-    if (StringUtils.isEmpty(rom)) {
-      rom = gameDetails.getTableName();
-    }
-    return rom;
   }
 
   private void setMappedFieldValue(String field, String value) {
