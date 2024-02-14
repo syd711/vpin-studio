@@ -1,4 +1,10 @@
 {
+  "highscoreMappings": [
+    {
+      "rom": "spongebob",
+      "textFile": "spongebob-highscores.txt"
+    }
+  ],
   "supportedNvRams": [
     "cyberrace",
     "bloodmach",
