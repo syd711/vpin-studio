@@ -16,9 +16,11 @@
       "textFile": ""
     }
   ],
-  "supportedNvRams": [
+  "notSupported": [
     "cyberrace",
-    "bloodmach",
+    "bloodmach"
+  ],
+  "supportedNvRams": [
     "abv106",
     "abv106r",
     "acd_160",

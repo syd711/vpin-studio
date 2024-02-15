@@ -9,6 +9,16 @@ public class ScoringDB {
 
   private List<String> supportedNvRams = new ArrayList<>();
 
+  private List<String> notSupported = new ArrayList<>();
+
+  public List<String> getNotSupported() {
+    return notSupported;
+  }
+
+  public void setNotSupported(List<String> notSupported) {
+    this.notSupported = notSupported;
+  }
+
   public List<ScoringDBMapping> getHighscoreMappings() {
     return highscoreMappings;
   }

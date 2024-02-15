@@ -60,3 +60,11 @@ Phew, so that was too easy, right? Now the usual additional goodies...
 - Added missing labels for "Audio" and "Audio Launch" in the Popper media section.
 - Maximizing the window will now work for the active screen.
 - Fixed duplicate table scan during initial installation.
+
+### Miscellaneous
+
+Since the table scans are never a 100% correct, I started a score database which helps to fix table scans by providing 
+additional data. So if you find table tables where the scan does not find the correct values, drop a message.
+I can fix the scans with additional lookups here (the file will be automatically downloaded by the server):
+
+https://github.com/syd711/vpin-studio/blob/main/resources/scoringdb.json
