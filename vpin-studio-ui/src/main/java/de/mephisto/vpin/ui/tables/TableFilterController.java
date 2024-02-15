@@ -95,19 +95,18 @@ public class TableFilterController implements Initializable {
   }
 
   public void setTableController(TableOverviewController tableOverviewController) {
-    tableOverviewController.getFilterButton();
     this.tableOverviewController = tableOverviewController;
-    this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
-    this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
-    filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
+//    tableOverviewController.getFilterButton();
+//    this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
+//    this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
+//    filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
 //    titlePaneRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
-
-    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//        System.out.println(newValue);
-      }
-    });
+//    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
+//      @Override
+//      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+////        System.out.println(newValue);
+//      }
+//    });
   }
 
   @FXML

@@ -219,12 +219,16 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
               }
             }
 
-            if (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null) {
-              tableDetails.setgDetails(tableInfo.getTableDescription());
+            if (overwrite || (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null)) {
+              if (tableInfo != null) {
+                tableDetails.setgDetails(tableInfo.getTableDescription());
+              }
             }
 
-            if (StringUtils.isEmpty(tableDetails.getgNotes()) && tableInfo != null && tableInfo.getTableRules() != null) {
-              tableDetails.setgNotes(tableInfo.getTableRules());
+            if (overwrite || (StringUtils.isEmpty(tableDetails.getgNotes()) && tableInfo != null && tableInfo.getTableRules() != null)) {
+              if (tableInfo != null) {
+                tableDetails.setgNotes(tableInfo.getTableRules());
+              }
             }
 
             if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {

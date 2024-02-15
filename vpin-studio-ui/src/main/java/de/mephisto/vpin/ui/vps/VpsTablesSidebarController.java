@@ -3,14 +3,15 @@ package de.mephisto.vpin.ui.vps;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class VpsTablesSidebarController implements Initializable {
   private Label theme;
 
   @FXML
-  private HBox features;
+  private FlowPane features;
 
   @FXML
   private VBox dataRoot;
@@ -132,11 +133,15 @@ public class VpsTablesSidebarController implements Initializable {
       VpsTable table = selection.get();
       updated.setText(DateFormat.getDateInstance().format(new Date(table.getUpdatedAt())));
 
-      if(table.getFeatures()!= null) {
+      if (table.getFeatures() != null) {
         for (String feature : table.getFeatures()) {
+          if (feature.equalsIgnoreCase("fp") || feature.equalsIgnoreCase("vpx")) {
+            continue;
+          }
+
           Label badge = new Label(feature);
           badge.getStyleClass().add("white-label");
-          badge.setTooltip(new Tooltip(feature));
+          badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
           badge.getStyleClass().add("vps-badge");
           badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
           features.getChildren().add(badge);

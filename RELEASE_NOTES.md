@@ -33,6 +33,7 @@ Even if you table scan resolved the correct ROM name of a table.
 
 - Added checkbox to enable fuzzy lookup logic for the backglass server in the "Backglass Server" preferences.
 - Improved navigation between the Table Data Manager and the Table Asset Manager, including previous and next button.
+- Added tooltips for VPS feature badges.
 - Added "Invalidate All" as split-button to the "Invalidate" button in the overview toolbar.
 - Added auto-full rules for the VPX meta-data fields notes and rules, so that these values are written to the "notes" and "details" fields of PinUP Popper 1.5. 
 - VPS update flags are now resetted for the following uploads: backglass, table replacements, altsound, altcolor, puppack and pov files/archives.
@@ -48,6 +49,7 @@ Even if you table scan resolved the correct ROM name of a table.
 
 ### Bugfixes
 
+- Fixed VPS tables view's sidebar section: All badges of a table are readable now and not abbreviated anymore. 
 - Upload menu items sorted alphabetical now.
 - Added missing labels for "Audio" and "Audio Launch" in the Popper media section.
 - Maximizing the window will now work for the active screen.
