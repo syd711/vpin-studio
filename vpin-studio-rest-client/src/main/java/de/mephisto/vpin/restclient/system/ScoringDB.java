@@ -18,7 +18,7 @@ public class ScoringDB {
   private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
 
   public static String SCORING_DB_NAME = "scoringdb.json";
-  public final static String URL = "https://github.com/syd711/vpin-studio/blob/main/resources/scoringdb.json";
+  public final static String URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/scoringdb.json";
 
   private static final ObjectMapper objectMapper;
 

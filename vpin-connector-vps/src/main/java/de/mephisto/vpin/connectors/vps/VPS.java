@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
-  public final static String URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/scoringdb.json";
+  public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
   public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
 
   private static final ObjectMapper objectMapper;
