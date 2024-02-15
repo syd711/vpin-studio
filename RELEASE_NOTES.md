@@ -2,15 +2,11 @@
 
 ### Table Data Management
 
-**I make a separate note here, because these are more or less breaking changes, but they all affect the table data management.**
+**Sorry for the wallpaper here, but it's a bigger change and long overdue. So here we go...**
 
 **tltr:** Checkout the brand new "Table Data Manager" (edit table) and the new "Server Settings" in detail with all descriptions!
 
-
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager.png" width="600" />
-
-
-Sorry for the wallpaper here, but it's a bigger change and long overdue. So here we go:
 
 The **Table Data Manager** is now "the one" dialog to rule them all. It consolidates the 4x existing data sources for table data:
 - PinUP Popper table data 
