@@ -1469,4 +1469,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void setFilterIds(List<Integer> filteredIds) {
     this.filteredIds = filteredIds;
   }
+
+  public Button getFilterButton() {
+    return this.filterBtn;
+  }
 }
