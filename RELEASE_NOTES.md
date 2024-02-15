@@ -28,14 +28,16 @@ you can go to the server setting to change the default mapping there.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/field-mapping.png" width="600" />
 
-Additionally, the copying of VP-spreadsheet table meta-data into PinUP Popper has been moved into "Table Data" dialog too, so that one can see what data will be written.
+Additionally, the copying of VP-spreadsheet table meta-data into PinUP Popper has been moved into **Table Data Manager** dialog too, so that one can see what data will be written.
 
 
 **Ok, but why is this a breaking change?**
 
-If you had stored invalid values for the Popper fields that are mapped for the highscore filename or the ROM name in Popper, the highscores won't be resolved anymore.
-Even if you table scan resolved the correct ROM name of a table.
+If you had stored invalid values for the Popper fields that are used for the highscore filename or the ROM name,
+the highscores of these tables won't be resolved anymore. Even if your table scan resolved the correct ROM name of a table.
+The field in Popper must either be empty OR you can apply the correct value so that it is saved there.
 
+Phew, so that was too easy, right? Now the usual additional goodies...
 
 ### Other Changes
 
@@ -43,14 +45,14 @@ Even if you table scan resolved the correct ROM name of a table.
 - Improved navigation between the Table Data Manager and the Table Asset Manager, including previous and next button.
 - Added tooltips for VPS feature badges.
 - Added "Invalidate All" as split-button to the "Invalidate" button in the overview toolbar.
-- Added auto-full rules for the VPX meta-data fields notes and rules, so that these values are written to the "notes" and "details" fields of PinUP Popper 1.5. 
+- Added auto-fill rules for the VPX meta-data fields notes and rules, so that these values are written to the "notes" and "details" fields of PinUP Popper 1.5. 
 - VPS update flags are now resetted for the following uploads: backglass, table replacements, altsound, altcolor, puppack and pov files/archives.
-- The automatic writing from mapped VPS data to PinUP popper has been removed again for: initial scans, table replacements and clones.
+- The automatic writing from mapped VPS data to PinUP popper has been removed again for: initial scans, table replacements and clones. It is only applied via the **Table Data Manager** or when a **new** table is imported.
 - The "Table Import" dialog now provides a progress bar, so that the user gets feedback about the progress when a bunch of tables is installed at once.
 - The media preview is now pausing when the window does not have the focus anymore (saving CPU usage here).
 - Moved "Scan All" button into a split-menu button since it's not likely to be used that often.
-- Re-arranged fields in the "PinUP Popper Table Data" section.
-- Added option to upload "Music" archives. The upload accepts any zip with audio files (with or without "Music" folder in it.). I think we have all mandatory uploads then, right?
+- Re-arranged fields in the "PinUP Popper Table Data" section so that they match with the new Table Data Manager.
+- Added option to upload **Music** archives. The upload accepts any zip with audio files (with or without "Music" folder in it.). I think we have all mandatory uploads then, right?
 - Added the option to render highscore cards with a transparent background.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/cards/transparent-cards.png" width="600" />
