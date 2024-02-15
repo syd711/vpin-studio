@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
     <center>
         <BorderPane BorderPane.alignment="CENTER">
             <center>
@@ -124,17 +124,6 @@
                     <top>
                         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                             <items>
-                        <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Toggle Filter View" />
-                           </tooltip>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu" iconSize="18" />
-                           </graphic>
-                        </Button>
                                 <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                     <font>
                                         <Font size="14.0" />

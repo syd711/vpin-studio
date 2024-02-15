@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.popper.*;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
@@ -157,6 +156,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
     String vpsTableId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableId());
     String vpsTableVersionId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
+    TableInfo tableInfo = vpxService.getTableInfo(game);
 
     if (!StringUtils.isEmpty(vpsTableId)) {
       VpsTable vpsTable = VPS.getInstance().getTableById(vpsTableId);
@@ -214,7 +214,17 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
             }
 
             if (overwrite || StringUtils.isEmpty(tableDetails.getNotes())) {
-              tableDetails.setNotes(tableVersion.getComment());
+              if (!StringUtils.isEmpty(tableVersion.getComment())) {
+                tableDetails.setNotes(tableVersion.getComment());
+              }
+            }
+
+            if (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null) {
+              tableDetails.setgDetails(tableInfo.getTableDescription());
+            }
+
+            if (StringUtils.isEmpty(tableDetails.getgNotes()) && tableInfo != null && tableInfo.getTableRules() != null) {
+              tableDetails.setgNotes(tableInfo.getTableRules());
             }
 
             if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
@@ -226,12 +236,12 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
           }
         }
         else {
-          fillTableInfoWithVpxData(game, tableDetails, overwrite);
+          fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
         }
       }
     }
     else {
-      fillTableInfoWithVpxData(game, tableDetails, overwrite);
+      fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
     }
 
     if (simulate) {
@@ -248,8 +258,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   /**
    * Some fallback: we use the VPX script metadata for popper if the VPS version data has not been applied.
    */
-  private void fillTableInfoWithVpxData(@NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
-    TableInfo tableInfo = vpxService.getTableInfo(game);
+  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
     if (tableInfo != null) {
       if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
         tableDetails.setGameVersion(tableInfo.getTableVersion());

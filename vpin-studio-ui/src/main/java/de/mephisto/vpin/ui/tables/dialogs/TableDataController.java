@@ -407,6 +407,9 @@ public class TableDataController implements Initializable, DialogController, Aut
         tags.setText(td.getTags());
         notes.setText(td.getNotes());
         gameVersion.setText(td.getGameVersion());
+        gNotes.setText(td.getgNotes());
+        gDetails.setText(td.getgDetails());
+        gLog.setText(td.getgLog());
       }
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
@@ -475,8 +478,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onVersionFix() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-        + game.getVersion() + "\" with the VPS table version \"" +
-        game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+      + game.getVersion() + "\" with the VPS table version \"" +
+      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
       td.setGameVersion(game.getExtVersion());
@@ -694,7 +697,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -1145,7 +1148,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private void onRomNameFocusChange(Boolean newValue) {
-    if(!newValue) {
+    if (!newValue) {
       romName.setPromptText("");
       if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
         romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
@@ -1164,7 +1167,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private void onAltRomNameFocusChange(Boolean newValue) {
-    if(!newValue) {
+    if (!newValue) {
       altRomName.setPromptText("");
       if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
         altRomName.setPromptText(gameDetails.getTableName() + " (scanned value)");
@@ -1211,10 +1214,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     //check ROM name validity
     if (played
-        && !scoringDB.getSupportedNvRams().contains(rom)
-        && !scoringDB.getSupportedNvRams().contains(tableName)
-        && !highscoreFiles.getVpRegEntries().contains(rom)
-        && !highscoreFiles.getVpRegEntries().contains(tableName)) {
+      && !scoringDB.getSupportedNvRams().contains(rom)
+      && !scoringDB.getSupportedNvRams().contains(tableName)
+      && !highscoreFiles.getVpRegEntries().contains(rom)
+      && !highscoreFiles.getVpRegEntries().contains(tableName)) {
       Label l = new Label();
       l.setGraphic(WidgetFactory.createUnsupportedIcon());
       l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
@@ -1372,12 +1375,14 @@ public class TableDataController implements Initializable, DialogController, Aut
     applyAltRomBtn.setDisable(StringUtils.isEmpty(gameDetails.getTableName()));
 
     scannedHighscoreFileName.setText(gameDetails.getHsFileName());
-    if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-      highscoreFileName.setPromptText(gameDetails.getTableName() + " (scanned value)");
-    }
     scannedHighscoreFileName.setPromptText("");
-    if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-      scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt");
+
+    if (!StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(highscoreFileName.getValue())) {
+      highscoreFileName.setPromptText(gameDetails.getHsFileName() + " (scanned value)");
+    }
+    else if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
+      //apply tablename fallback for scanned highscore field
+      scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt (scanned value)");
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(gameDetails.getHsFileName()));
   }

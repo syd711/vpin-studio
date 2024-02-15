@@ -2,7 +2,18 @@
   "highscoreMappings": [
     {
       "rom": "spongebob",
-      "textFile": "spongebob-highscores.txt"
+      "tableName": "",
+      "textFile": "spongebob_hiscores.txt"
+    },
+    {
+      "rom": "hpgof",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "rom": "pizzatime",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "supportedNvRams": [
