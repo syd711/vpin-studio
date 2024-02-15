@@ -12,18 +12,22 @@
 
 Sorry for the wallpaper here, but it's a bigger change and long overdue. So here we go:
 
-The "Table Data" is now "the one" dialog to rule them all. It consolidates the 4x existing data sources for table data:
+The **Table Data Manager** is now "the one" dialog to rule them all. It consolidates the 4x existing data sources for table data:
 - PinUP Popper table data 
 - VPin Studio scanned table data
 - Virtual Pinball Spreadsheet data
-- VPX file inner info section
+- VPX file script fields section
 
-**It wasn't obvious where data was stored before and when exactly what value is used or preferred.1**
+**It wasn't obvious where data was stored before and when exactly what value is used or preferred.**
 From now on, **the values inside the PinUP Popper database will be the single source of truth and are always preferred over the scanned table values**.
-As a result from this, large parts of the "Script Section" have been resolved into the "Table Data" dialog (and moved lower to the bottom) and the "Popper Popper Table Data" section has been re-ordered.
+As a result from this, large parts of the "Script Section" have been resolved into the **Table Data Manager** dialog (and moved lower to the bottom) and the "Popper Popper Table Data" section has been re-ordered.
 
-The VP-spreadsheet table mapping is now stored inside the PinUP Popper database too. Since Popper does not provide special fields for these values, 
+**The VP-spreadsheet table mapping is now stored inside the PinUP Popper database too.** 
+Since Popper does not provide special fields for these values, 
 you can go to the server setting to change the default mapping there.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/field-mapping.png" width="600" />
+
 Additionally, the copying of VP-spreadsheet table meta-data into PinUP Popper has been moved into "Table Data" dialog too, so that one can see what data will be written.
 
 
