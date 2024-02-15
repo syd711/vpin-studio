@@ -52,15 +52,6 @@ import java.util.stream.Collectors;
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
-  public static String SCORING_DB_NAME = "scoringdb.json";
-  private static final ObjectMapper objectMapper;
-
-  static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-  }
-
   public final static int SERVER_PORT = RestClient.PORT;
 
   public static final String COMPETITION_BADGES = "competition-badges";
@@ -514,25 +505,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   private void loadingScoringDB() {
-    FileInputStream in = null;
-    try {
-      in = new FileInputStream(getScoringDBFile());
-      db = objectMapper.readValue(in, ScoringDB.class);
-      LOG.info("Loaded " + db + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(getScoringDBFile().lastModified())));
-    } catch (Exception e) {
-      db = new ScoringDB();
-      LOG.error("Failed to load scoring DB json: " + e.getMessage(), e);
-    } finally {
-      try {
-        in.close();
-      } catch (IOException e) {
-        //ignore
-      }
-    }
+    db = ScoringDB.load();
   }
 
   private static File getScoringDBFile() {
-    return new File(SystemInfo.RESOURCES, SCORING_DB_NAME);
+    return new File(SystemInfo.RESOURCES, ScoringDB.SCORING_DB_NAME);
   }
 
   @Override
@@ -550,8 +527,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return;
     }
 
+    this.loadingScoringDB();
     new Thread(() -> {
       Thread.currentThread().setName("ScoringDB Updater");
+      ScoringDB.update();
       this.loadingScoringDB();
     }).start();
 

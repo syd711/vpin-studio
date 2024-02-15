@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg", "sendKeys.bat", SystemService.SCORING_DB_NAME);
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg", "sendKeys.bat", ScoringDB.SCORING_DB_NAME);
 
   public static void execute() {
     new Thread(() -> {
