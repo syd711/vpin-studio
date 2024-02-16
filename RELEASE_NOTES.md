@@ -14,6 +14,8 @@ The **Table Data Manager** is now "the one" dialog to rule them all. It consolid
 - Virtual Pinball Spreadsheet data
 - VPX file script fields section
 
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager2.png" width="650" />
+
 **It wasn't obvious where data was stored before and when exactly what value is used or preferred.**
 From now on, **the values inside the PinUP Popper database will be the single source of truth and are always preferred over the scanned table values**.
 As a result from this, large parts of the "Script Section" have been resolved into the **Table Data Manager** dialog (and moved lower to the bottom) and the "Popper Popper Table Data" section has been re-ordered.
