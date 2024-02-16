@@ -41,7 +41,9 @@ public class ScoringDB {
       LOG.error("Failed to load scoring DB json: " + e.getMessage(), e);
     } finally {
       try {
-        in.close();
+        if (in != null) {
+          in.close();
+        }
       } catch (IOException e) {
         //ignore
       }

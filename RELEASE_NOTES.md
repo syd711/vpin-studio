@@ -60,6 +60,7 @@ Phew, so that was too easy, right? Now the usual additional goodies...
 - Added missing labels for "Audio" and "Audio Launch" in the Popper media section.
 - Maximizing the window will now work for the active screen.
 - Fixed duplicate table scan during initial installation.
+- Fixed VPS search: Unfortunately, only matches have been shown that start with the search term, not include them.
 
 ### Miscellaneous
 

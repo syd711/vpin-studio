@@ -1213,11 +1213,13 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (played
+    if (scoringDB.getNotSupported().contains(rom) ||
+      (played
       && !scoringDB.getSupportedNvRams().contains(rom)
       && !scoringDB.getSupportedNvRams().contains(tableName)
       && !highscoreFiles.getVpRegEntries().contains(rom)
-      && !highscoreFiles.getVpRegEntries().contains(tableName)) {
+      && !highscoreFiles.getVpRegEntries().contains(tableName))) {
+      romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
       Label l = new Label();
       l.setGraphic(WidgetFactory.createUnsupportedIcon());
       l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));

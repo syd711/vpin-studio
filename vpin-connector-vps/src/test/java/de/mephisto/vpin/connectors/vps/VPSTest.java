@@ -97,8 +97,9 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
-    List<VpsTable> vpsTables = vps.find("Flintstones, The");
+    List<VpsTable> vpsTables = vps.find("Okto");
     assertEquals(1, vpsTables.size());
+    assertEquals("Jolly Park Oktoberfest | Original (2024)", vpsTables.get(0).getDisplayName());
 
     vpsTables = vps.find("X-Files");
     assertTrue(!vpsTables.isEmpty());
