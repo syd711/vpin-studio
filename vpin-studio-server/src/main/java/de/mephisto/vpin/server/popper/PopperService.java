@@ -231,11 +231,16 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
               }
             }
 
-            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
-              if (tableVersion.getFeatures() != null) {
-                tableDetails.setTags(String.join(", ", tableVersion.getFeatures()));
-              }
-            }
+//            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
+//              if (tableVersion.getFeatures() != null) {
+//                String tags = String.join(", ", tableVersion.getFeatures());
+//                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
+//                if (!tableDetailTags.contains(tags)) {
+//                  tableDetailTags = tableDetailTags + ", " + tags;
+//                }
+//                tableDetails.setTags(tableDetailTags);
+//              }
+//            }
             LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
           }
         }
