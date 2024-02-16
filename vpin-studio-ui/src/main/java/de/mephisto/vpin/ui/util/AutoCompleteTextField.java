@@ -51,7 +51,7 @@ public class AutoCompleteTextField {
           entriesPopup.hide();
         }
         else {
-          List<String> searchResult = entries.stream().filter(e -> e.toLowerCase().startsWith(textField.getText().toLowerCase())).collect(Collectors.toList());
+          List<String> searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).collect(Collectors.toList());
 //          searchResult.addAll(entries.subSet(textField.getText(), textField.getText() + Character.MAX_VALUE));
           if (entries.size() > 0) {
             populatePopup(searchResult);
