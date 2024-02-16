@@ -6,7 +6,7 @@
 
 **tltr:** Checkout the brand new "Table Data Manager" (edit table) and the new "Server Settings" in detail with all descriptions!
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager.png" width="650" />
 
 The **Table Data Manager** is now "the one" dialog to rule them all. It consolidates the 4x existing data sources for table data:
 - PinUP Popper table data 
