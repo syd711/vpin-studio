@@ -9,15 +9,15 @@ import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
@@ -28,8 +28,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableFilterController.class);
@@ -77,58 +75,87 @@ public class TableFilterController implements Initializable {
   private VBox filterRoot;
 
   @FXML
-  private VBox titlePaneRoot;
-
-  @FXML
   private ComboBox<TableStatus> statusCombo;
 
   private boolean visible = false;
   private boolean updatesDisabled = false;
   private FilterSettings filterSettings;
   private TableOverviewController tableOverviewController;
+  private Button filterButton;
+  private boolean blocked;
 
 
   @FXML
   private void onReset() {
-    updateSettings(new FilterSettings());
-    applyFilter();
+    if (!filterSettings.isResetted()) {
+      updateSettings(new FilterSettings());
+      applyFilter();
+    }
   }
 
   public void setTableController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
-//    tableOverviewController.getFilterButton();
-//    this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
-//    this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
-//    filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
+    filterButton = tableOverviewController.getFilterButton();
+    this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
+    this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
+    filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
 //    titlePaneRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
-//    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
-//      @Override
-//      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-////        System.out.println(newValue);
-//      }
-//    });
+    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        refreshState();
+      }
+    });
+  }
+
+  private void refreshState() {
+    if (visible) {
+      tableOverviewController.getTableView().setMaxWidth(tableOverviewController.getTableStack().getWidth() - 250);
+    }
+    else {
+      tableOverviewController.getTableView().setMaxWidth(tableOverviewController.getTableStack().getWidth());
+    }
   }
 
   @FXML
   public void toggle() {
+    if (blocked) {
+      return;
+    }
+
+    blocked = true;
+
     if (!visible) {
       visible = true;
       filterRoot.setVisible(true);
+      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
       TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, 250);
+      filterTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+        @Override
+        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+          if (newValue == Animation.Status.STOPPED) {
+            refreshState();
+            blocked = false;
+          }
+        }
+      });
       filterTransition.play();
     }
     else {
       visible = false;
+      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
       TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, -250);
       translateByXTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
         @Override
         public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
           if (newValue == Animation.Status.STOPPED) {
             filterRoot.setVisible(false);
+            blocked = false;
           }
         }
       });
       translateByXTransition.play();
+      refreshState();
     }
   }
 
@@ -239,17 +266,21 @@ public class TableFilterController implements Initializable {
   }
 
   private void applyFilter() {
+    if (filterSettings.isResetted()) {
+      filterButton.getStyleClass().remove("filter-button-selected");
+    }
+    else {
+      if (!filterButton.getStyleClass().contains("filter-button-selected")) {
+        filterButton.getStyleClass().add("filter-button-selected");
+      }
+    }
+
     if (updatesDisabled) {
       return;
     }
 
-    try {
-      List<Integer> integers = client.getGameService().filterGames(this.filterSettings);
-      tableOverviewController.setFilterIds(integers);
-      tableOverviewController.onReload();//TODO
-    } catch (Exception e) {
-      LOG.error("Error filtering tables: " + e.getMessage());
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
-    }
+    Platform.runLater(() -> {
+      tableOverviewController.onRefresh(filterSettings);
+    });
   }
 }

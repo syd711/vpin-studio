@@ -26,7 +26,7 @@
             <center>
                 <BorderPane BorderPane.alignment="CENTER">
                     <center>
-                        <StackPane fx:id="tableStack" styleClass="media-parent">
+                        <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                             <BorderPane.margin>
                                 <Insets bottom="6.0" />
                             </BorderPane.margin>
@@ -124,6 +124,17 @@
                     <top>
                         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                             <items>
+                        <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Toggle Filter View" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
                                 <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                     <font>
                                         <Font size="14.0" />

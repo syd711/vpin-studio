@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
@@ -670,6 +671,34 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
+
+  public synchronized void onRefresh(FilterSettings filterSettings) {
+    tableView.setVisible(false);
+
+    if (!tableStack.getChildren().contains(tablesLoadingOverlay)) {
+      tableStack.getChildren().add(tablesLoadingOverlay);
+    }
+
+    new Thread(() -> {
+      Platform.runLater(() -> {
+        try {
+          List<Integer> integers = client.getGameService().filterGames(filterSettings);
+          setFilterIds(integers);
+
+          filterGames(games);
+          tableView.setItems(data);
+          tableView.refresh();
+
+          tableView.setVisible(true);
+          tableStack.getChildren().remove(tablesLoadingOverlay);
+        } catch (Exception e) {
+          LOG.error("Error filtering tables: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
+        }
+      });
+    }).start();
+  }
+
   @FXML
   public void onReload() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -694,7 +723,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.vpsResetBtn.setDisable(true);
 
     tableView.setVisible(false);
-
     tableStack.getChildren().add(tablesLoadingOverlay);
 
     new Thread(() -> {

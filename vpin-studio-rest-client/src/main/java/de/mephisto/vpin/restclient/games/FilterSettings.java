@@ -127,4 +127,21 @@ public class FilterSettings {
   public void setVersionUpdates(boolean versionUpdates) {
     this.versionUpdates = versionUpdates;
   }
+
+  public boolean isResetted() {
+    return !this.missingAssets
+      && !this.noHighscoreSettings
+      && !this.noHighscoreSupport
+      && !this.notPlayed
+      && !this.noVpsMapping
+      && !this.vpsUpdates
+      && !this.versionUpdates
+      && !this.withAltColor
+      && !this.withAltSound
+      && !this.withBackglass
+      && !this.withPovIni
+      && !this.withPupPack
+      && this.gameStatus == -1
+      && this.emulatorId == -1;
+  }
 }
