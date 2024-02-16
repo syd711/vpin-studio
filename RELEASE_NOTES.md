@@ -6,19 +6,22 @@
 
 **tltr:** Checkout the brand new "Table Data Manager" (edit table) and the new "Server Settings" in detail with all descriptions!
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager.png" width="650" />
-
 The **Table Data Manager** is now "the one" dialog to rule them all. It consolidates the 4x existing data sources for table data:
 - PinUP Popper table data 
 - VPin Studio scanned table data
 - Virtual Pinball Spreadsheet data
 - VPX file script fields section
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager2.png" width="650" />
-
 **It wasn't obvious where data was stored before and when exactly what value is used or preferred.**
 From now on, **the values inside the PinUP Popper database will be the single source of truth and are always preferred over the scanned table values**.
-As a result from this, large parts of the "Script Section" have been resolved into the **Table Data Manager** dialog (and moved lower to the bottom) and the "Popper Popper Table Data" section has been re-ordered.
+As a result from this, large parts of the "Script Section" have been resolved into the **Table Data Manager** dialog (and moved lower to the bottom).
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager.png" width="650" />
+
+
+It includes a deeper analysis of the gathered data regarding the status of the highscore.
+I hope the new view gives a better overview about the configuration status and will help to setup the required fields to extract highscores from tables. 
+
 
 **The VP-spreadsheet table mapping is now stored inside the PinUP Popper database too.** 
 Since Popper does not provide special fields for these values, 
@@ -27,6 +30,8 @@ you can go to the server setting to change the default mapping there.
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/field-mapping.png" width="600" />
 
 Additionally, the copying of VP-spreadsheet table meta-data into PinUP Popper has been moved into **Table Data Manager** dialog too, so that one can see what data will be written.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-manager2.png" width="650" />
 
 
 **Ok, but why is this a breaking change?**
@@ -69,6 +74,6 @@ Phew, so that was too easy, right? Now the usual additional goodies...
 
 Since the table scans are never a 100% correct, I started a score database which helps to fix table scans by providing 
 additional data. So if you find table tables where the scan does not find the correct values, drop a message.
-I can fix the scans with additional lookups here (the file will be automatically downloaded by the server):
+I can fix the scans with additional lookups there (the file will be automatically downloaded by the server):
 
 https://github.com/syd711/vpin-studio/blob/main/resources/scoringdb.json
