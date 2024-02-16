@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -22,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,7 +179,12 @@ public class TablesSidebarController implements Initializable {
   private void onVpsBtn() {
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
-        Desktop.getDesktop().browse(new URI("https://virtual-pinball-spreadsheet.web.app/"));
+        String url = VPS.BASE_URL;
+        GameRepresentation selection = this.tablesController.getSelection();
+        if(selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+          url = VPS.getVpsTableUrl(selection.getExtTableId());
+        }
+        Desktop.getDesktop().browse(new URI(url));
       } catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
