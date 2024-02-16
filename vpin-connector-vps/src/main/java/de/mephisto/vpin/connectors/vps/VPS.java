@@ -208,9 +208,8 @@ public class VPS {
       }
 
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
-
       return Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures() != null && t.getFeatures().contains(VpsFeatures.VPX))
+          .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
           .collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);

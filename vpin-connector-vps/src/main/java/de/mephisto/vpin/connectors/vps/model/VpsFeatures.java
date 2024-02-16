@@ -3,6 +3,7 @@ package de.mephisto.vpin.connectors.vps.model;
 public interface VpsFeatures {
   String MOD = "MOD";
   String VPX = "VPX";
+  String FP = "FP";
   String INCL_PUP = "incl. PuP";
   String NO_ROM = "no ROM";
   String SSF = "SFF";

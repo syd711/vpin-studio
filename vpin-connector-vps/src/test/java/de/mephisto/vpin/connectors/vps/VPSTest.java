@@ -97,9 +97,13 @@ public class VPSTest {
     VPS vps = VPS.getInstance();
     List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
-    List<VpsTable> vpsTables = vps.find("Okto");
+    List<VpsTable> vpsTables = vps.find("2 in 1");
+    for (VpsTable vpsTable : vpsTables) {
+      System.out.println(vpsTable.getDisplayName());
+    }
+
     assertEquals(1, vpsTables.size());
-    assertEquals("Jolly Park Oktoberfest | Original (2024)", vpsTables.get(0).getDisplayName());
+    assertEquals("Star Action | Williams (1973)", vpsTables.get(0).getDisplayName());
 
     vpsTables = vps.find("X-Files");
     assertTrue(!vpsTables.isEmpty());
