@@ -18,19 +18,21 @@
 
 <body>
     <h3><span>&nbsp;&nbsp;What is Virtual Pinball Backup Manager</span></h3>
-    <img src="img/vpbmFullScreen.jpg" alt="VPBM" width="800" height="435" style="float: right;">
     <p>Virtual Pinball Backup Manager (<span class="vpbm">VPBM</span>) is designed to manage backups of individual Virtual Pinball games within a Pinup System/Baller Installer installation.</p>
     <p><span class="vpbm">VPBM</span> currently supports Visual Pinball (VPX) and Future Pinball emulators.</p>
     <p><span class="vpbm">VPBM</span> supports backup and restore of a wide range of game related content, including:
     <ul>
-        <li>Game files</li>
-        <li>Game specific Pup Packs</li>
-        <li>Game specific Pinup media files</li>
-        <li>Game specific Pinup database settings</li>
+        <li>Pinup System specific
+            <ul>
+                <li>Pinup database settings</li>
+                <li>Pinup media files</li>
+                <li>Pup Packs</li>
+            </ul>
+        </li>
         <li>VPX specific
             <ul>
                 <li>B2S (backglass) files</li>
-                <li>Game specific B2S settings</li>
+                <li>B2S settings</li>
                 <li>POV (point-of-view) files</li>
                 <li>Flex DMD/Ultra DMD files and folders</li>
                 <li>VPReg.stg entries</li>
@@ -49,6 +51,7 @@
         </li>
         <li><strong>NOTE: Additional filter rules can be setup by users to include additional content not met by the default rules</strong></li>
     </ul>
+    <img src="img/vpbmFullScreen.jpg" width="1432" alt="VPBM">
     <p>The contents of a games backup can easily be viewed within the application using the tree view, while an integrated <strong>Quick View</strong> bar provides users a quick visual indication of the presence of critical files.</p>
     <p>Pinup database game details are displayed, as is Pinup media, in a manner consistent with how media is displayed within Pinup Menu Setup.</p>
     <p><span class="vpbm">VPBM</span> is not designed to replace <a href="https://www.nailbuster.com/wikipinup/doku.php?id=start">Pinup System</a>, in fact it depends on it to function - rather it tries to add features that make managing game files and settings easier by providing an individual game backup and support for comparing this backup to the installed game.</p>
@@ -61,28 +64,49 @@
             <ul>
                 <li><a href="./applicationSettings.html">Application Settings</a></li>
                 <li><a href="./fileMenu.html">File Menu</a></li>
-                <li><a href="./importMenu.html">Import / Restore Menu</a></li>
                 <li><a href="./helpMenu.html">Help Menu</a></li>
                 <li><a href="./installedGames.html">Installed Games Panel</a></li>
                 <li><a href="./selectedGameDisplayControl.html">Selected Game Display Control Panel</a></li>
                 <li><a href="./selectedGameContent.html">Selected Game Content Panel</a></li>
-                <li><a href="./selectedGameDetails.html">Selected Game Details Panel</a></li>
+                <li><a href="./selectedGamePinupDetails.html">Selected Game Pinup Details Panel</a></li>
                 <li><a href="./selectedGamePinupMedia.html">Selected Game Pinup Media Panel</a></li>
-                <li><a href="./filterVariables.html">Filter Variables Panel</a></li>
-                <li><a href="./customFileFilters.html">Custom File Filters Panel</a></li>
-                <li><a href="./restoreGameBackups.html">Restore Game Backups Form</a></li>
-                <li><a href="./importNewGames.html">Import New Games Form</a></li>
+                <li><a href="./selectedGameFilterVariables.html">Selected Game Filter Variables Panel</a></li>
+                <li><a href="./selectedGameCustomFilters.html">Selected Game Custom Filters Panel</a></li>
+                <li><a href="./importingNewGames.html">Importing New Games</a></li>
             </ul>
         </dd>
     </dl>
-    <hr>
 
+    <hr>
+    <h3><span>&nbsp;&nbsp;Command Line Mode</span></h3>
+    <p><span class="vpbm">VPBM</span> provides built in command line support of all major functions. This allows <span class="vpbm">VPBM</span> to be used by tools such as <a href=https://github.com/syd711/vpin-studio/wiki>VPin Studio</a>.</p>
+    <p>Integrated command line help is available and can be viewed by opening a Command Promt, navigating to the <span class="vpbm">VPBM</span> folder and running the command: "<stong>vPinBackupManager --help</stong>".</p>
+    <br />
+
+    <hr>
     <h3><span>&nbsp;&nbsp;Installing Updates</span></h3>
     <p><span class="vpbm">VPBM</span> contains built in update functionality. At startup, if connected to the internet, <span class="vpbm">VPBM</span> searches for any available updates. If an update is found, VPBM displays an indication of the update in the status bar.</p>
-    <img src="img/applicationUpdate.jpg" alt="update">
-    <p>Clicking on the red text in the status bar will trigger a dialog confirming you wish to proceed with the update.</p>
-    <img src="img/applicationUpdateConfirmation.jpg" alt="update confirmation">
-    <p>Clicking OK launches the auto updater. As per the description the updater will take several minutes to complete (depending on internet speed). During this time <span class="vpbm">VPBM</span> will download the appropriate update zip (as found <a href="https://github.com/mmattner/vPinBackupManagerApp/releases/latest">here</a>) before shutting down, unzipping the update and restarting.</p>
+
+    <br />
+    <img src="img/applicationUpdate.jpg" width="546" alt="update">
+    <br />
+    <br />
+    <p>Clicking on the red text in the status bar will trigger a dialog confirming you wish to proceed with the update and provide two methods of performing the update - automatic and manual.</p>
+    <ul>
+        <li>An automatic update requires a single button click, but could present issues if Antivirus or Windows Defender block the update zip being downloaded from https://github.com/mmattner/vPinBackupManagerApp/releases/latest.</li>
+        <li>A manual update provides the user a set of steps to manually download the update pack and manually check it before performing the update with a supplied install script. To assist with this process the link to https://github.com/mmattner/vPinBackupManagerApp/releases/latest is copied into the clipboard for the user to paste into their browser of choice.</li>
+    <br />
+    <img src="img/applicationUpdateConfirmation.jpg" width="546" alt="update confirmation">
+    <br />
+    <br />
+    <p>Clicking Yes launches the auto updater. As per the description the updater will take several minutes to complete (depending on internet speed). During this time <span class="vpbm">VPBM</span> will download the appropriate update zip (as found <a href="https://github.com/mmattner/vPinBackupManagerApp/releases/latest">here</a>) before shutting down, unzipping the update and restarting.</p>
+    <p>If the user clicks No, they are prevented a dialog containing the steps to perform a manual download (shown below). At this point they can either click OK and ignore the steps, or they can work through the steps to update the application version.</p>
+
+    <br />
+    <img src="img/manualApplicationUpdateSteps.jpg" width="865" alt="update confirmation">
+    <br />
+    <br />
+
 </body>
 
 <footer>

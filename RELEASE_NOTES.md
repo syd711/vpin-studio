@@ -2,6 +2,7 @@
 
 ### Changes
 
+- Updated to Virtual Pinball Backup Manager 2.0. (Installer only)
 - Added "Statistics" tab to the Table Data Manager dialog.
 - Added Table Filters.
 

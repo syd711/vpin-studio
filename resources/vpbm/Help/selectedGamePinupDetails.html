@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VPBM - Selected Game Display Control Panel</title>
+    <title>VPBM - Selected Game Pinup Details Panel</title>
     <link rel="icon" href="img/vpbm.png">
     <link rel="stylesheet" href="vpbm.css">
 </head>
@@ -10,7 +10,7 @@
 <header>
     <hr>
 	<a href="main.html"><img style="float: left; padding: 6px 0px 0px 0px;" src="./img/logo.png" alt="VPBM Logo" width="60" height="60"></a>
-    <h2><span>&nbsp;&nbsp;Selected Game Display Control Panel</span></h2>
+    <h2><span>&nbsp;&nbsp;Selected Game Pinup Details Panel</span></h2>
 	<p><span class="vpbm">Virtual Pinball Backup Manager</span> - managing your backups, one game at a time</p>
     <hr>
 </header>
@@ -18,10 +18,15 @@
 
 <body>
     <h3><span>&nbsp;&nbsp;Overview</span></h3>
-        <p>The <strong>Selected Game Display Control</strong> panel is provided to allow users to manage what information is displayed for the selected game. The selected game itself corresponds to the most recently selected game in the <a href="./installedGames.html">Installed Games</a> panels game table.</p>
-		<p>The control allows the user to select whether game information is to be displayed from the Current system (currently installed game - on disk) or from the Backup. The Backup option is only made available for games that have a backup file present. By default the Current option is selected.</p>
-        <p><img src="img/SelectedGameDisplayControl.gif" width="714" alt="Selected Game Display Control"></p>
-		<p>Content in other selected game content panels is updated to reflect the change and the title of these panels changed to reflect the display source, with the text <strong>"(Backup)"</strong> added if backup content ids being displayed. Controls in these panels may be disabled when viewing backups if modification is not possible.</p>
+    <p>The <strong>Selected Game Pinup Details</strong> panel provides a read only view of the currently selected games details. This information mirrors the information found within the Pinup Popper Games Manager, but is a read only copy of this information.</p>
+    <p>Users wishing to modify game data seen in this panel should do this through Pinup Popper as the scope of <span class="vpbm">VPBM</span> is limited to the management of game backups rather than editing game data.</p>
+    <p>The source of information viewed in this panel is determined by the selections made in the <a href="./selectedGameDisplayControl.html">Selected Game Display Control</a> panel.</p>
+    <ol>
+        <li>If <strong>Disk</strong> is selected, the displayed content is taken from the currently active Pinup Popper database.</li>
+        <li>If <strong>Backup</strong> is selected, the displayed content is taken from the currently games backup file.</li>
+    </ol>
+    <p>Content within the <strong>Selected Game Pinup Details</strong> panel will be colored red if the content differs between the installed game and database, or green if the content is only present in the installed game or database. </p>
+    <img src="img/SelectedGameDetails.jpg" width="445" alt="Selected Game Details">
 </body>
 
 <footer>
