@@ -15,6 +15,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -1221,6 +1222,11 @@
                                  </padding>
                               </VBox>
                            </content>
+                        </Tab>
+                        <Tab fx:id="statisticsTab" text="Statistics">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
                         </Tab>
                      </tabs>
                   </TabPane>

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -118,7 +119,22 @@
                            </VBox.margin>
                         </CheckBox>
                         <CheckBox fx:id="versionUpdatesCheckBox" layoutX="21.0" layoutY="365.0" mnemonicParsing="false" styleClass="preference-checkbox" text="New Version Available" />
-                        <CheckBox fx:id="notPlayedCheckBox" layoutX="21.0" layoutY="317.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Not Played Yet" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
+                           <children>
+                              <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Based on launches from PinUP POpper" wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                         <CheckBox fx:id="noHighscoreSupportCheckBox" layoutX="21.0" layoutY="394.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
                      </children>
                   </VBox>

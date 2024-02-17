@@ -352,4 +352,19 @@ public class VPReg {
 
     return root.createDirectory(rom);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof VPReg)) return false;
+
+    VPReg vpReg = (VPReg) o;
+
+    return vpregFile.equals(vpReg.vpregFile);
+  }
+
+  @Override
+  public int hashCode() {
+    return vpregFile.hashCode();
+  }
 }

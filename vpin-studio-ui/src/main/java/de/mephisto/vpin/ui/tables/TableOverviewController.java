@@ -212,6 +212,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private Button filterBtn;
 
+  @FXML
+  private StackPane loaderStack;
+
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
@@ -684,9 +687,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public synchronized void onRefresh(FilterSettings filterSettings) {
     tableView.setVisible(false);
 
-    if (!tableStack.getChildren().contains(tablesLoadingOverlay)) {
-      tableStack.getChildren().add(tablesLoadingOverlay);
-    }
+    setBusy(true);
 
     new Thread(() -> {
       try {
@@ -696,9 +697,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           filterGames(games);
           tableView.setItems(data);
           tableView.refresh();
-
-          tableView.setVisible(true);
-          tableStack.getChildren().remove(tablesLoadingOverlay);
+          if (filterSettings.isResetted()) {
+            labelTableCount.setText(games.size() + " tables");
+          }
+          else {
+            labelTableCount.setText(data.size() + " of " + games.size() + " tables");
+          }
+          setBusy(false);
         });
       } catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
@@ -730,8 +735,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.vpsBtn.setDisable(true);
     this.vpsResetBtn.setDisable(true);
 
-    tableView.setVisible(false);
-    tableStack.getChildren().add(tablesLoadingOverlay);
+    setBusy(true);
 
     new Thread(() -> {
 
@@ -755,9 +759,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         else if (!games.isEmpty()) {
           tableView.getSelectionModel().select(0);
         }
-
-        tableStack.getChildren().remove(tablesLoadingOverlay);
-
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
@@ -775,14 +776,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.scanAllBtn.setDisable(false);
         this.uploadTableBtn.setDisable(false);
 
-        tableView.setVisible(true);
         labelTableCount.setText(games.size() + " tables");
 
+        setBusy(false);
         Platform.runLater(() -> {
           tableView.requestFocus();
         });
       });
     }).start();
+  }
+
+  private void setBusy(boolean b) {
+    if (b) {
+      tableView.setVisible(false);
+      if (!loaderStack.getChildren().contains(tablesLoadingOverlay)) {
+        loaderStack.getChildren().add(tablesLoadingOverlay);
+      }
+    }
+    else {
+      tableView.setVisible(true);
+      loaderStack.getChildren().remove(tablesLoadingOverlay);
+    }
   }
 
   private void refreshPlaylists() {

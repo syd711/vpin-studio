@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -54,6 +53,9 @@ public class GamesResource {
   @Autowired
   private PreferencesService preferenceService;
 
+  @Autowired
+  private GameFilterService gameFilterService;
+
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -61,7 +63,7 @@ public class GamesResource {
 
   @PostMapping("/filter")
   public List<Integer> getGamesFiltered(@RequestBody FilterSettings filterSettings) {
-    return gameService.filterGames(filterSettings);
+    return gameFilterService.filterGames(gameService, filterSettings);
   }
 
   @GetMapping("/ids")

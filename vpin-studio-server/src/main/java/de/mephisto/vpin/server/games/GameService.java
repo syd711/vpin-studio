@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDataUtil;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -32,6 +31,7 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -101,6 +101,9 @@ public class GameService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private GameFilterService gameFilterService;
+
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
@@ -150,11 +153,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-        .stream()
-        .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-        .collect(Collectors.toList());
+      .stream()
+      .filter(g ->
+        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+      .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -598,71 +601,6 @@ public class GameService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     return highscoreService.getHighscoreFiles(game);
-  }
-
-  public List<Integer> filterGames(FilterSettings filterSettings) {
-    List<Integer> result = new ArrayList<>();
-    List<Game> knownGames = getKnownGames();
-    for (Game game : knownGames) {
-      if (filterSettings.getEmulatorId() >= 0 && filterSettings.getEmulatorId() != game.getEmulatorId()) {
-        continue;
-      }
-      if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
-        continue;
-      }
-      if (filterSettings.isWithAltSound() && !game.isAltSoundAvailable()) {
-        continue;
-      }
-      if (filterSettings.isWithAltColor() && game.getAltColorType() == null) {
-        continue;
-      }
-      if (filterSettings.isWithBackglass() && !game.getDirectB2SFile().exists()) {
-        continue;
-      }
-      if (filterSettings.isWithPupPack() && game.getPupPack() == null) {
-        continue;
-      }
-      if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
-        continue;
-      }
-      if (filterSettings.isVpsUpdates() && game.getUpdates().isEmpty()) {
-        continue;
-      }
-      if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
-        continue;
-      }
-
-      List<ValidationState> states = validate(game);
-      if (filterSettings.isMissingAssets() && !gameValidator.hasMissingAssets(states)) {
-        continue;
-      }
-      if (filterSettings.isNoVpsMapping() && !gameValidator.hasNoVpsMapping(states)) {
-        continue;
-      }
-
-      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-      boolean played = (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
-      if (filterSettings.isNotPlayed() && !played) {
-        continue;
-      }
-
-      if (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
-        continue;
-      }
-
-      if (played && filterSettings.isNoHighscoreSupport()) {
-        ScoringDB scoringDB = systemService.getScoringDatabase();
-        if (!StringUtils.isEmpty(game.getRom()) && !scoringDB.getSupportedNvRams().contains(game.getRom())) {
-          continue;
-        }
-        if (!StringUtils.isEmpty(game.getHsFileName()) && game.getHighscoreTextFile().exists()) {
-          continue;
-        }
-      }
-
-      result.add(game.getId());
-    }
-    return result;
   }
 
   @Override

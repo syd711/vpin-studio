@@ -25,6 +25,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
+import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
@@ -36,7 +37,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -316,6 +319,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private HBox romStatusBox;
 
   @FXML
+  private Tab statisticsTab;
+
+  @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -335,6 +341,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Stage stage;
   private ScoringDB scoringDB;
   private HighscoreFiles highscoreFiles;
+  private TableDataTabStatisticsController tableStatisticsController;
 
   @FXML
   private void onAssetManager(ActionEvent e) {
@@ -689,7 +696,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     hintCustom5.setVisible(false);
     hintWebId.setVisible(false);
 
-
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
 
@@ -779,6 +785,15 @@ public class TableDataController implements Initializable, DialogController, Aut
         useEmuDefaultsCheckbox.setSelected(false);
       }
     });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
+      Parent builtInRoot = loader.load();
+      tableStatisticsController = loader.getController();
+      statisticsTab.setContent(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load tile: " + e.getMessage(), e);
+    }
   }
 
   @Override
@@ -898,9 +913,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     romName.valueProperty().addListener((observable, oldValue, newValue) -> {
       onRomNameUpdate(newValue);
     });
-    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      onRomNameUpdate(newValue);
-    });
     romName.focusedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -912,6 +924,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
       applyRomBtn.setDisable(false);
     }
+    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      onRomNameUpdate(newValue);
+    });
 
     manufacturer.setText(tableDetails.getManufacturer());
     manufacturer.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
@@ -1144,6 +1159,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     });
 
     initVpsStatus();
+    tableStatisticsController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);
   }
 
@@ -1213,17 +1229,20 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (scoringDB.getNotSupported().contains(rom) ||
+    if (scoringDB.getNotSupported().contains(rom) || !scoringDB.getSupportedNvRams().contains(rom) || !scoringDB.getSupportedNvRams().contains(tableName) ||
       (played
-      && !scoringDB.getSupportedNvRams().contains(rom)
-      && !scoringDB.getSupportedNvRams().contains(tableName)
-      && !highscoreFiles.getVpRegEntries().contains(rom)
-      && !highscoreFiles.getVpRegEntries().contains(tableName))) {
-      romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
-      Label l = new Label();
-      l.setGraphic(WidgetFactory.createUnsupportedIcon());
-      l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
-      romStatusBox.getChildren().add(l);
+        && !highscoreFiles.getVpRegEntries().contains(rom)
+        && !highscoreFiles.getVpRegEntries().contains(tableName))) {
+
+      //so far the ROM is not valid, but maybe we have a highscore file instead
+      String hsfile = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+      if (StringUtils.isEmpty(hsfile) || !highscoreFileName.getItems().contains(hsfile)) {
+        romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
+        Label l = new Label();
+        l.setGraphic(WidgetFactory.createUnsupportedIcon());
+        l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
+        romStatusBox.getChildren().add(l);
+      }
     }
 
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
