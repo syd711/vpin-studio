@@ -256,6 +256,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getVPXExe().getName() + ")";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getVPXExe().getName() + " [" + tablesDirectory + "])";
   }
 }

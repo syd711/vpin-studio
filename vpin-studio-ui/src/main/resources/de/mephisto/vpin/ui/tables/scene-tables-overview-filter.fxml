@@ -96,7 +96,7 @@
                               <Insets top="-6.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="noHighscoreSettingsCheckBox1" layoutX="21.0" layoutY="410.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Mapping" />
+                        <CheckBox fx:id="noVpsMappingCheckBox" layoutX="21.0" layoutY="410.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Mapping" />
                         <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">
                            <VBox.margin>
                               <Insets top="24.0" />

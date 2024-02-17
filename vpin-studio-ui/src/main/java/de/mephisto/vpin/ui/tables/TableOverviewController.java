@@ -577,6 +577,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void reload(int id) {
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
 
+    //if the refreshed game is part of the current filter, refresh the whole view, not only the game
+    if (filteredIds.contains(refreshedGame.getId())) {
+      Platform.runLater(() -> {
+        onRefresh(tableFilterController.getFilterSettings());
+      });
+      return;
+    }
+
     Platform.runLater(() -> {
       tableView.getSelectionModel().getSelectedItems().removeListener(this);
       GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
@@ -592,6 +600,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (selection != null && data.contains(refreshedGame)) {
         tableView.getSelectionModel().select(refreshedGame);
       }
+
       tableView.refresh();
     });
   }
@@ -680,22 +689,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     new Thread(() -> {
-      Platform.runLater(() -> {
-        try {
-          List<Integer> integers = client.getGameService().filterGames(filterSettings);
+      try {
+        List<Integer> integers = client.getGameService().filterGames(filterSettings);
+        Platform.runLater(() -> {
           setFilterIds(integers);
-
           filterGames(games);
           tableView.setItems(data);
           tableView.refresh();
 
           tableView.setVisible(true);
           tableStack.getChildren().remove(tablesLoadingOverlay);
-        } catch (Exception e) {
-          LOG.error("Error filtering tables: " + e.getMessage());
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
-        }
-      });
+        });
+      } catch (Exception e) {
+        LOG.error("Error filtering tables: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
+      }
     }).start();
   }
 
@@ -1208,6 +1216,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     String filterValue = textfieldSearch.textProperty().getValue();
 
     PlaylistRepresentation playlist = playlistCombo.getValue();
+
+    //if all tables are filtered...
+    if (filteredIds.isEmpty() && !tableFilterController.getFilterSettings().isResetted()) {
+      data = FXCollections.emptyObservableList();
+      return;
+    }
 
     for (GameRepresentation game : games) {
       if (!filteredIds.isEmpty() && !filteredIds.contains(game.getId())) {

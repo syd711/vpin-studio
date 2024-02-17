@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PauseMenuItemsFactory {
@@ -56,7 +57,10 @@ public class PauseMenuItemsFactory {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
           String authorAllowList = pauseMenuSettings.getAuthorAllowList() == null ? "" : pauseMenuSettings.getAuthorAllowList();
-          List<String> authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
+          List<String> authorNames = Collections.emptyList();
+          if (!StringUtils.isEmpty(authorAllowList)) {
+            authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
+          }
 
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
             boolean excludeTutorial = excludeTutorial(authorNames, tutorialFile);
@@ -84,14 +88,14 @@ public class PauseMenuItemsFactory {
   }
 
   private static boolean excludeTutorial(List<String> authorAllowList, VpsTutorialUrls tutorialFile) {
-    if(authorAllowList.isEmpty()) {
+    if (authorAllowList.isEmpty()) {
       return false;
     }
 
     List<String> authors = tutorialFile.getAuthors();
     if (!authorAllowList.isEmpty()) {
       for (String author : authors) {
-        if(authorAllowList.contains(author.toLowerCase())) {
+        if (authorAllowList.contains(author.toLowerCase())) {
           return false;
         }
       }

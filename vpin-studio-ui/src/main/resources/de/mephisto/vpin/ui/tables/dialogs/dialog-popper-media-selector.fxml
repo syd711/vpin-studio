@@ -345,7 +345,7 @@
                                                 <Tooltip text="Open PinUP Popper system folder for this asset type" />
                                              </tooltip>
                                           </Button>
-                                          <Separator layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                          <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                           <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />

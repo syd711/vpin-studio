@@ -57,6 +57,9 @@ public class TableFilterController implements Initializable {
   private CheckBox noHighscoreSupportCheckBox;
 
   @FXML
+  private CheckBox noVpsMappingCheckBox;
+
+  @FXML
   private CheckBox withBackglassCheckBox;
 
   @FXML
@@ -208,6 +211,11 @@ public class TableFilterController implements Initializable {
       filterSettings.setNoHighscoreSupport(newValue);
       applyFilter();
     });
+    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
+    noVpsMappingCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNoVpsMapping(newValue);
+      applyFilter();
+    });
     withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
     withBackglassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithBackglass(newValue);
@@ -251,12 +259,14 @@ public class TableFilterController implements Initializable {
   private void updateSettings(FilterSettings filterSettings) {
     updatesDisabled = true;
     emulatorCombo.setValue(null);
+    statusCombo.setValue(null);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
     versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
     noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
     noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
+    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
     withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
     withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
@@ -282,5 +292,9 @@ public class TableFilterController implements Initializable {
     Platform.runLater(() -> {
       tableOverviewController.onRefresh(filterSettings);
     });
+  }
+
+  public FilterSettings getFilterSettings() {
+    return filterSettings;
   }
 }

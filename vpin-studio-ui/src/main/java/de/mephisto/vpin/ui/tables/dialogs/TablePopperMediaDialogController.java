@@ -114,6 +114,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private Button folderBtn;
 
   @FXML
+  private Separator folderSeparator;
+
+  @FXML
   private ListView<GameMediaItemRepresentation> assetList;
 
   @FXML
@@ -457,7 +460,11 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.folderBtn.setDisable(!client.getSystemService().isLocal());
+    this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
+    this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
+
+    this.folderBtn.setVisible(client.getSystemService().isLocal());
+    this.folderSeparator.setVisible(client.getSystemService().isLocal());
 
     try {
       encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);

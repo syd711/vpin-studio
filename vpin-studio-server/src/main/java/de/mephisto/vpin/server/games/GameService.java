@@ -646,7 +646,7 @@ public class GameService implements InitializingBean {
         continue;
       }
 
-      if (filterSettings.getGameStatus() >= 0 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
+      if (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
         continue;
       }
 
