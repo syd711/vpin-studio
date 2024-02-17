@@ -408,6 +408,28 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return info;
   }
 
+  @NonNull
+  public List<Game> getGamesByFilename(String filename) {
+    Connection connect = this.connect();
+    List<Game> result = new ArrayList<>();
+    try {
+      String gameName = filename.replaceAll("'", "''");
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
+      while (rs.next()) {
+        Game game = createGame(connect, rs);
+        result.add(game);
+      }
+      rs.close();
+      statement.close();
+    } catch (SQLException e) {
+      LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
   @Nullable
   public Game getGameByName(String gameName) {
     Connection connect = this.connect();

@@ -3,6 +3,10 @@ package de.mephisto.vpin.restclient.directb2s;
 import java.util.Date;
 
 public class DirectB2SData {
+  private String filename;
+  private int emulatorId;
+  private int gameId;
+
   private String name;
   private int tableType;
   private int numberOfPlayers;
@@ -19,6 +23,50 @@ public class DirectB2SData {
   private String backgroundBase64;
   private String dmdBase64;
   private int illuminations;
+
+  public static String getTableType(int type) {
+    switch (type) {
+      case 1: {
+        return "Electro Mechanical";
+      }
+      case 2: {
+        return "Solid State Electronic";
+      }
+      case 3: {
+        return "Solid State Electronic with DMD";
+      }
+      case 4: {
+        return "Original";
+      }
+      default: {
+        return "-";
+      }
+    }
+  }
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
+  }
+
+  public String getFilename() {
+    return filename;
+  }
+
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
   public int getIlluminations() {
     return illuminations;

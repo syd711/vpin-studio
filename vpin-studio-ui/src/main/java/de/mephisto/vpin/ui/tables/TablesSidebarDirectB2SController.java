@@ -48,14 +48,14 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public static final int DEBOUNCE_MS = 100;
 
   //WE ARE CONFIGURING HIDE FIELDS HERE; SO VALUES ARE SET HERE INVERTED
-  private final static List<B2SVisibility> VISIBILITIES = Arrays.asList(new B2SVisibility(0, "Visible"),
+  public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(new B2SVisibility(0, "Visible"),
       new B2SVisibility(1, "Hidden"),
       new B2SVisibility(2, "Standard"));
 
-  private final static List<B2SLedType> LED_TYPES = Arrays.asList(new B2SLedType(1, "Simple LEDs"),
+  public final static List<B2SLedType> LED_TYPES = Arrays.asList(new B2SLedType(1, "Simple LEDs"),
       new B2SLedType(2, "Dream7 LEDs"));
 
-  private final static List<B2SGlowing> GLOWINGS = Arrays.asList(new B2SGlowing(0, "Off"),
+  public final static List<B2SGlowing> GLOWINGS = Arrays.asList(new B2SGlowing(0, "Off"),
       new B2SGlowing(1, "Low"),
       new B2SGlowing(2, "Medium"),
       new B2SGlowing(3, "High"),
@@ -159,6 +159,10 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private CheckBox bringBGFromTop;
 
+
+  @FXML
+  private Button backglassManagerBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -166,11 +170,15 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private boolean saveEnabled;
-  private DirectB2ServerSettings backglassServerSettings;
 
 
   // Add a public no-args constructor
   public TablesSidebarDirectB2SController() {
+  }
+
+  @FXML
+  private void onBackglassManager() {
+    TableDialogs.openDirectB2sManagerDialog(tablesSidebarController);
   }
 
   @FXML
@@ -328,12 +336,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dmdResolutionLabel.setText("");
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
-      this.backglassServerSettings = client.getBackglassServiceClient().getServerSettings(g.get().getEmulatorId());
       this.tableSettings = client.getBackglassServiceClient().getTableSettings(g.get().getId());
       this.tableData = client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
 
       nameLabel.setText(tableData.getName());
-      typeLabel.setText(this.getTableType(tableData.getTableType()));
+      typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
       authorLabel.setText(tableData.getAuthor());
       artworkLabel.setText(tableData.getArtwork());
       grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
@@ -403,26 +410,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     directb2sRoot.setOnDragOver(new FileDragEventHandler(directb2sRoot, true, "directb2s"));
     directb2sRoot.setOnDragDropped(new DirectB2SFileDropEventHandler(tablesSidebarController));
-  }
-
-  private String getTableType(int type) {
-    switch (type) {
-      case 1: {
-        return "Electro Mechanical";
-      }
-      case 2: {
-        return "Solid State Electronic";
-      }
-      case 3: {
-        return "Solid State Electronic with DMD";
-      }
-      case 4: {
-        return "Original";
-      }
-      default: {
-        return "-";
-      }
-    }
   }
 
   @Override

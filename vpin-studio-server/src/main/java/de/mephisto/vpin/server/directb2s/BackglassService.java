@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
@@ -8,6 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BackglassService {
@@ -30,8 +34,20 @@ public class BackglassService {
     Game game = gameService.getGame(gameId);
     if (game != null && game.isDirectB2SAvailable()) {
       DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      return extractor.extractData(game.getDirectB2SFile());
+      return extractor.extractData(game.getDirectB2SFile(), game.getEmulatorId(), game.getId());
     }
+    return new DirectB2SData();
+  }
+
+  public DirectB2SData getDirectB2SData(int emulatorId, String name) {
+    String vpxName = name + ".vpx";
+    List<Game> gamesByFilename = pinUPConnector.getGamesByFilename(vpxName);
+    for (Game game : gamesByFilename) {
+      if (game.getEmulator().getId() == emulatorId) {
+        return getDirectB2SData(game.getId());
+      }
+    }
+
     return new DirectB2SData();
   }
 
@@ -98,5 +114,24 @@ public class BackglassService {
     B2SServerSettingsSerializer serverSettingsSerializer = new B2SServerSettingsSerializer(settingsXml);
     serverSettingsSerializer.serialize(settings);
     return getServerSettings(gameId);
+  }
+
+  public List<DirectB2S> getBackglasses() {
+    List<DirectB2S> result = new ArrayList<>();
+    List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      File tablesFolder = gameEmulator.getTablesFolder();
+      File[] files = tablesFolder.listFiles((dir, name) -> name.endsWith(".directb2s"));
+
+      if (files != null) {
+        for (File file : files) {
+          DirectB2S directB2SData = new DirectB2S();
+          directB2SData.setEmulatorId(gameEmulator.getId());
+          directB2SData.setName(FilenameUtils.getBaseName(file.getName()));
+          result.add(directB2SData);
+        }
+      }
+    }
+    return result;
   }
 }

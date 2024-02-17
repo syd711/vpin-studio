@@ -55,7 +55,7 @@ public class DefaultPictureService {
     if (game.getDirectB2SFile().exists()) {
       try {
         DirectB2SDataExtractor data = new DirectB2SDataExtractor();
-        DirectB2SData directB2SData = data.extractData(game.getDirectB2SFile());
+        DirectB2SData directB2SData = data.extractData(game.getDirectB2SFile(), game.getEmulatorId(), game.getId());
         DirectB2SImageExporter extractor = new DirectB2SImageExporter(directB2SData);
         extractor.extractBackground(target);
         extractor.extractDMD(game.getDMDPicture());

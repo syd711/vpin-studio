@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -407,6 +408,15 @@
                </font>
             </Button>
             <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" text="Backglass Manager">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>

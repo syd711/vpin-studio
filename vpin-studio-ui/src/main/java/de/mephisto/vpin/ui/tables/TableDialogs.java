@@ -132,6 +132,15 @@ public class TableDialogs {
     return true;
   }
 
+  public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController) {
+    Stage stage = Dialogs.createStudioDialogStage(DirectB2sAdminController.class, "dialog-directb2s-admin.fxml", "Backglass Manager");
+    DirectB2sAdminController controller = (DirectB2sAdminController) stage.getUserData();
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
+
+    return true;
+  }
+
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

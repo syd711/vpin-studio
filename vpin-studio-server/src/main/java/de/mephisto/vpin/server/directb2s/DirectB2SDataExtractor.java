@@ -24,9 +24,12 @@ public class DirectB2SDataExtractor extends DefaultHandler {
   public DirectB2SDataExtractor() {
   }
 
-  public DirectB2SData extractData(@NonNull File directB2S) {
+  public DirectB2SData extractData(@NonNull File directB2S, int emulatorId, int gameId) {
     this.data = new DirectB2SData();
+    this.data.setFilename(directB2S.getName());
     this.data.setFilesize(directB2S.length());
+    this.data.setEmulatorId(emulatorId);
+    this.data.setGameId(gameId);
     this.data.setModificationDate(new Date(directB2S.lastModified()));
     InputStream in = null;
     try {

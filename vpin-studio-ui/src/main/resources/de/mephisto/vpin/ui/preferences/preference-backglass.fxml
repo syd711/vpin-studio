@@ -58,6 +58,12 @@
                      </font>
                   </CheckBox>
                   <Label layoutX="10.0" layoutY="145.0" styleClass="checkbox-description" text="If checked, directb2s files must not have the same name as the VPX file anymore." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="205.0" styleClass="checkbox-description" text="(You can enable fuzzy matching, but note that the VPin Studio does not support it " textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="and will always only look for exact matches when looking for .directb2s files)." textFill="WHITE" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

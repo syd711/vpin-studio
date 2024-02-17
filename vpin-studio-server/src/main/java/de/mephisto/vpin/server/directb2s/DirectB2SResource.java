@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -42,6 +44,16 @@ public class DirectB2SResource {
   @GetMapping("/{id}")
   public DirectB2SData getData(@PathVariable("id") int id) {
     return backglassService.getDirectB2SData(id);
+  }
+
+  @GetMapping("/{emulatorId}/{name}")
+  public DirectB2SData getData(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
+    return backglassService.getDirectB2SData(emulatorId, name);
+  }
+
+  @GetMapping
+  public List<DirectB2S> getBackglasses() {
+    return backglassService.getBackglasses();
   }
 
   @GetMapping("/tablesettings/{gameId}")

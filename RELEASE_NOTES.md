@@ -3,6 +3,7 @@
 ### Changes
 
 - Updated to Virtual Pinball Backup Manager 2.0. (Installer only)
+- Added hint for the backglass server settings that fozzy matching is not supported by the VPin Studio. You can enable it, but the Studio will always only look for exact .directb2s matches.
 - Added "Statistics" tab to the Table Data Manager dialog.
 - Added Table Filters.
 
