@@ -22,14 +22,16 @@
 }
 
 .filter-component {
-    -fx-border-radius: 0 0 0 12;
-    -fx-border-style: solid solid solid solid;
+    -fx-border-style: transparent transparent transparent solid;
     -fx-border-color: black;
-    -fx-border-width: 1;
 }
 
 .filter-button-selected {
     -fx-background-color: #6666FFAA;
+}
+
+.filter-selected {
+
 }
 
 /**

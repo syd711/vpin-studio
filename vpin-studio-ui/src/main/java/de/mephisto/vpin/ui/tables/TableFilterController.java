@@ -287,8 +287,10 @@ public class TableFilterController implements Initializable {
   private void applyFilter() {
     if (filterSettings.isResetted()) {
       filterButton.getStyleClass().remove("filter-button-selected");
+      filterRoot.getStyleClass().remove("filter-selected");
     }
     else {
+      filterRoot.getStyleClass().add("filter-selected");
       if (!filterButton.getStyleClass().contains("filter-button-selected")) {
         filterButton.getStyleClass().add("filter-button-selected");
       }
