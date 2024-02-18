@@ -540,18 +540,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDismissAll() {
-    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     if (selectedItems.size() == 1) {
       TableDialogs.openDismissAllDialog(selectedItems.get(0));
     }
     else if (selectedItems.size() > 1) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss All");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss Selection");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        for (GameRepresentation selectedItem : selectedItems) {
-          List<ValidationState> validations = Studio.client.getGameService().getValidations(selectedItem.getId());
-          DismissalUtil.dismissSelection(selectedItem, validations.stream().map(v -> v.getCode()).collect(Collectors.toList()));
-          EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
-        }
+        ProgressDialog.createProgressDialog(new TableDismissAllProgressModel(selectedItems));
       }
     }
   }
