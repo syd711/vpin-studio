@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.games;
 public class FilterSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
+  private boolean otherIssues;
   private boolean vpsUpdates;
   private boolean noVpsMapping;
   private boolean versionUpdates;
@@ -15,6 +16,14 @@ public class FilterSettings {
   private boolean withAltColor;
   private boolean withPovIni;
   private int gameStatus = -1;
+
+  public boolean isOtherIssues() {
+    return otherIssues;
+  }
+
+  public void setOtherIssues(boolean otherIssues) {
+    this.otherIssues = otherIssues;
+  }
 
   public boolean isNoVpsMapping() {
     return noVpsMapping;
@@ -130,6 +139,7 @@ public class FilterSettings {
 
   public boolean isResetted() {
     return !this.missingAssets
+      && !this.otherIssues
       && !this.noHighscoreSettings
       && !this.noHighscoreSupport
       && !this.notPlayed

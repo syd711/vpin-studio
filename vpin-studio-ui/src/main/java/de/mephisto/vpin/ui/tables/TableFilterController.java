@@ -42,6 +42,9 @@ public class TableFilterController implements Initializable {
   private CheckBox missingAssetsCheckBox;
 
   @FXML
+  private CheckBox otherIssuesCheckbox;
+
+  @FXML
   private CheckBox vpsUpdatesCheckBox;
 
   @FXML
@@ -186,6 +189,11 @@ public class TableFilterController implements Initializable {
       filterSettings.setMissingAssets(newValue);
       applyFilter();
     });
+    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
+    otherIssuesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setOtherIssues(newValue);
+      applyFilter();
+    });
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
     vpsUpdatesCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setVpsUpdates(newValue);
@@ -261,6 +269,7 @@ public class TableFilterController implements Initializable {
     emulatorCombo.setValue(null);
     statusCombo.setValue(null);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
+    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
     versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());

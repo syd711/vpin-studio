@@ -415,18 +415,46 @@ public class GameValidationService implements InitializingBean {
 
   public boolean hasMissingAssets(List<ValidationState> states) {
     List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.isEmpty()) {
+      return false;
+    }
+
     if (codes.contains(CODE_NO_AUDIO)
-        || codes.contains(CODE_NO_AUDIO_LAUNCH)
-        || codes.contains(CODE_NO_APRON)
-        || codes.contains(CODE_NO_INFO)
-        || codes.contains(CODE_NO_HELP)
-        || codes.contains(CODE_NO_TOPPER)
-        || codes.contains(CODE_NO_BACKGLASS)
-        || codes.contains(CODE_NO_DMD)
-        || codes.contains(CODE_NO_PLAYFIELD)
-        || codes.contains(CODE_NO_LOADING)
-        || codes.contains(CODE_NO_OTHER2)
-        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      || codes.contains(CODE_NO_AUDIO_LAUNCH)
+      || codes.contains(CODE_NO_APRON)
+      || codes.contains(CODE_NO_INFO)
+      || codes.contains(CODE_NO_HELP)
+      || codes.contains(CODE_NO_TOPPER)
+      || codes.contains(CODE_NO_BACKGLASS)
+      || codes.contains(CODE_NO_DMD)
+      || codes.contains(CODE_NO_PLAYFIELD)
+      || codes.contains(CODE_NO_LOADING)
+      || codes.contains(CODE_NO_OTHER2)
+      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean hasOtherIssues(List<ValidationState> states) {
+    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.isEmpty()) {
+      return false;
+    }
+
+    if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
+    || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+    || codes.contains(CODE_NO_ROM)
+    || codes.contains(CODE_ROM_NOT_EXISTS)
+    || codes.contains(CODE_VPX_NOT_EXISTS)
+    || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+    || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+    || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+    || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+    || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+    || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+    || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+    ) {
       return true;
     }
     return false;

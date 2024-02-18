@@ -91,6 +91,9 @@ public class GameFilterService {
       if (filterSettings.isMissingAssets() && !gameValidator.hasMissingAssets(states)) {
         continue;
       }
+      if (filterSettings.isOtherIssues() && !gameValidator.hasOtherIssues(states)) {
+        continue;
+      }
       if (filterSettings.isNoVpsMapping() && !gameValidator.hasNoVpsMapping(states)) {
         continue;
       }
