@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public DirectB2SData getDirectB2SData(int emulatorId, String name) {
+    name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
     return getRestClient().get(API + "directb2s/" + emulatorId + "/" + name, DirectB2SData.class);
   }
 

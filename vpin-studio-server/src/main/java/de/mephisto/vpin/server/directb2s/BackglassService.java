@@ -48,7 +48,10 @@ public class BackglassService {
       }
     }
 
-    return new DirectB2SData();
+    DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
+    GameEmulator gameEmulator = pinUPConnector.getGameEmulator(emulatorId);
+    File b2sFile = new File(gameEmulator.getTablesFolder(), name + ".directb2s");
+    return extractor.extractData(b2sFile, emulatorId, -1);
   }
 
   public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {

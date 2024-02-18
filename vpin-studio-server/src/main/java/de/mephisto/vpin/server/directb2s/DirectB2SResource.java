@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -48,7 +50,7 @@ public class DirectB2SResource {
 
   @GetMapping("/{emulatorId}/{name}")
   public DirectB2SData getData(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
-    return backglassService.getDirectB2SData(emulatorId, name);
+    return backglassService.getDirectB2SData(emulatorId, URLDecoder.decode(name, StandardCharsets.UTF_8));
   }
 
   @GetMapping

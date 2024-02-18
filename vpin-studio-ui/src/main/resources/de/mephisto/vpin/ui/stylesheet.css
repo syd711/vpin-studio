@@ -1046,3 +1046,34 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-border-radius: 4 4 4 4;
 }
+
+
+
+.pretty-list-view .list-cell: hover {
+    -fx-border-width: 1;
+    -fx-background-color: #33333311;
+    -fx-text-background-color: #6666FF;
+}
+.pretty-list-view .list-cell: odd{
+    -fx-background-color: #93f9b911;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view .list-cell: even{
+    -fx-background-color: #1dbbdd11;
+}
+
+.pretty-list-view .list-cell: selected {
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
+}
+.pretty-list-view:row-selection .list-cell:filled:hover {
+    -fx-background-color: #6666FF55;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view:focused .list-cell:filled:focused:selected:hover {
+    -fx-text-background-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
+ }

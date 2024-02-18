@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
@@ -32,94 +33,102 @@
                   <Insets left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <left>
-                  <ListView fx:id="directb2sList" prefWidth="300.0" BorderPane.alignment="CENTER">
+                  <ListView fx:id="directb2sList" prefWidth="300.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets right="6.0" />
                      </BorderPane.margin></ListView>
                </left>
                <center>
                   <BorderPane BorderPane.alignment="CENTER">
-                     <top>
-                        <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
-                          <items>
-                              <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-arrow-up-outline" />
-                                 </graphic>
-                              </Button>
-                              <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                 </graphic>
-                              </Button>
-                          </items>
-                        </ToolBar>
-                     </top>
                      <center>
-                        <VBox spacing="48.0" BorderPane.alignment="CENTER">
+                        <VBox spacing="24.0" BorderPane.alignment="CENTER">
                            <children>
-                              <GridPane hgap="24.0">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.599951171875" minWidth="10.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="284.80003356933594" minWidth="10.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="48.0">
                                  <children>
-                                    <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.rowIndex="1">
-                                       <center>
-                                          <ImageView fx:id="thumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
-                                             <BorderPane.margin>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </BorderPane.margin>
-                                          </ImageView>
-                                       </center>
-                                       <bottom>
-                                          <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
-                                             <padding>
-                                                <Insets left="3.0" />
-                                             </padding>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label text="Background Preview" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
                                           </Label>
-                                       </bottom>
-                                    </BorderPane>
-                                    <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                       <center>
-                                          <ImageView fx:id="dmdThumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
-                                             <BorderPane.margin>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </BorderPane.margin>
-                                          </ImageView>
-                                       </center>
-                                       <bottom>
-                                          <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                          <BorderPane maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
+                                             <bottom>
+                                                <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </bottom>
+                                             <center>
+                                                <ImageView fx:id="thumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                                                   <BorderPane.margin>
+                                                      <Insets top="12.0" />
+                                                   </BorderPane.margin>
+                                                </ImageView>
+                                             </center>
                                              <padding>
-                                                <Insets left="3.0" />
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                              </padding>
+                                          </BorderPane>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label text="DMD Preview" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
                                           </Label>
-                                       </bottom>
-                                    </BorderPane>
-                                    <Label text="Background Preview" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="14.0" text="DMD Preview" textFill="WHITE" GridPane.columnIndex="1">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
+                                          <BorderPane maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
+                                             <center>
+                                                <ImageView fx:id="dmdThumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true">
+                                                   <BorderPane.margin>
+                                                      <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                                   </BorderPane.margin>
+                                                </ImageView>
+                                             </center>
+                                             <bottom>
+                                                <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                                   <padding>
+                                                      <Insets left="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </bottom>
+                                             <padding>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </padding>
+                                          </BorderPane>
+                                       </children>
+                                    </VBox>
                                  </children>
-                              </GridPane>
-                              <HBox spacing="48.0">
+                              </HBox>
+                              <VBox>
+                                 <children>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <Label text="Matching Table" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="Even if fuzzy name matching is enabled for the backglass server, the Studio will only show exact matches here." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="gameLabel" styleClass="default-text" text="-" />
+                                 </children>
+                              </VBox>
+                              <HBox spacing="54.0">
                                  <children>
                                     <GridPane hgap="12.0" vgap="3.0">
                                        <columnConstraints>
@@ -267,7 +276,7 @@
                                           </Label>
                                        </children>
                                     </GridPane>
-                                    <VBox prefWidth="400.0">
+                                    <VBox prefWidth="500.0">
                                        <children>
                                           <GridPane vgap="3.0">
                                              <columnConstraints>
@@ -407,6 +416,51 @@
                      </center>
                   </BorderPane>
                </center>
+               <top>
+                  <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="243.0" promptText="Search Backglass...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Reload all table data" />
+                           </tooltip>
+                        </Button>
+                        <Separator layoutX="456.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="222.0" />
+                        <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Edit Popper Table Data" />
+                           </tooltip>
+                        </Button>
+                        <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                           </graphic>
+                        </Button>
+                    </items>
+                  </ToolBar>
+               </top>
             </BorderPane>
          </top>
       </BorderPane>
