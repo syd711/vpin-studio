@@ -216,6 +216,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button filterBtn;
 
   @FXML
+  private Hyperlink dismissBtn;
+
+  @FXML
   private StackPane loaderStack;
 
   private Parent tablesLoadingOverlay;
@@ -537,8 +540,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onDismissAll() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    TableDialogs.openDismissAllDialog(game);
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems.size() == 1) {
+      TableDialogs.openDismissAllDialog(selectedItems.get(0));
+    }
+    else if (selectedItems.size() > 1) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss All");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        for (GameRepresentation selectedItem : selectedItems) {
+          List<ValidationState> validations = Studio.client.getGameService().getValidations(selectedItem.getId());
+          DismissalUtil.dismissSelection(selectedItem, validations.stream().map(v -> v.getCode()).collect(Collectors.toList()));
+          EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
+        }
+      }
+    }
   }
 
   public void reloadByRom(String rom) {
@@ -1265,6 +1280,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
+    dismissBtn.setVisible(true);
+
     validationError.setVisible(false);
     validationErrorLabel.setText("");
     validationErrorText.setText("");
@@ -1282,6 +1299,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     else {
       validationError.setVisible(false);
       NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+    }
+
+    if (tableView.getSelectionModel().getSelectedItems().size() > 1) {
+      Optional<GameRepresentation> first = tableView.getSelectionModel().getSelectedItems().stream().filter(game -> game.getValidationState() != null).findFirst();
+      if (first.isPresent()) {
+        dismissBtn.setVisible(false);
+
+        validationError.setVisible(true);
+        validationErrorLabel.setText("On or more of the selected tables has issues.");
+        validationErrorText.setText("");
+      }
     }
   }
 

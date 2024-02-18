@@ -83,7 +83,7 @@
                                        <right>
                                           <HBox BorderPane.alignment="CENTER">
                                              <children>
-                                                            <Hyperlink onAction="#onDismiss" text="Dismiss" textFill="WHITE">
+                                                            <Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="Dismiss" textFill="WHITE">
                                                                 <font>
                                                                     <Font size="10.0" />
                                                                 </font>
