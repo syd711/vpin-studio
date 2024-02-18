@@ -10,11 +10,13 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -150,6 +152,10 @@ public class DirectB2sAdminController implements Initializable, DialogController
   private Label gameFilenameLabel;
 
   @FXML
+  private Button dataManagerBtn;
+
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
@@ -162,6 +168,24 @@ public class DirectB2sAdminController implements Initializable, DialogController
   private TablesSidebarController tablesSidebarController;
   private List<DirectB2S> backglasses;
   private GameRepresentation game;
+
+  @FXML
+  private void onUpload(ActionEvent e) {
+    if (game != null) {
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      TableDialogs.directBackglassUpload(stage, game);
+    }
+  }
+
+  @FXML
+  private void onTableDataManager(ActionEvent e) {
+    if (game != null) {
+      onCancel(e);
+      Platform.runLater(() -> {
+        TableDialogs.openTableDataDialog(tablesSidebarController.getTablesController(), this.game);
+      });
+    }
+  }
 
   @FXML
   private void onRename(ActionEvent e) {
@@ -236,6 +260,11 @@ public class DirectB2sAdminController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.dataManagerBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
+    this.duplicateBtn.setDisable(true);
+    this.deleteBtn.setDisable(true);
+
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulators());
     emulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
@@ -373,8 +402,13 @@ public class DirectB2sAdminController implements Initializable, DialogController
   public void onDialogCancel() {
   }
 
-  private void refresh(DirectB2S newValue) {
+  private void refresh(@Nullable DirectB2S newValue) {
     setSaveEnabled(false);
+    this.dataManagerBtn.setDisable(true);
+
+    this.renameBtn.setDisable(newValue == null);
+    this.duplicateBtn.setDisable(newValue == null);
+    this.deleteBtn.setDisable(newValue == null);
 
     this.tableSettings = null;
 
@@ -403,6 +437,7 @@ public class DirectB2sAdminController implements Initializable, DialogController
         game = client.getGame(this.tableData.getGameId());
         gameLabel.setText(game.getGameDisplayName());
         gameFilenameLabel.setText(game.getGameFileName());
+        dataManagerBtn.setDisable(false);
       }
       else {
         this.tableSettings = null;
@@ -500,6 +535,7 @@ public class DirectB2sAdminController implements Initializable, DialogController
       try {
         if (this.saveEnabled) {
           client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
+          this.refresh(this.directb2sList.getSelectionModel().getSelectedItem());
         }
       } catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);

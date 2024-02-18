@@ -110,7 +110,7 @@ public class DirectB2SResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
+  public JobExecutionResult uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
                                             @RequestParam(value = "uploadType", required = false) String uploadType,
                                             @RequestParam("objectId") Integer gameId) {
     try {

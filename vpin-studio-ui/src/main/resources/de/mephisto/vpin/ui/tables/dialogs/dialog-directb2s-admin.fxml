@@ -502,11 +502,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="default-button" text="Close">
+            <Button fx:id="dataManagerBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="default-button" text="Open Table Data Manager">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
+            <Button fx:id="cancelBtn1" layoutX="1175.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="default-button" text="Close" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
