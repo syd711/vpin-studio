@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -14,8 +15,7 @@ import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +36,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -146,6 +147,9 @@ public class DirectB2sAdminController implements Initializable, DialogController
   private Label gameLabel;
 
   @FXML
+  private Label gameFilenameLabel;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
@@ -157,15 +161,61 @@ public class DirectB2sAdminController implements Initializable, DialogController
 
   private TablesSidebarController tablesSidebarController;
   private List<DirectB2S> backglasses;
+  private GameRepresentation game;
 
   @FXML
   private void onRename(ActionEvent e) {
+    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getName() + ".directb2s\"", null, null, selectedItem.getName());
+      if (newName != null) {
+        if (!FileUtils.isValidFilename(newName)) {
+          WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
+          return;
+        }
 
+        try {
+          if (!newName.endsWith(".directb2s")) {
+            newName = newName + ".directb2s";
+          }
+          client.getBackglassServiceClient().renameBackglass(selectedItem.getEmulatorId(), selectedItem.getName(), newName);
+        } catch (Exception ex) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
+        }
+        onReload();
+      }
+    }
+  }
+
+  @FXML
+  private void onDuplicate(ActionEvent e) {
+    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Duplicate");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        try {
+          client.getBackglassServiceClient().duplicateBackglass(selectedItem.getEmulatorId(), selectedItem.getName());
+        } catch (Exception ex) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
+        }
+        onReload();
+      }
+    }
   }
 
   @FXML
   private void onDelete(ActionEvent e) {
-
+    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.getBackglassServiceClient().deleteBackglass(selectedItem.getEmulatorId(), selectedItem.getName());
+        onReload();
+      }
+    }
   }
 
   @FXML
@@ -176,9 +226,12 @@ public class DirectB2sAdminController implements Initializable, DialogController
 
   @FXML
   private void onReload() {
+    setSaveEnabled(false);
     backglasses = client.getBackglassServiceClient().getBackglasses();
     List<DirectB2S> filtered = filterEntries(backglasses);
     directb2sList.setItems(FXCollections.observableList(filtered));
+    directb2sList.refresh();
+    setSaveEnabled(true);
   }
 
   @Override
@@ -187,16 +240,10 @@ public class DirectB2sAdminController implements Initializable, DialogController
     emulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
-    this.emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
-
-      private List<DirectB2S> backglasses;
-
-      @Override
-      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
-        backglasses = client.getBackglassServiceClient().getBackglasses();
-        List<DirectB2S> filtered = filterEntries(backglasses);
-        directb2sList.setItems(FXCollections.observableList(filtered));
-      }
+    this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      backglasses = client.getBackglassServiceClient().getBackglasses();
+      List<DirectB2S> filtered = filterEntries(backglasses);
+      directb2sList.setItems(FXCollections.observableList(filtered));
     });
 
     searchField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -290,9 +337,14 @@ public class DirectB2sAdminController implements Initializable, DialogController
     this.backglasses = client.getBackglassServiceClient().getBackglasses();
     this.directb2sList.setItems(FXCollections.observableList(backglasses));
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      setSaveEnabled(false);
       deleteBtn.setDisable(newValue == null);
       reloadBtn.setDisable(newValue == null);
-      refresh(newValue);
+
+      Platform.runLater(() -> {
+        refresh(newValue);
+        setSaveEnabled(true);
+      });
     });
   }
 
@@ -317,27 +369,12 @@ public class DirectB2sAdminController implements Initializable, DialogController
     return filtered;
   }
 
-  private void save() {
-
-//    if (this.game.isPresent()) {
-//      GameRepresentation g = this.game.get();
-//      try {
-//        if (this.saveEnabled) {
-//          client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
-//        }
-//      } catch (Exception e) {
-//        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
-//        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
-//      }
-//    }
-  }
-
   @Override
   public void onDialogCancel() {
   }
 
   private void refresh(DirectB2S newValue) {
-    this.saveEnabled = false;
+    setSaveEnabled(false);
 
     this.tableSettings = null;
 
@@ -356,13 +393,16 @@ public class DirectB2sAdminController implements Initializable, DialogController
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     gameLabel.setText("-");
+    gameFilenameLabel.setText("-");
+    game = null;
 
     if (newValue != null) {
       this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue.getEmulatorId(), newValue.getName());
       if (this.tableData.getGameId() > 0) {
         this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
-        GameRepresentation game = client.getGame(this.tableData.getGameId());
+        game = client.getGame(this.tableData.getGameId());
         gameLabel.setText(game.getGameDisplayName());
+        gameFilenameLabel.setText(game.getGameFileName());
       }
       else {
         this.tableSettings = null;
@@ -443,11 +483,40 @@ public class DirectB2sAdminController implements Initializable, DialogController
         bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
       }
 
-      this.saveEnabled = true;
+      setSaveEnabled(true);
     }
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  private void save() {
+    if (!saveEnabled) {
+      return;
+    }
+
+    if (this.game != null) {
+      try {
+        if (this.saveEnabled) {
+          client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
+      }
+    }
+  }
+
+  private void setSaveEnabled(boolean b) {
+    if (b) {
+      try {
+        Thread.sleep(DEBOUNCE_MS + 10);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    this.saveEnabled = b;
   }
 }

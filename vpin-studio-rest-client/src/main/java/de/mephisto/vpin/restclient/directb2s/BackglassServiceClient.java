@@ -19,7 +19,9 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * DirectB2S
@@ -47,6 +49,25 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public DirectB2SData getDirectB2SData(int emulatorId, String name) {
     name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
     return getRestClient().get(API + "directb2s/" + emulatorId + "/" + name, DirectB2SData.class);
+  }
+
+  public boolean deleteBackglass(int emulatorId, String name) {
+    name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    return getRestClient().delete(API + "directb2s/" + emulatorId + "/" + name);
+  }
+
+  public boolean renameBackglass(int emulatorId, String name, String newName) throws Exception {
+    name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    Map<String,Object> params = new HashMap<>();
+    params.put("newName", newName);
+    return getRestClient().put(API + "directb2s/" + emulatorId + "/" + name, params, Boolean.class);
+  }
+
+  public boolean duplicateBackglass(int emulatorId, String name) throws Exception {
+    name = URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
+    Map<String,Object> params = new HashMap<>();
+    params.put("duplicate", true);
+    return getRestClient().put(API + "directb2s/" + emulatorId + "/" + name, params, Boolean.class);
   }
 
   public List<DirectB2S> getBackglasses() {

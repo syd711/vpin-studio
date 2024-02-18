@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,11 @@ public class BackglassService {
     return new DirectB2SData();
   }
 
+  public boolean deleteBackglass(int emulatorId, String name) {
+    File b2sFile = getBackglassFile(emulatorId, name);
+    return b2sFile.exists() && b2sFile.delete();
+  }
+
   public DirectB2SData getDirectB2SData(int emulatorId, String name) {
     String vpxName = name + ".vpx";
     List<Game> gamesByFilename = pinUPConnector.getGamesByFilename(vpxName);
@@ -49,8 +56,7 @@ public class BackglassService {
     }
 
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-    GameEmulator gameEmulator = pinUPConnector.getGameEmulator(emulatorId);
-    File b2sFile = new File(gameEmulator.getTablesFolder(), name + ".directb2s");
+    File b2sFile = getBackglassFile(emulatorId, name);
     return extractor.extractData(b2sFile, emulatorId, -1);
   }
 
@@ -136,5 +142,33 @@ public class BackglassService {
       }
     }
     return result;
+  }
+
+  private File getBackglassFile(int emulatorId, String name) {
+    GameEmulator gameEmulator = pinUPConnector.getGameEmulator(emulatorId);
+    return new File(gameEmulator.getTablesFolder(), name + ".directb2s");
+  }
+
+  public boolean rename(int emulatorId, String name, String newName) {
+    File b2sFile = getBackglassFile(emulatorId, name);
+    if( b2sFile.exists() && b2sFile.renameTo(new File(b2sFile.getParentFile(), newName))) {
+      LOG.info("Renamed \"" + b2sFile.getName() + "\" to \"" + newName + "\"");
+      return true;
+    }
+    return false;
+  }
+
+  public boolean duplicate(int emulatorId, String name) throws IOException {
+    try {
+      File b2sFile = getBackglassFile(emulatorId, name);
+      File target = new File(b2sFile.getParentFile(), b2sFile.getName());
+      target = FileUtils.uniqueFile(target);
+      org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
+      LOG.info("Copied \"" + b2sFile.getName() + "\" to \"" + target.getAbsolutePath() + "\"");
+      return true;
+    } catch (IOException e) {
+      LOG.error("Failed to duplicate backglass " + name + ": " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

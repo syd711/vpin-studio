@@ -23,9 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -51,6 +53,27 @@ public class DirectB2SResource {
   @GetMapping("/{emulatorId}/{name}")
   public DirectB2SData getData(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
     return backglassService.getDirectB2SData(emulatorId, URLDecoder.decode(name, StandardCharsets.UTF_8));
+  }
+
+  @DeleteMapping("/{emulatorId}/{name}")
+  public boolean deleteBackglass(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
+    return backglassService.deleteBackglass(emulatorId, URLDecoder.decode(name, StandardCharsets.UTF_8));
+  }
+
+  @PutMapping("/{emulatorId}/{name}")
+  public boolean updateBackglass(@PathVariable("emulatorId") int emulatorId,
+                                 @PathVariable("name") String name,
+                                 @RequestBody Map<String, Object> values) throws IOException {
+    name = URLDecoder.decode(name, StandardCharsets.UTF_8);
+    String newName = (String) values.get("newName");
+    if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
+      return backglassService.rename(emulatorId, name, newName);
+    }
+
+    if (values.containsKey("duplicate")) {
+      return backglassService.duplicate(emulatorId, name);
+    }
+    return false;
   }
 
   @GetMapping

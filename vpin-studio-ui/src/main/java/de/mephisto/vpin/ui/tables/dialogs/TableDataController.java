@@ -1406,6 +1406,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt (scanned value)");
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(gameDetails.getHsFileName()));
+    refreshStatusIcons();
   }
 
   /**

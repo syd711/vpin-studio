@@ -125,7 +125,30 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label fx:id="gameLabel" styleClass="default-text" text="-" />
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="439.199951171875" minWidth="10.0" prefWidth="129.5999755859375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2000732421875" minWidth="10.0" prefWidth="758.4000244140625" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Display Name:" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="gameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" />
+                                          <Label layoutX="10.0" layoutY="15.0" text="File Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="gameFilenameLabel" layoutX="140.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                       </children>
+                                    </GridPane>
                                  </children>
                               </VBox>
                               <HBox spacing="54.0">
@@ -449,6 +472,17 @@
                               <Tooltip text="Edit Popper Table Data" />
                            </tooltip>
                         </Button>
+                        <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Edit Popper Table Data" />
+                           </tooltip>
+                        </Button>
                         <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                            <font>
@@ -466,9 +500,9 @@
       </BorderPane>
    </center>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close">
+            <Button fx:id="cancelBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="default-button" text="Close">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

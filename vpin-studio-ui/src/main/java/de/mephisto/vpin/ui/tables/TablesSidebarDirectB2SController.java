@@ -159,7 +159,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private CheckBox bringBGFromTop;
 
-
   @FXML
   private Button backglassManagerBtn;
 
@@ -201,6 +200,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBoxScrollPane.managedProperty().bindBidirectional(dataBoxScrollPane.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+
+
+    Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
+    ImageView view5 = new ImageView(image5);
+    view5.setFitWidth(18);
+    view5.setFitHeight(18);
+    backglassManagerBtn.setGraphic(view5);
 
     dataBoxScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);

@@ -1047,28 +1047,45 @@
     -fx-border-radius: 4 4 4 4;
 }
 
-
-
+.pretty-list-view {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+.pretty-list-view: focused {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
 .pretty-list-view .list-cell: hover {
     -fx-border-width: 1;
-    -fx-background-color: #33333311;
+    -fx-background-color: #3e3e71;
     -fx-text-background-color: #6666FF;
 }
 .pretty-list-view .list-cell: odd{
-    -fx-background-color: #93f9b911;
+    -fx-background-color: #303733;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view .list-cell: odd:hover{
+    -fx-background-color: #3e3e71;
     -fx-text-fill: #FFFFFF;
 }
 .pretty-list-view .list-cell: even{
-    -fx-background-color: #1dbbdd11;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #283335;
+}
+.pretty-list-view .list-cell: even:hover{
+    -fx-background-color: #3e3e71;
+    -fx-text-fill: #FFFFFF;
 }
 
-.pretty-list-view .list-cell: selected {
+.pretty-list-view .list-cell:selected {
     -fx-text-background-color: #FFFFFF;
     -fx-font-weight: bold;
-    -fx-background-color: #6666FFAA;
+    -fx-background-color: #5252b8;
 }
 .pretty-list-view:row-selection .list-cell:filled:hover {
-    -fx-background-color: #6666FF55;
+    -fx-background-color: #5252b8;
     -fx-text-fill: #FFFFFF;
 }
 .pretty-list-view:focused .list-cell:filled:focused:selected:hover {

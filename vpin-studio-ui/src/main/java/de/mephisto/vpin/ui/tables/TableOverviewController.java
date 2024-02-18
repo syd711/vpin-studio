@@ -141,6 +141,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button tableEditBtn;
 
   @FXML
+  private Button backglassBtn;
+
+  @FXML
   private SplitMenuButton validateBtn;
 
   @FXML
@@ -236,6 +239,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
+
+  @FXML
+  private void onBackglassManager() {
+    TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController());
+  }
 
   @FXML
   private void onAltSoundUpload() {
@@ -1461,6 +1469,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view4.setFitWidth(18);
     view4.setFitHeight(18);
     tableEditBtn.setGraphic(view4);
+
+    Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
+    ImageView view5 = new ImageView(image5);
+    view5.setFitWidth(18);
+    view5.setFitHeight(18);
+    backglassBtn.setGraphic(view5);
 
     columnEmulator.setVisible(false);
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
