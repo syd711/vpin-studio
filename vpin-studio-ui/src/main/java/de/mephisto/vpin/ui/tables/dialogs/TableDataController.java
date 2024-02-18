@@ -1229,7 +1229,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (scoringDB.getNotSupported().contains(rom) || !scoringDB.getSupportedNvRams().contains(rom) || !scoringDB.getSupportedNvRams().contains(tableName) ||
+    if (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom) && !scoringDB.getSupportedNvRams().contains(tableName)) ||
       (played
         && !highscoreFiles.getVpRegEntries().contains(rom)
         && !highscoreFiles.getVpRegEntries().contains(tableName))) {
