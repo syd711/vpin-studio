@@ -5,7 +5,6 @@
 - Updated to Virtual Pinball Backup Manager 2.0. (Installer only)
 - Added hint for the backglass server settings that fozzy matching is not supported by the VPin Studio. You can enable it, but the Studio will always only look for exact .directb2s matches.
 - Added "Statistics" tab to the Table Data Manager dialog.
-
 - Added bulk dismissals: You can now multi-select a set of tables from the overview and dismiss all issues for these (useful in combination with filters).
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validation-error-bulk.png" width="600" />

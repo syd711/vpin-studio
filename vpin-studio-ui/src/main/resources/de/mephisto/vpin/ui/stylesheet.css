@@ -22,8 +22,6 @@
 }
 
 .filter-component {
-    -fx-border-style: transparent transparent transparent solid;
-    -fx-border-color: black;
 }
 
 .filter-button-selected {

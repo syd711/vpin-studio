@@ -12,6 +12,8 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -161,6 +163,9 @@ public class TableUploadController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
+    keepDisplayNamesCheckbox.setDisable(true);
+    keepNamesCheckbox.setDisable(true);
+
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -185,6 +190,14 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
+
+    toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+      @Override
+      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        keepDisplayNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
+        keepNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
+      }
+    });
 
 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());

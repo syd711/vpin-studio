@@ -25,7 +25,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
-import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
@@ -484,25 +483,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVersionFix(ActionEvent e) {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-      + game.getVersion() + "\" with the VPS table version \"" +
-      game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
-      td.setGameVersion(game.getExtVersion());
-      try {
-        client.getPinUPPopperService().saveTableDetails(td, game.getId());
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-
-        this.onCancelClick(e);
-        Platform.runLater(() -> {
-          TableDialogs.openTableDataDialog(overviewController, game);
-        });
-      } catch (Exception ex) {
-        LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
-      }
-    }
+    TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
+    td.setGameVersion(game.getExtVersion());
+    gameVersion.setText(game.getExtVersion());
+    fixVersionBtn.setDisable(true);
   }
 
   @FXML
@@ -882,7 +866,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     gameTheme.setText(tableDetails.getGameTheme());
     gameTheme.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameTheme(newValue));
     gameVersion.setText(tableDetails.getGameVersion());
-    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameVersion(newValue));
+    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+      tableDetails.setGameVersion(newValue);
+      fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
+    });
 
     gameTypeCombo.setItems(FXCollections.observableList(Arrays.asList(GameType.values())));
     GameType gt = tableDetails.getGameType();
