@@ -483,7 +483,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   @FXML
-  private void onVersionFix() {
+  private void onVersionFix(ActionEvent e) {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
       + game.getVersion() + "\" with the VPS table version \"" +
       game.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
@@ -493,6 +493,11 @@ public class TableDataController implements Initializable, DialogController, Aut
       try {
         client.getPinUPPopperService().saveTableDetails(td, game.getId());
         EventManager.getInstance().notifyTableChange(game.getId(), null);
+
+        this.onCancelClick(e);
+        Platform.runLater(() -> {
+          TableDialogs.openTableDataDialog(overviewController, game);
+        });
       } catch (Exception ex) {
         LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -1229,9 +1234,9 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom) && !scoringDB.getSupportedNvRams().contains(tableName)) ||
+    if (scoringDB.getNotSupported().contains(String.valueOf(rom).toLowerCase()) || (!scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) && !scoringDB.getSupportedNvRams().contains(tableName)) ||
       (played
-        && !highscoreFiles.getVpRegEntries().contains(rom)
+        && !highscoreFiles.getVpRegEntries().contains(String.valueOf(rom).toLowerCase())
         && !highscoreFiles.getVpRegEntries().contains(tableName))) {
 
       //so far the ROM is not valid, but maybe we have a highscore file instead

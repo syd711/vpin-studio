@@ -114,12 +114,12 @@ public class GameFilterService {
         String hsfile = game.getHsFileName();
 
         //the ROM was found as nvram file
-        if (scoringDB.getSupportedNvRams().contains(rom) || scoringDB.getSupportedNvRams().contains(tableName)) {
+        if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
           continue;
         }
 
         //the ROM was found in VPReg.stg
-        if (vpRegEntries.contains(rom) || vpRegEntries.contains(tableName)) {
+        if (vpRegEntries.contains(String.valueOf(rom).toLowerCase()) || vpRegEntries.contains(tableName)) {
           continue;
         }
 

@@ -306,7 +306,8 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     //rename game filename which results in renaming VPX related files
     if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-      if (de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
+      String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
+      if (!existingName.equalsIgnoreCase(name) || de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
         if (game.getDirectB2SFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
         }

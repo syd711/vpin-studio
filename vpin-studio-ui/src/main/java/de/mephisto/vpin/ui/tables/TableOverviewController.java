@@ -1303,7 +1303,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         dismissBtn.setVisible(false);
 
         validationError.setVisible(true);
-        validationErrorLabel.setText("On or more of the selected tables has issues.");
+        validationErrorLabel.setText("One or more of the selected tables have issues.");
         validationErrorText.setText("");
       }
     }

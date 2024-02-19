@@ -3,14 +3,12 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -31,7 +29,6 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -591,7 +588,7 @@ public class GameService implements InitializingBean {
         updates = String.join(",", existingUpdates);
         gameDetails.setUpdates(updates);
         gameDetailsRepository.saveAndFlush(gameDetails);
-        LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates + "\n");
+        LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
     } catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);

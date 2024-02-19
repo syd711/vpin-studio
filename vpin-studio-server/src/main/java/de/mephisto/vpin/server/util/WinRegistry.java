@@ -14,6 +14,9 @@ import java.util.Map;
 public class WinRegistry {
   private final static Logger LOG = LoggerFactory.getLogger(WinRegistry.class);
 
+  //Defender Exceptions => Computer\HKEY_LOCAL_MACHINE\
+  public static final String DEFENDER_EXCLUSIONS = "SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths";
+
   /**
    * Try "SOFTWARE\\Freeware\\Visual PinMame"
    */

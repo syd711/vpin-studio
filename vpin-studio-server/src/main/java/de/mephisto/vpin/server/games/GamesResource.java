@@ -197,9 +197,14 @@ public class GamesResource {
         File gameFile = game.getGameFile();
 
         if (mode.equals(TableUploadDescriptor.uploadAndReplace)) {
-          if (gameFile.exists() && !gameFile.delete()) {
-            LOG.error("Table upload failed: existing table could not be deleted.");
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+          if (gameFile.exists()) {
+            if (!gameFile.delete()) {
+              LOG.error("Table upload failed: existing table could not be deleted.");
+              throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
+            }
+            else {
+              LOG.info("Deleted existing game file \"" + gameFile.getAbsolutePath() + "\"");
+            }
           }
 
           if (keepExistingFilename) {
@@ -267,12 +272,14 @@ public class GamesResource {
             //the game file has already been deleted at this point
             TableDetails tableDetails = popperService.getTableDetails(gameId);
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
+
+            //the game file name is already updated here
             tableDetails.setGameFileName(uploadFile.getName());
             if (!keepExistingDisplayName) {
               tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
             tableDetails.setGameVersion(""); //reset version to re-apply the newer one
-            popperService.saveTableDetails(tableDetails, gameId, false);
+            popperService.saveTableDetails(tableDetails, gameId, !keepExistingFilename);
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {

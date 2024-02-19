@@ -14,5 +14,6 @@
 ### Bugfixes
 
 - Table Data Manager: Fixed miscellaneous issues with the info badges.
+- Table Data Manager: Fixed "Fix Version" action.
 - Table Data Manager: Added hints which fields will be overwritten on auto-fill.
 - Pause Menu: Fixed video author allow list so that an empty list shows all videos available in the pause menu. 
