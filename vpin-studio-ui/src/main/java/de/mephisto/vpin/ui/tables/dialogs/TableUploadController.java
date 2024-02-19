@@ -3,9 +3,11 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.VpxArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -28,6 +30,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableUploadController implements Initializable, DialogController {
@@ -47,6 +50,12 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private RadioButton uploadAndCloneRadio;
+
+  @FXML
+  private CheckBox keepNamesCheckbox;
+
+  @FXML
+  private CheckBox keepDisplayNamesCheckbox;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
@@ -150,6 +159,8 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -174,6 +185,19 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
+
+
+    keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
+    keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setVpxKeepFileNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
+    keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setVpxKeepDisplayNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
   }
 
   public void setGame(GameRepresentation game) {
@@ -189,6 +213,8 @@ public class TableUploadController implements Initializable, DialogController {
     }
     else {
       this.uploadAndReplaceRadio.setDisable(true);
+      this.keepDisplayNamesCheckbox.setDisable(true);
+      this.keepNamesCheckbox.setDisable(true);
       this.uploadAndCloneRadio.setDisable(true);
       this.gameId = -1;
     }

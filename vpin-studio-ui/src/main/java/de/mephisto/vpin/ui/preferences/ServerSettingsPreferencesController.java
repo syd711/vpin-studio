@@ -1,13 +1,10 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,12 +33,6 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private Spinner<Integer> idleSpinner;
-
-  @FXML
-  private CheckBox keepNamesCheckbox;
-
-  @FXML
-  private CheckBox keepDisplayNamesCheckbox;
 
   @FXML
   private CheckBox launchPopperCheckbox;
@@ -109,18 +100,6 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableVersionId(newValue);
       PreferencesController.markDirty(PreferenceType.serverSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
-    });
-
-    keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
-    keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      serverSettings.setVpxKeepFileNames(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
-    });
-
-    keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
-    keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      serverSettings.setVpxKeepDisplayNames(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 

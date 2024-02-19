@@ -178,26 +178,6 @@
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
-            <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filenames when replacing tables." textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Label styleClass="checkbox-description" text="If enabled, the upload and replace action will keep the existing VPX filename" textFill="WHITE" />
-            <Label styleClass="checkbox-description" text="instead of using the one from the VPX file that has been uploaded." textFill="WHITE" />
-            <CheckBox fx:id="keepDisplayNamesCheckbox" layoutX="34.0" layoutY="529.0" mnemonicParsing="false" text="Keep existing display names when replacing tables." textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Label layoutX="34.0" layoutY="549.0" styleClass="checkbox-description" text="If enabled, the upload and replace action will keep the existing display name of the table" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="571.0" styleClass="checkbox-description" text="instead of using the VPX filename as a new display name value." textFill="WHITE" />
             <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch PinUP Popper on maintenance exit." textFill="WHITE">
                <font>
                   <Font size="14.0" />
