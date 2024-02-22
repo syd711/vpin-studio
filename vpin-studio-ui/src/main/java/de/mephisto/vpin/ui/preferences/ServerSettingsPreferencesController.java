@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.Studio;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,10 +14,7 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
@@ -38,6 +37,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox launchPopperCheckbox;
 
   @FXML
+  private Button shutdownBtn;
+
+  @FXML
   private ComboBox<String> mappingHsFileNameCombo;
 
   @FXML
@@ -46,8 +48,30 @@ public class ServerSettingsPreferencesController implements Initializable {
   @FXML
   private ComboBox<String> mappingVpsVersionIdCombo;
 
+  @FXML
+  private void onShutdown() {
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Cancel", "Shutdown System", "Are you sure you want to shutdown the remote system?", null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getSystemService().systemShutdown();
+      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
+    }
+  }
+
+  @FXML
+  private void onBackup() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Backup Database", "This creates a copy with timestamp of the VPin Studio Servers database.", null, "Backup Database");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      String dbFile = client.getSystemService().backup();
+      if (dbFile != null) {
+        WidgetFactory.showInformation(Studio.stage, "Backup Database", "Created database backup \"" + dbFile + "\".");
+      }
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    shutdownBtn.setDisable(client.getSystemService().isLocal());
+
     Date startupTime = client.getSystemService().getStartupTime();
     int dbVersion = client.getPinUPPopperService().getVersion();
 
@@ -56,7 +80,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     serviceStartupCheckbox.setSelected(client.getSystemService().autostartInstalled());
     serviceStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if(newValue) {
+      if (newValue) {
         client.getSystemService().autostartInstall();
       }
       else {
@@ -76,7 +100,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    List<String> hsFileNameMappingFields =  Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    List<String> hsFileNameMappingFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingHsFileNameCombo.setItems(FXCollections.observableList(hsFileNameMappingFields));
     mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
