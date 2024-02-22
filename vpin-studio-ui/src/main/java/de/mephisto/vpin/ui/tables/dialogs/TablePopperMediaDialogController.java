@@ -159,6 +159,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private BorderPane screenAudioLaunch;
 
+  @FXML
+  private Button openDataManager;
 
   private TableOverviewController overviewController;
   private GameRepresentation game;
