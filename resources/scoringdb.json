@@ -18,9 +18,7 @@
   ],
   "notSupported": [
     "cyberrace",
-    "bloodmach",
-    "empsback",
-    "dracula"
+    "bloodmach"
   ],
   "supportedNvRams": [
     "abv106",

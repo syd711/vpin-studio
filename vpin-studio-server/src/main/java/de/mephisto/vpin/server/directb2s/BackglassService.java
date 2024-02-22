@@ -137,6 +137,9 @@ public class BackglassService {
           DirectB2S directB2SData = new DirectB2S();
           directB2SData.setEmulatorId(gameEmulator.getId());
           directB2SData.setName(FilenameUtils.getBaseName(file.getName()));
+
+          String vpxFile = FilenameUtils.getBaseName(file.getName()) + ".vpx";
+          directB2SData.setVpxAvailable(new File(file.getParentFile(), vpxFile).exists());
           result.add(directB2SData);
         }
       }

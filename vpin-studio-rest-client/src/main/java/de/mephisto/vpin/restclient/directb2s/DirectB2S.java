@@ -5,6 +5,15 @@ import java.util.Objects;
 public class DirectB2S {
   private String name;
   private int emulatorId;
+  private boolean vpxAvailable;
+
+  public boolean isVpxAvailable() {
+    return vpxAvailable;
+  }
+
+  public void setVpxAvailable(boolean vpxAvailable) {
+    this.vpxAvailable = vpxAvailable;
+  }
 
   public String getName() {
     return name;

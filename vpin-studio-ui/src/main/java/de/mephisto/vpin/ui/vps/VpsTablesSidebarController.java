@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
@@ -9,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -68,9 +71,27 @@ public class VpsTablesSidebarController implements Initializable {
   @FXML
   private VBox detailsBox;
 
+  @FXML
+  private Button openBtn;
+
   private Optional<VpsTable> selection;
 
   private boolean initialized = false;
+
+
+  @FXML
+  private void onVpsBtn() {
+    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+      try {
+        if(selection.isPresent()) {
+          String url = VPS.getVpsTableUrl(selection.get().getId());
+          Desktop.getDesktop().browse(new URI(url));
+        }
+      } catch (Exception ex) {
+        LOG.error("Failed to open link: " + ex.getMessage(), ex);
+      }
+    }
+  }
 
   private void init() {
     //TODO mpf!
@@ -113,6 +134,7 @@ public class VpsTablesSidebarController implements Initializable {
 
   public void setTable(Optional<VpsTable> selection) {
     this.init();
+    this.openBtn.setDisable(selection.isEmpty());
 
     this.selection = selection;
 

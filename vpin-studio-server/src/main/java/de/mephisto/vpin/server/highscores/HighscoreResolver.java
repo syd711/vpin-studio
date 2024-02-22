@@ -154,7 +154,6 @@ class HighscoreResolver {
       List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
       if (!supportedNvRams.contains(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
-        LOG.info(msg);
         metadata.setStatus(msg);
         return null;
       }

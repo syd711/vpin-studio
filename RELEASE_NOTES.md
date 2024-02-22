@@ -9,7 +9,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validation-error-bulk.png" width="600" />
 
-- Add preferences about "Upload and Replace" options into the table upload dialog, because that's where they are used.
+- Moved preferences about "Upload and Replace" options from the "Server Settings" into the table upload dialog, because that's where they are used.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
 
@@ -17,7 +17,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/filters.png" width="600" />
 
-- Added Backglass Manager.
+- Added Backglass Manager: You can finally also access the .directb2s files that are not linked to any table.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager.png" width="600" />
 
@@ -29,3 +29,4 @@
 - Table Data Manager: Added hints which fields will be overwritten on auto-fill.
 - Table Uploads: Fixed "Upload and Replace" option in combination with the "Keep..." settings and fixed related asset renaming.
 - Pause Menu: Fixed video author allow list so that an empty list shows all videos available in the pause menu. 
+- Added additional "Open" button to the right section of the VPS table overview.

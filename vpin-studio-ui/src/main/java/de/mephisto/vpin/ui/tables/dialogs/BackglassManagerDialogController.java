@@ -29,7 +29,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DirectB2sAdminController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(DirectB2sAdminController.class);
+public class BackglassManagerDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerDialogController.class);
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
@@ -264,6 +266,27 @@ public class DirectB2sAdminController implements Initializable, DialogController
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
+
+    this.directb2sList.setCellFactory(new Callback<>() {
+      @Override
+      public ListCell<DirectB2S> call(ListView<DirectB2S> param) {
+        return new ListCell<>() {
+          @Override
+          public void updateItem(DirectB2S backglass, boolean empty) {
+            super.updateItem(backglass, empty);
+            if (backglass == null || empty) {
+              setText(null);
+            }
+            else {
+              setText(backglass.getName());
+
+              FontIcon fontIcon = backglass.isVpxAvailable() ? null : WidgetFactory.createExclamationIcon();
+              setGraphic(fontIcon);
+            }
+          }
+        };
+      }
+    });
 
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulators());
     emulators.add(0, null);

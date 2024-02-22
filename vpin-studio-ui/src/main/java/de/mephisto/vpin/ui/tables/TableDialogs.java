@@ -133,8 +133,8 @@ public class TableDialogs {
   }
 
   public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController) {
-    Stage stage = Dialogs.createStudioDialogStage(DirectB2sAdminController.class, "dialog-directb2s-admin.fxml", "Backglass Manager");
-    DirectB2sAdminController controller = (DirectB2sAdminController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager");
+    BackglassManagerDialogController controller = (BackglassManagerDialogController) stage.getUserData();
     controller.setTableSidebarController(tablesSidebarController);
     stage.showAndWait();
 

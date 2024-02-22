@@ -347,6 +347,18 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
+  public boolean isPopperRunning() {
+    List<ProcessHandle> allProcesses = ProcessHandle.allProcesses()
+      .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+    for (ProcessHandle p : allProcesses) {
+      String cmdName = p.info().command().get();
+      if (cmdName.contains("PinUpMenu") || isVPXRunning()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
       .allProcesses()
