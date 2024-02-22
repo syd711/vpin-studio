@@ -50,10 +50,10 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onShutdown() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Are you sure you want to shutdown the remote system?", "Shutdown System", null, null);
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Cancel", "Shutdown System", "Are you sure you want to shutdown the remote system?", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getSystemService().systemShutdown();
-      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in a few minutes.");
+      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
     }
   }
 

@@ -81,7 +81,7 @@ public class SystemResource {
 
   @GetMapping("/systemshutdown")
   public boolean systemShutdown() {
-    systemService.shutdown();
+    systemService.systemShutdown();
     return true;
   }
 
