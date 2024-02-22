@@ -22,6 +22,10 @@
 }
 
 .filter-component {
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-7;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-width: 1;
 }
 
 .filter-button-selected {
@@ -29,7 +33,6 @@
 }
 
 .filter-selected {
-
 }
 
 /**

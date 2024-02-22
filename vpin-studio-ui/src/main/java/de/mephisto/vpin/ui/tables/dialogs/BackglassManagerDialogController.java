@@ -276,6 +276,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
             super.updateItem(backglass, empty);
             if (backglass == null || empty) {
               setText(null);
+              setGraphic(null);
             }
             else {
               setText(backglass.getName());
@@ -391,7 +392,6 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       setSaveEnabled(false);
       deleteBtn.setDisable(newValue == null);
-      reloadBtn.setDisable(newValue == null);
 
       Platform.runLater(() -> {
         refresh(newValue);

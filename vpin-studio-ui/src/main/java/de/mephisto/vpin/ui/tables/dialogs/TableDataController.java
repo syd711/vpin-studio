@@ -1221,21 +1221,24 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     //check ROM name validity
-    if (scoringDB.getNotSupported().contains(String.valueOf(rom).toLowerCase()) || (!scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) && !scoringDB.getSupportedNvRams().contains(tableName)) ||
-      (played
-        && !highscoreFiles.getVpRegEntries().contains(String.valueOf(rom).toLowerCase())
-        && !highscoreFiles.getVpRegEntries().contains(tableName))) {
+    if (rom != null) {
+      if (scoringDB.getNotSupported().contains(String.valueOf(rom).toLowerCase()) || (!scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) && !scoringDB.getSupportedNvRams().contains(tableName)) ||
+        (played
+          && !highscoreFiles.getVpRegEntries().contains(String.valueOf(rom).toLowerCase())
+          && !highscoreFiles.getVpRegEntries().contains(tableName))) {
 
-      //so far the ROM is not valid, but maybe we have a highscore file instead
-      String hsfile = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
-      if (StringUtils.isEmpty(hsfile) || !highscoreFileName.getItems().contains(hsfile)) {
-        romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
-        Label l = new Label();
-        l.setGraphic(WidgetFactory.createUnsupportedIcon());
-        l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
-        romStatusBox.getChildren().add(l);
+        //so far the ROM is not valid, but maybe we have a highscore file instead
+        String hsfile = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+        if (StringUtils.isEmpty(hsfile) || !highscoreFileName.getItems().contains(hsfile)) {
+          romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
+          Label l = new Label();
+          l.setGraphic(WidgetFactory.createUnsupportedIcon());
+          l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
+          romStatusBox.getChildren().add(l);
+        }
       }
     }
+
 
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
     if (!StringUtils.isEmpty(hsName)) {
