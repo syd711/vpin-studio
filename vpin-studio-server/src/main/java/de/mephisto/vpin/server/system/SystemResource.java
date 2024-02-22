@@ -79,6 +79,12 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/systemshutdown")
+  public boolean systemShutdown() {
+    systemService.shutdown();
+    return true;
+  }
+
   @GetMapping("/maintenance/{enabled}")
   public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled, HttpServletRequest request) {
     boolean b = systemService.setMaintenanceMode(enabled);

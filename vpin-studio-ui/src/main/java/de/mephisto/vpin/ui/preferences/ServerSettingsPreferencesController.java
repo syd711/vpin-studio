@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.Studio;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,10 +14,7 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
@@ -38,6 +37,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox launchPopperCheckbox;
 
   @FXML
+  private Button shutdownBtn;
+
+  @FXML
   private ComboBox<String> mappingHsFileNameCombo;
 
   @FXML
@@ -46,8 +48,19 @@ public class ServerSettingsPreferencesController implements Initializable {
   @FXML
   private ComboBox<String> mappingVpsVersionIdCombo;
 
+  @FXML
+  private void onShutdown() {
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Are you sure you want to shutdown the remote system?", "Shutdown System", null, null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getSystemService().systemShutdown();
+      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in a few minutes.");
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    shutdownBtn.setDisable(client.getSystemService().isLocal());
+
     Date startupTime = client.getSystemService().getStartupTime();
     int dbVersion = client.getPinUPPopperService().getVersion();
 

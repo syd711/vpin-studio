@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.keyevent.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -483,6 +484,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public void shutdown() {
     ((ConfigurableApplicationContext) context).close();
     System.exit(0);
+  }
+
+  public void systemShutdown() {
+    ShutdownThread.shutdown();
   }
 
   public File getComponentArchiveFolder(ComponentType type) {

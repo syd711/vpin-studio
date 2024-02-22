@@ -42,6 +42,11 @@ public class SystemServiceClient extends VPinStudioClientService {
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/shutdown", Boolean.class);
   }
 
+  public void systemShutdown() {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);
+  }
+
   public boolean autostartInstalled() {
     final RestTemplate restTemplate = new RestTemplate();
     return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/installed", Boolean.class));

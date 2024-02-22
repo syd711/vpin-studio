@@ -56,7 +56,7 @@ public class ShutdownThread extends Thread {
     this.idleMinutes = 0;
   }
 
-  private void shutdown() {
+  public static void shutdown() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
       executor.executeCommand();
