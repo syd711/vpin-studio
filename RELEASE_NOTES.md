@@ -28,6 +28,7 @@
 - Table Data Manager: Fixed miscellaneous issues with the info badges and ROM validations.
 - Table Data Manager: Fixed "Fix Version" action.
 - Table Data Manager: Added hints which fields will be overwritten on auto-fill.
-- Table Asset Manager: Fixed error that the the Asset Manager did always open on enter pressed.
+- Table Data Manager: Fixed error that the the Table Data Manager did close on enter pressed.
+- Table Asset Manager: Fixed error that the the Table Asset Manager did close on enter pressed.
 - Table Uploads: Fixed "Upload and Replace" option in combination with the "Keep..." settings and fixed related asset renaming.
 - Pause Menu: Fixed video author allow list so that an empty list shows all videos available in the pause menu. 

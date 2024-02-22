@@ -496,7 +496,7 @@
             <HBox spacing="6.0">
                <children>
                   <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Table Data Manager" />
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" />
+                  <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" />
                </children>
             </HBox>
          </right>
