@@ -24,6 +24,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
@@ -314,8 +316,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -330,15 +332,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     return !filteredProceses.isEmpty();
   }
 
 
   public boolean isVPXRunning() {
     List<ProcessHandle> allProcesses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
     for (ProcessHandle p : allProcesses) {
       String cmdName = p.info().command().get();
       if (cmdName.contains("Visual Pinball") || cmdName.contains("VisualPinball") || cmdName.contains("VPinball")) {
@@ -350,19 +352,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
-      .allProcesses()
-      .filter(p -> p.info().command().isPresent() &&
-        (
-          p.info().command().get().contains("PinUpMenu") ||
-            p.info().command().get().contains("PinUpDisplay") ||
-            p.info().command().get().contains("PinUpPlayer") ||
-            p.info().command().get().contains("VPXStarter") ||
-            p.info().command().get().contains("PinUpPackEditor") ||
-            p.info().command().get().contains("VPinballX") ||
-            p.info().command().get().startsWith("VPinball") ||
-            p.info().command().get().contains("B2SBackglassServerEXE") ||
-            p.info().command().get().contains("DOF")))
-      .collect(Collectors.toList());
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains("PinUpMenu") ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("PinUpPackEditor") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No PinUP processes found, termination canceled.");
@@ -520,6 +522,20 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   @Override
   public void setApplicationContext(ApplicationContext context) throws BeansException {
     this.context = context;
+  }
+
+  public String backup() {
+    File source = new File(RESOURCES, "vpin-studio.db");
+    String name = FilenameUtils.getBaseName(source.getName()) + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".db";
+    File targetFolder = new File(RESOURCES, "backups/");
+    File target = new File(targetFolder, name);
+    try {
+      targetFolder.mkdirs();
+      FileUtils.copyFile(source, target);
+    } catch (IOException e) {
+      LOG.error("Failed to backup DB: " + e.getMessage(), e);
+    }
+    return target.getName();
   }
 
   @Override

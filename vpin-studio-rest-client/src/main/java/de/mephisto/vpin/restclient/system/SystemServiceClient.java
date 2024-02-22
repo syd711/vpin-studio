@@ -37,6 +37,11 @@ public class SystemServiceClient extends VPinStudioClientService {
     return url.contains("localhost") || url.contains("127.0.0.1");
   }
 
+  public String backup() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/backup", String.class);
+  }
+
   public void shutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/shutdown", Boolean.class);
@@ -141,5 +146,4 @@ public class SystemServiceClient extends VPinStudioClientService {
   public void clearCache() {
     getRestClient().clearCache(API + "system/info");
   }
-
 }

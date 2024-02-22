@@ -154,6 +154,21 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="Create a copy of the VPin Studio database (with timestamp) as backup." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="The copy is created inside the servers installation folder under &quot;resources/backups&quot;." textFill="WHITE" />
+            <Button mnemonicParsing="false" onAction="#onBackup" text="Create Backup">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
             <Label layoutX="34.0" layoutY="360.0" styleClass="preference-subtitle" text="Table Data Mapping">
                <VBox.margin>
                   <Insets top="24.0" />
@@ -167,11 +182,11 @@
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
@@ -181,7 +196,10 @@
                      </font>
                   </Label>
                   <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
-                  <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2" />
+                  <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></ComboBox>
                   <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />

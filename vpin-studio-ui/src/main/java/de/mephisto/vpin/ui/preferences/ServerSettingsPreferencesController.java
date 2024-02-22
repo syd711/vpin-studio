@@ -57,6 +57,17 @@ public class ServerSettingsPreferencesController implements Initializable {
     }
   }
 
+  @FXML
+  private void onBackup() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Backup Database", "This creates a copy with timestamp of the VPin Studio Servers database.", null, "Backup Database");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      String dbFile = client.getSystemService().backup();
+      if (dbFile != null) {
+        WidgetFactory.showInformation(Studio.stage, "Backup Database", "Created database backup \"" + dbFile + "\".");
+      }
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     shutdownBtn.setDisable(client.getSystemService().isLocal());
@@ -69,7 +80,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     serviceStartupCheckbox.setSelected(client.getSystemService().autostartInstalled());
     serviceStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if(newValue) {
+      if (newValue) {
         client.getSystemService().autostartInstall();
       }
       else {
@@ -89,7 +100,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    List<String> hsFileNameMappingFields =  Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    List<String> hsFileNameMappingFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingHsFileNameCombo.setItems(FXCollections.observableList(hsFileNameMappingFields));
     mappingHsFileNameCombo.setValue(serverSettings.getMappingHsFileName());
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {

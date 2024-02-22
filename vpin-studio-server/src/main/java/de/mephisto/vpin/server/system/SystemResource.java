@@ -85,6 +85,11 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/backup")
+  public String backup() {
+    return systemService.backup();
+  }
+
   @GetMapping("/maintenance/{enabled}")
   public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled, HttpServletRequest request) {
     boolean b = systemService.setMaintenanceMode(enabled);
