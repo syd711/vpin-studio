@@ -2,7 +2,7 @@
 
 ### Changes
 
-- Updated to Virtual Pinball Backup Manager 2.0. (Installer only)
+- Updated to Virtual Pinball Backup Manager 2.0. (Installer only). For existing installation, you can update the manager in the preferences.
 - Added hint for the backglass server settings that fozzy matching is not supported by the VPin Studio. You can enable it, but the Studio will always only look for exact .directb2s matches.
 - Added **Blank Media** button for the **Audio Launch** screen in the asset manager - Not sure if it is useful for other screens too.
 - Added **Statistics** tab to the **Table Data Manager** dialog.
