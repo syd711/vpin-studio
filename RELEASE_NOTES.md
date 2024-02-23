@@ -4,6 +4,7 @@
 
 - Updated to Virtual Pinball Backup Manager 2.0. (Installer only)
 - Added hint for the backglass server settings that fozzy matching is not supported by the VPin Studio. You can enable it, but the Studio will always only look for exact .directb2s matches.
+- Added **Blank Media** button for the **Audio Launch** screen in the asset manager - Not sure if it is useful for other screens too.
 - Added **Statistics** tab to the **Table Data Manager** dialog.
 - Added **System Shutdown** button in the **Server Settings** to shutdown the cabinet. (Who wants to get up from the sofa for this?)
 - Added bulk dismissals: You can now multi-select a set of tables from the overview and dismiss all issues for these (useful in combination with filters).
@@ -25,6 +26,7 @@
 
 ### Bugfixes
 
+- Overlay Key Binding: Added check so that the overlay is only shown, when the Popper game selector is opened.
 - Table Data Manager: Fixed miscellaneous issues with the info badges and ROM validations.
 - Table Data Manager: Fixed "Fix Version" action.
 - Table Data Manager: Added hints which fields will be overwritten on auto-fill.

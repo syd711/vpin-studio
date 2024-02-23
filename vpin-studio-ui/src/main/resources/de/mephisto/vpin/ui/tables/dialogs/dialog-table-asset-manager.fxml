@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TablePopperMediaDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.AssetManagerDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -231,7 +231,7 @@
                                     <Insets />
                                  </BorderPane.margin>
                                  <left>
-                                    <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" styleClass="media-list" BorderPane.alignment="CENTER" />
+                                    <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
                                  </left>
                                  <center>
                                     <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -322,7 +322,7 @@
                                     <Insets />
                                  </BorderPane.margin>
                                  <left>
-                                    <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" styleClass="media-list" BorderPane.alignment="CENTER" />
+                                    <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
                                  </left>
                                  <center>
                                     <BorderPane BorderPane.alignment="CENTER">
@@ -406,6 +406,20 @@
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
                                              </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
+                                             </tooltip>
+                                          </Button>
+                                          <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
+                                             </tooltip>
                                           </Button>
                                        </items>
                                     </ToolBar>

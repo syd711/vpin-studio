@@ -17,8 +17,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableAssetSearch;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -73,8 +71,8 @@ import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
 
 
-public class TablePopperMediaDialogController implements Initializable, DialogController, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablePopperMediaDialogController.class);
+public class AssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
+  private final static Logger LOG = LoggerFactory.getLogger(AssetManagerDialogController.class);
   public static final int MEDIA_SIZE = 280;
 
   @FXML
@@ -162,6 +160,9 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   @FXML
   private Button openDataManager;
 
+  @FXML
+  private Button addAudioBlank;
+
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private PopperScreen screen;
@@ -170,7 +171,6 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   private Node lastHover;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
-
 
 
   @FXML
@@ -189,6 +189,17 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);
     }
+  }
+
+  @FXML
+  private void onAudioBlank() {
+    try {
+      client.getPinUPPopperService().addBlank(game.getId(), screen);
+      EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
+    } catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Adding blank media failed: " + e.getMessage());
+    }
+    refreshTableMediaView();
   }
 
   @FXML
@@ -464,6 +475,8 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
+    this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
+    this.addAudioBlank.managedProperty().bindBidirectional(this.addAudioBlank.visibleProperty());
 
     this.folderBtn.setVisible(client.getSystemService().isLocal());
     this.folderSeparator.setVisible(client.getSystemService().isLocal());
@@ -511,7 +524,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     this.deleteBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.downloadAssetBtn.setDisable(true);
-    this.addToPlaylistBtn.setDisable(true);
+    this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
 
     List<GameRepresentation> games = client.getGameService().getGamesCached();
@@ -799,7 +812,7 @@ public class TablePopperMediaDialogController implements Initializable, DialogCo
     }
 
     this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
-    this.addToPlaylistBtn.setDisable(true);
+    this.addAudioBlank.setVisible(screen.equals(PopperScreen.AudioLaunch));
 
     gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
     List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);

@@ -5,10 +5,10 @@ import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
-import de.mephisto.vpin.restclient.popper.TableAssetSearch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableAssetSearch;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -47,6 +47,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequestMapping(API_SEGMENT + "poppermedia")
 public class PopperMediaResource implements InitializingBean {
+  public static final byte[] EMPTY_MP4 = Base64.getDecoder().decode("AAAAGGZ0eXBpc29tAAAAAGlzb21tcDQxAAAACGZyZWUAAAAmbWRhdCELUCh9wBQ+4cAhC1AAfcAAPuHAIQtQAH3AAD7hwAAAAlNtb292AAAAbG12aGQAAAAAxzFHd8cxR3cAAV+QAAAYfQABAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAG2lvZHMAAAAAEA0AT////xX/DgQAAAACAAABxHRyYWsAAABcdGtoZAAAAAfHMUd3xzFHdwAAAAIAAAAAAAAYfQAAAAAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAWBtZGlhAAAAIG1kaGQAAAAAxzFHd8cxR3cAAKxEAAAL/xXHAAAAAAA0aGRscgAAAAAAAAAAc291bgAAAAAAAAAAAAAAAFNvdW5kIE1lZGlhIEhhbmRsZXIAAAABBG1pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAcZHJlZgAAAAAAAAABAAAADHVybCAAAAABAAAAyHN0YmwAAABkc3RzZAAAAAAAAAABAAAAVG1wNGEAAAAAAAAAAQAAAAAAAAAAAAIAEAAAAACsRAAAAAAAMGVzZHMAAAAAA4CAgB8AQBAEgICAFEAVAAYAAAANdQAADXUFgICAAhIQBgECAAAAGHN0dHMAAAAAAAAAAQAAAAMAAAQAAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAADAAAAAQAAABRzdHN6AAAAAAAAAAoAAAADAAAAFHN0Y28AAAAAAAAAAQAAACg=");
+  public static final byte[] EMPTY_MP3 = Base64.getDecoder().decode("SUQzAwAAAAADJVRGTFQAAAAPAAAB//5NAFAARwAvADMAAABDT01NAAAAggAAAGRldWlUdW5TTVBCACAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMDAwMDAxMmMxIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+7RAAAAE4ABLgAAACAAACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=");
   private final static Logger LOG = LoggerFactory.getLogger(PopperResource.class);
 
   @Autowired
@@ -150,23 +152,8 @@ public class PopperMediaResource implements InitializingBean {
         return JobExecutionResultFactory.error("No game found for PinUP Popper media upload.");
       }
 
-      File pinUPMediaFolder = game.getPinUPMediaFolder(popperScreen);
-      String filename = game.getGameName();
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-
-      File out = new File(pinUPMediaFolder, filename + "." + suffix);
-      if (out.exists()) {
-        String nameIndex = "01";
-        out = new File(pinUPMediaFolder, filename + nameIndex + "." + suffix);
-      }
-
-      int index = 1;
-      while (out.exists()) {
-        index++;
-        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-        out = new File(pinUPMediaFolder, filename + nameIndex + "." + suffix);
-      }
-
+      File out = uniquePopperAsset(game, popperScreen, suffix);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
@@ -192,6 +179,9 @@ public class PopperMediaResource implements InitializingBean {
     try {
       if (data.containsKey("fullscreen")) {
         return toFullscreenMedia(gameId, screen);
+      }
+      if (data.containsKey("blank")) {
+        return addBlank(gameId, screen);
       }
       if (data.containsKey("oldName")) {
         return renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
@@ -237,16 +227,55 @@ public class PopperMediaResource implements InitializingBean {
 
       File target = new File(mediaFile.getParentFile(), name);
 
-      LOG.info("Copying blank video to " + target.getAbsolutePath());
+      LOG.info("Copying blank asset to " + target.getAbsolutePath());
       FileOutputStream out = new FileOutputStream(target);
       //copy base64 encoded 0s video
-      byte[] bytesEncoded = Base64.getDecoder().decode("AAAAGGZ0eXBpc29tAAAAAGlzb21tcDQxAAAACGZyZWUAAAAmbWRhdCELUCh9wBQ+4cAhC1AAfcAAPuHAIQtQAH3AAD7hwAAAAlNtb292AAAAbG12aGQAAAAAxzFHd8cxR3cAAV+QAAAYfQABAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAG2lvZHMAAAAAEA0AT////xX/DgQAAAACAAABxHRyYWsAAABcdGtoZAAAAAfHMUd3xzFHdwAAAAIAAAAAAAAYfQAAAAAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAWBtZGlhAAAAIG1kaGQAAAAAxzFHd8cxR3cAAKxEAAAL/xXHAAAAAAA0aGRscgAAAAAAAAAAc291bgAAAAAAAAAAAAAAAFNvdW5kIE1lZGlhIEhhbmRsZXIAAAABBG1pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAcZHJlZgAAAAAAAAABAAAADHVybCAAAAABAAAAyHN0YmwAAABkc3RzZAAAAAAAAAABAAAAVG1wNGEAAAAAAAAAAQAAAAAAAAAAAAIAEAAAAACsRAAAAAAAMGVzZHMAAAAAA4CAgB8AQBAEgICAFEAVAAYAAAANdQAADXUFgICAAhIQBgECAAAAGHN0dHMAAAAAAAAAAQAAAAMAAAQAAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAADAAAAAQAAABRzdHN6AAAAAAAAAAoAAAADAAAAFHN0Y28AAAAAAAAAAQAAACg=");
-      IOUtils.write(bytesEncoded, out);
+      IOUtils.write(EMPTY_MP4, out);
       out.close();
 
       return true;
     }
     return false;
+  }
+
+  private boolean addBlank(int gameId, PopperScreen screen) throws IOException {
+    Game game = gameService.getGame(gameId);
+    File target = uniquePopperAsset(game, screen);
+    FileOutputStream out = new FileOutputStream(target);
+    //copy base64 asset
+    if (screen.equals(PopperScreen.AudioLaunch) || screen.equals(PopperScreen.Audio)) {
+      IOUtils.write(EMPTY_MP3, out);
+    }
+    else {
+      IOUtils.write(EMPTY_MP4, out);
+    }
+    LOG.info("Written blank asset \"" + target.getAbsolutePath() + "\"");
+    out.close();
+    return true;
+  }
+
+  private File uniquePopperAsset(Game game, PopperScreen screen) {
+    String suffix = "mp4";
+    if (screen.equals(PopperScreen.AudioLaunch) || screen.equals(PopperScreen.Audio)) {
+      suffix = "mp3";
+    }
+    return uniquePopperAsset(game, screen, suffix);
+  }
+
+  private File uniquePopperAsset(Game game, PopperScreen screen, String suffix) {
+    File out = new File(game.getPinUPMediaFolder(screen), game.getGameName() + "." + suffix);
+    if (out.exists()) {
+      String nameIndex = "01";
+      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
+    }
+
+    int index = 1;
+    while (out.exists()) {
+      index++;
+      String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
+    }
+    return out;
   }
 
   @Override

@@ -160,6 +160,17 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
+  public boolean addBlank(int gameId, PopperScreen screen) throws Exception {
+    try {
+      Map<String, Object> values = new HashMap<>();
+      values.put("blank", "true");
+      return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
+    } catch (Exception e) {
+      LOG.error("Adding blank asset failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public GameMediaRepresentation getGameMedia(int gameId) {
     return getRestClient().get(API + "poppermedia/" + gameId, GameMediaRepresentation.class);
   }

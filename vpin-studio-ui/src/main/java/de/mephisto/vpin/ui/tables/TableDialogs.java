@@ -114,8 +114,8 @@ public class TableDialogs {
   }
 
   public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
-    Stage stage = Dialogs.createStudioDialogStage(TablePopperMediaDialogController.class, "dialog-popper-media-selector.fxml", "Asset Manager");
-    TablePopperMediaDialogController controller = (TablePopperMediaDialogController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(AssetManagerDialogController.class, "dialog-table-asset-manager.fxml", "Asset Manager");
+    AssetManagerDialogController controller = (AssetManagerDialogController) stage.getUserData();
     controller.setGame(overviewController, game, screen);
     stage.showAndWait();
 
