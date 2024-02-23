@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.logging.Level;
 
 @Service
@@ -75,18 +76,22 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
     if (!StringUtils.isEmpty(overlayKey)) {
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) || overlayVisible) {
-        this.overlayVisible = !overlayVisible;
-        Platform.runLater(() -> {
-          LOG.info("Toggle show (Key " + overlayKey + ") / showing: " + overlayVisible);
-          boolean vpxRunning = systemService.isVPXRunning();
-          if (showPauseInsteadOfOverlay && vpxRunning) {
-            OverlayWindowFX.getInstance().togglePauseMenu();
+      if (keyChecker.matches(nativeKeyEvent)) {
+        List<ProcessHandle> processes = systemService.getProcesses();
+        boolean vpxRunning = systemService.isVPXRunning(processes);
+        if (showPauseInsteadOfOverlay && vpxRunning) {
+          this.overlayVisible = !overlayVisible;
+          OverlayWindowFX.getInstance().togglePauseMenu();
+        }
+        else {
+          if (systemService.isPopperMenuRunning(processes)) {
+            this.overlayVisible = !overlayVisible;
+            Platform.runLater(() -> {
+              OverlayWindowFX.getInstance().showOverlay(overlayVisible);
+            });
           }
-          else {
-            OverlayWindowFX.getInstance().showOverlay(overlayVisible);
-          }
-        });
+        }
+        LOG.info("Toggle show (Key " + overlayKey + ") / showing: " + overlayVisible);
       }
     }
 

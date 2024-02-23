@@ -1238,6 +1238,12 @@ public class TableDataController implements Initializable, DialogController, Aut
         }
       }
     }
+    else if (StringUtils.isEmpty(rom) && StringUtils.isEmpty(tableName) && StringUtils.isEmpty(hsName)) {
+      Label l = new Label();
+      l.setGraphic(WidgetFactory.createUnsupportedIcon());
+      l.setTooltip(new Tooltip("Neither ROM name nor highscore filename is set."));
+      romStatusBox.getChildren().add(l);
+    }
 
 
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
