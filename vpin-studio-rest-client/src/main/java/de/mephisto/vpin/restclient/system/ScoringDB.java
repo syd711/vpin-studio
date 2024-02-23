@@ -38,7 +38,7 @@ public class ScoringDB {
       LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
     } catch (Exception e) {
       db = new ScoringDB();
-      LOG.error("Failed to load scoring DB json: " + e.getMessage(), e);
+      LOG.error("Failed to load scoring DB json: " + e.getMessage());
     } finally {
       try {
         if (in != null) {
