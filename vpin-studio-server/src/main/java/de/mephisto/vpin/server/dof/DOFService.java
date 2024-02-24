@@ -167,7 +167,8 @@ public class DOFService implements InitializingBean {
         }
 
         int interval = settings.getInterval();
-        if (interval > 0) {
+        String key = settings.getApiKey();
+        if (interval > 0 && !StringUtils.isEmpty(key)) {
           boolean doSync = false;
           if (!StringUtils.isEmpty(settings.getInstallationPath())) {
             doSync = doSync(settings.getInstallationPath(), interval);
