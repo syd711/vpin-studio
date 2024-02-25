@@ -33,6 +33,7 @@ import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
+import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
@@ -63,35 +64,36 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
   private final ArchiveServiceClient archiveServiceClient;
+  private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
-  private final DOFServiceClient dofServiceClient;
   private final DiscordServiceClient discordServiceClient;
+  private final DMDServiceClient dmdServiceClient;
+  private final DOFServiceClient dofServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
+  private final HigscoreBackupServiceClient higscoreBackupServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
+  private final MameServiceClient mameServiceClient;
+  private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
   private final PinUPPopperServiceClient pinUPPopperServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
-  private final DMDServiceClient dmdServiceClient;
   private final SystemServiceClient systemServiceClient;
-  private final MameServiceClient mameServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
-  private final NVRamsServiceClient nvRamsServiceClient;
-  private final VpxServiceClient vpxServiceClient;
-  private final VpbmServiceClient vpbmServiceClient;
-  private final RomServiceClient romServiceClient;
-  private final VpsServiceClient vpsServiceClient;
+  private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
-  private final HigscoreBackupServiceClient higscoreBackupServiceClient;
-  private final AlxServiceClient alxServiceClient;
+  private final RomServiceClient romServiceClient;
+  private final VpbmServiceClient vpbmServiceClient;
+  private final VpxServiceClient vpxServiceClient;
+  private final VpsServiceClient vpsServiceClient;
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host);
@@ -119,6 +121,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
+    this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
@@ -138,6 +141,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public TextEditorServiceClient getTextEditorService() {
+    return textEditorServiceClient;
   }
 
   public GameStatusServiceClient getGameStatusService() {

@@ -162,7 +162,7 @@ public class DOFService implements InitializingBean {
         long start = System.currentTimeMillis();
         Thread.currentThread().setName("DOF Synchronizer");
         DOFSettings settings = getSettings();
-        if (!settings.isSyncEnabled()) {
+        if (!settings.getSyncEnabled()) {
           return;
         }
 

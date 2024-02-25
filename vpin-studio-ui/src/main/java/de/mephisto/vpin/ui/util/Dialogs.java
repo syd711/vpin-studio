@@ -7,7 +7,9 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.TextEditorController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
@@ -48,6 +50,16 @@ public class Dialogs {
 
   public static boolean openUpdateDialog() {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    stage.showAndWait();
+    return true;
+  }
+
+  public static boolean openTextEditor(VPinFile file) {
+    FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, file.toString());
+    TextEditorController controller = (TextEditorController) stage.getUserData();
+//    stage.setResizable(true);
+//    new FXResizeHelper(stage, 30, 6);
     stage.showAndWait();
     return true;
   }

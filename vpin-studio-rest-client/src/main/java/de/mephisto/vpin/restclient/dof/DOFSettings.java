@@ -17,7 +17,7 @@ public class DOFSettings extends JsonSettings {
 
   }
 
-  public boolean isSyncEnabled() {
+  public boolean getSyncEnabled() {
     return syncEnabled;
   }
 

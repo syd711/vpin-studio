@@ -10,7 +10,10 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,9 @@ import java.util.ResourceBundle;
 
 public class OverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
+
+  @FXML
+  private StackPane rootStack;
 
   @FXML
   private Label titleLabel;
@@ -49,6 +55,12 @@ public class OverlayController implements Initializable {
   }
 
   public void refreshData() {
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    if(screenBounds.getWidth() < screenBounds.getHeight()) {
+      rootStack.setRotate(0);
+    }
+
+
     LOG.info("Refreshing overlay.");
     PreferenceEntryRepresentation systemName = OverlayWindowFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = systemName.getValue();

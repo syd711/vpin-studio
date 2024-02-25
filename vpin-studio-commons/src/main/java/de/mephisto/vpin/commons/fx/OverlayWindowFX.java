@@ -148,10 +148,15 @@ public class OverlayWindowFX extends Application {
   private static String resolveDashboardResolution() {
     String resource = "uhd";
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    if (screenBounds.getWidth() < 3000 && screenBounds.getWidth() > 2000) {
+    double width = screenBounds.getWidth();
+    if(screenBounds.getWidth() < screenBounds.getHeight()) {
+      width = screenBounds.getHeight();
+    }
+
+    if (width < 3000 && width > 2000) {
       resource = "wqhd";
     }
-    else if (screenBounds.getWidth() < 2000) {
+    else if (width < 2000) {
       resource = "hd";
     }
     return resource;

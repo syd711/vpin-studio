@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FreezySummarizer {
   private final static Logger LOG = LoggerFactory.getLogger(FreezySummarizer.class);
@@ -48,7 +46,7 @@ public class FreezySummarizer {
       if (StringUtils.isEmpty(vniKey)) {
         summary.addEntry("VNI Key", null, false, "\"vni.key\" not set in " + iniFile.getAbsolutePath(), "The \"vni.key\" must be set so that .pac files can be decoded.");
       }
-      else if(!vniKey.equals("f0ad135937ffa111c60b24d88ebb2e59")) {
+      else if (!vniKey.equals("f0ad135937ffa111c60b24d88ebb2e59")) {
         summary.addEntry("VNI Key", vniKey + " invalid, must be \"f0ad135937ffa111c60b24d88ebb2e59\"", false, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
       }
       else {
@@ -57,13 +55,27 @@ public class FreezySummarizer {
 
       int pluginIndex = 0;
       String key = "plugin.." + pluginIndex + "..path";
-      List<String> plugins = new ArrayList<>();
       while (iniConfiguration.containsKey(key)) {
-        plugins.add(iniConfiguration.getString(key));
+        String path = iniConfiguration.getString(key);
+        boolean exists = new File(path).exists();
+        summary.addEntry("Plugin (" + pluginIndex + ") Path", path, exists, exists ? path : "The .dll file \"" + path + "\" does not exist, fix the path in the DmdDevice.ini.");
+
+        String key64 = "plugin.." + pluginIndex + "..path64";
+        if (iniConfiguration.containsKey(key64)) {
+          String path64 = iniConfiguration.getString(key64);
+          exists = new File(path64).exists();
+          summary.addEntry("Plugin (" + pluginIndex + ") Path 64 ", path64, exists, exists ? path64 : "The .dll file \"" + path64 + "\" does not exist, fix the path in the DmdDevice.ini.");
+        }
+
+        String passthroughKey = "plugin.." + pluginIndex + "..passthrough";
+        if (iniConfiguration.containsKey(passthroughKey)) {
+          String passthrough = iniConfiguration.getString(passthroughKey);
+          summary.addEntry("Plugin (" + pluginIndex + ") Passthrough", passthrough, true, "");
+        }
+
         pluginIndex++;
         key = "plugin." + pluginIndex + ".path";
       }
-      summary.addEntry("Plugins", plugins.isEmpty() ? "-" : String.join(", ", plugins), true, null, "The plugins that have been added in the DmdDevice.ini.");
 
 //      String env = System.getenv("DMDDEVICE_CONFIG");
 //      if (StringUtils.isEmpty(env)) {
@@ -95,7 +107,7 @@ public class FreezySummarizer {
       }
 
     } catch (Exception e) {
-      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage());
+      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
       summary.setError("Error creating freezy summary: " + e.getMessage());
     }
     return summary;

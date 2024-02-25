@@ -141,13 +141,27 @@ public class DOFPreferencesController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 30, 7);
     syncInterval.setValueFactory(factory1);
     syncInterval.getValueFactory().setValue(settings.getInterval());
-    syncInterval.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> settings.setInterval(newValue));
-    syncInterval.setDisable(!settings.isSyncEnabled());
+    syncInterval.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> {
+      settings.setInterval(newValue);
+      try {
+        client.getDofService().saveSettings(settings);
+        refresh();
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
+    });
+    syncInterval.setDisable(!settings.getSyncEnabled());
 
-    syncCheckbox.setSelected(settings.isSyncEnabled());
+    syncCheckbox.setSelected(settings.getSyncEnabled());
     syncCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       syncInterval.setDisable(!newValue);
       settings.setSyncEnabled(newValue);
+      try {
+        client.getDofService().saveSettings(settings);
+        refresh();
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
     });
 
     folderBtn.setVisible(client.getSystemService().isLocal());
