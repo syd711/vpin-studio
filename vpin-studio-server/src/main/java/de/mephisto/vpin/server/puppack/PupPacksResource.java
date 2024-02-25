@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,15 @@ public class PupPacksResource {
 
   @Autowired
   private GameValidationService validationService;
+
+  @GetMapping("/menu")
+  public PupPackRepresentation getPupPack() {
+    PupPack pupPack = pupPacksService.getMenuPupPack();
+    if (pupPack != null) {
+      return toPupPackRepresentation(null, pupPack);
+    }
+    return null;
+  }
 
   @GetMapping("/{gameId}")
   public PupPackRepresentation getPupPack(@PathVariable("gameId") int gameId) {
@@ -114,13 +124,12 @@ public class PupPacksResource {
     }
   }
 
-  private PupPackRepresentation toPupPackRepresentation(Game game, @NonNull PupPack pupPack) {
+  private PupPackRepresentation toPupPackRepresentation(@Nullable Game game, @NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
     representation.setScriptOnly(pupPack.isScriptOnly());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
-    representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
@@ -129,7 +138,14 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
-    representation.setValidationStates(validationService.validatePupPack(game));
+    representation.setHelpTransparency(pupPack.isTransparent(PopperScreen.GameHelp));
+    representation.setInfoTransparency(pupPack.isTransparent(PopperScreen.GameInfo));
+    representation.setOther2Transparency(pupPack.isTransparent(PopperScreen.Other2));
+
+    if (game != null) {
+      representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
+      representation.setValidationStates(validationService.validatePupPack(game));
+    }
     return representation;
   }
 }

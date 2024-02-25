@@ -5,9 +5,9 @@ import org.springframework.lang.Nullable;
 public enum PopperScreen {
   Audio(-1, "audio"),
   AudioLaunch(-1, "audiolaunch"),
-  Other2(-1, "GameSelect"),
-  GameInfo(-1, "GameInfo"),
-  GameHelp(-1, "GameHelp"),
+  Other2(8, "GameSelect"),
+  GameInfo(9, "GameInfo"),
+  GameHelp(10, "GameHelp"),
   Topper(0, "Topper"),
   BackGlass(2, "Backglass"),
   Menu(5, "Menu"),

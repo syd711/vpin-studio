@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -41,6 +41,12 @@ public class PupPacksService implements InitializingBean {
 
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
+  public PupPack getMenuPupPack() {
+    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
+    return loadPupPack(menuPupPackFolder);
+  }
+
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
@@ -71,7 +77,7 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
   }
 
-  public void loadPupPack(File packFolder) {
+  public PupPack loadPupPack(File packFolder) {
     PupPack pupPack = new PupPack(packFolder);
     if (new File(packFolder, "scriptonly.txt").exists()) {
       pupPack.setScriptOnly(true);
@@ -82,6 +88,7 @@ public class PupPacksService implements InitializingBean {
     if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || !FileUtils.listFiles(packFolder, new String[]{"mp4", "png"}, true).isEmpty())) {
       pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
     }
+    return pupPack;
   }
 
   public JobExecutionResult option(Game game, String option) {

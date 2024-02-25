@@ -1,7 +1,5 @@
 package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
@@ -13,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -36,28 +33,36 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   private void refreshCustomValues() {
     clearCustomValues();
-
-    ComponentRepresentation freezyComponent = client.getComponentService().getComponent(ComponentType.freezy);
-    Date lastModified = freezyComponent.getLastModified();
-    if (lastModified != null && this.component.getLastModified() != null) {
-      ComponentSummaryEntry entry = new ComponentSummaryEntry();
-      entry.setValid(true);
-      if (lastModified.before(this.component.getLastModified())) {
-        entry.setValue("The Serum .dll files are newer than the Freezy installation files.");
-      }
-      else {
-        entry.setValue("The Freezy installation is newer than the Serum .dll files.");
-      }
-      entry.setName("Serum Status");
-      entry.setDescription("If the Serum .dll files are newer than the Freezy installation, make sure that they are added as plugin with \"passthrough\" set to \"true\".");
-
-      super.addCustomValue(entry);
-    }
+//
+//    ComponentRepresentation freezyComponent = client.getComponentService().getComponent(ComponentType.freezy);
+//    Date lastModified = freezyComponent.getLastModified();
+//    if (lastModified != null && this.component.getLastModified() != null) {
+//      ComponentSummaryEntry entry = new ComponentSummaryEntry();
+//      entry.setValid(true);
+//      if (lastModified.before(this.component.getLastModified())) {
+//        entry.setValue("The Serum .dll files are newer than the Freezy installation files.");
+//      }
+//      else {
+//        entry.setValue("The Freezy installation is newer than the Serum .dll files.");
+//      }
+//      entry.setName("Serum Status");
+//      entry.setDescription("If the Serum .dll files are newer than the Freezy installation, make sure that they are added as plugin with \"passthrough\" set to \"true\".");
+//
+//      super.addCustomValue(entry);
+//    }
   }
 
   @FXML
   private void onDmdDevice() {
-    Dialogs.openTextEditor(VPinFile.DmdDeviceIni);
+    if (client.getSystemService().isLocal()) {
+      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      File folder = new File(defaultGameEmulator.getMameDirectory());
+      File exe = new File(folder, "DmdDevice.ini");
+      super.editFile(exe);
+    }
+    else {
+      Dialogs.openTextEditor(VPinFile.DmdDeviceIni);
+    }
   }
 
 

@@ -21,6 +21,33 @@ public class PupPackRepresentation {
   private ScreenMode screenFullDMDMode;
   private ScreenMode screenTopperMode;
   private boolean scriptOnly = false;
+  private boolean infoTransparency= false;
+  private boolean helpTransparency= false;
+  private boolean other2Transparency= false;
+
+  public boolean isInfoTransparency() {
+    return infoTransparency;
+  }
+
+  public void setInfoTransparency(boolean infoTransparency) {
+    this.infoTransparency = infoTransparency;
+  }
+
+  public boolean isHelpTransparency() {
+    return helpTransparency;
+  }
+
+  public void setHelpTransparency(boolean helpTransparency) {
+    this.helpTransparency = helpTransparency;
+  }
+
+  public boolean isOther2Transparency() {
+    return other2Transparency;
+  }
+
+  public void setOther2Transparency(boolean other2Transparency) {
+    this.other2Transparency = other2Transparency;
+  }
 
   private String selectedOption;
 
