@@ -361,7 +361,7 @@ public class MenuController implements Initializable {
   }
 
   public void resetBrowser() {
-    if (pauseMenuSettings!= null && !pauseMenuSettings.isUseInternalBrowser()) {
+    if (pauseMenuSettings!= null && !pauseMenuSettings.isUseInternalBrowser() && pauseMenuSettings.isRenderTutorialLinks()) {
       ChromeLauncher.exitBrowser();
     }
   }
