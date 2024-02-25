@@ -76,7 +76,7 @@
                         <VBox>
                            <children>
                               <Label styleClass="default-text" text="The transparency for this screen is not enabled." />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="If you want to use transparent highscore card, enable them:" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="If you want to use transparent highscore cards, enable screen transparency." />
                               <Hyperlink onAction="#onScreenHelp" text="VPin Studio Documentation: Enable Screen Transparency">
                                  <VBox.margin>
                                     <Insets left="-4.0" />
