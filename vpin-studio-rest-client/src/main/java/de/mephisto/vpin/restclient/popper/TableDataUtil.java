@@ -1,11 +1,42 @@
 package de.mephisto.vpin.restclient.popper;
 
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 
 public class TableDataUtil {
+
+  public static boolean isSupported(ScoringDB scoringDB, HighscoreFiles highscoreFiles, String rom, String tableName, String effectiveHighscoreFilename, boolean played) {
+    if (scoringDB.getNotSupported().contains(String.valueOf(rom).toLowerCase())) {
+      return false;
+    }
+
+    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase())) {
+      return true;
+    }
+
+    if (highscoreFiles.getVpRegEntries().contains(String.valueOf(rom).toLowerCase())) {
+      return true;
+    }
+
+    if (highscoreFiles.getVpRegEntries().contains(tableName)) {
+      return true;
+    }
+
+    //maybe we have a highscore file instead
+    if (!StringUtils.isEmpty(effectiveHighscoreFilename) && !highscoreFiles.getTextFiles().contains(effectiveHighscoreFilename)) {
+      return true;
+    }
+
+    if(!played) {
+      return true;
+    }
+
+    return false;
+  }
 
   public static String getEffectiveRom(@NonNull TableDetails tableDetails, @NonNull GameDetailsRepresentation gameDetails) {
     String rom = tableDetails.getRomName();

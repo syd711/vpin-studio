@@ -761,9 +761,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         games = client.getGameService().getKnownGames();
-        filterGames(games);
 
+        filterGames(games);
         tableView.setItems(data);
+
         tableView.refresh();
 
         if (selection != null) {
@@ -1272,6 +1273,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         filtered.add(game);
       }
     }
+
     data = FXCollections.observableList(filtered);
   }
 

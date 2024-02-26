@@ -65,6 +65,9 @@ public class GameFilterService {
       if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
         continue;
       }
+      if (filterSettings.isWithNVOffset() && game.getNvOffset() == 0) {
+        continue;
+      }
       if (filterSettings.isWithAltSound() && !game.isAltSoundAvailable()) {
         continue;
       }

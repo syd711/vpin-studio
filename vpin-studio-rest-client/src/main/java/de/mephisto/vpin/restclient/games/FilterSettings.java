@@ -15,7 +15,16 @@ public class FilterSettings {
   private boolean withAltSound;
   private boolean withAltColor;
   private boolean withPovIni;
+  private boolean withNVOffset;
   private int gameStatus = -1;
+
+  public boolean isWithNVOffset() {
+    return withNVOffset;
+  }
+
+  public void setWithNVOffset(boolean withNVOffset) {
+    this.withNVOffset = withNVOffset;
+  }
 
   public boolean isOtherIssues() {
     return otherIssues;

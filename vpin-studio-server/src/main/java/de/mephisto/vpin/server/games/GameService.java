@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -97,9 +98,6 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
-
-  @Autowired
-  private GameFilterService gameFilterService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {

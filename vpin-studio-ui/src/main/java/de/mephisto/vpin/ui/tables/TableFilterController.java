@@ -42,6 +42,9 @@ public class TableFilterController implements Initializable {
   private CheckBox missingAssetsCheckBox;
 
   @FXML
+  private CheckBox withNVOffsetCheckBox;
+
+  @FXML
   private CheckBox otherIssuesCheckbox;
 
   @FXML
@@ -247,6 +250,11 @@ public class TableFilterController implements Initializable {
     withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
     withPovIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithPovIni(newValue);
+      applyFilter();
+    });
+    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
+    withNVOffsetCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithNVOffset(newValue);
       applyFilter();
     });
 

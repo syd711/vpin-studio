@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -63,6 +65,12 @@ public class GameValidationService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
+
   private Preferences preferences;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
@@ -92,6 +100,21 @@ public class GameValidationService implements InitializingBean {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+        List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (Game rawGame : otherGamesWithSameRom) {
+          GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
+          if (byPupId.getNvOffset() == 0) {
+            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }
@@ -443,17 +466,17 @@ public class GameValidationService implements InitializingBean {
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-    || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-    || codes.contains(CODE_NO_ROM)
-    || codes.contains(CODE_ROM_NOT_EXISTS)
-    || codes.contains(CODE_VPX_NOT_EXISTS)
-    || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-    || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-    || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-    || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-    || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-    || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-    || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+      || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+      || codes.contains(CODE_NO_ROM)
+      || codes.contains(CODE_ROM_NOT_EXISTS)
+      || codes.contains(CODE_VPX_NOT_EXISTS)
+      || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+      || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+      || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+      || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+      || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }
