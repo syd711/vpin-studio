@@ -36,6 +36,32 @@ public class VPXUtil {
     }
   }
 
+  public static byte[] readScreenshot(@NonNull File file) throws Exception {
+    Map<String, Object> result = new HashMap<>();
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(file, true);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry tableInfo = (DirectoryEntry) root.getEntry("TableInfo");
+      DocumentNode screenshot = (DocumentNode) tableInfo.getEntry("Screenshot");
+      DocumentInputStream documentInputStream = new DocumentInputStream(screenshot);
+      byte[] infoContent = new byte[documentInputStream.available()];
+      documentInputStream.read(infoContent);
+      return infoContent;
+    } catch (Exception e) {
+      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+    } finally {
+      try {
+        if (fs != null) {
+          fs.close();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+      }
+    }
+  }
+
   public static Map<String, Object> readTableInfo(@NonNull File file) throws Exception {
     Map<String, Object> result = new HashMap<>();
     POIFSFileSystem fs = null;
