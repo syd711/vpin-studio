@@ -10,12 +10,15 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,6 +84,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button openTableRulesBtn;
 
   @FXML
+  private Button screenshotBtn;
+
+  @FXML
   private Label tableNameLabel;
 
   @FXML
@@ -106,6 +113,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Label releaseDateLabel;
 
+  @FXML
+  private ImageView screenshotView;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -119,6 +129,13 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
+  }
+
+  @FXML
+  private void onScreenshot() {
+    if (this.game.isPresent()) {
+      this.loadScreenshot(this.game.get(), true);
+    }
   }
 
   @FXML
@@ -242,8 +259,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onInspect() {
     if (game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
-        "This will extract the table script into a temporary file.",
-        "It will be opened afterwards in a text editor.");
+          "This will extract the table script into a temporary file.",
+          "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
@@ -271,6 +288,8 @@ public class TablesSidebarScriptDataController implements Initializable {
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    screenshotBtn.setDisable(g.isEmpty());
+    screenshotView.setImage(null);
 
     tableNameLabel.setText("-");
     authorWebsiteLabel.setText("-");
@@ -310,6 +329,8 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
+
+      loadScreenshot(game, false);
     }
     else {
       labelRomAlias.setText("-");
@@ -318,6 +339,18 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelFilesize.setText("-");
       labelLastModified.setText("-");
     }
+  }
+
+  private void loadScreenshot(GameRepresentation game, boolean reload) {
+    Platform.runLater(() -> {
+      String url = client.getURL("vpx/screenshot/" + game.getId());
+      if(reload) {
+        client.getImageCache().clear(url);
+      }
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      Image image = new Image(cachedUrlImage);
+      screenshotView.setImage(image);
+    });
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

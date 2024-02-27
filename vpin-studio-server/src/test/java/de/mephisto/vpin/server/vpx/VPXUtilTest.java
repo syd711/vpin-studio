@@ -39,20 +39,14 @@ public class VPXUtilTest {
 
 //  @Test
 //  public void testInfo2() throws Exception {
-//    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Attack from Mars 2.0.1.vpx");
-//    Map<String, Object> data = VPXUtil.readTableInfo(table);
-//    Set<Map.Entry<String, Object>> entries = data.entrySet();
-//    for (Map.Entry<String, Object> entry : entries) {
-////      System.out.println(entry.getKey() + " => " + entry.getValue());
-//      if (entry.getKey().equals("Screenshot")) {
-//        File file = new File("E:\\temp\\out.png");
-//        file.delete();
-//        Object value = entry.getValue();
-//        IOUtils.write((byte[])value, new FileOutputStream(file));
-//        System.out.println("Written " + file.getName());
-//      }
-//    }
-//
-//    assertNotNull(data);
+////    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Screen Size Calibration.vpx");
+////    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\The Addams FamilyV2.vpx");
+//    File table = new File("C:\\vPinball\\VisualPinball\\Tables\\Blood Machines 2.0.vpx");
+//    byte[] bytes = VPXUtil.readScreenshot(table);
+//    File file = new File("C:\\temp\\out.png");
+//    file.delete();
+//    IOUtils.write(bytes, new FileOutputStream(file));
+//    System.out.println("Written " + file.getName());
+//    assertNotNull(bytes);
 //  }
 }

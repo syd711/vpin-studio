@@ -78,4 +78,8 @@ public class ImageCache extends VPinStudioClientService {
   public byte[] get(String name) {
     return imageCache.get(name);
   }
+
+  public void clear(String url) {
+    this.imageCache.remove(url);
+  }
 }
