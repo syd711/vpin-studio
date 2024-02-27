@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -159,23 +160,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   }
 
   protected void editFile(File file) {
-    try {
-      if (file.exists()) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-          try {
-            desktop.edit(file);
-          } catch (Exception e) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute \"" + file.getAbsolutePath() + "\": " + e.getMessage());
-          }
-        }
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    Dialogs.editFile(file);
   }
 
   @Override

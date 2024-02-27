@@ -71,9 +71,4 @@ public class RomService {
     GameEmulator gameEmulator = this.pinUPConnector.getGameEmulator(emuId);
     return mameRomAliasService.deleteAliasMapping(gameEmulator, alias);
   }
-
-  public boolean saveAliasMapping(int emuId, Map<String, String> values) throws IOException {
-    GameEmulator gameEmulator = this.pinUPConnector.getGameEmulator(emuId);
-    return mameRomAliasService.saveAliasMapping(gameEmulator, values);
-  }
 }

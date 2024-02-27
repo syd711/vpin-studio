@@ -9,11 +9,14 @@
 - Added Remote File Editor: It's a first very basic text editor, but as a first step, you can edit the "DmdDevice.ini" file now remotely (in the System Manager). The editor can be used for future releases to edit other cabinet files too.
 - Highscore Card Settings: Added hint about the transparency settings when a Popper menu screen is selected that has no transparency enabled. This setting is required when you want to use transparent highscore cards.
 - Table Management: Added **NVOffset** validator. If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
-- Table Management: **NVOffset** filter option to filter for tables that have set **NVOffset(<?>)** set in their script. 
+- Table Management: **NVOffset** filter option to filter for tables that have set **NVOffset(<?>)** set in their script.
+- Table Script Section: Moved Alias mapping stuff into the **VPin MAME** section, because that's where is belongs.
 - Table Script Section: This section now supports reading the **Screenshot** information out of the VPX file:
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-screenshot.png" width="400" />
 
+- Table VPin MAME Section: The moved **VPin MAME** section has been re-worked and you can edit the VPMAlias.txt directly now.
+- https://www.nailbuster.com/wikipinup/doku.php?id=pinup_optional
 
 ### Bugfixes
 

@@ -43,9 +43,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
 
   @FXML
-  private Label labelRomAlias;
-
-  @FXML
   private Label labelNVOffset;
 
   @FXML
@@ -65,12 +62,6 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private SplitMenuButton scanBtn;
-
-  @FXML
-  private Button editAliasBtn;
-
-  @FXML
-  private Button deleteAliasBtn;
 
   @FXML
   private Button vpSaveEditBtn;
@@ -208,32 +199,6 @@ public class TablesSidebarScriptDataController implements Initializable {
     }
   }
 
-  @FXML
-  public void onAliasEdit() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      String rom = g.getRom();
-      String alias = g.getRomAlias();
-      TableDialogs.openAliasMappingDialog(g, alias, rom);
-    }
-  }
-
-
-  @FXML
-  public void onDeleteAlias() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-      String alias = g.getRomAlias();
-
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
-        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
-      }
-    }
-  }
-
 
   @FXML
   public void onEdit() {
@@ -300,8 +265,6 @@ public class TablesSidebarScriptDataController implements Initializable {
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     viewScreenshotBtn.setDisable(g.isEmpty());
     screenshotBtn.setDisable(g.isEmpty());
     screenshotView.setImage(null);
@@ -337,9 +300,6 @@ public class TablesSidebarScriptDataController implements Initializable {
         openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
       }
 
-      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
-
-      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
@@ -348,7 +308,6 @@ public class TablesSidebarScriptDataController implements Initializable {
       loadScreenshot(game, false);
     }
     else {
-      labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
       labelFilesize.setText("-");

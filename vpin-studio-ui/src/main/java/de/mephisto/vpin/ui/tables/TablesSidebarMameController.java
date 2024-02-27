@@ -1,22 +1,28 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -93,6 +99,22 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private Button reloadBtn;
 
+  @FXML
+  private Button deleteAliasBtn;
+
+  @FXML
+  private Button copyRomAliasBtn;
+
+  @FXML
+  private Button copyRomBtn;
+
+  @FXML
+  private Label labelRomAlias;
+
+  @FXML
+  private Label labelRom;
+
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -103,6 +125,65 @@ public class TablesSidebarMameController implements Initializable {
   // Add a public no-args constructor
   public TablesSidebarMameController() {
   }
+
+
+  @FXML
+  private void onRomAliasCopy() {
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    content.putString(game.get().getRomAlias());
+    clipboard.setContent(content);
+  }
+
+  @FXML
+  private void onRomCopy() {
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    content.putString(game.get().getRom());
+    clipboard.setContent(content);
+  }
+
+  @FXML
+  private void onVPMAlias() {
+    if (client.getSystemService().isLocal()) {
+      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      File folder = new File(defaultGameEmulator.getMameDirectory());
+      File textFile = new File(folder, "VPMAlias.txt");
+      Dialogs.editFile(textFile);
+    }
+    else {
+      Dialogs.openTextEditor(VPinFile.VPMAliasTxt);
+    }
+    EventManager.getInstance().notifyTablesChanged();
+  }
+
+
+  @FXML
+  public void onAliasEdit() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      String rom = g.getRom();
+      String alias = g.getRomAlias();
+//      TableDialogs.openAliasMappingDialog(g, alias, rom);
+    }
+  }
+
+
+  @FXML
+  public void onDeleteAlias() {
+    if (this.game.isPresent()) {
+      GameRepresentation g = this.game.get();
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+      String alias = g.getRomAlias();
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
+        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
+      }
+    }
+  }
+
 
   @FXML
   private void onReload() {
@@ -213,6 +294,12 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
 
+    deleteAliasBtn.setDisable(true);
+    labelRomAlias.setText("-");
+    labelRom.setText("-");
+    copyRomAliasBtn.setDisable(true);
+    copyRomBtn.setDisable(true);
+
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
     useSamples.setSelected(false);
@@ -230,6 +317,17 @@ public class TablesSidebarMameController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+
+      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        labelRomAlias.setText(game.getRomAlias());
+        copyRomAliasBtn.setDisable(false);
+      }
+
+      if (!StringUtils.isEmpty(game.getRom())) {
+        labelRom.setText(game.getRom());
+        copyRomBtn.setDisable(false);
+      }
 
       invalidDataBox.setVisible(HighscoreType.VPReg.name().equals(game.getHighscoreType()));
       if (invalidDataBox.isVisible()) {

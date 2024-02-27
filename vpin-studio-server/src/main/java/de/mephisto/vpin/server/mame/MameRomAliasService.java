@@ -1,12 +1,15 @@
 package de.mephisto.vpin.server.mame;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 public class MameRomAliasService {
   private final static Logger LOG = LoggerFactory.getLogger(MameRomAliasService.class);
 
-  private final static String VPM_ALIAS = "VPMAlias.txt";
+  private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
   @NonNull
   @JsonIgnore
@@ -53,39 +56,43 @@ public class MameRomAliasService {
     if (!StringUtils.isEmpty(alias) && aliasToRomMapping.containsKey(alias)) {
       aliasToRomMapping.remove(alias);
       LOG.info("Removed alias mapping '" + alias + "'");
-      saveMapping(emulator, aliasToRomMapping);
+//      saveMapping(emulator, aliasToRomMapping);
     }
     return false;
   }
 
-  public boolean saveAliasMapping(@NonNull GameEmulator emulator, Map<String, String> update) throws IOException {
-    Map<String, String> aliasToRomMapping = loadAliasMapping(emulator);
-    String oldValue = update.get("#oldValue");
-    if (!StringUtils.isEmpty(oldValue) && aliasToRomMapping.containsKey(oldValue)) {
-      aliasToRomMapping.remove(oldValue);
-      LOG.info("Removed old alias mapping '" + oldValue + "'");
-    }
-    update.remove("#oldValue");
-
-
-    Set<Map.Entry<String, String>> entries = update.entrySet();
-    for (Map.Entry<String, String> entry : entries) {
-      String alias = entry.getKey();
-      String romName = entry.getValue();
-
-      if (!aliasToRomMapping.containsValue(alias)) {
-        aliasToRomMapping.put(alias.trim(), romName.trim());
+  public TextFile loadAliasFile(@NonNull GameEmulator emulator) {
+    TextFile textFile = new TextFile();
+    File vpmAliasFile = getVPMAliasFile(emulator);
+    try {
+      if (vpmAliasFile.exists()) {
+        textFile.setSize(vpmAliasFile.length());
+        textFile.setPath(vpmAliasFile.getAbsolutePath());
+        textFile.setLastModified(new Date(vpmAliasFile.lastModified()));
+        textFile.setContent(FileUtils.readFileToString(vpmAliasFile, Charset.defaultCharset()));
       }
+    } catch (IOException e) {
+      LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
-
-    saveMapping(emulator, aliasToRomMapping);
-    return true;
+    return textFile;
   }
 
-  private void saveMapping(@NonNull GameEmulator emulator, @NonNull Map<String, String> aliasToRomMapping) throws IOException {
-    String mapAsString = aliasToRomMapping.keySet().stream().map(key -> key.trim() + "," + aliasToRomMapping.get(key).trim()).sorted().collect(Collectors.joining("\n"));
+  public void saveAliasFile(@NonNull GameEmulator emulator, @NonNull String text) {
     File vpmAliasFile = getVPMAliasFile(emulator);
-    FileUtils.writeStringToFile(vpmAliasFile, mapAsString, Charset.defaultCharset());
+    try {
+      File backup = new File(vpmAliasFile.getParentFile(), vpmAliasFile.getName() + ".bak");
+      if (!backup.exists()) {
+        FileUtils.copyFile(vpmAliasFile, backup);
+      }
+
+      if (vpmAliasFile.exists() && vpmAliasFile.delete()) {
+        text = text.replaceAll("\n", "\r\n");
+        FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
+        LOG.info("Written " + vpmAliasFile.getAbsolutePath());
+      }
+    } catch (IOException e) {
+      LOG.error("Error saving " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+    }
   }
 
   private Map<String, String> loadAliasMapping(@NonNull GameEmulator emulator) {

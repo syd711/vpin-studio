@@ -30,12 +30,12 @@
                   </tooltip>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="external-component" text="DmdDevice.ini" textFill="WHITE">
+               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="DmdDevice.ini" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="PinUP Popper Setup" />

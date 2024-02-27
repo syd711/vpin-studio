@@ -963,6 +963,12 @@
     -fx-base : #338800;
 }
 
+.text-button {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : -fx-info-background;
+}
+
 .folder-component {
     -fx-font-color: #000000;
     -fx-text-fill: #000000;

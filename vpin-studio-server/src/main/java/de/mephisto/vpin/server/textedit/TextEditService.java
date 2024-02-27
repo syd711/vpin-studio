@@ -3,8 +3,10 @@ package de.mephisto.vpin.server.textedit;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class TextEditService {
   @Autowired
   private PinUPConnector pinUPConnector;
 
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
+
   public TextFile getText(VPinFile file) {
     TextFile textFile = new TextFile();
     try {
@@ -44,6 +49,10 @@ public class TextEditService {
           textFile.setSize(init.length());
           textFile.setLastModified(new Date(init.lastModified()));
           break;
+        }
+        case VPMAliasTxt: {
+          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + file);
@@ -79,6 +88,11 @@ public class TextEditService {
             throw new IOException("Failed to delete target file.");
           }
           return getText(file);
+        }
+        case VPMAliasTxt: {
+          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          mameRomAliasService.saveAliasFile(defaultGameEmulator, text);
+          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + file);

@@ -514,8 +514,9 @@ public class GameService implements InitializingBean {
     //check alias
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
     if (!StringUtils.isEmpty(originalRom)) {
+      String aliasName = game.getRom();
       game.setRom(originalRom);
-      game.setRomAlias(game.getRom());
+      game.setRomAlias(aliasName);
     }
 
     game.setNvOffset(gameDetails.getNvOffset());
