@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -84,6 +85,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button openTableRulesBtn;
 
   @FXML
+  private Button viewScreenshotBtn;
+
+  @FXML
   private Button screenshotBtn;
 
   @FXML
@@ -130,6 +134,16 @@ public class TablesSidebarScriptDataController implements Initializable {
     this.game = game;
     this.refreshView(game);
   }
+
+  @FXML
+  private void onScreenshotView() {
+    if (this.game.isPresent()) {
+      String url = client.getURL("vpx/screenshot/" + game.get().getId());
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      MediaUtil.openMedia(cachedUrlImage);
+    }
+  }
+
 
   @FXML
   private void onScreenshot() {
@@ -259,8 +273,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onInspect() {
     if (game.isPresent()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
-          "This will extract the table script into a temporary file.",
-          "It will be opened afterwards in a text editor.");
+        "This will extract the table script into a temporary file.",
+        "It will be opened afterwards in a text editor.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
@@ -288,6 +302,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    viewScreenshotBtn.setDisable(g.isEmpty());
     screenshotBtn.setDisable(g.isEmpty());
     screenshotView.setImage(null);
 
@@ -344,12 +359,13 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void loadScreenshot(GameRepresentation game, boolean reload) {
     Platform.runLater(() -> {
       String url = client.getURL("vpx/screenshot/" + game.getId());
-      if(reload) {
+      if (reload) {
         client.getImageCache().clear(url);
       }
       InputStream cachedUrlImage = client.getCachedUrlImage(url);
       Image image = new Image(cachedUrlImage);
       screenshotView.setImage(image);
+      viewScreenshotBtn.setDisable(false);
     });
   }
 

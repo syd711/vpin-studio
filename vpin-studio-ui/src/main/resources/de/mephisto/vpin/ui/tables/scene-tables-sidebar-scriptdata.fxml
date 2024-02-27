@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarScriptDataController">
+<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarScriptDataController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
@@ -323,14 +323,23 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="9">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
-                                 </tooltip>
-                              </Button>
+                              <VBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                 <children>
+                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="viewScreenshotBtn" mnemonicParsing="false" onAction="#onScreenshotView">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </VBox>
                               <VBox minHeight="200.0" styleClass="media-parent" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                  <GridPane.margin>
                                     <Insets right="6.0" />
