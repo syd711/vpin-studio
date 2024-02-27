@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -37,20 +38,24 @@ public class VPXUtil {
   }
 
   public static byte[] readScreenshot(@NonNull File file) throws Exception {
-    Map<String, Object> result = new HashMap<>();
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(file, true);
       DirectoryEntry root = fs.getRoot();
       DirectoryEntry tableInfo = (DirectoryEntry) root.getEntry("TableInfo");
-      DocumentNode screenshot = (DocumentNode) tableInfo.getEntry("Screenshot");
-      DocumentInputStream documentInputStream = new DocumentInputStream(screenshot);
-      byte[] infoContent = new byte[documentInputStream.available()];
-      documentInputStream.read(infoContent);
-      return infoContent;
+      if(tableInfo.hasEntry("Screenshot")) {
+        DocumentNode screenshot = (DocumentNode) tableInfo.getEntry("Screenshot");
+        DocumentInputStream documentInputStream = new DocumentInputStream(screenshot);
+        byte[] infoContent = new byte[documentInputStream.available()];
+        documentInputStream.read(infoContent);
+        documentInputStream.close();
+        LOG.info("Extracted screenshot from file " + file.getAbsolutePath() + ", size: " + FileUtils.readableFileSize(infoContent.length));
+        return infoContent;
+      }
+      return null;
     } catch (Exception e) {
-      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
-      throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      LOG.error("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      throw new Exception("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
     } finally {
       try {
         if (fs != null) {

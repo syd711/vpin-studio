@@ -4,24 +4,41 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.popper.GameMedia;
+import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
@@ -59,6 +76,35 @@ public class VPXResource {
   public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     String base64Source = (String) values.get("source");
     return vpxService.saveSources(gameService.getGame(id), base64Source);
+  }
+
+
+  @GetMapping("/screenshot/{id}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id) throws IOException {
+    try {
+      Game game = gameService.getGame(id);
+      if (game != null) {
+        File file = game.getGameFile();
+        byte[] bytes = VPXUtil.readScreenshot(file);
+        if (bytes == null || bytes.length == 0) {
+          InputStream in = ResourceLoader.class.getResourceAsStream("empty-preview.png");
+          bytes = IOUtils.toByteArray(in);
+        }
+
+        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(CONTENT_LENGTH, String.valueOf(bytes.length));
+        responseHeaders.set(CONTENT_TYPE, "image/png");
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+        responseHeaders.set("Cache-Control", "public, max-age=3600");
+        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+      }
+      return ResponseEntity.notFound().build();
+    } catch (Exception e) {
+      LOG.error("Screenshot extraction failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Screenshot extraction failed: " + e.getMessage());
+    }
   }
 
   @GetMapping("/pov/{id}")

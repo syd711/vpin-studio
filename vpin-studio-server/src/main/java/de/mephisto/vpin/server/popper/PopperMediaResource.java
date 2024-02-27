@@ -54,9 +54,6 @@ public class PopperMediaResource implements InitializingBean {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private SystemService systemService;
-
   private TableAssetsService tableAssetsService;
 
   @GetMapping("/{id}")

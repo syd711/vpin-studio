@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarScriptDataController">
+<BorderPane fx:id="defaultBackgroundBorderPane" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarScriptDataController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
@@ -200,7 +201,7 @@
                               <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label alignment="TOP_LEFT" styleClass="default-text" text="Table Name:" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
@@ -317,6 +318,31 @@
                                     <Insets right="6.0" />
                                  </GridPane.margin>
                               </TextArea>
+                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="424.0" styleClass="default-text" text="Screenshot:" textFill="WHITE" GridPane.rowIndex="9">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                 </tooltip>
+                              </Button>
+                              <VBox minHeight="200.0" styleClass="media-parent" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                 <GridPane.margin>
+                                    <Insets right="6.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ImageView fx:id="screenshotView" fitWidth="380.0" pickOnBounds="true" preserveRatio="true">
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </VBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </VBox>
                            </children>
                         </GridPane>
                      </children>

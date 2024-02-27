@@ -8,8 +8,12 @@
 - Pause Menu: Added preferences checkbox for the tutorials, so that you can skip the rendering of YouTube entries completely (in case you have downloaded all tutorial videos instead).
 - Added Remote File Editor: It's a first very basic text editor, but as a first step, you can edit the "DmdDevice.ini" file now remotely (in the System Manager). The editor can be used for future releases to edit other cabinet files too.
 - Highscore Card Settings: Added hint about the transparency settings when a Popper menu screen is selected that has no transparency enabled. This setting is required when you want to use transparent highscore cards.
-- Added **NVOffset** validator: If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
-- Added **NVOffset** filter option: Filter for tables that have set **NVOffset(<?>)** set in their script. 
+- Table Management: Added **NVOffset** validator. If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
+- Table Management: **NVOffset** filter option to filter for tables that have set **NVOffset(<?>)** set in their script. 
+- Table Script Section: This section now supports reading the **Screenshot** information out of the VPX file:
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-screenshot.png" width="400" />
+
 
 ### Bugfixes
 

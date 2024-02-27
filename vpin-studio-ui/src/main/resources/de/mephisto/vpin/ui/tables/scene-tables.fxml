@@ -71,7 +71,7 @@
                 <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>
-                <Insets bottom="7.0" right="7.0" />
+                <Insets bottom="7.0" right="12.0" />
             </padding>
         </VBox>
     </right>
