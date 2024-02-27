@@ -46,7 +46,7 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NOT_ALL_WITH_NVOFFSET: {
-        label = "Not all \"NVOffsets\" are set.";
+        label = "Not all \"NVOffset\" are set.";
         text = "This table has an \"NVOffset\" set, but other tables with the same ROM don't. You must set it for all tables based on this ROM.";
         break;
       }

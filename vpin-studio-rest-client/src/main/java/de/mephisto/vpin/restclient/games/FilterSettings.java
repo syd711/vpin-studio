@@ -160,6 +160,7 @@ public class FilterSettings {
       && !this.withBackglass
       && !this.withPovIni
       && !this.withPupPack
+      && !this.withNVOffset
       && this.gameStatus == -1
       && this.emulatorId == -1;
   }
