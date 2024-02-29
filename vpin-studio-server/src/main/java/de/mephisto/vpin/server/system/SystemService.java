@@ -311,8 +311,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -327,14 +327,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     return !filteredProceses.isEmpty();
   }
 
   public List<ProcessHandle> getProcesses() {
     return ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
   public boolean isVPXRunning() {
@@ -367,19 +367,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
-      .allProcesses()
-      .filter(p -> p.info().command().isPresent() &&
-        (
-          p.info().command().get().contains("PinUpMenu") ||
-            p.info().command().get().contains("PinUpDisplay") ||
-            p.info().command().get().contains("PinUpPlayer") ||
-            p.info().command().get().contains("VPXStarter") ||
-            p.info().command().get().contains("PinUpPackEditor") ||
-            p.info().command().get().contains("VPinballX") ||
-            p.info().command().get().startsWith("VPinball") ||
-            p.info().command().get().contains("B2SBackglassServerEXE") ||
-            p.info().command().get().contains("DOF")))
-      .collect(Collectors.toList());
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains("PinUpMenu") ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("PinUpPackEditor") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No PinUP processes found, termination canceled.");

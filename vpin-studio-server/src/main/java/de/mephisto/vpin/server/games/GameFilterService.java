@@ -2,18 +2,15 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,39 +22,15 @@ public class GameFilterService {
   private PinUPConnector pinUPConnector;
 
   @Autowired
-  private SystemService systemService;
+  private GameValidationService gameValidator;
 
   @Autowired
-  private GameValidationService gameValidator;
+  private GameDetailsRepository gameDetailsRepository;
+
 
   public List<Integer> filterGames(GameService gameService, FilterSettings filterSettings) {
     List<Integer> result = new ArrayList<>();
     List<Game> knownGames = gameService.getKnownGames();
-    ScoringDB scoringDB = systemService.getScoringDatabase();
-
-    List<File> vpRegFiles = new ArrayList<>();
-    List<String> vpRegEntries = new ArrayList<>();
-    List<String> highscoreFiles = new ArrayList<>();
-
-    List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      File vpRegFile = gameEmulator.getVPRegFile();
-      if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
-        vpRegFiles.add(vpRegFile);
-        VPReg reg = new VPReg(vpRegFile);
-        vpRegEntries.addAll(reg.getEntries());
-      }
-
-      File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
-      if (files != null) {
-        for (File file : files) {
-          if (!highscoreFiles.contains(file.getName())) {
-            highscoreFiles.add(file.getName());
-          }
-        }
-      }
-    }
-
     for (Game game : knownGames) {
       if (filterSettings.getEmulatorId() >= 0 && filterSettings.getEmulatorId() != game.getEmulatorId()) {
         continue;
@@ -111,25 +84,8 @@ public class GameFilterService {
         continue;
       }
 
-      if (filterSettings.isNoHighscoreSupport()) {
-        String rom = game.getRom();
-        String tableName = game.getTableName();
-        String hsfile = game.getHsFileName();
-
-        //the ROM was found as nvram file
-        if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
-          continue;
-        }
-
-        //the ROM was found in VPReg.stg
-        if (vpRegEntries.contains(String.valueOf(rom).toLowerCase()) || vpRegEntries.contains(tableName)) {
-          continue;
-        }
-
-        //the highscore file was found
-        if (!StringUtils.isEmpty(hsfile) && highscoreFiles.contains(hsfile)) {
-          continue;
-        }
+      if (filterSettings.isNoHighscoreSupport() && gameValidator.validateHighscoreStatus(game, gameDetailsRepository.findByPupId(game.getId()), tableDetails).isValidScoreConfiguration()) {
+        continue;
       }
 
       result.add(game.getId());

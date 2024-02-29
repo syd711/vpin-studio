@@ -122,6 +122,10 @@ public class ScoringDB {
     this.supportedNvRams = supportedNvRams;
   }
 
+  public boolean isNotSupported(String rom) {
+    return notSupported.contains(rom) || notSupported.contains(rom + ".txt");
+  }
+
   @Override
   public String toString() {
     return "Scoring Database (" + supportedNvRams.size() + " supported nvrams, " + highscoreMappings.size() + " mappings)";

@@ -35,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -732,6 +733,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
+  private void onReloadPressed(ActionEvent e) {
+    client.getGameService().reload();
+    this.onReload();
+  }
+
   public void onReload() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();

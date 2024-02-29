@@ -44,6 +44,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.games = new ArrayList<>();
   }
 
+  public void reload() {
+    getRestClient().get(API + "games/reload", Boolean.class);
+  }
+
   public boolean uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;

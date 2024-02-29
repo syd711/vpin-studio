@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
@@ -66,6 +67,8 @@ public class HighscoreService implements InitializingBean {
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
+  private final List<String> vpRegEntries = new ArrayList<>();
+  private final List<String> highscoreFiles = new ArrayList<>();
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
@@ -74,7 +77,7 @@ public class HighscoreService implements InitializingBean {
     highscoreFiles.setVpRegEntries(reg.getEntries());
 
     File userFolder = game.getEmulator().getUserFolder();
-    if(userFolder.exists()) {
+    if (userFolder.exists()) {
       File[] files = userFolder.listFiles((dir, name) -> name.endsWith(".txt"));
       if (files != null) {
         highscoreFiles.setTextFiles(Arrays.stream(files).map(File::getName).collect(Collectors.toList()));
@@ -82,7 +85,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     File nvramFolder = game.getEmulator().getNvramFolder();
-    if(nvramFolder.exists()) {
+    if (nvramFolder.exists()) {
       File[] files = nvramFolder.listFiles((dir, name) -> name.endsWith(".nv"));
       if (files != null) {
         highscoreFiles.setNvRams(Arrays.stream(files).map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList()));
@@ -586,13 +589,70 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
+    refreshAvailableScores();
+
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreUpdated(game, highscore);
+    }
+  }
+
+  public void refreshAvailableScores() {
+    this.refreshHighscoreFiles();
+    this.refreshVPRegEntries();
+  }
+
+  public List<String> getVPRegEntries() {
+    return this.vpRegEntries;
+  }
+
+  public List<String> getHighscoreFiles() {
+    return highscoreFiles;
+  }
+
+  public void refreshVPRegEntries() {
+    try {
+      List<File> vpRegFiles = new ArrayList<>();
+      vpRegEntries.clear();
+      List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+      for (GameEmulator gameEmulator : gameEmulators) {
+        File vpRegFile = gameEmulator.getVPRegFile();
+        if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
+          vpRegFiles.add(vpRegFile);
+          VPReg reg = new VPReg(vpRegFile);
+          vpRegEntries.addAll(reg.getEntries());
+        }
+      }
+      LOG.info("Highscore Service read " + vpRegEntries.size() + " VPReg.stg entries");
+    } catch (Exception e) {
+      LOG.error("Failed to refresh VPReg entries: " + e.getMessage(), e);
+    }
+  }
+
+
+  public void refreshHighscoreFiles() {
+    try {
+      highscoreFiles.clear();
+      List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+      for (GameEmulator gameEmulator : gameEmulators) {
+        File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
+        if (files != null) {
+          for (File file : files) {
+            if (!highscoreFiles.contains(file.getName())) {
+              highscoreFiles.add(file.getName());
+            }
+          }
+        }
+      }
+      LOG.info("Highscore Service read " + highscoreFiles.size() + " highscore text files");
+    } catch (Exception e) {
+      LOG.error("Failed to refresh highscore filenames: " + e.getMessage(), e);
     }
   }
 
   @Override
   public void afterPropertiesSet() {
     this.highscoreResolver = new HighscoreResolver(systemService);
+    this.refreshVPRegEntries();
+    this.refreshHighscoreFiles();
   }
 }
