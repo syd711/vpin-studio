@@ -113,6 +113,14 @@ public class GameService implements InitializingBean {
     return games;
   }
 
+  /**
+   * Pre-reload triggered before an actual manual table reload (server service cache reset)
+   */
+  public boolean reload() {
+    highscoreService.refreshAvailableScores();
+    return true;
+  }
+
   @SuppressWarnings("unused")
   public List<Integer> getUnknownGames() {
     List<Integer> gameIds = new ArrayList<>(getGameIds());

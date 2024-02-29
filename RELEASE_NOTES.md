@@ -7,6 +7,7 @@
 - System Manager: Added **Serum** support. Serum is already part of Freezy, but if you really want to ensure to have the latest and greatest Serum support, you can download the required DLLs this way too.
 - Pause Menu: Added preferences checkbox for the tutorials, so that you can skip the rendering of YouTube entries completely (in case you have downloaded all tutorial videos instead).
 - Highscore Card Settings: Added hint about the transparency settings when a Popper menu screen is selected that has no transparency enabled. This setting is required when you want to use transparent highscore cards.
+- Default Table Assets: Added **ROM Alias** support for the default asset generation (used for scores, competitions and highscore card backgrounds).
 - Table Management: Added **NVOffset** validator. If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
 - Table Management: **NVOffset filter** option to filter for tables that have set **NVOffset(<?>)** set in their script.
 - Table Management: **Alias filter** option to filter for tables that have set an entry in the **VPMAlias.txt**.
@@ -29,6 +30,7 @@
 - Fixed **ROM alias** calculation for tables. Yes, I never got this right too.
 - Table Data Manager: Fixed error in ROM validation.
 - Fixed Highscore Section: The section now always re-scans the highscores and the raw data is taken from this scan, not from a previous database entry. After configuration updates, old values may have been shown there.
+- Highscore Card Generator: Added automatic downscaling of **long table names**, so that they always fit in into the card.
 
 
 ### Additional Information

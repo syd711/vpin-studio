@@ -59,7 +59,7 @@ class HighscoreResolver {
         rawScore = readVPRegHighscore(game, metadata);
       }
       if (rawScore == null) {
-        rawScore = parseHSFileHighscore(game, metadata);
+        rawScore = readHSFileHighscore(game, metadata);
       }
 
       if (rawScore == null) {
@@ -78,7 +78,7 @@ class HighscoreResolver {
     return metadata;
   }
 
-  private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+  private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = game.getAlternateHighscoreTextFile();

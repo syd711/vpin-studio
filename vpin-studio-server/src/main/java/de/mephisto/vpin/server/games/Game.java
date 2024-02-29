@@ -567,6 +567,9 @@ public class Game {
   public File getRawDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
+      if (!StringUtils.isEmpty(this.getRomAlias())) {
+        subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;
