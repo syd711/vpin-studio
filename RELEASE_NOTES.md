@@ -23,6 +23,7 @@
 - Fixed calculating the correct nvram file when table is using **NVOffset**: Somehow, I never got this right.
 - Table Data Manager: Fixed error in ROM validation.
 - Fixed Highscore Section: The section now always re-scans the highscores and the raw data is taken from this scan, not from a previous database entry. After configuration updates, old values may have been shown there.
+- Highscore Card Generator: Added automatic downscaling of **long table names**, so that they always fit in into the card.
 
 
 ### Additional Information
