@@ -68,6 +68,9 @@ public class GameFilterService {
       if (filterSettings.isWithNVOffset() && game.getNvOffset() == 0) {
         continue;
       }
+      if (filterSettings.isWithAlias() && StringUtils.isEmpty(game.getRomAlias())) {
+        continue;
+      }
       if (filterSettings.isWithAltSound() && !game.isAltSoundAvailable()) {
         continue;
       }
