@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -145,16 +144,19 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onVPMAlias() {
-    if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-      File folder = new File(defaultGameEmulator.getMameDirectory());
-      File textFile = new File(folder, "VPMAlias.txt");
-      Dialogs.editFile(textFile);
+//    if (client.getSystemService().isLocal()) {
+//      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+//      File folder = new File(defaultGameEmulator.getMameDirectory());
+//      File textFile = new File(folder, "VPMAlias.txt");
+//      Dialogs.editFile(textFile);
+//    }
+//    else {
+//
+//    }
+    boolean b = Dialogs.openTextEditor(VPinFile.VPMAliasTxt);
+    if (b) {
+      EventManager.getInstance().notifyTablesChanged();
     }
-    else {
-      Dialogs.openTextEditor(VPinFile.VPMAliasTxt);
-    }
-    EventManager.getInstance().notifyTablesChanged();
   }
 
 

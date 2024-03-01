@@ -180,7 +180,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       });
 
-      if(!tableCombo.getItems().isEmpty()) {
+      if (!tableCombo.getItems().isEmpty()) {
         tableCombo.setValue(tableCombo.getItems().get(0));
       }
     } catch (Exception e) {
@@ -477,7 +477,14 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @Override
   public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    if (!ignoreList.contains(key)) {
+    if (key != null && !ignoreList.contains(key)) {
+      onGenerateClick();
+    }
+  }
+
+  @Override
+  public void changed(String propertiesName, Map<String, String> values) {
+    if (!values.isEmpty()) {
       onGenerateClick();
     }
   }

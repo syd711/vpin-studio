@@ -28,9 +28,10 @@
 - Enabled dashboard support for **rotated playfields**: With long overdue, this should finally work for those of you using rotated playfield screens. I've only supported the default portrait mode of Windows here, no additional rotations.
 - Fixed calculating the correct nvram file when table is using **NVOffset**: Somehow, I never got this right.
 - Fixed **ROM alias** calculation for tables. Yes, I never got this right too.
-- Table Data Manager: Fixed error in ROM validation.
+- Table Data Manager: Re-implemented ROM and highscore file validation on the server so that the filter options and Table Manager using the score validation.
 - Fixed Highscore Section: The section now always re-scans the highscores and the raw data is taken from this scan, not from a previous database entry. After configuration updates, old values may have been shown there.
 - Highscore Card Generator: Added automatic downscaling of **long table names**, so that they always fit in into the card.
+- Highscore Card Generator: Fixed error during font size changing, firing multiple change events at once.
 
 
 ### Additional Information

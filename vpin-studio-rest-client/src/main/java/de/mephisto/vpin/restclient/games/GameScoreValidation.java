@@ -17,10 +17,12 @@ public class GameScoreValidation {
   public final static String STATUS_ROM_NOT_SUPPORTED = "This ROM is currently not supported by the highscore parser.";
   public final static String STATUS_HSFILE_NOT_SUPPORTED = "This highscore text file not supported by the highscore parser.";
 
-  public final static String STATUS_PLAYED_NO_MATCH_FOUND = "Table has been played, but no nv-RAM file or VPReg.stg entry has been found.";
-  public final static String STATUS_NOT_PLAYED_NO_MATCH_FOUND = "No nv-RAM file or entry in VPReg.stg has been found, but the table has not been played yet.";
-  public final static String STATUS_PLAYED_HSFILE_NOT_FOUND = "Table has been played, but no highscore text file has been found for this name.";
   public final static String STATUS_NOT_PLAYED_HSFILE_NOT_FOUND = "No highscore text file has been found for this name, but the table has not been played yet.";
+  public final static String STATUS_NOT_PLAYED_NO_MATCH_FOUND = "No .nvram file or entry in VPReg.stg has been found, but the table has not been played yet.";
+
+  public final static String STATUS_PLAYED_HSFILE_NOT_FOUND = "Table has been played, but no highscore text file has been found for this name.";
+  public final static String STATUS_PLAYED_NO_MATCH_FOUND = "Table has been played, but no .nvram file or VPReg.stg entry has been found.";
+
 
   private String highscoreFilenameStatus;
   private String highscoreFilenameIcon;

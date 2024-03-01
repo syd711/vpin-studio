@@ -520,6 +520,9 @@ public class Game {
   public File getCroppedDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;
@@ -530,6 +533,9 @@ public class Game {
   public File getDMDPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DMD);
     }
     return null;

@@ -82,7 +82,7 @@ public class Dialogs {
 //    stage.setResizable(true);
 //    new FXResizeHelper(stage, 30, 6);
     stage.showAndWait();
-    return true;
+    return controller.isSaved();
   }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {

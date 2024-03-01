@@ -810,7 +810,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     availableHsFiles.add(0, null);
     highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
 
-    refreshStatusIcons();
     refreshScannedValues();
 
     this.stage = stage;
@@ -1189,7 +1188,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private void refreshStatusIcons() {
-    GameScoreValidation gameScoreValidation = null;
+    GameScoreValidation gameScoreValidation = client.getGameService().getGameScoreValidation(this.game.getId());
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
 
@@ -1214,91 +1213,6 @@ public class TableDataController implements Initializable, DialogController, Aut
         hsFileStatusBox.getChildren().add(l);
       }
     }
-
-//    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
-//    String hsType = game.getHighscoreType();
-//
-//    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
-//    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
-//    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
-//
-//    romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
-//    if (!String.valueOf(hsType).equals(HighscoreType.EM.name()) && !StringUtils.isEmpty(rom)) {
-//      if (romName.getItems().contains(rom)) {
-//        Label l = new Label();
-//        l.setGraphic(WidgetFactory.createCheckIcon());
-//        l.setTooltip(new Tooltip("A matching highscore entry has been found for this ROM name."));
-//        romStatusBox.getChildren().add(l);
-//      }
-//      else if (StringUtils.isEmpty(hsName)) {
-//        if (played) {
-//          Label l = new Label();
-//          l.setGraphic(WidgetFactory.createExclamationIcon());
-//          l.setTooltip(new Tooltip("Table has been played, but no nv-RAM file or VPReg.stg entry has been found."));
-//          romStatusBox.getChildren().add(l);
-//        }
-//        else {
-//          Label l = new Label();
-//          l.setGraphic(WidgetFactory.createIcon(UNPLAYED_STATUS_ICON));
-//          l.setTooltip(new Tooltip("No nv-RAM file or entry in VPReg.stg has been found, but the table has not been played yet."));
-//          romStatusBox.getChildren().add(l);
-//        }
-//      }
-//    }
-//
-//    //check ROM name validity
-//    if (rom != null) {
-//      String effectiveHighscoreFilename = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
-//      if (!TableDataUtil.isSupported(scoringDB, highscoreFiles, rom, tableName, effectiveHighscoreFilename, played)) {
-//        romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
-//        Label l = new Label();
-//        l.setGraphic(WidgetFactory.createUnsupportedIcon());
-//        l.setTooltip(new Tooltip("This ROM is currently not supported by the highscore parser."));
-//        romStatusBox.getChildren().add(l);
-//      }
-//    }
-//    else if (StringUtils.isEmpty(rom) && StringUtils.isEmpty(tableName) && StringUtils.isEmpty(hsName)) {
-//      Label l = new Label();
-//      l.setGraphic(WidgetFactory.createUnsupportedIcon());
-//      l.setTooltip(new Tooltip("Neither ROM name nor highscore filename is set."));
-//      romStatusBox.getChildren().add(l);
-//    }
-//
-//
-//    hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
-//    if (!StringUtils.isEmpty(hsName)) {
-//      if (highscoreFileName.getItems().contains(hsName)) {
-//        Label l = new Label();
-//        l.setGraphic(WidgetFactory.createCheckIcon());
-//        l.setTooltip(new Tooltip("A matching highscore file has been found."));
-//        hsFileStatusBox.getChildren().add(l);
-//      }
-//      else {
-//        //txt not found
-//        Label l = new Label();
-//        if (played) {
-//          l.setGraphic(WidgetFactory.createExclamationIcon());
-//          l.setTooltip(new Tooltip("Table has been played, but text file has been found for this name."));
-//          hsFileStatusBox.getChildren().add(l);
-//        }
-//        else {
-//          l.setGraphic(WidgetFactory.createIcon(UNPLAYED_STATUS_ICON));
-//          l.setTooltip(new Tooltip("No text file has been found for this name, but the table has not been played yet."));
-//          hsFileStatusBox.getChildren().add(l);
-//        }
-//      }
-//    }
-//    else {
-//      String altRom = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
-//      if (!StringUtils.isEmpty(altRom)) {
-//        if (highscoreFileName.getItems().contains(altRom + ".txt")) {
-//          Label l = new Label();
-//          l.setGraphic(WidgetFactory.createCheckIcon());
-//          l.setTooltip(new Tooltip("A matching highscore file has been found (using \"" + altRom + "\"as fallback."));
-//          hsFileStatusBox.getChildren().add(l);
-//        }
-//      }
-//    }
   }
 
   private void setMappedFieldValue(String field, String value) {

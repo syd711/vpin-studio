@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -605,6 +606,13 @@ public class GameService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     return highscoreService.getHighscoreFiles(game);
+  }
+
+  public GameScoreValidation getGameScoreValidation(int id) {
+    Game game = getGame(id);
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    TableDetails tableDetails = pinUPConnector.getTableDetails(id);
+    return gameValidator.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 
   @Override

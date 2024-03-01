@@ -182,6 +182,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public VpsServiceClient getVpsService() {
     return vpsServiceClient;
   }
+
   public HigscoreBackupServiceClient getHigscoreBackupService() {
     return higscoreBackupServiceClient;
   }
@@ -406,6 +407,19 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
       ObservedProperties obsprops = this.observedProperties.get(propertiesName);
       obsprops.notifyChange(key, updatedValue.get());
+    } catch (Exception e) {
+      LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void changed(String propertiesName, Map<String, String> values) {
+    try {
+      Map<String, Object> model = new HashMap<>();
+      model.putAll(values);
+      Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
+      ObservedProperties obsprops = this.observedProperties.get(propertiesName);
+      obsprops.notifyChange(values);
     } catch (Exception e) {
       LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
     }

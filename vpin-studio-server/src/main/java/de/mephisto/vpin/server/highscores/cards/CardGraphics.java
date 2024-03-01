@@ -198,6 +198,7 @@ public class CardGraphics {
       int width = g.getFontMetrics().stringWidth(tableName);
       while (width > DEFAULT_MEDIA_SIZE - 24) {
         TABLE_FONT_SIZE = TABLE_FONT_SIZE - 1;
+        g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
         width = g.getFontMetrics().stringWidth(tableName);
       }
       tableNameY = tableNameY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;

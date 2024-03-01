@@ -262,4 +262,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   public boolean resetHighscore(int gameId) {
     return getRestClient().delete(API + "games/reset/" + gameId);
   }
+
+  public GameScoreValidation getGameScoreValidation(int gameId) {
+    return getRestClient().get(API + "games/scorevalidation/" + gameId, GameScoreValidation.class);
+  }
 }

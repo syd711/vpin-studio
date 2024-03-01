@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -117,6 +118,11 @@ public class GamesResource {
       return Collections.emptyList();
     }
     return gameService.validate(game);
+  }
+
+  @GetMapping("/scorevalidation/{id}")
+  public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id) {
+    return gameService.getGameScoreValidation(id);
   }
 
   @GetMapping("/scores/{id}")

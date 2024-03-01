@@ -402,12 +402,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onStop() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().terminatePopper();
-      }
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getPinUPPopperService().terminatePopper();
     }
   }
 
