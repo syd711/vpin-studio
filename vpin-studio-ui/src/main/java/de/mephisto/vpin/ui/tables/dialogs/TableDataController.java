@@ -692,7 +692,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-        apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
@@ -1192,26 +1192,24 @@ public class TableDataController implements Initializable, DialogController, Aut
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
 
-    if (!gameScoreValidation.isValidScoreConfiguration()) {
-      String statusRom = gameScoreValidation.getRomStatus();
-      if (statusRom != null) {
-        FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getRomIcon());
-        icon.setIconColor(Paint.valueOf(gameScoreValidation.getRomIconColor()));
-        Label l = new Label();
-        l.setGraphic(icon);
-        l.setTooltip(new Tooltip(statusRom));
-        romStatusBox.getChildren().add(l);
-      }
+    String statusRom = gameScoreValidation.getRomStatus();
+    if (statusRom != null) {
+      FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getRomIcon());
+      icon.setIconColor(Paint.valueOf(gameScoreValidation.getRomIconColor()));
+      Label l = new Label();
+      l.setGraphic(icon);
+      l.setTooltip(new Tooltip(statusRom));
+      romStatusBox.getChildren().add(l);
+    }
 
-      String statusHsFile = gameScoreValidation.getHighscoreFilenameStatus();
-      if (statusHsFile != null) {
-        FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getHighscoreFilenameIcon());
-        icon.setIconColor(Paint.valueOf(gameScoreValidation.getHighscoreFilenameIconColor()));
-        Label l = new Label();
-        l.setGraphic(icon);
-        l.setTooltip(new Tooltip(statusHsFile));
-        hsFileStatusBox.getChildren().add(l);
-      }
+    String statusHsFile = gameScoreValidation.getHighscoreFilenameStatus();
+    if (statusHsFile != null) {
+      FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getHighscoreFilenameIcon());
+      icon.setIconColor(Paint.valueOf(gameScoreValidation.getHighscoreFilenameIconColor()));
+      Label l = new Label();
+      l.setGraphic(icon);
+      l.setTooltip(new Tooltip(statusHsFile));
+      hsFileStatusBox.getChildren().add(l);
     }
   }
 

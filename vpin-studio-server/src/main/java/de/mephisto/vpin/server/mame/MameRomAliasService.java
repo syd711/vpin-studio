@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,13 +20,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-public class MameRomAliasService {
+public class MameRomAliasService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MameRomAliasService.class);
 
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
+
+  private Map<Integer, Map<String, String>> aliasMappingCache = new HashMap<>();
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   @NonNull
   @JsonIgnore
@@ -38,7 +43,7 @@ public class MameRomAliasService {
       return null;
     }
 
-    Map<String, String> aliasToRomMapping = loadAliasMapping(emulator);
+    Map<String, String> aliasToRomMapping = aliasMappingCache.get(emulator.getId());
     Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
     for (Map.Entry<String, String> entry : entries) {
       String alias = entry.getKey();
@@ -49,16 +54,6 @@ public class MameRomAliasService {
       }
     }
     return null;
-  }
-
-  public boolean deleteAliasMapping(@NonNull GameEmulator emulator, @Nullable String alias) throws IOException {
-    Map<String, String> aliasToRomMapping = loadAliasMapping(emulator);
-    if (!StringUtils.isEmpty(alias) && aliasToRomMapping.containsKey(alias)) {
-      aliasToRomMapping.remove(alias);
-      LOG.info("Removed alias mapping '" + alias + "'");
-//      saveMapping(emulator, aliasToRomMapping);
-    }
-    return false;
   }
 
   public TextFile loadAliasFile(@NonNull GameEmulator emulator) {
@@ -115,11 +110,28 @@ public class MameRomAliasService {
             }
           }
         }
-//        LOG.info("Loaded " + aliasToRomMapping.size() + " alias mappings for " + emulator.getMameFolder().getAbsolutePath());
       }
     } catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return aliasToRomMapping;
+  }
+
+  public void clearCache() {
+    aliasMappingCache.clear();
+    List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      aliasMappingCache.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
+    }
+    LOG.info("Loaded Alias Mappings:");
+    Set<Map.Entry<Integer, Map<String, String>>> entries = aliasMappingCache.entrySet();
+    for (Map.Entry<Integer, Map<String, String>> entry : entries) {
+      LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    clearCache();
   }
 }

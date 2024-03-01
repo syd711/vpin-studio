@@ -99,9 +99,6 @@ public class TablesSidebarMameController implements Initializable {
   private Button reloadBtn;
 
   @FXML
-  private Button deleteAliasBtn;
-
-  @FXML
   private Button copyRomAliasBtn;
 
   @FXML
@@ -155,37 +152,10 @@ public class TablesSidebarMameController implements Initializable {
 //    }
     boolean b = Dialogs.openTextEditor(VPinFile.VPMAliasTxt);
     if (b) {
+      client.getMameService().clearCache();
       EventManager.getInstance().notifyTablesChanged();
     }
   }
-
-
-  @FXML
-  public void onAliasEdit() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      String rom = g.getRom();
-      String alias = g.getRomAlias();
-//      TableDialogs.openAliasMappingDialog(g, alias, rom);
-    }
-  }
-
-
-  @FXML
-  public void onDeleteAlias() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-      String alias = g.getRomAlias();
-
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
-        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
-      }
-    }
-  }
-
 
   @FXML
   private void onReload() {
@@ -296,7 +266,6 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
 
-    deleteAliasBtn.setDisable(true);
     labelRomAlias.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
@@ -320,7 +289,6 @@ public class TablesSidebarMameController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
       if (!StringUtils.isEmpty(game.getRomAlias())) {
         labelRomAlias.setText(game.getRomAlias());
         copyRomAliasBtn.setDisable(false);

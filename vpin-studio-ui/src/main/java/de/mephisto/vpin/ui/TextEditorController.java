@@ -62,11 +62,6 @@ public class TextEditorController implements Initializable, DialogController {
   private boolean saved = false;
 
   @FXML
-  private void onClose() {
-
-  }
-
-  @FXML
   private void onSave(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
@@ -91,7 +86,7 @@ public class TextEditorController implements Initializable, DialogController {
   @FXML
   private void onSaveAndClose(ActionEvent e) {
     onSave(e);
-    onClose();
+    onCancelClick(e);
   }
 
   @Override

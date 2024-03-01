@@ -170,14 +170,6 @@
                      <children>
                         <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
-                              <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Update the ROM name for this table." />
-                                 </tooltip>
-                              </Button>
                               <Button fx:id="copyRomAliasBtn" mnemonicParsing="false" onAction="#onRomAliasCopy">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />

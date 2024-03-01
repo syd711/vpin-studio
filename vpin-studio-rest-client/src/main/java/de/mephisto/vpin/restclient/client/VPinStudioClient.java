@@ -19,7 +19,10 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatusServiceClient;
+import de.mephisto.vpin.restclient.games.GamesServiceClient;
+import de.mephisto.vpin.restclient.games.NVRamsServiceClient;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -90,7 +93,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   private final PinVolServiceClient pinVolServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
-  private final RomServiceClient romServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -125,7 +127,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
-    this.romServiceClient = new RomServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
@@ -197,10 +198,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public PinVolServiceClient getPinVolService() {
     return pinVolServiceClient;
-  }
-
-  public RomServiceClient getRomService() {
-    return romServiceClient;
   }
 
   public AltColorServiceClient getAltColorService() {
