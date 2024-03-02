@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -68,6 +69,9 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataController implements Initializable, DialogController, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
   private final static Logger LOG = LoggerFactory.getLogger(TableDataController.class);
+  private final static int DEBOUNCE_MS = 300;
+
+  private final Debouncer debouncer = new Debouncer();
 
   private final static TableStatus STATUS_DISABLED = new TableStatus(0, "InActive (Disabled)");
   private final static TableStatus STATUS_NORMAL = new TableStatus(1, "Visible (Normal)");
@@ -664,6 +668,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
       tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(this.tableDetails, game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), null);
+
+      this.refreshScannedValues();
     } catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -912,11 +918,19 @@ public class TableDataController implements Initializable, DialogController, Aut
     });
 
     if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-      romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+      if(!StringUtils.isEmpty(game.getRomAlias())) {
+        romName.setPromptText(game.getRom() + " (aliased ROM)");
+      }
+      else {
+        romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+      }
+
       applyRomBtn.setDisable(false);
     }
     romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      onRomNameUpdate(newValue);
+      debouncer.debounce("romName", () -> {
+        onRomNameUpdate(newValue);
+      }, DEBOUNCE_MS);
     });
 
     manufacturer.setText(tableDetails.getManufacturer());
@@ -1146,7 +1160,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       onHighscoreFilenameUpdate(newValue, mappingHsField);
     });
     highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      onHighscoreFilenameUpdate(newValue, mappingHsField);
+      debouncer.debounce("highscoreFileName", () -> {
+        onHighscoreFilenameUpdate(newValue, mappingHsField);
+      }, DEBOUNCE_MS);
     });
 
     initVpsStatus();
@@ -1158,7 +1174,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (!newValue) {
       romName.setPromptText("");
       if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-        romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+        if(!StringUtils.isEmpty(game.getRomAlias())) {
+          romName.setPromptText(game.getRom() + " (aliased ROM)");
+        }
+        else {
+          romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+        }
       }
     }
   }

@@ -38,6 +38,7 @@ public class MameRomAliasService implements InitializingBean {
     return new File(emulator.getMameFolder(), VPM_ALIAS);
   }
 
+  @Nullable
   public String getRomForAlias(@NonNull GameEmulator emulator, @Nullable String romAlias) {
     if (romAlias == null) {
       return null;

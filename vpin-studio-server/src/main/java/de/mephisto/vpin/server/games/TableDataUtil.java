@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 public class TableDataUtil {
 
@@ -38,6 +39,7 @@ public class TableDataUtil {
     return false;
   }
 
+  @Nullable
   public static String getEffectiveRom(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails) {
     String rom = tableDetails.getRomName();
     if (StringUtils.isEmpty(rom)) {
@@ -46,6 +48,7 @@ public class TableDataUtil {
     return rom;
   }
 
+  @Nullable
   public static String getEffectiveHighscoreFilename(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails, @NonNull ServerSettings serverSettings) {
     String hs = tableDetails.getMappedValue(serverSettings.getMappingHsFileName());
     if (StringUtils.isEmpty(hs)) {
@@ -54,6 +57,7 @@ public class TableDataUtil {
     return hs;
   }
 
+  @Nullable
   public static String getEffectiveTableName(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails) {
     String rom = tableDetails.getRomAlt();
     if (StringUtils.isEmpty(rom)) {

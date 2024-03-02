@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -81,6 +82,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
@@ -508,6 +512,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
+    boolean aliasedRom = false;
+    if (!StringUtils.isEmpty(originalRom)) {
+      aliasedRom = true;
+      rom = originalRom;
+    }
+
     String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
     String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
 
@@ -519,8 +530,16 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       return validation;
     }
 
+    //aliased ROM was found as nvram file
+    if (aliasedRom && (scoringDB.getSupportedNvRams().contains(rom) || scoringDB.getSupportedNvRams().contains(rom.toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName))) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
+      return validation;
+    }
+
     //the ROM was found as nvram file
-    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
+    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom)) || scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
@@ -528,7 +547,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //the ROM was found as VPReg.stg entry
-    if (vpRegEntries.contains(String.valueOf(rom).toLowerCase()) || vpRegEntries.contains(tableName)) {
+    if (vpRegEntries.contains(String.valueOf(rom)) || vpRegEntries.contains(tableName)) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_VPREG_STG_MATCH_FOUND);
@@ -544,7 +563,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //not played and the ROM VPReg.stg entry not found
-    if (!played && !vpRegEntries.contains(String.valueOf(rom).toLowerCase()) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
+    if (!played && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -561,7 +580,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //ROM is not supported
-    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) ||!scoringDB.getSupportedNvRams().contains(rom))) {
+    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
