@@ -11,6 +11,7 @@
 - Table Management: Added **NVOffset** validator. If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
 - Table Management: **NVOffset filter** option to filter for tables that have set **NVOffset(<?>)** set in their script.
 - Table Management: **Alias filter** option to filter for tables that have set an entry in the **VPMAlias.txt**.
+- Table Data Manager: Added **ROM Alias** support for the ROM validation.
 - Table Script Section: **Moved Alias mapping stuff into the VPin MAME section**, because that's where is belongs.
 - Table Script Section: This section now supports reading the **screenshot** information out of the VPX file:
 
@@ -30,8 +31,8 @@
 - Fixed calculating the correct nvram file when table is using **NVOffset**: Somehow, I never got this right.
 - Fixed **ROM alias** calculation for tables. Yes, I never got this right too.
 - Add **ROM alias caching** to improve table reload performance.
-- Table Data Manager: Re-implemented ROM and highscore file validation on the server so that the filter options and Table Manager using the score validation.
-- Fixed Highscore Section: The section now always re-scans the highscores and the raw data is taken from this scan, not from a previous database entry. After configuration updates, old values may have been shown there.
+- Table Data Manager: Re-implemented ROM and highscore file validation on the server so that the **Highscore Not Supported** filter option and **Table Data Manager** using the same validation routines.
+- Table Highscore Section: The section now always re-scans the highscores and the raw data is taken from this scan, not from a previous database entry. After configuration updates, old values may have been shown there.
 - Highscore Card Generator: Added automatic downscaling of **long table names**, so that they always fit in into the card.
 - Highscore Card Generator: Fixed error during font size changing, firing multiple change events at once.
 
