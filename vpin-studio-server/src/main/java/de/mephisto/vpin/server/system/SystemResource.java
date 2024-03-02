@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +45,9 @@ public class SystemResource {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   @GetMapping("/startupTime")
   public Date startupTime() {
     return startupTime;
@@ -62,9 +66,13 @@ public class SystemResource {
   }
 
   @GetMapping("/info")
-  @ResponseBody
   public SystemSummary info() {
-    return systemService.getSystemSummary();
+    SystemSummary info = new SystemSummary();
+    info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
+    info.setScreenInfos(systemService.getScreenInfos());
+    info.setArchiveType(systemService.getArchiveType());
+    info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
+    return info;
   }
 
 

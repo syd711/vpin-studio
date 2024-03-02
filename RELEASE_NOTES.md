@@ -11,8 +11,8 @@
 - Table Management: Added **NVOffset** validator. If a table uses an NVOffset, all tables using the same ROM must have set it in order to work.
 - Table Management: **NVOffset filter** option to filter for tables that have set **NVOffset(<?>)** set in their script.
 - Table Management: **Alias filter** option to filter for tables that have set an entry in the **VPMAlias.txt**.
-- Table Script Section: Moved Alias mapping stuff into the **VPin MAME** section, because that's where is belongs.
-- Table Script Section: This section now supports reading the **Screenshot** information out of the VPX file:
+- Table Script Section: **Moved Alias mapping stuff into the VPin MAME section**, because that's where is belongs.
+- Table Script Section: This section now supports reading the **screenshot** information out of the VPX file:
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/table-screenshot.png" width="600" />
 
@@ -24,7 +24,8 @@
 
 ### Bugfixes
 
-- Enabled folder selection for VPin Studio installer files.
+- Added PinUP Popper database version check for the startup. An error message is shown if the version does not match to avoid unspecific server errors.
+- Enabled the installation folder selection for VPin Studio installer .exe files.
 - Enabled dashboard support for **rotated playfields**: With long overdue, this should finally work for those of you using rotated playfield screens. I've only supported the default portrait mode of Windows here, no additional rotations.
 - Fixed calculating the correct nvram file when table is using **NVOffset**: Somehow, I never got this right.
 - Fixed **ROM alias** calculation for tables. Yes, I never got this right too.

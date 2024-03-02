@@ -6,11 +6,15 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FXResizeHelper;
+import de.mephisto.vpin.ui.util.LocalUISettings;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -36,8 +40,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
@@ -111,6 +113,12 @@ public class Studio extends Application {
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     try {
+      SystemSummary systemSummary = client.getSystemService().getSystemSummary();
+      if (!systemSummary.isPopper15()) {
+        WidgetFactory.showAlert(new Stage(), "Invalid PinUP Popper version.", "Please install version 1.5 or higher to use VPin Studio.");
+        System.exit(0);
+      }
+
       Stage splash = createSplash();
 
       Platform.runLater(() -> {

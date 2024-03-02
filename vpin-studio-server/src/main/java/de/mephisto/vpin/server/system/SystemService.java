@@ -190,14 +190,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return backupFolder;
   }
 
-  public SystemSummary getSystemSummary() {
-    SystemSummary info = new SystemSummary();
-    info.setPinupSystemDirectory(getPinUPSystemFolder().getAbsolutePath());
-    info.setScreenInfos(getScreenInfos());
-    info.setArchiveType(this.getArchiveType());
-    return info;
-  }
-
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
     StringBuilder b = new StringBuilder(label);
     b.append(":");
