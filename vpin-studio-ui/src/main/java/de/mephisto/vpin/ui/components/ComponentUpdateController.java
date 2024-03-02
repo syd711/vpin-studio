@@ -237,10 +237,6 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   public void initialize(URL url, ResourceBundle resourceBundle) {
     EventManager.getInstance().addListener(this);
 
-    textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-      setText(newValue);
-    });
-
     simBtn.setDisable(true);
     installBtn.setDisable(true);
     artifactCombo.setDisable(true);
@@ -258,6 +254,23 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       textArea.selectPositionCaret(textArea.getLength());
       textArea.positionCaret(textArea.getLength());
       textArea.deselect();
+
+      new Thread(() -> {
+        try {
+          Thread.sleep(100);
+
+          Platform.runLater(() -> {
+            textArea.setText("");
+            textArea.appendText(text);
+            textArea.setScrollTop(Double.MAX_VALUE);
+            textArea.selectPositionCaret(textArea.getLength());
+            textArea.positionCaret(textArea.getLength());
+            textArea.deselect();
+          });
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }).start();
     });
   }
 }
