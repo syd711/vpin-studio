@@ -136,6 +136,7 @@
                               <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
                               <Tab fx:id="freezyTab" closable="false" text="Freezy" />
                               <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
+                        <Tab fx:id="serumTab" closable="false" text="Serum" />
                           </tabs>
                       </TabPane>
                </children>

@@ -2,19 +2,18 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
-
-
 <?import javafx.scene.text.Font?>
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
+
+<StackPane fx:id="rootStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
    <children>
-      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-1740.0" >
+      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-1740.0">
          <font>
             <Font name="System Bold" size="124.0" />
          </font>
       </Label>
-      <fx:include fx:id="players" scaleX="1.5" maxWidth="754.0" minWidth="754.0" prefHeight="1060.0" scaleY="1.5"  source="widgets/widget-player-rank.fxml" translateX="462.0" translateY="-300.0" />
-      <fx:include fx:id="latestScores" scaleX="1.5" prefHeight="1680.0" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-578.0" translateY="-300.0" />
+      <fx:include fx:id="players" maxWidth="754.0" minWidth="754.0" prefHeight="1060.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-player-rank.fxml" translateX="462.0" translateY="-300.0" />
+      <fx:include fx:id="latestScores" prefHeight="1680.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-578.0" translateY="-300.0" />
 
-      <fx:include fx:id="offlineCompetition" scaleX="1.5" prefWidth="1370.0" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="1440.0" />
+      <fx:include fx:id="offlineCompetition" prefWidth="1370.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="1440.0" />
    </children>
 </StackPane>

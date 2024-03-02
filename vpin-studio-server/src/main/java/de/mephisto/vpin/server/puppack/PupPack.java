@@ -110,8 +110,12 @@ public class PupPack {
     return this.packFolder;
   }
 
-  public ScreenMode getScreenMode(PopperScreen dmd) {
-    return this.screensPup.getScreenMode(dmd);
+  public ScreenMode getScreenMode(PopperScreen screen) {
+    return this.screensPup.getScreenMode(screen);
+  }
+
+  public boolean isTransparent(PopperScreen screen) {
+    return this.screensPup.isTransparent(screen);
   }
 
   public void load() {

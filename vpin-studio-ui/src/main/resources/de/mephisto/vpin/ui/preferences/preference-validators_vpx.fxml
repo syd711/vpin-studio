@@ -21,6 +21,8 @@
             <Label styleClass="checkbox-description" text="Checks if a ROM name was resolved for the table." textFill="WHITE" />
             <CheckBox fx:id="pref_3" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM File Check" />
             <Label styleClass="checkbox-description" text="Checks if a ROM file for the selected table was found." textFill="WHITE" />
+            <CheckBox fx:id="pref_5" layoutX="34.0" layoutY="220.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="NVOffset Check" />
+            <Label layoutX="34.0" layoutY="258.0" styleClass="checkbox-description" text="If a table has set an NVOffset, all tables using the same ROM must have set it." textFill="WHITE" />
             <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX File Check" />
             <Label styleClass="checkbox-description" text="Checks if the VPX file for the selected table was found." textFill="WHITE" />
             <CheckBox fx:id="pref_20" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="DirectB2S or Pup Pack Required" />

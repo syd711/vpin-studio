@@ -422,14 +422,6 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean openAliasMappingDialog(GameRepresentation game, String alias, String rom) {
-    Stage stage = Dialogs.createStudioDialogStage(AliasMappingController.class, "dialog-alias-mapping.fxml", "Alias Mapping");
-    AliasMappingController controller = (AliasMappingController) stage.getUserData();
-    controller.setValues(game, alias, rom);
-    stage.showAndWait();
-    return true;
-  }
-
   public static void openDismissAllDialog(GameRepresentation gameRepresentation) {
     FXMLLoader fxmlLoader = new FXMLLoader(DismissAllController.class.getResource("dialog-dismiss-all.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Dismiss Validation Errors");

@@ -8,14 +8,18 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,9 +41,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarScriptDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
-
-  @FXML
-  private Label labelRomAlias;
 
   @FXML
   private Label labelNVOffset;
@@ -62,12 +64,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   private SplitMenuButton scanBtn;
 
   @FXML
-  private Button editAliasBtn;
-
-  @FXML
-  private Button deleteAliasBtn;
-
-  @FXML
   private Button vpSaveEditBtn;
 
   @FXML
@@ -78,6 +74,12 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private Button openTableRulesBtn;
+
+  @FXML
+  private Button viewScreenshotBtn;
+
+  @FXML
+  private Button screenshotBtn;
 
   @FXML
   private Label tableNameLabel;
@@ -106,6 +108,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private Label releaseDateLabel;
 
+  @FXML
+  private ImageView screenshotView;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -119,6 +124,23 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
+  }
+
+  @FXML
+  private void onScreenshotView() {
+    if (this.game.isPresent()) {
+      String url = client.getURL("vpx/screenshot/" + game.get().getId());
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      MediaUtil.openMedia(cachedUrlImage);
+    }
+  }
+
+
+  @FXML
+  private void onScreenshot() {
+    if (this.game.isPresent()) {
+      this.loadScreenshot(this.game.get(), true);
+    }
   }
 
   @FXML
@@ -173,32 +195,6 @@ public class TablesSidebarScriptDataController implements Initializable {
         new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
       } catch (Exception e) {
         LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-      }
-    }
-  }
-
-  @FXML
-  public void onAliasEdit() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      String rom = g.getRom();
-      String alias = g.getRomAlias();
-      TableDialogs.openAliasMappingDialog(g, alias, rom);
-    }
-  }
-
-
-  @FXML
-  public void onDeleteAlias() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-      String alias = g.getRomAlias();
-
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
-        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
   }
@@ -269,8 +265,9 @@ public class TablesSidebarScriptDataController implements Initializable {
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    viewScreenshotBtn.setDisable(g.isEmpty());
+    screenshotBtn.setDisable(g.isEmpty());
+    screenshotView.setImage(null);
 
     tableNameLabel.setText("-");
     authorWebsiteLabel.setText("-");
@@ -303,21 +300,32 @@ public class TablesSidebarScriptDataController implements Initializable {
         openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
       }
 
-      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
-
-      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
+
+      loadScreenshot(game, false);
     }
     else {
-      labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
       labelFilesize.setText("-");
       labelLastModified.setText("-");
     }
+  }
+
+  private void loadScreenshot(GameRepresentation game, boolean reload) {
+    Platform.runLater(() -> {
+      String url = client.getURL("vpx/screenshot/" + game.getId());
+      if (reload) {
+        client.getImageCache().clear(url);
+      }
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      Image image = new Image(cachedUrlImage);
+      screenshotView.setImage(image);
+      viewScreenshotBtn.setDisable(false);
+    });
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

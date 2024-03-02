@@ -16,6 +16,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class BindingUtil {
@@ -151,9 +154,11 @@ public class BindingUtil {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          properties.set(key + "FontName", result.getFamily());
-          properties.set(key + "FontSize", String.valueOf((int) result.getSize()));
-          properties.set(key + "FontStyle", result.getStyle());
+          Map<String, String> values = new HashMap<>();
+          values.put(key + "FontName", result.getFamily());
+          values.put(key + "FontSize", String.valueOf((int) result.getSize()));
+          values.put(key + "FontStyle", result.getStyle());
+          properties.set(values);
 
           Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
           label.setFont(labelFont);

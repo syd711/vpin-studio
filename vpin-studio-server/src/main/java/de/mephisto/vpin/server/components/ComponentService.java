@@ -250,6 +250,9 @@ public class ComponentService implements InitializingBean {
       case freezy: {
         return new FreezyComponent();
       }
+      case serum: {
+        return new SerumComponent();
+      }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + type);
       }

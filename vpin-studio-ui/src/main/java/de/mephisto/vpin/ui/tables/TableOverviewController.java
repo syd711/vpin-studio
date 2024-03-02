@@ -35,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -401,12 +402,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onStop() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().terminatePopper();
-      }
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getPinUPPopperService().terminatePopper();
     }
   }
 
@@ -732,6 +730,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
+  private void onReloadPressed(ActionEvent e) {
+    client.getGameService().reload();
+    this.onReload();
+  }
+
   public void onReload() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
@@ -761,9 +764,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         games = client.getGameService().getKnownGames();
-        filterGames(games);
 
+        filterGames(games);
         tableView.setItems(data);
+
         tableView.refresh();
 
         if (selection != null) {
@@ -1272,6 +1276,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         filtered.add(game);
       }
     }
+
     data = FXCollections.observableList(filtered);
   }
 

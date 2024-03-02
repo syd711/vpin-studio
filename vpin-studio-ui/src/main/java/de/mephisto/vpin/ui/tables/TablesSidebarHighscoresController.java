@@ -269,12 +269,12 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
       HighscoreMetadataRepresentation metadata = summary.getMetadata();
-      if (forceRescan) {
+      if (true) { //TODO
         metadata = Studio.client.getGameService().scanGameScore(game.getId());
-        EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
+//        EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
       }
 
-      boolean hasHighscore = !StringUtils.isEmpty(summary.getRaw());
+      boolean hasHighscore = !StringUtils.isEmpty(summary.getRaw()) && metadata.getStatus() == null;
       dataPane.setVisible(hasHighscore);
       statusPane.setVisible(!hasHighscore);
 
@@ -315,7 +315,7 @@ public class TablesSidebarHighscoresController implements Initializable {
           scoreGraphWrapper.setVisible(true);
 
           rawScoreLabel.setFont(WidgetController.getScoreFontText());
-          rawScoreLabel.setText(summary.getRaw());
+          rawScoreLabel.setText(metadata.getRaw());
 
           List<ScoreRepresentation> scores = summary.getScores();
           StringBuilder builder = new StringBuilder();

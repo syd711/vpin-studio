@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
@@ -12,6 +13,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;

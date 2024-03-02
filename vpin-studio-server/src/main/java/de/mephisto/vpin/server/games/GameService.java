@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -98,9 +100,6 @@ public class GameService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
-  @Autowired
-  private GameFilterService gameFilterService;
-
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
@@ -113,6 +112,15 @@ public class GameService implements InitializingBean {
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
+  }
+
+  /**
+   * Pre-reload triggered before an actual manual table reload (server service cache reset)
+   */
+  public boolean reload() {
+    mameRomAliasService.clearCache();
+    highscoreService.refreshAvailableScores();
+    return true;
   }
 
   @SuppressWarnings("unused")
@@ -516,8 +524,9 @@ public class GameService implements InitializingBean {
     //check alias
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
     if (!StringUtils.isEmpty(originalRom)) {
+      String aliasName = game.getRom();
       game.setRom(originalRom);
-      game.setRomAlias(game.getRom());
+      game.setRomAlias(aliasName);
     }
 
     game.setNvOffset(gameDetails.getNvOffset());
@@ -598,6 +607,13 @@ public class GameService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     return highscoreService.getHighscoreFiles(game);
+  }
+
+  public GameScoreValidation getGameScoreValidation(int id) {
+    Game game = getGame(id);
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    TableDetails tableDetails = pinUPConnector.getTableDetails(id);
+    return gameValidator.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 
   @Override

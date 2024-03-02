@@ -9,6 +9,15 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean autoplay = true;
   private String authorAllowList;
   private int videoScreen;
+  private boolean renderTutorialLinks = true;
+
+  public boolean isRenderTutorialLinks() {
+    return renderTutorialLinks;
+  }
+
+  public void setRenderTutorialLinks(boolean renderTutorialLinks) {
+    this.renderTutorialLinks = renderTutorialLinks;
+  }
 
   public int getVideoScreen() {
     return videoScreen;

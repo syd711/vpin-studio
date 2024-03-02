@@ -5,7 +5,9 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -63,10 +65,15 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onDmdDevice() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getMameDirectory());
-    File exe = new File(folder, "DmdDevice.ini");
-    super.editFile(exe);
+    if (client.getSystemService().isLocal()) {
+      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      File folder = new File(defaultGameEmulator.getMameDirectory());
+      File exe = new File(folder, "DmdDevice.ini");
+      super.editFile(exe);
+    }
+    else {
+      Dialogs.openTextEditor(VPinFile.DmdDeviceIni);
+    }
   }
 
   @Override
@@ -97,7 +104,6 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     flexDMDBtn.setDisable(!client.getSystemService().isLocal());
-    dmdDeviceBtn.setDisable(!client.getSystemService().isLocal());
     refreshCustomValues();
   }
 }

@@ -59,7 +59,7 @@ class HighscoreResolver {
         rawScore = readVPRegHighscore(game, metadata);
       }
       if (rawScore == null) {
-        rawScore = parseHSFileHighscore(game, metadata);
+        rawScore = readHSFileHighscore(game, metadata);
       }
 
       if (rawScore == null) {
@@ -78,13 +78,13 @@ class HighscoreResolver {
     return metadata;
   }
 
-  private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+  private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = game.getAlternateHighscoreTextFile();
     }
 
-    if(hsFile != null && hsFile.exists()) {
+    if (hsFile != null && hsFile.exists()) {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
@@ -148,6 +148,12 @@ class HighscoreResolver {
 
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
       String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
+      if (nvRamFileName.contains(" ")) {
+        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\"");
+        nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
+        nvRamFileName = nvRamName + ".nv";
+      }
+
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
@@ -203,10 +209,10 @@ class HighscoreResolver {
 
       //check for pre-formatting
       List<String> list = Arrays.asList(stdOut.trim().split("\n"));
-      if(list.size() < 5) {
+      if (list.size() < 5) {
         LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format, because output length are only " + list.size() + " lines.");
         String raw = HighscoreRawToMachineReadableConverter.convertToMachineReadable(list);
-        if(raw == null) {
+        if (raw == null) {
           LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
           metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
         }

@@ -64,6 +64,9 @@ public class OverlayPreferencesController implements Initializable {
   private CheckBox autoplayCheckbox;
 
   @FXML
+  private CheckBox renderTutorialLinks;
+
+  @FXML
   private TextField videoAuthorsAllowList;
 
   @FXML
@@ -155,6 +158,19 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
       pauseMenuKeyCombo.setDisable(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    userInternalBrowserCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
+    autoplayCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
+    videoAuthorsAllowList.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
+
+    renderTutorialLinks.setSelected(pauseMenuSettings.isRenderTutorialLinks());
+    renderTutorialLinks.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setRenderTutorialLinks(newValue);
+      userInternalBrowserCheckbox.setDisable(!newValue);
+      autoplayCheckbox.setDisable(!newValue);
+      videoAuthorsAllowList.setDisable(!newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 

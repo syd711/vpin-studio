@@ -45,6 +45,11 @@ public class GameValidationTexts {
         text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM in the \"Script Details\" section.";
         break;
       }
+      case CODE_NOT_ALL_WITH_NVOFFSET: {
+        label = "Not all \"NVOffset\" are set.";
+        text = "This table has an \"NVOffset\" set, but other tables with the same ROM don't. You must set it for all tables based on this ROM.";
+        break;
+      }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No PUP pack and no directb2s file found.";
         text = "No additional media has been found. Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";

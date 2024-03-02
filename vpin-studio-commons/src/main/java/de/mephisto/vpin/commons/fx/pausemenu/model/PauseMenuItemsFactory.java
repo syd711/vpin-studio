@@ -51,7 +51,7 @@ public class PauseMenuItemsFactory {
 
 
     String extTableId = game.getExtTableId();
-    if (!StringUtils.isEmpty(extTableId)) {
+    if (pauseMenuSettings.isRenderTutorialLinks() && !StringUtils.isEmpty(extTableId)) {
       VpsTable tableById = VPS.getInstance().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();

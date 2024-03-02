@@ -260,8 +260,8 @@ public class Game {
     String baseFilename = getGameName();
     File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
     if (mediaFiles != null) {
-      Pattern plainMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
-      Pattern screenMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
+      Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
+      Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
       return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
     }
     return Collections.emptyList();
@@ -520,6 +520,9 @@ public class Game {
   public File getCroppedDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;
@@ -530,6 +533,9 @@ public class Game {
   public File getDMDPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DMD);
     }
     return null;
@@ -541,24 +547,24 @@ public class Game {
     File nvRamFolder = new File(emulator.getMameFolder(), "nvram");
 
     String rom = getRom();
-    File aliasedNvFile = new File(nvRamFolder, rom + ".nv");
-    if (aliasedNvFile.exists() && getNvOffset() == 0) {
-      return aliasedNvFile;
+    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
+    if (defaultNvRam.exists() && getNvOffset() == 0) {
+      return defaultNvRam;
     }
 
-    //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(emulator.getMameFolder(), rom + " v" + getNvOffset() + ".nv");
-    if (versionNVAliasedFile.exists()) {
-      return versionNVAliasedFile;
-    }
-
-    //if the text file exists, the current nv file contains the highscore of this table
-    File versionTextFile = new File(emulator.getMameFolder(), getRom() + " v" + getNvOffset() + ".txt");
+    //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
+    File versionTextFile = new File(nvRamFolder, getRom() + " v" + getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
-      return versionTextFile;
+      return defaultNvRam;
     }
 
-    return aliasedNvFile;
+    //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
+    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + getNvOffset() + ".nv");
+    if (nvOffsettedNvRam.exists()) {
+      return nvOffsettedNvRam;
+    }
+
+    return defaultNvRam;
   }
 
 
@@ -567,6 +573,9 @@ public class Game {
   public File getRawDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
+      if (!StringUtils.isEmpty(this.getRomAlias())) {
+        subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;

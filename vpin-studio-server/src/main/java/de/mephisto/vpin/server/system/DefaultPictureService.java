@@ -66,9 +66,7 @@ public class DefaultPictureService {
     }
 
     GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.BackGlass);
-    if (backGlassItem != null && backGlassItem.getFile().
-
-        exists()) {
+    if (backGlassItem != null && backGlassItem.getFile().exists()) {
       String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {
         try {

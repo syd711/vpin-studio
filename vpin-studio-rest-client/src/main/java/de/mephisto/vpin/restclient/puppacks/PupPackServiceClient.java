@@ -27,6 +27,10 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "puppacks/" + gameId, PupPackRepresentation.class);
   }
 
+  public PupPackRepresentation getMenuPupPack() {
+    return getRestClient().get(API + "puppacks/menu", PupPackRepresentation.class);
+  }
+
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "puppacks/clearcache", Boolean.class);

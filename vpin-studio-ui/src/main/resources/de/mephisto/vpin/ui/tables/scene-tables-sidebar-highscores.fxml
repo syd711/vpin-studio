@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
     <center>
         <ScrollPane hbarPolicy="NEVER">
             <padding>
@@ -228,7 +228,7 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="Scan All">
                      <graphic>
-                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2r-refresh">
+                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18">
                            <font>
                               <Font size="14.0" />
                            </font></FontIcon>

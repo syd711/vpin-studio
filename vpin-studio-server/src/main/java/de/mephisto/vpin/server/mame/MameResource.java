@@ -13,6 +13,9 @@ public class MameResource {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
+
   @GetMapping("/options/{rom}")
   public MameOptions getOptions(@PathVariable("rom") String rom) {
     return mameService.getOptions(rom);
@@ -25,6 +28,7 @@ public class MameResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
+    mameRomAliasService.clearCache();
     return mameService.clearCache();
   }
 }

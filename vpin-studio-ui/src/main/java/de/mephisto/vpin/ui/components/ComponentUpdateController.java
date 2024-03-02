@@ -66,7 +66,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
-      textArea.setText(log.toString());
+      setText(log.toString());
       EventManager.getInstance().notify3rdPartyVersionUpdate(type);
     }
     else {
@@ -102,7 +102,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
         if (!resultModel.getResults().isEmpty()) {
           ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
-          textArea.setText(log.toString());
+          setText(log.toString());
         }
         else {
           textArea.setText("Check failed. See log for details.");
@@ -135,7 +135,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
-        textArea.setText(log.toString());
+        setText(log.toString());
 
         componentTab.postProcessing(simulate);
 
@@ -195,14 +195,14 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       String systemPreset = client.getSystemPreset();
       if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
         List<String> collect = release.getArtifacts().stream().filter(r -> r.contains("x64")).collect(Collectors.toList());
-        if(!collect.isEmpty()) {
+        if (!collect.isEmpty()) {
           artifactCombo.setItems(FXCollections.observableList(collect));
           artifactCombo.setValue(collect.get(0));
         }
       }
       else {
         List<String> collect = release.getArtifacts().stream().filter(r -> !r.contains("x64")).collect(Collectors.toList());
-        if(!collect.isEmpty()) {
+        if (!collect.isEmpty()) {
           artifactCombo.setItems(FXCollections.observableList(collect));
           artifactCombo.setValue(collect.get(0));
         }
@@ -214,19 +214,6 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
       artifactCombo.setDisable(releases.isEmpty());
     }
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    EventManager.getInstance().addListener(this);
-
-    simBtn.setDisable(true);
-    installBtn.setDisable(true);
-    artifactCombo.setDisable(true);
-    releasesCombo.setDisable(true);
-    checkBtn.setDisable(true);
-
-    releasesCombo.valueProperty().addListener(this);
   }
 
   @Override
@@ -244,5 +231,46 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     this.releasesCombo.valueProperty().removeListener(this);
     refresh(newValue, null);
     this.releasesCombo.valueProperty().addListener(this);
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    EventManager.getInstance().addListener(this);
+
+    simBtn.setDisable(true);
+    installBtn.setDisable(true);
+    artifactCombo.setDisable(true);
+    releasesCombo.setDisable(true);
+    checkBtn.setDisable(true);
+
+    releasesCombo.valueProperty().addListener(this);
+  }
+
+  private void setText(String text) {
+    textArea.setText("");
+    textArea.appendText(text);
+    Platform.runLater(() -> {
+      textArea.setScrollTop(Double.MAX_VALUE);
+      textArea.selectPositionCaret(textArea.getLength());
+      textArea.positionCaret(textArea.getLength());
+      textArea.deselect();
+
+      new Thread(() -> {
+        try {
+          Thread.sleep(100);
+
+          Platform.runLater(() -> {
+            textArea.setText("");
+            textArea.appendText(text);
+            textArea.setScrollTop(Double.MAX_VALUE);
+            textArea.selectPositionCaret(textArea.getLength());
+            textArea.positionCaret(textArea.getLength());
+            textArea.deselect();
+          });
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }).start();
+    });
   }
 }

@@ -15,7 +15,25 @@ public class FilterSettings {
   private boolean withAltSound;
   private boolean withAltColor;
   private boolean withPovIni;
+  private boolean withNVOffset;
+  private boolean withAlias;
   private int gameStatus = -1;
+
+  public boolean isWithNVOffset() {
+    return withNVOffset;
+  }
+
+  public boolean isWithAlias() {
+    return withAlias;
+  }
+
+  public void setWithAlias(boolean withAlias) {
+    this.withAlias = withAlias;
+  }
+
+  public void setWithNVOffset(boolean withNVOffset) {
+    this.withNVOffset = withNVOffset;
+  }
 
   public boolean isOtherIssues() {
     return otherIssues;
@@ -151,6 +169,8 @@ public class FilterSettings {
       && !this.withBackglass
       && !this.withPovIni
       && !this.withPupPack
+      && !this.withNVOffset
+      && !this.withAlias
       && this.gameStatus == -1
       && this.emulatorId == -1;
   }

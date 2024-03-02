@@ -2,10 +2,7 @@ package de.mephisto.vpin.restclient.util.properties;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 public class ObservedProperties {
 
@@ -34,9 +31,20 @@ public class ObservedProperties {
     this.observer.changed(bundle, key, Optional.of(value));
   }
 
+  public void set(Map<String, String> values) {
+    this.properties.putAll(values);
+    this.observer.changed(bundle, values);
+  }
+
   public void notifyChange(String key, String value) {
     for (ObservedPropertyChangeListener changeListener : this.changeListeners) {
       changeListener.changed(bundle, key, Optional.of(value));
+    }
+  }
+
+  public void notifyChange(Map<String, String> values) {
+    for (ObservedPropertyChangeListener changeListener : this.changeListeners) {
+      changeListener.changed(bundle, values);
     }
   }
 

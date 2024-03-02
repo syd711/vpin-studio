@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -49,7 +50,6 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
                                     <Label styleClass="default-text" text="Table Filename:" textFill="WHITE">
@@ -57,7 +57,7 @@
                                             <Font name="System Bold" size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="3">
                                         <font>
                                             <Font name="System Bold" size="14.0" />
                                         </font>
@@ -67,17 +67,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="56.0" styleClass="default-text" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="3">
-                                        <font>
-                                            <Font name="System Bold" size="14.0" />
-                                        </font>
-                                    </Label>
-                                    <Label fx:id="labelRomAlias" layoutX="130.0" layoutY="56.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                        <font>
-                                            <Font size="14.0" />
-                                        </font>
-                                    </Label>
-                                    <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="labelNVOffset" layoutX="130.0" layoutY="78.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -102,38 +92,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                 <children>
-                                    <Button fx:id="deleteAliasBtn" layoutX="57.0" layoutY="13.0" mnemonicParsing="false" onAction="#onDeleteAlias">
-                                       <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Update the ROM name for this table." />
-                                       </tooltip>
-                                    </Button>
-                                    <Button fx:id="editAliasBtn" mnemonicParsing="false" onAction="#onAliasEdit">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Update the ROM name for this table." />
-                                       </tooltip>
-                                    </Button>
-                                    <Label>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="In Visual PinMAME (VPinMAME), the VpmAlias mapping feature is used to associate multiple ROM names with a single pinball machine. It is particularly useful when different versions or revisions of a pinball machine exist, and you want to consolidate them under a single entry in Visual Pinball X (VPX)." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                              <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
                                     <Label prefHeight="40.0" prefWidth="18.0">
                                        <font>
@@ -200,7 +159,7 @@
                               <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label alignment="TOP_LEFT" styleClass="default-text" text="Table Name:" textFill="WHITE" GridPane.halignment="LEFT" GridPane.valignment="TOP">
@@ -317,6 +276,40 @@
                                     <Insets right="6.0" />
                                  </GridPane.margin>
                               </TextArea>
+                              <Label alignment="TOP_LEFT" contentDisplay="TOP" layoutX="10.0" layoutY="424.0" styleClass="default-text" text="Screenshot:" textFill="WHITE" GridPane.rowIndex="9">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <VBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                 <children>
+                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="viewScreenshotBtn" mnemonicParsing="false" onAction="#onScreenshotView">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </VBox>
+                              <VBox minHeight="200.0" styleClass="media-parent" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                 <GridPane.margin>
+                                    <Insets right="6.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ImageView fx:id="screenshotView" fitWidth="380.0" pickOnBounds="true" preserveRatio="true">
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </VBox.margin>
+                                    </ImageView>
+                                 </children>
+                              </VBox>
                            </children>
                         </GridPane>
                      </children>

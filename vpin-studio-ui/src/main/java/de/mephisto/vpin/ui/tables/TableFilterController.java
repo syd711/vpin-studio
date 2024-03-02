@@ -42,6 +42,9 @@ public class TableFilterController implements Initializable {
   private CheckBox missingAssetsCheckBox;
 
   @FXML
+  private CheckBox withNVOffsetCheckBox;
+
+  @FXML
   private CheckBox otherIssuesCheckbox;
 
   @FXML
@@ -76,6 +79,9 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private CheckBox withPovIniCheckBox;
+
+  @FXML
+  private CheckBox withAliasCheckBox;
 
   @FXML
   private VBox filterRoot;
@@ -249,6 +255,16 @@ public class TableFilterController implements Initializable {
       filterSettings.setWithPovIni(newValue);
       applyFilter();
     });
+    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
+    withNVOffsetCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithNVOffset(newValue);
+      applyFilter();
+    });
+    withAliasCheckBox.setSelected(filterSettings.isWithAlias());
+    withAliasCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithAlias(newValue);
+      applyFilter();
+    });
 
     List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES_15);
     statuses.add(0, null);
@@ -281,6 +297,8 @@ public class TableFilterController implements Initializable {
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
     withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
+    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
+    withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     updatesDisabled = false;
   }
 

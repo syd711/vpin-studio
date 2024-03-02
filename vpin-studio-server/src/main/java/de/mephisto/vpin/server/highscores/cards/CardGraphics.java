@@ -44,7 +44,7 @@ public class CardGraphics {
 
   private final String TABLE_FONT_NAME;
   private final int TABLE_FONT_STYLE;
-  private final int TABLE_FONT_SIZE;
+  private int TABLE_FONT_SIZE;
 
   private final String FONT_COLOR;
 
@@ -153,7 +153,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -195,8 +195,14 @@ public class CardGraphics {
     int tableNameY = titleY;
     if (RENDER_TABLE_NAME) {
       String tableName = game.getGameDisplayName();
-      tableNameY = tableNameY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
       int width = g.getFontMetrics().stringWidth(tableName);
+      while (width > DEFAULT_MEDIA_SIZE - 24) {
+        TABLE_FONT_SIZE = TABLE_FONT_SIZE - 1;
+        g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
+        width = g.getFontMetrics().stringWidth(tableName);
+      }
+      tableNameY = tableNameY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
+      g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
       g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
     }
 

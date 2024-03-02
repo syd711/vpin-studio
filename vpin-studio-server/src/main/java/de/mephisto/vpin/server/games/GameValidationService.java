@@ -1,18 +1,29 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +40,7 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
  * See ValidationTexts
  */
 @Service
-public class GameValidationService implements InitializingBean {
+public class GameValidationService implements InitializingBean, PreferenceChangedListener {
 
   private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
 
@@ -63,7 +74,23 @@ public class GameValidationService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private SystemService systemService;
+
+  @Autowired
+  private HighscoreService highscoreService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
+
   private Preferences preferences;
+  private ServerSettings serverSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
@@ -92,6 +119,21 @@ public class GameValidationService implements InitializingBean {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+        List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (Game rawGame : otherGamesWithSameRom) {
+          GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
+          if (byPupId.getNvOffset() == 0) {
+            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }
@@ -420,17 +462,17 @@ public class GameValidationService implements InitializingBean {
     }
 
     if (codes.contains(CODE_NO_AUDIO)
-      || codes.contains(CODE_NO_AUDIO_LAUNCH)
-      || codes.contains(CODE_NO_APRON)
-      || codes.contains(CODE_NO_INFO)
-      || codes.contains(CODE_NO_HELP)
-      || codes.contains(CODE_NO_TOPPER)
-      || codes.contains(CODE_NO_BACKGLASS)
-      || codes.contains(CODE_NO_DMD)
-      || codes.contains(CODE_NO_PLAYFIELD)
-      || codes.contains(CODE_NO_LOADING)
-      || codes.contains(CODE_NO_OTHER2)
-      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+        || codes.contains(CODE_NO_AUDIO_LAUNCH)
+        || codes.contains(CODE_NO_APRON)
+        || codes.contains(CODE_NO_INFO)
+        || codes.contains(CODE_NO_HELP)
+        || codes.contains(CODE_NO_TOPPER)
+        || codes.contains(CODE_NO_BACKGLASS)
+        || codes.contains(CODE_NO_DMD)
+        || codes.contains(CODE_NO_PLAYFIELD)
+        || codes.contains(CODE_NO_LOADING)
+        || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
     return false;
@@ -443,25 +485,151 @@ public class GameValidationService implements InitializingBean {
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-    || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-    || codes.contains(CODE_NO_ROM)
-    || codes.contains(CODE_ROM_NOT_EXISTS)
-    || codes.contains(CODE_VPX_NOT_EXISTS)
-    || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-    || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-    || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-    || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-    || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-    || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-    || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_NO_ROM)
+        || codes.contains(CODE_ROM_NOT_EXISTS)
+        || codes.contains(CODE_VPX_NOT_EXISTS)
+        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }
     return false;
   }
 
+  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails) {
+    GameScoreValidation validation = new GameScoreValidation();
+    validation.setValidScoreConfiguration(true);
+
+    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    ScoringDB scoringDB = systemService.getScoringDatabase();
+    List<String> vpRegEntries = highscoreService.getVPRegEntries();
+    List<String> highscoreFiles = highscoreService.getHighscoreFiles();
+
+    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
+    boolean aliasedRom = false;
+    if (!StringUtils.isEmpty(originalRom)) {
+      aliasedRom = true;
+      rom = originalRom;
+    }
+
+    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
+    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+
+    //the highscore file was found
+    if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {
+      validation.setHighscoreFilenameIcon(GameScoreValidation.OK_ICON);
+      validation.setHighscoreFilenameIconColor(GameScoreValidation.OK_COLOR);
+      validation.setHighscoreFilenameStatus(GameScoreValidation.STATUS_HSFILE_MATCH_FOUND);
+      return validation;
+    }
+
+    //aliased ROM was found as nvram file
+    if (aliasedRom && (scoringDB.getSupportedNvRams().contains(rom) || scoringDB.getSupportedNvRams().contains(rom.toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName))) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
+      return validation;
+    }
+
+    //the ROM was found as nvram file
+    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom)) || scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
+      return validation;
+    }
+
+    //the ROM was found as VPReg.stg entry
+    if (vpRegEntries.contains(String.valueOf(rom)) || vpRegEntries.contains(tableName)) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_VPREG_STG_MATCH_FOUND);
+      return validation;
+    }
+
+    //not played and no highscore file found
+    if (!played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+      validation.setHighscoreFilenameIcon(GameScoreValidation.UNPLAYED_ICON);
+      validation.setHighscoreFilenameIconColor(GameScoreValidation.OK_COLOR);
+      validation.setHighscoreFilenameStatus(GameScoreValidation.STATUS_NOT_PLAYED_HSFILE_NOT_FOUND);
+      return validation;
+    }
+
+    //not played and the ROM VPReg.stg entry not found
+    if (!played && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
+      validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
+      return validation;
+    }
+
+    //no fields are set
+    if (StringUtils.isEmpty(rom) && StringUtils.isEmpty(tableName) && StringUtils.isEmpty(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_FIELDS_NOT_SET);
+      return validation;
+    }
+
+    //ROM is not supported
+    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_SUPPORTED);
+      return validation;
+    }
+
+    //Highscore file is not supported
+    if (!StringUtils.isEmpty(hsName) && scoringDB.getNotSupported().contains(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_HSFILE_NOT_SUPPORTED);
+      return validation;
+    }
+
+    //game has been played, but the text file has not been generated
+    if (played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_PLAYED_HSFILE_NOT_FOUND);
+      return validation;
+    }
+
+    //game has been played, but the .nvram or VPReg has not been found
+    if (played && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_PLAYED_NO_MATCH_FOUND);
+      return validation;
+    }
+
+    return validation;
+  }
+
   @Override
   public void afterPropertiesSet() {
+    preferences = preferencesService.getPreferences();
+    preferencesService.addChangeListener(this);
+    this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
     preferences = preferencesService.getPreferences();
   }
 }

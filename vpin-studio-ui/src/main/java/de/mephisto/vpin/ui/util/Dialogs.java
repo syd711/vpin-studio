@@ -7,7 +7,9 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.TextEditorController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
@@ -34,6 +36,26 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
+  public static void editFile(File file) {
+    try {
+      if (file.exists()) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
+          try {
+            desktop.edit(file);
+          } catch (Exception e) {
+            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute \"" + file.getAbsolutePath() + "\": " + e.getMessage());
+          }
+        }
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
   public static void openUpdateInfoDialog(String version, boolean force) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     if (force || !uiSettings.isHideUpdateInfo()) {
@@ -50,6 +72,17 @@ public class Dialogs {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
     stage.showAndWait();
     return true;
+  }
+
+  public static boolean openTextEditor(VPinFile file) {
+    FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, file.toString());
+    TextEditorController controller = (TextEditorController) stage.getUserData();
+    controller.load(file);
+//    stage.setResizable(true);
+//    new FXResizeHelper(stage, 30, 6);
+    stage.showAndWait();
+    return controller.isSaved();
   }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {

@@ -54,6 +54,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab freezyTab;
 
   @FXML
+  private Tab serumTab;
+
+  @FXML
   private Tab flexDMDTab;
 
   @FXML
@@ -151,6 +154,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(mameTab, "tab-mame.fxml");
     loadTab(flexDMDTab, "tab-flexdmd.fxml");
     loadTab(freezyTab, "tab-freezy.fxml");
+    loadTab(serumTab, "tab-serum.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());
