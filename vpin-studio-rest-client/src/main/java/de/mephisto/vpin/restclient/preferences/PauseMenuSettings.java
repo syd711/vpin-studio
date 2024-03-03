@@ -10,6 +10,18 @@ public class PauseMenuSettings extends JsonSettings {
   private String authorAllowList;
   private int videoScreen;
   private boolean renderTutorialLinks = true;
+  private PauseMenuStyle style = PauseMenuStyle.embedded;
+
+  public PauseMenuStyle getStyle() {
+    if(style == null) {
+      style = PauseMenuStyle.embedded;
+    }
+    return style;
+  }
+
+  public void setStyle(PauseMenuStyle style) {
+    this.style = style;
+  }
 
   public boolean isRenderTutorialLinks() {
     return renderTutorialLinks;

@@ -2,8 +2,9 @@
 
 ### Changes
 
+- Pause Menu: Added view option "Style" to the preferences. You can now choose if entries should be rendered as part of the pause menu or if Popper assets of the "Info", "Help" and "Other2" screen should be shown on their configured screen locations. 
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/mame.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />
 
 - Added Remote File Editor: It's a first very basic text editor, but as a first step, you can edit the **DmdDevice.ini** and the **VPMAlias.txt** now remotely. (The editor can't do much since text editing with Java is like driving Formula 1 with a Fiat Panda).
 

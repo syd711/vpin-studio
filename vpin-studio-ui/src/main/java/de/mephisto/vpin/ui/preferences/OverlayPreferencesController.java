@@ -2,18 +2,17 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.BindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
-import de.mephisto.vpin.ui.util.ScreenModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
@@ -38,6 +34,9 @@ public class OverlayPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<String> pauseMenuKeyCombo;
+
+  @FXML
+  private ComboBox<PauseMenuStyle> pauseMenuStyleCombo;
 
   @FXML
   private CheckBox showOverlayOnStartupCheckbox;
@@ -95,6 +94,7 @@ public class OverlayPreferencesController implements Initializable {
     keyNames.add(0, "");
     overlayKeyCombo.setItems(FXCollections.observableList(keyNames));
     pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
+    pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
     BindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
     BindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
@@ -190,6 +190,12 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuKeyCombo.setDisable(pauseMenuCheckbox.isSelected());
     pauseMenuKeyCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setKey(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    pauseMenuStyleCombo.setValue(pauseMenuSettings.getStyle());
+    pauseMenuStyleCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setStyle(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 

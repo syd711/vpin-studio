@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -191,6 +192,7 @@
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -222,12 +224,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Pause Menu Browser:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Pause Menu Browser:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <CheckBox fx:id="userInternalBrowserCheckbox" mnemonicParsing="false" text="Use internal browser (not recommended)" textFill="WHITE">
                                  <font>
@@ -252,12 +254,12 @@
                               <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="Use this option if the video playback does not start on &quot;Start&quot; button pressed." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <children>
                               <TextField fx:id="videoAuthorsAllowList">
                                  <VBox.margin>
@@ -270,12 +272,12 @@
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="11.0" layoutY="156.0" styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="11.0" layoutY="156.0" styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <CheckBox fx:id="renderTutorialLinks" mnemonicParsing="false" text="Render Virtual Pinball Spreadsheet Tutorial Video Entries" textFill="WHITE">
                                  <font>
@@ -285,6 +287,27 @@
                               <Label styleClass="checkbox-description" text="You can also download tutorial videos from VPU instead of using these YouTube links." textFill="WHITE" />
                            </children>
                         </VBox>
+                        <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <ComboBox fx:id="pauseMenuStyleCombo" prefHeight="30.0" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="When the Popper screens are used, the first assets of the &quot;Other2&quot;, &quot;Info&quot; and &quot;Help&quot; screens are shown on the configured screen locations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <opaqueInsets>
                         <Insets />
