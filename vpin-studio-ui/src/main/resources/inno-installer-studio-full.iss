@@ -40,15 +40,20 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create Desktop Icon for the VPin Studio"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "desktopiconVPBM"; Description: "Create Desktop Icon for the Visual Pinball Archive Manager"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[Dirs]
+Name: "{app}\resources"; Permissions: users-full
+Name: "{app}\config"; Permissions: users-full
+Name: "{app}"; Permissions: users-full
+
 [Files]
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.bat"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
