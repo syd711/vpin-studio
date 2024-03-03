@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -31,22 +32,24 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
-    item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
-    if (imageStream != null) {
-      Image scoreImage = new Image(imageStream);
-      item.setDataImage(scoreImage);
-      pauseMenuItems.add(item);
-    }
+    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+      item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+      InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+      if (imageStream != null) {
+        Image scoreImage = new Image(imageStream);
+        item.setDataImage(scoreImage);
+        pauseMenuItems.add(item);
+      }
 
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.GameInfo)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
-    }
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.Other2)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
-    }
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.GameHelp)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.GameInfo)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+      }
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.Other2)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
+      }
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.GameHelp)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
+      }
     }
 
 

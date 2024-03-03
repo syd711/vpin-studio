@@ -462,6 +462,11 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     return pinUPConnector.getGameEmulators();
   }
 
+
+  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
+    return pinUPConnector.getPupPlayerDisplays();
+  }
+
   @Nullable
   public PinUPPlayerDisplay getPupPlayerDisplay(@NonNull PopperScreen screen) {
     List<PinUPPlayerDisplay> pupPlayerDisplays = pinUPConnector.getPupPlayerDisplays();

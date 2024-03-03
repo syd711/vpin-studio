@@ -119,6 +119,11 @@ public class PopperServiceResource {
     return popperService.getPupPlayerDisplay(screen);
   }
 
+  @GetMapping("/screens")
+  public List<PinUPPlayerDisplay> getScreens() {
+    return popperService.getPupPlayerDisplays();
+  }
+
   @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
                                @PathVariable("overwrite") boolean overwrite) {

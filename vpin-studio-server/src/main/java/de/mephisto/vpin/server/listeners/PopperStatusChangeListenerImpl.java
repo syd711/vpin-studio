@@ -84,8 +84,11 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
-            PinUPPlayerDisplay pupPlayerDisplay = popperService.getPupPlayerDisplay(screen);
-            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getFile());
+            PinUPPlayerDisplay pupPlayerDisplay = null;
+            if (cardSettings.isNotificationOnPopperScreen()) {
+              pupPlayerDisplay = popperService.getPupPlayerDisplay(screen);
+            }
+            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
           });
         }
       }

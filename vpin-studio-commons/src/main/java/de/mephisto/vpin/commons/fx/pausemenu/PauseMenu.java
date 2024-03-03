@@ -1,6 +1,8 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -24,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
@@ -32,7 +35,9 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -48,6 +53,8 @@ public class PauseMenu extends Application {
   private static boolean visible = false;
 
   private static Robot robot;
+
+  private static List<PopperScreenAsset> screenAssets = new ArrayList<>();
 
   static {
     try {
@@ -185,6 +192,11 @@ public class PauseMenu extends Application {
       StateMananger.getInstance().setGame(game, status, screen, screenDisplay, pauseMenuSettings);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
+        Platform.runLater(() -> {
+          screenAssets.clear();
+          screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+        });
+
         OverlayWindowFX.toFront(stage, visible);
         OverlayWindowFX.toFront(stage, visible);
         OverlayWindowFX.toFront(stage, visible);
@@ -193,11 +205,11 @@ public class PauseMenu extends Application {
       OverlayWindowFX.forceShow(stage);
     }
     else {
-      exit();
+      exitPauseMenu();
     }
   }
 
-  public static void exit() {
+  public static void exitPauseMenu() {
     StateMananger.getInstance().exit();
     if (!PRODUCTION_USE) {
       Platform.runLater(() -> {
@@ -207,6 +219,10 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Exited pause menu");
       stage.hide();
+      screenAssets.stream().forEach(asset -> {
+        asset.getScreenStage().hide();
+        asset.dispose();
+      });
 
       try {
         SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("sendKeys.bat", "Visual Pinball Player", ""));

@@ -2,6 +2,8 @@ package de.mephisto.vpin.restclient.popper;
 
 import org.springframework.lang.Nullable;
 
+import java.util.List;
+
 public enum PopperScreen {
   Audio(-1, "audio"),
   AudioLaunch(-1, "audiolaunch"),
@@ -40,6 +42,18 @@ public enum PopperScreen {
     }
     return null;
   }
+
+  @Nullable
+  public static PinUPPlayerDisplay valueOfScreen(List<PinUPPlayerDisplay> displays, PopperScreen screen) {
+    for (PinUPPlayerDisplay pupPlayerDisplay : displays) {
+      PopperScreen popperScreen = PopperScreen.valueOfScreen(pupPlayerDisplay.getName());
+      if (popperScreen != null && popperScreen.equals(screen)) {
+        return pupPlayerDisplay;
+      }
+    }
+    return null;
+  }
+
 
   public String getSegment() {
     return segment;

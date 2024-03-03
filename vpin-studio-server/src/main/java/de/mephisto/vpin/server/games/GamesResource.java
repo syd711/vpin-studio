@@ -289,7 +289,6 @@ public class GamesResource {
             if (!keepExistingDisplayName) {
               tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
-            tableDetails.setGameVersion(""); //reset version to re-apply the newer one
             popperService.saveTableDetails(tableDetails, gameId, !keepExistingFilename);
 
             Game game = gameService.scanGame(gameId);

@@ -10,7 +10,6 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -96,7 +95,7 @@ public class StateMananger implements NativeKeyListener {
       LOG.info("Entered " + this.activeState);
     }
     else if (keyCode == BACK) {
-      PauseMenu.exit();
+      PauseMenu.exitPauseMenu();
     }
   }
 

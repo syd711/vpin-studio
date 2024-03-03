@@ -1,13 +1,13 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.PopperScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -17,15 +17,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
@@ -52,11 +50,10 @@ public class OverlayWindowFX extends Application {
 
   private Stage overlayStage;
   private Stage maintenanceStage;
-  private Stage highscoreCardStage;
 
   private boolean overlayVisible = false;
 
-  private HighscoreCardController highscoreCardController;
+  private PopperScreenController highscoreCardController;
 
   public static OverlayWindowFX getInstance() {
     return INSTANCE;
@@ -123,7 +120,7 @@ public class OverlayWindowFX extends Application {
   public static void toFront(Stage stage, boolean visible) {
     try {
       Thread.sleep(2500);
-      stage.getScene().setCursor(null);
+      stage.getScene().setCursor(Cursor.NONE);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -214,45 +211,32 @@ public class OverlayWindowFX extends Application {
 
   public void exitPauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.exit();
+      PauseMenu.exitPauseMenu();
     });
   }
 
-  public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, File file) {
+  public void showHighscoreCard(CardSettings cardSettings, PinUPPlayerDisplay display, String mimeType, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {
-        LOG.info("Showing highscore card " + file.getAbsolutePath());
-        if (highscoreCardStage != null) {
-          highscoreCardController.setImage(highscoreCardStage, cardSettings, display, file);
-          showHighscoreCard(notificationTime);
-          return;
+        int rotation = 0;
+        String rotationValue = cardSettings.getNotificationRotation();
+        if (rotationValue != null) {
+          try {
+            rotation = Integer.parseInt(rotationValue);
+          } catch (NumberFormatException e) {
+            LOG.info("Error reading card rotation value: " + e.getMessage());
+          }
         }
 
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: transparent;");
-        Screen screen = Screen.getPrimary();
-        final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
-        scene.setFill(Color.TRANSPARENT);
-        scene.setCursor(Cursor.NONE);
+        PopperScreenAsset asset = new PopperScreenAsset();
+        asset.setDisplay(display);
+        asset.setRotation(rotation);
+        asset.setDuration(notificationTime);
+        asset.setMimeType(mimeType);
+        asset.setInputStream(new FileInputStream(file));
 
-        highscoreCardStage = new Stage();
-        highscoreCardStage.setScene(scene);
-        highscoreCardStage.initStyle(StageStyle.TRANSPARENT);
-        highscoreCardStage.setAlwaysOnTop(true);
-
-        try {
-          String resource = "scene-highscore-card.fxml";
-          FXMLLoader loader = new FXMLLoader(HighscoreCardController.class.getResource(resource));
-          Parent widgetRoot = loader.load();
-          highscoreCardController = loader.getController();
-          highscoreCardController.setImage(highscoreCardStage, cardSettings, display, file);
-          root.setCenter(widgetRoot);
-        } catch (IOException e) {
-          LOG.error("Failed to init dashboard: " + e.getMessage(), e);
-        }
-
-        showHighscoreCard(notificationTime);
+        PopperScreensManager.getInstance().showScreen(asset);
       }
       else {
         LOG.info("Skipping highscore card overlay, zero time set.");
@@ -260,24 +244,6 @@ public class OverlayWindowFX extends Application {
     } catch (Exception e) {
       LOG.error("Failed to open highscore card notification: " + e.getMessage());
     }
-  }
-
-  private void showHighscoreCard(int notificationTime) {
-    highscoreCardStage.show();
-    TransitionUtil.createInFader(highscoreCardController.getRoot(), 500).play();
-    new Thread(() -> {
-      try {
-        Thread.sleep(notificationTime * 1000);
-      } catch (InterruptedException e) {
-        //ignore
-      } finally {
-        Platform.runLater(() -> {
-          FadeTransition outFader = TransitionUtil.createOutFader(highscoreCardController.getRoot(), 500);
-          outFader.setOnFinished(event -> highscoreCardStage.hide());
-          outFader.play();
-        });
-      }
-    }).start();
   }
 
   @Override
