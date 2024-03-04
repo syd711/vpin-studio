@@ -50,8 +50,8 @@ public class MameRomAliasService implements InitializingBean {
       String alias = entry.getKey();
       String romName = entry.getValue();
 
-      if (alias.equals(romAlias)) {
-        return romName;
+      if (alias.trim().equals(romAlias.trim())) {
+        return romName.trim();
       }
     }
     return null;
