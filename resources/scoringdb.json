@@ -3,7 +3,10 @@
     {
       "rom": "spongebob",
       "tableName": "",
-      "textFile": "spongebob_hiscores.txt"
+      "textFile": "spongebob_hiscores.txt",
+      "parser": {
+        "name": "dotColonParser"
+      }
     },
     {
       "rom": "hpgof",
@@ -17,8 +20,9 @@
     }
   ],
   "notSupported": [
+    "bloodmach",
     "cyberrace",
-    "bloodmach"
+    "spagb_100"
   ],
   "supportedNvRams": [
     "abv106",

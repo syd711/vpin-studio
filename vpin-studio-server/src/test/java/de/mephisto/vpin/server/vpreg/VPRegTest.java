@@ -24,7 +24,6 @@ public class VPRegTest {
     VPRegScoreSummary summary = reg.readHighscores();
     String initialRaw = summary.toRaw();
     reg.resetHighscores();
-    reg.restoreHighscore(summary);
 
     VPRegScoreSummary resettedSummary = reg.readHighscores();
     assertEquals(initialRaw, resettedSummary.toRaw());

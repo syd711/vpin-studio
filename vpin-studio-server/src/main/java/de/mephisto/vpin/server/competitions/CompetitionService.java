@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;

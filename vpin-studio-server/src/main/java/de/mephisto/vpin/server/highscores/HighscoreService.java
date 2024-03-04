@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PinUPConnector;

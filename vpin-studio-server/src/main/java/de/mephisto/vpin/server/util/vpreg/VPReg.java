@@ -86,48 +86,6 @@ public class VPReg {
     return false;
   }
 
-  public boolean restoreHighscore(VPRegScoreSummary summary) {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      DirectoryEntry gameFolder = getGameDirectory(root);
-      if (gameFolder != null) {
-        if (!gameFolder.hasEntry(HIGH_SCORE + "1")) {
-          return false;
-        }
-
-        LOG.info("Writing VPReg entry \"" + gameFolder.getName() + "\"");
-        List<VPRegScoreEntry> scores = summary.getScores();
-        for (VPRegScoreEntry score : scores) {
-          DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos());
-          POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-          scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(score.getBase64Score())));
-
-          DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + score.getPos() + NAME_SUFFIX);
-          POIFSDocument nameDocument = new POIFSDocument(nameEntry);
-          nameDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(score.getBase64Name())));
-
-          LOG.info("Written VPReg score entry: " + score);
-        }
-
-        fs.writeFilesystem();
-        return true;
-      }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        } catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return false;
-  }
-
   public boolean resetHighscores() {
     POIFSFileSystem fs = null;
     try {

@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.popper.PinUPConnector;

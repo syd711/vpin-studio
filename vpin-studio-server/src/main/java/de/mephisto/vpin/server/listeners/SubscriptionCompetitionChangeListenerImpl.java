@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.*;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;

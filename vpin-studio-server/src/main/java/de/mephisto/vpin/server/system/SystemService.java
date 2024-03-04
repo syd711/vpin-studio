@@ -558,7 +558,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     this.loadingScoringDB();
     new Thread(() -> {
       Thread.currentThread().setName("ScoringDB Updater");
-      ScoringDB.update();
+      if (!new File("./").getAbsolutePath().contains("workspace")) {
+        ScoringDB.update();
+      }
       this.loadingScoringDB();
     }).start();
 
