@@ -1,13 +1,9 @@
 package de.mephisto.vpin.server.vpreg;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
-import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
+import de.mephisto.vpin.server.highscores.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.vpreg.VPRegScoreSummary;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.util.List;

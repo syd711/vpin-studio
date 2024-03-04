@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;

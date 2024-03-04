@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.util.vpreg;
+package de.mephisto.vpin.server.highscores.vpreg;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

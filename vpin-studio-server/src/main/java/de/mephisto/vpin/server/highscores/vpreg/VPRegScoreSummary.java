@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.util.vpreg;
+package de.mephisto.vpin.server.highscores.vpreg;
 
 import de.mephisto.vpin.server.util.ScoreHelper;
 

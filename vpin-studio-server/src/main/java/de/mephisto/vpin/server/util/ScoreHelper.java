@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
