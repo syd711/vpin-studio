@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,5 +40,17 @@ public class VPRegTest {
     reg.restore(data);
     String restoredData = reg.toJson();
     assertEquals(data, restoredData);
+  }
+
+  @Test
+  public void testAllHighscores() {
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
+    VPReg reg = new VPReg(vpRegFile);
+    List<String> entries = reg.getEntries();
+    for (String entry : entries) {
+      VPReg regEntry = new VPReg(vpRegFile, "entry", null);
+      VPRegScoreSummary vpRegScoreSummary = regEntry.readHighscores();
+      assertNotNull(vpRegScoreSummary, "Reading failed for " + entry);
+    }
   }
 }
