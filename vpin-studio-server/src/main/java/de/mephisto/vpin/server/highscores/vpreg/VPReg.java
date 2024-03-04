@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
+import de.mephisto.vpin.server.highscores.vpreg.adapters.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPReg {
@@ -22,12 +21,19 @@ public class VPReg {
 
   public static final String ARCHIVE_FILENAME = "vpreg-stg.json";
 
-  public static final String NAME_SUFFIX = "Name";
-  public static final String HIGH_SCORE = "HighScore";
-
   private final File vpregFile;
   private String rom;
   private String tablename;
+
+
+  private static Map<String, VPRegHighscoreAdapter> adapters = new LinkedHashMap<>();
+
+  static {
+    adapters.put("numericList", new NumericListVPRegHighscoreAdapter());
+    adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter());
+    adapters.put("singleWithLettersEntry", new SingleEntryWithLettersVPRegHighscoreAdapter());
+    adapters.put("numericListAnonymous", new NumericListAnonymousVPRegHighscoreAdapter());
+  }
 
 
   public VPReg(File vpregFile) {
@@ -93,22 +99,11 @@ public class VPReg {
       DirectoryEntry root = fs.getRoot();
       DirectoryEntry gameFolder = getGameDirectory(root);
       if (gameFolder != null) {
-        if (!gameFolder.hasEntry(HIGH_SCORE + "1")) {
-          return false;
+        for (VPRegHighscoreAdapter adapter : adapters.values()) {
+          if (adapter.isApplicable(gameFolder)) {
+            return adapter.resetHighscore(gameFolder);
+          }
         }
-        int index = 1;
-        while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + NAME_SUFFIX)) {
-          DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
-          POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-          scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
-
-          DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index + NAME_SUFFIX);
-          POIFSDocument nameDocument = new POIFSDocument(nameEntry);
-          nameDocument.replaceContents(new ByteArrayInputStream("???".getBytes()));
-
-          index++;
-        }
-
         fs.writeFilesystem();
         return true;
       }
@@ -215,51 +210,11 @@ public class VPReg {
       DirectoryEntry root = fs.getRoot();
       DirectoryEntry gameFolder = getGameDirectory(root);
       if (gameFolder != null) {
-        if (!gameFolder.hasEntry(HIGH_SCORE + "1")) {
-          return null;
-        }
-
-        VPRegScoreSummary summary = new VPRegScoreSummary();
-        int index = 1;
-        String prefix = HIGH_SCORE;
-        String nameSuffix = "Name";
-        while (gameFolder.hasEntry(prefix + index) && gameFolder.hasEntry(prefix + index + nameSuffix)) {
-          DocumentEntry scoreEntry = (DocumentEntry) gameFolder.getEntry(prefix + index);
-          DocumentEntry nameEntry = (DocumentEntry) gameFolder.getEntry(prefix + index + nameSuffix);
-
-          DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
-          byte[] scoreContent = new byte[scoreEntryStream.available()];
-          scoreEntryStream.read(scoreContent);
-          scoreEntryStream.close();
-
-          DocumentInputStream nameEntryStream = new DocumentInputStream(nameEntry);
-          byte[] nameContent = new byte[nameEntryStream.available()];
-          nameEntryStream.read(nameContent);
-          nameEntryStream.close();
-
-          String nameString = new String(nameContent, StandardCharsets.UTF_8);
-          nameString = nameString.replace("\0", "").trim();
-
-          String scoreString = new String(scoreContent, StandardCharsets.UTF_8);
-          scoreString = scoreString.replace("\0", "");
-          while (scoreString.contains(".")) {
-            scoreString = scoreString.substring(0, scoreString.indexOf("."));
+        for (VPRegHighscoreAdapter adapter : adapters.values()) {
+          if (adapter.isApplicable(gameFolder)) {
+            return adapter.readHighscore(gameFolder);
           }
-          while (scoreString.contains(",")) {
-            scoreString = scoreString.substring(0, scoreString.indexOf("."));
-          }
-
-          VPRegScoreEntry score = new VPRegScoreEntry();
-          score.setBase64Score(new Base64Encoder().encode(scoreContent));
-          score.setBase64Name(new Base64Encoder().encode(nameContent));
-          score.setInitials(nameString);
-          score.setScore(StringUtils.isEmpty(scoreString) ? 0 : Long.parseLong(scoreString));
-          score.setPos(index);
-          summary.getScores().add(score);
-          index++;
         }
-
-        return summary;
       }
     } catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);

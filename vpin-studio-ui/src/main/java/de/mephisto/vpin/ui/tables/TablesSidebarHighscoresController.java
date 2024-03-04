@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -143,7 +143,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       if (b) {
         ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(g);
         MediaUtil.openMedia(s);
-      } else {
+      }
+      else {
         ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(g.getId());
         String status = summary.getMetadata().getStatus();
         WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
@@ -195,7 +196,8 @@ public class TablesSidebarHighscoresController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
           "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
           "You can enter the values for this manually in the \"Script Details\" section.");
-      } else {
+      }
+      else {
         TableDialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
       }
     }
@@ -259,7 +261,8 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       if (StringUtils.isEmpty(rom)) {
         backupCountLabel.setText("0");
-      } else {
+      }
+      else {
         highscoreBackups = Studio.client.getHigscoreBackupService().get(rom);
         backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
         if (!highscoreBackups.isEmpty()) {
@@ -267,26 +270,24 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
       }
 
-      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
-      HighscoreMetadataRepresentation metadata = summary.getMetadata();
-      if (true) { //TODO
-        metadata = Studio.client.getGameService().scanGameScore(game.getId());
-//        EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
-      }
 
-      boolean hasHighscore = !StringUtils.isEmpty(summary.getRaw()) && metadata.getStatus() == null;
+      HighscoreMetadataRepresentation metadata = Studio.client.getGameService().scanGameScore(game.getId());
+
+      boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
       dataPane.setVisible(hasHighscore);
       statusPane.setVisible(!hasHighscore);
 
-      if (!hasHighscore) {
-        if (!StringUtils.isEmpty(metadata.getStatus())) {
-          statusLabel.setText(metadata.getStatus());
-        } else {
-          statusLabel.setText("Unknown status.");
-        }
-      }
-
+      statusLabel.setText("Unknown status.");
       if (metadata != null) {
+        if (!hasHighscore) {
+          if (!StringUtils.isEmpty(metadata.getStatus())) {
+            statusLabel.setText(metadata.getStatus());
+          }
+          else {
+            statusLabel.setText("Unknown status.");
+          }
+        }
+
         backupBtn.setDisable(metadata.getType() == null);
         restoreBtn.setDisable(metadata.getType() == null && (highscoreBackups == null || highscoreBackups.isEmpty()));
 
@@ -306,16 +307,19 @@ public class TablesSidebarHighscoresController implements Initializable {
           this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getScanned()));
         }
 
+        if (!StringUtils.isEmpty(metadata.getRaw())) {
+          rawTitleLabel.setVisible(true);
+          rawScoreWrapper.setVisible(true);
+          rawScoreLabel.setFont(WidgetController.getScoreFontText());
+          rawScoreLabel.setText(metadata.getRaw());
+        }
+
+        ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
         if (!summary.getScores().isEmpty()) {
           cardBtn.setDisable(false);
           resetBtn.setDisable(StringUtils.isEmpty(rom));
 
-          rawTitleLabel.setVisible(true);
-          rawScoreWrapper.setVisible(true);
           scoreGraphWrapper.setVisible(true);
-
-          rawScoreLabel.setFont(WidgetController.getScoreFontText());
-          rawScoreLabel.setText(metadata.getRaw());
 
           List<ScoreRepresentation> scores = summary.getScores();
           StringBuilder builder = new StringBuilder();

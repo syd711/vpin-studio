@@ -2,19 +2,9 @@ package de.mephisto.vpin.server.highscores.vpreg;
 
 public class VPRegScoreEntry {
 
-  private String initials;
+  private String initials = "???";
   private int pos;
-  private String base64Name;
-  private String base64Score;
-  private long score;
-
-  public String getBase64Name() {
-    return base64Name;
-  }
-
-  public void setBase64Name(String base64Name) {
-    this.base64Name = base64Name;
-  }
+  private long score = 0;
 
   public String getInitials() {
     return initials;
@@ -30,14 +20,6 @@ public class VPRegScoreEntry {
 
   public void setPos(int pos) {
     this.pos = pos;
-  }
-
-  public String getBase64Score() {
-    return base64Score;
-  }
-
-  public void setBase64Score(String base64Score) {
-    this.base64Score = base64Score;
   }
 
   public long getScore() {

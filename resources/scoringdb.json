@@ -19,6 +19,22 @@
       "textFile": ""
     }
   ],
+  "ignoredVPRegEntries": [
+    "Gridiron_1977",
+    "TripleStrike",
+    "HarleyQuinn_VPX",
+    "ScaredStiffVPX",
+    "TAF_VPX_V2",
+    "spongebob",
+    "SexyGirl",
+    "cyberrace",
+    "eballdlx",
+    "bnzai_l3",
+    "CC_TTNZ",
+    "ww_lh6",
+    "nf_23x",
+    "hh"
+  ],
   "notSupported": [
     "bloodmach",
     "cyberrace",

@@ -33,6 +33,9 @@ public class ScoringDB {
     ScoringDB db = null;
     try {
       File dbFile = new File("./resources/", SCORING_DB_NAME);
+      if(!dbFile.exists()) {
+        dbFile = new File("../resources/", SCORING_DB_NAME);
+      }
       in = new FileInputStream(dbFile);
       db = objectMapper.readValue(in, ScoringDB.class);
       LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
@@ -98,8 +101,18 @@ public class ScoringDB {
 
   private List<String> notSupported = new ArrayList<>();
 
+  private List<String> ignoredVPRegEntries = new ArrayList<>();
+
   public List<String> getNotSupported() {
     return notSupported;
+  }
+
+  public List<String> getIgnoredVPRegEntries() {
+    return ignoredVPRegEntries;
+  }
+
+  public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {
+    this.ignoredVPRegEntries = ignoredVPRegEntries;
   }
 
   public void setNotSupported(List<String> notSupported) {
