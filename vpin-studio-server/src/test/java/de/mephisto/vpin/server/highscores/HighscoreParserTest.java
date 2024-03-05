@@ -199,7 +199,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
 
   @Test
   public void testSpongebob() {
-    List<Score> test = highscoreParser.parseScores(new Date(), SPONGE_BOB, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), SPONGE_BOB, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
     assertTrue(test.get(0).getPosition() == 1);
@@ -208,7 +208,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
   @Test
   public void testParsing() {
     for (String testling : testlings) {
-      List<Score> test = highscoreParser.parseScores(new Date(), testling, -1, -1l);
+      List<Score> test = highscoreParsingService.parseScores(new Date(), testling, -1, -1l);
       assertFalse(test.isEmpty());
       assertTrue(test.size() > 3);
     }
@@ -216,28 +216,28 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
 
   @Test
   public void testSingleton() {
-    List<Score> test = highscoreParser.parseScores(new Date(), singleton, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), singleton, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testInvalidTitle() {
-    List<Score> test = highscoreParser.parseScores(new Date(), invalidTitle, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), invalidTitle, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testBlankScores() {
-    List<Score> test = highscoreParser.parseScores(new Date(), blankValues, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), blankValues, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testOrder() {
-    List<Score> test = highscoreParser.parseScores(new Date(), orderCheck, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), orderCheck, -1, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
 

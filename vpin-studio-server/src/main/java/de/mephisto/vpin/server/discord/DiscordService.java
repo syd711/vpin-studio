@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -256,7 +256,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
    * @param channelId the discord channel id
    */
   @NonNull
-  public ScoreSummary getScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
+  public ScoreSummary getScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     if (this.discordClient != null) {
       List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : competitionUpdates) {
@@ -485,7 +485,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return category;
   }
 
-  private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {
+  private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();

@@ -2,10 +2,12 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.parsing.text.HighscoreRawToMachineReadableConverter;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.highscores.vpreg.VPReg;
-import de.mephisto.vpin.server.highscores.vpreg.VPRegScoreSummary;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -27,9 +29,11 @@ class HighscoreResolver {
   public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
   private final SystemService systemService;
+  private final ScoringDB scoringDB;
 
   public HighscoreResolver(@NonNull SystemService systemService) {
     this.systemService = systemService;
+    this.scoringDB = systemService.getScoringDatabase();
   }
 
   /**
@@ -109,16 +113,22 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+    if(game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
+      return null;
+    }
+
+    if(game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
+      return null;
+    }
+
     File vpRegFile = game.getEmulator().getVPRegFile();
     VPReg reg = new VPReg(vpRegFile, game.getRom(), game.getTableName());
-
-    //TODO cleanup metadata usage
     if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(vpRegFile.getCanonicalPath());
       metadata.setModified(new Date(vpRegFile.lastModified()));
 
-      VPRegScoreSummary summary = reg.readHighscores();
+      ScoreParsingSummary summary = reg.readHighscores();
       if (summary != null) {
         metadata.setRaw(summary.toRaw());
       }

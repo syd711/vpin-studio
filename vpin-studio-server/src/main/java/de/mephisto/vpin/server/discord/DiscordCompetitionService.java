@@ -15,7 +15,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.highscores.parser.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -34,7 +34,7 @@ public class DiscordCompetitionService {
   private DiscordService discordService;
 
   @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreParsingService highscoreParser;
 
   @Autowired
   private DiscordChannelMessageFactory discordChannelMessageFactory;

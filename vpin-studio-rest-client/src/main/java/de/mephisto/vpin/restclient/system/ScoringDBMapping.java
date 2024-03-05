@@ -4,15 +4,6 @@ public class ScoringDBMapping {
   private String rom;
   private String tableName;
   private String textFile;
-  private ScoringDBHighscoreParser parser;
-
-  public ScoringDBHighscoreParser getParser() {
-    return parser;
-  }
-
-  public void setParser(ScoringDBHighscoreParser parser) {
-    this.parser = parser;
-  }
 
   public String getTableName() {
     return tableName;

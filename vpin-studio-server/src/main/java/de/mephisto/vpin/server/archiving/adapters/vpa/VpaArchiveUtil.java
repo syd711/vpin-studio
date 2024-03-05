@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.server.highscores.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

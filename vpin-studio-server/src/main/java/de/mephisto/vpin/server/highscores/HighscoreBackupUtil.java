@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ZipUtil;
-import de.mephisto.vpin.server.highscores.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;

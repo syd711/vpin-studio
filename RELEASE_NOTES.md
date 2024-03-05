@@ -2,6 +2,8 @@
 
 ### Changes
 
+- Highscore Parsing: Added support for a lot more VPReg.stg based highscore formats.
+- Highscore Parsing: Added support for single score tables.
 - Pause Menu: Added view option "Style" to the preferences. You can now choose if entries should be rendered as part of the pause menu or if Popper assets of the "Info", "Help" and "Other2" screen should be shown on their configured screen locations. 
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />

@@ -3,10 +3,7 @@
     {
       "rom": "spongebob",
       "tableName": "",
-      "textFile": "spongebob_hiscores.txt",
-      "parser": {
-        "name": "dotColonParser"
-      }
+      "textFile": "spongebob_hiscores.txt"
     },
     {
       "rom": "hpgof",
