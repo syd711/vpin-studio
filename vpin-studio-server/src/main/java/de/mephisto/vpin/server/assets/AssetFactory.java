@@ -58,7 +58,7 @@ public class AssetFactory {
         name = name.substring(0, 34) + "...";
       }
 
-      String table = game.getGameFileName();
+      String table = game.getGameDisplayName();
       if (table.length() > 36) {
         table = table.substring(0, 35) + "...";
       }
