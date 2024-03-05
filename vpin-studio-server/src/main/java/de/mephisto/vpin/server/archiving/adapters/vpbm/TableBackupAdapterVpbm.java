@@ -56,7 +56,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
 
   @Override
   public JobExecutionResult createBackup() {
-    LOG.info("Starting VPBM backup of " + game.getGameFileName());
+    LOG.info("Starting VPBM backup of " + game.getGameDisplayName());
 
     status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
 

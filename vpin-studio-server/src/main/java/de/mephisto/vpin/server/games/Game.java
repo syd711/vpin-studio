@@ -366,9 +366,7 @@ public class Game {
   }
 
   public boolean isDirectB2SAvailable() {
-    String name = FilenameUtils.getBaseName(this.getGameFileName());
-    String directB2SName = name + ".directb2s";
-    return new File(emulator.getTablesFolder(), directB2SName).exists();
+    return getDirectB2SFile().exists();
   }
 
   public boolean isGameFileAvailable() {
