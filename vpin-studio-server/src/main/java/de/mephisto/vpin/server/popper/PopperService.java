@@ -31,9 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,21 +78,20 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     GameList list = new GameList();
     for (GameEmulator emulator : emulators) {
       File vpxTablesFolder = emulator.getTablesFolder();
-      File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
-      if (files != null) {
-        List<Game> games = pinUPConnector.getGames();
-        List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-        for (File file : files) {
-          if (!filesNames.contains(file.getName())) {
-            GameListItem item = new GameListItem();
-            item.setName(file.getName());
-            item.setFileName(file.getAbsolutePath());
-            item.setEmuId(emulator.getId());
-            list.getItems().add(item);
-          }
+      List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+      List<Game> games = pinUPConnector.getGames();
+      List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+      for (File file : files) {
+        if (!filesNames.contains(file.getName())) {
+          GameListItem item = new GameListItem();
+          item.setName(file.getName());
+          item.setFileName(file.getAbsolutePath());
+          item.setEmuId(emulator.getId());
+          list.getItems().add(item);
         }
       }
     }
+    Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
     return list;
   }
 
