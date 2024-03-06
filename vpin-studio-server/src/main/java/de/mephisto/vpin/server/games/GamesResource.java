@@ -230,11 +230,11 @@ public class GamesResource {
       File uploadFile = null;
       if (suffix != null && (suffix.equalsIgnoreCase("zip") || (suffix.equalsIgnoreCase("rar")))) {
         try {
-          File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
-          UploadUtil.upload(file, tempFile);
-          String fileNameToExtract = PackageUtil.contains(tempFile, ".vpx");
+          File temporaryArchive = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
+          UploadUtil.upload(file, temporaryArchive);
+          String fileNameToExtract = PackageUtil.contains(temporaryArchive, ".vpx");
           if (fileNameToExtract == null) {
-            throw new IOException("No VPX file found in archive file " + tempFile.getAbsolutePath());
+            throw new IOException("No VPX file found in archive file " + temporaryArchive.getAbsolutePath());
           }
           File targetFile = new File(gameEmulator.getTablesFolder(), fileNameToExtract);
           if (keepExistingFilename) {
@@ -247,7 +247,7 @@ public class GamesResource {
           }
           LOG.info("Extracting archive file \"" + fileNameToExtract + "\" to \"" + uploadFile.getAbsolutePath() + "\"");
           uploadFile.getParentFile().mkdirs();
-          PackageUtil.unpackTargetFile(tempFile, uploadFile, fileNameToExtract);
+          PackageUtil.unpackTargetFile(temporaryArchive, uploadFile, fileNameToExtract);
         } catch (Exception e) {
           LOG.error("Upload of vpx archive file failed: " + e.getMessage(), e);
           throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Upload of packaged VPX file failed: " + e.getMessage());
@@ -284,8 +284,27 @@ public class GamesResource {
             TableDetails tableDetails = popperService.getTableDetails(gameId);
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 
-            //the game file name is already updated here
-            tableDetails.setGameFileName(uploadFile.getName());
+            //the uploaded file name is already updated here
+            File oldGameFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
+            if (!oldGameFile.equals(uploadFile)) {
+              if (oldGameFile.exists()) {
+                if (oldGameFile.delete()) {
+                  LOG.info("Deleted existing old game file \"" + oldGameFile.getAbsolutePath() + "\"");
+                }
+              }
+              org.apache.commons.io.FileUtils.moveFile(uploadFile, oldGameFile);
+              LOG.info("Moved \"" + uploadFile.getAbsolutePath() + "\" to \"" + oldGameFile.getAbsolutePath() + "\"");
+            }
+
+            //if the VPX file is inside a subfolder, we have to prepend the folder name
+            String name = uploadFile.getName();
+            String oldName = tableDetails.getGameFileName();
+            if(oldName.contains("\\")) {
+              name = oldName.substring(0, oldName.lastIndexOf("\\")+1) + uploadFile.getName();
+            }
+
+            LOG.info("Updated new filename to \"" + name + "\"");
+            tableDetails.setGameFileName(name);
             if (!keepExistingDisplayName) {
               tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }

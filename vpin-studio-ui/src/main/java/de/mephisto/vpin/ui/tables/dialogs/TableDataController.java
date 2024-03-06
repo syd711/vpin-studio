@@ -858,6 +858,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     });
     gameFileName.setText(tableDetails.getGameFileName());
+    gameFileName.setDisable(tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"));
     gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
       if (FileUtils.isValidFilename(newValue)) {
         tableDetails.setGameFileName(newValue);
@@ -918,7 +919,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     });
 
     if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-      if(!StringUtils.isEmpty(game.getRomAlias())) {
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
         romName.setPromptText(game.getRom() + " (aliased ROM)");
       }
       else {
@@ -1174,7 +1175,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (!newValue) {
       romName.setPromptText("");
       if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-        if(!StringUtils.isEmpty(game.getRomAlias())) {
+        if (!StringUtils.isEmpty(game.getRomAlias())) {
           romName.setPromptText(game.getRom() + " (aliased ROM)");
         }
         else {

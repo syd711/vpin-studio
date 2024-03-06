@@ -6,6 +6,15 @@ public class DirectB2S {
   private String name;
   private int emulatorId;
   private boolean vpxAvailable;
+  private String fileName;
+
+  public String getFileName() {
+    return fileName;
+  }
+
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
   public boolean isVpxAvailable() {
     return vpxAvailable;

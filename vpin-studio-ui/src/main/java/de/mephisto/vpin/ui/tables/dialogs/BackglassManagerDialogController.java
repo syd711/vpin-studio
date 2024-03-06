@@ -205,7 +205,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           if (!newName.endsWith(".directb2s")) {
             newName = newName + ".directb2s";
           }
-          client.getBackglassServiceClient().renameBackglass(selectedItem.getEmulatorId(), selectedItem.getName(), newName);
+          client.getBackglassServiceClient().renameBackglass(selectedItem, newName);
         } catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
         }
@@ -222,7 +222,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Duplicate");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getBackglassServiceClient().duplicateBackglass(selectedItem.getEmulatorId(), selectedItem.getName());
+          client.getBackglassServiceClient().duplicateBackglass(selectedItem);
         } catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
         }
@@ -233,14 +233,18 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   @FXML
   private void onDelete(ActionEvent e) {
-    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getBackglassServiceClient().deleteBackglass(selectedItem.getEmulatorId(), selectedItem.getName());
-        onReload();
+    try {
+      DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          client.getBackglassServiceClient().deleteBackglass(selectedItem);
+          onReload();
+        }
       }
+    } catch (Exception ex) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
     }
   }
 
@@ -454,13 +458,19 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     game = null;
 
     if (newValue != null) {
-      this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue.getEmulatorId(), newValue.getName());
+      try {
+        this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
+      } catch (Exception e) {
+        this.tableData = new DirectB2SData();
+      }
+
       if (this.tableData.getGameId() > 0) {
         this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
         game = client.getGame(this.tableData.getGameId());
         gameLabel.setText(game.getGameDisplayName());
         gameFilenameLabel.setText(game.getGameFileName());
         dataManagerBtn.setDisable(false);
+        modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
       }
       else {
         this.tableSettings = null;
@@ -476,7 +486,6 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
       filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
       bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
       hideGrill.setDisable(tableData.getGrillHeight() == 0);
 

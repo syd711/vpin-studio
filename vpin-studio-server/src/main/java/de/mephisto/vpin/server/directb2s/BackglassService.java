@@ -10,16 +10,20 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -41,23 +45,21 @@ public class BackglassService {
     return new DirectB2SData();
   }
 
-  public boolean deleteBackglass(int emulatorId, String name) {
-    File b2sFile = getBackglassFile(emulatorId, name);
+  public boolean deleteBackglass(File b2sFile) {
     return b2sFile.exists() && b2sFile.delete();
   }
 
-  public DirectB2SData getDirectB2SData(int emulatorId, String name) {
-    String vpxName = name + ".vpx";
+  public DirectB2SData getDirectB2SData(@NonNull DirectB2S directB2S) {
+    String vpxName = directB2S.getName() + ".vpx";
     List<Game> gamesByFilename = pinUPConnector.getGamesByFilename(vpxName);
     for (Game game : gamesByFilename) {
-      if (game.getEmulator().getId() == emulatorId) {
+      if (game.getEmulator().getId() == directB2S.getEmulatorId()) {
         return getDirectB2SData(game.getId());
       }
     }
 
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-    File b2sFile = getBackglassFile(emulatorId, name);
-    return extractor.extractData(b2sFile, emulatorId, -1);
+    return extractor.extractData(new File(directB2S.getFileName()), directB2S.getEmulatorId(), -1);
   }
 
   public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {
@@ -130,47 +132,38 @@ public class BackglassService {
     List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       File tablesFolder = gameEmulator.getTablesFolder();
-      File[] files = tablesFolder.listFiles((dir, name) -> name.endsWith(".directb2s"));
+      Collection<File> files = org.apache.commons.io.FileUtils.listFiles(tablesFolder, new String[]{"directb2s"}, true);
+      for (File file : files) {
+        DirectB2S directB2SData = new DirectB2S();
+        directB2SData.setEmulatorId(gameEmulator.getId());
+        directB2SData.setName(FilenameUtils.getBaseName(file.getName()));
+        directB2SData.setFileName(file.getAbsolutePath());
 
-      if (files != null) {
-        for (File file : files) {
-          DirectB2S directB2SData = new DirectB2S();
-          directB2SData.setEmulatorId(gameEmulator.getId());
-          directB2SData.setName(FilenameUtils.getBaseName(file.getName()));
-
-          String vpxFile = FilenameUtils.getBaseName(file.getName()) + ".vpx";
-          directB2SData.setVpxAvailable(new File(file.getParentFile(), vpxFile).exists());
-          result.add(directB2SData);
-        }
+        String vpxFile = FilenameUtils.getBaseName(file.getName()) + ".vpx";
+        directB2SData.setVpxAvailable(new File(file.getParentFile(), vpxFile).exists());
+        result.add(directB2SData);
       }
     }
     return result;
   }
 
-  private File getBackglassFile(int emulatorId, String name) {
-    GameEmulator gameEmulator = pinUPConnector.getGameEmulator(emulatorId);
-    return new File(gameEmulator.getTablesFolder(), name + ".directb2s");
-  }
-
-  public boolean rename(int emulatorId, String name, String newName) {
-    File b2sFile = getBackglassFile(emulatorId, name);
-    if( b2sFile.exists() && b2sFile.renameTo(new File(b2sFile.getParentFile(), newName))) {
+  public boolean rename(File b2sFile, String newName) {
+    if (b2sFile.exists() && b2sFile.renameTo(new File(b2sFile.getParentFile(), newName))) {
       LOG.info("Renamed \"" + b2sFile.getName() + "\" to \"" + newName + "\"");
       return true;
     }
     return false;
   }
 
-  public boolean duplicate(int emulatorId, String name) throws IOException {
+  public boolean duplicate(File b2sFile) throws IOException {
     try {
-      File b2sFile = getBackglassFile(emulatorId, name);
       File target = new File(b2sFile.getParentFile(), b2sFile.getName());
       target = FileUtils.uniqueFile(target);
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
       LOG.info("Copied \"" + b2sFile.getName() + "\" to \"" + target.getAbsolutePath() + "\"");
       return true;
     } catch (IOException e) {
-      LOG.error("Failed to duplicate backglass " + name + ": " + e.getMessage(), e);
+      LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
       throw e;
     }
   }

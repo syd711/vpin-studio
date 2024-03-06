@@ -50,28 +50,26 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(id);
   }
 
-  @GetMapping("/{emulatorId}/{name}")
-  public DirectB2SData getData(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
-    return backglassService.getDirectB2SData(emulatorId, URLDecoder.decode(name, StandardCharsets.UTF_8));
+  @PostMapping("/get")
+  public DirectB2SData getData(@RequestBody DirectB2S directB2S) {
+    return backglassService.getDirectB2SData(directB2S);
   }
 
-  @DeleteMapping("/{emulatorId}/{name}")
-  public boolean deleteBackglass(@PathVariable("emulatorId") int emulatorId, @PathVariable("name") String name) {
-    return backglassService.deleteBackglass(emulatorId, URLDecoder.decode(name, StandardCharsets.UTF_8));
+  @PostMapping("/delete")
+  public boolean deleteBackglass(@RequestBody DirectB2S directB2S) {
+    return backglassService.deleteBackglass(new File(directB2S.getFileName()));
   }
 
-  @PutMapping("/{emulatorId}/{name}")
-  public boolean updateBackglass(@PathVariable("emulatorId") int emulatorId,
-                                 @PathVariable("name") String name,
-                                 @RequestBody Map<String, Object> values) throws IOException {
-    name = URLDecoder.decode(name, StandardCharsets.UTF_8);
+  @PutMapping
+  public boolean updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+    String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
     if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-      return backglassService.rename(emulatorId, name, newName);
+      return backglassService.rename(new File(fileName), newName);
     }
 
     if (values.containsKey("duplicate")) {
-      return backglassService.duplicate(emulatorId, name);
+      return backglassService.duplicate(new File(fileName));
     }
     return false;
   }

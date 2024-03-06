@@ -308,20 +308,20 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getPOVFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
 
   @NonNull
   @JsonIgnore
   public File getIniFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
   @NonNull
   @JsonIgnore
   public File getResFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }
 
   @NonNull
@@ -510,7 +510,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(emulator.getTablesFolder(), baseName + ".directb2s");
+    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
   }
 
   @Nullable

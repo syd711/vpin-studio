@@ -418,7 +418,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     try {
       String gameName = filename.replaceAll("'", "''");
       Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName LIKE '%" + gameName + "%';");
       while (rs.next()) {
         Game game = createGame(connect, rs);
         result.add(game);

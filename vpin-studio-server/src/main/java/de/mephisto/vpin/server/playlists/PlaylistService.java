@@ -34,6 +34,10 @@ public class PlaylistService {
     return pinUPConnector.getPlayList(playlistId);
   }
 
+  public void removeFromPlaylists(int gameId) {
+    pinUPConnector.deleteFromPlaylists(gameId);
+  }
+
   public Playlist addToPlaylist(int playlistId, int gameId) {
     pinUPConnector.addToPlaylist(playlistId, gameId);
     return pinUPConnector.getPlayList(playlistId);

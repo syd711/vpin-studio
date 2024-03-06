@@ -88,6 +88,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
           if (!filesNames.contains(file.getName())) {
             GameListItem item = new GameListItem();
             item.setName(file.getName());
+            item.setFileName(file.getAbsolutePath());
             item.setEmuId(emulator.getId());
             list.getItems().add(item);
           }

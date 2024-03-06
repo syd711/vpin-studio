@@ -141,7 +141,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini)" wrapText="true" />
+                                                            <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini). Renaming of VPX files located in subfolders is not supported." wrapText="true" />
                                                          </tooltip>
                                                          <font>
                                                             <Font size="14.0" />

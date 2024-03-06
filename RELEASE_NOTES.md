@@ -2,6 +2,7 @@
 
 ### Changes
 
+- Table Management: Added support for **loading tables from sub-folders**. Up until now, the Studio did only assume that all VPX files and backglasses are located in the **Tables** folder of the emulator. While Popper supports sub-folders here, the Studio does now too.
 - Highscore Parsing: Added support for a lot more VPReg.stg based highscore formats.
 - Highscore Parsing: Added support for single score tables.
 - Pause Menu: Added view option "Style" to the preferences. You can now choose if entries should be rendered as part of the pause menu or if Popper assets of the "Info", "Help" and "Other2" screen should be shown on their configured screen locations. 

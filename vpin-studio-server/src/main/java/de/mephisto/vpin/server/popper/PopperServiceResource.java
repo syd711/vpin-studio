@@ -57,15 +57,14 @@ public class PopperServiceResource {
 
   @PostMapping("/import")
   public JobExecutionResult importTable(@RequestBody GameListItem item) {
-    GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
-    File tableFile = new File(emulator.getTablesFolder(), item.getName());
+    File tableFile = new File(item.getFileName());
     if (tableFile.exists()) {
       int result = popperService.importVPXGame(tableFile, true, -1, item.getEmuId());
       if (result > 0) {
         gameService.scanGame(result);
       }
     }
-    return JobExecutionResultFactory.ok("Imported " + item.getName(), -1);
+    return JobExecutionResultFactory.ok("Imported " + item.getFileName(), -1);
   }
 
   @GetMapping("/pincontrol/{screen}")
