@@ -292,8 +292,9 @@ public class GamesResource {
                   LOG.info("Deleted existing old game file \"" + oldGameFile.getAbsolutePath() + "\"");
                 }
               }
-              org.apache.commons.io.FileUtils.moveFile(uploadFile, oldGameFile);
-              LOG.info("Moved \"" + uploadFile.getAbsolutePath() + "\" to \"" + oldGameFile.getAbsolutePath() + "\"");
+              File movingTo = new File(oldGameFile.getParentFile(), uploadFile.getName());
+              org.apache.commons.io.FileUtils.moveFile(uploadFile, movingTo);
+              LOG.info("Moved \"" + uploadFile.getAbsolutePath() + "\" to \"" + movingTo.getAbsolutePath() + "\"");
             }
 
             //if the VPX file is inside a subfolder, we have to prepend the folder name
