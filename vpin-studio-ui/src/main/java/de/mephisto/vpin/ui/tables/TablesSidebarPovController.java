@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class TablesSidebarPovController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPovController.class);

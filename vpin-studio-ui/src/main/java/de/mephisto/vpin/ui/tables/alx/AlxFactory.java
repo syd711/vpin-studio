@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.alx;
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -156,7 +156,7 @@ public class AlxFactory {
       }
 
       int percentage = alxEntry.getScores() * 100 / maxValue;
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, BindingUtil.toHexString(colors.get(counter)));
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();
@@ -194,7 +194,7 @@ public class AlxFactory {
 
       int percentage = alxEntry.getTimePlayedSecs() * 100 / maxValue;
       String durationText = DurationFormatUtils.formatDuration(alxEntry.getTimePlayedSecs() * 1000, "HH 'hours', mm 'minutes'", false);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, BindingUtil.toHexString(colors.get(counter)));
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();
@@ -231,7 +231,7 @@ public class AlxFactory {
       }
 
       int percentage = alxEntry.getNumberOfPlays() * 100 / maxValue;
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, BindingUtil.toHexString(colors.get(counter)));
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();

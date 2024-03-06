@@ -17,7 +17,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class ServerSettingsPreferencesController implements Initializable {
 

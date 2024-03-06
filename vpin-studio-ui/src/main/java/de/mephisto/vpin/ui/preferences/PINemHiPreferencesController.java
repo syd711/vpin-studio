@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PINemHiPreferencesController implements Initializable, IniSettingsChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PINemHiPreferencesController.class);

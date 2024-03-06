@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -74,13 +74,13 @@ public class CardGenerationPreferencesController implements Initializable {
     ObservedProperties properties = client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
-    BindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
+    PreferenceBindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
     popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
 
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
-    BindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
+    PreferenceBindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
 
-    BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 30);
+    PreferenceBindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 30);
 
     cardPosPlayfieldRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class OverlayPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayPreferencesController.class);
@@ -96,8 +96,8 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
     pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
-    BindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
-    BindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
+    PreferenceBindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
+    PreferenceBindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
 
     radioA.setUserData("");
     radioB.setUserData("-hs-plrs-offline");

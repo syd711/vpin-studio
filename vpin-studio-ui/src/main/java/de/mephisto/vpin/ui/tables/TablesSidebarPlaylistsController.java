@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -142,7 +142,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           @Override
           public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
             try {
-              PlaylistRepresentation update = client.getPlaylistsService().setPlaylistColor(playlist, BindingUtil.toHexString(t1));
+              PlaylistRepresentation update = client.getPlaylistsService().setPlaylistColor(playlist, PreferenceBindingUtil.toHexString(t1));
               refreshPlaylist(update);
             } catch (Exception e) {
               LOG.error("Failed to update playlists: " + e.getMessage(), e);
