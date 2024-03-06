@@ -1,20 +1,19 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +29,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class CardGenerationPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CardGenerationPreferencesController.class);
+  public static Debouncer debouncer = new Debouncer();
 
   @FXML
   private ComboBox<String> popperScreenCombo;
@@ -71,38 +71,51 @@ public class CardGenerationPreferencesController implements Initializable {
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     transparencyHelp.setVisible(false);
 
-    ObservedProperties properties = client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
-    PreferenceBindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
-    popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
+    popperScreenCombo.setValue(cardSettings.getPopperScreen() != null ? cardSettings.getPopperScreen() : "");
+    popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      cardSettings.setPopperScreen(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      onScreenChange();
+    });
 
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
-    PreferenceBindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
-
-    PreferenceBindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 30);
-
-    cardPosPlayfieldRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+    rotationCombo.setValue(cardSettings.getNotificationRotation());
+    rotationCombo.valueProperty().addListener(new ChangeListener<String>() {
       @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        rotationCombo.setDisable(!newValue);
-        cardPosPopperRadio.setSelected(!newValue);
-        properties.set("notificationOnPopperScreen", String.valueOf(!newValue));
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        cardSettings.setNotificationRotation(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
       }
     });
 
-    cardPosPopperRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        rotationCombo.setDisable(newValue);
-        cardPosPlayfieldRadio.setSelected(!newValue);
-        properties.set("notificationOnPopperScreen", String.valueOf(newValue));
-      }
-    });
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 30, cardSettings.getNotificationTime());
+    highscoreCardDuration.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("cardDuration", () -> {
+      int value1 = Integer.parseInt(String.valueOf(t1));
+      cardSettings.setNotificationTime(value1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    }, 500));
 
-    boolean notificationOnPopperScreen = properties.getProperty("notificationOnPopperScreen", false);
+    boolean notificationOnPopperScreen = cardSettings.isNotificationOnPopperScreen();
     cardPosPopperRadio.setSelected(notificationOnPopperScreen);
     cardPosPlayfieldRadio.setSelected(!notificationOnPopperScreen);
+
+    cardPosPlayfieldRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      rotationCombo.setDisable(!newValue);
+      cardPosPopperRadio.setSelected(!newValue);
+      cardSettings.setNotificationOnPopperScreen(false);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    });
+
+    cardPosPopperRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      rotationCombo.setDisable(newValue);
+      cardPosPlayfieldRadio.setSelected(!newValue);
+      cardSettings.setNotificationOnPopperScreen(true);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    });
 
     onScreenChange();
   }
@@ -136,9 +149,9 @@ public class CardGenerationPreferencesController implements Initializable {
       String value = popperScreenCombo.getValue();
       PopperScreen screen = PopperScreen.valueOf(value);
       transparencyHelp.setVisible(
-        (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
-          (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
-          (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
+          (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
+              (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
+              (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
       );
     }
   }

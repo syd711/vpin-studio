@@ -35,7 +35,6 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.vpbm;
   exports de.mephisto.vpin.restclient.system;
   exports de.mephisto.vpin.restclient.util.ini;
-  exports de.mephisto.vpin.restclient.util.properties;
   exports de.mephisto.vpin.restclient.dmd;
   exports de.mephisto.vpin.restclient.components;
   exports de.mephisto.vpin.restclient.cards;

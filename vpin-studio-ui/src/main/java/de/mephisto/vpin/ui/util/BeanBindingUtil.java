@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -158,27 +157,27 @@ public class BeanBindingUtil {
     });
   }
 
-  public static void bindSlider(Slider slider, ObservedProperties properties, String property) {
-    int value = properties.getProperty(property, 0);
+  public static void bindSlider(Slider slider, Object beanObject, String property) {
+    int value = getIntProperty(beanObject, property, 0);
     slider.setValue(value);
     slider.valueProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
         debouncer.debounce(property, () -> {
           int value1 = ((Double) t1).intValue();
-          properties.set(property, String.valueOf(value1));
+          setProperty(beanObject, property, value1);
         }, 1000);
       }
     });
   }
 
-  public static void bindColorPicker(ColorPicker colorPicker, ObservedProperties properties, String property) {
-    String value = properties.getProperty(property, "#FFFFFF");
+  public static void bindColorPicker(ColorPicker colorPicker, Object beanObject, String property) {
+    String value = getProperty(beanObject, property, "#FFFFFF");
     Color colorValue = Color.web(value);
     colorPicker.setValue(colorValue);
     colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
       String hex = toHexString(t1);
-      properties.set(property, hex);
+      setProperty(beanObject, property, hex);
     });
   }
 

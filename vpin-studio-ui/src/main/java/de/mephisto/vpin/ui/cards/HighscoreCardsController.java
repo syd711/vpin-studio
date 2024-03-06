@@ -261,17 +261,17 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onFontTitleSelect() {
-    BeanBindingUtil.bindFontSelector(properties, "cardTitle", titleFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardTitle", titleFontLabel);
   }
 
   @FXML
   private void onFontTableSelect() {
-    BeanBindingUtil.bindFontSelector(properties, "cardTable", tableFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardTable", tableFontLabel);
   }
 
   @FXML
   private void onFontScoreSelect() {
-    BeanBindingUtil.bindFontSelector(properties, "cardScore", scoreFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardScore", scoreFontLabel);
   }
 
   @FXML
@@ -311,27 +311,20 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       BeanBindingUtil.bindFontLabel(scoreFontLabel, getCardTemplate(), "cardScore");
 
       BeanBindingUtil.bindColorPicker(fontColorSelector, getCardTemplate(), "cardFontColor");
-      xxCardsBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");
+      BeanBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");xx
 
       BeanBindingUtil.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "cardUseDirectB2S");
       BeanBindingUtil.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "cardGrayScale");
       BeanBindingUtil.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
-//      CardsBindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
-      renderTableNameCheckbox.setSelected(properties.getProperty("renderTableName", false));
-      renderTableNameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          properties.set("renderTableName", String.valueOf(newValue));
-        }
-      });
+      BeanBindingUtil.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
 
       imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
       backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
       backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
 
-      BeanBindingUtil.bindComboBox(backgroundImageCombo, properties, "cardBackground");
-      String backgroundName = properties.getProperty("cardBackground", null);
+      BeanBindingUtil.bindComboBox(backgroundImageCombo, getCardTemplate(), "cardBackground");
+      String backgroundName = getCardTemplate().getCardBackground();
       if (StringUtils.isEmpty(backgroundName)) {
         backgroundImageCombo.setValue(imageList.get(0));
       }
@@ -344,7 +337,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       BeanBindingUtil.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
       BeanBindingUtil.bindSpinner(marginTopSpinner, getCardTemplate(), "cardPadding");
       BeanBindingUtil.bindSpinner(wheelImageSpinner, getCardTemplate(), "cardHighscoresRowPaddingLeft");
-      BeanBindingUtil.bindSpinner(rowSeparatorSpinner, c, "cardHighscoresRowseparator");
+      BeanBindingUtil.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "cardHighscoresRowseparator");
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override

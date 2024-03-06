@@ -1,11 +1,15 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
-import javafx.scene.control.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,18 +33,6 @@ public class PreferenceBindingUtil {
     }, 500));
   }
 
-  public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property) {
-    bindComboBox(comboBox, properties, property, "");
-  }
-
-  public static void bindComboBox(ComboBox<String> comboBox, ObservedProperties properties, String property, String defaultValue) {
-    String value = properties.getProperty(property, defaultValue);
-    StringProperty stringProperty = new SimpleStringProperty();
-    Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
-    comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> properties.set(property, t1));
-  }
-
   public static void bindComboBox(ComboBox<String> comboBox, String preference) {
     PreferenceEntryRepresentation entry = client.getPreference(preference);
     String value = entry.getValue();
@@ -58,18 +50,6 @@ public class PreferenceBindingUtil {
     booleanProperty.set(checked);
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(preference, t1));
   }
-
-
-  public static void bindSpinner(Spinner spinner, ObservedProperties properties, String property, int min, int max) {
-    int value = properties.getProperty(property, 0);
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, value);
-    spinner.setValueFactory(factory);
-    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
-      int value1 = Integer.parseInt(String.valueOf(t1));
-      properties.set(property, String.valueOf(value1));
-    }, 500));
-  }
-
 
   private static String format(double val) {
     String in = Integer.toHexString((int) Math.round(val * 255));
