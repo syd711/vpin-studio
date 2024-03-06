@@ -3,15 +3,16 @@ package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
-import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.CardsBindingUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -43,9 +44,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class HighscoreCardsController implements Initializable, ObservedPropertyChangeListener, StudioFXController {
+public class HighscoreCardsController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   @FXML
@@ -144,18 +146,17 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   @FXML
   private CheckBox renderTableNameCheckbox;
 
-  private ObservedProperties properties;
-
   private List<String> ignoreList = new ArrayList<>();
   private ObservableList<String> imageList;
   private Parent waitOverlay;
 
+  private CardTemplates cardTemplates;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+      cardTemplates = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
-      properties.addObservedPropertyChangeListener(this);
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
@@ -199,7 +200,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
-        boolean result = Studio.client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
+        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
         if (result) {
           String baseName = FilenameUtils.getBaseName(file.getName());
           if (!imageList.contains(baseName)) {
@@ -216,7 +217,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void onOpenImage() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(game);
+      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(game);
       MediaUtil.openMedia(s);
     }
   }
@@ -233,19 +234,19 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onGenerateAll() {
-    ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
-    String targetScreen = properties.getProperty("popperScreen", null);
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    String targetScreen = cardSettings.getPopperScreen();
     if (StringUtils.isEmpty(targetScreen)) {
       WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
-      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(Studio.client, "Generating Highscore Cards"));
+      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
     }
   }
 
   @FXML
   private void onTableRefresh() {
-    List<GameRepresentation> games = Studio.client.getGameService().getGamesWithScores();
+    List<GameRepresentation> games = client.getGameService().getGamesWithScores();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
 
     GameRepresentation game = tableCombo.getSelectionModel().getSelectedItem();
@@ -260,32 +261,42 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
   @FXML
   private void onFontTitleSelect() {
-    BindingUtil.bindFontSelector(properties, "cardTitle", titleFontLabel);
+    CardsBindingUtil.bindFontSelector(properties, "cardTitle", titleFontLabel);
   }
 
   @FXML
   private void onFontTableSelect() {
-    BindingUtil.bindFontSelector(properties, "cardTable", tableFontLabel);
+    CardsBindingUtil.bindFontSelector(properties, "cardTable", tableFontLabel);
   }
 
   @FXML
   private void onFontScoreSelect() {
-    BindingUtil.bindFontSelector(properties, "cardScore", scoreFontLabel);
+    CardsBindingUtil.bindFontSelector(properties, "cardScore", scoreFontLabel);
   }
 
   @FXML
   private void onOpenDefaultPicture() {
     GameRepresentation game = tableCombo.getValue();
     if (game != null) {
-      ByteArrayInputStream s = Studio.client.getBackglassServiceClient().getDefaultPicture(game);
+      ByteArrayInputStream s = client.getBackglassServiceClient().getDefaultPicture(game);
       MediaUtil.openMedia(s);
     }
   }
 
   @FXML
   private void onGenerateClick() {
+    doSave();
     GameRepresentation value = tableCombo.getValue();
     refreshPreview(Optional.ofNullable(value), true);
+  }
+
+  private CardTemplate getCardTemplate() {
+    //TODO add combo
+    return this.cardTemplates.getDefaultTemplate();
+  }
+
+  private void doSave() {
+    client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, cardTemplates);
   }
 
   public HighscoreCardsController() {
@@ -294,18 +305,18 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
   private void initFields() {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
 
-    try {
-      BindingUtil.bindFontLabel(titleFontLabel, properties, "cardTitle");
-      BindingUtil.bindFontLabel(tableFontLabel, properties, "cardTable");
-      BindingUtil.bindFontLabel(scoreFontLabel, properties, "cardScore");
+    try {      
+      CardsBindingUtil.bindFontLabel(titleFontLabel, getCardTemplate(), "cardTitle");
+      CardsBindingUtil.bindFontLabel(tableFontLabel, getCardTemplate(), "cardTable");
+      CardsBindingUtil.bindFontLabel(scoreFontLabel, getCardTemplate(), "cardScore");
 
-      BindingUtil.bindColorPicker(fontColorSelector, properties, "cardFontColor");
-      BindingUtil.bindHighscoreTablesComboBox(Studio.client, tableCombo, properties, "cardSampleTable");
+      CardsBindingUtil.bindColorPicker(fontColorSelector, getCardTemplate(), "cardFontColor");
+      CardsBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");
 
-      BindingUtil.bindCheckbox(useDirectB2SCheckbox, properties, "cardUseDirectB2S");
-      BindingUtil.bindCheckbox(grayScaleCheckbox, properties, "cardGrayScale");
-      BindingUtil.bindCheckbox(transparentBackgroundCheckbox, properties, "transparentBackground");
-//      BindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
+      CardsBindingUtil.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "cardUseDirectB2S");
+      CardsBindingUtil.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "cardGrayScale");
+      CardsBindingUtil.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
+//      CardsBindingUtil.bindCheckbox(renderTableNameCheckbox, properties, "renderTableName");
       renderTableNameCheckbox.setSelected(properties.getProperty("renderTableName", false));
       renderTableNameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -314,26 +325,26 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         }
       });
 
-      imageList = FXCollections.observableList(new ArrayList<>(Studio.client.getHighscoreCardsService().getHighscoreBackgroundImages()));
+      imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
-      backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
-      backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(Studio.client));
+      backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
+      backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
 
-      BindingUtil.bindComboBox(backgroundImageCombo, properties, "cardBackground");
+      CardsBindingUtil.bindComboBox(backgroundImageCombo, properties, "cardBackground");
       String backgroundName = properties.getProperty("cardBackground", null);
       if (StringUtils.isEmpty(backgroundName)) {
         backgroundImageCombo.setValue(imageList.get(0));
       }
 
-      BindingUtil.bindTextField(titleText, properties, "cardTitleText", "Highscores");
-      BindingUtil.bindSlider(brightenSlider, properties, "cardAlphacompositeWhite");
-      BindingUtil.bindSlider(darkenSlider, properties, "cardAlphacompositeBlack");
-      BindingUtil.bindSlider(blurSlider, properties, "cardBlur");
-      BindingUtil.bindSlider(borderSlider, properties, "cardBorderWidth");
-      BindingUtil.bindSlider(alphaPercentageSpinner, properties, "transparentPercentage");
-      BindingUtil.bindSpinner(marginTopSpinner, properties, "cardPadding");
-      BindingUtil.bindSpinner(wheelImageSpinner, properties, "cardHighscoresRowPaddingLeft");
-      BindingUtil.bindSpinner(rowSeparatorSpinner, properties, "cardHighscoresRowseparator");
+      CardsBindingUtil.bindTextField(titleText, getCardTemplate(), "cardTitleText", "Highscores");
+      CardsBindingUtil.bindSlider(brightenSlider, getCardTemplate(), "cardAlphacompositeWhite");
+      CardsBindingUtil.bindSlider(darkenSlider, getCardTemplate(), "cardAlphacompositeBlack");
+      CardsBindingUtil.bindSlider(blurSlider, getCardTemplate(), "cardBlur");
+      CardsBindingUtil.bindSlider(borderSlider, getCardTemplate(), "cardBorderWidth");
+      CardsBindingUtil.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
+      CardsBindingUtil.bindSpinner(marginTopSpinner, getCardTemplate(), "cardPadding");
+      CardsBindingUtil.bindSpinner(wheelImageSpinner, getCardTemplate(), "cardHighscoresRowPaddingLeft");
+      CardsBindingUtil.bindSpinner(rowSeparatorSpinner, c, "cardHighscoresRowseparator");
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -343,7 +354,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       });
       updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
 
-      BindingUtil.bindCheckbox(renderRawHighscore, properties, "cardRawHighscore");
+      CardsBindingUtil.bindCheckbox(renderRawHighscore, getCardTemplate(), "cardRawHighscore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
@@ -408,7 +419,7 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
 
       if (game.isPresent()) {
         openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
+        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game.get());
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
@@ -441,23 +452,13 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
       try {
         new Thread(() -> {
           if (regenerate) {
-            Studio.client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
+            client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
           }
 
-          InputStream input = Studio.client.getHighscoreCardsService().getHighscoreCard(game.get());
+          InputStream input = client.getHighscoreCardsService().getHighscoreCard(game.get());
           Image image = new Image(input);
           cardPreview.setImage(image);
           cardPreview.setVisible(true);
-
-//          int resolution = Integer.parseInt(imageScalingCombo.getValue());
-//          if (image.getWidth() >= resolution && image.getWidth() < imageCenter.getWidth()) {
-////              cardPreview.setFitHeight(image.getHeight());
-////              cardPreview.setFitWidth(image.getWidth());
-//          }
-//          else {
-//            cardPreview.setFitHeight(imageCenter.getHeight() - offset);
-//            cardPreview.setFitWidth(imageCenter.getWidth() - offset);
-//          }
 
           Platform.runLater(() -> {
             imageMetaDataLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
@@ -473,20 +474,6 @@ public class HighscoreCardsController implements Initializable, ObservedProperty
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
     });
-  }
-
-  @Override
-  public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    if (key != null && !ignoreList.contains(key)) {
-      onGenerateClick();
-    }
-  }
-
-  @Override
-  public void changed(String propertiesName, Map<String, String> values) {
-    if (!values.isEmpty()) {
-      onGenerateClick();
-    }
   }
 
   @Override

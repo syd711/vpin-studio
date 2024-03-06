@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class PropertiesResource {
 
   private static ObjectMapper objectMapper = new ObjectMapper();
   static {
-    propertiesMapping.put(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    propertiesMapping.put(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
 
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
