@@ -12,9 +12,6 @@ public class CardSettings extends JsonSettings {
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
-  private boolean transparentBackground = false;
-  private int transparentPercentage = 0;
-  private boolean renderTableName = true;
 
   public String getPopperScreen() {
     return popperScreen;
@@ -46,29 +43,5 @@ public class CardSettings extends JsonSettings {
 
   public void setNotificationOnPopperScreen(boolean notificationOnPopperScreen) {
     this.notificationOnPopperScreen = notificationOnPopperScreen;
-  }
-
-  public boolean isTransparentBackground() {
-    return transparentBackground;
-  }
-
-  public void setTransparentBackground(boolean transparentBackground) {
-    this.transparentBackground = transparentBackground;
-  }
-
-  public int getTransparentPercentage() {
-    return transparentPercentage;
-  }
-
-  public void setTransparentPercentage(int transparentPercentage) {
-    this.transparentPercentage = transparentPercentage;
-  }
-
-  public boolean isRenderTableName() {
-    return renderTableName;
-  }
-
-  public void setRenderTableName(boolean renderTableName) {
-    this.renderTableName = renderTableName;
   }
 }

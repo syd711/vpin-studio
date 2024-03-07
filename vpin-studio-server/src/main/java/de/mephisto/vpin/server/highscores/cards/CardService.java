@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -56,19 +58,17 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
-  public boolean generateCard(Game game, boolean generateSampleCard) {
+  public boolean generateCard(Game game, String templateName, boolean generateSampleCard) {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-        if (cardSettings == null) {
-          cardSettings = new CardSettings();
-        }
+        CardTemplates cardTemplates = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
+        CardTemplate template = cardTemplates.getTemplate(templateName);
 
         //sample card are always generated
         if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
@@ -77,9 +77,13 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         }
 
         //otherwise check if the card rendering is enabled
+        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        if (cardSettings == null) {
+          cardSettings = new CardSettings();
+        }
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
           if (bufferedImage != null) {
             File highscoreCard = getCardFile(game, screenName);
             ImageUtil.write(bufferedImage, highscoreCard);

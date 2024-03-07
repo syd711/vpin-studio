@@ -34,4 +34,13 @@ public class CardTemplates extends JsonSettings {
   public void remove(CardTemplate cardTemplate) {
     templates.remove(cardTemplate);
   }
+
+  public CardTemplate getTemplate(String templateName) {
+    for (CardTemplate template : templates) {
+      if (template.getName().equals(templateName)) {
+        return template;
+      }
+    }
+    return getDefaultTemplate();
+  }
 }

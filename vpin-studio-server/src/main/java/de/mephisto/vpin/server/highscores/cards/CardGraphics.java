@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -61,45 +62,45 @@ public class CardGraphics {
 
   private final DefaultPictureService directB2SService;
   private final ScoreSummary summary;
-  private final CardSettings cardSettings;
+  private final CardTemplate cardTemplate;
   private final Game game;
 
-  public CardGraphics(DefaultPictureService directB2SService, CardSettings cardSettings, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, CardTemplate cardTemplate, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
-    this.cardSettings = cardSettings;
+    this.cardTemplate = cardTemplate;
     this.game = game;
     this.summary = summary;
 
-    ROW_SEPARATOR = cardSettings.getCardHighscoresRowSeparator();
-    WHEEL_PADDING = cardSettings.getCardHighscoresRowPaddingLeft();
+    ROW_SEPARATOR = cardTemplate.getRowMargin();
+    WHEEL_PADDING = cardTemplate.getWheelPadding();
 
-    TITLE_TEXT = cardSettings.getCardTitleText();
+    TITLE_TEXT = cardTemplate.getTitle();
 
-    SCORE_FONT_NAME = cardSettings.getCardScoreFontName();
-    SCORE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardScoreFontStyle());
-    SCORE_FONT_SIZE = cardSettings.getCardScoreFontSize();
+    SCORE_FONT_NAME = cardTemplate.getCardScoreFontName();
+    SCORE_FONT_STYLE = ImageUtil.convertFontPosture(cardTemplate.getCardScoreFontStyle());
+    SCORE_FONT_SIZE = cardTemplate.getCardScoreFontSize();
 
-    TITLE_FONT_NAME = cardSettings.getCardTitleFontName();
-    TITLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTitleFontStyle());
-    TITLE_FONT_SIZE = cardSettings.getCardTitleFontSize();
+    TITLE_FONT_NAME = cardTemplate.getCardTitleFontName();
+    TITLE_FONT_STYLE = ImageUtil.convertFontPosture(cardTemplate.getCardTitleFontStyle());
+    TITLE_FONT_SIZE = cardTemplate.getCardTitleFontSize();
 
-    TABLE_FONT_NAME = cardSettings.getCardTableFontName();
-    TABLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTableFontStyle());
-    TABLE_FONT_SIZE = cardSettings.getCardTableFontSize();
+    TABLE_FONT_NAME = cardTemplate.getCardTableFontName();
+    TABLE_FONT_STYLE = ImageUtil.convertFontPosture(cardTemplate.getCardTableFontStyle());
+    TABLE_FONT_SIZE = cardTemplate.getCardTableFontSize();
 
-    FONT_COLOR = cardSettings.getCardFontColor();
+    FONT_COLOR = cardTemplate.getCardFontColor();
 
-    PADDING = cardSettings.getCardPadding();
+    PADDING = cardTemplate.getPadding();
 
-    RAW_HIGHSCORE = cardSettings.isCardRawHighscore();
-    USE_DIRECTB2S = cardSettings.isCardUseDirectB2S();
-    GRAY_SCALE = cardSettings.isCardGrayScale();
+    RAW_HIGHSCORE = cardTemplate.isRawScore();
+    USE_DIRECTB2S = cardTemplate.isUseDirectB2S();
+    GRAY_SCALE = cardTemplate.isGrayScale();
 
-    BLUR_PIXELS = cardSettings.getCardBlur();
+    BLUR_PIXELS = cardTemplate.getBlur();
 
-    TRANSPARENT_BACKGROUND = cardSettings.getTransparentBackground();
-    TRANSPARENT_PERCENTAGE = cardSettings.getTransparentPercentage();
-    RENDER_TABLE_NAME = cardSettings.getRenderTableName();
+    TRANSPARENT_BACKGROUND = cardTemplate.isTransparentBackground();
+    TRANSPARENT_PERCENTAGE = cardTemplate.getTransparentPercentage();
+    RENDER_TABLE_NAME = cardTemplate.isRenderTableName();
   }
 
   public BufferedImage draw() throws Exception {
@@ -114,13 +115,13 @@ public class CardGraphics {
         backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
       }
 
-      float alphaWhite = cardSettings.getCardAlphacompositeWhite();
-      float alphaBlack = cardSettings.getCardAlphacompositeBlack();
+      float alphaWhite = cardTemplate.getAlphaWhite();
+      float alphaBlack = cardTemplate.getAlphaBlack();
       ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
     }
 
     renderCardData(backgroundImage, game);
-    int borderWidth = cardSettings.getCardBorderWidth();
+    int borderWidth = cardTemplate.getBorderWidth();
     ImageUtil.drawBorder(backgroundImage, borderWidth);
 
     return backgroundImage;
@@ -141,9 +142,9 @@ public class CardGraphics {
     }
 
     File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
-    File sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".jpg");
+    File sourceImage = new File(backgroundsFolder, cardTemplate.getBackground() + ".jpg");
     if (!sourceImage.exists()) {
-      sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".png");
+      sourceImage = new File(backgroundsFolder, cardTemplate.getBackground() + ".png");
     }
     if (!sourceImage.exists()) {
       File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));

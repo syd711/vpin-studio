@@ -311,10 +311,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       BeanBindingUtil.bindFontLabel(scoreFontLabel, getCardTemplate(), "cardScore");
 
       BeanBindingUtil.bindColorPicker(fontColorSelector, getCardTemplate(), "cardFontColor");
-      BeanBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");xx
+      BeanBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");
 
-      BeanBindingUtil.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "cardUseDirectB2S");
-      BeanBindingUtil.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "cardGrayScale");
+      BeanBindingUtil.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
+      BeanBindingUtil.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
       BeanBindingUtil.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
       BeanBindingUtil.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
 
@@ -323,21 +323,21 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
       backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
 
-      BeanBindingUtil.bindComboBox(backgroundImageCombo, getCardTemplate(), "cardBackground");
-      String backgroundName = getCardTemplate().getCardBackground();
+      BeanBindingUtil.bindComboBox(backgroundImageCombo, getCardTemplate(), "background");
+      String backgroundName = getCardTemplate().getBackground();
       if (StringUtils.isEmpty(backgroundName)) {
         backgroundImageCombo.setValue(imageList.get(0));
       }
 
-      BeanBindingUtil.bindTextField(titleText, getCardTemplate(), "cardTitleText", "Highscores");
-      BeanBindingUtil.bindSlider(brightenSlider, getCardTemplate(), "cardAlphacompositeWhite");
-      BeanBindingUtil.bindSlider(darkenSlider, getCardTemplate(), "cardAlphacompositeBlack");
-      BeanBindingUtil.bindSlider(blurSlider, getCardTemplate(), "cardBlur");
-      BeanBindingUtil.bindSlider(borderSlider, getCardTemplate(), "cardBorderWidth");
+      BeanBindingUtil.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
+      BeanBindingUtil.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
+      BeanBindingUtil.bindSlider(darkenSlider, getCardTemplate(), "alphaBlack");
+      BeanBindingUtil.bindSlider(blurSlider, getCardTemplate(), "blur");
+      BeanBindingUtil.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
       BeanBindingUtil.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
-      BeanBindingUtil.bindSpinner(marginTopSpinner, getCardTemplate(), "cardPadding");
-      BeanBindingUtil.bindSpinner(wheelImageSpinner, getCardTemplate(), "cardHighscoresRowPaddingLeft");
-      BeanBindingUtil.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "cardHighscoresRowseparator");
+      BeanBindingUtil.bindSpinner(marginTopSpinner, getCardTemplate(), "padding");
+      BeanBindingUtil.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
+      BeanBindingUtil.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin");
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -347,7 +347,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       });
       updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
 
-      BeanBindingUtil.bindCheckbox(renderRawHighscore, getCardTemplate(), "cardRawHighscore");
+      BeanBindingUtil.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);

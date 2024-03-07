@@ -6,19 +6,17 @@ public class CardTemplate {
   public final static String DEFAULT = "default";
 
   private String name = DEFAULT;
-  private int cardAlphacompositeBlack = 33;
-  private int cardAlphacompositeWhite = 1;
-  private String cardBackground = "Old Bumbers";
-  private int cardBorderWidth = 1;
-  private String cardRatio = "RATIO_16x9";
-  private int cardPadding = 10;
-  private int cardHighscoresRowPaddingLeft = 32;
-  private int cardHighscoresRowSeparator = 5;
-  private int cardScaling = 1280;
-  private int cardBlur = 6;
+  private int alphaBlack = 33;
+  private int alphaWhite = 1;
+  private String background = "Old Bumbers";
+  private int borderWidth = 1;
+  private int padding = 10;
+  private int wheelPadding = 32;
+  private int rowMargin = 5;
+  private int blur = 6;
   private String cardFontColor = "#FFFFFF";
-  private boolean cardGrayScale = false;
-  private boolean cardRawHighscore = true;
+  private boolean grayScale = false;
+  private boolean rawScore = true;
   private int cardSampleTable = 1;
   private String cardScoreFontName = "Monospaced";
   private int cardScoreFontSize = 90;
@@ -29,8 +27,35 @@ public class CardTemplate {
   private String cardTitleFontName = "Cambria";
   private int cardTitleFontSize = 120;
   private String cardTitleFontStyle = "Regular";
-  private String cardTitleText = "Highscores";
-  private boolean cardUseDirectB2S = true;
+  private String title = "Highscores";
+  private boolean useDirectB2S = true;
+  private boolean transparentBackground = false;
+  private int transparentPercentage = 0;
+  private boolean renderTableName = true;
+
+  public boolean isTransparentBackground() {
+    return transparentBackground;
+  }
+
+  public void setTransparentBackground(boolean transparentBackground) {
+    this.transparentBackground = transparentBackground;
+  }
+
+  public int getTransparentPercentage() {
+    return transparentPercentage;
+  }
+
+  public void setTransparentPercentage(int transparentPercentage) {
+    this.transparentPercentage = transparentPercentage;
+  }
+
+  public boolean isRenderTableName() {
+    return renderTableName;
+  }
+
+  public void setRenderTableName(boolean renderTableName) {
+    this.renderTableName = renderTableName;
+  }
 
   public String getName() {
     return name;
@@ -40,84 +65,68 @@ public class CardTemplate {
     this.name = name;
   }
 
-  public int getCardAlphacompositeBlack() {
-    return cardAlphacompositeBlack;
+  public int getAlphaBlack() {
+    return alphaBlack;
   }
 
-  public void setCardAlphacompositeBlack(int cardAlphacompositeBlack) {
-    this.cardAlphacompositeBlack = cardAlphacompositeBlack;
+  public void setAlphaBlack(int alphaBlack) {
+    this.alphaBlack = alphaBlack;
   }
 
-  public int getCardAlphacompositeWhite() {
-    return cardAlphacompositeWhite;
+  public int getAlphaWhite() {
+    return alphaWhite;
   }
 
-  public void setCardAlphacompositeWhite(int cardAlphacompositeWhite) {
-    this.cardAlphacompositeWhite = cardAlphacompositeWhite;
+  public void setAlphaWhite(int alphaWhite) {
+    this.alphaWhite = alphaWhite;
   }
 
-  public String getCardBackground() {
-    return cardBackground;
+  public String getBackground() {
+    return background;
   }
 
-  public void setCardBackground(String cardBackground) {
-    this.cardBackground = cardBackground;
+  public void setBackground(String background) {
+    this.background = background;
   }
 
-  public int getCardBorderWidth() {
-    return cardBorderWidth;
+  public int getBorderWidth() {
+    return borderWidth;
   }
 
-  public void setCardBorderWidth(int cardBorderWidth) {
-    this.cardBorderWidth = cardBorderWidth;
+  public void setBorderWidth(int borderWidth) {
+    this.borderWidth = borderWidth;
   }
 
-  public String getCardRatio() {
-    return cardRatio;
+  public int getPadding() {
+    return padding;
   }
 
-  public void setCardRatio(String cardRatio) {
-    this.cardRatio = cardRatio;
+  public void setPadding(int padding) {
+    this.padding = padding;
   }
 
-  public int getCardPadding() {
-    return cardPadding;
+  public int getWheelPadding() {
+    return wheelPadding;
   }
 
-  public void setCardPadding(int cardPadding) {
-    this.cardPadding = cardPadding;
+  public void setWheelPadding(int wheelPadding) {
+    this.wheelPadding = wheelPadding;
   }
 
-  public int getCardHighscoresRowPaddingLeft() {
-    return cardHighscoresRowPaddingLeft;
+  public int getRowMargin() {
+    return rowMargin;
   }
 
-  public void setCardHighscoresRowPaddingLeft(int cardHighscoresRowPaddingLeft) {
-    this.cardHighscoresRowPaddingLeft = cardHighscoresRowPaddingLeft;
+  public void setRowMargin(int rowMargin) {
+    this.rowMargin = rowMargin;
   }
 
-  public int getCardHighscoresRowSeparator() {
-    return cardHighscoresRowSeparator;
+  public int getBlur() {
+    return blur;
   }
 
-  public void setCardHighscoresRowSeparator(int cardHighscoresRowSeparator) {
-    this.cardHighscoresRowSeparator = cardHighscoresRowSeparator;
-  }
-
-  public int getCardScaling() {
-    return cardScaling;
-  }
-
-  public void setCardScaling(int cardScaling) {
-    this.cardScaling = cardScaling;
-  }
-
-  public int getCardBlur() {
-    return cardBlur;
-  }
-
-  public void setCardBlur(int cardBlur) {
-    this.cardBlur = cardBlur;
+  public void setBlur(int blur) {
+    this.blur = blur;
   }
 
   public String getCardFontColor() {
@@ -128,20 +137,20 @@ public class CardTemplate {
     this.cardFontColor = cardFontColor;
   }
 
-  public boolean isCardGrayScale() {
-    return cardGrayScale;
+  public boolean isGrayScale() {
+    return grayScale;
   }
 
-  public void setCardGrayScale(boolean cardGrayScale) {
-    this.cardGrayScale = cardGrayScale;
+  public void setGrayScale(boolean grayScale) {
+    this.grayScale = grayScale;
   }
 
-  public boolean isCardRawHighscore() {
-    return cardRawHighscore;
+  public boolean isRawScore() {
+    return rawScore;
   }
 
-  public void setCardRawHighscore(boolean cardRawHighscore) {
-    this.cardRawHighscore = cardRawHighscore;
+  public void setRawScore(boolean rawScore) {
+    this.rawScore = rawScore;
   }
 
   public int getCardSampleTable() {
@@ -224,20 +233,20 @@ public class CardTemplate {
     this.cardTitleFontStyle = cardTitleFontStyle;
   }
 
-  public String getCardTitleText() {
-    return cardTitleText;
+  public String getTitle() {
+    return title;
   }
 
-  public void setCardTitleText(String cardTitleText) {
-    this.cardTitleText = cardTitleText;
+  public void setTitle(String title) {
+    this.title = title;
   }
 
-  public boolean isCardUseDirectB2S() {
-    return cardUseDirectB2S;
+  public boolean isUseDirectB2S() {
+    return useDirectB2S;
   }
 
-  public void setCardUseDirectB2S(boolean cardUseDirectB2S) {
-    this.cardUseDirectB2S = cardUseDirectB2S;
+  public void setUseDirectB2S(boolean useDirectB2S) {
+    this.useDirectB2S = useDirectB2S;
   }
 
   @Override
