@@ -35,9 +35,9 @@ public class CardTemplates extends JsonSettings {
     templates.remove(cardTemplate);
   }
 
-  public CardTemplate getTemplate(String templateName) {
+  public CardTemplate getTemplate(int gameId) {
     for (CardTemplate template : templates) {
-      if (template.getName().equals(templateName)) {
+      if (template.getGameIds().contains(gameId)) {
         return template;
       }
     }

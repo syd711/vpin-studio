@@ -58,13 +58,13 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
-  public boolean generateCard(Game game, String templateName, boolean generateSampleCard) {
+  public boolean generateCard(Game game, boolean generateSampleCard) {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game, game.getGameDisplayName());
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         CardTemplates cardTemplates = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
-        CardTemplate template = cardTemplates.getTemplate(templateName);
+        CardTemplate template = cardTemplates.getTemplate(game.getId());
 
         //sample card are always generated
         if (generateSampleCard) {

@@ -261,17 +261,17 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onFontTitleSelect() {
-    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardTitle", titleFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "title", titleFontLabel);
   }
 
   @FXML
   private void onFontTableSelect() {
-    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardTable", tableFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "table", tableFontLabel);
   }
 
   @FXML
   private void onFontScoreSelect() {
-    BeanBindingUtil.bindFontSelector(getCardTemplate(), "cardScore", scoreFontLabel);
+    BeanBindingUtil.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
   }
 
   @FXML
@@ -306,12 +306,12 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
 
     try {      
-      BeanBindingUtil.bindFontLabel(titleFontLabel, getCardTemplate(), "cardTitle");
-      BeanBindingUtil.bindFontLabel(tableFontLabel, getCardTemplate(), "cardTable");
-      BeanBindingUtil.bindFontLabel(scoreFontLabel, getCardTemplate(), "cardScore");
+      BeanBindingUtil.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
+      BeanBindingUtil.bindFontLabel(tableFontLabel, getCardTemplate(), "table");
+      BeanBindingUtil.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
 
-      BeanBindingUtil.bindColorPicker(fontColorSelector, getCardTemplate(), "cardFontColor");
-      BeanBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "cardSampleTable");
+      BeanBindingUtil.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
+      BeanBindingUtil.bindHighscoreTablesComboBox(client, tableCombo, getCardTemplate(), "sampleTable");
 
       BeanBindingUtil.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
       BeanBindingUtil.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");

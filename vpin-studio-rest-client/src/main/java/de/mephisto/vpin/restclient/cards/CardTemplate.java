@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CardTemplate {
@@ -14,24 +16,34 @@ public class CardTemplate {
   private int wheelPadding = 32;
   private int rowMargin = 5;
   private int blur = 6;
-  private String cardFontColor = "#FFFFFF";
+  private String fontColor = "#FFFFFF";
   private boolean grayScale = false;
   private boolean rawScore = true;
   private int cardSampleTable = 1;
-  private String cardScoreFontName = "Monospaced";
-  private int cardScoreFontSize = 90;
-  private String cardScoreFontStyle = "Regular";
-  private String cardTableFontName = "Impact";
-  private int cardTableFontSize = 72;
-  private String cardTableFontStyle = "Regular";
-  private String cardTitleFontName = "Cambria";
-  private int cardTitleFontSize = 120;
-  private String cardTitleFontStyle = "Regular";
+  private String scoreFontName = "Monospaced";
+  private int scoreFontSize = 90;
+  private String scoreFontStyle = "Regular";
+  private String tableFontName = "Impact";
+  private int tableFontSize = 72;
+  private String tableFontStyle = "Regular";
+  private String titleFontName = "Cambria";
+  private int titleFontSize = 120;
+  private String titleFontStyle = "Regular";
   private String title = "Highscores";
   private boolean useDirectB2S = true;
   private boolean transparentBackground = false;
   private int transparentPercentage = 0;
   private boolean renderTableName = true;
+
+  private List<Integer> gameIds = new ArrayList<>();
+
+  public List<Integer> getGameIds() {
+    return gameIds;
+  }
+
+  public void setGameIds(List<Integer> gameIds) {
+    this.gameIds = gameIds;
+  }
 
   public boolean isTransparentBackground() {
     return transparentBackground;
@@ -129,12 +141,12 @@ public class CardTemplate {
     this.blur = blur;
   }
 
-  public String getCardFontColor() {
-    return cardFontColor;
+  public String getFontColor() {
+    return fontColor;
   }
 
-  public void setCardFontColor(String cardFontColor) {
-    this.cardFontColor = cardFontColor;
+  public void setFontColor(String fontColor) {
+    this.fontColor = fontColor;
   }
 
   public boolean isGrayScale() {
@@ -161,76 +173,76 @@ public class CardTemplate {
     this.cardSampleTable = cardSampleTable;
   }
 
-  public String getCardScoreFontName() {
-    return cardScoreFontName;
+  public String getScoreFontName() {
+    return scoreFontName;
   }
 
-  public void setCardScoreFontName(String cardScoreFontName) {
-    this.cardScoreFontName = cardScoreFontName;
+  public void setScoreFontName(String scoreFontName) {
+    this.scoreFontName = scoreFontName;
   }
 
-  public int getCardScoreFontSize() {
-    return cardScoreFontSize;
+  public int getScoreFontSize() {
+    return scoreFontSize;
   }
 
-  public void setCardScoreFontSize(int cardScoreFontSize) {
-    this.cardScoreFontSize = cardScoreFontSize;
+  public void setScoreFontSize(int scoreFontSize) {
+    this.scoreFontSize = scoreFontSize;
   }
 
-  public String getCardScoreFontStyle() {
-    return cardScoreFontStyle;
+  public String getScoreFontStyle() {
+    return scoreFontStyle;
   }
 
-  public void setCardScoreFontStyle(String cardScoreFontStyle) {
-    this.cardScoreFontStyle = cardScoreFontStyle;
+  public void setScoreFontStyle(String scoreFontStyle) {
+    this.scoreFontStyle = scoreFontStyle;
   }
 
-  public String getCardTableFontName() {
-    return cardTableFontName;
+  public String getTableFontName() {
+    return tableFontName;
   }
 
-  public void setCardTableFontName(String cardTableFontName) {
-    this.cardTableFontName = cardTableFontName;
+  public void setTableFontName(String tableFontName) {
+    this.tableFontName = tableFontName;
   }
 
-  public int getCardTableFontSize() {
-    return cardTableFontSize;
+  public int getTableFontSize() {
+    return tableFontSize;
   }
 
-  public void setCardTableFontSize(int cardTableFontSize) {
-    this.cardTableFontSize = cardTableFontSize;
+  public void setTableFontSize(int tableFontSize) {
+    this.tableFontSize = tableFontSize;
   }
 
-  public String getCardTableFontStyle() {
-    return cardTableFontStyle;
+  public String getTableFontStyle() {
+    return tableFontStyle;
   }
 
-  public void setCardTableFontStyle(String cardTableFontStyle) {
-    this.cardTableFontStyle = cardTableFontStyle;
+  public void setTableFontStyle(String tableFontStyle) {
+    this.tableFontStyle = tableFontStyle;
   }
 
-  public String getCardTitleFontName() {
-    return cardTitleFontName;
+  public String getTitleFontName() {
+    return titleFontName;
   }
 
-  public void setCardTitleFontName(String cardTitleFontName) {
-    this.cardTitleFontName = cardTitleFontName;
+  public void setTitleFontName(String titleFontName) {
+    this.titleFontName = titleFontName;
   }
 
-  public int getCardTitleFontSize() {
-    return cardTitleFontSize;
+  public int getTitleFontSize() {
+    return titleFontSize;
   }
 
-  public void setCardTitleFontSize(int cardTitleFontSize) {
-    this.cardTitleFontSize = cardTitleFontSize;
+  public void setTitleFontSize(int titleFontSize) {
+    this.titleFontSize = titleFontSize;
   }
 
-  public String getCardTitleFontStyle() {
-    return cardTitleFontStyle;
+  public String getTitleFontStyle() {
+    return titleFontStyle;
   }
 
-  public void setCardTitleFontStyle(String cardTitleFontStyle) {
-    this.cardTitleFontStyle = cardTitleFontStyle;
+  public void setTitleFontStyle(String titleFontStyle) {
+    this.titleFontStyle = titleFontStyle;
   }
 
   public String getTitle() {
