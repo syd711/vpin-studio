@@ -63,7 +63,7 @@ public class DiscordCompetitionService {
         ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
         List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
-        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game, null);
+        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
         versionedScores.add(latestScore);
 
         //oldest versionedScores first to replay in the correct order

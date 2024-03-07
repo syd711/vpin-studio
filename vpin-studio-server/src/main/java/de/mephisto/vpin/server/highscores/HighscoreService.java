@@ -11,12 +11,12 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -270,11 +270,10 @@ public class HighscoreService implements InitializingBean {
    * Returns a list of all scores for the given game
    *
    * @param game        the game to retrieve the highscores for
-   * @param displayName the optional display name/name of the table the summary is for
    * @return all highscores of the given player
    */
   @NonNull
-  public ScoreSummary getScoreSummary(long serverId, Game game, @Nullable String displayName) {
+  public ScoreSummary getScoreSummary(long serverId, Game game) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore.isPresent()) {
@@ -284,19 +283,6 @@ public class HighscoreService implements InitializingBean {
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
-
-      HighscoreMetadata metadata = new HighscoreMetadata();
-      metadata.setDisplayName(displayName);
-      metadata.setModified(h.getLastModified());
-      metadata.setScanned(h.getLastScanned());
-      metadata.setFilename(h.getFilename());
-      metadata.setType(h.getType() != null ? HighscoreType.valueOf(h.getType()) : null);
-      metadata.setStatus(h.getStatus());
-      summary.setMetadata(metadata);
-    }
-    else {
-      HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
-      summary.setMetadata(metadata);
     }
     return summary;
   }

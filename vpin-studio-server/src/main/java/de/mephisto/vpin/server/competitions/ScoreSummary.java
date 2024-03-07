@@ -11,19 +11,10 @@ public class ScoreSummary {
   private String raw;
   private Date createdAt;
   private List<Score> scores;
-  private HighscoreMetadata metadata;
 
   public ScoreSummary(List<Score> scores, Date createdAt) {
     this.scores = scores;
     this.createdAt = createdAt;
-  }
-
-  public HighscoreMetadata getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(HighscoreMetadata metadata) {
-    this.metadata = metadata;
   }
 
   public String getRaw() {

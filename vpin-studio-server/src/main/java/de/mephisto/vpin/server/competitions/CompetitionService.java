@@ -176,7 +176,7 @@ public class CompetitionService implements InitializingBean {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
 
@@ -330,7 +330,7 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
   @Override

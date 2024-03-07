@@ -1,8 +1,7 @@
-package de.mephisto.vpin.server.highscores.vpreg;
+package de.mephisto.vpin.server.highscores.parsing.vpreg;
 
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +43,7 @@ public class VPRegTest {
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
     VPReg reg = new VPReg(vpRegFile);
     List<String> entries = reg.getEntries();
+    int count = 0;
     for (String entry : entries) {
       if (entry.toLowerCase().endsWith("lut")) {
         continue;
@@ -59,9 +59,10 @@ public class VPRegTest {
       assertNotNull(vpRegScoreSummary, "Reading failed for " + entry);
       assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for " + entry);
       assertNotNull(vpRegScoreSummary.getScores().get(0).getInitials(), "No score initials found for " + entry);
-
+      count++;
 //      assertNotEquals(0, vpRegScoreSummary.getScores().get(0).getScore(), "No score record found for " + entry);
     }
+    System.out.println("Tested " + count + " entries");
   }
 
   @Test

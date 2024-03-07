@@ -145,9 +145,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         MediaUtil.openMedia(s);
       }
       else {
-        ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(g.getId());
-        String status = summary.getMetadata().getStatus();
-        WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed: " + status);
+        WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed, check log files for details.");
       }
     }
   }
