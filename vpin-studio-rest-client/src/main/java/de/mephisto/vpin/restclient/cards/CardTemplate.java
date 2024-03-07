@@ -19,7 +19,6 @@ public class CardTemplate {
   private String fontColor = "#FFFFFF";
   private boolean grayScale = false;
   private boolean rawScore = true;
-  private int cardSampleTable = 1;
   private String scoreFontName = "Monospaced";
   private int scoreFontSize = 90;
   private String scoreFontStyle = "Regular";
@@ -34,6 +33,8 @@ public class CardTemplate {
   private boolean transparentBackground = false;
   private int transparentPercentage = 0;
   private boolean renderTableName = true;
+  private boolean renderTitle = true;
+  private boolean renderWheelIcon = true;
 
   private List<Integer> gameIds = new ArrayList<>();
 
@@ -43,6 +44,22 @@ public class CardTemplate {
 
   public void setGameIds(List<Integer> gameIds) {
     this.gameIds = gameIds;
+  }
+
+  public boolean isRenderWheelIcon() {
+    return renderWheelIcon;
+  }
+
+  public void setRenderWheelIcon(boolean renderWheelIcon) {
+    this.renderWheelIcon = renderWheelIcon;
+  }
+
+  public boolean isRenderTitle() {
+    return renderTitle;
+  }
+
+  public void setRenderTitle(boolean renderTitle) {
+    this.renderTitle = renderTitle;
   }
 
   public boolean isTransparentBackground() {
@@ -163,14 +180,6 @@ public class CardTemplate {
 
   public void setRawScore(boolean rawScore) {
     this.rawScore = rawScore;
-  }
-
-  public int getCardSampleTable() {
-    return cardSampleTable;
-  }
-
-  public void setCardSampleTable(int cardSampleTable) {
-    this.cardSampleTable = cardSampleTable;
   }
 
   public String getScoreFontName() {

@@ -23,6 +23,12 @@ public class CardTemplates extends JsonSettings {
 
   @NonNull
   public CardTemplate getDefaultTemplate() {
+    if (this.templates.isEmpty()) {
+      CardTemplate defaultTemplate = new CardTemplate();
+      this.templates.add(defaultTemplate);
+      return defaultTemplate;
+    }
+
     for (CardTemplate template : templates) {
       if (template.getName().equals(CardTemplate.DEFAULT)) {
         return template;

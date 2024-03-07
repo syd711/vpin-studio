@@ -12,6 +12,15 @@ public class CardSettings extends JsonSettings {
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
+  private int sampleTable = 1;
+
+  public int getSampleTable() {
+    return sampleTable;
+  }
+
+  public void setSampleTable(int sampleTable) {
+    this.sampleTable = sampleTable;
+  }
 
   public String getPopperScreen() {
     return popperScreen;
