@@ -45,9 +45,7 @@ public class TableImportController implements Initializable, DialogController {
     GameList importList = new GameList();
     for (CheckBox checkBox : checkBoxes) {
       if (checkBox.isSelected()) {
-        GameListItem item = new GameListItem();
-        item.setName(checkBox.getText());
-        item.setEmuId((Integer) checkBox.getUserData());
+        GameListItem item = (GameListItem) checkBox.getUserData();
         importList.getItems().add(item);
       }
     }
@@ -104,7 +102,7 @@ public class TableImportController implements Initializable, DialogController {
 
       for (GameListItem item : importableTables.getItems()) {
         CheckBox checkBox = new CheckBox(item.getName());
-        checkBox.setUserData(item.getEmuId());
+        checkBox.setUserData(item);
         checkBox.setStyle("-fx-font-size: 14px;");
         checkBox.setPrefHeight(30);
         tableBox.getChildren().add(checkBox);

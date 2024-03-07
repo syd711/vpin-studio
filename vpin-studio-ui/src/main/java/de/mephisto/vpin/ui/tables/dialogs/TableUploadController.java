@@ -220,6 +220,7 @@ public class TableUploadController implements Initializable, DialogController {
       this.gameId = game.getId();
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+      this.uploadAndCloneRadio.setDisable(game.getGameFileName().contains("\\"));
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);

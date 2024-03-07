@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BackglassService {
@@ -144,6 +142,7 @@ public class BackglassService {
         result.add(directB2SData);
       }
     }
+    Collections.sort(result, Comparator.comparing(o -> o.getName().toLowerCase()));
     return result;
   }
 

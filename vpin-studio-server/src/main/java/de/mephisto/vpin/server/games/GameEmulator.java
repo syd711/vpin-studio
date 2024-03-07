@@ -3,14 +3,11 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
@@ -83,6 +80,10 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+  }
+
+  public String getGameFileName(@NonNull File file) {
+    return file.getAbsolutePath().substring(getTablesFolder().getAbsolutePath().length() + 1);
   }
 
   public String getGameExt() {

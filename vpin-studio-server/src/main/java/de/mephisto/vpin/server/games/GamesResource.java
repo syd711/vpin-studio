@@ -286,7 +286,7 @@ public class GamesResource {
 
             //the uploaded file name is already updated here
             File oldGameFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
-            if (!oldGameFile.equals(uploadFile)) {
+            if (!oldGameFile.getParentFile().equals(uploadFile.getParentFile())) {
               if (oldGameFile.exists()) {
                 if (oldGameFile.delete()) {
                   LOG.info("Deleted existing old game file \"" + oldGameFile.getAbsolutePath() + "\"");
@@ -330,7 +330,6 @@ public class GamesResource {
               tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
-              tableDetails.setGameVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId, false);
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
 

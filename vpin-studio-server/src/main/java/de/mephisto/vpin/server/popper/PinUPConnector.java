@@ -603,8 +603,9 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   public int importGame(@NonNull File file, int emuId) {
+    GameEmulator gameEmulator = getGameEmulator(emuId);
     String name = FilenameUtils.getBaseName(file.getName());
-    String gameFileName = file.getName();
+    String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
     return importGame(emuId, name, gameFileName, gameDisplayName, null);
   }
@@ -632,7 +633,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + gameName + "' / '" + gameFileName + "'");
+      LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);

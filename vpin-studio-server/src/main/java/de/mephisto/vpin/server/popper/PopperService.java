@@ -80,9 +80,10 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
       File vpxTablesFolder = emulator.getTablesFolder();
       List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
       List<Game> games = pinUPConnector.getGames();
-      List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+      List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
       for (File file : files) {
-        if (!filesNames.contains(file.getName())) {
+        String gameFileName = emulator.getGameFileName(file);
+        if (!emulatorGameFileNames.contains(gameFileName)) {
           GameListItem item = new GameListItem();
           item.setName(file.getName());
           item.setFileName(file.getAbsolutePath());
