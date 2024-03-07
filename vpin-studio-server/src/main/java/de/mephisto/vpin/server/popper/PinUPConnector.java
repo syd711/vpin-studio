@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
@@ -13,8 +12,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -88,7 +85,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
-    throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
+    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
+    return null;
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -1507,14 +1505,9 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    File file = systemService.getPinUPDatabaseFile();
-    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-
-    sqlVersion = this.getSqlVersion();
-
+  public void loadEmulators() {
     List<Emulator> ems = this.getEmulators();
+    this.emulators.clear();
     for (Emulator emulator : ems) {
       try {
         if (!isValidVPXEmulator(emulator)) {
@@ -1529,7 +1522,22 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         LOG.error("Emulator initialization failed: " + e.getMessage(), e);
       }
     }
-    LOG.info("Finished Popper scripts configuration check.");
+
+    if (this.emulators.isEmpty()) {
+      LOG.error("****************************************************************************************");
+      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in PinUP Popper.");
+      LOG.error("****************************************************************************************");
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    File file = systemService.getPinUPDatabaseFile();
+    dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+
+    sqlVersion = this.getSqlVersion();
+
+    this.loadEmulators();
 
     getPupPlayerDisplays();
 

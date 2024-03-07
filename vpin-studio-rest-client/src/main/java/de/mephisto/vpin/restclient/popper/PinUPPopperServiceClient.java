@@ -208,4 +208,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
+  public void clearCache() {
+    getRestClient().clearCache("popper/emulators");
+  }
 }

@@ -118,6 +118,7 @@ public class GameService implements InitializingBean {
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public boolean reload() {
+    pinUPConnector.loadEmulators();
     mameRomAliasService.clearCache();
     highscoreService.refreshAvailableScores();
     return true;

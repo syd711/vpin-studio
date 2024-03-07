@@ -532,8 +532,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    ValidationState validationState = game.getValidationState();
-    DismissalUtil.dismissValidation(game, validationState);
+    if(game != null) {
+      ValidationState validationState = game.getValidationState();
+      DismissalUtil.dismissValidation(game, validationState);
+    }
   }
 
   @FXML
@@ -731,6 +733,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onReloadPressed(ActionEvent e) {
+    client.getPinUPPopperService().clearCache();
     client.getGameService().reload();
     this.onReload();
   }
@@ -789,6 +792,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
           GameRepresentation gameRepresentation = games.get(0);
           this.vpsBtn.setDisable(StringUtils.isEmpty(gameRepresentation.getExtTableVersionId()));
+        }
+        else {
+          this.validationErrorLabel.setText("No tables found");
+          this.validationErrorText.setText("Check the emulator setup in PinUP Popper. Make sure that all(!) directories are set and reload after fixing these.");
         }
 
         this.importBtn.setDisable(false);
