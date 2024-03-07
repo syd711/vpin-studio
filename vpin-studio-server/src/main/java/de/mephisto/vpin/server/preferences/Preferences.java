@@ -71,6 +71,8 @@ public class Preferences {
 
   private String highscoreCardSettings;
 
+  private String highscoreCardTemplates;
+
   private String pauseMenuSettings;
 
   @Column(length = 1024)
@@ -420,5 +422,11 @@ public class Preferences {
     this.ignoredValidations = ignoredValidations;
   }
 
+  public String getHighscoreCardTemplates() {
+    return highscoreCardTemplates;
+  }
 
+  public void setHighscoreCardTemplates(String highscoreCardTemplates) {
+    this.highscoreCardTemplates = highscoreCardTemplates;
+  }
 }

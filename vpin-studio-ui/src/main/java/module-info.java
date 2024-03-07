@@ -35,6 +35,7 @@ module de.mephisto.vpin.ui {
   requires de.mephisto.vpin.commons;
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.iscored;
+  requires commons.beanutils;
 //  requires sevenzipjbinding;
 
   opens de.mephisto.vpin.ui to javafx.fxml;
@@ -89,4 +90,6 @@ module de.mephisto.vpin.ui {
   opens de.mephisto.vpin.ui.vps.containers to javafx.fxml;
   exports de.mephisto.vpin.ui.vps.dialogs;
   opens de.mephisto.vpin.ui.vps.dialogs to javafx.fxml;
+  exports de.mephisto.vpin.ui.util.binding;
+  opens de.mephisto.vpin.ui.util.binding to javafx.fxml;
 }

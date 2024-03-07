@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -24,6 +24,6 @@ public class ResetPreferencesController implements Initializable {
     keyNames.add(0, "");
     resetKeyCombo.setItems(FXCollections.observableList(keyNames));
 
-    BindingUtil.bindComboBox(resetKeyCombo, PreferenceNames.RESET_KEY);
+    PreferenceBindingUtil.bindComboBox(resetKeyCombo, PreferenceNames.RESET_KEY);
   }
 }

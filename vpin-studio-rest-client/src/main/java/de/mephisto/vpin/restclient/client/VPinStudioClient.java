@@ -38,8 +38,6 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
-import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
@@ -54,13 +52,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.List;
 
-public class VPinStudioClient implements ObservedPropertyChangeListener, OverlayClient {
+public class VPinStudioClient implements OverlayClient {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   public final static String API = "api/v1/";
-
-  private final Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
   private final RestClient restClient;
 
@@ -376,50 +372,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     });
   }
 
-  public ObservedProperties getProperties(String propertiesName) {
-    if (!observedProperties.containsKey(propertiesName)) {
-      Map<String, Object> result = restClient.get(VPinStudioClientService.API + "properties/" + propertiesName, Map.class);
-      Properties properties = new Properties();
-      properties.putAll(result);
-      ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
-      observedProperties.setObserver(this);
-      this.observedProperties.put(propertiesName, observedProperties);
-    }
-
-    return this.observedProperties.get(propertiesName);
-  }
-
   public String getURL(String segment) {
     if (!segment.startsWith("http") && !segment.contains(VPinStudioClientService.API)) {
       return restClient.getBaseUrl() + VPinStudioClientService.API + segment;
     }
     return segment;
-  }
-
-  @Override
-  public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    try {
-      Map<String, Object> model = new HashMap<>();
-      model.put(key, updatedValue.get());
-      Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
-      ObservedProperties obsprops = this.observedProperties.get(propertiesName);
-      obsprops.notifyChange(key, updatedValue.get());
-    } catch (Exception e) {
-      LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public void changed(String propertiesName, Map<String, String> values) {
-    try {
-      Map<String, Object> model = new HashMap<>();
-      model.putAll(values);
-      Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
-      ObservedProperties obsprops = this.observedProperties.get(propertiesName);
-      obsprops.notifyChange(values);
-    } catch (Exception e) {
-      LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
-    }
   }
 
   public void clearCache() {

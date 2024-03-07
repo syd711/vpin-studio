@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PlayerRankingsPreferencesController implements Initializable {
 

@@ -24,19 +24,19 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
 
    <right>
-      <BorderPane prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+      <BorderPane prefWidth="350.0" styleClass="subpanel" BorderPane.alignment="CENTER">
 
          <center>
-            <Accordion fx:id="accordion" prefWidth="300.0" BorderPane.alignment="CENTER">
+            <Accordion fx:id="accordion" BorderPane.alignment="CENTER">
               <panes>
-                 <TitledPane fx:id="backgroundSettingsPane" prefWidth="300.0" text="Background Settings">
+                 <TitledPane fx:id="backgroundSettingsPane" text="Background Settings">
                     <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                             <VBox styleClass="accordion-container">
+                             <VBox maxWidth="340.0" styleClass="accordion-container">
                                 <children>
                                     <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
                                        <font>
@@ -51,7 +51,7 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Slider fx:id="alphaPercentageSpinner" layoutX="22.0" layoutY="204.0">
+                                    <Slider fx:id="alphaPercentageSpinner" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -80,26 +80,20 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                    </Label>
-                                    <BorderPane>
-                                       <center>
-                                         <HBox prefWidth="520.0">
-                                            <children>
-                                               <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
-                                                   <HBox.margin>
-                                                      <Insets top="3.0" />
-                                                   </HBox.margin>
-                                                </ComboBox>
-                                            </children>
-                                         </HBox>
-                                       </center>
-                                       <right>
-                                         <Button mnemonicParsing="false" onAction="#onUploadButton" BorderPane.alignment="CENTER">
+                                   <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                      <children>
+                                         <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
+                                             <HBox.margin>
+                                                <Insets top="3.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                         <Button mnemonicParsing="false" onAction="#onUploadButton">
                                             <graphic>
                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                             </graphic>
                                          </Button>
-                                       </right>
-                                    </BorderPane>
+                                      </children>
+                                   </HBox>
                                     <Label text="Brighten Background:" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -108,7 +102,7 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Slider fx:id="brightenSlider">
+                                    <Slider fx:id="brightenSlider" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -121,7 +115,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Slider fx:id="darkenSlider">
+                                    <Slider fx:id="darkenSlider" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -134,7 +128,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Slider fx:id="blurSlider">
+                                    <Slider fx:id="blurSlider" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -147,7 +141,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Slider fx:id="borderSlider">
+                                    <Slider fx:id="borderSlider" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -160,7 +154,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Spinner fx:id="marginTopSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default">
+                                    <Spinner fx:id="marginTopSpinner" editable="true" styleClass="widget-default">
                                        <VBox.margin>
                                           <Insets top="6.0" />
                                        </VBox.margin>
@@ -181,7 +175,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox prefWidth="580.0" styleClass="accordion-container">
+                              <VBox styleClass="accordion-container">
                                  <children>
                                     <Label text="Title Font" textFill="WHITE">
                                        <font>
@@ -287,7 +281,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox prefWidth="580.0" styleClass="accordion-container">
+                              <VBox prefWidth="300.0" spacing="3.0" styleClass="accordion-container">
                                  <children>
                                     <Label text="Title:" textFill="WHITE">
                                        <font>
@@ -307,7 +301,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Spinner fx:id="wheelImageSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
+                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
                                     <Label text="Row Separator:" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -316,10 +310,10 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" prefHeight="26.0" prefWidth="303.0" styleClass="widget-default" />
-                                    <BorderPane prefHeight="36.0" prefWidth="279.0">
+                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
+                                    <BorderPane prefHeight="36.0">
                                        <left>
-                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -339,10 +333,29 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </BorderPane>
+                                    <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <CheckBox fx:id="renderWheelIconCheckbox" layoutX="22.0" layoutY="284.0" mnemonicParsing="false" text="Render Wheel Icon">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
                                     </CheckBox>
                                  </children>
                                  <padding>
@@ -360,7 +373,7 @@
             </Accordion>
          </center>
          <top>
-            <TitledPane collapsible="false" prefHeight="233.0" prefWidth="300.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
+            <TitledPane collapsible="false" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
@@ -369,7 +382,7 @@
                      <children>
                         <BorderPane styleClass="media-parent">
                            <center>
-                              <ImageView fx:id="rawDirectB2SImage" fitHeight="350.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
                                  </viewport>

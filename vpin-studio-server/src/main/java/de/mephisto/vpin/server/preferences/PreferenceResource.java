@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.preferences;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -51,6 +52,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
           return preferencesService.getJsonPreference(key, CardSettings.class);
+        }
+        case PreferenceNames.HIGHSCORE_CARD_TEMPLATES: {
+          return preferencesService.getJsonPreference(key, CardTemplates.class);
         }
         case PreferenceNames.TOURNAMENTS_SETTINGS: {
           return preferencesService.getJsonPreference(key, TournamentSettings.class);

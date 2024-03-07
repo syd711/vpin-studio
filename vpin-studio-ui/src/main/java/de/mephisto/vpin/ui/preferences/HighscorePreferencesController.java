@@ -12,12 +12,10 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class HighscorePreferencesController implements Initializable {
 
