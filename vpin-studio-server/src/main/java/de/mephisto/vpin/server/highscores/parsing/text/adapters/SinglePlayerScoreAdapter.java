@@ -30,16 +30,12 @@ public class SinglePlayerScoreAdapter extends ScoreTextFileAdapterImpl {
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
-    if (StringUtils.isEmpty(defaultInitials)) {
-      defaultInitials = "???";
-    }
-
+  public String convert(@NotNull File file, @NotNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine);
     builder.append("#1");
     builder.append(" ");
-    builder.append(defaultInitials);
+    builder.append("???");
     builder.append("   ");
     builder.append(score1.replaceAll("\\.", ""));
     builder.append("\n");

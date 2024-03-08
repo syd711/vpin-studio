@@ -93,8 +93,7 @@ class HighscoreResolver {
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
-      String defaultInitials = playerService.getAdminPlayerInitials();
-      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile, defaultInitials);
+      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile);
     }
     return null;
   }
@@ -165,8 +164,7 @@ class HighscoreResolver {
       }
       metadata.setType(HighscoreType.NVRam);
 
-      String defaultInitials = playerService.getAdminPlayerInitials();
-      return executePINemHi(nvRamFileName, nvRam, defaultInitials);
+      return executePINemHi(nvRamFileName, nvRam);
     } catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
@@ -175,10 +173,10 @@ class HighscoreResolver {
     return null;
   }
 
-  private String executePINemHi(@NonNull String nvRamFileName, @NonNull File nvRam, @Nullable String defaultInitials) throws Exception {
+  private String executePINemHi(@NonNull String nvRamFileName, @NonNull File nvRam) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName, defaultInitials);
+      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName);
     } catch (Exception e) {
       throw e;
     }

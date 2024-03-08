@@ -9,5 +9,5 @@ public interface ScoreNvRamAdapter {
 
   boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines);
 
-  String convert(@NonNull String nvRam, @NonNull List<String> lines, @Nullable String defaultInitials);
+  String convert(@NonNull String nvRam, @NonNull List<String> lines);
 }

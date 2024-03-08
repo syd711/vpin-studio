@@ -30,7 +30,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
     int count = 0;
     for (File entry : files) {
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry, "???");
+      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
       List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
       assertNotNull(scores, "Reading failed for " + entry);
       assertFalse(scores.isEmpty(), "No score entry found for " + entry);

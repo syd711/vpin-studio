@@ -25,7 +25,7 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
+  public String convert(@NotNull File file, @NotNull List<String> lines) {
     return super.convertAlteringScoreLines(start, entryCount, lines);
   }
 }

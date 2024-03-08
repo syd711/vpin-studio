@@ -60,7 +60,7 @@ public class AlteringScoreInitialsBlocksWithOffsetAdapter extends ScoreTextFileA
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
+  public String convert(@NotNull File file, @NotNull List<String> lines) {
     StringBuilder builder = new StringBuilder(HIGHEST_SCORES + "\n");
 
     for (int index = 0; index < size; index++) {

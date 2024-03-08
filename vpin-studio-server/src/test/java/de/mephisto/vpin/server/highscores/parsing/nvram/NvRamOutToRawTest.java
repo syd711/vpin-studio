@@ -30,7 +30,7 @@ public class NvRamOutToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry.getName(), "???");
+      String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry.getName());
 
       System.out.println(raw);
 
@@ -49,7 +49,7 @@ public class NvRamOutToRawTest {
   public void testSingle() throws Exception {
     ScoringDB scoringDB = ScoringDB.load();
     File entry = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/", "sorcr_l1");
-    String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry.getName(), "???");
+    String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry.getName());
 
     System.out.println(raw);
 

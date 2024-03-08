@@ -10,7 +10,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />
 
-- Introduced "Default Players": The build-in players dialog has an additional checkbox now to mark the default player of a cabinet. If you are not sharing the cabinet that much, the initials of this player are used for older tables highscores, instead of just showing the "???" values. 
+- Introduced "Default Players": The build-in players dialog has an additional checkbox now to mark the default player of a cabinet. 
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/players/add-player.png" width="600" />
 

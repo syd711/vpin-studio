@@ -48,7 +48,7 @@ public class TextHighscoreToRawConverter {
     adapters.add(new TwoPlayersAdapter(8));
   }
 
-  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file, @Nullable String defaultInitials) {
+  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
       return null;
     }
@@ -59,7 +59,7 @@ public class TextHighscoreToRawConverter {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
-          return adapter.convert(file, lines, defaultInitials);
+          return adapter.convert(file, lines);
         }
       }
       LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");

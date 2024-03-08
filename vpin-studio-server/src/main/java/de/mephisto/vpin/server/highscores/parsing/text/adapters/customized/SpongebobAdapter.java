@@ -16,7 +16,7 @@ public class SpongebobAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
+  public String convert(@NotNull File file, @NotNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     for (int i = 1; i < lines.size(); i++) {
       String line = lines.get(i);

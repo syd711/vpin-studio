@@ -10,5 +10,5 @@ public interface ScoreTextFileAdapter {
 
   boolean isApplicable(@NonNull File file, @NonNull List<String> lines);
 
-  String convert(@NonNull File file, @NonNull List<String> lines, @Nullable String defaultInitials);
+  String convert(@NonNull File file, @NonNull List<String> lines);
 }
