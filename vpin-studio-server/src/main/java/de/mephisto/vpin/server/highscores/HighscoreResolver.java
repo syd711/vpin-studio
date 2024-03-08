@@ -11,15 +11,12 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -92,19 +89,7 @@ class HighscoreResolver {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
-
-      FileInputStream fileInputStream = null;
-      try {
-        fileInputStream = new FileInputStream(hsFile);
-        List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-        return HighscoreRawToMachineReadableConverter.convertToMachineReadable(lines);
-      } catch (IOException e) {
-        LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
-      } finally {
-        if (fileInputStream != null) {
-          fileInputStream.close();
-        }
-      }
+      return HighscoreRawToMachineReadableConverter.convertTextFileTextToMachineReadable(hsFile);
     }
     return null;
   }
@@ -113,11 +98,11 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    if(game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
+    if (game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
       return null;
     }
 
-    if(game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
+    if (game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
       return null;
     }
 
@@ -174,7 +159,7 @@ class HighscoreResolver {
         return null;
       }
 
-      return executePINemHi(nvRamFileName, metadata);
+      return executePINemHi(nvRamFileName, metadata, nvRam);
     } catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
@@ -199,7 +184,7 @@ class HighscoreResolver {
     return "";
   }
 
-  private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata) throws Exception {
+  private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata, @NonNull File nvRam) throws Exception {
     metadata.setType(HighscoreType.NVRam);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
@@ -221,7 +206,7 @@ class HighscoreResolver {
       List<String> list = Arrays.asList(stdOut.trim().split("\n"));
       if (list.size() < 5) {
         LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format, because output length are only " + list.size() + " lines.");
-        String raw = HighscoreRawToMachineReadableConverter.convertToMachineReadable(list);
+        String raw = HighscoreRawToMachineReadableConverter.convertNvRamTextToMachineReadable(nvRam, list);
         if (raw == null) {
           LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
           metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");

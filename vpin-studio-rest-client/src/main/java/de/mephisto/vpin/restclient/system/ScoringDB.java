@@ -103,6 +103,16 @@ public class ScoringDB {
 
   private List<String> ignoredVPRegEntries = new ArrayList<>();
 
+  private List<String> ignoredTextFiles = new ArrayList<>();
+
+  public List<String> getIgnoredTextFiles() {
+    return ignoredTextFiles;
+  }
+
+  public void setIgnoredTextFiles(List<String> ignoredTextFiles) {
+    this.ignoredTextFiles = ignoredTextFiles;
+  }
+
   public List<String> getNotSupported() {
     return notSupported;
   }

@@ -16,6 +16,10 @@
       "textFile": ""
     }
   ],
+  "ignoredTextFiles": [
+    "ZekesPeakHighscore.txt",
+    "LineDrive.txt"
+  ],
   "ignoredVPRegEntries": [
     "Gridiron_1977",
     "TripleStrike",
