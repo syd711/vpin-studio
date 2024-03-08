@@ -3,8 +3,7 @@ package de.mephisto.vpin.server.highscores.parsing;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.parsing.text.HighscoreRawToMachineReadableConverter;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,8 @@ public class TextParsingTest extends AbstractVPinServerTest {
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt") && !FilenameUtils.getBaseName(name).endsWith("LUT"));
     int count = 0;
     for (File entry : files) {
-//      if (scoringDB.getIgnoredVPRegEntries().contains(entry)) {
-//        continue;
-//      }
-
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = HighscoreRawToMachineReadableConverter.convertTextFileTextToMachineReadable(entry);
+      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
       List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
       assertNotNull(scores, "Reading failed for " + entry);
       assertFalse(scores.isEmpty(), "No score entry found for " + entry);

@@ -1,15 +1,19 @@
 package de.mephisto.vpin.server.highscores.parsing.text;
 
 
+import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapterImpl;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Date;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HighscoreToRawTest {
 
@@ -25,21 +29,26 @@ public class HighscoreToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = HighscoreRawToMachineReadableConverter.convertTextFileTextToMachineReadable(entry);
+      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
 
       System.out.println(raw);
 
       assertNotNull(raw);
       assertTrue(raw.contains(ScoreTextFileAdapterImpl.HIGHEST_SCORES));
+
+      RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
+      List<Score> parse = parser.parse();
+      assertFalse(parse.isEmpty());
     }
     System.out.println("Tested " + count + " entries");
   }
 
   @Test
   public void testSingle() {
+    ScoringDB scoringDB = ScoringDB.load();
     File entry = new File("../testsystem/vPinball/VisualPinball/User/", "HangGlider_76VPX.txt");
     System.out.println("Reading '" + entry.getName() + "'");
-    String raw = HighscoreRawToMachineReadableConverter.convertTextFileTextToMachineReadable(entry);
+    String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
 
     System.out.println(raw);
 

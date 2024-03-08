@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.parsing.text.HighscoreRawToMachineReadableConverter;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
+import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -89,7 +88,7 @@ class HighscoreResolver {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
-      return HighscoreRawToMachineReadableConverter.convertTextFileTextToMachineReadable(hsFile);
+      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile);
     }
     return null;
   }
@@ -153,7 +152,7 @@ class HighscoreResolver {
       metadata.setModified(new Date(nvRam.lastModified()));
 
       List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
-      if (!supportedNvRams.contains(nvRamName)) {
+      if (!supportedNvRams.contains(nvRamName) || scoringDB.getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
         metadata.setStatus(msg);
         return null;
@@ -168,58 +167,13 @@ class HighscoreResolver {
     return null;
   }
 
-  private String readPINemHiStatus(String cmd) {
-    File commandFile = systemService.getPinemhiCommandFile();
-    try {
-      List<String> commands = Arrays.asList(commandFile.getName(), cmd);
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(commandFile.getParentFile());
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      return standardOutputFromCommand.toString();
-    } catch (Exception e) {
-      LOG.error("Failed to read pinemhi data: " + e.getMessage(), e);
-    }
-    return "";
-  }
-
   private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata, @NonNull File nvRam) throws Exception {
     metadata.setType(HighscoreType.NVRam);
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      List<String> commands = Arrays.asList(commandFile.getName(), nvRamFileName);
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(commandFile.getParentFile());
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamFileName + ") failed: " + standardErrorFromCommand;
-        LOG.error(error);
-        metadata.setStatus(error);
-        throw new Exception(error);
-      }
-      String stdOut = standardOutputFromCommand.toString();
-
-      //check for pre-formatting
-      List<String> list = Arrays.asList(stdOut.trim().split("\n"));
-      if (list.size() < 5) {
-        LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format, because output length are only " + list.size() + " lines.");
-        String raw = HighscoreRawToMachineReadableConverter.convertNvRamTextToMachineReadable(nvRam, list);
-        if (raw == null) {
-          LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
-          metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
-        }
-        else {
-          return raw;
-        }
-      }
-      return stdOut;
+      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName);
     } catch (Exception e) {
-      String msg = commandFile.getCanonicalPath() + " command failed for directory " + commandFile.getCanonicalPath() + ": " + e.getMessage();
-      metadata.setStatus(msg);
-      LOG.error(msg);
+      metadata.setStatus(e.getMessage());
       throw e;
     }
   }

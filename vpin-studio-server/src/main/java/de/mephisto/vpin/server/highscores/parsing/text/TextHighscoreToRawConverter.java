@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.highscores.parsing.text;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +16,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HighscoreRawToMachineReadableConverter {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreRawToMachineReadableConverter.class);
+public class TextHighscoreToRawConverter {
+  private final static Logger LOG = LoggerFactory.getLogger(TextHighscoreToRawConverter.class);
 
   private final static List<ScoreTextFileAdapter> adapters = new ArrayList<>();
 
@@ -44,12 +46,21 @@ public class HighscoreRawToMachineReadableConverter {
     adapters.add(new TwoPlayersAdapter(8));
   }
 
-  public static String convertTextFileTextToMachineReadable(@NonNull File file) {
+  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {
+    if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
+      return null;
+    }
+
     FileInputStream fileInputStream = null;
     try {
       fileInputStream = new FileInputStream(file);
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-      return convertNvRamTextToMachineReadable(file, lines);
+      for (ScoreTextFileAdapter adapter : adapters) {
+        if (adapter.isApplicable(file, lines)) {
+          return adapter.convert(file, lines);
+        }
+      }
+      LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");
     } catch (IOException e) {
       LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
     } finally {
@@ -61,16 +72,6 @@ public class HighscoreRawToMachineReadableConverter {
         }
       }
     }
-    return null;
-  }
-
-  public static String convertNvRamTextToMachineReadable(@NonNull File file, List<String> lines) {
-    for (ScoreTextFileAdapter adapter : adapters) {
-      if (adapter.isApplicable(file, lines)) {
-        return adapter.convert(file, lines);
-      }
-    }
-    LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");
     return null;
   }
 }
