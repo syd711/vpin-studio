@@ -348,7 +348,11 @@ public class DiscordClient {
   public void deleteChannel(long serverId, long channelId) {
     Guild guild = this.getGuild(serverId);
     if (guild != null) {
-      guild.getTextChannelById(channelId).delete().complete();
+      try {
+        guild.getTextChannelById(channelId).delete().complete();
+      } catch (Exception e) {
+        LOG.error("Channel deletion failed: " + e.getMessage());
+      }
     }
   }
 

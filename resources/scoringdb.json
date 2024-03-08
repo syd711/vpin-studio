@@ -37,6 +37,8 @@
     "hh"
   ],
   "notSupported": [
+    "mtl_180hc",
+    "mtl_170hc",
     "bloodmach",
     "cyberrace",
     "spagb_100",

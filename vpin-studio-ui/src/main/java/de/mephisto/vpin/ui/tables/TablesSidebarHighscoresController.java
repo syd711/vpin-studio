@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,10 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -269,7 +267,11 @@ public class TablesSidebarHighscoresController implements Initializable {
       }
 
 
-      HighscoreMetadataRepresentation metadata = Studio.client.getGameService().scanGameScore(game.getId());
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(game)));
+      HighscoreMetadataRepresentation metadata = null;
+      if (!progressDialog.getResults().isEmpty()) {
+        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
+      }
 
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
       dataPane.setVisible(hasHighscore);

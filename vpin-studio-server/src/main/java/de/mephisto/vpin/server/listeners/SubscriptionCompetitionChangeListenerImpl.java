@@ -10,7 +10,10 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.highscores.Highscore;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.popper.PopperService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -76,7 +79,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
           if (isOwner) {
             //check if the channel already exists, then simply re-join
             DiscordChannel subscriptionChannel = discordService.getSubscriptionChannel(competition, game);
-            if(subscriptionChannel == null) {
+            if (subscriptionChannel == null) {
               subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
             }
             else {
@@ -93,28 +96,25 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
               Optional<Highscore> highscore = highscoreService.getOrCreateHighscore(game);
 
-              new Thread(() -> {
-                Thread.currentThread().setName("Discord Subscription Message Emitter");
-                byte[] image = assetService.getSubscriptionCard(competition, game);
-                String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
+              byte[] image = assetService.getSubscriptionCard(competition, game);
+              String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
-                long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
-                    "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
-                discordService.initCompetition(serverId, channelId, messageId, null);
+              long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
+                "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
+              discordService.initCompetition(serverId, channelId, messageId, null);
 
-                if (!competition.isHighscoreReset()) {
-                  if (highscore.isPresent()) {
-                    Highscore hs = highscore.get();
-                    List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
+              if (!competition.isHighscoreReset()) {
+                if (highscore.isPresent()) {
+                  Highscore hs = highscore.get();
+                  List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
 
-                    if(!scores.isEmpty()) {
-                      String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());
-                      long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
-                      discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
-                    }
+                  if (!scores.isEmpty()) {
+                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());
+                    long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
+                    discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
                   }
                 }
-              }).start();
+              }
             }
           }
           else {
