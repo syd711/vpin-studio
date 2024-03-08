@@ -2,10 +2,8 @@ package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
@@ -99,7 +97,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
-        if(o instanceof PlayerRepresentation) {
+        if (o instanceof PlayerRepresentation) {
           this.player = (PlayerRepresentation) o;
         }
         else {
@@ -203,9 +201,12 @@ public class PlayerDialogController implements Initializable, DialogController {
       tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
       refreshAvatar();
     }
+    else {
+      this.adminRoleCheckbox.setSelected(players.stream().filter(PlayerRepresentation::isAdministrative).findFirst().isEmpty());
+    }
 
     for (PlayerRepresentation other : players) {
-      if(other.getId() != this.player.getId() && other.isAdministrative()) {
+      if (other.getId() != this.player.getId() && other.isAdministrative()) {
         this.adminRoleCheckbox.setDisable(true);
         break;
       }

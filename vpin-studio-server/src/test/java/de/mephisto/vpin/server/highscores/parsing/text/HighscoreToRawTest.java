@@ -29,7 +29,7 @@ public class HighscoreToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
+      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry, "???");
 
       System.out.println(raw);
 
@@ -46,9 +46,9 @@ public class HighscoreToRawTest {
   @Test
   public void testSingle() {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "HangGlider_76VPX.txt");
+    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "BallsAPoppin_56VPX.txt");
     System.out.println("Reading '" + entry.getName() + "'");
-    String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
+    String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry, "???");
 
     System.out.println(raw);
 

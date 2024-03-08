@@ -28,7 +28,7 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SinglePlayerScoreAdapter());
   }
 
-  public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull String nvRamFileName) throws Exception {
+  public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull String nvRamFileName, String defaultInitials) throws Exception {
     try {
       List<String> commands = Arrays.asList(commandFile.getName(), nvRamFileName);
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
@@ -41,8 +41,7 @@ public class NvRamHighscoreToRawConverter {
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();
-
-      return convertOutputToRaw(nvRamFileName, stdOut);
+      return convertOutputToRaw(nvRamFileName, stdOut, defaultInitials);
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       throw e;
@@ -50,12 +49,12 @@ public class NvRamHighscoreToRawConverter {
   }
 
   @NotNull
-  private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
+  private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut, String defaultInitials) throws Exception {
     //check for pre-formatting
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));
     for (ScoreNvRamAdapter adapter : adapters) {
       if (adapter.isApplicable(nvRamFileName, lines)) {
-        return adapter.convert(nvRamFileName, lines);
+        return adapter.convert(nvRamFileName, lines, defaultInitials);
       }
     }
     return stdOut;

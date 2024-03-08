@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -24,13 +26,16 @@ public class SinglePlayerScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public String convert(@NotNull String nvRam, @NotNull List<String> lines) {
-    StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+  public String convert(@NotNull String nvRam, @NotNull List<String> lines, @Nullable String defaultInitials) {
+    if (StringUtils.isEmpty(defaultInitials)) {
+      defaultInitials = "???";
+    }
 
+    StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine);
     builder.append("#1");
     builder.append(" ");
-    builder.append("???");
+    builder.append(defaultInitials);
     builder.append("   ");
     builder.append(score1.replaceAll("\\.", ""));
     builder.append("\n");

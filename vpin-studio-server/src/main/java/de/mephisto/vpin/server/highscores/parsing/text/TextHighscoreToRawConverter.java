@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class TextHighscoreToRawConverter {
     adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));
     adapters.add(new AlteringScoreInitialsLinesAdapter(26, 0, 3));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(25, 5, 5));
+    adapters.add(new AlteringScoreInitialsBlocksAdapter(18, 8, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(17, 7, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(16, 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(15, 5, 5));
@@ -46,7 +48,7 @@ public class TextHighscoreToRawConverter {
     adapters.add(new TwoPlayersAdapter(8));
   }
 
-  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {
+  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file, @Nullable String defaultInitials) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
       return null;
     }
@@ -57,7 +59,7 @@ public class TextHighscoreToRawConverter {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
-          return adapter.convert(file, lines);
+          return adapter.convert(file, lines, defaultInitials);
         }
       }
       LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");

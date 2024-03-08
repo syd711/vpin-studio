@@ -23,7 +23,7 @@ public class FourColumnScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public String convert(@NotNull String nvRam, @NotNull List<String> lines) {
+  public String convert(@NotNull String nvRam, @NotNull List<String> lines, String defaultInitials) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
     for (int i = 1; i < lines.size(); i++) {

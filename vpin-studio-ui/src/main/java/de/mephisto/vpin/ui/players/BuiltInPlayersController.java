@@ -227,6 +227,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       return null;
     });
 
+    adminColumn.setVisible(true);
     adminColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.isAdministrative()) {
@@ -310,13 +311,14 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    adminColumn.setVisible(Features.TOURNAMENTS_ENABLED);
     tournamentColumn.setVisible(Features.TOURNAMENTS_ENABLED);
 
-    if (Features.TOURNAMENTS_ENABLED && PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
-      adminColumn.setVisible(settings.isEnabled());
-      tournamentColumn.setVisible(settings.isEnabled());
+
+      if (Features.TOURNAMENTS_ENABLED) {
+        tournamentColumn.setVisible(settings.isEnabled());
+      }
     }
   }
 }

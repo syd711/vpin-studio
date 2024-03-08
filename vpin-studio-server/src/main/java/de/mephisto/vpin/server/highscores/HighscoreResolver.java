@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,10 +27,13 @@ class HighscoreResolver {
 
   private final SystemService systemService;
   private final ScoringDB scoringDB;
+  @NonNull
+  private final PlayerService playerService;
 
-  public HighscoreResolver(@NonNull SystemService systemService) {
+  public HighscoreResolver(@NonNull SystemService systemService, @NonNull PlayerService playerService) {
     this.systemService = systemService;
     this.scoringDB = systemService.getScoringDatabase();
+    this.playerService = playerService;
   }
 
   /**
@@ -88,7 +92,9 @@ class HighscoreResolver {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
-      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile);
+
+      String defaultInitials = playerService.getAdminPlayerInitials();
+      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile, defaultInitials);
     }
     return null;
   }
@@ -157,8 +163,10 @@ class HighscoreResolver {
         metadata.setStatus(msg);
         return null;
       }
+      metadata.setType(HighscoreType.NVRam);
 
-      return executePINemHi(nvRamFileName, metadata, nvRam);
+      String defaultInitials = playerService.getAdminPlayerInitials();
+      return executePINemHi(nvRamFileName, nvRam, defaultInitials);
     } catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
@@ -167,13 +175,11 @@ class HighscoreResolver {
     return null;
   }
 
-  private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata, @NonNull File nvRam) throws Exception {
-    metadata.setType(HighscoreType.NVRam);
+  private String executePINemHi(@NonNull String nvRamFileName, @NonNull File nvRam, @Nullable String defaultInitials) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName);
+      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName, defaultInitials);
     } catch (Exception e) {
-      metadata.setStatus(e.getMessage());
       throw e;
     }
   }

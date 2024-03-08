@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -61,6 +62,9 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private ScoreFilter scoreFilter;
+
+  @Autowired
+  private PlayerService playerService;
 
   private boolean pauseHighscoreEvents;
 
@@ -637,7 +641,7 @@ public class HighscoreService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    this.highscoreResolver = new HighscoreResolver(systemService);
+    this.highscoreResolver = new HighscoreResolver(systemService, playerService);
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
   }

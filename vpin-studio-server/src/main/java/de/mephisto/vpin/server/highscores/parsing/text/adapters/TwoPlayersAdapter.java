@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,21 +33,24 @@ public class TwoPlayersAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines) {
-    StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
+    if(StringUtils.isEmpty(defaultInitials)) {
+      defaultInitials = "???";
+    }
 
+    StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine1);
     String score2 = lines.get(scoreLine2);
     builder.append("#1");
     builder.append(" ");
-    builder.append("???");
+    builder.append(defaultInitials);
     builder.append("   ");
     builder.append(score2);
     builder.append("\n");
 
     builder.append("#2");
     builder.append(" ");
-    builder.append("???");
+    builder.append(defaultInitials);
     builder.append("   ");
     builder.append(score1);
     builder.append("\n");

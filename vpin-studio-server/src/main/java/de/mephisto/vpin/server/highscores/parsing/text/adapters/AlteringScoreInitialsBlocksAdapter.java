@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -35,7 +36,7 @@ public class AlteringScoreInitialsBlocksAdapter extends ScoreTextFileAdapterImpl
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines) {
+  public String convert(@NotNull File file, @NotNull List<String> lines, @Nullable String defaultInitials) {
     return super.convertAlteringScoreBlocks(start, size, lines);
   }
 }

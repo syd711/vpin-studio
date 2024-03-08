@@ -55,6 +55,20 @@ public class PlayerService {
     return Collections.emptyList();
   }
 
+  public String getAdminPlayerInitials() {
+    Player adminPlayer = getAdminPlayer();
+    if(adminPlayer != null) {
+      return adminPlayer.getInitials();
+    }
+    return null;
+  }
+
+  @Nullable
+  public Player getAdminPlayer() {
+    List<Player> buildInPlayers = getBuildInPlayers();
+    return buildInPlayers.stream().filter(Player::isAdministrative).findFirst().orElse(null);
+  }
+
   @Nullable
   public Player getPlayerForInitials(long serverId, @Nullable String initials) {
     if (StringUtils.isEmpty(initials)) {

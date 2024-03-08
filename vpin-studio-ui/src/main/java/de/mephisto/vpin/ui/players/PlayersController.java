@@ -1,12 +1,10 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
-import javafx.application.Platform;
+import de.mephisto.vpin.ui.players.dialogs.PlayerScoreLoadingProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,8 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,8 +24,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -91,37 +85,9 @@ public class PlayersController implements Initializable, StudioFXController {
         errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials for one of them.");
       }
 
-      new Thread(() -> {
-        ScoreSummaryRepresentation playerScores = client.getPlayerService().getPlayerScores(p.getInitials());
-        Platform.runLater(() -> {
-          highscoresTitledPane.setText("Player Highscores \"" + player.get().getName() + "\"");
-          highscoreList.getChildren().removeAll(highscoreList.getChildren());
-          if (playerScores.getScores().isEmpty()) {
-            noScoreLabel.setVisible(true);
-            noScoreLabel.setText("No scores found for this player.");
-          }
-          else {
-            noScoreLabel.setVisible(false);
-            for (ScoreRepresentation playerScore : playerScores.getScores()) {
-              GameRepresentation game = client.getGame(playerScore.getGameId());
-              if (game == null) {
-                continue;
-              }
+      highscoresTitledPane.setText("Player Highscores \"" + player.get().getName() + "\"");
 
-              try {
-                FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
-                Pane row = loader.load();
-                row.setPrefWidth(600 - 48);
-                WidgetPlayerScoreController controller = loader.getController();
-                controller.setData(p, game, playerScore);
-                highscoreList.getChildren().add(row);
-              } catch (IOException e) {
-                LOG.error("failed to load score component: " + e.getMessage(), e);
-              }
-            }
-          }
-        });
-      }).start();
+      ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
     }
     else {
       noScoreLabel.setText("");
