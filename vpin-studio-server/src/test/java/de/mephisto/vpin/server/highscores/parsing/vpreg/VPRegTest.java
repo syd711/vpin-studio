@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
+import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.junit.jupiter.api.Test;
 
@@ -83,4 +84,19 @@ public class VPRegTest {
     assertNotNull(vpRegScoreSummary);
     assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");
   }
+
+
+//  @Test
+//  public void testReset() {
+//    File vpRegFile = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
+//    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
+//    VPReg reg = new VPReg(vpRegFile, "b66_orig", null);
+//    reg.resetHighscores();
+//    ScoreParsingSummary scoreParsingSummary = reg.readHighscores();
+//    List<ScoreParsingEntry> scores = scoreParsingSummary.getScores();
+//    for (ScoreParsingEntry score : scores) {
+//      assertEquals(score.getInitials(), "");
+//      assertEquals(score.getScore(), 0);
+//    }
+//  }
 }

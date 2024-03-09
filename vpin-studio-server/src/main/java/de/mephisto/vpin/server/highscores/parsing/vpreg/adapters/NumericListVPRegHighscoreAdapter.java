@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
@@ -44,18 +44,22 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
   }
 
   @Override
-  public boolean resetHighscore(DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
     int index = 1;
     while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + NAME_SUFFIX)) {
-      DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
+      String scoreKey = HIGH_SCORE + index;
+      DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(scoreKey);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
+      scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(VPRegHighscoreAdapter.BASE64_ZERO_SCORE)));
 
-      DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index + NAME_SUFFIX);
+      String nameKey = HIGH_SCORE + index + NAME_SUFFIX;
+      DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(nameKey);
       POIFSDocument nameDocument = new POIFSDocument(nameEntry);
-      nameDocument.replaceContents(new ByteArrayInputStream("\0???".getBytes()));
+      nameDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
 
       index++;
+
+      fs.writeFilesystem();
     }
     return true;
   }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -13,6 +14,7 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
   protected String getNameString(DocumentEntry nameEntry) throws IOException {
     DocumentInputStream nameEntryStream = new DocumentInputStream(nameEntry);
     byte[] nameContent = new byte[nameEntryStream.available()];
+//    System.out.println("name:'" + new Base64Encoder().encode(nameContent) + "'");
     nameEntryStream.read(nameContent);
     nameEntryStream.close();
 
@@ -24,6 +26,7 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
   protected String getScoreEntry(DocumentEntry scoreEntry) throws IOException {
     DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
     byte[] scoreContent = new byte[scoreEntryStream.available()];
+//    System.out.println("score:'" + new Base64Encoder().encode(scoreContent) + "'");
     scoreEntryStream.read(scoreContent);
     scoreEntryStream.close();
 

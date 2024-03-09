@@ -102,7 +102,7 @@ public class VPReg {
       if (gameFolder != null) {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
-            return adapter.resetHighscore(gameFolder);
+            return adapter.resetHighscore(fs, gameFolder);
           }
         }
         fs.writeFilesystem();

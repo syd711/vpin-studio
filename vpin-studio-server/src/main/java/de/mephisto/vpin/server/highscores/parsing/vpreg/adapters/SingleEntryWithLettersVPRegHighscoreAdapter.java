@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,8 +36,8 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
   }
 
   @Override
-  public boolean resetHighscore(DirectoryEntry gameFolder) throws IOException {
-    super.resetHighscore(gameFolder);
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+    super.resetHighscore(fs, gameFolder);
 
     for (int i = 0; i < 3; i++) {
       int index = i + 1;
@@ -44,11 +45,13 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("HSA" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
         scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
+        fs.writeFilesystem();
       }
       else if (gameFolder.hasEntry("hsa" + i)) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
         scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
+        fs.writeFilesystem();
       }
     }
     return false;

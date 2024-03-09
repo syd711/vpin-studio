@@ -2,11 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,7 +38,7 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
   }
 
   @Override
-  public boolean resetHighscore(DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
     int index = 1;
     while (gameFolder.hasEntry(HIGH_SCORE + index)) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
@@ -50,6 +46,7 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
       scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
 
       index++;
+      fs.writeFilesystem();
     }
     return true;
   }

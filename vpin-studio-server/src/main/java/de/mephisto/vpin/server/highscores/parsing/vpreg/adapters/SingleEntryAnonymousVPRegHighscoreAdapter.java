@@ -1,12 +1,9 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,10 +34,10 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
   }
 
   @Override
-  public boolean resetHighscore(DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
     DocumentNode highscoreEntry = getHighscoreEntry(gameFolder);
     POIFSDocument scoreDocument = new POIFSDocument(highscoreEntry);
-    scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
+    scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(VPRegHighscoreAdapter.BASE64_ZERO_SCORE)));
     return true;
   }
 }
