@@ -33,7 +33,7 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
 
       ScoreParsingEntry score = new ScoreParsingEntry();
       score.setInitials("???");
-      score.setScore(StringUtils.isEmpty(scoreString) ? 0 : Long.parseLong(scoreString));
+      score.setScore(parseScoreString(scoreString));
       score.setPos(index);
       summary.getScores().add(score);
       index++;
@@ -47,7 +47,7 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
     while (gameFolder.hasEntry(HIGH_SCORE + index)) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
+      scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
 
       index++;
     }

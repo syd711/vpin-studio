@@ -29,7 +29,7 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
     String scoreString = super.getScoreEntry(scoreEntry);
     ScoreParsingEntry score = new ScoreParsingEntry();
     score.setInitials("???");
-    score.setScore(StringUtils.isEmpty(scoreString) ? 0 : Long.parseLong(scoreString));
+    score.setScore(parseScoreString(scoreString));
     score.setPos(1);
     summary.getScores().add(score);
 
@@ -40,7 +40,7 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
   public boolean resetHighscore(DirectoryEntry gameFolder) throws IOException {
     DocumentNode highscoreEntry = getHighscoreEntry(gameFolder);
     POIFSDocument scoreDocument = new POIFSDocument(highscoreEntry);
-    scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
+    scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
     return true;
   }
 }

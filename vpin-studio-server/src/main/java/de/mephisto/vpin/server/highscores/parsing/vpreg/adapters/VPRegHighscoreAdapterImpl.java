@@ -50,4 +50,13 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
     }
     return null;
   }
+
+  protected long parseScoreString(String scoreString) {
+    try {
+      return Long.parseLong(scoreString);
+    }
+    catch (Exception e) {
+      return 0;
+    }
+  }
 }

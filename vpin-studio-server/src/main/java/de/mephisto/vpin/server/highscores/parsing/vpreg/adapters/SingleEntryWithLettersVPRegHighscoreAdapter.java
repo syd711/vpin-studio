@@ -43,12 +43,12 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
       if (gameFolder.hasEntry("HSA" + index)) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("HSA" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
-        scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
+        scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
       }
       else if (gameFolder.hasEntry("hsa" + i)) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
-        scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
+        scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
       }
     }
     return false;

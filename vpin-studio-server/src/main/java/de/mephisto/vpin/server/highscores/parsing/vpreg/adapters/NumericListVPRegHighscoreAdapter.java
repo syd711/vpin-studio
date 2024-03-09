@@ -35,7 +35,7 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
 
       ScoreParsingEntry score = new ScoreParsingEntry();
       score.setInitials(nameString);
-      score.setScore(StringUtils.isEmpty(scoreString) ? 0 : Long.parseLong(scoreString));
+      score.setScore(parseScoreString(scoreString));
       score.setPos(index);
       summary.getScores().add(score);
       index++;
@@ -49,11 +49,11 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
     while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + NAME_SUFFIX)) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      scoreDocument.replaceContents(new ByteArrayInputStream("0".getBytes()));
+      scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
 
       DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(HIGH_SCORE + index + NAME_SUFFIX);
       POIFSDocument nameDocument = new POIFSDocument(nameEntry);
-      nameDocument.replaceContents(new ByteArrayInputStream("???".getBytes()));
+      nameDocument.replaceContents(new ByteArrayInputStream("\0???".getBytes()));
 
       index++;
     }
