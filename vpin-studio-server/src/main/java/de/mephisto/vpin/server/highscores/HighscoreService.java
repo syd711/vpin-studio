@@ -273,7 +273,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns a list of all scores for the given game
    *
-   * @param game        the game to retrieve the highscores for
+   * @param game the game to retrieve the highscores for
    * @return all highscores of the given player
    */
   @NonNull
@@ -445,7 +445,7 @@ public class HighscoreService implements InitializingBean {
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
     if (!oldScores.isEmpty()) {
-      List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
+      List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
       if (changedPositions.isEmpty()) {
         LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
       }
@@ -526,7 +526,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns the highscore difference position, starting from 1.
    */
-  public List<Integer> calculateChangedPositions(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
+  public List<Integer> calculateChangedPositions(@NonNull String gameDisplayName, @NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
     List<Integer> changes = new ArrayList<>();
     try {
       for (int i = 0; i < newScores.size(); i++) {
@@ -535,10 +535,16 @@ public class HighscoreService implements InitializingBean {
           continue;
         }
 
+        if (i >= oldScores.size()) {
+          LOG.warn("The number of score entries of the old scores and the new scores do differ: " + oldScores.size() + " vs. " + newScores.size());
+          continue;
+        }
+
+
         boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
         if (notFound) {
           changes.add(newScore.getPosition());
-          LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
+          LOG.info(gameDisplayName + ": Calculated changed score [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
         }
       }
     } catch (Exception e) {

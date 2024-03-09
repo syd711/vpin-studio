@@ -48,7 +48,7 @@ public class NvRamOutToRawTest {
   @Test
   public void testSingle() throws Exception {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/", "sorcr_l1");
+    File entry = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/", "godzilla.nv");
     String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry.getName());
 
     System.out.println(raw);

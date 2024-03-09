@@ -40,17 +40,7 @@ public class RawScoreParser {
         return scores;
       }
 
-      int index = 0;
-      for (String line : new ArrayList<>(lines)) {
-        index++;
-        if (line.trim().startsWith("HIGHEST SCORES")) {
-          lines = lines.subList(index-1, lines.size());
-          break;
-        }
-      }
-
-
-      index = 1;
+      int index = 1;
       for (int i = 0; i < lines.size(); i++) {
         String line = lines.get(i);
         if (titles.contains(line.trim())) {

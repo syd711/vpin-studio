@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -38,9 +37,6 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Autowired
   private CompetitionService competitionService;
-
-  @Autowired
-  private PreferencesService preferencesService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -174,7 +170,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
               Platform.runLater(() -> {
                 String description = "";
                 if (!scoreSummary.getScores().isEmpty()) {
-                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores());
+                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores(), competition.getScoreLimit());
                 }
                 description = description + "\nYou can duplicate the competition to continue it with another table or duration.";
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);

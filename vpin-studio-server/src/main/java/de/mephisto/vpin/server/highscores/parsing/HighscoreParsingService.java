@@ -53,7 +53,7 @@ public class HighscoreParsingService {
       Player player = playerService.getPlayerForInitials(serverId, score.getPlayerInitials());
       score.setPlayer(player);
 
-      if(score.getPlayerInitials().equals("???")) {
+      if(score.getPlayerInitials().equals("???") && score.getNumericScore() > 0) {
         Player admin = playerService.getAdminPlayer();
         if(admin != null) {
           score.setPlayer(admin);

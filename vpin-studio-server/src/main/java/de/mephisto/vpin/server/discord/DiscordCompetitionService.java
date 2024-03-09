@@ -81,7 +81,7 @@ public class DiscordCompetitionService {
             oldScores = versionedScoreSummary.cloneEmptyScores();
           }
 
-          List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+          List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
           if (!changedPositions.isEmpty()) {
             LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
             for (Integer changedPosition : changedPositions) {

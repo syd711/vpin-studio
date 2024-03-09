@@ -37,6 +37,7 @@ public class DiscordSubscriptionMessageFactory {
                                                         @NonNull Competition competition,
                                                         @NonNull Score newScore,
                                                         int scoreLimit) {
+    playerService.validateInitials(newScore);
     String template = "Here is the " + HIGHSCORE_INDICATOR + "\n(ID: %s)\n";
     String msg = String.format(template, competition.getUuid());
     return msg + DiscordChannelMessageFactory.createInitialHighscoreList(newScore, scoreLimit);
@@ -47,6 +48,7 @@ public class DiscordSubscriptionMessageFactory {
                                                           @NonNull Score oldScore,
                                                           @NonNull Score newScore,
                                                           List<Score> updatedScores) {
+    playerService.validateInitials(newScore);
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created a new highscore!**\n(ID: %s)\n" +
         "```%s\n" +
@@ -54,7 +56,7 @@ public class DiscordSubscriptionMessageFactory {
     String msg = String.format(template, playerName, competition.getUuid(), newScore);
     msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 
-    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + DiscordChannelMessageFactory.createHighscoreList(updatedScores);
+    return msg + "\nHere is the " + HIGHSCORE_INDICATOR + ":" + DiscordChannelMessageFactory.createHighscoreList(updatedScores, competition.getScoreLimit());
   }
 
   public String createSubscriptionJoinedMessage(@NonNull Competition competition, @NonNull DiscordMember bot) {

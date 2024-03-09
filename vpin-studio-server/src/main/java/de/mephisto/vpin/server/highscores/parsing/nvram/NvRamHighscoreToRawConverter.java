@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.FourColumnScoreAdapter;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.ScoreNvRamAdapter;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SinglePlayerScoreAdapter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SkipFirstListScoreAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SinglePlayerScoreAdapter("alienstr.nv", 1));
     adapters.add(new SinglePlayerScoreAdapter("alpok_b6.nv", 1));
     adapters.add(new FourColumnScoreAdapter("monopoly.nv"));
+    adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
     adapters.add(new SinglePlayerScoreAdapter());
   }
 
