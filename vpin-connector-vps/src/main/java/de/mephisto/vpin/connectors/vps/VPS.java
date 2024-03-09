@@ -17,7 +17,7 @@ public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
   public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
-  public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
+  public final static String BASE_URL = "https://virtualpinballspreadsheet.github.io";
 
   private static final ObjectMapper objectMapper;
 
@@ -51,7 +51,7 @@ public class VPS {
   }
 
   public static String getVpsTableUrl(String tableId, String versionId) {
-    String url = BASE_URL + "/game/" + tableId;
+    String url = getVpsTableUrl(tableId);
     if (versionId != null) {
       url += "#" + versionId;
     }
@@ -59,7 +59,7 @@ public class VPS {
   }
 
   public static String getVpsTableUrl(String tableId) {
-    return BASE_URL + "/game/" + tableId;
+    return BASE_URL + "/?game=" + tableId;
   }
 
   public static VPS getInstance() {
@@ -157,7 +157,8 @@ public class VPS {
     while (results.isEmpty()) {
       if (term.contains(" ")) {
         term = term.substring(0, term.lastIndexOf(" "));
-      } else {
+      }
+      else {
         break;
       }
       results = findInternal(term, rom);
@@ -209,8 +210,8 @@ public class VPS {
 
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
       return Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
-          .collect(Collectors.toList());
+        .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
+        .collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);
     } finally {
@@ -267,7 +268,8 @@ public class VPS {
           listener.vpsSheetChanged(diffs);
           LOG.info("Notified VPS change listener \"" + listener.getClass().getName() + "\"");
         }
-      } else {
+      }
+      else {
         LOG.info("VPS had no changes, skipped update listeners.");
       }
 
@@ -288,7 +290,7 @@ public class VPS {
   }
 
   public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
-    if(oldTables == null || newTables == null) {
+    if (oldTables == null || newTables == null) {
       LOG.info("Skipping VPS diff, because lists are empty.");
       return Collections.emptyList();
     }
