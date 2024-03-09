@@ -30,10 +30,10 @@ public class DiscordChannelMessageFactory {
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
   private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".\n(ID: %s)";
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
-      "but no winner could be determined:\n" +
-      "No scores have been found.\n(ID: %s)";
+    "but no winner could be determined:\n" +
+    "No scores have been found.\n(ID: %s)";
   private static final String COMPETITION_FINISHED_TEMPLATE =
-      "The competition \"%s\" has been finished!\n(ID: %s)";
+    "The competition \"%s\" has been finished!\n(ID: %s)";
 
   @Autowired
   private PlayerService playerService;
@@ -48,10 +48,11 @@ public class DiscordChannelMessageFactory {
                                                               @NonNull Competition competition,
                                                               @NonNull Score newScore,
                                                               int scoreCount) {
+    playerService.validateInitials(newScore);
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-        "```%s\n" +
-        "```";
+      "```%s\n" +
+      "```";
 
     //do not use the original Score#toString() method as the online position does not match with the persisted score
     String score = "#1 " + newScore.getPlayerInitials() + "   " + newScore.getScore();
@@ -65,10 +66,11 @@ public class DiscordChannelMessageFactory {
                                                          @NonNull Score oldScore,
                                                          @NonNull Score newScore,
                                                          List<Score> updatedScores) {
+    playerService.validateInitials(newScore);
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-        "```%s\n" +
-        "```";
+      "```%s\n" +
+      "```";
     String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 

@@ -10,7 +10,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />
 
-- Introduced "Default Players": The build-in players dialog has an additional checkbox now to mark the default player of a cabinet. 
+- Introduced "Default Players": The build-in players dialog has an additional checkbox now to mark the default player of a cabinet. If set, the highscore filter won't filter anonymous highscores anymore. So for tables with anonymous highscores, the default initials will be used when Discord messages are posted. The flag will become more relevant in the future too when it comes to tournament setups.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/players/add-player.png" width="600" />
 

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.highscores.Score;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -148,6 +149,13 @@ public class PlayerService {
       else {
         initials.put(player.getInitials(), player);
       }
+    }
+  }
+
+  public void validateInitials(Score newScore) {
+    String defaultInitials = getAdminPlayerInitials();
+    if(String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null) {
+      newScore.setPlayerInitials(defaultInitials);
     }
   }
 }
