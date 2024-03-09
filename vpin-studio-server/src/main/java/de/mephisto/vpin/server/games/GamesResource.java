@@ -289,7 +289,6 @@ public class GamesResource {
             if (!keepExistingDisplayName) {
               tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
-            tableDetails.setGameVersion(""); //reset version to re-apply the newer one
             popperService.saveTableDetails(tableDetails, gameId, !keepExistingFilename);
 
             Game game = gameService.scanGame(gameId);
@@ -311,7 +310,6 @@ public class GamesResource {
               tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
-              tableDetails.setGameVersion(""); //reset version to re-apply the newer one
               popperService.saveTableDetails(tableDetails, importedGameId, false);
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
 

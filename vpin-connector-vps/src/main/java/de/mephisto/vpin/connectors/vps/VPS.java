@@ -17,7 +17,7 @@ public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
   public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
-  public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
+  public final static String BASE_URL = "https://virtualpinballspreadsheet.github.io";
 
   private static final ObjectMapper objectMapper;
 
