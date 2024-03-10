@@ -8,15 +8,18 @@
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -450,105 +453,146 @@
       </BorderPane>
    </right>
    <center>
-      <BorderPane fx:id="imageCenter" styleClass="subpanel" BorderPane.alignment="CENTER">
+      <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets right="12.0" />
          </BorderPane.margin>
          <center>
-            <BorderPane fx:id="imageCenter" styleClass="media-container">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
+            <BorderPane fx:id="imageCenter" styleClass="subpanel">
                <center>
-                  <StackPane fx:id="previewStack">
-                     <children>
-                        <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </StackPane>
+                  <SplitPane dividerPositions="0.32" BorderPane.alignment="CENTER">
+                    <items>
+                        <BorderPane minWidth="300.0" prefWidth="250.0">
+                           <center>
+                              <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                       <columns>
+                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                          <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </StackPane>
+                           </center>
+                           <top>
+                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                 <items>
+                                    <MenuButton fx:id="filterButton" mnemonicParsing="false">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Filter Tables" />
+                                       </tooltip>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </MenuButton>
+                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </TextField>
+                                 </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <StackPane fx:id="previewStack" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <VBox fx:id="previewAnchor" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                       <padding>
+                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                       </padding>
+                                       <children>
+                                          <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </StackPane>
+                           </center>
+                           <top>
+                              <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
+                                 <items>
+                                    <Label text="Template: " textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="222.0" />
+                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Rename Template" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="duplicateBtn" mnemonicParsing="false" onAction="#onDuplicate" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Duplicate Template" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                       </graphic>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                    <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                  <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                 </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                    </items>
+                  </SplitPane>
                </center>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
             </BorderPane>
          </center>
-         <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </padding>
-         <bottom>
-            <Label fx:id="imageMetaDataLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
-               <BorderPane.margin>
-                  <Insets top="6.0" />
-               </BorderPane.margin>
-            </Label>
-         </bottom>
       </BorderPane>
    </center>
    <padding>
       <Insets bottom="6.0" />
    </padding>
-   <left>
-      <BorderPane prefWidth="350.0" BorderPane.alignment="CENTER">
-         <center>
-            <StackPane fx:id="tableStack" style="-fx-background-color: #222222;" BorderPane.alignment="CENTER">
-               <children>
-                  <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                     <columns>
-                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="200.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                        <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
-                     </columns>
-                  </TableView>
-               </children>
-            </StackPane>
-         </center>
-      </BorderPane>
-   </left>
-   <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
-         <items>
-            <Label text="Sample Data:" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <padding>
-                  <Insets left="3.0" right="3.0" />
-               </padding>
-            </Label>
-            <ComboBox fx:id="tableCombo" />
-            <Separator layoutX="244.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onTableRefresh" text=" Reload">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                                       </graphic>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-          <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" text=" Open Image" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-               </graphic>
-            </Button>
-         </items>
-      </ToolBar>
-   </top>
 </BorderPane>

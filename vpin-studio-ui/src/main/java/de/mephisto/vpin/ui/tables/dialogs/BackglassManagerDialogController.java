@@ -156,7 +156,6 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   @FXML
   private Button dataManagerBtn;
 
-
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 

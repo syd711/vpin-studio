@@ -29,25 +29,6 @@ public class BeanBinder {
     this.listener = listener;
   }
 
-  public void bindHighscoreTablesComboBox(VPinStudioClient client, ComboBox<GameRepresentation> comboBox, Object beanObject, String property) {
-    int pupId = getIntProperty(beanObject, property);
-    GameRepresentation game = null;
-    if (pupId > 0) {
-      game = client.getGame(pupId);
-    }
-
-    if (game != null) {
-      comboBox.setValue(game);
-    }
-    ObjectProperty objectProperty = new SimpleObjectProperty<GameRepresentation>();
-    Bindings.bindBidirectional(objectProperty, comboBox.valueProperty());
-    comboBox.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      if (t1 != null) {
-        setProperty(beanObject, property, t1.getId());
-      }
-    });
-  }
-
   public void bindTextField(TextField textField, Object beanObject, String property, String defaultValue) {
     String value = getProperty(beanObject, property);
     StringProperty stringProperty = new SimpleStringProperty();
