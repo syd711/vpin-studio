@@ -176,6 +176,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TableColumn<GameRepresentation, Label> columnTemplate;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnStatus;
+
+  @FXML
   private Button renameBtn;
 
   @FXML
@@ -624,6 +627,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
 
     for (GameRepresentation game : games) {
+      if (game.getHighscoreType() == null) {
+        continue;
+      }
+
       if (!emuIds.contains(game.getEmulatorId())) {
         continue;
       }
@@ -698,6 +705,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       Label label = new Label(value.getGameDisplayName());
       label.getStyleClass().add("default-text");
       return new SimpleObjectProperty(label);
+    });
+
+    columnStatus.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
+      if (!defaultBackgroundAvailable) {
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(null));
+      }
+      return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });
 
     tableView.setItems(data);

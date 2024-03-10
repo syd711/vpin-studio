@@ -92,7 +92,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -122,43 +122,47 @@ public class CardGraphics {
     ImageUtil.setDefaultColor(g, template.getFontColor());
     int imageWidth = image.getWidth();
 
-    String titleFontName = template.getTitleFontName();
-    int titleFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
-    int titleFontSize = template.getTitleFontSize();
+    int currentY = template.getPadding();
+    if (template.isRenderTitle()) {
+      String titleFontName = template.getTitleFontName();
+      int titleFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int titleFontSize = template.getTitleFontSize();
+      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
 
-    g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+      String title = template.getTitle();
+      int titleWidth = g.getFontMetrics().stringWidth(title);
+      currentY = titleFontSize + template.getPadding();
+      g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
+      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+    }
 
-    String title = template.getTitle();
-    int titleWidth = g.getFontMetrics().stringWidth(title);
-    int titleY = titleFontSize + template.getPadding();
-    g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
-
-    g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
-
-    int tableNameY = titleY;
     if (template.isRenderTableName()) {
+      String tableFontName = template.getTableFontName();
+      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int tableFontSize = template.getTitleFontSize();
+      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+
       String tableName = game.getGameDisplayName();
       int width = g.getFontMetrics().stringWidth(tableName);
       while (width > DEFAULT_MEDIA_SIZE - 24) {
-        titleFontSize = titleFontSize - 1;
-        g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+        tableFontSize = tableFontSize - 1;
+        g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
         width = g.getFontMetrics().stringWidth(tableName);
       }
-      tableNameY = tableNameY + titleFontSize + titleFontSize / 2;
-      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
-      g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
+      currentY = currentY + tableFontSize + tableFontSize / 2;
+      g.drawString(tableName, imageWidth / 2 - width / 2, currentY);
     }
 
     if (template.isRawScore()) {
-      int yStart = tableNameY + template.getTableFontSize();
-      renderRawScore(game, image.getHeight(), image.getWidth(), g, yStart);
+      currentY = currentY + template.getTableFontSize();
+      renderRawScore(game, image.getHeight(), image.getWidth(), g, currentY);
     }
     else {
-      renderScorelist(game, g, title, tableNameY);
+      renderScorelist(game, g, template.getTitle(), currentY); //TODO why title?
     }
   }
 
-  private void renderScorelist(Game game, Graphics g, String title, int tableNameY) throws IOException {
+  private void renderScorelist(Game game, Graphics g, String title, int currentY) throws IOException {
     g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), template.getScoreFontSize()));
     int count = 0;
     int scoreWidth = 0;
@@ -178,28 +182,30 @@ public class CardGraphics {
       }
     }
 
-    tableNameY = tableNameY + template.getTableFontSize() / 2;
+    currentY = currentY + template.getTableFontSize() / 2;
 
-    //draw wheel icon
-    int wheelY = tableNameY + template.getRowMargin();
     int wheelSize = 3 * template.getScoreFontSize() + 3 * template.getRowMargin();
-
-
-    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
-    if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
-      File wheelIconFile = defaultMediaItem.getFile();
-      WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
-      if (augmenter.getBackupWheelIcon().exists()) {
-        wheelIconFile = augmenter.getBackupWheelIcon();
+    if (template.isRenderWheelIcon()) {
+      //draw wheel icon
+      int wheelY = currentY + template.getRowMargin();
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        File wheelIconFile = defaultMediaItem.getFile();
+        WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
+        if (augmenter.getBackupWheelIcon().exists()) {
+          wheelIconFile = augmenter.getBackupWheelIcon();
+        }
+        BufferedImage wheelImage = ImageIO.read(wheelIconFile);
+        g.drawImage(wheelImage, template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
       }
-      BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-      g.drawImage(wheelImage, template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
     }
 
-
     //the wheelsize should match the height of three score entries
-    int scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
-    int scoreY = tableNameY;
+    int scoreX = template.getPadding();
+    if (template.isRenderWheelIcon()) {
+      scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
+    }
+    int scoreY = currentY;
     for (String score : scores) {
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
       g.drawString(score, scoreX, scoreY);
