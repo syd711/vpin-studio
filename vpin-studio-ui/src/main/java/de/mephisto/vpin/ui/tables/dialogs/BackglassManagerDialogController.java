@@ -18,6 +18,8 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -157,7 +159,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private Button dataManagerBtn;
 
   @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+  private MenuButton filterButton;
 
   @FXML
   private ListView<DirectB2S> directb2sList;
@@ -292,15 +294,25 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
     });
 
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulators());
-    emulators.add(0, null);
-    ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
-    this.emulatorCombo.setItems(data);
-    this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      backglasses = client.getBackglassServiceClient().getBackglasses();
-      List<DirectB2S> filtered = filterEntries(backglasses);
-      directb2sList.setItems(FXCollections.observableList(filtered));
-    });
+    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      CustomMenuItem item = new CustomMenuItem();
+      CheckBox checkBox = new CheckBox(gameEmulator.getName());
+      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
+      checkBox.setPrefHeight(30);
+      checkBox.setSelected(true);
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          backglasses = client.getBackglassServiceClient().getBackglasses();
+          List<DirectB2S> filtered = filterEntries(backglasses);
+          directb2sList.setItems(FXCollections.observableList(filtered));
+        }
+      });
+      checkBox.setUserData(gameEmulator);
+      item.setContent(checkBox);
+      filterButton.getItems().add(item);
+    }
 
     searchField.textProperty().addListener((observable, oldValue, newValue) -> {
       List<DirectB2S> filtered = filterEntries(backglasses);
@@ -404,13 +416,29 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   }
 
   private List<DirectB2S> filterEntries(List<DirectB2S> backglasses) {
-    int emulatorId = -1;
-    if (this.emulatorCombo.getValue() != null) {
-      emulatorId = this.emulatorCombo.getValue().getId();
+    List<Integer> emuIds = new ArrayList<>();
+    ObservableList<MenuItem> items = this.filterButton.getItems();
+    for (MenuItem item : items) {
+      CheckBox checkBox = (CheckBox) ((CustomMenuItem) item).getContent();
+      GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) checkBox.getUserData();
+      if (checkBox.isSelected()) {
+        emuIds.add(emulatorRepresentation.getId());
+      }
     }
+
+    filterButton.getStyleClass().remove("filter-button-selected");
+    if (emuIds.size() != client.getPinUPPopperService().getGameEmulators().size()) {
+      filterButton.getStyleClass().add("filter-button-selected");
+      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
+    }
+    else {
+      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
+    }
+
+
     List<DirectB2S> filtered = new ArrayList<>();
     for (DirectB2S backglass : backglasses) {
-      if (emulatorId != -1 && backglass.getEmulatorId() != emulatorId) {
+      if (!emuIds.contains(backglass.getEmulatorId())) {
         continue;
       }
 

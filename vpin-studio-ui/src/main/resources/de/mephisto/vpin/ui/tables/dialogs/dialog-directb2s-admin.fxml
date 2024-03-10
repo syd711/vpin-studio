@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
@@ -33,10 +34,47 @@
                   <Insets left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <left>
-                  <ListView fx:id="directb2sList" prefWidth="300.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER">
+                  <BorderPane BorderPane.alignment="CENTER">
                      <BorderPane.margin>
-                        <Insets right="6.0" />
-                     </BorderPane.margin></ListView>
+                        <Insets />
+                     </BorderPane.margin>
+                     <center>
+                        <ListView fx:id="directb2sList" prefWidth="300.0" styleClass="pretty-list-view" />
+                     </center>
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <items>
+                              <MenuButton fx:id="filterButton" mnemonicParsing="false">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Filter Tables" />
+                                 </tooltip>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </MenuButton>
+                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Reload all table data" />
+                                 </tooltip>
+                              </Button>
+                           </items>
+                        </ToolBar>
+                     </top>
+                  </BorderPane>
                </left>
                <center>
                   <BorderPane BorderPane.alignment="CENTER">
@@ -437,64 +475,46 @@
                            </padding>
                         </VBox>
                      </center>
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                          <items>
+                              <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" />
+                              <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit Popper Table Data" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit Popper Table Data" />
+                                 </tooltip>
+                              </Button>
+                              <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                 </graphic>
+                              </Button>
+                          </items>
+                        </ToolBar>
+                     </top>
                   </BorderPane>
                </center>
-               <top>
-                  <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
-                    <items>
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="243.0" promptText="Search Backglass...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Reload all table data" />
-                           </tooltip>
-                        </Button>
-                        <Separator layoutX="456.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="222.0" />
-                        <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Edit Popper Table Data" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Edit Popper Table Data" />
-                           </tooltip>
-                        </Button>
-                        <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                           </graphic>
-                        </Button>
-                    </items>
-                  </ToolBar>
-               </top>
             </BorderPane>
          </top>
       </BorderPane>
