@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
@@ -13,8 +12,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -273,6 +270,27 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       disconnect(connect);
     }
     return manifest;
+  }
+
+  public void updateTableFileUpdated(int id) {
+    Connection connect = this.connect();
+    try {
+      String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
+      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setObject(1, ts);
+      preparedStatement.setInt(2, id);
+
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to save table details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
   }
 
   public void saveTableDetails(int id, TableDetails tableDetails) {

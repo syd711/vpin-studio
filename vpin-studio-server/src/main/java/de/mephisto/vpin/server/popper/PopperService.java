@@ -284,6 +284,10 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     return pinUPConnector.getTableDetails(gameId);
   }
 
+  public void updateTableFileUpdated(int gameId) {
+    pinUPConnector.updateTableFileUpdated(gameId);
+  }
+
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails oldDetails = getTableDetails(gameId);

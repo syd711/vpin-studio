@@ -30,9 +30,10 @@ public interface ComponentFacade {
   @NonNull
   List<String> getExclusionList();
 
-  boolean isSkipRootFolder();
+  List<String> getRootFolderIndicators();
 
   default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 
   }
+
 }
