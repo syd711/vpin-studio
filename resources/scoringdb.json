@@ -18,7 +18,8 @@
   ],
   "notSupported": [
     "cyberrace",
-    "bloodmach"
+    "spagb_100",
+    "stwr_104"
   ],
   "supportedNvRams": [
     "abv106",
