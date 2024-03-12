@@ -62,6 +62,7 @@ public class TournamentsService implements InitializingBean {
 
   @VisibleForTesting
   public void setCabinetId(String id) {
-    maniaClient.setCabinetId(id);
+    //TODO mania
+//    maniaClient.setCabinetId(id);
   }
 }

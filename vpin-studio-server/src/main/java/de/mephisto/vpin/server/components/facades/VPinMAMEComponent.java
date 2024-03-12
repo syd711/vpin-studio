@@ -58,7 +58,7 @@ public class VPinMAMEComponent implements ComponentFacade {
   }
 
   @Override
-  public boolean isSkipRootFolder() {
-    return true;
+  public List<String> getRootFolderIndicators() {
+    return Arrays.asList("VPMAlias.txt");
   }
 }

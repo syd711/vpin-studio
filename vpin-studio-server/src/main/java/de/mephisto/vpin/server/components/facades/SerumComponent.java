@@ -50,43 +50,6 @@ public class SerumComponent implements ComponentFacade {
     return null;
   }
 
-  @Override
-  public void postProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
-//    try {
-//      install.log("\n\nExecuting Post Processing\n========================================");
-//      File vpxFile = new File(gameEmulator.getTablesFolder().getParentFile(), "VPinballX.exe");
-//      File vpxGlFile = new File(gameEmulator.getTablesFolder().getParentFile(), "VPinballX_GL64.exe");
-//      File vpx64File = new File(gameEmulator.getTablesFolder().getParentFile(), "VPinballX64.exe");
-
-//      if (vpxFile.exists()) {
-//        File backupFile = new File(vpxFile.getParentFile(), vpxFile.getName() + ".bak");
-//        if (backupFile.exists() && !backupFile.delete()) {
-//          install.setStatus("Failed to delete VPX backup file " + backupFile.getAbsolutePath());
-//          return;
-//        }
-//
-//        if (!vpxFile.renameTo(backupFile)) {
-//          install.setStatus("Failed create VPX backup file " + backupFile.getAbsolutePath());
-//          return;
-//        }
-//
-//        install.log("Created backup file " + backupFile.getAbsolutePath());
-//      }
-//
-//      if (vpxGlFile.exists()) {
-//        FileUtils.copyFile(vpxGlFile, vpxFile);
-//        install.log("Copied " + vpxGlFile.getAbsolutePath() + " to " + vpxFile.getAbsolutePath());
-//      }
-//
-//      if (vpx64File.exists()) {
-//        FileUtils.copyFile(vpx64File, vpxFile);
-//        install.log("Copied " + vpx64File.getAbsolutePath() + " to " + vpxFile.getAbsolutePath());
-//      }
-//    } catch (IOException e) {
-//      install.setStatus("Post processing failed: " + e.getMessage());
-//    }
-  }
-
   @Nullable
   @Override
   public List<String> getExclusionList() {
@@ -94,7 +57,7 @@ public class SerumComponent implements ComponentFacade {
   }
 
   @Override
-  public boolean isSkipRootFolder() {
-    return true;
+  public List<String> getRootFolderIndicators() {
+    return Arrays.asList("serum64.dll", "serum.dll");
   }
 }

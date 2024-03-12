@@ -310,6 +310,7 @@ public class GamesResource {
               tableDetails.setGameDisplayName(FilenameUtils.getBaseName(originalFilename));
             }
             popperService.saveTableDetails(tableDetails, gameId, !keepExistingFilename);
+            popperService.updateTableFileUpdated(gameId);
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
@@ -331,6 +332,7 @@ public class GamesResource {
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
               popperService.saveTableDetails(tableDetails, importedGameId, false);
+              popperService.updateTableFileUpdated(importedGameId);
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
 
               //clone popper media

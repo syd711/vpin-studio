@@ -273,6 +273,27 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return manifest;
   }
 
+  public void updateTableFileUpdated(int id) {
+    Connection connect = this.connect();
+    try {
+      String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
+      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setObject(1, ts);
+      preparedStatement.setInt(2, id);
+
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    } catch (Exception e) {
+      LOG.error("Failed to save table details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
   public void saveTableDetails(int id, TableDetails tableDetails) {
     Connection connect = this.connect();
     try {

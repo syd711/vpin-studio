@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -315,7 +316,7 @@ public class TournamentsController implements Initializable, StudioFXController 
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
       }
       else {
-        List<TournamentMember> memberList = maniaClient.getTournamentClient().getTournamentMembers(tournament);
+        List<TournamentMember> memberList = new ArrayList<>(); //TODO mania maniaClient.getTournamentClient().getTournamentMembers(tournament);
         if (memberList.isEmpty()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No players have joined this tournament yet."));
         }

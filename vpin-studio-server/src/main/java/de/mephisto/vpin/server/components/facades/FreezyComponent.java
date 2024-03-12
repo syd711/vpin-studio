@@ -58,7 +58,7 @@ public class FreezyComponent implements ComponentFacade {
   }
 
   @Override
-  public boolean isSkipRootFolder() {
-    return true;
+  public List<String> getRootFolderIndicators() {
+    return Arrays.asList("DmdDevice.ini");
   }
 }
