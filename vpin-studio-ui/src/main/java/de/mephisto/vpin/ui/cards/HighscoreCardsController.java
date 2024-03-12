@@ -130,10 +130,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private CheckBox renderRawHighscore;
 
   @FXML
-  private BorderPane imageCenter;
+  private FontIcon rawHighscoreHelp;
 
   @FXML
-  private FontIcon rawHighscoreHelp;
+  private Button falbackUploadBtn;
 
   @FXML
   private Button openImageBtn;
@@ -163,7 +163,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private CheckBox renderWheelIconCheckbox;
 
   @FXML
-  private Pane previewAnchor;
+  private Pane previewPanel;
 
   //table components
   @FXML
@@ -409,8 +409,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onGenerateClick() {
-    GameRepresentation value = tableView.getSelectionModel().getSelectedItem();
-    refreshPreview(Optional.ofNullable(value), true);
+    Platform.runLater(() -> {
+      GameRepresentation value = tableView.getSelectionModel().getSelectedItem();
+      refreshPreview(Optional.ofNullable(value), true);
+    });
   }
 
   private CardTemplate getCardTemplate() {
@@ -432,6 +434,16 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
 
       templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
+      useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          backgroundImageCombo.setDisable(newValue);
+          falbackUploadBtn.setDisable(newValue);
+        }
+      });
+      backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
+      falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
+
       templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
       templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
       templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
@@ -499,7 +511,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       blurSlider.setDisable(newValue);
       brightenSlider.setDisable(newValue);
       darkenSlider.setDisable(newValue);
-      backgroundImageCombo.setDisable(newValue);
+      backgroundImageCombo.setDisable(newValue || getCardTemplate().isUseDirectB2S());
       alphaPercentageSpinner.setDisable(!newValue);
 
       if (newValue) {
@@ -507,10 +519,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
           BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
           BackgroundSize.DEFAULT);
-        imageCenter.setBackground(new Background(myBI));
+        previewPanel.setBackground(new Background(myBI));
       }
       else {
-        imageCenter.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+        previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
       }
     });
   }
@@ -569,8 +581,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           });
 
         }).start();
-        cardPreview.setFitHeight(previewAnchor.getHeight() - offset);
-        cardPreview.setFitWidth(previewAnchor.getWidth() - offset);
+        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
+        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
 
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
@@ -678,7 +690,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       initFields();
 
       cardPreview.setPreserveRatio(true);
-      previewAnchor.widthProperty().addListener((obs, oldVal, newVal) -> {
+      previewPanel.widthProperty().addListener((obs, oldVal, newVal) -> {
         debouncer.debounce("refresh", () -> {
           Platform.runLater(() -> {
             cardPreview.setFitWidth(newVal.intValue() / 2);
@@ -711,7 +723,13 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       GameRepresentation value = cellData.getValue();
       boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
       if (!defaultBackgroundAvailable) {
-        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(null));
+        Label label = new Label();
+        label.setGraphic(WidgetFactory.createExclamationIcon(null));
+        Tooltip tt = new Tooltip("The table does not have a default background.");
+        tt.setWrapText(true);
+        tt.setMaxWidth(400);
+        label.setTooltip(tt);
+        return new SimpleObjectProperty(label);
       }
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });

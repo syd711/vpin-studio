@@ -125,7 +125,7 @@ public class CardGraphics {
     int currentY = template.getPadding();
     if (template.isRenderTitle()) {
       String titleFontName = template.getTitleFontName();
-      int titleFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int titleFontStyle = ImageUtil.convertFontPosture(template.getTitleFontStyle());
       int titleFontSize = template.getTitleFontSize();
       g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
 
@@ -134,12 +134,14 @@ public class CardGraphics {
       currentY = titleFontSize + template.getPadding();
       g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
       g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+
+      currentY = currentY + template.getPadding();
     }
 
     if (template.isRenderTableName()) {
       String tableFontName = template.getTableFontName();
       int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
-      int tableFontSize = template.getTitleFontSize();
+      int tableFontSize = template.getTableFontSize();
       g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
 
       String tableName = game.getGameDisplayName();
@@ -149,12 +151,13 @@ public class CardGraphics {
         g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
         width = g.getFontMetrics().stringWidth(tableName);
       }
-      currentY = currentY + tableFontSize + tableFontSize / 2;
+      currentY = currentY + tableFontSize + template.getPadding();
       g.drawString(tableName, imageWidth / 2 - width / 2, currentY);
+
+      currentY = currentY + template.getPadding() * 2;
     }
 
     if (template.isRawScore()) {
-      currentY = currentY + template.getTableFontSize();
       renderRawScore(game, image.getHeight(), image.getWidth(), g, currentY);
     }
     else {
@@ -213,8 +216,13 @@ public class CardGraphics {
   }
 
   private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
+    int wheelWidth = template.getPadding() * 2 + template.getTableFontSize() * 2;
+    if (!template.isRenderWheelIcon()) {
+      wheelWidth = 0;
+    }
+
     int remainingHeight = imageHeight - yStart - template.getPadding();
-    int remainingWidth = imageWidth - 2 * template.getPadding();
+    int remainingWidth = imageWidth - (2 * template.getPadding()) - wheelWidth;
     String raw = summary.getRaw().trim();
     String[] lines = raw.split("\n");
 
@@ -245,23 +253,16 @@ public class CardGraphics {
     int remainingXSpace = remainingWidth - columnsWidth;
 
     int x = 0;
-    int wheelWidth = template.getPadding() * 2 + template.getTableFontSize() * 2;
-
-    boolean renderWheel = remainingXSpace > (wheelWidth + template.getPadding());
-    if (remainingXSpace > 250) {
-      wheelWidth = 250;
-    }
-
     //file exists && there is place to render it
     GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
-    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && renderWheel) {
+    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && template.isRenderWheelIcon()) {
       File wheelIconFile = defaultMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
       if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-      x = (remainingXSpace - wheelWidth) / 2;
+      x = (remainingXSpace) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
       x = x + wheelWidth + template.getPadding();
     }

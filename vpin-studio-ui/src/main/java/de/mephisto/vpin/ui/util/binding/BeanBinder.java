@@ -31,9 +31,7 @@ public class BeanBinder {
 
   public void bindTextField(TextField textField, Object beanObject, String property, String defaultValue) {
     String value = getProperty(beanObject, property);
-    StringProperty stringProperty = new SimpleStringProperty();
     textField.setText(value);
-    Bindings.bindBidirectional(stringProperty, textField.textProperty());
     textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(property, () -> {
       setProperty(beanObject, property, textField.getText());
     }, 1000));
@@ -49,18 +47,16 @@ public class BeanBinder {
 
   public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property, String defaultValue) {
     String value = getProperty(beanObject, property, defaultValue);
-    StringProperty stringProperty = new SimpleStringProperty();
-    Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
     comboBox.setValue(value);
     comboBox.valueProperty().addListener((observableValue, s, t1) -> setProperty(beanObject, property, t1));
   }
 
   public void bindCheckbox(CheckBox checkbox, Object beanObject, String property) {
     boolean value = getBooleanProperty(beanObject, property, false);
-    BooleanProperty booleanProperty = new SimpleBooleanProperty();
-    Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());
-    booleanProperty.set(value);
-    checkbox.selectedProperty().addListener((observableValue, s, t1) -> setProperty(beanObject, property, t1));
+    checkbox.setSelected(value);
+    checkbox.selectedProperty().addListener((observableValue, s, t1) -> {
+      setProperty(beanObject, property, t1);
+    });
   }
 
   public void bindSpinner(Spinner spinner, Object beanObject, String property, int min, int max) {
@@ -69,7 +65,7 @@ public class BeanBinder {
     spinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
-      setProperty(beanObject, property, String.valueOf(value1));
+      setProperty(beanObject, property, value1);
     }, 500));
   }
 
@@ -106,8 +102,8 @@ public class BeanBinder {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          setProperty(beanObject, key + "FontName", result.getFamily());
-          setProperty(beanObject, key + "FontSize", String.valueOf((int) result.getSize()));
+          setProperty(beanObject, key + "FontName", result.getFamily(), true);
+          setProperty(beanObject, key + "FontSize", (int) result.getSize(), true);
           setProperty(beanObject, key + "FontStyle", result.getStyle());
 
           Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
@@ -117,7 +113,7 @@ public class BeanBinder {
             label.setText(labelText);
             label.setTooltip(new Tooltip(labelText));
           });
-        }, 1000);
+        }, 50);
 
       }
     });
@@ -206,9 +202,13 @@ public class BeanBinder {
   }
 
   private void setProperty(Object beanObject, String property, Object value) {
+    setProperty(beanObject, property, value, false);
+  }
+
+  private void setProperty(Object beanObject, String property, Object value, boolean skipChangeEvent) {
     try {
       PropertyUtils.setProperty(beanObject, property, value);
-      if (listener != null) {
+      if (listener != null && !skipChangeEvent) {
         listener.beanPropertyChanged(beanObject, property, value);
       }
     } catch (Exception e) {

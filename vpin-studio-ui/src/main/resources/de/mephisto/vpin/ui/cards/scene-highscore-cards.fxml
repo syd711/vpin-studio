@@ -69,14 +69,6 @@
                                          <Font size="14.0" />
                                       </font>
                                    </CheckBox>
-                                    <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
                                    <Label text="Fallback Background Image:" textFill="WHITE">
                                       <font>
                                          <Font size="14.0" />
@@ -92,13 +84,21 @@
                                                 <Insets top="3.0" />
                                              </HBox.margin>
                                           </ComboBox>
-                                         <Button mnemonicParsing="false" onAction="#onUploadButton">
+                                         <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
                                             <graphic>
                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                             </graphic>
                                          </Button>
                                       </children>
                                    </HBox>
+                                    <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <Label text="Brighten Background:" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -133,7 +133,7 @@
                                           <Insets top="12.0" />
                                        </padding>
                                     </Label>
-                                    <Slider fx:id="blurSlider" maxWidth="330.0">
+                                    <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -298,24 +298,6 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Label text="Wheel Image Padding:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
-                                    <Label text="Row Separator:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
                                     <BorderPane prefHeight="36.0">
                                        <left>
                                           <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE" BorderPane.alignment="CENTER">
@@ -338,12 +320,30 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </BorderPane>
+                                    <Label text="Wheel Image Padding:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="3.0" />
+                                       </padding>
+                                    </Label>
+                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
+                                    <Label text="Row Separator:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="12.0" />
+                                       </padding>
+                                    </Label>
+                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
                                     <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets />
+                                          <Insets top="12.0" />
                                        </VBox.margin>
                                     </CheckBox>
                                     <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
@@ -458,7 +458,7 @@
             <Insets right="12.0" />
          </BorderPane.margin>
          <center>
-            <BorderPane fx:id="imageCenter" styleClass="subpanel">
+            <BorderPane styleClass="subpanel">
                <center>
                   <SplitPane dividerPositions="0.32" BorderPane.alignment="CENTER">
                     <items>
@@ -503,7 +503,7 @@
                            <center>
                               <StackPane fx:id="previewStack" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER">
                                  <children>
-                                    <VBox fx:id="previewAnchor" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                    <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                        </padding>
