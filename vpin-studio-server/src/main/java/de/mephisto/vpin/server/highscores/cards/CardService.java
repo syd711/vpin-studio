@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.highscores.cards;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -44,6 +43,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private CardTemplatesService cardTemplatesService;
+
   public File generateSampleCard(Game game) throws Exception {
     File cardSampleFile = getCardSampleFile();
     if (!cardSampleFile.exists()) {
@@ -63,8 +65,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        CardTemplates cardTemplates = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
-        CardTemplate template = cardTemplates.getTemplate(game.getId());
+        CardTemplate template = cardTemplatesService.getTemplatesForGame(game.getId());
 
         //sample card are always generated
         if (generateSampleCard) {

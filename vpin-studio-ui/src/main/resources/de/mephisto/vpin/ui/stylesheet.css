@@ -1103,3 +1103,37 @@
     -fx-font-weight: bold;
     -fx-background-color: #6666FFAA;
  }
+
+
+.edit-mode-border {
+    -fx-border-color: #6666FF;
+    -fx-border-style: solid;
+    -fx-border-width: 3;
+}
+
+.edit-mode-container {
+    -fx-background-color: #6666FF;
+}
+
+.edit-button {
+    -fx-background-color: #5555FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-weight: bold;
+    -fx-border-radius: 3 3 3 3;
+    -fx-font-size: 14px;
+    -fx-border-color: #FFFFFF;
+    -fx-text-fill: #DDDDDD;
+}
+
+.edit-button:hover {
+    -fx-background-color: #7777FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 3 3 3 3;
+    -fx-border-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+}

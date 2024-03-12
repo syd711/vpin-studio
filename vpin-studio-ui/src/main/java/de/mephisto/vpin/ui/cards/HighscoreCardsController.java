@@ -6,7 +6,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -62,6 +61,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   private final Debouncer debouncer = new Debouncer();
+
+  @FXML
+  private ComboBox<CardTemplate> templateCombo;
 
   @FXML
   private Label resolutionLabel;
@@ -185,6 +187,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private Button deleteBtn;
 
   @FXML
+  private Button createBtn;
+
+  @FXML
   private Button duplicateBtn;
 
   @FXML
@@ -196,6 +201,22 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private StackPane loaderStack;
 
+  // template editing
+  @FXML
+  private Button editTemplateBtn;
+
+  @FXML
+  private ToolBar editorFooterToolbar;
+
+  @FXML
+  private ToolBar editorHeaderToolbar;
+
+  @FXML
+  private Label templateLabel;
+
+  @FXML
+  private Pane editorFrame;
+
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
 
@@ -203,7 +224,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private ObservableList<String> imageList;
   private Parent waitOverlay;
 
-  private CardTemplates cardTemplates;
   private CardSettings cardSettings;
   private BeanBinder templateBeanBinder;
   private BeanBinder cardSettingsBinder;
@@ -212,6 +232,52 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+
+  @FXML
+  private void onTemplateCreate() {
+
+  }
+
+  @FXML
+  private void onTemplateEdit() {
+    CardTemplate template = templateCombo.getValue();
+    editorFooterToolbar.setVisible(true);
+    editorHeaderToolbar.setVisible(true);
+
+    duplicateBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+    editTemplateBtn.setDisable(true);
+    createBtn.setDisable(true);
+    templateCombo.setDisable(true);
+
+    editorFrame.getStyleClass().add("edit-mode-border");
+    templateLabel.setText(template.getName());
+  }
+
+  @FXML
+  private void onTemplateSave() {
+    CardTemplate template = templateCombo.getValue();
+    editorFooterToolbar.setVisible(false);
+    editorHeaderToolbar.setVisible(false);
+
+    duplicateBtn.setDisable(false);
+    deleteBtn.setDisable(false);
+    editTemplateBtn.setDisable(false);
+    createBtn.setDisable(false);
+    templateCombo.setDisable(false);
+
+    editorFrame.getStyleClass().clear();
+  }
+
+  @FXML
+  private void onResize() {
+    System.out.println("resize");
+  }
+
+  @FXML
+  private void onResizeEnd() {
+    System.out.println("resize end");
+  }
 
   @FXML
   private void onRename(ActionEvent e) {
@@ -416,8 +482,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private CardTemplate getCardTemplate() {
-    //TODO add combo
-    return this.cardTemplates.getDefaultTemplate();
+    return this.templateCombo.getValue();
   }
 
   public HighscoreCardsController() {
@@ -605,7 +670,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void beanPropertyChanged(Object bean, String key, Object value) {
     if (bean instanceof CardTemplate) {
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, this.cardTemplates);
+
       onGenerateClick();
     }
     else if (bean instanceof CardSettings) {
@@ -675,12 +740,27 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
+      editorFooterToolbar.setVisible(false);
+      editorFooterToolbar.getStyleClass().add("media-container");
+
+      editorHeaderToolbar.setVisible(false);
+      editorHeaderToolbar.getStyleClass().add("media-container");
+
+      editorFrame.getStyleClass().remove("edit-mode-border");
+
+
       templateBeanBinder = new BeanBinder(this);
       cardSettingsBinder = new BeanBinder(this);
 
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      cardTemplates = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
+
+      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+      if (items.isEmpty()) {
+        items.add(new CardTemplate());
+      }
+      templateCombo.setItems(FXCollections.observableList(items));
+      templateCombo.getSelectionModel().select(0);
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();

@@ -460,7 +460,7 @@
          <center>
             <BorderPane styleClass="subpanel">
                <center>
-                  <SplitPane dividerPositions="0.32" BorderPane.alignment="CENTER">
+                  <SplitPane dividerPositions="0.32" onDragDetected="#onResize" onDragDropped="#onResizeEnd" BorderPane.alignment="CENTER">
                     <items>
                         <BorderPane minWidth="300.0" prefWidth="250.0">
                            <center>
@@ -479,7 +479,7 @@
                            <top>
                               <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <items>
-                                    <MenuButton fx:id="filterButton" mnemonicParsing="false">
+                                    <MenuButton fx:id="filterButton" mnemonicParsing="false" textFill="WHITE">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                                        </graphic>
@@ -499,18 +499,40 @@
                               </ToolBar>
                            </top>
                         </BorderPane>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                        <BorderPane>
                            <center>
                               <StackPane fx:id="previewStack" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER">
                                  <children>
-                                    <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                                       <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                       </padding>
-                                       <children>
-                                          <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
-                                       </children>
-                                    </VBox>
+                                    <BorderPane fx:id="editorFrame" styleClass="edit-mode-border">
+                                       <center>
+                                          <VBox fx:id="previewPanel" alignment="CENTER">
+                                             <children>
+                                                <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
+                                             </children>
+                                          </VBox>
+                                       </center>
+                                       <bottom>
+                                          <ToolBar fx:id="editorFooterToolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" styleClass="edit-mode-container" BorderPane.alignment="CENTER">
+                                            <items>
+                                              <Button mnemonicParsing="false" onAction="#onTemplateSave" styleClass="edit-button" text="Close" />
+                                            </items>
+                                          </ToolBar>
+                                       </bottom>
+                                       <top>
+                                          <ToolBar fx:id="editorHeaderToolbar" prefHeight="40.0" prefWidth="200.0" styleClass="edit-mode-container" BorderPane.alignment="CENTER">
+                                             <items>
+                                                <Label fx:id="templateLabel" text="Template: " textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="16.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets left="6.0" />
+                                                   </padding>
+                                                </Label>
+                                             </items>
+                                          </ToolBar>
+                                       </top>
+                                    </BorderPane>
                                  </children>
                               </StackPane>
                            </center>
@@ -522,8 +544,19 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="222.0" />
-                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                                    <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
+                                    <Button fx:id="createBtn" layoutX="310.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTemplateCreate" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Create New Template" />
+                                       </tooltip>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="editTemplateBtn" mnemonicParsing="false" onAction="#onTemplateEdit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

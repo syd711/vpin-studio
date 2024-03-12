@@ -1,9 +1,5 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardTemplates;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -80,24 +76,6 @@ public class CardsResource {
     return ResponseEntity.notFound().build();
   }
 
-  @PostMapping(value = "/savetemplate")
-  public CardTemplates saveTemplate(@RequestBody CardTemplate cardTemplate) throws Exception {
-    CardTemplates templates = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
-    if (templates.contains(cardTemplate)) {
-      templates.remove(cardTemplate);
-    }
-    templates.getTemplates().add(cardTemplate);
-    preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, templates);
-    return templates;
-  }
-
-  @DeleteMapping(value = "/deletetemplate")
-  public CardTemplates deleteTemplate(@RequestBody CardTemplate cardTemplate) throws Exception {
-    CardTemplates templates = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, CardTemplates.class);
-    templates.remove(cardTemplate);
-    preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_TEMPLATES, templates);
-    return templates;
-  }
 
   @PostMapping(value = "/backgroundupload")
   public Boolean upload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {

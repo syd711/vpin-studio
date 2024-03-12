@@ -1,11 +1,15 @@
 package de.mephisto.vpin.restclient.cards;
 
+import de.mephisto.vpin.restclient.JsonSettings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CardTemplate {
-  public final static String DEFAULT = "default";
+public class CardTemplate extends JsonSettings {
+  public final static String DEFAULT = "Default";
+
+  private long id;
 
   private String name = DEFAULT;
   private int alphaBlack = 33;
@@ -35,6 +39,14 @@ public class CardTemplate {
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
 
   private List<Integer> gameIds = new ArrayList<>();
 
@@ -281,5 +293,10 @@ public class CardTemplate {
   @Override
   public int hashCode() {
     return Objects.hash(name);
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
   }
 }

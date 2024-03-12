@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -74,6 +75,7 @@ public class VPinStudioClient implements OverlayClient {
   private final GamesServiceClient gamesServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
+  private final HighscoreCardTemplatesServiceClient highscoreCardTemplatesServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
@@ -111,6 +113,7 @@ public class VPinStudioClient implements OverlayClient {
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
+    this.highscoreCardTemplatesServiceClient = new HighscoreCardTemplatesServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
@@ -138,6 +141,10 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public HighscoreCardTemplatesServiceClient getHighscoreCardTemplatesClient() {
+    return highscoreCardTemplatesServiceClient;
   }
 
   public TextEditorServiceClient getTextEditorService() {
