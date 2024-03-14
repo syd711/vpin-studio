@@ -14,6 +14,8 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -30,428 +32,6 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
-
-   <right>
-      <BorderPane prefWidth="350.0" styleClass="subpanel" BorderPane.alignment="CENTER">
-
-         <center>
-            <Accordion fx:id="accordion" BorderPane.alignment="CENTER">
-              <panes>
-                 <TitledPane fx:id="backgroundSettingsPane" text="Background Settings">
-                    <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                             <VBox maxWidth="340.0" styleClass="accordion-container">
-                                <children>
-                                    <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label layoutX="22.0" layoutY="184.0" text="Alpha Percentage:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Slider fx:id="alphaPercentageSpinner" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                   <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
-                                      <VBox.margin>
-                                         <Insets top="12.0" />
-                                      </VBox.margin>
-                                      <font>
-                                         <Font size="14.0" />
-                                      </font>
-                                   </CheckBox>
-                                   <Label text="Fallback Background Image:" textFill="WHITE">
-                                      <font>
-                                         <Font size="14.0" />
-                                      </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                   </Label>
-                                   <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                      <children>
-                                         <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </ComboBox>
-                                         <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
-                                            <graphic>
-                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                            </graphic>
-                                         </Button>
-                                      </children>
-                                   </HBox>
-                                    <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <Label text="Brighten Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Slider fx:id="brightenSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Darken Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="darkenSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Blur Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Border Size:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="borderSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Padding:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="marginTopSpinner" editable="true" styleClass="widget-default">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </Spinner>
-                                </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                             </VBox>
-                           </content>
-                        </ScrollPane>
-                    </content>
-              </TitledPane>
-                <TitledPane text="Font Settings">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox styleClass="accordion-container">
-                                 <children>
-                                    <Label text="Title Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                             </graphic>
-                                          </Button>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Table Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
-                                             </graphic>
-                                          </Button>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Score Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                             </graphic>
-                                          </Button>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Font Color" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <ColorPicker fx:id="fontColorSelector">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </ColorPicker>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                </TitledPane>
-                <TitledPane expanded="false" text="Layout">
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox prefWidth="300.0" spacing="3.0" styleClass="accordion-container">
-                                 <children>
-                                    <Label text="Title:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="titleText">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <BorderPane prefHeight="36.0">
-                                       <left>
-                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <BorderPane.margin>
-                                                <Insets />
-                                             </BorderPane.margin>
-                                          </CheckBox>
-                                       </left>
-                                       <right>
-                                          <FontIcon fx:id="rawHighscoreHelp" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets />
-                                             </BorderPane.margin>
-                                          </FontIcon>
-                                       </right>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </BorderPane>
-                                    <Label text="Wheel Image Padding:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
-                                    <Label text="Row Separator:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
-                                    <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="renderWheelIconCheckbox" layoutX="22.0" layoutY="284.0" mnemonicParsing="false" text="Render Wheel Icon">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                </TitledPane>
-              </panes>
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-            </Accordion>
-         </center>
-         <top>
-            <TitledPane collapsible="false" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-               <content>
-                  <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
-                     <children>
-                        <BorderPane maxHeight="260.0" minHeight="260.0" styleClass="media-parent">
-                           <center>
-                              <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
-                                 <viewport>
-                                    <Rectangle2D />
-                                 </viewport>
-                              </ImageView>
-                           </center>
-                           <top>
-                              <ToolBar BorderPane.alignment="CENTER">
-                                 <items>
-                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Button>
-                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Button>
-                                 </items>
-                              </ToolBar>
-                           </top>
-                        </BorderPane>
-                        <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="media-parent">
-                           <padding>
-                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                           </padding>
-                        </TilePane>
-                        <BorderPane>
-                           <VBox.margin>
-                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                           </VBox.margin>
-                           <left>
-                              <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
-                           </left>
-                           <right>
-                              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
-                              </HBox>
-                           </right>
-                        </BorderPane>
-                     </children>
-                     <padding>
-                        <Insets left="1.0" right="1.0" />
-                     </padding>
-                  </VBox>
-               </content>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TitledPane>
-         </top>
-         <BorderPane.margin>
-            <Insets right="6.0" />
-         </BorderPane.margin>
-      </BorderPane>
-   </right>
    <center>
       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -462,43 +42,470 @@
                <center>
                   <SplitPane dividerPositions="0.32" onDragDetected="#onResize" onDragDropped="#onResizeEnd" BorderPane.alignment="CENTER">
                     <items>
-                        <BorderPane minWidth="300.0" prefWidth="250.0">
-                           <center>
-                              <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                       <columns>
-                                          <TableColumn fx:id="columnStatus" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: BASELINE_CENTER;" />
-                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                          <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
-                                       </columns>
-                                    </TableView>
-                                 </children>
-                              </StackPane>
-                           </center>
-                           <top>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                 <items>
-                                    <MenuButton fx:id="filterButton" mnemonicParsing="false" textFill="WHITE">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Filter Tables" />
-                                       </tooltip>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </MenuButton>
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                 </items>
-                              </ToolBar>
-                           </top>
-                        </BorderPane>
+                        <TabPane fx:id="tabPane" minWidth="400.0" prefWidth="400.0">
+                           <tabs>
+                              <Tab closable="false" text="Tables">
+                                 <content>
+                                    <BorderPane minWidth="300.0" prefWidth="250.0">
+                                       <center>
+                                          <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                                   <columns>
+                                                      <TableColumn fx:id="columnStatus" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: BASELINE_CENTER;" />
+                                                      <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                                      <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
+                                                   </columns>
+                                                </TableView>
+                                             </children>
+                                          </StackPane>
+                                       </center>
+                                       <top>
+                                          <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                             <items>
+                                                <MenuButton fx:id="filterButton" mnemonicParsing="false" textFill="WHITE">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Filter Tables" />
+                                                   </tooltip>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </MenuButton>
+                                                <TextField fx:id="searchField" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                             </items>
+                                          </ToolBar>
+                                       </top>
+                                    </BorderPane>
+                                 </content>
+                              </Tab>
+                              <Tab closable="false" text="Template Designer">
+                                 <content>
+                                    <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                       <top>
+                                          <TitledPane collapsible="false" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                             <content>
+                                                <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
+                                                   <children>
+                                                      <BorderPane maxHeight="260.0" minHeight="260.0" styleClass="media-parent">
+                                                         <center>
+                                                            <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
+                                                               <viewport>
+                                                                  <Rectangle2D />
+                                                               </viewport>
+                                                            </ImageView>
+                                                         </center>
+                                                         <top>
+                                                            <ToolBar BorderPane.alignment="CENTER">
+                                                               <items>
+                                                                  <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Button>
+                                                                  <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Button>
+                                                               </items>
+                                                            </ToolBar>
+                                                         </top>
+                                                      </BorderPane>
+                                                      <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="media-parent">
+                                                         <padding>
+                                                            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                                         </padding>
+                                                      </TilePane>
+                                                      <BorderPane>
+                                                         <VBox.margin>
+                                                            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                                         </VBox.margin>
+                                                         <left>
+                                                            <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
+                                                         </left>
+                                                         <right>
+                                                            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
+                                                               <BorderPane.margin>
+                                                                  <Insets />
+                                                               </BorderPane.margin>
+                                                            </HBox>
+                                                         </right>
+                                                      </BorderPane>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="1.0" right="1.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </content>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TitledPane>
+                                       </top>
+                                       <center>
+                                          <Accordion fx:id="accordion" BorderPane.alignment="CENTER">
+                                            <panes>
+                                               <TitledPane fx:id="backgroundSettingsPane" text="Background Settings">
+                                                  <content>
+                                                      <ScrollPane hbarPolicy="NEVER">
+                                                         <content>
+                                                           <VBox maxWidth="340.0" styleClass="accordion-container">
+                                                              <children>
+                                                                  <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </CheckBox>
+                                                                  <Label layoutX="22.0" layoutY="184.0" text="Alpha Percentage:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </Label>
+                                                                  <Slider fx:id="alphaPercentageSpinner" maxWidth="330.0">
+                                                                     <padding>
+                                                                        <Insets bottom="12.0" top="6.0" />
+                                                                     </padding>
+                                                                  </Slider>
+                                                                 <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
+                                                                    <VBox.margin>
+                                                                       <Insets top="12.0" />
+                                                                    </VBox.margin>
+                                                                    <font>
+                                                                       <Font size="14.0" />
+                                                                    </font>
+                                                                 </CheckBox>
+                                                                 <Label text="Fallback Background Image:" textFill="WHITE">
+                                                                    <font>
+                                                                       <Font size="14.0" />
+                                                                    </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                 </Label>
+                                                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                                                    <children>
+                                                                       <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
+                                                                           <HBox.margin>
+                                                                              <Insets top="3.0" />
+                                                                           </HBox.margin>
+                                                                        </ComboBox>
+                                                                       <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                                                                          <graphic>
+                                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                                                          </graphic>
+                                                                       </Button>
+                                                                    </children>
+                                                                 </HBox>
+                                                                  <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </CheckBox>
+                                                                  <Label text="Brighten Background:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </Label>
+                                                                  <Slider fx:id="brightenSlider" maxWidth="330.0">
+                                                                     <padding>
+                                                                        <Insets bottom="12.0" top="6.0" />
+                                                                     </padding>
+                                                                  </Slider>
+                                                                  <Label text="Darken Background:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="12.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Slider fx:id="darkenSlider" maxWidth="330.0">
+                                                                     <padding>
+                                                                        <Insets bottom="12.0" top="6.0" />
+                                                                     </padding>
+                                                                  </Slider>
+                                                                  <Label text="Blur Background:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="12.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
+                                                                     <padding>
+                                                                        <Insets bottom="12.0" top="6.0" />
+                                                                     </padding>
+                                                                  </Slider>
+                                                                  <Label text="Border Size:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="12.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Slider fx:id="borderSlider" maxWidth="330.0">
+                                                                     <padding>
+                                                                        <Insets bottom="12.0" top="6.0" />
+                                                                     </padding>
+                                                                  </Slider>
+                                                                  <Label text="Padding:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="12.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Spinner fx:id="marginTopSpinner" editable="true" styleClass="widget-default">
+                                                                     <VBox.margin>
+                                                                        <Insets top="6.0" />
+                                                                     </VBox.margin>
+                                                                  </Spinner>
+                                                              </children>
+                                                               <padding>
+                                                                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                               </padding>
+                                                           </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                  </content>
+                                            </TitledPane>
+                                              <TitledPane text="Font Settings">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <content>
+                                                      <ScrollPane hbarPolicy="NEVER">
+                                                         <content>
+                                                            <VBox styleClass="accordion-container">
+                                                               <children>
+                                                                  <Label text="Title Font" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <BorderPane>
+                                                                     <left>
+                                                                        <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                        </Label>
+                                                                     </left>
+                                                                     <right>
+                                                                        <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                           <graphic>
+                                                                              <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                                                           </graphic>
+                                                                        </Button>
+                                                                     </right>
+                                                                  </BorderPane>
+                                                                  <Label text="Table Font" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </Label>
+                                                                  <BorderPane>
+                                                                     <left>
+                                                                        <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                        </Label>
+                                                                     </left>
+                                                                     <right>
+                                                                        <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                           <graphic>
+                                                                              <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
+                                                                           </graphic>
+                                                                        </Button>
+                                                                     </right>
+                                                                  </BorderPane>
+                                                                  <Label text="Score Font" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </Label>
+                                                                  <BorderPane>
+                                                                     <left>
+                                                                        <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                        </Label>
+                                                                     </left>
+                                                                     <right>
+                                                                        <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                           <graphic>
+                                                                              <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                                                           </graphic>
+                                                                        </Button>
+                                                                     </right>
+                                                                  </BorderPane>
+                                                                  <Label text="Font Color" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </Label>
+                                                                  <ColorPicker fx:id="fontColorSelector">
+                                                                     <VBox.margin>
+                                                                        <Insets top="6.0" />
+                                                                     </VBox.margin>
+                                                                  </ColorPicker>
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                              </TitledPane>
+                                              <TitledPane expanded="false" text="Layout">
+                                                   <content>
+                                                      <ScrollPane hbarPolicy="NEVER">
+                                                         <content>
+                                                            <VBox prefWidth="300.0" spacing="3.0" styleClass="accordion-container">
+                                                               <children>
+                                                                  <Label text="Title:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <TextField fx:id="titleText">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </TextField>
+                                                                  <BorderPane prefHeight="36.0">
+                                                                     <left>
+                                                                        <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                           <BorderPane.margin>
+                                                                              <Insets />
+                                                                           </BorderPane.margin>
+                                                                        </CheckBox>
+                                                                     </left>
+                                                                     <right>
+                                                                        <FontIcon fx:id="rawHighscoreHelp" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" BorderPane.alignment="CENTER">
+                                                                           <BorderPane.margin>
+                                                                              <Insets />
+                                                                           </BorderPane.margin>
+                                                                        </FontIcon>
+                                                                     </right>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </BorderPane>
+                                                                  <Label text="Wheel Image Padding:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="3.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
+                                                                  <Label text="Row Separator:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets top="12.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
+                                                                  <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="12.0" />
+                                                                     </VBox.margin>
+                                                                  </CheckBox>
+                                                                  <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="6.0" />
+                                                                     </VBox.margin>
+                                                                  </CheckBox>
+                                                                  <CheckBox fx:id="renderWheelIconCheckbox" layoutX="22.0" layoutY="284.0" mnemonicParsing="false" text="Render Wheel Icon">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <VBox.margin>
+                                                                        <Insets top="6.0" />
+                                                                     </VBox.margin>
+                                                                  </CheckBox>
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                              </TitledPane>
+                                            </panes>
+                                             <BorderPane.margin>
+                                                <Insets />
+                                             </BorderPane.margin>
+                                          </Accordion>
+                                       </center>
+                                    </BorderPane>
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
                         <BorderPane>
                            <center>
                               <StackPane fx:id="previewStack" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER">

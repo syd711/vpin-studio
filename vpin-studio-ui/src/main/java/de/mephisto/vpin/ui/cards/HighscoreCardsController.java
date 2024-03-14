@@ -215,6 +215,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private Label templateLabel;
 
   @FXML
+  private TabPane tabPane;
+
+  @FXML
   private Pane editorFrame;
 
   private ObservableList<GameRepresentation> data;
@@ -740,6 +743,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
+      tabPane.selectedProperty().addListener((obs, oldval, newval) ->
+        tp.setMaxHeight(((newval) ? TABPANE_HEADER_HEIGHT : -1)));
+
       editorFooterToolbar.setVisible(false);
       editorFooterToolbar.getStyleClass().add("media-container");
 
