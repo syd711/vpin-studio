@@ -132,14 +132,17 @@ public class CardGenerationPreferencesController implements Initializable {
       validationError.setVisible(false);
     }
 
+    transparencyHelp.setVisible(false);
     if (menuPupPack != null && popperScreenCombo.getValue() != null) {
       String value = popperScreenCombo.getValue();
-      PopperScreen screen = PopperScreen.valueOf(value);
-      transparencyHelp.setVisible(
-        (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
-          (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
-          (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
-      );
+      if(!StringUtils.isEmpty(value)) {
+        PopperScreen screen = PopperScreen.valueOf(value);
+        transparencyHelp.setVisible(
+          (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
+            (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
+            (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
+        );
+      }
     }
   }
 }
