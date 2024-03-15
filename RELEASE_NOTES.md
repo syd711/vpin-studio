@@ -23,3 +23,5 @@
 - **Subscription Channels**: Added support for tables with anonymous tables. Since anonymous highscore changes are not filtered anymore when a default user is set, subscription will now created for the these type of tables too.
 - Added progress dialog for loading player highscore in the players section. This avoids possible concurrent database accesses when double-clicking a player.
 - Emulator Validation: The Studio can now start even if no emulator is found. This may happen when not folders have been set up in PinUP Popper.
+- **ROM Aliases**: Fixed possible error when used with multiple emulators.
+- **Highscore Card Preferences**: Fixed resetting the target screen to an empty entry to disable the generation.

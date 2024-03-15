@@ -45,15 +45,18 @@ public class MameRomAliasService implements InitializingBean {
     }
 
     Map<String, String> aliasToRomMapping = aliasMappingCache.get(emulator.getId());
-    Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
-    for (Map.Entry<String, String> entry : entries) {
-      String alias = entry.getKey();
-      String romName = entry.getValue();
+    if (aliasToRomMapping != null) {
+      Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
+      for (Map.Entry<String, String> entry : entries) {
+        String alias = entry.getKey();
+        String romName = entry.getValue();
 
-      if (alias.trim().equals(romAlias.trim())) {
-        return romName.trim();
+        if (alias.trim().equals(romAlias.trim())) {
+          return romName.trim();
+        }
       }
     }
+
     return null;
   }
 
