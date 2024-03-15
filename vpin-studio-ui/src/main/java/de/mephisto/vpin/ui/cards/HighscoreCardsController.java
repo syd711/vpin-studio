@@ -743,9 +743,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      tabPane.selectedProperty().addListener((obs, oldval, newval) ->
-        tp.setMaxHeight(((newval) ? TABPANE_HEADER_HEIGHT : -1)));
-
       editorFooterToolbar.setVisible(false);
       editorFooterToolbar.getStyleClass().add("media-container");
 
