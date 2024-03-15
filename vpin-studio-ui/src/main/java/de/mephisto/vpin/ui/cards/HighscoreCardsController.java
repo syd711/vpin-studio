@@ -17,8 +17,6 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -39,23 +37,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
-import javafx.stage.FileChooser;
 import javafx.util.Callback;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, StudioFXController, PreferenceChangeListener, BindingChangedListener, ListChangeListener<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
@@ -75,67 +68,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private ImageView cardPreview;
 
   @FXML
-  private Label titleFontLabel;
-
-  @FXML
-  private Label scoreFontLabel;
-
-  @FXML
-  private Label tableFontLabel;
-
-  @FXML
   private ImageView rawDirectB2SImage;
-
-  @FXML
-  private CheckBox useDirectB2SCheckbox;
-
-  @FXML
-  private CheckBox grayScaleCheckbox;
-
-  @FXML
-  private CheckBox transparentBackgroundCheckbox;
-
-  @FXML
-  private ColorPicker fontColorSelector;
-
-  @FXML
-  private ComboBox<String> backgroundImageCombo;
-
-  @FXML
-  private TextField titleText;
-
-  @FXML
-  private Slider brightenSlider;
-
-  @FXML
-  private Slider darkenSlider;
-
-  @FXML
-  private Slider blurSlider;
-
-  @FXML
-  private Slider borderSlider;
-
-  @FXML
-  private Spinner<Integer> marginTopSpinner;
-
-  @FXML
-  private Spinner<Integer> wheelImageSpinner;
-
-  @FXML
-  private Spinner<Integer> rowSeparatorSpinner;
-
-  @FXML
-  private Slider alphaPercentageSpinner;
-
-  @FXML
-  private CheckBox renderRawHighscore;
-
-  @FXML
-  private FontIcon rawHighscoreHelp;
-
-  @FXML
-  private Button falbackUploadBtn;
 
   @FXML
   private Button openImageBtn;
@@ -148,21 +81,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private StackPane previewStack;
-
-  @FXML
-  private TitledPane backgroundSettingsPane;
-
-  @FXML
-  private Accordion accordion;
-
-  @FXML
-  private CheckBox renderTitleCheckbox;
-
-  @FXML
-  private CheckBox renderTableNameCheckbox;
-
-  @FXML
-  private CheckBox renderWheelIconCheckbox;
 
   @FXML
   private Pane previewPanel;
@@ -179,9 +97,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
-
-  @FXML
-  private Button renameBtn;
 
   @FXML
   private Button deleteBtn;
@@ -205,36 +120,22 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private Button editTemplateBtn;
 
-  @FXML
-  private ToolBar editorFooterToolbar;
-
-  @FXML
-  private ToolBar editorHeaderToolbar;
-
-  @FXML
-  private Label templateLabel;
-
-  @FXML
-  private TabPane tabPane;
-
-  @FXML
-  private Pane editorFrame;
-
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
 
   private List<String> ignoreList = new ArrayList<>();
-  private ObservableList<String> imageList;
   private Parent waitOverlay;
 
   private CardSettings cardSettings;
-  private BeanBinder templateBeanBinder;
-  private BeanBinder cardSettingsBinder;
 
   private Parent tablesLoadingOverlay;
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+
+  public HighscoreCardsController() {
+  }
+
 
   @FXML
   private void onTemplateCreate() {
@@ -243,33 +144,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onTemplateEdit() {
-    CardTemplate template = templateCombo.getValue();
-    editorFooterToolbar.setVisible(true);
-    editorHeaderToolbar.setVisible(true);
-
-    duplicateBtn.setDisable(true);
-    deleteBtn.setDisable(true);
-    editTemplateBtn.setDisable(true);
-    createBtn.setDisable(true);
-    templateCombo.setDisable(true);
-
-    editorFrame.getStyleClass().add("edit-mode-border");
-    templateLabel.setText(template.getName());
-  }
-
-  @FXML
-  private void onTemplateSave() {
-    CardTemplate template = templateCombo.getValue();
-    editorFooterToolbar.setVisible(false);
-    editorHeaderToolbar.setVisible(false);
-
-    duplicateBtn.setDisable(false);
-    deleteBtn.setDisable(false);
-    editTemplateBtn.setDisable(false);
-    createBtn.setDisable(false);
-    templateCombo.setDisable(false);
-
-    editorFrame.getStyleClass().clear();
+    CardsDialogs.openTemplateManager(this);
   }
 
   @FXML
@@ -284,61 +159,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onRename(ActionEvent e) {
-//    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
-//    if (selectedItem != null) {
-//      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//      String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getName() + ".directb2s\"", null, null, selectedItem.getName());
-//      if (newName != null) {
-//        if (!FileUtils.isValidFilename(newName)) {
-//          WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
-//          return;
-//        }
-//
-//        try {
-//          if (!newName.endsWith(".directb2s")) {
-//            newName = newName + ".directb2s";
-//          }
-//          client.getBackglassServiceClient().renameBackglass(selectedItem, newName);
-//        } catch (Exception ex) {
-//          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
-//        }
-//        onReload();
-//      }
-//    }
   }
 
   @FXML
   private void onDuplicate(ActionEvent e) {
-//    DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
-//    if (selectedItem != null) {
-//      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Duplicate");
-//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//        try {
-//          client.getBackglassServiceClient().duplicateBackglass(selectedItem);
-//        } catch (Exception ex) {
-//          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
-//        }
-//        onReload();
-//      }
-//    }
   }
 
   @FXML
   private void onDelete(ActionEvent e) {
-//    try {
-//      DirectB2S selectedItem = directb2sList.getSelectionModel().getSelectedItem();
-//      if (selectedItem != null) {
-//        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
-//        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//          client.getBackglassServiceClient().deleteBackglass(selectedItem);
-//          onReload();
-//        }
-//      }
-//    } catch (Exception ex) {
-//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
-//    }
   }
 
   @FXML
@@ -398,30 +226,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   @FXML
-  private void onUploadButton() {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
-    fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
-      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-      new FileChooser.ExtensionFilter("PNG", "*.png"));
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null && file.exists()) {
-      try {
-        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
-        if (result) {
-          String baseName = FilenameUtils.getBaseName(file.getName());
-          if (!imageList.contains(baseName)) {
-            imageList.add(baseName);
-          }
-        }
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-      }
-    }
-  }
-
-  @FXML
   private void onOpenImage() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
@@ -453,21 +257,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   @FXML
-  private void onFontTitleSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "title", titleFontLabel);
-  }
-
-  @FXML
-  private void onFontTableSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "table", tableFontLabel);
-  }
-
-  @FXML
-  private void onFontScoreSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
-  }
-
-  @FXML
   private void onOpenDefaultPicture() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
@@ -484,104 +273,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     });
   }
 
-  private CardTemplate getCardTemplate() {
-    return this.templateCombo.getValue();
-  }
-
-  public HighscoreCardsController() {
-  }
-
-  private void initFields() {
-    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-
-    try {
-      templateBeanBinder.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
-      templateBeanBinder.bindFontLabel(tableFontLabel, getCardTemplate(), "table");
-      templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
-
-      templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
-
-      templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
-      useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          backgroundImageCombo.setDisable(newValue);
-          falbackUploadBtn.setDisable(newValue);
-        }
-      });
-      backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
-      falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
-
-      templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
-      templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
-      templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
-      templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
-      templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
-
-      imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
-      backgroundImageCombo.setItems(imageList);
-      backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
-      backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
-
-      templateBeanBinder.bindComboBox(backgroundImageCombo, getCardTemplate(), "background");
-      String backgroundName = getCardTemplate().getBackground();
-      if (StringUtils.isEmpty(backgroundName)) {
-        backgroundImageCombo.setValue(imageList.get(0));
-      }
-
-      templateBeanBinder.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
-      templateBeanBinder.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
-      templateBeanBinder.bindSlider(darkenSlider, getCardTemplate(), "alphaBlack");
-      templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
-      templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
-      templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
-      templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "padding");
-      templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
-      templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin");
-
-      transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          updateTransparencySettings(newValue);
-        }
-      });
-      updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
-
-      templateBeanBinder.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
-      renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-        wheelImageSpinner.setDisable(t1);
-        rowSeparatorSpinner.setDisable(t1);
-      });
-
-      wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
-      rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-    } catch (Exception e) {
-      LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
-    }
-
-    rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
-
-    Tooltip tooltip = new Tooltip();
-    tooltip.setGraphic(rawHighscoreHelp);
-    Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
-
-    GameRepresentation value = tableView.getSelectionModel().getSelectedItem();
-    refreshRawPreview(Optional.ofNullable(value));
-    refreshPreview(Optional.ofNullable(value), false);
-
-    accordion.setExpandedPane(backgroundSettingsPane);
-  }
-
   private void updateTransparencySettings(Boolean newValue) {
     Platform.runLater(() -> {
-      grayScaleCheckbox.setDisable(newValue);
-      useDirectB2SCheckbox.setDisable(newValue);
-      blurSlider.setDisable(newValue);
-      brightenSlider.setDisable(newValue);
-      darkenSlider.setDisable(newValue);
-      backgroundImageCombo.setDisable(newValue || getCardTemplate().isUseDirectB2S());
-      alphaPercentageSpinner.setDisable(!newValue);
-
       if (newValue) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
@@ -645,7 +338,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
           Platform.runLater(() -> {
             previewStack.getChildren().remove(waitOverlay);
-            updateTransparencySettings(this.transparentBackgroundCheckbox.isSelected());
+            updateTransparencySettings(this.templateCombo.getSelectionModel().getSelectedItem().isTransparentBackground());
           });
 
         }).start();
@@ -673,7 +366,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void beanPropertyChanged(Object bean, String key, Object value) {
     if (bean instanceof CardTemplate) {
-
       onGenerateClick();
     }
     else if (bean instanceof CardSettings) {
@@ -723,6 +415,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     data = FXCollections.observableList(filtered);
   }
 
+  public GameRepresentation getSelectedTable() {
+    return this.tableView.getSelectionModel().getSelectedItem();
+  }
+
   @Override
   public void onChanged(Change<? extends GameRepresentation> c) {
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
@@ -743,18 +439,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      editorFooterToolbar.setVisible(false);
-      editorFooterToolbar.getStyleClass().add("media-container");
-
-      editorHeaderToolbar.setVisible(false);
-      editorHeaderToolbar.getStyleClass().add("media-container");
-
-      editorFrame.getStyleClass().remove("edit-mode-border");
-
-
-      templateBeanBinder = new BeanBinder(this);
-      cardSettingsBinder = new BeanBinder(this);
-
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
 
@@ -770,8 +454,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Generating Card...");
 
-      initFields();
-
       cardPreview.setPreserveRatio(true);
       previewPanel.widthProperty().addListener((obs, oldVal, newVal) -> {
         debouncer.debounce("refresh", () -> {
@@ -782,7 +464,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         }, 300);
       });
     } catch (Exception e) {
-      LOG.error("Failed to init highscores: " + e.getMessage(), e);
+      LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
 
     try {
