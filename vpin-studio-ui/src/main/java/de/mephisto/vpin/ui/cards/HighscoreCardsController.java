@@ -99,15 +99,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TableColumn<GameRepresentation, String> columnStatus;
 
   @FXML
-  private Button deleteBtn;
-
-  @FXML
-  private Button createBtn;
-
-  @FXML
-  private Button duplicateBtn;
-
-  @FXML
   private MenuButton filterButton;
 
   @FXML
@@ -171,7 +162,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onReload() {
-    this.duplicateBtn.setDisable(true);
     this.generateBtn.setDisable(true);
     this.generateAllBtn.setDisable(true);
     this.openImageBtn.setDisable(true);
@@ -199,7 +189,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           tableView.getSelectionModel().select(0);
         }
 
-        this.duplicateBtn.setDisable(games.isEmpty());
         this.generateBtn.setDisable(games.isEmpty());
         this.generateAllBtn.setDisable(games.isEmpty());
         this.openImageBtn.setDisable(games.isEmpty());
@@ -419,10 +408,13 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     return this.tableView.getSelectionModel().getSelectedItem();
   }
 
+  public CardTemplate getSelectedTemplate() {
+    return templateCombo.getSelectionModel().getSelectedItem();
+  }
+
   @Override
   public void onChanged(Change<? extends GameRepresentation> c) {
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
-    this.duplicateBtn.setDisable(disable);
     this.generateBtn.setDisable(disable);
     this.generateAllBtn.setDisable(disable);
     this.openImageBtn.setDisable(disable);

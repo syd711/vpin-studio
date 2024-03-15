@@ -23,86 +23,10 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.dialogs.TemplateManagerDialogController">
+<BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.dialogs.TemplateManagerDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
-   <center>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" styleClass="base-component">
-         <top>
-            <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <center>
-                  <StackPane fx:id="previewStack" styleClass="media-container">
-                     <children>
-                        <BorderPane fx:id="previewPanel">
-                           <center>
-                              <ImageView fx:id="cardPreview" fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
-                           </center>
-                        </BorderPane>
-                     </children>
-                  </StackPane>
-               </center>
-               <top>
-                  <ToolBar prefWidth="700.0" BorderPane.alignment="CENTER">
-                    <items>
-                        <Label text="Template: " textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                        <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Add" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Create New Template" />
-                           </tooltip>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                           </graphic>
-                        </Button>
-                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Edit Popper Table Data" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Edit Popper Table Data" />
-                           </tooltip>
-                        </Button>
-                        <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                           </graphic>
-                        </Button>
-                    </items>
-                  </ToolBar>
-               </top>
-            </BorderPane>
-         </top>
-      </BorderPane>
-   </center>
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
@@ -455,6 +379,89 @@
                </panes>
             </Accordion>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
       </VBox>
    </right>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <top>
+            <ToolBar prefWidth="700.0" BorderPane.alignment="CENTER">
+               <items>
+                  <Label text="Template: " textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
+                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Add" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Create New Template" />
+                     </tooltip>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit Popper Table Data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit Popper Table Data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </items>
+            </ToolBar>
+         </top>
+         <center>
+            <StackPane fx:id="previewStack" BorderPane.alignment="CENTER">
+               <children>
+                  <BorderPane fx:id="previewPanel" styleClass="media-container">
+                     <center>
+                        <ImageView fx:id="cardPreview" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+                     </center>
+                  </BorderPane>
+               </children>
+            </StackPane>
+         </center>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </center>
 </BorderPane>

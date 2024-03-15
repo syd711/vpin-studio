@@ -34,7 +34,7 @@
                <center>
                   <SplitPane dividerPositions="0.23" onDragDetected="#onResize" onDragDropped="#onResizeEnd" BorderPane.alignment="CENTER">
                     <items>
-                        <BorderPane>
+                        <BorderPane prefWidth="350.0">
                            <center>
                               <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
                                  <children>
@@ -62,7 +62,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </MenuButton>
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
+                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="250.0" promptText="Search Table...">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -71,7 +71,7 @@
                               </ToolBar>
                            </top>
                            <bottom>
-                              <TitledPane maxHeight="250.0" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
+                              <TitledPane collapsible="false" maxHeight="250.0" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
                                  <content>
                                     <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
                                        <children>
@@ -159,46 +159,16 @@
                                        </font>
                                     </Label>
                                     <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                                    <Button fx:id="createBtn" layoutX="310.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTemplateCreate" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Create New Template" />
-                                       </tooltip>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="editTemplateBtn" mnemonicParsing="false" onAction="#onTemplateEdit" textFill="WHITE">
+                                    <Button fx:id="editTemplateBtn" mnemonicParsing="false" onAction="#onTemplateEdit" text="Template Editor" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Rename Template" />
                                        </tooltip>
-                                    </Button>
-                                    <Button fx:id="duplicateBtn" mnemonicParsing="false" onAction="#onDuplicate" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Duplicate Template" />
-                                       </tooltip>
-                                    </Button>
-                                    <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                       </graphic>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                     <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">

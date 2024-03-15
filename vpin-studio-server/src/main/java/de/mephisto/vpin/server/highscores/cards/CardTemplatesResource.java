@@ -20,12 +20,12 @@ public class CardTemplatesResource {
     return cardTemplatesService.getTemplates();
   }
 
-  @PostMapping(value = "/savetemplate")
+  @PostMapping(value = "/save")
   public CardTemplate saveTemplate(@RequestBody CardTemplate cardTemplate) throws Exception {
     return cardTemplatesService.save(cardTemplate);
   }
 
-  @DeleteMapping(value = "/deletetemplate/{id}")
+  @DeleteMapping(value = "/delete/{id}")
   public boolean deleteTemplate(@PathVariable("id") int id) throws Exception {
     return cardTemplatesService.delete(id);
   }

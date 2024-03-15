@@ -2,31 +2,15 @@ package de.mephisto.vpin.ui.cards.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
-import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
-import de.mephisto.vpin.ui.cards.CardsDialogs;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
-import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
-import de.mephisto.vpin.ui.tables.models.B2SGlowing;
-import de.mephisto.vpin.ui.tables.models.B2SLedType;
-import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,26 +24,23 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -175,21 +156,91 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onCreate(ActionEvent e) {
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
+    if (!StringUtils.isEmpty(s)) {
+      ObservableList<CardTemplate> items = this.templateCombo.getItems();
+      Optional<CardTemplate> first = items.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
+      if (first.isPresent()) {
+        CardTemplate template = first.get();
+        template.setName(s);
+        template.setId(null);
+        try {
+          CardTemplate card = client.getHighscoreCardTemplatesClient().save(template);
 
+          Platform.runLater(() -> {
+            List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+            this.templateCombo.setItems(FXCollections.observableList(templates));
+            this.templateCombo.setValue(card);
+          });
+        } catch (Exception ex) {
+          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+        }
+      }
+    }
   }
+
   @FXML
   private void onRename(ActionEvent e) {
+    CardTemplate cardTemplate = getCardTemplate();
+    String s = WidgetFactory.showInputDialog(stage, "Rename Template", "Enter Template Name", "Enter the new template name.", null, cardTemplate.getName());
+    if (!StringUtils.isEmpty(s) && !cardTemplate.getName().equals(s)) {
+      cardTemplate.setName(s);
 
+      try {
+        CardTemplate card = client.getHighscoreCardTemplatesClient().save(cardTemplate);
+        Platform.runLater(() -> {
+          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templateCombo.setItems(FXCollections.observableList(templates));
+          this.templateCombo.setValue(card);
+        });
+      } catch (Exception ex) {
+        LOG.error("Failed to rename template: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+      }
+    }
   }
 
   @FXML
   private void onDuplicate(ActionEvent e) {
+    String s = WidgetFactory.showInputDialog(stage, "Duplicate Template \"" + getCardTemplate().getName() + "\"", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
+    if (!StringUtils.isEmpty(s)) {
+      ObservableList<CardTemplate> items = this.templateCombo.getItems();
+      CardTemplate template = getCardTemplate();
+      template.setName(s);
+      template.setId(null);
+      try {
+        CardTemplate card = client.getHighscoreCardTemplatesClient().save(template);
 
+        Platform.runLater(() -> {
+          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templateCombo.setItems(FXCollections.observableList(templates));
+          this.templateCombo.setValue(card);
+        });
+      } catch (Exception ex) {
+        LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, "Template Duplication Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+      }
+    }
   }
 
   @FXML
   private void onDelete(ActionEvent e) {
-
+    CardTemplate cardTemplate = getCardTemplate();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", null, "Delete");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      try {
+        client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
+        Platform.runLater(() -> {
+          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templateCombo.setItems(FXCollections.observableList(templates));
+          this.templateCombo.setValue(templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get());
+        });
+      } catch (Exception ex) {
+        LOG.error("Failed to delete template: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+      }
+    }
   }
 
   @FXML
@@ -240,22 +291,34 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      this.renameBtn.setDisable(true);
-      this.duplicateBtn.setDisable(true);
       this.deleteBtn.setDisable(true);
 
       List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      if (items.isEmpty()) {
-        items.add(new CardTemplate());
-      }
       templateCombo.setItems(FXCollections.observableList(items));
-      templateCombo.getSelectionModel().select(0);
+
+      templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
+        @Override
+        public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
+          if (newValue != null) {
+            deleteBtn.setDisable(newValue.getName().equals(CardTemplate.DEFAULT));
+            initFields();
+            onGenerateClick();
+          }
+        }
+      });
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Generating Card...");
 
+      rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
+
+      Tooltip tooltip = new Tooltip();
+      tooltip.setGraphic(rawHighscoreHelp);
+      Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
+
+      accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
       previewPanel.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -264,7 +327,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
             cardPreview.setFitWidth(newVal.intValue() / 2);
             refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
           });
-        }, 300);
+        }, 800);
       });
     } catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
@@ -278,6 +341,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   private void initFields() {
     try {
+      if (templateBeanBinder != null) {
+        templateBeanBinder.destroy();
+      }
+
       templateBeanBinder = new BeanBinder(this);
 
       templateBeanBinder.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
@@ -344,16 +411,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
     }
 
-    rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
-
-    Tooltip tooltip = new Tooltip();
-    tooltip.setGraphic(rawHighscoreHelp);
-    Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
-
     GameRepresentation value = highscoreCardsController.getSelectedTable();
     refreshPreview(Optional.ofNullable(value), false);
-
-    accordion.setExpandedPane(backgroundSettingsPane);
   }
 
   private void updateTransparencySettings(Boolean newValue) {
@@ -375,6 +434,20 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       }
       else {
         previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+      }
+    });
+  }
+
+  @FXML
+  private void onGenerateClick() {
+    Platform.runLater(() -> {
+      GameRepresentation value = highscoreCardsController.getSelectedTable();
+      try {
+        client.getHighscoreCardTemplatesClient().save(this.templateCombo.getValue());
+        refreshPreview(Optional.ofNullable(value), true);
+      } catch (Exception e) {
+        LOG.error("Failed to save template: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
       }
     });
   }
@@ -421,13 +494,13 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   public void setHighscoreCardsController(HighscoreCardsController highscoreCardsController) {
     this.highscoreCardsController = highscoreCardsController;
-    initFields();
+    templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
   }
 
   @Override
   public void beanPropertyChanged(Object bean, String key, Object value) {
     if (bean instanceof CardTemplate) {
-//      onGenerateClick();
+      onGenerateClick();
     }
 //    else if (bean instanceof CardSettings) {
 //      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, this.cardSettings);

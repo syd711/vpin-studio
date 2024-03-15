@@ -9,7 +9,7 @@ import java.util.Objects;
 public class CardTemplate extends JsonSettings {
   public final static String DEFAULT = "Default";
 
-  private long id;
+  private Long id;
 
   private String name = DEFAULT;
   private int alphaBlack = 33;
@@ -40,22 +40,12 @@ public class CardTemplate extends JsonSettings {
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
-  }
-
-  private List<Integer> gameIds = new ArrayList<>();
-
-  public List<Integer> getGameIds() {
-    return gameIds;
-  }
-
-  public void setGameIds(List<Integer> gameIds) {
-    this.gameIds = gameIds;
   }
 
   public boolean isRenderWheelIcon() {

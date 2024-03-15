@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util.binding;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
@@ -214,5 +215,9 @@ public class BeanBinder {
     } catch (Exception e) {
       LOG.error("Failed to set property " + property + ": " + e.getMessage());
     }
+  }
+
+  public void destroy() {
+    this.listener = null;
   }
 }

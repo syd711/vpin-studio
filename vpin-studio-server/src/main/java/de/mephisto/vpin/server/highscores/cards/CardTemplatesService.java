@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CardTemplatesService {
@@ -14,12 +15,21 @@ public class CardTemplatesService {
   private TemplateMappingRepository templateMappingRepository;
 
   public CardTemplate save(CardTemplate cardTemplate) throws Exception {
-    TemplateMapping mapping = new TemplateMapping();
-    mapping.setCardTemplate(cardTemplate);
-    TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(mapping);
-    CardTemplate updatedTemplate = CardTemplate.fromJson(CardTemplate.class, updatedMapping.getTemplateJson());
-    updatedTemplate.setId(updatedTemplate.getId());
-    return updatedTemplate;
+    if (cardTemplate.getId() != null) {
+      Optional<TemplateMapping> mapping = templateMappingRepository.findById(cardTemplate.getId());
+      if (mapping.isPresent()) {
+        TemplateMapping m = mapping.get();
+        m.setCardTemplate(cardTemplate);
+        templateMappingRepository.saveAndFlush(m);
+        return cardTemplate;
+      }
+    }
+
+    TemplateMapping m = new TemplateMapping();
+    m.setCardTemplate(cardTemplate);
+    TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
+    cardTemplate.setId(updatedMapping.getId());
+    return cardTemplate;
   }
 
   public boolean delete(int id) {
@@ -30,9 +40,17 @@ public class CardTemplatesService {
   public List<CardTemplate> getTemplates() throws Exception {
     List<CardTemplate> result = new ArrayList<>();
     List<TemplateMapping> all = templateMappingRepository.findAll();
+    if (all.isEmpty()) {
+      CardTemplate template = new CardTemplate();
+      template.setName(CardTemplate.DEFAULT);
+      save(template);
+    }
+
+    all = templateMappingRepository.findAll();
     for (TemplateMapping mapping : all) {
       CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
       template.setId(mapping.getId());
+      result.add(template);
     }
     return result;
   }

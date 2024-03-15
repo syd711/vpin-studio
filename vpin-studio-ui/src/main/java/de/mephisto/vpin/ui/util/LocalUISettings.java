@@ -46,12 +46,29 @@ public class LocalUISettings {
     LOG.info("Saved window position to store.");
   }
 
+  public static void saveLocation(String id, int x, int y, int width, int height) {
+    store.set(id + ".x", x);
+    store.set(id + ".y", y);
+    store.set(id + ".width", width);
+    store.set(id + ".height", height);
+    LOG.info("Saved window position to store for " + id);
+  }
+
   public static Rectangle getPosition() {
     Rectangle rectangle = new Rectangle();
     rectangle.setX(store.getInt("x", -1));
     rectangle.setY(store.getInt("y", -1));
     rectangle.setWidth(store.getInt("width", -1));
     rectangle.setHeight(store.getInt("height", -1));
+    return rectangle;
+  }
+
+  public static Rectangle getPosition(String id) {
+    Rectangle rectangle = new Rectangle();
+    rectangle.setX(store.getInt(id + ".x", -1));
+    rectangle.setY(store.getInt(id + ".y", -1));
+    rectangle.setWidth(store.getInt(id + ".width", -1));
+    rectangle.setHeight(store.getInt(id + ".height", -1));
     return rectangle;
   }
 
