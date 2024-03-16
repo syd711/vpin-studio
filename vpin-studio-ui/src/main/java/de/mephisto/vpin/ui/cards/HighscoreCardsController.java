@@ -13,11 +13,14 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -50,7 +53,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class HighscoreCardsController implements Initializable, StudioFXController, PreferenceChangeListener, BindingChangedListener, ListChangeListener<GameRepresentation> {
+public class HighscoreCardsController implements Initializable, StudioFXController, PreferenceChangeListener, BindingChangedListener, ListChangeListener<GameRepresentation>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   private final Debouncer debouncer = new Debouncer();
@@ -123,6 +126,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+  private List<CardTemplate> cardTemplates;
+  private TemplateComboChangeListener templateComboChangeListener;
 
   public HighscoreCardsController() {
   }
@@ -172,6 +177,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         games = client.getGameService().getKnownGames();
+        cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
         filterGames(games);
         tableView.setItems(data);
@@ -418,14 +424,24 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     this.generateBtn.setDisable(disable);
     this.generateAllBtn.setDisable(disable);
     this.openImageBtn.setDisable(disable);
+    this.templateCombo.setDisable(disable);
 
+    this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
     if (c.getList().isEmpty()) {
       refreshPreview(Optional.empty(), false);
     }
     else {
       GameRepresentation gameRepresentation = c.getList().get(0);
-      refreshPreview(Optional.ofNullable(gameRepresentation), true);
+      if (gameRepresentation.getTemplateId() == null) {
+        Optional<CardTemplate> first = cardTemplates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
+        templateCombo.setValue(first.get());
+      }
+      else {
+        Optional<CardTemplate> first = cardTemplates.stream().filter(t -> t.getId().equals(gameRepresentation.getTemplateId())).findFirst();
+        templateCombo.setValue(first.get());
+      }
     }
+    this.templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
 
   @Override
@@ -434,13 +450,12 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
 
-      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      if (items.isEmpty()) {
-        items.add(new CardTemplate());
-      }
-      templateCombo.setItems(FXCollections.observableList(items));
+      cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
+      templateCombo.setItems(FXCollections.observableList(cardTemplates));
       templateCombo.getSelectionModel().select(0);
 
+      this.templateComboChangeListener = new TemplateComboChangeListener();
+      templateCombo.valueProperty().addListener(this.templateComboChangeListener);
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
@@ -469,13 +484,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    columnDisplayName.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      Label label = new Label(value.getGameDisplayName());
-      label.getStyleClass().add("default-text");
-      return new SimpleObjectProperty(label);
-    });
-
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
@@ -490,6 +498,29 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       }
       return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
     });
+
+    columnDisplayName.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      Label label = new Label(value.getGameDisplayName());
+      label.getStyleClass().add("default-text");
+      return new SimpleObjectProperty(label);
+    });
+
+    columnTemplate.setCellValueFactory(cellData -> {
+      GameRepresentation value = cellData.getValue();
+      if (value.getTemplateId() != null) {
+        Optional<CardTemplate> first = cardTemplates.stream().filter(g -> g.getId().equals(value.getTemplateId())).findFirst();
+        if (first.isPresent()) {
+          CardTemplate template = first.get();
+          Label label = new Label(template.getName());
+          return new SimpleObjectProperty(label);
+        }
+      }
+
+      Label label = new Label(CardTemplate.DEFAULT);
+      return new SimpleObjectProperty(label);
+    });
+
 
     tableView.setItems(data);
     tableView.setEditable(true);
@@ -543,12 +574,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       }
     });
 
-    columnTemplate.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-      Label label = new Label(value.getGameDisplayName());
-      return new SimpleObjectProperty("");
-    });
-
     searchField.textProperty().addListener((observableValue, s, filterValue) -> {
       tableView.getSelectionModel().clearSelection();
       filterGames(games);
@@ -577,6 +602,53 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       filterButton.getItems().add(item);
     }
 
+    EventManager.getInstance().addListener(this);
     onReload();
+  }
+
+  @Override
+  public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
+    if (id > 0) {
+      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      Platform.runLater(() -> {
+        tableView.getSelectionModel().getSelectedItems().removeListener(this);
+        GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+        tableView.getSelectionModel().clearSelection();
+
+        int index = data.indexOf(refreshedGame);
+        if (index != -1) {
+          data.remove(index);
+          data.add(index, refreshedGame);
+        }
+        tableView.getSelectionModel().getSelectedItems().addListener(this);
+
+        if (selection != null && data.contains(refreshedGame)) {
+          tableView.getSelectionModel().select(refreshedGame);
+        }
+
+        tableView.refresh();
+      });
+    }
+  }
+
+  class TemplateComboChangeListener implements ChangeListener<CardTemplate> {
+
+    @Override
+    public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
+      GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        selectedItem.setTemplateId(newValue.getId());
+        try {
+          client.getGameService().saveGame(selectedItem);
+          EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
+          refreshPreview(Optional.of(selectedItem), true);
+        } catch (Exception e) {
+          LOG.error("Failed to save template mapping: " + e.getMessage(), e);
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save template mapping: " + e.getMessage());
+          });
+        }
+      }
+    }
   }
 }

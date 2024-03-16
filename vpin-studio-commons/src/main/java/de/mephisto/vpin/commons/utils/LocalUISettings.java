@@ -1,6 +1,5 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.commons.utils.PropertiesStore;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
@@ -64,12 +63,16 @@ public class LocalUISettings {
   }
 
   public static Rectangle getPosition(String id) {
-    Rectangle rectangle = new Rectangle();
-    rectangle.setX(store.getInt(id + ".x", -1));
-    rectangle.setY(store.getInt(id + ".y", -1));
-    rectangle.setWidth(store.getInt(id + ".width", -1));
-    rectangle.setHeight(store.getInt(id + ".height", -1));
-    return rectangle;
+    if (store.containsKey(id + ".x")) {
+      Rectangle rectangle = new Rectangle();
+      rectangle.setX(store.getInt(id + ".x", -1));
+      rectangle.setY(store.getInt(id + ".y", -1));
+      rectangle.setWidth(store.getInt(id + ".width", -1));
+      rectangle.setHeight(store.getInt(id + ".height", -1));
+      return rectangle;
+    }
+
+    return null;
   }
 
 }

@@ -49,6 +49,9 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
+    if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackFolders.containsKey(game.getPupPackName().toLowerCase())) {
+      return pupPackFolders.get(game.getPupPackName().toLowerCase());
+    }
     if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
       return pupPackFolders.get(game.getRom().toLowerCase());
     }

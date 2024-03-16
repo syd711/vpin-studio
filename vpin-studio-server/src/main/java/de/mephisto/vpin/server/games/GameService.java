@@ -503,7 +503,6 @@ public class GameService implements InitializingBean {
       gameDetails.setTableName(scannedTableName);
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
-      gameDetails.setPupId(game.getId());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
@@ -545,6 +544,8 @@ public class GameService implements InitializingBean {
       game.setExtTableVersionId(gameDetails.getExtTableVersionId());
     }
 
+    game.setTemplateId(gameDetails.getTemplateId());
+    game.setPupPackName(gameDetails.getPupPack());
     game.setPupPack(pupPackService.getPupPack(game));
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
@@ -579,6 +580,7 @@ public class GameService implements InitializingBean {
 
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    gameDetails.setTemplateId(game.getTemplateId());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getUpdates() != null) {
       gameDetails.setUpdates(String.join(",", game.getUpdates()));

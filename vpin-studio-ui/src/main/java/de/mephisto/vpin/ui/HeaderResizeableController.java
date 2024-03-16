@@ -2,13 +2,12 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
-import de.mephisto.vpin.ui.util.LocalUISettings;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +16,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;

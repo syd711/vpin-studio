@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 
 public class CardsDialogs {
   public static boolean openTemplateManager(HighscoreCardsController highscoreCardsController) {
-    Stage stage = Dialogs.createStudioDialogStage(TemplateManagerDialogController.class, "dialog-template-admin.fxml", "Template Editor");
-    stage.setResizable(true);
+    Stage stage = Dialogs.createStudioDialogStage(TemplateManagerDialogController.class, "dialog-template-admin.fxml", "Template Editor", TemplateManagerDialogController.class.getSimpleName());
+
     TemplateManagerDialogController controller = (TemplateManagerDialogController) stage.getUserData();
     controller.setHighscoreCardsController(highscoreCardsController);
 

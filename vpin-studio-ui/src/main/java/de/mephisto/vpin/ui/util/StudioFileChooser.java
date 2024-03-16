@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import javafx.collections.ObservableList;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;

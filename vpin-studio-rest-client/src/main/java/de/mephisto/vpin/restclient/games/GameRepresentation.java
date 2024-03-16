@@ -35,7 +35,6 @@ public class GameRepresentation {
   private GameMediaRepresentation gameMedia;
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
-  private boolean pupPackAvailable;
   private ValidationState validationState;
   private String hsFileName;
   private boolean romExists;
@@ -53,7 +52,25 @@ public class GameRepresentation {
   private String extTableVersionId;
   private String extVersion;
   private int emulatorId;
+  private String pupPackName;
+  private Long templateId;
   private List<String> updates;
+
+  public String getPupPackName() {
+    return pupPackName;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
+  }
 
   public Date getDateAdded() {
     return dateAdded;
@@ -285,14 +302,6 @@ public class GameRepresentation {
 
   public void setDirectB2SAvailable(boolean directB2SAvailable) {
     this.directB2SAvailable = directB2SAvailable;
-  }
-
-  public boolean isPupPackAvailable() {
-    return pupPackAvailable;
-  }
-
-  public void setPupPackAvailable(boolean pupPackAvailable) {
-    this.pupPackAvailable = pupPackAvailable;
   }
 
   public String getRom() {

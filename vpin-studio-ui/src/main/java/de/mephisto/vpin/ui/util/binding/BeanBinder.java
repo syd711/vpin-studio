@@ -1,13 +1,8 @@
 package de.mephisto.vpin.ui.util.binding;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
@@ -25,6 +20,10 @@ public class BeanBinder {
   public static Debouncer debouncer = new Debouncer();
 
   private BindingChangedListener listener;
+  private Object bean;
+  private boolean paused;
+
+  private final static int MAX_DEBOUNCE = 500;
 
   public BeanBinder(BindingChangedListener listener) {
     this.listener = listener;
@@ -34,8 +33,8 @@ public class BeanBinder {
     String value = getProperty(beanObject, property);
     textField.setText(value);
     textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(property, () -> {
-      setProperty(beanObject, property, textField.getText());
-    }, 1000));
+      setProperty(property, textField.getText());
+    }, MAX_DEBOUNCE));
 
     if (StringUtils.isEmpty(value)) {
       textField.setText(defaultValue);
@@ -49,14 +48,14 @@ public class BeanBinder {
   public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property, String defaultValue) {
     String value = getProperty(beanObject, property, defaultValue);
     comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> setProperty(beanObject, property, t1));
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> setProperty(property, t1));
   }
 
   public void bindCheckbox(CheckBox checkbox, Object beanObject, String property) {
     boolean value = getBooleanProperty(beanObject, property, false);
     checkbox.setSelected(value);
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> {
-      setProperty(beanObject, property, t1);
+      setProperty(property, t1);
     });
   }
 
@@ -66,8 +65,8 @@ public class BeanBinder {
     spinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
-      setProperty(beanObject, property, value1);
-    }, 500));
+      setProperty(property, value1);
+    }, MAX_DEBOUNCE));
   }
 
   public void bindSpinner(Spinner spinner, Object beanObject, String property) {
@@ -103,9 +102,9 @@ public class BeanBinder {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
         debouncer.debounce("font", () -> {
-          setProperty(beanObject, key + "FontName", result.getFamily(), true);
-          setProperty(beanObject, key + "FontSize", (int) result.getSize(), true);
-          setProperty(beanObject, key + "FontStyle", result.getStyle());
+          setProperty(key + "FontName", result.getFamily(), true);
+          setProperty(key + "FontSize", (int) result.getSize(), true);
+          setProperty(key + "FontStyle", result.getStyle());
 
           Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
           label.setFont(labelFont);
@@ -128,10 +127,16 @@ public class BeanBinder {
       public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
         debouncer.debounce(property, () -> {
           int value1 = ((Double) t1).intValue();
-          setProperty(beanObject, property, value1);
-        }, 1000);
+          setProperty(property, value1);
+        }, MAX_DEBOUNCE);
       }
     });
+  }
+
+  public void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
+    String value = getProperty(beanObject, property, "#FFFFFF");
+    Color colorValue = Color.web(value);
+    colorPicker.setValue(colorValue);
   }
 
   public void bindColorPicker(ColorPicker colorPicker, Object beanObject, String property) {
@@ -140,7 +145,7 @@ public class BeanBinder {
     colorPicker.setValue(colorValue);
     colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
       String hex = toHexString(t1);
-      setProperty(beanObject, property, hex);
+      setProperty(property, hex);
     });
   }
 
@@ -202,22 +207,33 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private void setProperty(Object beanObject, String property, Object value) {
-    setProperty(beanObject, property, value, false);
+  private void setProperty(String property, Object value) {
+    setProperty(property, value, false);
   }
 
-  private void setProperty(Object beanObject, String property, Object value, boolean skipChangeEvent) {
+  private void setProperty(String property, Object value, boolean skipChangeEvent) {
     try {
-      PropertyUtils.setProperty(beanObject, property, value);
-      if (listener != null && !skipChangeEvent) {
-        listener.beanPropertyChanged(beanObject, property, value);
+      PropertyUtils.setProperty(bean, property, value);
+      if (listener != null && !skipChangeEvent && !paused) {
+        listener.beanPropertyChanged(bean, property, value);
       }
     } catch (Exception e) {
       LOG.error("Failed to set property " + property + ": " + e.getMessage());
     }
   }
 
-  public void destroy() {
-    this.listener = null;
+  public void setBean(Object bean) {
+    this.bean = bean;
+  }
+
+  public void setPaused(boolean paused) {
+    if(!paused) {
+      debouncer.debounce("delay", () -> {
+        this.paused = paused;
+      }, MAX_DEBOUNCE + 100);
+    }
+    else {
+      this.paused = paused;
+    }
   }
 }

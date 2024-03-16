@@ -37,6 +37,12 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
     return new ByteArrayInputStream(bytes);
   }
 
+  public ByteArrayInputStream getHighscoreCardPreview(GameRepresentation game, CardTemplate template) {
+    int gameId = game.getId();
+    byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + gameId + "/" + template.getId());
+    return new ByteArrayInputStream(bytes);
+  }
+
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
     return getRestClient().get(API + "cards/generate/" + gameId, Boolean.class);
@@ -44,7 +50,7 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
 
   public boolean generateHighscoreCardSample(GameRepresentation game) {
     int gameId = game.getId();
-    return getRestClient().get(API + "cards/generatesample/" + gameId, Boolean.class);
+    return getRestClient().get(API + "cards/generatesample/" + gameId + "/" + (game.getTemplateId() != null ? String.valueOf(game.getTemplateId())  : "-1"), Boolean.class);
   }
 
   public List<String> getHighscoreBackgroundImages() {

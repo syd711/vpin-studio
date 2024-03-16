@@ -48,6 +48,8 @@ public class Game {
   private PupPack pupPack;
   private List<Integer> playlists;
 
+  private String pupPackName;
+  private Long templateId;
   private SystemService systemService;
   private String extTableId;
   private String extTableVersionId;
@@ -60,6 +62,25 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public String getPupPackName() {
+    if(this.pupPack != null) {
+      return this.pupPack.getName();
+    }
+    return pupPackName;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
   }
 
   public Date getDateAdded() {

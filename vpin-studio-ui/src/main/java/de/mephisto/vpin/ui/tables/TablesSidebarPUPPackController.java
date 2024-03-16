@@ -158,7 +158,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onPupPackEnable() {
-    if (game.isPresent() && game.get().isPupPackAvailable()) {
+    if (game.isPresent() && game.get().getPupPackName() != null) {
       GameRepresentation g = game.get();
       Studio.client.getPupPackService().setPupPackEnabled(g.getId(), enabledCheckbox.isSelected());
       EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());

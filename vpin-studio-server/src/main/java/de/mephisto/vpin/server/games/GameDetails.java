@@ -35,9 +35,13 @@ public class GameDetails {
   @Column(length = 1024)
   public String updates;
 
+  private Long templateId;
+
   private String romName;
 
   private String tableName;
+
+  private String pupPack;
 
   private String extTableId;
 
@@ -50,6 +54,22 @@ public class GameDetails {
   private int pupId;
 
   private int nvOffset;
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
+  }
+
+  public String getPupPack() {
+    return pupPack;
+  }
+
+  public void setPupPack(String pupPack) {
+    this.pupPack = pupPack;
+  }
 
   public String getUpdates() {
     return updates;

@@ -1003,7 +1003,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (value.isPupPackAvailable()) {
+      if (value.getPupPackName() != null) {
         if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.pupPack.name())) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
@@ -1119,7 +1119,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             return true;
           }
           else if (column.equals(columnPUPPack)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPupPackAvailable));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getPupPackName())));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

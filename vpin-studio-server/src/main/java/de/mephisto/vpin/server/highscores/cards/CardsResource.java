@@ -37,14 +37,20 @@ public class CardsResource {
   @Autowired
   private CardService cardService;
 
-  @Autowired
-  private PreferencesService preferencesService;
-
-  @GetMapping("/preview/{gameId}")
-  public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
+  @GetMapping("/preview/{gameId}/{templateId}")
+  public ResponseEntity<byte[]> generateCardTemplatePreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateSampleCard(game));
+      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId));
+    }
+    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+  }
+
+  @GetMapping("/preview/{gameId}")
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return RequestUtil.serializeImage(cardService.generateTableCardFile(game));
     }
     throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
   }
@@ -52,13 +58,13 @@ public class CardsResource {
   @GetMapping("/generate/{gameId}")
   public boolean generateCards(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
-    return cardService.generateCard(game, false);
+    return cardService.generateCard(game);
   }
 
-  @GetMapping("/generatesample/{gameId}")
-  public boolean generateSampleCard(@PathVariable("gameId") int gameId) {
+  @GetMapping("/generatesample/{gameId}/{templateId}")
+  public boolean generateSampleCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) {
     Game game = gameService.getGame(gameId);
-    return cardService.generateCard(game, true);
+    return cardService.generateCard(game, true, templateId);
   }
 
   @GetMapping("/backgrounds")

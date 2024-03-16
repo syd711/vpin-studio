@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -13,7 +14,6 @@ import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
-import de.mephisto.vpin.ui.util.LocalUISettings;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Application;
 import javafx.application.Platform;

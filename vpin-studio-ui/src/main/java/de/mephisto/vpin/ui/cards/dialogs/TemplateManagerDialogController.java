@@ -292,20 +292,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       this.deleteBtn.setDisable(true);
+      this.renameBtn.setDisable(true);
 
       List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
       templateCombo.setItems(FXCollections.observableList(items));
-
-      templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
-        @Override
-        public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
-          if (newValue != null) {
-            deleteBtn.setDisable(newValue.getName().equals(CardTemplate.DEFAULT));
-            initFields();
-            onGenerateClick();
-          }
-        }
-      });
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
@@ -321,14 +311,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
-      previewPanel.widthProperty().addListener((obs, oldVal, newVal) -> {
-        debouncer.debounce("refresh", () -> {
-          Platform.runLater(() -> {
-            cardPreview.setFitWidth(newVal.intValue() / 2);
-            refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
-          });
-        }, 800);
-      });
     } catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
@@ -338,14 +320,55 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     return this.templateCombo.getValue();
   }
 
+  private void setTemplate(CardTemplate cardTemplate) {
+    deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
+    renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
-  private void initFields() {
+    templateBeanBinder.setBean(cardTemplate);
+    templateBeanBinder.setPaused(true);
+
+    titleFontLabel.setText(cardTemplate.getTitleFontName());
+    tableFontLabel.setText(cardTemplate.getTableFontName());
+    scoreFontLabel.setText(cardTemplate.getScoreFontName());
+
+    templateBeanBinder.setColorPickerValue(fontColorSelector, getCardTemplate(), "fontColor");
+
+    useDirectB2SCheckbox.setSelected(cardTemplate.isUseDirectB2S());
+    backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
+    falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
+
+    grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
+    transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
+    renderTableNameCheckbox.setSelected(cardTemplate.isRenderTableName());
+    renderWheelIconCheckbox.setSelected(cardTemplate.isRenderWheelIcon());
+    renderTitleCheckbox.setSelected(cardTemplate.isRenderTitle());
+
+    titleText.setText(cardTemplate.getTitle());
+    brightenSlider.setValue(cardTemplate.getAlphaWhite());
+    darkenSlider.setValue(cardTemplate.getAlphaBlack());
+    blurSlider.setValue(cardTemplate.getBlur());
+    borderSlider.setValue(cardTemplate.getBorderWidth());
+    alphaPercentageSpinner.setValue(cardTemplate.getTransparentPercentage());
+    marginTopSpinner.getValueFactory().setValue(cardTemplate.getPadding());
+    wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
+    rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
+
+    updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
+
+    renderRawHighscore.setSelected(cardTemplate.isRawScore());
+    wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
+    rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
+
+    templateBeanBinder.setPaused(false);
+
+    refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), true);
+  }
+
+
+  private void initBindings() {
     try {
-      if (templateBeanBinder != null) {
-        templateBeanBinder.destroy();
-      }
-
       templateBeanBinder = new BeanBinder(this);
+      templateBeanBinder.setBean(this.getCardTemplate());
 
       templateBeanBinder.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
       templateBeanBinder.bindFontLabel(tableFontLabel, getCardTemplate(), "table");
@@ -410,9 +433,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     } catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
     }
-
-    GameRepresentation value = highscoreCardsController.getSelectedTable();
-    refreshPreview(Optional.ofNullable(value), false);
   }
 
   private void updateTransparencySettings(Boolean newValue) {
@@ -465,17 +485,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       try {
         new Thread(() -> {
           if (regenerate) {
-            client.getHighscoreCardsService().generateHighscoreCardSample(game.get());
+            InputStream input = client.getHighscoreCardsService().getHighscoreCardPreview(game.get(), templateCombo.getValue());
+            Image image = new Image(input);
+            cardPreview.setImage(image);
+            cardPreview.setVisible(true);
           }
-
-          InputStream input = client.getHighscoreCardsService().getHighscoreCard(game.get());
-          Image image = new Image(input);
-          cardPreview.setImage(image);
-          cardPreview.setVisible(true);
 
           Platform.runLater(() -> {
             previewStack.getChildren().remove(waitOverlay);
-            updateTransparencySettings(this.transparentBackgroundCheckbox.isSelected());
           });
 
         }).start();
@@ -495,6 +512,17 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   public void setHighscoreCardsController(HighscoreCardsController highscoreCardsController) {
     this.highscoreCardsController = highscoreCardsController;
     templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
+    initBindings();
+
+    templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
+      @Override
+      public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
+        if (newValue != null) {
+          setTemplate(newValue);
+        }
+      }
+    });
+    setTemplate(templateCombo.getValue());
   }
 
   @Override
@@ -502,9 +530,11 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     if (bean instanceof CardTemplate) {
       onGenerateClick();
     }
-//    else if (bean instanceof CardSettings) {
-//      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, this.cardSettings);
-////      onGenerateClick();
-//    }
+  }
+
+  @Override
+  public void onResized(int x, int y, int width, int height) {
+    cardPreview.setFitWidth(previewPanel.getWidth() / 2);
+    refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
   }
 }

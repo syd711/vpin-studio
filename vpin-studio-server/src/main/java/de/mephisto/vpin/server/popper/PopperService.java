@@ -354,7 +354,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game);
-      cardService.generateCard(game, false);
+      cardService.generateCard(game);
     }
   }
 

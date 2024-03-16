@@ -5,9 +5,9 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -234,10 +235,14 @@ public class WidgetFactory {
 
   public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return createDialogStage(fxmlLoader, owner, title);
+    return createDialogStage(fxmlLoader, owner, title, null);
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title) {
+    return createDialogStage(fxmlLoader, owner, title, null);
+  }
+
+  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
     Parent root = null;
 
     try {
@@ -259,6 +264,20 @@ public class WidgetFactory {
     stage.initStyle(StageStyle.UNDECORATED);
     stage.setTitle(title);
     stage.setUserData(controller);
+
+    if (stateId != null) {
+      stage.setResizable(true);
+
+      Rectangle position = LocalUISettings.getPosition(stateId);
+      if (position != null) {
+        stage.setX(position.getX());
+        stage.setY(position.getY());
+
+        stage.setWidth(position.getWidth());
+        stage.setHeight(position.getHeight());
+      }
+      dialogHeaderController.enableStateListener(stage, controller, stateId);
+    }
 
     stage.initOwner(owner);
     Scene scene = new Scene(root);

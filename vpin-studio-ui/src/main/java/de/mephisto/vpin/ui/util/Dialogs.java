@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -65,7 +64,7 @@ public class Dialogs {
     }
 
     uiSettings.setHideUpdateInfo(true);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
   }
 
   public static boolean openUpdateDialog() {
@@ -145,13 +144,21 @@ public class Dialogs {
   }
 
   public static Stage createStudioDialogStage(Stage stage, Class clazz, String fxml, String title) {
+    return createStudioDialogStage(stage, clazz, fxml, title, null);
+  }
+
+  public static Stage createStudioDialogStage(Stage stage, Class clazz, String fxml, String title, String stateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, stage, title);
+    return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId);
   }
 
   public static Stage createStudioDialogStage(Class clazz, String fxml, String title) {
+    return createStudioDialogStage(clazz, fxml, title, null);
+  }
+
+  public static Stage createStudioDialogStage(Class clazz, String fxml, String title, String stateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, stateId);
   }
 
   public static boolean openPopperRunningWarning(Stage stage) {

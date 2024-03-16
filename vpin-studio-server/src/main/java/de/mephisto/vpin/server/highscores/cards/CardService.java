@@ -46,11 +46,13 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   @Autowired
   private CardTemplatesService cardTemplatesService;
 
-  public File generateSampleCard(Game game) throws Exception {
-    File cardSampleFile = getCardSampleFile();
-    if (!cardSampleFile.exists()) {
-      generateCard(game, true);
-    }
+  public File generateTableCardFile(Game game) {
+    generateCard(game);
+    return getCardSampleFile();
+  }
+
+  public File generateTemplateTableCardFile(Game game, int templateId) {
+    generateCard(game, true, templateId);
     return getCardSampleFile();
   }
 
@@ -60,15 +62,18 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
-  public boolean generateCard(Game game, boolean generateSampleCard) {
+  public boolean generateCard(Game game) {
+    return generateCard(game, false, -1);
+  }
+
+  public boolean generateCard(Game game, boolean generateSampleCard, long templateId) {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        CardTemplate template = cardTemplatesService.getTemplatesForGame(game.getId());
-
         //sample card are always generated
         if (generateSampleCard) {
+          CardTemplate template = cardTemplatesService.getTemplate(templateId);
           BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
@@ -84,6 +89,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         }
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
+          CardTemplate template = cardTemplatesService.getTemplateForGame(game);
           BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
           if (bufferedImage != null) {
             File highscoreCard = getCardFile(game, screenName);
@@ -124,7 +130,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   @Override
   public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
-    generateCard(game, false);
+    generateCard(game);
   }
 
   @Override

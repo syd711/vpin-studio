@@ -373,7 +373,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     boolean doFilter = filterCheckbox.isSelected();
 
-    if (!doFilter || !game.get().isPupPackAvailable()) {
+    if (!doFilter || game.get().getPupPackName() != null) {
       addSection(dataRoot, "PUP Pack", vpsTable.getPupPackFiles());
     }
 

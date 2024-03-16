@@ -387,7 +387,7 @@
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <top>
-            <ToolBar prefWidth="700.0" BorderPane.alignment="CENTER">
+            <ToolBar BorderPane.alignment="CENTER">
                <items>
                   <Label text="Template: " textFill="WHITE">
                      <font>
@@ -395,7 +395,7 @@
                      </font>
                   </Label>
                   <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Add" textFill="WHITE">
+                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="New" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -406,23 +406,23 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Edit Popper Table Data" />
-                     </tooltip>
-                  </Button>
                   <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit Popper Table Data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="Edit Popper Table Data" />
@@ -453,7 +453,7 @@
                <children>
                   <BorderPane fx:id="previewPanel" styleClass="media-container">
                      <center>
-                        <ImageView fx:id="cardPreview" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="cardPreview" pickOnBounds="true" preserveRatio="true" />
                      </center>
                   </BorderPane>
                </children>

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.server.games.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,36 @@ public class CardTemplatesService {
     return result;
   }
 
-  public CardTemplate getTemplatesForGame(int id) {
-    return new CardTemplate();
+  public CardTemplate getTemplateForGame(Game game) throws Exception {
+    Optional<TemplateMapping> byId = templateMappingRepository.findById((long) game.getId());
+    if (byId.isPresent()) {
+      TemplateMapping mapping = byId.get();
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
+      template.setId(mapping.getId());
+      return template;
+    }
+
+    return getCardTemplate(CardTemplate.DEFAULT);
+  }
+
+  private CardTemplate getCardTemplate(String name) throws Exception {
+    Optional<CardTemplate> first = getTemplates().stream().filter(c -> c.getName().equals(name)).findFirst();
+    if (first.isEmpty()) {
+      first = getTemplates().stream().filter(c -> c.getName().equals(CardTemplate.DEFAULT)).findFirst();
+    }
+
+    return first.get();
+  }
+
+  public CardTemplate getTemplate(long templateId) throws Exception {
+    Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
+    if(mapping.isPresent()) {
+      TemplateMapping m = mapping.get();
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, m.getTemplateJson());
+      template.setId(m.getId());
+      return template;
+    }
+
+    return getCardTemplate(CardTemplate.DEFAULT);
   }
 }

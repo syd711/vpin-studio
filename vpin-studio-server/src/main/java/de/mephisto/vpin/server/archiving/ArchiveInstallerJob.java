@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -69,7 +68,7 @@ public class ArchiveInstallerJob implements Job {
       result = tableInstallerAdapter.installTable();
       if (StringUtils.isEmpty(result.getError())) {
         Game game = gameService.getGame(result.getGameId());
-        cardService.generateCard(game, false);
+        cardService.generateCard(game);
       }
       return result;
     } catch (Exception e) {

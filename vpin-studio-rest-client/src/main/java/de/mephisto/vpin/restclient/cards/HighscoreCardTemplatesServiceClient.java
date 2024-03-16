@@ -26,7 +26,7 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     return Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class));
   }
 
-  public void deleteTemplate(long id) {
+  public void deleteTemplate(Long id) {
     try {
       getRestClient().delete(API + "cardtemplates/delete/" + id);
     } catch (Exception e) {
