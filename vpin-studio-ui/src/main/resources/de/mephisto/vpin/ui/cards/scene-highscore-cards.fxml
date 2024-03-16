@@ -151,9 +151,9 @@
                               </StackPane>
                            </center>
                            <top>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
+                              <ToolBar style="-fx-background-radius: 3 3 0 0;" BorderPane.alignment="CENTER">
                                  <items>
-                                    <Label text="Template: " textFill="WHITE">
+                                    <Label text="Assigned Template: " textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>

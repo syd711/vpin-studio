@@ -156,6 +156,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onCreate(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
@@ -165,12 +166,12 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
         template.setName(s);
         template.setId(null);
         try {
-          CardTemplate card = client.getHighscoreCardTemplatesClient().save(template);
+          CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(template);
 
           Platform.runLater(() -> {
             List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
             this.templateCombo.setItems(FXCollections.observableList(templates));
-            this.templateCombo.setValue(card);
+            this.templateCombo.setValue(newTemplate);
           });
         } catch (Exception ex) {
           LOG.error("Failed to create new template: " + ex.getMessage(), ex);
@@ -182,6 +183,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onRename(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
     String s = WidgetFactory.showInputDialog(stage, "Rename Template", "Enter Template Name", "Enter the new template name.", null, cardTemplate.getName());
     if (!StringUtils.isEmpty(s) && !cardTemplate.getName().equals(s)) {
@@ -203,6 +205,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onDuplicate(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "Duplicate Template \"" + getCardTemplate().getName() + "\"", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
@@ -226,6 +229,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onDelete(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", null, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -463,7 +467,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     Platform.runLater(() -> {
       GameRepresentation value = highscoreCardsController.getSelectedTable();
       try {
-        client.getHighscoreCardTemplatesClient().save(this.templateCombo.getValue());
+        client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
         refreshPreview(Optional.ofNullable(value), true);
       } catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
@@ -496,8 +500,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           });
 
         }).start();
-        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
-        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
+//        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
+//        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
 
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
@@ -534,7 +538,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @Override
   public void onResized(int x, int y, int width, int height) {
-    cardPreview.setFitWidth(previewPanel.getWidth() / 2);
+    cardPreview.setFitWidth(width- 500);
+    cardPreview.setFitHeight(height - 200);
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
   }
 }

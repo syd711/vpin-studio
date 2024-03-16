@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -35,6 +36,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,6 +279,13 @@ public class WidgetFactory {
         stage.setHeight(position.getHeight());
       }
       dialogHeaderController.enableStateListener(stage, controller, stateId);
+
+      stage.setOnShowing(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          controller.onResized((int) stage.getX(), (int) stage.getY(), (int) stage.getWidth(), (int) stage.getHeight());
+        }
+      });
     }
 
     stage.initOwner(owner);

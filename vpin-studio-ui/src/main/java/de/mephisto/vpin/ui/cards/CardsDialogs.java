@@ -6,7 +6,7 @@ import de.mephisto.vpin.ui.util.FXResizeHelper;
 import javafx.stage.Stage;
 
 public class CardsDialogs {
-  public static boolean openTemplateManager(HighscoreCardsController highscoreCardsController) {
+  public static void openTemplateManager(HighscoreCardsController highscoreCardsController) {
     Stage stage = Dialogs.createStudioDialogStage(TemplateManagerDialogController.class, "dialog-template-admin.fxml", "Template Editor", TemplateManagerDialogController.class.getSimpleName());
 
     TemplateManagerDialogController controller = (TemplateManagerDialogController) stage.getUserData();
@@ -16,6 +16,5 @@ public class CardsDialogs {
     stage.setUserData(fxResizeHelper);
 
     stage.showAndWait();
-    return true;
   }
 }

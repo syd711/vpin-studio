@@ -132,15 +132,26 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   public HighscoreCardsController() {
   }
 
-
-  @FXML
-  private void onTemplateCreate() {
-
-  }
-
   @FXML
   private void onTemplateEdit() {
     CardsDialogs.openTemplateManager(this);
+
+    this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
+    CardTemplate value = this.templateCombo.getValue();
+    cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
+    Optional<CardTemplate> selectionExists = cardTemplates.stream().filter(t -> t.getId().equals(value.getId())).findFirst();
+    this.templateCombo.setItems(FXCollections.observableList(cardTemplates));
+
+    if (selectionExists.isPresent()) {
+      this.templateCombo.setValue(selectionExists.get());
+      this.templateCombo.valueProperty().addListener(templateComboChangeListener);
+    }
+    else {
+      this.templateCombo.valueProperty().addListener(templateComboChangeListener);
+      this.templateCombo.getSelectionModel().select(0);
+    }
+
+    onReload();
   }
 
   @FXML
@@ -176,7 +187,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     new Thread(() -> {
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-        games = client.getGameService().getKnownGames();
+        games = client.getGameService().getGamesCached();
         cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
         filterGames(games);
@@ -424,7 +435,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     this.generateBtn.setDisable(disable);
     this.generateAllBtn.setDisable(disable);
     this.openImageBtn.setDisable(disable);
-    this.templateCombo.setDisable(disable);
+    this.templateCombo.setDisable(c.getList().isEmpty());
+
+    previewPanel.setVisible(!c.getList().isEmpty());
 
     this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
     if (c.getList().isEmpty()) {
@@ -438,8 +451,16 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       }
       else {
         Optional<CardTemplate> first = cardTemplates.stream().filter(t -> t.getId().equals(gameRepresentation.getTemplateId())).findFirst();
-        templateCombo.setValue(first.get());
+        //not present if deleted
+        if(first.isPresent()) {
+          templateCombo.setValue(first.get());
+        }
+        else {
+         templateCombo.getSelectionModel().select(0);
+        }
       }
+
+      refreshPreview(Optional.of(c.getList().get(0)), true);
     }
     this.templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
@@ -513,17 +534,20 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         if (first.isPresent()) {
           CardTemplate template = first.get();
           Label label = new Label(template.getName());
+          label.getStyleClass().add("default-text");
           return new SimpleObjectProperty(label);
         }
       }
 
       Label label = new Label(CardTemplate.DEFAULT);
+      label.getStyleClass().add("default-text");
       return new SimpleObjectProperty(label);
     });
 
 
     tableView.setItems(data);
     tableView.setEditable(true);
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
       @Override
@@ -533,6 +557,13 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
           if (column.equals(columnDisplayName)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnTemplate)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getTemplateId())));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -632,22 +663,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   class TemplateComboChangeListener implements ChangeListener<CardTemplate> {
-
     @Override
     public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
-      GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-      if (selectedItem != null) {
-        selectedItem.setTemplateId(newValue.getId());
-        try {
-          client.getGameService().saveGame(selectedItem);
-          EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
-          refreshPreview(Optional.of(selectedItem), true);
-        } catch (Exception e) {
-          LOG.error("Failed to save template mapping: " + e.getMessage(), e);
-          Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save template mapping: " + e.getMessage());
-          });
-        }
+      List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+
+      if (!selectedItems.isEmpty()) {
+        ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, newValue.getId()));
+        Platform.runLater(() -> {
+          refreshPreview(Optional.of(selectedItems.get(0)), true);
+        });
       }
     }
   }

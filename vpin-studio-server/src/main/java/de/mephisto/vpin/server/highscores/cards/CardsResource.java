@@ -74,9 +74,10 @@ public class CardsResource {
 
   @GetMapping("/background/{name}")
   public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
+    String image = imageName.replaceAll("\\+", " ");
     File folder = new File(SystemService.RESOURCES, "backgrounds");
-    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name), StandardCharsets.UTF_8).equals(imageName));
-    if (files != null) {
+    File[] files = folder.listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(image));
+    if (files != null && files.length > 0) {
       return RequestUtil.serializeImage(files[0]);
     }
     return ResponseEntity.notFound().build();

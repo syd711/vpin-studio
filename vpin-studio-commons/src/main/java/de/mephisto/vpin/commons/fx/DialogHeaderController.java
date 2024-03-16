@@ -66,7 +66,7 @@ public class DialogHeaderController implements Initializable {
   }
 
   @FXML
-  private void onDragDone() {
+  public void onDragDone() {
     debouncer.debounce("position", () -> {
       int y = (int) stage.getY();
       int x = (int) stage.getX();

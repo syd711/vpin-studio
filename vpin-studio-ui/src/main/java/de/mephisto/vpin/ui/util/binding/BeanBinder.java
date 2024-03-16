@@ -226,6 +226,10 @@ public class BeanBinder {
     this.bean = bean;
   }
 
+  public Object getBean() {
+    return bean;
+  }
+
   public void setPaused(boolean paused) {
     if(!paused) {
       debouncer.debounce("delay", () -> {

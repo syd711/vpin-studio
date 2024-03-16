@@ -451,11 +451,11 @@
          <center>
             <StackPane fx:id="previewStack" BorderPane.alignment="CENTER">
                <children>
-                  <BorderPane fx:id="previewPanel" styleClass="media-container">
-                     <center>
+                  <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
                         <ImageView fx:id="cardPreview" pickOnBounds="true" preserveRatio="true" />
-                     </center>
-                  </BorderPane>
+                     </children>
+                  </VBox>
                </children>
             </StackPane>
          </center>
