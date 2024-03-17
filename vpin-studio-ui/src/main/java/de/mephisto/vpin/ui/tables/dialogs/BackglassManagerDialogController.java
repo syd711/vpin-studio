@@ -123,6 +123,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private CheckBox lightBulbOn;
 
   @FXML
+  private CheckBox startAsExe;
+
+  @FXML
   private ComboBox<B2SGlowing> glowing;
 
   @FXML
@@ -321,17 +324,26 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setHideGrill(t1.getId());
       save();
     });
 
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setHideB2SDMD(newValue);
       save();
     });
 
     hideDMD.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideDMD.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setHideDMD(t1.getId());
       save();
     });
@@ -340,6 +352,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     skipLampFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
       debouncer.debounce("skipLampFrames", () -> {
+        if (tableSettings == null) {
+          return;
+        }
         tableSettings.setLampsSkipFrames(t1);
         save();
       }, DEBOUNCE_MS);
@@ -349,6 +364,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     skipGIFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
       debouncer.debounce("skipGIFrames", () -> {
+        if (tableSettings == null) {
+          return;
+        }
         tableSettings.setGiStringsSkipFrames(t1);
         save();
       }, DEBOUNCE_MS);
@@ -357,6 +375,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipSolenoidFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
       debouncer.debounce("skipSolenoidFrames", () -> {
         tableSettings.setSolenoidsSkipFrames(t1);
         save();
@@ -366,6 +387,10 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipLEDFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
+
       debouncer.debounce("skipLEDFrames", () -> {
         tableSettings.setLedsSkipFrames(t1);
         save();
@@ -375,16 +400,34 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     glowing.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.GLOWINGS));
     glowing.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setGlowIndex(t1.getId());
       save();
     });
 
+    startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
+      tableSettings.setStartAsEXE(newValue);
+      save();
+    });
+
     lightBulbOn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setGlowBulbOn(newValue);
+      save();
     });
 
     usedLEDType.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.LED_TYPES));
     usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setUsedLEDType(t1.getId());
       glowing.setDisable(t1.getId() == 1);
       lightBulbOn.setDisable(t1.getId() == 1);
@@ -393,11 +436,17 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     });
 
     startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setStartBackground(newValue);
       save();
     });
 
     bringBGFromTop.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
       tableSettings.setFormToFront(newValue);
       save();
     });
@@ -406,13 +455,34 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.directb2sList.setItems(FXCollections.observableList(backglasses));
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       setSaveEnabled(false);
-      deleteBtn.setDisable(newValue == null);
+      this.deleteBtn.setDisable(newValue == null);
+      this.glowing.setDisable(newValue == null);
+      this.startAsExe.setDisable(newValue == null);
+      this.dataManagerBtn.setDisable(newValue == null);
+      this.duplicateBtn.setDisable(newValue == null);
+      this.hideB2SDMD.setDisable(newValue == null);
+      this.hideGrill.setDisable(newValue == null);
+      this.hideDMD.setDisable(newValue == null);
+      this.startBackground.setDisable(newValue == null);
+      this.bringBGFromTop.setDisable(newValue == null);
+      this.skipGIFrames.setDisable(newValue == null);
+      this.skipLampFrames.setDisable(newValue == null);
+      this.skipLampFrames.setDisable(newValue == null);
+      this.skipSolenoidFrames.setDisable(newValue == null);
+      this.bulbsLabel.setDisable(newValue == null);
+      this.usedLEDType.setDisable(newValue == null);
 
       Platform.runLater(() -> {
         refresh(newValue);
-        setSaveEnabled(true);
       });
     });
+
+    if (this.directb2sList.getItems().isEmpty()) {
+      this.directb2sList.getSelectionModel().clearSelection();
+    }
+    else {
+      this.directb2sList.getSelectionModel().select(0);
+    }
   }
 
   private List<DirectB2S> filterEntries(List<DirectB2S> backglasses) {
@@ -484,6 +554,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     gameFilenameLabel.setText("-");
     game = null;
 
+
+    DirectB2STableSettings tmpTableSettings;
     if (newValue != null) {
       try {
         this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
@@ -492,7 +564,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
 
       if (this.tableData.getGameId() > 0) {
-        this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
+        tmpTableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
         game = client.getGame(this.tableData.getGameId());
         gameLabel.setText(game.getGameDisplayName());
         gameFilenameLabel.setText(game.getGameFileName());
@@ -500,9 +572,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
       }
       else {
-        this.tableSettings = null;
+        tmpTableSettings = null;
       }
-
 
       nameLabel.setText(tableData.getName());
       typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
@@ -519,7 +590,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
       if (bytesEncoded != null) {
         Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
+        if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
           PixelReader reader = image.getPixelReader();
           image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
         }
@@ -541,43 +612,49 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         dmdResolutionLabel.setText("No DMD background available.");
       }
 
-      hideGrill.setDisable(tableSettings == null);
+      hideGrill.setDisable(tmpTableSettings == null);
       hideB2SDMD.setSelected(false);
-      hideB2SDMD.setDisable(tableSettings == null);
-      hideDMD.setDisable(tableSettings == null);
+      hideB2SDMD.setDisable(tmpTableSettings == null);
+      hideDMD.setDisable(tmpTableSettings == null);
       skipLampFrames.getValueFactory().setValue(0);
-      skipLampFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+      skipLampFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
       skipGIFrames.getValueFactory().setValue(0);
-      skipGIFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+      skipGIFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
       skipSolenoidFrames.getValueFactory().setValue(0);
-      skipSolenoidFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+      skipSolenoidFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
       skipLEDFrames.getValueFactory().setValue(0);
-      skipLEDFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0 || usedLEDType.getValue() == null || usedLEDType.getValue().getId() == 2);
+      skipLEDFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0 || usedLEDType.getValue() == null || usedLEDType.getValue().getId() == 2);
       lightBulbOn.setSelected(false);
-      lightBulbOn.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
-      glowing.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
-      usedLEDType.setDisable(tableSettings == null);
+      lightBulbOn.setDisable(tmpTableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
+      glowing.setDisable(tmpTableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
+      usedLEDType.setDisable(tmpTableSettings == null);
       startBackground.setSelected(false);
-      startBackground.setDisable(tableSettings == null);
+      startBackground.setDisable(tmpTableSettings == null);
       bringBGFromTop.setSelected(false);
-      bringBGFromTop.setDisable(tableSettings == null);
+      bringBGFromTop.setDisable(tmpTableSettings == null);
 
-      if (tableSettings != null) {
-        hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
-        hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
-        hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
-        skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
-        skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
-        skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
-        skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
-        lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-        glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
-        usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
-        startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
-        bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+      if (tmpTableSettings != null) {
+        startAsExe.setSelected(tmpTableSettings.isStartAsEXE());
+        hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideGrill()).findFirst().get());
+        hideB2SDMD.selectedProperty().setValue(tmpTableSettings.isHideB2SDMD());
+        hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideDMD()).findFirst().get());
+        skipLampFrames.getValueFactory().valueProperty().set(tmpTableSettings.getLampsSkipFrames());
+        skipGIFrames.getValueFactory().valueProperty().set(tmpTableSettings.getGiStringsSkipFrames());
+        skipSolenoidFrames.getValueFactory().valueProperty().set(tmpTableSettings.getSolenoidsSkipFrames());
+        skipLEDFrames.getValueFactory().valueProperty().set(tmpTableSettings.getLedsSkipFrames());
+        lightBulbOn.selectedProperty().setValue(tmpTableSettings.isGlowBulbOn());
+        glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tmpTableSettings.getGlowIndex()).findFirst().get());
+        usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tmpTableSettings.getUsedLEDType()).findFirst().get());
+        startBackground.selectedProperty().setValue(tmpTableSettings.isStartBackground());
+        bringBGFromTop.selectedProperty().setValue(tmpTableSettings.isFormToFront());
       }
 
+      this.tableSettings = tmpTableSettings;
+
       setSaveEnabled(true);
+    }
+    else {
+      tmpTableSettings = null;
     }
   }
 
@@ -594,7 +671,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       try {
         if (this.saveEnabled) {
           client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
-          this.refresh(this.directb2sList.getSelectionModel().getSelectedItem());
+          Platform.runLater(() -> {
+            this.refresh(this.directb2sList.getSelectionModel().getSelectedItem());
+          });
         }
       } catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
@@ -606,7 +685,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private void setSaveEnabled(boolean b) {
     if (b) {
       try {
-        Thread.sleep(DEBOUNCE_MS + 10);
+        Thread.sleep(DEBOUNCE_MS + 100);
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
       }

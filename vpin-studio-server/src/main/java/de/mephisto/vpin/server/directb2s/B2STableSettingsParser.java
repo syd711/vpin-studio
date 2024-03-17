@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -107,10 +108,17 @@ public class B2STableSettingsParser extends DefaultHandler {
         settings.setGlowIndex(Integer.parseInt(node.getTextContent().trim()));
         break;
       }
-//      case "StartAsEXE": {
-//        settings.setStartAsEXE(Integer.parseInt(node.getTextContent().trim()) == 1);
-//        break;
-//      }
+      case "StartAsEXE": {
+        try {
+          String value = node.getTextContent().trim();
+          boolean startAsExe = !StringUtils.isEmpty(value) &&Integer.parseInt(value) == 1;
+          settings.setStartAsEXE(startAsExe);
+        }
+        catch (Exception e) {
+          //ignore
+        }
+        break;
+      }
       case "StartBackground": {
         settings.setStartBackground(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;

@@ -16,10 +16,15 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/players/add-player.png" width="600" />
 
+- **Header Toolbar**: De-cluttered the toolbar by moving entries into a split menu. I also added a DOF Sync entry there.
 
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="300" />
+
+- **Backglass Management**: Added option to check the "Execute as EXE" flag. It seems this may have quite some performance improvement when checked.
 
 ### Bugfixes
 
+-- **Backglass Manager**: Fixed a bunch of issues here, looks like I tested this one half asleep.
 - Fixed table overview errors of tables without VPS updates.
 - Fixed list sorting int the "Table Import" dialog.
 - Fixed list sorting in the "Backglass Manager" dialog.

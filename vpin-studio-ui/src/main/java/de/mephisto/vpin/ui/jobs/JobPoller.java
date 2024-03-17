@@ -119,7 +119,12 @@ public class JobPoller {
         jobMenu.setText("No active jobs");
       }
       else {
-        jobMenu.setText(updatedJobList.size() + " active job(s)");
+        if(updatedJobList.size() == 1) {
+          jobMenu.setText(updatedJobList.size() + " active job");
+        }
+        else {
+          jobMenu.setText(updatedJobList.size() + " active jobs");
+        }
       }
 
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());

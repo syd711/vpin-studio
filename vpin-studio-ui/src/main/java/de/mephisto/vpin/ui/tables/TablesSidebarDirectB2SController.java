@@ -130,6 +130,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private CheckBox hideB2SDMD;
 
   @FXML
+  private CheckBox startAsExe;
+
+  @FXML
   private ComboBox<B2SVisibility> hideDMD;
 
   @FXML
@@ -274,6 +277,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     lightBulbOn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setGlowBulbOn(newValue);
+      save();
+    });
+
+    startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setStartAsEXE(newValue);
+      save();
     });
 
     usedLEDType.setItems(FXCollections.observableList(LED_TYPES));
@@ -301,7 +310,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       GameRepresentation g = this.game.get();
       try {
         if (this.saveEnabled) {
-          client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
+          this.tableSettings = client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
         }
       } catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
@@ -396,6 +405,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
         startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
         bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+        startAsExe.selectedProperty().setValue(tableSettings.isStartAsEXE());
       }
 
 
