@@ -199,6 +199,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem romsUploadItem;
 
   @FXML
+  private MenuItem iniUploadMenuItem;
+
+  @FXML
   private MenuItem altSoundUploadItem;
 
   @FXML
@@ -302,6 +305,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
+    }
+  }
+
+  @FXML
+  private void onIniUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.iniUpload(stage, selectedItems.get(0));
     }
   }
 
@@ -1374,6 +1385,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     dmdUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
+    iniUploadMenuItem.setDisable(disable);
 
 
     validateBtn.setDisable(c.getList().isEmpty());

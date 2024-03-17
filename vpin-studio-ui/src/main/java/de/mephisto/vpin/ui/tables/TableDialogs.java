@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.DirectB2SArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.IniArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -105,6 +106,29 @@ public class TableDialogs {
         }
         else {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean iniUpload(Stage stage, GameRepresentation game) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select .ini File");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar"));
+
+    File file = fileChooser.showOpenDialog(stage);
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String analyze = IniArchiveAnalyzer.analyze(file);
+        if (!StringUtils.isEmpty(analyze)) {
+          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
+        }
+        else {
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
       });

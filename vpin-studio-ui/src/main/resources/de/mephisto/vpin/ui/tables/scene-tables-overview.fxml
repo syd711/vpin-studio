@@ -231,6 +231,11 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload INI File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="Upload Music Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

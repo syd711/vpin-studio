@@ -185,7 +185,7 @@ public class DefaultPictureService {
       ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
       return blurred;
     } catch (Exception e) {
-      LOG.warn("Error creating competition image: " + e.getMessage(), e);
+      LOG.warn("Error creating competition image for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
     }
     return null;
   }

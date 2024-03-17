@@ -6,6 +6,7 @@ public enum AssetType {
   VPIN_AVATAR,
   TABLE,
   DIRECT_B2S,
+  INI,
   ALT_SOUND,
   PUP_PACK,
   DMD_PACK,

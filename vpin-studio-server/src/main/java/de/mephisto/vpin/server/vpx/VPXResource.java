@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -186,5 +187,55 @@ public class VPXResource {
     } catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
     }
+  }
+
+  @PostMapping("/ini/upload")
+  public JobExecutionResult initUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                      @RequestParam(value = "uploadType", required = false) String uploadType,
+                                      @RequestParam("objectId") Integer gameId) {
+    try {
+      if (file == null) {
+        LOG.error("Upload request did not contain a file object.");
+        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
+      }
+
+      Game game = gameService.getGame(gameId);
+      if (game == null) {
+        LOG.error("No game found for upload.");
+        return JobExecutionResultFactory.error("No game found for upload.");
+      }
+      File iniFile = game.getIniFile();
+      if (iniFile.exists() && !iniFile.delete()) {
+        return JobExecutionResultFactory.error("Failed to delete " + iniFile.getAbsolutePath());
+      }
+
+      String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+      if (StringUtils.isEmpty(suffix)) {
+        throw new UnsupportedOperationException("The uploaded file has no valid suffix \"" + suffix + "\"");
+      }
+
+      File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
+      LOG.info("Uploading " + tempFile.getAbsolutePath());
+
+      boolean upload = UploadUtil.upload(file, tempFile);
+      if (!upload) {
+        return JobExecutionResultFactory.error("Upload failed, check logs for details.");
+      }
+
+      if (suffix.equalsIgnoreCase("ini")) {
+        FileUtils.copyFile(tempFile, iniFile);
+      }
+      else if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("zip")) {
+        PackageUtil.unpackTargetFile(tempFile, iniFile, ".ini");
+      }
+      else {
+        throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");
+      }
+    } catch (Exception e) {
+      LOG.error("Ini upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Ini upload failed: " + e.getMessage());
+    }
+    return JobExecutionResultFactory.empty();
   }
 }
