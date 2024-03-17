@@ -17,6 +17,7 @@
 
 ### Bugfixes
 
+- Fixed table overview errors of tables without VPS updates.
 - Fixed list sorting int the "Table Import" dialog.
 - Fixed list sorting in the "Backglass Manager" dialog.
 - **Subscription Channels**: For new subscription channel, a set of highscores was posted before the actual initial message. This has been fixed so that if no highscore filters are (player definitions) set, these score are now appended **after** the initial message.

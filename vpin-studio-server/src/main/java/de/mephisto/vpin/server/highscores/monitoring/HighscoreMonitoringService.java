@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores.monitoring;
 
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ public class HighscoreMonitoringService {
   private Thread monitorThread;
 
   public void startMonitoring(@NonNull Game game) {
-    if(monitorThread != null) {
+    if (monitorThread != null) {
       stopMonitoring();
     }
 
@@ -63,7 +62,7 @@ public class HighscoreMonitoringService {
               //we only register "ENTRY_MODIFY" so the context is always a Path.
               final Path changed = (Path) event.context();
               if (changed.endsWith(highscoreFile.getName())) {
-                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
+//                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
               }
             }
             // reset the key
@@ -72,6 +71,7 @@ public class HighscoreMonitoringService {
               LOG.info("Key has been unregistered");
             }
           }
+          LOG.info("Terminated Monitoring Thread");
         }
       } catch (Exception e) {
         LOG.info("Highscore monitor failed: " + e.getMessage(), e);

@@ -31,6 +31,7 @@ public class RomService {
           ScoringDB scoringDatabase = systemService.getScoringDatabase();
           Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getRom().equals(scan.getRom())).findFirst();
           if (first.isPresent()) {
+            //enrich the scan result with data from the scoringdb.json
             ScoringDBMapping scoringDBMapping = first.get();
             if (scoringDBMapping.getTextFile() != null) {
               scan.setHsFileName(scoringDBMapping.getTextFile());

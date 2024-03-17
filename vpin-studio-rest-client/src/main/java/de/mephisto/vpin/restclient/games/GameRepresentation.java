@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.games;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class GameRepresentation {
   private int emulatorId;
   private String pupPackName;
   private Long templateId;
-  private List<String> updates;
+  private List<String> updates = new ArrayList<>();
 
   public String getPupPackName() {
     return pupPackName;

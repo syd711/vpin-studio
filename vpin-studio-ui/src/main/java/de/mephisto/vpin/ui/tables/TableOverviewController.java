@@ -936,7 +936,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       try {
-        if (!value.getUpdates().isEmpty()) {
+        if (value.getUpdates() != null && !value.getUpdates().isEmpty()) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
 
           Label label = new Label();
@@ -1386,7 +1386,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validationError.setVisible(c.getList().size() != 1);
 
     vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
-    vpsResetBtn.setDisable(c.getList().stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
+    vpsResetBtn.setDisable(c.getList().stream().filter(g -> g.getUpdates() != null && !g.getUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());

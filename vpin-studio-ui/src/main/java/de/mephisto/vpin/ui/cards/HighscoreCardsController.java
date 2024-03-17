@@ -360,6 +360,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void onViewActivated() {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
+    onReload();
   }
 
   @Override
@@ -452,15 +453,17 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       else {
         Optional<CardTemplate> first = cardTemplates.stream().filter(t -> t.getId().equals(gameRepresentation.getTemplateId())).findFirst();
         //not present if deleted
-        if(first.isPresent()) {
+        if (first.isPresent()) {
           templateCombo.setValue(first.get());
         }
         else {
-         templateCombo.getSelectionModel().select(0);
+          templateCombo.getSelectionModel().select(0);
         }
       }
 
-      refreshPreview(Optional.of(c.getList().get(0)), true);
+      Platform.runLater(() -> {
+        refreshPreview(Optional.of(c.getList().get(0)), true);
+      });
     }
     this.templateCombo.valueProperty().addListener(templateComboChangeListener);
   }

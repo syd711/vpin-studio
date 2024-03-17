@@ -11,6 +11,15 @@ public class ScanResult {
   private String hsFileName;
   private String someTextFile;
   private String tableName;
+  private String pupPackName;
+
+  public String getPupPackName() {
+    return pupPackName;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
 
   public String getSomeTextFile() {
     return someTextFile;

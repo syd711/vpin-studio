@@ -46,7 +46,7 @@ public class Game {
 
   private String assets;
   private PupPack pupPack;
-  private List<Integer> playlists;
+  private List<Integer> playlists = new ArrayList<>();
 
   private String pupPackName;
   private Long templateId;
@@ -54,7 +54,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
-  private List<String> updates;
+  private List<String> updates = new ArrayList<>();
 
   public Game() {
 
