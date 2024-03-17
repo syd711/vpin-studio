@@ -2,12 +2,13 @@ package de.mephisto.vpin.server.dof;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -36,7 +34,7 @@ public class DOFService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private JobQueue jobQueue;
 
   public DOFSettings saveSettings(DOFSettings settings) {
     try {
@@ -60,86 +58,29 @@ public class DOFService implements InitializingBean {
     }
   }
 
-  public JobExecutionResult sync() {
-    try {
-      String downloadUrl = "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + getSettings().getApiKey();
-      LOG.info("Downloading " + "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
-      URL url = new URL(downloadUrl);
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      connection.setReadTimeout(5000);
-      connection.setDoOutput(true);
-      BufferedInputStream in = new BufferedInputStream(url.openStream());
-      File zipFile = new File(SystemService.RESOURCES, "directoutputconfig.zip");
-      if (zipFile.exists()) {
-        zipFile.delete();
-      }
-      FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
-      }
-      in.close();
-      fileOutputStream.close();
+  public JobExecutionResult asyncSync() {
+    DOFSynchronizationJob job = new DOFSynchronizationJob(this, getSettings());
+    JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC, UUID.randomUUID().toString());
 
-      if (new String(dataBuffer).contains("API")) {
-        zipFile.delete();
-        return JobExecutionResultFactory.error(new String(dataBuffer));
-      }
+    jobDescriptor.setTitle("Synchronizing DOF Settings");
+    jobDescriptor.setDescription("Synchronizing with http://configtool.vpuniverse.com");
+    jobDescriptor.setJob(job);
+    jobDescriptor.setStatus(job.getStatus());
 
-      LOG.info("Downloaded file " + zipFile.getAbsolutePath());
+    jobQueue.offer(jobDescriptor);
+    LOG.info("Offered DOF Sync job.");
 
-      DOFSettings settings = getSettings();
-      if (!StringUtils.isEmpty(settings.getInstallationPath())) {
-        File targetFolder = new File(settings.getInstallationPath(), "Config");
-        if (!targetFolder.exists()) {
-          return JobExecutionResultFactory.error("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
-        }
-        LOG.info("Extracting DOF config for 64-bit folder " + settings.getInstallationPath());
-        ZipUtil.unzip(zipFile, targetFolder);
-      }
-
-      if (!StringUtils.isEmpty(settings.getInstallationPath32())) {
-        File targetFolder = new File(settings.getInstallationPath32(), "Config");
-        if (!targetFolder.exists()) {
-          return JobExecutionResultFactory.error("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
-        }
-        LOG.info("Extracting DOF config for 32-bit folder " + settings.getInstallationPath32());
-        ZipUtil.unzip(zipFile, targetFolder);
-      }
-
-    } catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Failed to execute download: " + e.getMessage());
-    }
     return JobExecutionResultFactory.empty();
   }
 
-//  private File getDOFInstallationFolder() {
-//    try {
-//      GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-//      File backglassServerDirectory = defaultGameEmulator.getBackglassServerDirectory();
-//      File dofConfigFolder = new File(backglassServerDirectory, "Plugins64/DirectOutputx64.lnk");
-//      LOG.info("Checking DOF config folder " + dofConfigFolder.getAbsolutePath());
-//
-//      boolean potentialValidLink = WindowsShortcut.isPotentialValidLink(dofConfigFolder);
-//      if (!potentialValidLink) {
-//        LOG.info("Checking DOF config folder " + dofConfigFolder.getAbsolutePath());
-//        dofConfigFolder = new File(backglassServerDirectory, "Plugins64/DirectOutput.lnk");
-//        potentialValidLink = WindowsShortcut.isPotentialValidLink(dofConfigFolder);
-//      }
-//      if (!potentialValidLink) {
-//        LOG.error("Failed to determine DOF zipFile folder.");
-//        return null;
-//      }
-//
-//      WindowsShortcut windowsShortcut = new WindowsShortcut(dofConfigFolder);
-//      return new File(windowsShortcut.getRealFilename());
-//    } catch (Exception e) {
-//      LOG.error("Failed to resolve DOF path: " + e.getMessage());
-//    }
-//    return null;
-//  }
+  public JobExecutionResult sync(boolean wait) {
+    if (wait) {
+      DOFSynchronizationJob job = new DOFSynchronizationJob(this, getSettings());
+      return job.execute();
+    }
+
+    return asyncSync();
+  }
 
   private boolean doSync(String installationPath, int interval) {
     File configFolder = new File(installationPath, "Config");
@@ -178,7 +119,7 @@ public class DOFService implements InitializingBean {
           }
 
           if (doSync) {
-            sync();
+            sync(false);
             LOG.info("DOF Synchronizer finished, took " + (System.currentTimeMillis() - start) + "ms.");
           }
         }
@@ -186,6 +127,5 @@ public class DOFService implements InitializingBean {
         LOG.error("Failed to synchronize DOF settings: " + e.getMessage(), e);
       }
     }).start();
-
   }
 }

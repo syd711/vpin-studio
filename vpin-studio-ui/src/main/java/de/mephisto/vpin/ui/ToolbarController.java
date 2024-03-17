@@ -2,18 +2,17 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +35,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuButton jobBtn;
 
   @FXML
+  private MenuItem dofSyncEntry;
+
+  @FXML
   private ToggleButton maintenanceBtn;
 
   @FXML
@@ -45,7 +47,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private HBox toolbarHBox;
 
   @FXML
-  private Button preferencesBtn;
+  private SplitMenuButton preferencesBtn;
 
   private String newVersion;
 
@@ -110,25 +112,10 @@ public class ToolbarController implements Initializable, StudioEventListener {
     client.clearCache();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
-    updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
-
-    this.jobBtn.setDisable(true);
-    this.messagesBtn.setDisable(true);
-    this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
-
-    EventManager.getInstance().addListener(this);
-
-    JobPoller.destroy();
-    JobPoller.create(this.jobBtn, this.messagesBtn);
-
-    runUpdateCheck();
-
+  @FXML
+  private void onDOFSyn() {
+    Studio.client.getDofService().sync(false);
     JobPoller.getInstance().setPolling();
-
-    this.messagesBtn.setDisable(client.getJobsService().getResults().isEmpty());
   }
 
   private void runUpdateCheck() {
@@ -162,5 +149,38 @@ public class ToolbarController implements Initializable, StudioEventListener {
     } catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.serverSettings)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = (settings.isValidDOFFolder() || settings.isValidDOFFolder32()) && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
+    updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
+    messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
+
+    this.jobBtn.setDisable(true);
+    this.messagesBtn.setVisible(false);
+    this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
+
+    EventManager.getInstance().addListener(this);
+
+    JobPoller.destroy();
+    JobPoller.create(this.jobBtn, this.messagesBtn);
+
+    runUpdateCheck();
+
+    JobPoller.getInstance().setPolling();
+
+    this.messagesBtn.setVisible(!client.getJobsService().getResults().isEmpty());
+
+    preferencesChanged(PreferenceType.serverSettings);
   }
 }

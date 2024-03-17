@@ -5,7 +5,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -78,32 +80,24 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
-                        <Button layoutX="164.0" layoutY="10.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Clear cache" />
-                           </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onDisconnect" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Disconnect" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="preferencesBtn" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
+                        <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="dofSyncEntry" mnemonicParsing="false" onAction="#onDOFSyn" text="Synchronize DOF">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                            <MenuItem mnemonicParsing="false" onAction="#onDisconnect" text="Disconnect">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                          </items>
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -113,7 +107,7 @@
                            <tooltip>
                               <Tooltip text="Open Settings" />
                            </tooltip>
-                        </Button>
+                        </SplitMenuButton>
                      </children>
                   </HBox>
                </right>

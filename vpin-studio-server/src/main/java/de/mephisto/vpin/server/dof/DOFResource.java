@@ -17,9 +17,9 @@ public class DOFResource {
   @Autowired
   private DOFService dofService;
 
-  @GetMapping("sync")
-  public JobExecutionResult syncDofConfig() {
-    return dofService.sync();
+  @GetMapping("sync/{wait}")
+  public JobExecutionResult syncDofConfig(@PathVariable("wait") Boolean wait) {
+    return dofService.sync(wait);
   }
 
   @GetMapping
