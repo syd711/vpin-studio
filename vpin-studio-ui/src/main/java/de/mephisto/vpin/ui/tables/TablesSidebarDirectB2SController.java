@@ -320,18 +320,30 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   }
 
 
+  private void setSaveEnabled(boolean b) {
+    if (b) {
+      try {
+        Thread.sleep(DEBOUNCE_MS + 100);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    this.saveEnabled = b;
+  }
+
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    setSaveEnabled(false);
+
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
-
-    this.saveEnabled = false;
 
     this.tableSettings = null;
 
@@ -417,7 +429,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
       lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
 
-      this.saveEnabled = true;
+      setSaveEnabled(true);
     }
   }
 

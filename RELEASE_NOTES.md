@@ -2,7 +2,6 @@
 
 ### Changes
 
-
 - **Table Management**: Added support for **loading tables from sub-folders**. Up until now, the Studio did only assume that all VPX files and backglasses are located in the **Tables** folder of the emulator. While Popper supports sub-folders here, the Studio does now too. Because of the complexity, I disabled some additional operations for these tables, like the renaming option of the VPX file. **This required quite a lot of changes, so there might be some aftermath**.
 - **Table Management**: Added additional check for **PUP Pack** names during table scans. Some tables define this name in a separate variable that differs from the default ROM name. An additional field **Name** has been added to the PUP Pack section to show the effective PUP pack.
 - **Highscore Parsing**: Re-implemented all highscore parsers for all formats: VPReg.stg entries, text files and nvram files. Kudos here to **@ED209** here who provided me tons of highscore data to make this happen. Because of this data I was able to support way more tables.  
@@ -24,7 +23,8 @@
 
 ### Bugfixes
 
--- **Backglass Manager**: Fixed a bunch of issues here, looks like I tested this one half asleep.
+- **Backglass Management**: Fixed accidental backglass save on selection.
+- **Backglass Manager**: Fixed a bunch of issues here, looks like I tested this one half asleep.
 - Fixed table overview errors of tables without VPS updates.
 - Fixed list sorting int the "Table Import" dialog.
 - Fixed list sorting in the "Backglass Manager" dialog.
