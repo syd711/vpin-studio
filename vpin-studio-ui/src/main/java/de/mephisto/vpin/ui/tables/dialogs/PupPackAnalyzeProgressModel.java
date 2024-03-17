@@ -14,14 +14,14 @@ public class PupPackAnalyzeProgressModel extends ProgressModel<File> {
 
   private final Iterator<File> iterator;
   private final String rom;
-  private final String tableName;
+  private final String pupPackName;
   private final File file;
   private PupPackAnalyzer analyzer;
 
-  public PupPackAnalyzeProgressModel(String rom, String tableName, String title, File file) {
+  public PupPackAnalyzeProgressModel(String rom, String pupPackName, String title, File file) {
     super(title);
     this.rom = rom;
-    this.tableName = tableName;
+    this.pupPackName = pupPackName;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
@@ -60,8 +60,8 @@ public class PupPackAnalyzeProgressModel extends ProgressModel<File> {
       if (rom != null) {
         roms.add(rom);
       }
-      if (tableName != null && !roms.contains(tableName)) {
-        roms.add(tableName);
+      if(pupPackName != null && !rom.contains(pupPackName)) {
+        roms.add(pupPackName);
       }
       analyzer.analyze(next, roms, progressResultModel);
       progressResultModel.addProcessed();

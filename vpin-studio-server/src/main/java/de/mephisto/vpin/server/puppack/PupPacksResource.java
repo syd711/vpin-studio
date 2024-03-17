@@ -138,6 +138,7 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
+    representation.setName(pupPack.getName());
     representation.setHelpTransparency(pupPack.isTransparent(PopperScreen.GameHelp));
     representation.setInfoTransparency(pupPack.isTransparent(PopperScreen.GameInfo));
     representation.setOther2Transparency(pupPack.isTransparent(PopperScreen.Other2));

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class PupPackRepresentation {
   private long size;
+  private String name;
   private Date modificationDate;
   private boolean enabled;
   private List<String> options = new ArrayList<>();
@@ -24,6 +25,14 @@ public class PupPackRepresentation {
   private boolean infoTransparency= false;
   private boolean helpTransparency= false;
   private boolean other2Transparency= false;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   public boolean isInfoTransparency() {
     return infoTransparency;

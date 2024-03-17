@@ -503,6 +503,7 @@ public class GameService implements InitializingBean {
       gameDetails.setTableName(scannedTableName);
       gameDetails.setNvOffset(scanResult.getNvOffset());
       gameDetails.setHsFileName(scanResult.getHsFileName());
+      gameDetails.setPupId(game.getId());
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
       gameDetails.setCreatedAt(new java.util.Date());

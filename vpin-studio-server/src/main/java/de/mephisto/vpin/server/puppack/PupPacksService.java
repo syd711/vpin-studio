@@ -89,6 +89,7 @@ public class PupPacksService implements InitializingBean {
     pupPack.load();
 
     if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || !FileUtils.listFiles(packFolder, new String[]{"mp4", "png"}, true).isEmpty())) {
+//      LOG.info("Loaded PUP Pack " + packFolder.getName());
       pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
     }
     return pupPack;

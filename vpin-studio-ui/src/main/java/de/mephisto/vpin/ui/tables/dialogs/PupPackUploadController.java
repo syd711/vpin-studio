@@ -76,7 +76,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select PUP Pack");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("PUP Pack", "*.zip", "*.rar"));
+      new FileChooser.ExtensionFilter("PUP Pack", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
@@ -91,7 +91,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getTableName(), "PUP Pack Analysis", this.selection));
+    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getPupPackName(), "PUP Pack Analysis", this.selection));
 
     if (!resultModel.getResults().isEmpty()) {
       result = false;
@@ -138,7 +138,7 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   public void setFile(File file, Stage stage) {
     this.selection = file;
-    if(selection != null) {
+    if (selection != null) {
       Platform.runLater(() -> {
         refreshSelection(stage);
       });

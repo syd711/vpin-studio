@@ -20,17 +20,17 @@ import java.util.zip.ZipInputStream;
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static JobExecutionResult unpack(File archiveFile, File destinationDir, String rom, String tableName) {
+  public static JobExecutionResult unpack(File archiveFile, File destinationDir, String rom, String pupPackName) {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
-      return unzip(archiveFile, destinationDir, rom, tableName);
+      return unzip(archiveFile, destinationDir, rom, pupPackName);
     }
     else if (archiveFile.getName().toLowerCase().endsWith(".rar")) {
-      return unrar(archiveFile, destinationDir, rom, tableName);
+      return unrar(archiveFile, destinationDir, rom, pupPackName);
     }
     throw new UnsupportedOperationException("Unsupported archive format for PUP pack " + archiveFile.getName());
   }
 
-  public static JobExecutionResult unrar(File archiveFile, File destinationDir, String rom, String tableName) {
+  public static JobExecutionResult unrar(File archiveFile, File destinationDir, String rom, String pupPackName) {
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
@@ -38,8 +38,8 @@ public class PupPackUtil {
 
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
         String name = item.getPath().replaceAll("\\\\", "/");
-        File newFile = new File(destinationDir, toTargetName(name, rom, tableName));
-        boolean isInPupPack = name.contains(rom + "/") || (!StringUtils.isEmpty(tableName) && name.contains(tableName));
+        File newFile = new File(destinationDir, toTargetName(name, rom, pupPackName));
+        boolean isInPupPack = name.contains(pupPackName + "/") || name.contains(rom + "/");
         if (!isInPupPack) {
           LOG.info("Skipping extraction of " + newFile.getAbsolutePath());
         }
@@ -120,15 +120,19 @@ public class PupPackUtil {
   }
 
   @NonNull
-  private static String toTargetName(String name, String rom, String tableName) {
+  private static String toTargetName(String name, String rom, String pupPackName) {
     String targetFolder = name;
-    while (!targetFolder.startsWith(rom + "/") && targetFolder.contains("/")) {
-      targetFolder = targetFolder.substring(targetFolder.indexOf("/") + 1);
+    if (!StringUtils.isEmpty(pupPackName)) {
+      while (!targetFolder.startsWith(pupPackName + "/") && targetFolder.contains("/")) {
+        targetFolder = targetFolder.substring(targetFolder.indexOf("/") + 1);
+      }
+
+      return targetFolder;
     }
 
-    if (!targetFolder.startsWith(rom) && !StringUtils.isEmpty(tableName)) {
+    if (!targetFolder.startsWith(pupPackName) && !StringUtils.isEmpty(rom)) {
       targetFolder = name;
-      while (!targetFolder.startsWith(tableName + "/") && targetFolder.contains("/")) {
+      while (!targetFolder.startsWith(rom + "/") && targetFolder.contains("/")) {
         targetFolder = targetFolder.substring(targetFolder.indexOf("/") + 1);
       }
     }

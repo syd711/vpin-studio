@@ -107,6 +107,9 @@ public class TablesSidebarPUPPackController implements Initializable {
   private VBox errorBox;
 
   @FXML
+  private Label nameLabel;
+
+  @FXML
   private Label errorTitle;
 
   @FXML
@@ -275,6 +278,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     bundleSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
+    nameLabel.setText("-");
 
     optionsCombo.getItems().clear();
     optionsCombo.setItems(FXCollections.emptyObservableList());
@@ -308,6 +312,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {
+        nameLabel.setText(pupPack.getName());
         enabledCheckbox.setSelected(pupPack.isEnabled());
 
         List<String> options = pupPack.getOptions();
