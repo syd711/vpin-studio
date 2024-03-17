@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Application;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -73,7 +75,7 @@ public class OverlayWindowFX extends Application {
   }
 
   public void showOverlay(boolean visible) {
-    if(overlayVisible && visible) {
+    if (overlayVisible && visible) {
       return;
     }
 
@@ -146,7 +148,7 @@ public class OverlayWindowFX extends Application {
     String resource = "uhd";
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     double width = screenBounds.getWidth();
-    if(screenBounds.getWidth() < screenBounds.getHeight()) {
+    if (screenBounds.getWidth() < screenBounds.getHeight()) {
       width = screenBounds.getHeight();
     }
 
@@ -205,7 +207,27 @@ public class OverlayWindowFX extends Application {
 
   public void togglePauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu();
+      PauseMenu.togglePauseMenu(null);
+    });
+  }
+
+  public void testPauseMenu() {
+    Platform.runLater(() -> {
+      GameStatus gameStatus = new GameStatus();
+      gameStatus.setGameId(370);
+      gameStatus.setStarted(new Date());
+      PauseMenu.togglePauseMenu(gameStatus);
+    });
+
+    try {
+      Thread.sleep(5000);
+
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
+    Platform.runLater(() -> {
+      PauseMenu.togglePauseMenu(null);
     });
   }
 

@@ -75,6 +75,11 @@ public class OverlayPreferencesController implements Initializable {
   private TextField externalPageUrl;
 
   @FXML
+  private void onPauseTest() {
+    client.getSystemService().testPauseMenu();
+  }
+
+  @FXML
   private void onOpenExternalPage() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     String url = this.externalPageUrl.getText();

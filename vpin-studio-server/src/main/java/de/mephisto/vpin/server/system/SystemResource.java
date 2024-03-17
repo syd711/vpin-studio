@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -51,6 +53,12 @@ public class SystemResource {
   @GetMapping("/startupTime")
   public Date startupTime() {
     return startupTime;
+  }
+
+  @GetMapping("/pausemenu/test")
+  public boolean testPauseMenu() {
+    OverlayWindowFX.getInstance().testPauseMenu();
+    return true;
   }
 
   @GetMapping("/logs")

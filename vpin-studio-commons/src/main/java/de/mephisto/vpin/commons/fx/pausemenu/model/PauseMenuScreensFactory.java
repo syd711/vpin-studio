@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Factory class to create Popper screens for the assets found in the Popper resource folders.
+ */
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuScreensFactory.class);
 

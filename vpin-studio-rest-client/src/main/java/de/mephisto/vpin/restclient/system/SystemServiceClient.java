@@ -146,4 +146,9 @@ public class SystemServiceClient extends VPinStudioClientService {
   public void clearCache() {
     getRestClient().clearCache(API + "system/info");
   }
+
+  public void testPauseMenu() {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/pausemenu/test", Boolean.class);
+  }
 }

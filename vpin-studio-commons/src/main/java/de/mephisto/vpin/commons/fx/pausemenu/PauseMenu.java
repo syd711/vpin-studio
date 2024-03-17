@@ -14,6 +14,8 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +28,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class PauseMenu extends Application {
     OverlayWindowFX.client = new VPinStudioClient("localhost");
     PRODUCTION_USE = false;
     launch(args);
-    PauseMenu.togglePauseMenu();
+    PauseMenu.togglePauseMenu(null);
   }
 
   @Override
@@ -143,7 +144,7 @@ public class PauseMenu extends Application {
       logger.setUseParentHandlers(false);
 
       if (!PRODUCTION_USE) {
-        togglePauseMenu();
+        togglePauseMenu(null);
       }
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
@@ -163,9 +164,11 @@ public class PauseMenu extends Application {
     root.setScaleY(scaling);
   }
 
-  public static void togglePauseMenu() {
+  public static void togglePauseMenu(@Nullable GameStatus status) {
     if (!visible) {
-      GameStatus status = client.getGameStatusService().getStatus();
+      if (status == null) {
+        status = client.getGameStatusService().getStatus();
+      }
       if (!status.isActive()) {
         LOG.info("Skipped showing start menu: no game status found.");
         return;
@@ -194,7 +197,9 @@ public class PauseMenu extends Application {
       new Thread(() -> {
         Platform.runLater(() -> {
           screenAssets.clear();
-          screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+          if(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens)) {
+            screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+          }
         });
 
         OverlayWindowFX.toFront(stage, visible);

@@ -306,6 +306,14 @@
                                     <Tooltip prefWidth="300.0" text="When the Popper screens are used, the first assets of the &quot;Other2&quot;, &quot;Info&quot; and &quot;Help&quot; screens are shown on the configured screen locations." wrapText="true" />
                                  </tooltip>
                               </Label>
+                              <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="24.0" />
+                                 </HBox.margin>
+                              </Button>
                            </children>
                         </HBox>
                      </children>
