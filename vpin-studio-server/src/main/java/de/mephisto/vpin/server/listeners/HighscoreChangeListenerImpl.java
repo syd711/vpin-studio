@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.listeners;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,10 +58,15 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     Game game = event.getGame();
 
     //update channel subscriptions
-    List<Competition> competitionForRom = competitionService.getSubscriptions(game.getRom());
-    Optional<Competition> newCompetition = runSubscriptionChannelsCheck(game, competitionForRom);
+    List<Competition> subscriptionsByRom = new ArrayList<>(competitionService.getSubscriptions(game.getRom()));
+    Optional<Competition> newCompetition = runSubscriptionChannelsCheck(game, subscriptionsByRom);
 
-    for (Competition competition : competitionForRom) {
+    //add the newly created subscription channel so that the first highscore is written there too
+    if (newCompetition.isPresent()) {
+      subscriptionsByRom.add(newCompetition.get());
+    }
+
+    for (Competition competition : subscriptionsByRom) {
       //subscriptions don't need competition data, because we stick with a simple ROM name check.
       discordCompetitionService.runDiscordServerUpdate(event.getGame(), event.getNewScore(), competition, null);
     }

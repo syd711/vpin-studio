@@ -4,14 +4,14 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -38,6 +38,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +214,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Subscription '" + selection.getName() + "'?",
-          help, help2, "Delete Subscription");
+        help, help2, "Delete Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -306,6 +307,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(value.getName());
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -313,11 +315,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameCached(value.getGameId());
       Label label = new Label("- not available anymore -");
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
+        label.getStyleClass().add("default-text");
       }
 
       HBox hBox = new HBox(6);
@@ -325,7 +329,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
       ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
-      if(gameMediaItem != null) {
+      if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }
       ImageView view = new ImageView(image);
@@ -361,6 +365,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
+        label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
@@ -383,6 +388,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
+        label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
@@ -391,7 +397,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     });
 
     tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
-        "Create a new subscription by pressing the '+' button."));
+      "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
@@ -415,6 +421,34 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         }
       });
       return row;
+    });
+
+    columnServer.setSortable(false);
+    columnCompetitionOwner.setSortable(false);
+
+    tableView.setSortPolicy(new Callback<TableView<CompetitionRepresentation>, Boolean>() {
+      @Override
+      public Boolean call(TableView<CompetitionRepresentation> gameRepresentationTableView) {
+        CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
+          TableColumn<CompetitionRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          if (column.equals(columnName)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getName()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnTable)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> client.getGameCached(o.getGameId()).getGameDisplayName()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+        }
+        return true;
+      }
     });
 
     validationError.setVisible(false);

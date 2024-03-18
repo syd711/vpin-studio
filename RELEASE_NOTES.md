@@ -30,7 +30,7 @@
 - Fixed list sorting int the "Table Import" dialog.
 - Fixed list sorting in the "Backglass Manager" dialog.
 - **Subscription Channels**: For new subscription channel, a set of highscores was posted before the actual initial message. This has been fixed so that if no highscore filters are (player definitions) set, these score are now appended **after** the initial message.
-- **Subscription Channels**: Added support for tables with anonymous tables. Since anonymous highscore changes are not filtered anymore when a default user is set, subscription will now created for the these type of tables too.
+- **Subscription Channels**: Added support for tables with anonymous tables. Since anonymous highscore changes are not filtered anymore when a default user is set, subscription will now created for these type of tables too.
 - Added progress dialog for loading player highscore in the players section. This avoids possible concurrent database accesses when double-clicking a player.
 - Emulator Validation: The Studio can now start even if no emulator is found. This may happen when not folders have been set up in PinUP Popper.
 - **ROM Aliases**: Fixed possible error when used with multiple emulators.

@@ -58,7 +58,7 @@ public class PlayerService {
 
   public String getAdminPlayerInitials() {
     Player adminPlayer = getAdminPlayer();
-    if(adminPlayer != null) {
+    if (adminPlayer != null) {
       return adminPlayer.getInitials();
     }
     return null;
@@ -154,7 +154,7 @@ public class PlayerService {
 
   public void validateInitials(Score newScore) {
     String defaultInitials = getAdminPlayerInitials();
-    if(String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null) {
+    if (String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null && newScore.getNumericScore() > 0) {
       newScore.setPlayerInitials(defaultInitials);
     }
   }
