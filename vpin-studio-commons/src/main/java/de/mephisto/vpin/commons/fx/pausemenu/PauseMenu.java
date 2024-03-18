@@ -165,7 +165,7 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu() {
-    togglePauseMenu();
+    togglePauseMenu(null);
   }
 
   public static void togglePauseMenu(@Nullable GameStatus status) {

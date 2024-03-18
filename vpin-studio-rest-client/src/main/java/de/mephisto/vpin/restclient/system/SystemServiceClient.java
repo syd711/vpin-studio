@@ -2,9 +2,7 @@ package de.mephisto.vpin.restclient.system;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
-import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -147,8 +145,8 @@ public class SystemServiceClient extends VPinStudioClientService {
     getRestClient().clearCache(API + "system/info");
   }
 
-  public void testPauseMenu() {
+  public void testPauseMenu(GameRepresentation game, Integer value) {
     final RestTemplate restTemplate = new RestTemplate();
-    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/pausemenu/test", Boolean.class);
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/pausemenu/test/" + game.getId() + "/" + value, Boolean.class);
   }
 }

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.collections.FXCollections;
@@ -76,7 +77,7 @@ public class OverlayPreferencesController implements Initializable {
 
   @FXML
   private void onPauseTest() {
-    client.getSystemService().testPauseMenu();
+    PreferencesDialogs.openPauseMenuTestDialog();
   }
 
   @FXML

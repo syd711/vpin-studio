@@ -34,4 +34,9 @@ public class PreferencesDialogs {
     controller.setSettings(settings);
     stage.showAndWait();
   }
+
+  public static void openPauseMenuTestDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(TablePauseTestDialogController.class, "preference-table-pause-test-dialog.fxml", "Pause Menu Test");
+    stage.showAndWait();
+  }
 }
