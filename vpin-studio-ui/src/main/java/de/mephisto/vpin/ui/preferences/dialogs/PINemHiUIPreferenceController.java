@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.preferences;
+package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;

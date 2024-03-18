@@ -55,9 +55,9 @@ public class SystemResource {
     return startupTime;
   }
 
-  @GetMapping("/pausemenu/test")
-  public boolean testPauseMenu() {
-    OverlayWindowFX.getInstance().testPauseMenu();
+  @GetMapping("/pausemenu/test/{gameId}/{duration}")
+  public boolean testPauseMenu(@PathVariable("gameId") int gameId, @PathVariable("duration") int duration) {
+    OverlayWindowFX.getInstance().testPauseMenu(gameId, duration);
     return true;
   }
 

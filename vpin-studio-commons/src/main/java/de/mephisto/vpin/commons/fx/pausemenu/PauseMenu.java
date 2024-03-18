@@ -69,7 +69,7 @@ public class PauseMenu extends Application {
     OverlayWindowFX.client = new VPinStudioClient("localhost");
     PRODUCTION_USE = false;
     launch(args);
-    PauseMenu.togglePauseMenu(null);
+    PauseMenu.togglePauseMenu();
   }
 
   @Override
@@ -144,7 +144,7 @@ public class PauseMenu extends Application {
       logger.setUseParentHandlers(false);
 
       if (!PRODUCTION_USE) {
-        togglePauseMenu(null);
+        togglePauseMenu();
       }
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
@@ -162,6 +162,10 @@ public class PauseMenu extends Application {
     }
     root.setScaleX(scaling);
     root.setScaleY(scaling);
+  }
+
+  public static void togglePauseMenu() {
+    togglePauseMenu();
   }
 
   public static void togglePauseMenu(@Nullable GameStatus status) {

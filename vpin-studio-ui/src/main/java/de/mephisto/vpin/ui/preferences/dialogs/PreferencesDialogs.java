@@ -1,6 +1,7 @@
-package de.mephisto.vpin.ui.preferences;
+package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
+import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 

@@ -1,22 +1,22 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
 public class ChromeLauncher {
   private final static Logger LOG = LoggerFactory.getLogger(ChromeLauncher.class);
 
+  private static boolean launched = false;
+
   public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url) {
+    launched = true;
     try {
       int x = screenDisplay.getX();
       int y = screenDisplay.getY();
@@ -84,8 +84,10 @@ public class ChromeLauncher {
 
   public static void exitBrowser() {
     try {
-      SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", "chrome.exe"), false);
-      exit.executeCommand();
+      if (launched) {
+        SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", "chrome.exe"), false);
+        exit.executeCommand();
+      }
     } catch (Exception e) {
       LOG.error("Failed to exit browser: " + e.getMessage());
     }

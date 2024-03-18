@@ -207,27 +207,27 @@ public class OverlayWindowFX extends Application {
 
   public void togglePauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu(null);
+      PauseMenu.togglePauseMenu();
     });
   }
 
-  public void testPauseMenu() {
+  public void testPauseMenu(int gameId, int duration) {
     Platform.runLater(() -> {
       GameStatus gameStatus = new GameStatus();
-      gameStatus.setGameId(370);
+      gameStatus.setGameId(gameId);
       gameStatus.setStarted(new Date());
       PauseMenu.togglePauseMenu(gameStatus);
     });
 
     try {
-      Thread.sleep(5000);
+      Thread.sleep(duration * 1000);
 
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
 
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu(null);
+      PauseMenu.togglePauseMenu();
     });
   }
 

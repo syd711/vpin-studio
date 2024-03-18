@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.restclient.util.ini.IniSettingsChangeListener;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
