@@ -52,6 +52,17 @@ public class PauseMenuItemsFactory {
       }
     }
 
+
+    if (pauseMenuSettings.getStyle() == null
+      || (pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens) && !pauseMenuSettings.isAutoplay())
+      || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+      createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
+    }
+    return pauseMenuItems;
+  }
+
+  private static void createTutorialEntries(GameRepresentation game, PauseMenuSettings pauseMenuSettings, List<PauseMenuItem> pauseMenuItems) {
+    PauseMenuItem item;
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
       item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
@@ -63,8 +74,6 @@ public class PauseMenuItemsFactory {
       item.setDataImage(scoreImage);
       pauseMenuItems.add(item);
     }
-
-    return pauseMenuItems;
   }
 
   public static String createYouTubeUrl(VpsTutorialUrls tutorialUrl) {

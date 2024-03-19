@@ -164,7 +164,7 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
-    autoplayCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks() || pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
+    autoplayCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
     videoAuthorsAllowList.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
 
     renderTutorialLinks.setSelected(pauseMenuSettings.isRenderTutorialLinks());
@@ -191,13 +191,8 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuStyleCombo.setValue(pauseMenuSettings.getStyle());
     pauseMenuStyleCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setStyle(newValue);
-      autoplayCheckbox.setSelected(newValue.equals(PauseMenuStyle.popperScreens));
-      autoplayCheckbox.setDisable(newValue.equals(PauseMenuStyle.popperScreens));
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
-
-    autoplayCheckbox.setSelected(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
-    autoplayCheckbox.setDisable(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
 
     videoAuthorsAllowList.setText(pauseMenuSettings.getAuthorAllowList());
     videoAuthorsAllowList.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.PAUSE_MENU_SETTINGS, () -> {

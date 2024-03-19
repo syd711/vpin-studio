@@ -205,13 +205,15 @@ public class PauseMenu extends Application {
           screenAssets.clear();
           if (pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens)) {
             screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
-          }
 
-          List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
-          if (!videoTutorials.isEmpty()) {
-            VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
-            String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-            ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl);
+            if (pauseMenuSettings.isAutoplay()) {
+              List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+              if (!videoTutorials.isEmpty()) {
+                VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
+                String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
+                ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl);
+              }
+            }
           }
         });
 

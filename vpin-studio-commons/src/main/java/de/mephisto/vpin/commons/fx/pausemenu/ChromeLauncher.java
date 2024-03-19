@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class ChromeLauncher {
 
   public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url) {
     launched = true;
+    boolean kioskMode = true;
     try {
       int x = screenDisplay.getX();
       int y = screenDisplay.getY();
@@ -36,14 +38,18 @@ public class ChromeLauncher {
       profileFolder.mkdirs();
 
       String resizing = "";
-      boolean resize = false;
-      if (resize) {
+      if (!kioskMode) {
         resizing = "window.resizeTo(" + width + "," + height + ")";
       }
 
       List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
         "--app=\"data:text/html,<html><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
-        "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required", "--kiosk");
+        "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
+      if(kioskMode) {
+        cmds = new ArrayList<>(cmds);
+        cmds.add("--kiosk");
+      }
+
       String commandString = String.join(" ", cmds);
       LOG.info("Chrome Command: " + commandString);
 
