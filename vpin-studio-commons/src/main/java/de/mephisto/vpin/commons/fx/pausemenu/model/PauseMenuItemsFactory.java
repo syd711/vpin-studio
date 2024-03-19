@@ -52,7 +52,27 @@ public class PauseMenuItemsFactory {
       }
     }
 
+    List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
+    for (VpsTutorialUrls videoTutorial : videoTutorials) {
+      item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
+      String ytUrl = createYouTubeUrl(videoTutorial);
+      item.setYouTubeUrl(ytUrl);
+      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
+      String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
+      Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
+      item.setDataImage(scoreImage);
+      pauseMenuItems.add(item);
+    }
 
+    return pauseMenuItems;
+  }
+
+  public static String createYouTubeUrl(VpsTutorialUrls tutorialUrl) {
+    return "https://www.youtube.com/embed/" + tutorialUrl.getYoutubeId() + "?autoplay=1&controls=1";
+  }
+
+  public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {
+    List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (pauseMenuSettings.isRenderTutorialLinks() && !StringUtils.isEmpty(extTableId)) {
       VpsTable tableById = VPS.getInstance().getTableById(extTableId);
@@ -67,16 +87,8 @@ public class PauseMenuItemsFactory {
 
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
             boolean excludeTutorial = excludeTutorial(authorNames, tutorialFile);
-
             if (!excludeTutorial && !StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
-              item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
-              String ytUrl = "https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1";
-              item.setYouTubeUrl(ytUrl);
-              LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
-              String url = "https://img.youtube.com/vi/" + tutorialFile.getYoutubeId() + "/0.jpg";
-              Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
-              item.setDataImage(scoreImage);
-              pauseMenuItems.add(item);
+              tutorials.add(tutorialFile);
             }
           }
         }
@@ -85,9 +97,7 @@ public class PauseMenuItemsFactory {
         LOG.warn("The table \"" + game.getGameDisplayName() + "\" is not mapped against VPS, no additional tutorials links will be loaded.");
       }
     }
-
-
-    return pauseMenuItems;
+    return tutorials;
   }
 
   private static boolean excludeTutorial(List<String> authorAllowList, VpsTutorialUrls tutorialFile) {

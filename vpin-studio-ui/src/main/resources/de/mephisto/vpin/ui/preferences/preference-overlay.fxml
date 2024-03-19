@@ -224,24 +224,8 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Pause Menu Browser:" textFill="WHITE" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
-                              <CheckBox fx:id="userInternalBrowserCheckbox" mnemonicParsing="false" text="Use internal browser (not recommended)" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="3.0" />
-                                 </VBox.margin>
-                              </CheckBox>
-                              <Label styleClass="checkbox-description" text="By default, the pause menu requires the Chrome browser to be installed on the cabinet." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="You can use the internal browser instead, but this one has issues with the playback" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="of YouTube videos (loading spinner is not hiding)." textFill="WHITE" />
                               <CheckBox fx:id="autoplayCheckbox" layoutX="10.0" layoutY="13.0" mnemonicParsing="false" text="Auto-Play Videos" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -250,7 +234,7 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="Instruction videos will start playing when the entry is selected." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="Instruction videos will start on selection." textFill="WHITE" />
                               <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="Use this option if the video playback does not start on &quot;Start&quot; button pressed." textFill="WHITE" />
                            </children>
                         </VBox>
@@ -272,7 +256,7 @@
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="11.0" layoutY="156.0" styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="11.0" layoutY="156.0" styleClass="preference-label" text="Tutorial Video Options:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

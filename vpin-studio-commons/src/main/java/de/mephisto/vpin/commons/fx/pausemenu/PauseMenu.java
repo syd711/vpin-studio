@@ -1,10 +1,12 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -186,23 +188,30 @@ public class PauseMenu extends Application {
 
       //reload card settings to resolve actual target screen
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      PopperScreen screen = null;
+      PopperScreen cardScreen = null;
       if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-        screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+        cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
       }
 
-      PinUPPlayerDisplay screenDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
+      PinUPPlayerDisplay backglassDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
       PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
-      StateMananger.getInstance().setGame(game, status, screen, screenDisplay, pauseMenuSettings);
+      StateMananger.getInstance().setGame(game, status, cardScreen, backglassDisplay, pauseMenuSettings);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
         Platform.runLater(() -> {
           screenAssets.clear();
-          if(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens)) {
+          if (pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens)) {
             screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+          }
+
+          List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+          if (!videoTutorials.isEmpty()) {
+            VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
+            String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
+            ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl);
           }
         });
 

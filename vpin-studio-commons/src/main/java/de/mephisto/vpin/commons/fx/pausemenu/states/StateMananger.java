@@ -135,9 +135,9 @@ public class StateMananger implements NativeKeyListener {
     BACK = pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT);
   }
 
-  public void setGame(GameRepresentation game, GameStatus status, PopperScreen screen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(GameRepresentation game, GameStatus status, PopperScreen cardScreen, PinUPPlayerDisplay backglassDisplay, PauseMenuSettings pauseMenuSettings) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-    menuController.setGame(game, status, screen, screenDisplay, pauseMenuSettings);
+    menuController.setGame(game, status, cardScreen, backglassDisplay, pauseMenuSettings);
     running = true;
   }
 

@@ -8,6 +8,7 @@
 - **Highscore Parsing**: Re-implemented all highscore parsers for all formats: VPReg.stg entries, text files and nvram files. Kudos here to **@ED209** here who provided me tons of highscore data to make this happen. Because of this data I was able to support way more tables.  
 - **Highscore Parsing**: Added support for single score tables in general (no matter if stored in nvram or text files, these were ignored before completely).
 - **Highscore Parsing**: Added some custom parsers, e.g. for "godzilla" or "monopoly" to support more tables.
+- **Pause Menu**: Removed internal browser option.
 - **Pause Menu**: Added view option "Style" to the preferences. You can now choose if entries should be rendered as part of the pause menu or if Popper assets of the "Info", "Help" and "Other2" screen should be shown on their configured screen locations. 
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />
@@ -20,10 +21,11 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="300" />
 
-- **Backglass Management**: Added option to check the "Execute as EXE" flag. It seems this may have quite some performance improvement when checked.
+- **Backglass Management and Server Settings**: Added option to check the "Execute as EXE" flag for the server and individual backglass settings. It seems this may have quite some performance improvement when checked.
 
 ### Bugfixes
 
+- **Table Statistics**: Fixed possible "division by zero" error.
 - **Backglass Management**: Fixed accidental backglass save on selection.
 - **Backglass Manager**: Fixed a bunch of issues here, looks like I tested this one half asleep.
 - Fixed table overview errors of tables without VPS updates.

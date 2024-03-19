@@ -46,9 +46,6 @@ public class OverlayPreferencesController implements Initializable {
   private CheckBox pauseMenuCheckbox;
 
   @FXML
-  private CheckBox userInternalBrowserCheckbox;
-
-  @FXML
   private RadioButton radioA;
 
   @FXML
@@ -167,22 +164,14 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
-    userInternalBrowserCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
-    autoplayCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
+    autoplayCheckbox.setDisable(!pauseMenuSettings.isRenderTutorialLinks() || pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
     videoAuthorsAllowList.setDisable(!pauseMenuSettings.isRenderTutorialLinks());
 
     renderTutorialLinks.setSelected(pauseMenuSettings.isRenderTutorialLinks());
     renderTutorialLinks.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setRenderTutorialLinks(newValue);
-      userInternalBrowserCheckbox.setDisable(!newValue);
       autoplayCheckbox.setDisable(!newValue);
       videoAuthorsAllowList.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
-    });
-
-    userInternalBrowserCheckbox.setSelected(pauseMenuSettings.isUseInternalBrowser());
-    userInternalBrowserCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setUseInternalBrowser(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
@@ -202,8 +191,13 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuStyleCombo.setValue(pauseMenuSettings.getStyle());
     pauseMenuStyleCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setStyle(newValue);
+      autoplayCheckbox.setSelected(newValue.equals(PauseMenuStyle.popperScreens));
+      autoplayCheckbox.setDisable(newValue.equals(PauseMenuStyle.popperScreens));
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
+
+    autoplayCheckbox.setSelected(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
+    autoplayCheckbox.setDisable(pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens));
 
     videoAuthorsAllowList.setText(pauseMenuSettings.getAuthorAllowList());
     videoAuthorsAllowList.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.PAUSE_MENU_SETTINGS, () -> {

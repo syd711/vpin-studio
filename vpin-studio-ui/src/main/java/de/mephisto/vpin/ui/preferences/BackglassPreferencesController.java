@@ -30,6 +30,9 @@ public class BackglassPreferencesController implements Initializable {
   private CheckBox fuzzyMatchingCheckbox;
 
   @FXML
+  private CheckBox startModeCheckbox;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private DirectB2ServerSettings serverSettings;
@@ -71,6 +74,16 @@ public class BackglassPreferencesController implements Initializable {
       saveSettings();
     });
 
+    startModeCheckbox.setSelected(serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE);
+    startModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      int mode = DirectB2ServerSettings.EXE_START_MODE;
+      if (!newValue) {
+        mode = DirectB2ServerSettings.STANDARD_START_MODE;
+      }
+      serverSettings.setDefaultStartMode(mode);
+      saveSettings();
+    });
+
     saveEnabled = true;
   }
 
@@ -85,7 +98,7 @@ public class BackglassPreferencesController implements Initializable {
 
   private void saveSettings() {
     try {
-      if(saveEnabled) {
+      if (saveEnabled) {
         Studio.client.getBackglassServiceClient().saveServerSettings(emulatorRepresentation.getId(), serverSettings);
       }
     } catch (Exception e) {

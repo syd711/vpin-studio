@@ -82,7 +82,7 @@ public class MenuController implements Initializable {
   private int selectionIndex = 0;
 
   private PopperScreen cardScreen;
-  private PinUPPlayerDisplay screenDisplay;
+  private PinUPPlayerDisplay backglassDisplay;
   private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
@@ -111,10 +111,10 @@ public class MenuController implements Initializable {
     return pauseMenuSettings;
   }
 
-  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, PinUPPlayerDisplay screenDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, PinUPPlayerDisplay backglassDisplay, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
-    this.screenDisplay = screenDisplay;
+    this.backglassDisplay = backglassDisplay;
     this.pauseMenuSettings = pauseMenuSettings;
     this.customViewController.setGame(game, gameStatus);
     enterMenuItemSelection();
@@ -243,15 +243,15 @@ public class MenuController implements Initializable {
       mediaView.setMediaPlayer(mediaPlayer);
     }
     else if (activeSelection.getYouTubeUrl() != null) {
-      if (!pauseMenuSettings.isUseInternalBrowser()) {
-        screenImageView.setVisible(true);
-        screenImageView.setImage(activeSelection.getDataImage());
-      }
-      else {
-        webView.setVisible(true);
-        WebEngine engine = webView.getEngine();
-        engine.load(activeSelection.getYouTubeUrl());
-      }
+//      if (!pauseMenuSettings.isUseInternalBrowser()) {
+      screenImageView.setVisible(true);
+      screenImageView.setImage(activeSelection.getDataImage());
+//      }
+//      else {
+//        webView.setVisible(true);
+//        WebEngine engine = webView.getEngine();
+//        engine.load(activeSelection.getYouTubeUrl());
+//      }
 
       LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
     }
@@ -355,13 +355,17 @@ public class MenuController implements Initializable {
   }
 
   public void showYouTubeVideo(PauseMenuItem item) {
-    if (pauseMenuSettings != null && !pauseMenuSettings.isUseInternalBrowser()) {
-      ChromeLauncher.showYouTubeVideo(screenDisplay, item.getYouTubeUrl());
+    if (pauseMenuSettings != null) {
+      ChromeLauncher.showYouTubeVideo(backglassDisplay, item.getYouTubeUrl());
     }
   }
 
+  public void showYouTubeVideo(String url) {
+    ChromeLauncher.showYouTubeVideo(backglassDisplay, url);
+  }
+
   public void resetBrowser() {
-    if (pauseMenuSettings!= null && !pauseMenuSettings.isUseInternalBrowser() && pauseMenuSettings.isRenderTutorialLinks()) {
+    if (pauseMenuSettings != null && pauseMenuSettings.isRenderTutorialLinks()) {
       ChromeLauncher.exitBrowser();
     }
   }

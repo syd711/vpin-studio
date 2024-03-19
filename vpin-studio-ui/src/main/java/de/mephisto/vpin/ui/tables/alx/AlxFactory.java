@@ -101,6 +101,9 @@ public class AlxFactory {
     LocalDateTime endDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
 
     long weeks = ChronoUnit.WEEKS.between(startDate, endDate);
+    if (weeks == 0) {
+      weeks = 1;
+    }
 
     long avgSeksPerWeek = total / weeks;
     String time = (avgSeksPerWeek / 60) + " min";

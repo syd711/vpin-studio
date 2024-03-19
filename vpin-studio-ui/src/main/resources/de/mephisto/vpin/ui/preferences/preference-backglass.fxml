@@ -64,6 +64,13 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="and will always only look for exact matches when looking for .directb2s files)." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="startModeCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Launch as .exe" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Configures the default start mode of the backglass server to &quot;in EXE&quot;." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="312.0" styleClass="checkbox-description" text="This should improve performance." textFill="WHITE" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />
