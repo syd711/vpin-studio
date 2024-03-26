@@ -31,6 +31,8 @@
 - Fixed table overview errors of tables without VPS updates.
 - Fixed list sorting int the "Table Import" dialog.
 - Fixed list sorting in the "Backglass Manager" dialog.
+- Added several missing scroll bars for the table overview side sections.
+- **PUP Packs**: Added ROM aliases for PUP pack lookups.
 - **Subscription Channels**: For new subscription channel, a set of highscores was posted before the actual initial message. This has been fixed so that if no highscore filters are (player definitions) set, these score are now appended **after** the initial message.
 - **Subscription Channels**: Added support for tables with anonymous tables. Since anonymous highscore changes are not filtered anymore when a default user is set, subscription will now created for these type of tables too.
 - Added progress dialog for loading player highscore in the players section. This avoids possible concurrent database accesses when double-clicking a player.

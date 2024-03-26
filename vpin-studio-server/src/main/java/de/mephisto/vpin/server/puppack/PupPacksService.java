@@ -55,6 +55,9 @@ public class PupPacksService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
       return pupPackFolders.get(game.getRom().toLowerCase());
     }
+    if (!StringUtils.isEmpty(game.getRomAlias()) && pupPackFolders.containsKey(game.getRomAlias().toLowerCase())) {
+      return pupPackFolders.get(game.getRomAlias().toLowerCase());
+    }
     if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName().toLowerCase())) {
       return pupPackFolders.get(game.getTableName().toLowerCase());
     }

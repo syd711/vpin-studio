@@ -21,7 +21,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
   public HighscoreGeneratorProgressModel(VPinStudioClient client, String title) {
     super(title);
     this.client = client;
-    this.gameInfos = client.getGameService().getGamesCached().stream().filter(g -> g.getHighscoreType() != null ).collect(Collectors.toList());
+    this.gameInfos = client.getGameService().getGamesCached();
     iterator = gameInfos.iterator();
   }
 
@@ -33,6 +33,11 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
   @Override
   public GameRepresentation getNext() {
     return iterator.next();
+  }
+
+  @Override
+  public boolean isShowSummary() {
+    return false;
   }
 
   @Override
