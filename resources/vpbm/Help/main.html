@@ -49,9 +49,13 @@
                 <li>Game libraries - (via custom filters)</li>
             </ul>
         </li>
-        <li><strong>NOTE: Additional filter rules can be setup by users to include additional content not met by the default rules</strong></li>
     </ul>
-    <img src="img/vpbmFullScreen.jpg" width="1432" alt="VPBM">
+    </br>
+    <strong>NOTE: Additional filter rules can be setup by users to include additional content not met by the default rules</strong>
+	</br>
+    <img src="img/vpbmFullScreen.jpg" width="900" alt="VPBM">
+	</br>
+	</br>
     <p>The contents of a games backup can easily be viewed within the application using the tree view, while an integrated <strong>Quick View</strong> bar provides users a quick visual indication of the presence of critical files.</p>
     <p>Pinup database game details are displayed, as is Pinup media, in a manner consistent with how media is displayed within Pinup Menu Setup.</p>
     <p><span class="vpbm">VPBM</span> is not designed to replace <a href="https://www.nailbuster.com/wikipinup/doku.php?id=start">Pinup System</a>, in fact it depends on it to function - rather it tries to add features that make managing game files and settings easier by providing an individual game backup and support for comparing this backup to the installed game.</p>
@@ -72,7 +76,6 @@
                 <li><a href="./selectedGamePinupMedia.html">Selected Game Pinup Media Panel</a></li>
                 <li><a href="./selectedGameFilterVariables.html">Selected Game Filter Variables Panel</a></li>
                 <li><a href="./selectedGameCustomFilters.html">Selected Game Custom Filters Panel</a></li>
-                <li><a href="./importingNewGames.html">Importing New Games</a></li>
             </ul>
         </dd>
     </dl>
@@ -80,7 +83,13 @@
     <hr>
     <h3><span>&nbsp;&nbsp;Command Line Mode</span></h3>
     <p><span class="vpbm">VPBM</span> provides built in command line support of all major functions. This allows <span class="vpbm">VPBM</span> to be used by tools such as <a href=https://github.com/syd711/vpin-studio/wiki>VPin Studio</a>.</p>
-    <p>Integrated command line help is available and can be viewed by opening a Command Promt, navigating to the <span class="vpbm">VPBM</span> folder and running the command: "<stong>vPinBackupManager --help</stong>".</p>
+    <p>Integrated command line help is available and can be viewed by opening a Command Prompt, navigating to the <span class="vpbm">VPBM</span> folder and running the command: "<stong>vPinBackupManager --help</stong>".</p>
+    <br />
+
+    <hr>
+    <h3><span>&nbsp;&nbsp;Download & Installation</span></h3>
+    <p>Download the latest stable release of <span class="vpbm">VPBM</span> from the <a href="https://github.com/mmattner/vPinBackupManagerApp/releases/latest">releases section</a> of the <span class="vpbm">VPBM</span> Github repo. The self installing MSI is used for a clean installation.</p>
+	<p>Once installed a self updater will check for available updates upon startup and allow the user to trigger an update (see Updates section below).
     <br />
 
     <hr>
@@ -88,23 +97,28 @@
     <p><span class="vpbm">VPBM</span> contains built in update functionality. At startup, if connected to the internet, <span class="vpbm">VPBM</span> searches for any available updates. If an update is found, VPBM displays an indication of the update in the status bar.</p>
 
     <br />
-    <img src="img/applicationUpdate.jpg" width="546" alt="update">
+    <img src="img/vpbmApplicationUpdate.jpg" width="576" alt="VPBM Application Update">
     <br />
     <br />
     <p>Clicking on the red text in the status bar will trigger a dialog confirming you wish to proceed with the update and provide two methods of performing the update - automatic and manual.</p>
     <ul>
-        <li>An automatic update requires a single button click, but could present issues if Antivirus or Windows Defender block the update zip being downloaded from https://github.com/mmattner/vPinBackupManagerApp/releases/latest.</li>
-        <li>A manual update provides the user a set of steps to manually download the update pack and manually check it before performing the update with a supplied install script. To assist with this process the link to https://github.com/mmattner/vPinBackupManagerApp/releases/latest is copied into the clipboard for the user to paste into their browser of choice.</li>
+        <li>An automatic update requires a single button click, but could present issues if Antivirus or Windows Defender block the update zip being downloaded from <a href=https://github.com/mmattner/vPinBackupManagerApp/releases/latest>https://github.com/mmattner/vPinBackupManagerApp/releases/latest</a>.</li>
+        <li>A manual update provides the user a set of steps to manually download the update pack and manually check it before performing the update with a supplied install script. To assist with this process the above link is copied into the clipboard for the user to paste into their browser of choice.</li>
+    </ul>
     <br />
-    <img src="img/applicationUpdateConfirmation.jpg" width="546" alt="update confirmation">
+    <img src="img/vpbmApplicationUpdateConfirmation.jpg" width="583" alt="VPBM Application Update Confirmation">
     <br />
     <br />
     <p>Clicking Yes launches the auto updater. As per the description the updater will take several minutes to complete (depending on internet speed). During this time <span class="vpbm">VPBM</span> will download the appropriate update zip (as found <a href="https://github.com/mmattner/vPinBackupManagerApp/releases/latest">here</a>) before shutting down, unzipping the update and restarting.</p>
     <p>If the user clicks No, they are prevented a dialog containing the steps to perform a manual download (shown below). At this point they can either click OK and ignore the steps, or they can work through the steps to update the application version.</p>
 
     <br />
-    <img src="img/manualApplicationUpdateSteps.jpg" width="865" alt="update confirmation">
+    <img src="img/vpbmApplicationUpdateManualSteps.jpg" width="875" alt="VPBM Application Update Manual Steps">
     <br />
+
+    <hr>
+    <h3><span>&nbsp;&nbsp;Bug Tracking & Feature Requests</span></h3>
+    <p>Users can report bugs or make feature requests on Github using the following <a href="https://github.com/mmattner/vPinBackupManagerApp/issues/new">link</a>.
     <br />
 
 </body>

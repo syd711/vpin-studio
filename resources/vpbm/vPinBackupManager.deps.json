@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "vPinBackupManager/2.0.0": {
+      "vPinBackupManager/2.1.0": {
         "dependencies": {
           "CommandLineParser": "2.9.1",
           "DotNetZip": "1.16.0",
@@ -362,7 +362,7 @@
     }
   },
   "libraries": {
-    "vPinBackupManager/2.0.0": {
+    "vPinBackupManager/2.1.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
