@@ -17,9 +17,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
@@ -37,6 +37,9 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
+
+  @FXML
+  private ScrollPane dataScrollPane;
 
   @FXML
   private VBox dataBox;
@@ -265,6 +268,7 @@ public class TablesSidebarMameController implements Initializable {
     invalidDataBox.setVisible(false);
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
+    dataScrollPane.setVisible(g.isPresent());
 
     labelRomAlias.setText("-");
     labelRom.setText("-");

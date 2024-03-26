@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreGeneratorProgressModel.class);
@@ -20,7 +21,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
   public HighscoreGeneratorProgressModel(VPinStudioClient client, String title) {
     super(title);
     this.client = client;
-    this.gameInfos = client.getGameService().getGamesCached();
+    this.gameInfos = client.getGameService().getGamesCached().stream().filter(g -> g.getHighscoreType() != null ).collect(Collectors.toList());
     iterator = gameInfos.iterator();
   }
 

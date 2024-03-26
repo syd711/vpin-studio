@@ -513,7 +513,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
       if (!defaultBackgroundAvailable) {
         Label label = new Label();
-        label.setGraphic(WidgetFactory.createExclamationIcon(null));
+        label.setGraphic(WidgetFactory.createAlertIcon("mdi2i-image-off-outline"));
         Tooltip tt = new Tooltip("The table does not have a default background.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);

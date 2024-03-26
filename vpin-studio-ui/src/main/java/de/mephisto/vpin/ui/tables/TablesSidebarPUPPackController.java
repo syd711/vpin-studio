@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +61,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private VBox emptyDataBox;
+
+  @FXML
+  private ScrollPane dataScrollPane;
 
   @FXML
   private VBox dataBox;
@@ -240,6 +244,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     dataBox.setVisible(false);
+    dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
     openBtn.setText("View");
@@ -268,6 +273,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     screensPanel.setVisible(true);
 
     dataBox.setVisible(false);
+    dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
     openBtn.setDisable(true);
@@ -306,6 +312,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       enabledCheckbox.setDisable(!pupPackAvailable || StringUtils.isEmpty(game.getRom()));
 
       dataBox.setVisible(pupPackAvailable);
+      dataScrollPane.setVisible(pupPackAvailable);
       emptyDataBox.setVisible(!pupPackAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));

@@ -35,6 +35,7 @@ public class TextHighscoreToRawConverter {
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));
     adapters.add(new AlteringScoreInitialsLinesAdapter(26, 0, 3));
+    adapters.add(new AlteringScoreInitialsBlocksAdapter(27, 7, 5)); //space mission
     adapters.add(new AlteringScoreInitialsBlocksAdapter(25, 5, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(18, 8, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(17, 7, 5));
