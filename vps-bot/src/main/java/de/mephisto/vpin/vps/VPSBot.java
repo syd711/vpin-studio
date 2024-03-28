@@ -1,9 +1,10 @@
 package de.mephisto.vpin.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
-import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -12,7 +13,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,13 +76,13 @@ public class VPSBot implements VpsSheetChangedListener {
           for (VpsDiffer tableDiff : diff) {
             counter++;
 
-            List<VpsDiffTypes> differences = tableDiff.getDifferences();
-            if (differences.isEmpty()) {
+            VPSChanges changes = tableDiff.getChanges();
+            if (changes.isEmpty()) {
               LOG.info("Skipped updated for \"" + tableDiff.getDisplayName() + "\", no updates found.");
               continue;
             }
 
-            String value = "\n" + String.join("", differences.stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
+            String value = "\n" + String.join("", changes.getChanges().stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
             String title = tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]\n" + VPS.getVpsTableUrl(tableDiff.getId());
             entries.put(title, value);
 

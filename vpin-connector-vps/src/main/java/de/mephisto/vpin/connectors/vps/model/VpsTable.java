@@ -3,9 +3,10 @@ package de.mephisto.vpin.connectors.vps.model;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class VpsTable {
+public class VpsTable implements VPSEntity {
   private String id;
   private String name;
   private List<String> features;
@@ -255,5 +256,18 @@ public class VpsTable {
       }
     }
     return null;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    VpsTable vpsTable = (VpsTable) o;
+    return Objects.equals(id, vpsTable.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }

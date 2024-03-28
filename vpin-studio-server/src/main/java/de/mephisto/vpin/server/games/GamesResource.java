@@ -314,7 +314,6 @@ public class GamesResource {
 
             Game game = gameService.scanGame(gameId);
             if (game != null) {
-              gameService.resetUpdate(game.getId(), VpsDiffTypes.tables);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
             }
