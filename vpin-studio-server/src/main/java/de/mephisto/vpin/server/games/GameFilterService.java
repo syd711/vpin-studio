@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class GameFilterService {
       if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
         continue;
       }
-      if (filterSettings.isVpsUpdates() && game.getUpdates().isEmpty()) {
+      if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
         continue;
       }
       if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {

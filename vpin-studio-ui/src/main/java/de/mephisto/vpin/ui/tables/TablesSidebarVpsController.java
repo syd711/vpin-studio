@@ -295,7 +295,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      vpsResetBtn.setDisable(game.getUpdates().isEmpty());
+      vpsResetBtn.setDisable(game.getVpsUpdates().isEmpty());
 
       String vpsTableId = game.getExtTableId();
       String vpsTableVersionId = game.getExtTableVersionId();

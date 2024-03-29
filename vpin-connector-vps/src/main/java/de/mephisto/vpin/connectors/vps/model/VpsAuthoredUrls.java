@@ -1,6 +1,8 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class VpsAuthoredUrls implements VPSEntity {
@@ -10,6 +12,26 @@ public class VpsAuthoredUrls implements VPSEntity {
   private String version;
   private long updatedAt;
   private String id;
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    if (!authors.isEmpty()) {
+      builder.append("Authors: ");
+      builder.append(String.join(", ", authors));
+      builder.append("\n");
+    }
+
+    if(version != null) {
+      builder.append("Version: ");
+      builder.append(version);
+      builder.append("\n");
+    }
+
+    builder.append("Updated At:");
+    builder.append(DateFormat.getDateTimeInstance().format(new Date(updatedAt)));
+    return builder.toString();
+  }
 
   public String getId() {
     return id;
@@ -96,6 +118,4 @@ public class VpsAuthoredUrls implements VPSEntity {
     result = 31 * result + (int) (updatedAt ^ (updatedAt >>> 32));
     return result;
   }
-
-
 }

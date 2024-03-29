@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
@@ -553,16 +554,8 @@ public class GameService implements InitializingBean {
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
 
-    //VPS Stuff
     String updates = gameDetails.getUpdates();
-    if (updates != null) {
-      String[] split = updates.split(",");
-      List<String> collect = Arrays.stream(split).filter(change -> !StringUtils.isEmpty(change)).collect(Collectors.toList());
-      game.setUpdates(collect);
-    }
-    else {
-      game.setUpdates(Collections.emptyList());
-    }
+    game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
     Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
@@ -584,8 +577,10 @@ public class GameService implements InitializingBean {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
-    if (game.getUpdates() != null) {
-      gameDetails.setUpdates(String.join(",", game.getUpdates()));
+    if (game.getVpsUpdates() != null) {
+      VPSChanges vpsUpdates = game.getVpsUpdates();
+      String json = vpsUpdates.toJson();
+      gameDetails.setUpdates(json);
     }
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");

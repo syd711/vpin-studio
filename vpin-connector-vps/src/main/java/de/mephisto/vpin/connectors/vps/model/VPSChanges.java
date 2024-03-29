@@ -20,20 +20,30 @@ public class VPSChanges {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  public static <T> T fromJson(Class<T> clazz, String json) throws Exception {
-    try {
-      T t = objectMapper.readValue(json, clazz);
-      if (t != null) {
-        return t;
-      }
-    } catch (Exception e) {
-      LOG.warn("Error parsing settings json '" + json + "': " + e.getMessage());
+  public static VPSChanges fromJson(String json) {
+    if (json == null) {
+      return new VPSChanges();
     }
-    return clazz.getDeclaredConstructor().newInstance();
+
+    try {
+      return objectMapper.readValue(json, VPSChanges.class);
+    } catch (Exception e) {
+      //ignore LOG.warn("Error parsing settings json '" + json + "': " + e.getMessage());
+    }
+    return new VPSChanges();
   }
 
   public String toJson() throws JsonProcessingException {
     return objectMapper.writeValueAsString(this);
+  }
+
+  public boolean contains(VpsDiffTypes diffType) {
+    for (VPSChange change : this.changes) {
+      if (change.getDiffType().equals(diffType)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private List<VPSChange> changes = new ArrayList<>();
