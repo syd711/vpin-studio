@@ -74,8 +74,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     handleKeyEvent(nativeKeyEvent);
   }
 
-  private synchronized void handleKeyEvent(NativeKeyEvent nativeKeyEvent) {
-    if (debounce(nativeKeyEvent)) {
+  private void handleKeyEvent(NativeKeyEvent nativeKeyEvent) {
+    if (isEventDebounced(nativeKeyEvent)) {
       return;
     }
 
@@ -134,7 +134,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     }
   }
 
-  private boolean debounce(NativeKeyEvent nativeKeyEvent) {
+  private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
     if (USE_DEBOUNCE) {
       if (!timingMap.containsKey(overlayKey)) {
         timingMap.put(overlayKey, System.currentTimeMillis());
@@ -144,21 +144,25 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       }
 
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      long offset = System.currentTimeMillis() - timingMap.get(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) && offset < DEBOUNCE) {
-        LOG.info("Skipped overlay key event, because it was pressed " + offset + "ms before.");
-        return true;
+      if (keyChecker.matches(nativeKeyEvent)) {
+        long offset = System.currentTimeMillis() - timingMap.get(overlayKey);
+        if (offset < DEBOUNCE) {
+          LOG.info("Debouncer: Skipped overlay key event, because it was pressed " + offset + "ms before.");
+          return true;
+        }
+        timingMap.put(overlayKey, System.currentTimeMillis());
       }
 
       keyChecker = new KeyChecker(pauseKey);
-      offset = System.currentTimeMillis() - timingMap.get(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) && offset < DEBOUNCE) {
-        LOG.info("Skipped pause key event, because it was pressed " + offset + "ms before.");
-        return true;
+      if (keyChecker.matches(nativeKeyEvent)) {
+        long offset = System.currentTimeMillis() - timingMap.get(pauseKey);
+        if (offset < DEBOUNCE) {
+          LOG.info("Debouncer: Skipped pause key event, because it was pressed " + offset + "ms before.");
+          return true;
+        }
+        timingMap.put(pauseKey, System.currentTimeMillis());
       }
 
-      timingMap.put(overlayKey, System.currentTimeMillis());
-      timingMap.put(pauseKey, System.currentTimeMillis());
     }
     return false;
   }
