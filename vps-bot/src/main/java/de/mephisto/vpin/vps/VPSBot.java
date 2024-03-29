@@ -63,17 +63,17 @@ public class VPSBot implements VpsSheetChangedListener {
   }
 
   @Override
-  public void vpsSheetChanged(List<VpsDiffer> diff) {
-    LOG.info("VPS Bot emitting " + diff.size() + " updates");
+  public void vpsSheetChanged(List<VpsDiffer> tableDiffs) {
+    LOG.info("VPS Bot emitting " + tableDiffs.size() + " updates");
     new Thread(() -> {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
-        if (!diff.isEmpty()) {
+        if (!tableDiffs.isEmpty()) {
           lastUpdate = new Date();
 
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
-          for (VpsDiffer tableDiff : diff) {
+          for (VpsDiffer tableDiff : tableDiffs) {
             counter++;
 
             VPSChanges changes = tableDiff.getChanges();
@@ -82,9 +82,13 @@ public class VPSBot implements VpsSheetChangedListener {
               continue;
             }
 
-            String value = "\n" + String.join("", changes.getChanges().stream().map(d -> "- " + d.toString() + "\n").collect(Collectors.toList()));
+            StringBuilder builder = new StringBuilder();
+            for (VPSChange change : changes.getChanges()) {
+              builder.append(change.toString(tableDiff.getId()));
+            }
+
             String title = tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]\n" + VPS.getVpsTableUrl(tableDiff.getId());
-            entries.put(title, value);
+            entries.put(title, builder.toString());
 
             if (entries.size() > MAX_VPS_ENTRIES) {
               sendVpsUpdateSummary("VPS Update Summary", entries);
