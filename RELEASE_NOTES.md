@@ -22,6 +22,7 @@
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="300" />
 
 - **Backglass Management and Server Settings**: Added option to check the "Execute as EXE" flag for the server and individual backglass settings. It seems this may have quite some performance improvement when checked.
+- Updated shipped **VPBM** version to 2.1.
 
 ### Bugfixes
 
