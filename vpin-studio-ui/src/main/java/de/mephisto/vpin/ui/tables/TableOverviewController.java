@@ -959,6 +959,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           List<VPSChange> changes = value.getVpsUpdates().getChanges();
           for (VPSChange change : changes) {
             builder.append(change.toString(value.getExtTableId()));
+            builder.append("\n");
           }
 
           String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the VPS button from the toolbar.";

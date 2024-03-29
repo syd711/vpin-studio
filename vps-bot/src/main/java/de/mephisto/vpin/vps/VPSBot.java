@@ -1,9 +1,9 @@
 package de.mephisto.vpin.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
+import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -22,11 +23,10 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class VPSBot implements VpsSheetChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPSBot.class);
-  public static final int MAX_VPS_ENTRIES = 20;
+  public static final int MAX_VPS_ENTRIES = 15;
 
   private final JDA jda;
   private final VPSDiscordListenerAdapter listenerAdapter;
@@ -64,6 +64,8 @@ public class VPSBot implements VpsSheetChangedListener {
 
   @Override
   public void vpsSheetChanged(List<VpsDiffer> tableDiffs) {
+    VPS.getInstance().reload();
+
     LOG.info("VPS Bot emitting " + tableDiffs.size() + " updates");
     new Thread(() -> {
       Thread.currentThread().setName("VPS Discord Notifier");
@@ -85,6 +87,7 @@ public class VPSBot implements VpsSheetChangedListener {
             StringBuilder builder = new StringBuilder();
             for (VPSChange change : changes.getChanges()) {
               builder.append(change.toString(tableDiff.getId()));
+              builder.append("\n");
             }
 
             String title = tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]\n" + VPS.getVpsTableUrl(tableDiff.getId());
@@ -115,7 +118,11 @@ public class VPSBot implements VpsSheetChangedListener {
     Guild guild = getGuild(serverId);
     LOG.info("Sending update to server " + guild);
     if (guild != null) {
-      NewsChannel textChannel = jda.getNewsChannelById(vpsChannelId);
+      StandardGuildMessageChannel textChannel = jda.getNewsChannelById(vpsChannelId);
+      //development workaround
+      if (textChannel == null) {
+        textChannel = jda.getTextChannelById(vpsChannelId);
+      }
       LOG.info("Sending update to channel " + textChannel + " (" + vpsChannelId + ")");
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
@@ -131,8 +138,10 @@ public class VPSBot implements VpsSheetChangedListener {
         Message complete = textChannel.sendMessage("").setEmbeds(embed.build()).complete();
         long idLong = complete.getIdLong();
         LOG.info("Message completed, sending crosspost next.");
-        Message complete1 = textChannel.crosspostMessageById(idLong).complete();
-        LOG.info("Crossposted message completed.");
+        if (textChannel instanceof NewsChannel) {
+          Message complete1 = ((NewsChannel) textChannel).crosspostMessageById(idLong).complete();
+          LOG.info("Crossposted message completed.");
+        }
         return idLong;
       }
       else {

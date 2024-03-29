@@ -44,13 +44,13 @@ public enum VpsDiffTypes {
         return "Wheel Icon";
       }
       case tutorial: {
-        return "Tutorial added";
+        return "Tutorial Added";
       }
       case tableNewVPX: {
-        return "New table added (VPX)";
+        return "New Table Added";
       }
       case tableNewVersionVPX: {
-        return "Table version updated (VPX)";
+        return "Table Version Updated";
       }
       case topper: {
         return "Topper";
