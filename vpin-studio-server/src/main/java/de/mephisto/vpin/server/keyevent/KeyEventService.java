@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @Service
@@ -56,6 +58,11 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private String pauseKey;
   private String resetKey;
 
+  private final static boolean USE_DEBOUNCE = true;
+  private final static int DEBOUNCE = 1000;
+
+  private Map<String, Long> timingMap = new ConcurrentHashMap<>();
+
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
 
@@ -64,9 +71,17 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     shutdownThread.notifyKeyEvent();
+    handleKeyEvent(nativeKeyEvent);
+  }
+
+  private synchronized void handleKeyEvent(NativeKeyEvent nativeKeyEvent) {
+    if (debounce(nativeKeyEvent)) {
+      return;
+    }
 
     //always hide the overlay on any key press
     if (overlayVisible) {
+      LOG.info("Hiding overlay since key '" + nativeKeyEvent.getKeyChar() + "' was pressed.");
       this.overlayVisible = false;
       Platform.runLater(() -> {
         OverlayWindowFX.getInstance().showOverlay(false);
@@ -117,6 +132,35 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }).start();
       }
     }
+  }
+
+  private boolean debounce(NativeKeyEvent nativeKeyEvent) {
+    if (USE_DEBOUNCE) {
+      if (!timingMap.containsKey(overlayKey)) {
+        timingMap.put(overlayKey, System.currentTimeMillis());
+      }
+      if (!timingMap.containsKey(pauseKey)) {
+        timingMap.put(pauseKey, System.currentTimeMillis());
+      }
+
+      KeyChecker keyChecker = new KeyChecker(overlayKey);
+      long offset = System.currentTimeMillis() - timingMap.get(overlayKey);
+      if (keyChecker.matches(nativeKeyEvent) && offset < DEBOUNCE) {
+        LOG.info("Skipped overlay key event, because it was pressed " + offset + "ms before.");
+        return true;
+      }
+
+      keyChecker = new KeyChecker(pauseKey);
+      offset = System.currentTimeMillis() - timingMap.get(overlayKey);
+      if (keyChecker.matches(nativeKeyEvent) && offset < DEBOUNCE) {
+        LOG.info("Skipped pause key event, because it was pressed " + offset + "ms before.");
+        return true;
+      }
+
+      timingMap.put(overlayKey, System.currentTimeMillis());
+      timingMap.put(pauseKey, System.currentTimeMillis());
+    }
+    return false;
   }
 
   @Override

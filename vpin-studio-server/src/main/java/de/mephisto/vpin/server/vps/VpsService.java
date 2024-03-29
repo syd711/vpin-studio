@@ -185,7 +185,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
             String json  = tableDiff.getChanges().toJson();
-            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges() + ")");
+            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries)");
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
           }
@@ -197,7 +197,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+  public void preferenceChanged(String propertyName, Object oldVa11lue, Object newValue) {
     if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
