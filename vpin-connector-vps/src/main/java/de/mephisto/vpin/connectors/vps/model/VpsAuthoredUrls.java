@@ -1,11 +1,12 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class VpsAuthoredUrls {
-  private List<VpsUrl> urls;
+public class VpsAuthoredUrls implements VPSEntity {
+  private List<VpsUrl> urls = new ArrayList<>();
 
-  private List<String> authors;
+  private List<String> authors = new ArrayList<>();
   private String version;
   private long updatedAt;
   private String id;
@@ -50,15 +51,38 @@ public class VpsAuthoredUrls {
     this.urls = urls;
   }
 
+  public boolean isContainedIn(List<? extends VpsAuthoredUrls> urls) {
+    for (VpsAuthoredUrls url : urls) {
+      List<VpsUrl> comparingUrls = url.getUrls();
+      if (comparingUrls.isEmpty() && this.getUrls().isEmpty()) {
+        return true;
+      }
+
+      if (this.getId() != null && url.getId() != null) {
+        if (url.getId().equals(this.getId())) {
+          return true;
+        }
+      }
+
+      for (VpsUrl vpsUrl : this.urls) {
+        if (url.getUrls().contains(vpsUrl)) {
+          return true;
+        }
+      }
+
+    }
+    return false;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof VpsAuthoredUrls)) return false;
 
     VpsAuthoredUrls that = (VpsAuthoredUrls) o;
-    if(!String.valueOf(version).equals(String.valueOf(that.version))) return false;
-    if(urls == null && that.urls != null) return false;
-    if(urls != null && that.urls == null) return false;
+    if (!String.valueOf(version).equals(String.valueOf(that.version))) return false;
+    if (urls == null && that.urls != null) return false;
+    if (urls != null && that.urls == null) return false;
     if (updatedAt != that.updatedAt) return false;
     if (urls != null && that.urls != null && !urls.equals(that.urls)) return false;
     return true;
@@ -72,4 +96,6 @@ public class VpsAuthoredUrls {
     result = 31 * result + (int) (updatedAt ^ (updatedAt >>> 32));
     return result;
   }
+
+
 }

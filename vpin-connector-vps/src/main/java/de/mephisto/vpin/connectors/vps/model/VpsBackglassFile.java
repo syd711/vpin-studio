@@ -5,6 +5,7 @@ import java.util.Objects;
 public class VpsBackglassFile extends VpsAuthoredUrls {
   private String id;
   private String comment;
+
   public String getId() {
     return id;
   }
@@ -32,7 +33,7 @@ public class VpsBackglassFile extends VpsAuthoredUrls {
       builder.append(String.join(", ", getAuthors()));
     }
 
-    if(getVersion() != null && getVersion().trim().length() > 0) {
+    if (getVersion() != null && getVersion().trim().length() > 0) {
       builder.append(" ");
       builder.append("(");
       builder.append("Version ");
