@@ -955,16 +955,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           Label label = new Label();
           label.setGraphic(updateIcon);
 
+          StringBuilder builder = new StringBuilder();
           List<VPSChange> changes = value.getVpsUpdates().getChanges();
           for (VPSChange change : changes) {
-            VpsTable tableById = VPS.getInstance().getTableById(value.getExtTableId());
-
+            builder.append(change.toString(value.getExtTableId()));
           }
 
-
-          List<String> collect = value.getVpsUpdates().getChanges().stream().map(update -> "- " + update.getDiffType().name()).collect(Collectors.toList());
-          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect) + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
+          String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
           Tooltip tt = new Tooltip(tooltip);
+          tt.setStyle("-fx-font-weight: bold;");
           tt.setWrapText(true);
           tt.setMaxWidth(400);
           label.setTooltip(tt);

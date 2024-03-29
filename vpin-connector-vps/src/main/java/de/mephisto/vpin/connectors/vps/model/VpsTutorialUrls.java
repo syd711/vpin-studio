@@ -12,23 +12,23 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     if (!getAuthors().isEmpty()) {
-      builder.append("Authors: ");
+      builder.append("- Authors: ");
       builder.append(String.join(", ", getAuthors()));
       builder.append("\n");
     }
 
     if(getVersion() != null) {
-      builder.append("Version: ");
+      builder.append("- Version: ");
       builder.append(getVersion());
       builder.append("\n");
     }
     if(title != null) {
-      builder.append("Title: ");
+      builder.append("- Title: ");
       builder.append(title);
       builder.append("\n");
     }
 
-    builder.append("Updated At:");
+    builder.append("- Updated At: ");
     builder.append(DateFormat.getDateTimeInstance().format(new Date(getUpdatedAt())));
     return builder.toString();
   }

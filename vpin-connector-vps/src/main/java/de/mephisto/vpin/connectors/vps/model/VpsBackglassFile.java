@@ -13,23 +13,23 @@ public class VpsBackglassFile extends VpsAuthoredUrls {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     if (!getAuthors().isEmpty()) {
-      builder.append("Authors: ");
+      builder.append("- Authors: ");
       builder.append(String.join(", ", getAuthors()));
       builder.append("\n");
     }
 
     if(getVersion() != null) {
-      builder.append("Version: ");
+      builder.append("- Version: ");
       builder.append(getVersion());
       builder.append("\n");
     }
     if(comment != null) {
-      builder.append("Comment: ");
+      builder.append("- Comment: ");
       builder.append(comment);
       builder.append("\n");
     }
 
-    builder.append("Updated At:");
+    builder.append("- Updated At: ");
     builder.append(DateFormat.getDateTimeInstance().format(new Date(getUpdatedAt())));
     return builder.toString();
   }

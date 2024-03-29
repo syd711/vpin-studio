@@ -17,18 +17,18 @@ public class VpsAuthoredUrls implements VPSEntity {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     if (!authors.isEmpty()) {
-      builder.append("Authors: ");
+      builder.append("- Authors: ");
       builder.append(String.join(", ", authors));
       builder.append("\n");
     }
 
     if(version != null) {
-      builder.append("Version: ");
+      builder.append("- Version: ");
       builder.append(version);
       builder.append("\n");
     }
 
-    builder.append("Updated At:");
+    builder.append("- Updated At: ");
     builder.append(DateFormat.getDateTimeInstance().format(new Date(updatedAt)));
     return builder.toString();
   }

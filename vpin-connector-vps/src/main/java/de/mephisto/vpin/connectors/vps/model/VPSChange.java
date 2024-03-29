@@ -91,10 +91,17 @@ public class VPSChange {
         break;
       }
       case tableNewVPX: {
-        return VpsDiffTypes.tableNewVPX + "\n" + this.changedEntity.toString();
+        return VpsDiffTypes.tableNewVPX + "\n" + VPS.getInstance().getTableById(tableId).toString();
       }
       case tableNewVersionVPX: {
-        return VpsDiffTypes.tableNewVersionVPX + "\n" + this.changedEntity.toString();
+        VpsTable table = VPS.getInstance().getTableById(tableId);
+        if (table != null) {
+          VpsTableVersion version = table.getVersion(this.getId());
+          if(version != null) {
+            return VpsDiffTypes.tableNewVersionVPX + "\n" + version.toString();
+          }
+        }
+        return null;
       }
       case topper: {
         Optional<VpsAuthoredUrls> first = tableById.getTopperFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();

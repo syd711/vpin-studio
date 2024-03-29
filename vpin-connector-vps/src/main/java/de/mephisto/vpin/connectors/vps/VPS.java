@@ -309,7 +309,7 @@ public class VPS {
       VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
       VPSChanges changes = tableDiff.getChanges();
       if (!changes.isEmpty()) {
-        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + changes.getChanges().stream().map(VPSChange::toString).collect(Collectors.joining(", ")));
+        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + changes.getChanges().stream().map(c -> c.getDiffType().toString()).collect(Collectors.joining(", ")));
         diff.add(tableDiff);
       }
     }

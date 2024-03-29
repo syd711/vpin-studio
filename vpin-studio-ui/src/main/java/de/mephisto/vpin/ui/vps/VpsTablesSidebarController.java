@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -179,17 +180,17 @@ public class VpsTablesSidebarController implements Initializable {
       ipdbLink.setText(StringUtils.isEmpty(table.getIpdbUrl()) ? "-" : table.getIpdbUrl());
 
 
-      TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", table.getPupPackFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "Backglasses", table.getB2sFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", table.getAltSoundFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Color", table.getAltColorFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "ROM", table.getRomFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "Sound", table.getSoundFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "Topper", table.getTopperFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", null, VpsDiffTypes.pupPack, table.getPupPackFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "Backglasses", null, VpsDiffTypes.b2s, table.getB2sFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", null, VpsDiffTypes.altSound, table.getAltSoundFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "ALT Color", null, VpsDiffTypes.altColor, table.getAltColorFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "Sound", null, VpsDiffTypes.sound, table.getSoundFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "Topper", null, VpsDiffTypes.topper, table.getTopperFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "ROM", null, VpsDiffTypes.rom, table.getRomFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles());
+      TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles());
 
-      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", table.getWheelArtFiles());
-      TablesSidebarVpsController.addSection(dataRoot, "POV", table.getPovFiles());
-      TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", table.getTutorialFiles());
+      TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", null, table.getTutorialFiles());
     }
   }
 }
