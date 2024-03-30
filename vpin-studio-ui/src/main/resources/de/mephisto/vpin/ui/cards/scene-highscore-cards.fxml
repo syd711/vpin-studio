@@ -8,17 +8,17 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -71,71 +71,114 @@
                               </ToolBar>
                            </top>
                            <bottom>
-                              <TitledPane collapsible="false" maxHeight="250.0" prefHeight="233.0" styleClass="accordion-container" text="Default Background" BorderPane.alignment="CENTER">
-                                 <content>
-                                    <VBox prefHeight="151.0" prefWidth="298.0" styleClass="accordion-container">
-                                       <children>
-                                          <BorderPane maxHeight="260.0" minHeight="260.0" styleClass="media-parent">
-                                             <center>
-                                                <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
-                                                   <viewport>
-                                                      <Rectangle2D />
-                                                   </viewport>
-                                                </ImageView>
-                                             </center>
-                                             <top>
-                                                <ToolBar BorderPane.alignment="CENTER">
-                                                   <items>
-                                                      <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                                         </graphic>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-                                                         </graphic>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Button>
-                                                   </items>
-                                                </ToolBar>
-                                             </top>
-                                          </BorderPane>
-                                          <TilePane alignment="CENTER" prefHeight="232.0" prefWidth="298.0" styleClass="media-parent">
-                                             <padding>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </padding>
-                                          </TilePane>
+                              <TabPane maxHeight="330.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                                 <tabs>
+                                    <Tab text="Extracted Background">
+                                       <content>
                                           <BorderPane>
-                                             <VBox.margin>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </VBox.margin>
-                                             <left>
-                                                <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
-                                             </left>
-                                             <right>
-                                                <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
-                                                   <BorderPane.margin>
-                                                      <Insets />
-                                                   </BorderPane.margin>
-                                                </HBox>
-                                             </right>
+                                             <center>
+                                                <VBox styleClass="accordion-container">
+                                                   <children>
+                                                      <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-parent">
+                                                         <center>
+                                                            <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
+                                                               <viewport>
+                                                                  <Rectangle2D />
+                                                               </viewport>
+                                                            </ImageView>
+                                                         </center>
+                                                         <top>
+                                                            <ToolBar BorderPane.alignment="CENTER">
+                                                               <items>
+                                                                  <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Button>
+                                                                  <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Button>
+                                                               </items>
+                                                            </ToolBar>
+                                                         </top>
+                                                      </BorderPane>
+                                                      <BorderPane>
+                                                         <VBox.margin>
+                                                            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                                         </VBox.margin>
+                                                         <left>
+                                                            <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
+                                                         </left>
+                                                         <right>
+                                                            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
+                                                               <BorderPane.margin>
+                                                                  <Insets />
+                                                               </BorderPane.margin>
+                                                            </HBox>
+                                                         </right>
+                                                      </BorderPane>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="1.0" right="1.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </center>
                                           </BorderPane>
-                                       </children>
-                                       <padding>
-                                          <Insets left="1.0" right="1.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TitledPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Popper Background">
+                                       <content>
+                                          <BorderPane styleClass="media-parent">
+                                             <center>
+                                                <VBox>
+                                                   <children>
+                                                      <BorderPane fx:id="popperPreviewPanel">
+                                                         <top>
+                                                            <ToolBar BorderPane.alignment="CENTER">
+                                                               <items>
+                                                                  <Label text="Screen:" textFill="WHITE">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="14.0" />
+                                                                     </font>
+                                                                     <padding>
+                                                                        <Insets left="3.0" right="3.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <ComboBox fx:id="screensComboBox" prefWidth="150.0" />
+                                                                  <Label>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
+                                                                     </graphic>
+                                                                     <tooltip>
+                                                                        <Tooltip prefWidth="300.0" text="Previews Popper assets if you your transparent highscore cards are shown above a Popper screen." wrapText="true" />
+                                                                     </tooltip>
+                                                                  </Label>
+                                                               </items>
+                                                            </ToolBar>
+                                                         </top>
+                                                      </BorderPane>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="1.0" right="1.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </center>
+                                          </BorderPane>
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
                            </bottom>
                         </BorderPane>
                         <BorderPane>

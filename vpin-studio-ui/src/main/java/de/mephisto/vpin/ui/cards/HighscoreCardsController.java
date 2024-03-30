@@ -3,11 +3,14 @@ package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -33,6 +36,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -62,10 +66,16 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private ComboBox<CardTemplate> templateCombo;
 
   @FXML
+  private ComboBox<PopperScreen> screensComboBox;
+
+  @FXML
   private Label resolutionLabel;
 
   @FXML
   private Button openDefaultPictureBtn;
+
+  @FXML
+  private BorderPane popperPreviewPanel;
 
   @FXML
   private ImageView cardPreview;
@@ -441,6 +451,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     previewPanel.setVisible(!c.getList().isEmpty());
 
     this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
+    refreshPopperPreview();
     if (c.getList().isEmpty()) {
       refreshPreview(Optional.empty(), false);
     }
@@ -636,8 +647,48 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       filterButton.getItems().add(item);
     }
 
+    List<PopperScreen> popperScreens = new ArrayList<>(Arrays.asList(PopperScreen.values()));
+    popperScreens.remove(PopperScreen.Audio);
+    popperScreens.remove(PopperScreen.AudioLaunch);
+    popperScreens.remove(PopperScreen.PlayField);
+    popperScreens.remove(PopperScreen.Loading);
+
+    screensComboBox.setItems(FXCollections.observableList(popperScreens));
+    PopperScreen previewPopperScreen = cardSettings.getPreviewPopperScreen();
+    if (previewPopperScreen != null) {
+      screensComboBox.setValue(previewPopperScreen);
+    }
+    screensComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+      cardSettings.setPreviewPopperScreen(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      refreshPopperPreview();
+    });
+
     EventManager.getInstance().addListener(this);
     onReload();
+  }
+
+  private void refreshPopperPreview() {
+    Node center = popperPreviewPanel.getCenter();
+    if (center instanceof AssetMediaPlayer) {
+      ((AssetMediaPlayer) center).disposeMedia();
+    }
+
+    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(screensComboBox.getValue());
+      if (defaultMediaItem != null) {
+        WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, popperPreviewPanel);
+      }
+      else {
+        InputStream in = Studio.class.getResourceAsStream("empty-preview.png");
+        ImageView noPreview = new ImageView();
+        noPreview.setPreserveRatio(true);
+        noPreview.setFitHeight(250);
+        noPreview.setImage(new Image(in));
+        popperPreviewPanel.setCenter(noPreview);
+      }
+    }
   }
 
   @Override
