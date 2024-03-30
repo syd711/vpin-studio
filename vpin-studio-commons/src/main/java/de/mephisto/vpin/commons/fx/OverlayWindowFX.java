@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -120,15 +122,19 @@ public class OverlayWindowFX extends Application {
   }
 
   public static void toFront(Stage stage, boolean visible) {
+    toFront(Arrays.asList(stage), visible);
+  }
+
+  public static void toFront(List<Stage> stages, boolean visible) {
     try {
       Thread.sleep(2500);
-      stage.getScene().setCursor(Cursor.NONE);
+      stages.forEach(s -> s.getScene().setCursor(Cursor.NONE));
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
     Platform.runLater(() -> {
       if (visible) {
-        stage.toFront();
+        stages.stream().forEach(Stage::toFront);
       }
     });
   }

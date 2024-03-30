@@ -40,6 +40,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -138,9 +139,22 @@ public class TableDialogs {
   }
 
   public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetManagerDialogController.class, "dialog-table-asset-manager.fxml", "Asset Manager");
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
+    GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
+    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1080;
+
+    String fxml = "dialog-table-asset-manager.fxml";
+    if (hd) {
+      fxml = "dialog-table-asset-manager-hd.fxml";
+    }
+    Stage stage = Dialogs.createStudioDialogStage(AssetManagerDialogController.class, fxml, "Asset Manager", null);
     AssetManagerDialogController controller = (AssetManagerDialogController) stage.getUserData();
     controller.setGame(overviewController, game, screen);
+
+//    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+//    stage.setUserData(fxResizeHelper);
+
     stage.showAndWait();
 
     return true;
@@ -151,6 +165,7 @@ public class TableDialogs {
     TableHighscoresAdminController controller = (TableHighscoresAdminController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
+
     stage.showAndWait();
 
     return true;

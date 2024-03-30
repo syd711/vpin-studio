@@ -73,7 +73,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class AssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(AssetManagerDialogController.class);
-  public static final int MEDIA_SIZE = 280;
+//  public static final int MEDIA_SIZE = 280;
 
   @FXML
   private ComboBox<GameRepresentation> tablesCombo;
@@ -409,8 +409,8 @@ public class AssetManagerDialogController implements Initializable, DialogContro
       try {
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(MEDIA_SIZE);
-          imageView.setFitHeight(MEDIA_SIZE);
+          imageView.setFitWidth(getPreviewWidth());
+          imageView.setFitHeight(getPreviewHeight());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(assetUrl);
@@ -430,8 +430,14 @@ public class AssetManagerDialogController implements Initializable, DialogContro
         LOG.error("Preview failed for " + tableAsset);
       }
     });
+  }
 
+  private double getPreviewWidth() {
+    return serverAssetMediaPane.getPrefWidth() - 10;
+  }
 
+  private double getPreviewHeight() {
+    return serverAssetMediaPane.getPrefHeight() - 10;
   }
 
   @FXML
@@ -610,8 +616,8 @@ public class AssetManagerDialogController implements Initializable, DialogContro
 
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(MEDIA_SIZE);
-          imageView.setFitHeight(MEDIA_SIZE);
+          imageView.setFitWidth(getPreviewWidth());
+          imageView.setFitHeight(getPreviewHeight());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(url);

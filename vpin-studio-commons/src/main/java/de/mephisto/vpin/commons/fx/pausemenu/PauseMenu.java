@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static java.util.logging.Logger.getLogger;
 
@@ -214,6 +215,12 @@ public class PauseMenu extends Application {
                 ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl);
               }
             }
+
+//            List<Stage> stages = screenAssets.stream().map(PopperScreenAsset::getScreenStage).collect(Collectors.toList());
+//            OverlayWindowFX.toFront(stages, visible);
+//            OverlayWindowFX.toFront(stages, visible);
+//            OverlayWindowFX.toFront(stages, visible);
+//            OverlayWindowFX.toFront(stages, visible);
           }
         });
 
