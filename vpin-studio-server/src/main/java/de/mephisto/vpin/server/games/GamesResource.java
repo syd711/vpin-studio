@@ -30,7 +30,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -209,6 +211,16 @@ public class GamesResource {
 
         if (mode.equals(TableUploadDescriptor.uploadAndReplace)) {
           if (gameFile.exists()) {
+            //check if backup should be created
+            if (serverSettings.isBackupTableOnOverwrite()) {
+              File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
+              tableBackupsFolder.mkdirs();
+              String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+              File backup = new File(tableBackupsFolder, FilenameUtils.getBaseName(gameFile.getName()) + "[" + format + "].vpx");
+              org.apache.commons.io.FileUtils.copyFile(gameFile, backup);
+              LOG.info("Created backup VPX file \"" + backup.getAbsolutePath() + "\"");
+            }
+
             if (!gameFile.delete()) {
               LOG.error("Table upload failed: existing table could not be deleted.");
               throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: existing table could not be deleted.");
@@ -300,8 +312,8 @@ public class GamesResource {
             //if the VPX file is inside a subfolder, we have to prepend the folder name
             String name = uploadFile.getName();
             String oldName = tableDetails.getGameFileName();
-            if(oldName.contains("\\")) {
-              name = oldName.substring(0, oldName.lastIndexOf("\\")+1) + uploadFile.getName();
+            if (oldName.contains("\\")) {
+              name = oldName.substring(0, oldName.lastIndexOf("\\") + 1) + uploadFile.getName();
             }
 
             LOG.info("Updated new filename to \"" + name + "\"");

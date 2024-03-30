@@ -60,6 +60,9 @@ public class TableUploadController implements Initializable, DialogController {
   private CheckBox keepDisplayNamesCheckbox;
 
   @FXML
+  private CheckBox backupTableOnOverwriteCheckbox;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
@@ -196,6 +199,7 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         keepDisplayNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
         keepNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
+        backupTableOnOverwriteCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
       }
     });
 
@@ -209,6 +213,12 @@ public class TableUploadController implements Initializable, DialogController {
     keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
     keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setVpxKeepDisplayNames(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    backupTableOnOverwriteCheckbox.setSelected(serverSettings.isBackupTableOnOverwrite());
+    backupTableOnOverwriteCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }
@@ -228,6 +238,7 @@ public class TableUploadController implements Initializable, DialogController {
     else {
       this.uploadAndReplaceRadio.setDisable(true);
       this.keepDisplayNamesCheckbox.setDisable(true);
+      this.backupTableOnOverwriteCheckbox.setDisable(true);
       this.keepNamesCheckbox.setDisable(true);
       this.uploadAndCloneRadio.setDisable(true);
       this.gameId = -1;

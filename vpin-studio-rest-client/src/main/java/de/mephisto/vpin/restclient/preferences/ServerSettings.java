@@ -5,10 +5,19 @@ import de.mephisto.vpin.restclient.JsonSettings;
 public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
+  private boolean backupTableOnOverwrite = true;
   private boolean launchPopperOnExit = true;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+
+  public boolean isBackupTableOnOverwrite() {
+    return backupTableOnOverwrite;
+  }
+
+  public void setBackupTableOnOverwrite(boolean backupTableOnOverwrite) {
+    this.backupTableOnOverwrite = backupTableOnOverwrite;
+  }
 
   public String getMappingVpsTableVersionId() {
     return mappingVpsTableVersionId;
