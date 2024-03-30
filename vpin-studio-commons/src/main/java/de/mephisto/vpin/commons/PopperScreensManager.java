@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons;
 
+import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.PopperScreenController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
@@ -78,6 +79,9 @@ public class PopperScreensManager {
             outFader.setOnFinished(event -> stage.hide());
             outFader.play();
           });
+        }
+        else {
+          OverlayWindowFX.toFront(stage, stage.isShowing());
         }
       } catch (InterruptedException e) {
         //ignore

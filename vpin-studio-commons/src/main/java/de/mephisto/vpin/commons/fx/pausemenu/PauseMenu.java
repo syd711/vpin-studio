@@ -218,9 +218,6 @@ public class PauseMenu extends Application {
 
 //            List<Stage> stages = screenAssets.stream().map(PopperScreenAsset::getScreenStage).collect(Collectors.toList());
 //            OverlayWindowFX.toFront(stages, visible);
-//            OverlayWindowFX.toFront(stages, visible);
-//            OverlayWindowFX.toFront(stages, visible);
-//            OverlayWindowFX.toFront(stages, visible);
           }
         });
 
