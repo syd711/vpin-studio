@@ -275,6 +275,7 @@ public class PauseMenu extends Application {
       robot.keyPress(KeyEvent.VK_P);
       Thread.sleep(100);
       robot.keyRelease(KeyEvent.VK_P);
+      LOG.info("Sending Pause key 'P'");
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

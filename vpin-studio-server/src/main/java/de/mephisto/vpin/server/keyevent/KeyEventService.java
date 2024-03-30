@@ -95,18 +95,18 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         List<ProcessHandle> processes = systemService.getProcesses();
         boolean vpxRunning = systemService.isVPXRunning(processes);
         if (showPauseInsteadOfOverlay && vpxRunning) {
-          this.overlayVisible = !overlayVisible;
+          LOG.info("Toggle pause menu show (Key " + overlayKey + ")");
           OverlayWindowFX.getInstance().togglePauseMenu();
         }
         else {
           if (systemService.isPopperMenuRunning(processes)) {
             this.overlayVisible = !overlayVisible;
             Platform.runLater(() -> {
+              LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
               OverlayWindowFX.getInstance().showOverlay(overlayVisible);
             });
           }
         }
-        LOG.info("Toggle show (Key " + overlayKey + ") / showing: " + overlayVisible);
       }
     }
 
@@ -136,33 +136,25 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
     if (USE_DEBOUNCE) {
-      if (!timingMap.containsKey(overlayKey)) {
-        timingMap.put(overlayKey, System.currentTimeMillis());
-      }
-      if (!timingMap.containsKey(pauseKey)) {
-        timingMap.put(pauseKey, System.currentTimeMillis());
-      }
-
       KeyChecker keyChecker = new KeyChecker(overlayKey);
       if (keyChecker.matches(nativeKeyEvent)) {
-        long offset = System.currentTimeMillis() - timingMap.get(overlayKey);
-        if (offset < DEBOUNCE) {
-          LOG.info("Debouncer: Skipped overlay key event, because it was pressed " + offset + "ms before.");
+        if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < DEBOUNCE) {
+          LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
           return true;
         }
         timingMap.put(overlayKey, System.currentTimeMillis());
+        return false;
       }
 
       keyChecker = new KeyChecker(pauseKey);
       if (keyChecker.matches(nativeKeyEvent)) {
-        long offset = System.currentTimeMillis() - timingMap.get(pauseKey);
-        if (offset < DEBOUNCE) {
-          LOG.info("Debouncer: Skipped pause key event, because it was pressed " + offset + "ms before.");
+        if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < DEBOUNCE) {
+          LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
           return true;
         }
         timingMap.put(pauseKey, System.currentTimeMillis());
+        return false;
       }
-
     }
     return false;
   }
@@ -271,16 +263,19 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }
         case PreferenceNames.OVERLAY_KEY: {
           overlayKey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
+          LOG.info("Overlay key has been updated to: " + overlayKey);
           break;
         }
         case PreferenceNames.RESET_KEY: {
           resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
+          LOG.info("Reset key has been updated to: " + resetKey);
           break;
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
           showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
           pauseKey = pauseMenuSettings.getKey();
+          LOG.info("Pause key has been updated to: " + pauseKey);
           break;
         }
       }

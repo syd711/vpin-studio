@@ -34,6 +34,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -48,9 +49,11 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -820,6 +823,19 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     this.stage = stage;
     this.scene = stage.getScene();
+
+    this.stage.setOnShowing(new EventHandler<WindowEvent>() {
+      @Override
+      public void handle(WindowEvent event) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
+        GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
+        if(defaultConfiguration.getBounds().getHeight() < 1080) {
+          BorderPane root = (BorderPane) stage.getScene().getRoot();
+          root.setPrefHeight(820);
+        }
+      }
+    });
 
     scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
       if (t.getCode() == KeyCode.PAGE_UP) {
