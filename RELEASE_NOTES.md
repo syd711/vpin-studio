@@ -11,7 +11,7 @@
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
 
-
+- **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
 - Updated pinemhi.
 - Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files. 
 

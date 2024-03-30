@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.system;
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -28,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -145,6 +147,24 @@ public class SystemResource {
     new Thread(() -> {
       try {
         Thread.sleep(2000);
+        systemService.shutdown();
+      } catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
+    return true;
+  }
+
+  @GetMapping("/restart")
+  public boolean restart() throws IOException {
+    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\nwscript server.vbs\nexit");
+    List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
         systemService.shutdown();
       } catch (InterruptedException e) {
         //ignore
