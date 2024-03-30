@@ -13,7 +13,8 @@
 
 - **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
 - Updated pinemhi.
-- Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files. 
+- Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
+- **Server Settings**: Added option to restart the VPin Studio Server.
 
 ### Bugfixes
 
