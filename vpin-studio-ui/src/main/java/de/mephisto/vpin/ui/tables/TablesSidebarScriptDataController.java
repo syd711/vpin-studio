@@ -4,10 +4,13 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -202,7 +205,21 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onEdit() {
-    this.game.ifPresent(gameRepresentation -> tablesSidebarController.getTablesController().showScriptEditor(gameRepresentation));
+    try {
+      if (this.game.isPresent()) {
+        TextFile textFile = new TextFile(VPinFile.VBScript);
+        textFile.setFileId(this.game.get().getId());
+        boolean b = Dialogs.openTextEditor(textFile, this.game.get().getGameFileName());
+        if (b) {
+          client.getMameService().clearCache();
+          EventManager.getInstance().notifyTablesChanged();
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open table VPS: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPS file: " + e.getMessage());
+    }
+
   }
 
   @FXML

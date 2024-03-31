@@ -5,19 +5,21 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
+  private final static String VPX_TOOL_EXE = "vpxtool.exe";
 
   public static String readScript(@NonNull File file) {
     try {
@@ -44,7 +46,7 @@ public class VPXUtil {
       fs = new POIFSFileSystem(file, true);
       DirectoryEntry root = fs.getRoot();
       DirectoryEntry tableInfo = (DirectoryEntry) root.getEntry("TableInfo");
-      if(tableInfo.hasEntry("Screenshot")) {
+      if (tableInfo.hasEntry("Screenshot")) {
         DocumentNode screenshot = (DocumentNode) tableInfo.getEntry("Screenshot");
         DocumentInputStream documentInputStream = new DocumentInputStream(screenshot);
         byte[] infoContent = new byte[documentInputStream.available()];
@@ -147,26 +149,43 @@ public class VPXUtil {
     return content;
   }
 
-  public static void importVBS(@NonNull File file, String vps) throws IOException {
+  public static void importVBS(@NonNull File vpxFile, String vps) throws IOException {
     try {
-      String vpxFilePath = file.getAbsolutePath();
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("vpxtools.exe", "importvbx",  vpxFilePath));
+      File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
+      if (vbsFile.exists()) {
+        vbsFile.delete();
+      }
+      org.apache.commons.io.FileUtils.writeStringToFile(vbsFile, vps, Charset.defaultCharset());
+
+      String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
+      List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "importvbs", vpxFilePath);
+      LOG.info("VBS Import CMD: " + String.join(" ", cmds));
+      SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
     } catch (Exception e) {
-      LOG.error("Importing VBS failed for " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Importing VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
   }
 
-  public static void exportVBS(@NonNull File file, String vps) throws IOException {
+  public static String exportVBS(@NonNull File vpxFile, String vps) throws IOException {
     try {
-      String vpxFilePath = file.getAbsolutePath();
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("vpxtools.exe", "importvbx",  vpxFilePath));
+      File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
+      if (vbsFile.exists()) {
+        vbsFile.delete();
+      }
+      String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
+      List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "extractvbs", vpxFilePath);
+      LOG.info("VBS Export CMD: " + String.join(" ", cmds));
+      SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
+
+      return org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
     } catch (Exception e) {
-      LOG.error("Importing VBS failed for " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Exporting VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
+    return vps;
   }
 
   public static String getChecksum(File gameFile) {

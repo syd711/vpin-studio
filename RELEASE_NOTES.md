@@ -5,9 +5,13 @@
 
 - **UI Settings**: Converted the negative "Hide" description and checkboxes to positive "Show" descriptions.
 - **VPS Updates**: The VPS update calculation has been re-implemented so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.
-- **VPS Updates**: Added settings so that you can choose which update notifications to check.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-markers.png" width="300" />
+
+- **VPS Updates**: Added settings so that you can choose which update notifications to check.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/ui-settings.png" width="500" />
+
 
 - **Table Uploads**: Added backup option so that tables are not simply overwritten but copied into a separate "Tables (Backups)" folder.
 
@@ -20,5 +24,6 @@
 
 ### Bugfixes
 
-**NVOffsets**: Fixed problem that pinemhi is not able to read nvram files with offset. I worked around this problem by temporary renaming the .nv files parsing them.
+**NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with offset. I worked around this problem by temporary renaming the .nv files parsing them.
 **UI Settings**: Fixed missing refresh of after changing VPS column visibility changes.
+**VPX Commands**: Fixed VPX operation for installations having a whitespace in the directory path.

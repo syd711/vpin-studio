@@ -2,9 +2,12 @@ package de.mephisto.vpin.server.textedit;
 
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,9 @@ public class TextEditService {
 
   @Autowired
   private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private MameRomAliasService mameRomAliasService;
@@ -51,6 +57,15 @@ public class TextEditService {
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+        }
+        case VBScript: {
+          Game game = pinUPConnector.getGame(textFile.getFileId());
+          File gameFile = game.getGameFile();
+          String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent());
+          textFile.setLastModified(new Date(gameFile.lastModified()));
+          textFile.setPath(gameFile.getAbsolutePath());
+          textFile.setContent(vbs);
+          return textFile;
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
@@ -92,6 +107,16 @@ public class TextEditService {
           GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
           mameRomAliasService.saveAliasFile(defaultGameEmulator, textFile.getContent());
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+        }
+        case VBScript: {
+          Game game = pinUPConnector.getGame(textFile.getFileId());
+          File gameFile = game.getGameFile();
+          VPXUtil.importVBS(gameFile, textFile.getContent());
+          textFile.setLastModified(new Date(gameFile.lastModified()));
+          textFile.setSize(gameFile.length());
+          LOG.info("Saved " + gameFile.getAbsolutePath()+ ", performing table table.");
+          gameService.scanGame(textFile.getFileId());
+          return textFile;
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
