@@ -184,12 +184,12 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="vpsTableVersion" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Table Version" textFill="WHITE">
+                        <CheckBox fx:id="vpsToppper" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Topper " textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="vpsToppper" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                        <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -198,11 +198,6 @@
                   </VBox>
                   <VBox spacing="6.0">
                      <children>
-                        <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                         <CheckBox fx:id="vpsWheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Wheel" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

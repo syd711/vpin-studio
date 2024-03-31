@@ -67,8 +67,6 @@ public class UISettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox vpsSound;
   @FXML
-  private CheckBox vpsTableVersion;
-  @FXML
   private CheckBox vpsToppper;
   @FXML
   private CheckBox vpsTutorial;
@@ -138,8 +136,6 @@ public class UISettingsPreferencesController implements Initializable {
     vpsRom.setSelected(uiSettings.isVpsRom());
     vpsSound.setDisable(disabled);
     vpsSound.setSelected(uiSettings.isVpsSound());
-    vpsTableVersion.setDisable(disabled);
-    vpsTableVersion.setSelected(uiSettings.isVpsTableVersion());
     vpsToppper.setDisable(disabled);
     vpsToppper.setSelected(uiSettings.isVpsToppper());
     vpsTutorial.setDisable(disabled);
@@ -182,11 +178,6 @@ public class UISettingsPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
-    vpsTableVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsTableVersion(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
-    });
     vpsToppper.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsToppper(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
@@ -217,7 +208,6 @@ public class UISettingsPreferencesController implements Initializable {
       vpsPUPPack.setDisable(disabledSelection);
       vpsRom.setDisable(disabledSelection);
       vpsSound.setDisable(disabledSelection);
-      vpsTableVersion.setDisable(disabledSelection);
       vpsToppper.setDisable(disabledSelection);
       vpsTutorial.setDisable(disabledSelection);
       vpsWheel.setDisable(disabledSelection);

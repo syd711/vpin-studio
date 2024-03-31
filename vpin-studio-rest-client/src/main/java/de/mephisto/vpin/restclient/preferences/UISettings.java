@@ -12,7 +12,6 @@ public class UISettings extends JsonSettings {
   private boolean vpsPUPPack = true;
   private boolean vpsRom = true;
   private boolean vpsSound = true;
-  private boolean vpsTableVersion = true;
   private boolean vpsToppper = true;
   private boolean vpsTutorial = true;
   private boolean vpsWheel = true;
@@ -89,14 +88,6 @@ public class UISettings extends JsonSettings {
 
   public void setVpsSound(boolean vpsSound) {
     this.vpsSound = vpsSound;
-  }
-
-  public boolean isVpsTableVersion() {
-    return vpsTableVersion;
-  }
-
-  public void setVpsTableVersion(boolean vpsTableVersion) {
-    this.vpsTableVersion = vpsTableVersion;
   }
 
   public boolean isVpsToppper() {

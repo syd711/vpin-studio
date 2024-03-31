@@ -937,7 +937,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        if (this.showVpsUpdates && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
+        if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -980,7 +980,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPOV.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPovAvailable() || value.isIniAvailable()) {
-        if (this.showVpsUpdates && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
+        if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -999,7 +999,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltSoundAvailable()) {
-        if (this.showVpsUpdates && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
+        if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1011,7 +1011,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltColor.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.getAltColorType() != null) {
-        if (this.showVpsUpdates && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
+        if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1024,7 +1024,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.getPupPackName() != null) {
-        if (this.showVpsUpdates && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
+        if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
