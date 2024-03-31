@@ -3,7 +3,9 @@
 ### Changes
 
 
-- **VPS Updates**: The VPS update calculation has been re-implemented so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.  
+- **UI Settings**: Converted the negative "Hide" description and checkboxes to positive "Show" descriptions.
+- **VPS Updates**: The VPS update calculation has been re-implemented so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.
+- **VPS Updates**: Added settings so that you can choose which update notifications to check.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-markers.png" width="300" />
 
@@ -19,3 +21,4 @@
 ### Bugfixes
 
 **NVOffsets**: Fixed problem that pinemhi is not able to read nvram files with offset. I worked around this problem by temporary renaming the .nv files parsing them.
+**UI Settings**: Fixed missing refresh of after changing VPS column visibility changes.

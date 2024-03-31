@@ -47,10 +47,33 @@ public class UISettingsPreferencesController implements Initializable {
   private CheckBox uiShowVersion;
 
   @FXML
-  private CheckBox uiHideVPSUpdates;
+  private CheckBox uiShowVPSUpdates;
 
   @FXML
-  private CheckBox uiHideEmuColCheckbox;
+  private CheckBox uiShowEmuColCheckbox;
+
+  @FXML
+  private CheckBox vpsAltSound;
+  @FXML
+  private CheckBox vpsAltColor;
+  @FXML
+  private CheckBox vpsBackglass;
+  @FXML
+  private CheckBox vpsPOV;
+  @FXML
+  private CheckBox vpsPUPPack;
+  @FXML
+  private CheckBox vpsRom;
+  @FXML
+  private CheckBox vpsSound;
+  @FXML
+  private CheckBox vpsTableVersion;
+  @FXML
+  private CheckBox vpsToppper;
+  @FXML
+  private CheckBox vpsTutorial;
+  @FXML
+  private CheckBox vpsWheel;
 
   private Tile avatar;
 
@@ -93,23 +116,116 @@ public class UISettingsPreferencesController implements Initializable {
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    uiShowVersion.setSelected(uiSettings.isHideVersions());
+    uiShowVersion.setSelected(!uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHideVersions(t1);
+      uiSettings.setHideVersions(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
-    uiHideVPSUpdates.setSelected(uiSettings.isHideVPSUpdates());
-    uiHideVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHideVPSUpdates(t1);
+    boolean disabled = uiSettings.isHideVPSUpdates();
+    vpsAltSound.setDisable(disabled);
+    vpsAltSound.setSelected(uiSettings.isVpsAltSound());
+    vpsAltColor.setDisable(disabled);
+    vpsAltColor.setSelected(uiSettings.isVpsAltColor());
+    vpsBackglass.setDisable(disabled);
+    vpsBackglass.setSelected(uiSettings.isVpsBackglass());
+    vpsPOV.setDisable(disabled);
+    vpsPOV.setSelected(uiSettings.isVpsPOV());
+    vpsPUPPack.setDisable(disabled);
+    vpsPUPPack.setSelected(uiSettings.isVpsPUPPack());
+    vpsRom.setDisable(disabled);
+    vpsRom.setSelected(uiSettings.isVpsRom());
+    vpsSound.setDisable(disabled);
+    vpsSound.setSelected(uiSettings.isVpsSound());
+    vpsTableVersion.setDisable(disabled);
+    vpsTableVersion.setSelected(uiSettings.isVpsTableVersion());
+    vpsToppper.setDisable(disabled);
+    vpsToppper.setSelected(uiSettings.isVpsToppper());
+    vpsTutorial.setDisable(disabled);
+    vpsTutorial.setSelected(uiSettings.isVpsTutorial());
+    vpsWheel.setDisable(disabled);
+    vpsWheel.setSelected(uiSettings.isVpsWheel());
+
+    vpsAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsAltSound(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsAltColor(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsBackglass(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsPOV.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsPOV(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsPUPPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsPUPPack(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsRom.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsRom(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsSound(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsTableVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsTableVersion(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsToppper.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsToppper(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsTutorial.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsTutorial(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    vpsWheel.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setVpsWheel(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
-    uiHideEmuColCheckbox.setSelected(uiSettings.isHideEmulatorColumn());
-    uiHideEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHideEmulatorColumn(t1);
+    uiShowVPSUpdates.setSelected(!uiSettings.isHideVPSUpdates());
+    uiShowVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideVPSUpdates(!t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+
+      boolean disabledSelection = !t1;
+      vpsAltSound.setDisable(disabledSelection);
+      vpsAltColor.setDisable(disabledSelection);
+      vpsBackglass.setDisable(disabledSelection);
+      vpsPOV.setDisable(disabledSelection);
+      vpsPUPPack.setDisable(disabledSelection);
+      vpsRom.setDisable(disabledSelection);
+      vpsSound.setDisable(disabledSelection);
+      vpsTableVersion.setDisable(disabledSelection);
+      vpsToppper.setDisable(disabledSelection);
+      vpsTutorial.setDisable(disabledSelection);
+      vpsWheel.setDisable(disabledSelection);
+    });
+
+    uiShowEmuColCheckbox.setSelected(!uiSettings.isHideEmulatorColumn());
+    uiShowEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideEmulatorColumn(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
