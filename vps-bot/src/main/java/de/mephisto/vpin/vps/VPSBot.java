@@ -99,10 +99,20 @@ public class VPSBot implements VpsSheetChangedListener {
               builder.append("\n");
             }
 
-            String title = tableDiff.getDisplayName() + "\n" + VPS.getVpsTableUrl(tableDiff.getId());
-            entries.put(title, builder.toString());
+            if (!postSummary) {
+              for (VPSChange change : changes.getChanges()) {
+                String string = change.toString(tableDiff.getId());
+                string = string.substring(change.getDiffType().toString().length());
+                if(string.trim().startsWith(":")) {
+                  string = string.trim().substring(1).trim();
+                }
+                entries.put(change.getDiffType().toString(), string);
+              }
+            }
 
+            String title = tableDiff.getDisplayName() + "\n" + VPS.getVpsTableUrl(tableDiff.getId());
             if (postSummary) {
+              entries.put(title, builder.toString());
               if (entries.size() > MAX_VPS_ENTRIES) {
                 sendVpsUpdateSummary("VPS Update Summary", entries);
                 counter = 0;
@@ -144,7 +154,7 @@ public class VPSBot implements VpsSheetChangedListener {
       if (textChannel != null) {
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(title);
-        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
+//        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
         try {
           embed.setImage(imgUrl);
         } catch (Exception e) {

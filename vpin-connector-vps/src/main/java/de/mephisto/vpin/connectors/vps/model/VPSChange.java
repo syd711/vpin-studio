@@ -73,7 +73,7 @@ public class VPSChange {
         break;
       }
       case pupPack: {
-        Optional<VpsAuthoredUrls> first = tableById.getPupPackFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getPupPackFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.pupPack + ":\n" + first.get();
         }
