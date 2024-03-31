@@ -5,6 +5,8 @@ import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -13,6 +15,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -32,6 +35,7 @@ public class VPSBot implements VpsSheetChangedListener {
   private final VPSDiscordListenerAdapter listenerAdapter;
   private Date lastUpdate = new Date();
   private int totalDiffCount = 0;
+  private boolean postSummary = false;
 
   public VPSBot() throws InterruptedException {
     this.listenerAdapter = new VPSDiscordListenerAdapter(this);
@@ -53,8 +57,8 @@ public class VPSBot implements VpsSheetChangedListener {
       while (true) {
         VPS.getInstance().update();
         try {
-          LOG.info("Waiting 60 minutes");
-          TimeUnit.MINUTES.sleep(60);
+          LOG.info("Waiting 15 minutes");
+          TimeUnit.MINUTES.sleep(15);
         } catch (InterruptedException e) {
           //
         }
@@ -78,6 +82,7 @@ public class VPSBot implements VpsSheetChangedListener {
           for (VpsDiffer tableDiff : tableDiffs) {
             counter++;
 
+            VpsTable table = VPS.getInstance().getTableById(tableDiff.getId());
             VPSChanges changes = tableDiff.getChanges();
             if (changes.isEmpty()) {
               LOG.info("Skipped updated for \"" + tableDiff.getDisplayName() + "\", no updates found.");
@@ -90,13 +95,23 @@ public class VPSBot implements VpsSheetChangedListener {
               builder.append("\n");
             }
 
-            String title = tableDiff.getDisplayName() + "    [" + DateFormat.getDateInstance().format(tableDiff.getLastModified()) + "]\n" + VPS.getVpsTableUrl(tableDiff.getId());
+            String title = tableDiff.getDisplayName() + "\n" + VPS.getVpsTableUrl(tableDiff.getId());
             entries.put(title, builder.toString());
 
-            if (entries.size() > MAX_VPS_ENTRIES) {
-              sendVpsUpdateSummary("VPS Update Summary", entries);
-              counter = 0;
-              entries.clear();
+            if (postSummary) {
+              if (entries.size() > MAX_VPS_ENTRIES) {
+                sendVpsUpdateSummary("VPS Update Summary", entries);
+                counter = 0;
+                entries.clear();
+              }
+            }
+            else {
+              Optional<VpsTableVersion> first = table.getTableFiles().stream().filter(t -> t.getImgUrl() != null).findFirst();
+              String imgUrl = null;
+              if (first.isPresent()) {
+                imgUrl = first.get().getImgUrl();
+              }
+              sendVpsUpdateFull(tableDiff.getDisplayName(), tableDiff.getLastModified(), imgUrl, VPS.getVpsTableUrl(tableDiff.getId()), entries);
             }
           }
 
@@ -108,6 +123,49 @@ public class VPSBot implements VpsSheetChangedListener {
         LOG.error("Failed to push Discord notifications for VPS updates: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
+    long serverId = Long.parseLong(System.getenv("VPS_BOT_SERVER"));
+    long vpsChannelId = Long.parseLong(System.getenv("VPS_BOT_CHANNEL"));
+
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      StandardGuildMessageChannel textChannel = jda.getNewsChannelById(vpsChannelId);
+      //development workaround
+      if (textChannel == null) {
+        textChannel = jda.getTextChannelById(vpsChannelId);
+      }
+
+      if (textChannel != null) {
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(title);
+        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
+        try {
+          embed.setImage(imgUrl);
+        } catch (Exception e) {
+          LOG.info("Failed to attach image: '" + imgUrl + "' " + e.getMessage());
+        }
+        Set<Map.Entry<String, String>> entries = fields.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+          embed.addField(entry.getKey(), entry.getValue(), false);
+        }
+        embed.setColor(Color.GREEN);
+
+        Message complete = textChannel.sendMessage("").addActionRow(Button.link(gameLink, "Table")).setEmbeds(embed.build()).complete();
+        long idLong = complete.getIdLong();
+        if (textChannel instanceof NewsChannel) {
+          Message complete1 = ((NewsChannel) textChannel).crosspostMessageById(idLong).complete();
+          LOG.info("Crossposted message completed.");
+        }
+      }
+      else {
+        LOG.error("No discord channel found.");
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
+    }
   }
 
   public long sendVpsUpdateSummary(String title, Map<String, String> values) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -123,8 +124,89 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="If checked, the VPS update indicators and related actions are not shown in the table overview" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="654.0" styleClass="checkbox-description" text="and VPS section anymore." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="Toggles the visibility of the VPS update indicators and related actions in the table overview and VPS section." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="640.0" text="Hide the following update indicators:" textFill="WHITE">
+               <styleClass>
+                  <String fx:value="checkbox-description" />
+                  <String fx:value="default-text" />
+               </styleClass>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <HBox spacing="48.0">
+               <VBox.margin>
+                  <Insets left="24.0" top="6.0" />
+               </VBox.margin>
+               <children>
+                  <VBox spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="uiHideVPSUpdates1" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates11" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates111" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="uiHideVPSUpdates1111" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="POV" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates112" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates1111" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </VBox>
+                  <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="uiHideVPSUpdates11111" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates1111111" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Table Version" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiHideVPSUpdates111111" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="uiHideVPSUpdates11112" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
             <CheckBox fx:id="uiHideEmuColCheckbox" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" text="Hide &quot;Emulator&quot; column from table overview." textFill="WHITE">
                <font>
                   <Font size="14.0" />

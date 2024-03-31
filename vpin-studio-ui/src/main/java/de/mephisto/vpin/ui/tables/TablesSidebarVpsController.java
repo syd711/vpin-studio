@@ -406,13 +406,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
 
     if (!doFilter || !game.get().isPovAvailable()) {
-      addSection(dataRoot, "POV", game.get(), VpsDiffTypes.pov, vpsTable.getPovFiles());
+      addSection(dataRoot, "POV", game.get(), VpsDiffTypes.pov, vpsTable.getPovFiles(), this.vpsResetBtn.isVisible());
     }
 
     TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", game.get(), vpsTable.getTutorialFiles());
   }
 
-  public static void addSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, List<? extends VpsAuthoredUrls> urls) {
+  public static void addSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, List<? extends VpsAuthoredUrls> urls, boolean showUpdates) {
     if (urls == null || urls.isEmpty()) {
       return;
     }
@@ -436,7 +436,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
 
           String updateText = null;
-          if(game != null) {
+          if(game != null && showUpdates) {
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
             for (VPSChange change : changes) {
               if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {

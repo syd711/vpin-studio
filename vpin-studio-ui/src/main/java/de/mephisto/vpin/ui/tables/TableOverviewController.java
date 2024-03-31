@@ -1548,6 +1548,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
+      columnVPS.setVisible(!uiSettings.isHideVPSUpdates());
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
