@@ -82,6 +82,10 @@ public class VPSBot implements VpsSheetChangedListener {
           for (VpsDiffer tableDiff : tableDiffs) {
             counter++;
 
+            if (!postSummary) {
+              entries.clear();
+            }
+
             VpsTable table = VPS.getInstance().getTableById(tableDiff.getId());
             VPSChanges changes = tableDiff.getChanges();
             if (changes.isEmpty()) {
@@ -115,7 +119,7 @@ public class VPSBot implements VpsSheetChangedListener {
             }
           }
 
-          if (!entries.isEmpty()) {
+          if (postSummary && !entries.isEmpty()) {
             sendVpsUpdateSummary("VPS Update Summary", entries);
           }
         }
@@ -152,7 +156,7 @@ public class VPSBot implements VpsSheetChangedListener {
         }
         embed.setColor(Color.GREEN);
 
-        Message complete = textChannel.sendMessage("").addActionRow(Button.link(gameLink, "Table")).setEmbeds(embed.build()).complete();
+        Message complete = textChannel.sendMessage("").addActionRow(Button.link(gameLink, "View Entry")).setEmbeds(embed.build()).complete();
         long idLong = complete.getIdLong();
         if (textChannel instanceof NewsChannel) {
           Message complete1 = ((NewsChannel) textChannel).crosspostMessageById(idLong).complete();
