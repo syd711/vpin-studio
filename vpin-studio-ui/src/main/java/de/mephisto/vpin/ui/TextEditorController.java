@@ -133,7 +133,6 @@ public class TextEditorController implements Initializable, DialogController {
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
 
-
     this.saveBtn.setDisable(false);
     this.saveAndCloseBtn.setDisable(false);
   }
