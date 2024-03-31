@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.textedit;
 
 public enum VPinFile {
-  DmdDeviceIni, VPMAliasTxt;
+  DmdDeviceIni, VPMAliasTxt, VBScript;
 
 
   @Override
@@ -12,6 +12,9 @@ public enum VPinFile {
       }
       case VPMAliasTxt: {
         return "VPMAlias.txt";
+      }
+      case VBScript: {
+        return "VB Script";
       }
       default: {
         throw new UnsupportedOperationException("Invalid VPinFile");

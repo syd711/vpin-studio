@@ -1,8 +1,12 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -61,7 +65,16 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
       super.editFile(exe);
     }
     else {
-      Dialogs.openTextEditor(VPinFile.DmdDeviceIni);
+      try {
+        boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
+        if (b) {
+          client.getMameService().clearCache();
+          EventManager.getInstance().notifyTablesChanged();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
+      }
     }
   }
 

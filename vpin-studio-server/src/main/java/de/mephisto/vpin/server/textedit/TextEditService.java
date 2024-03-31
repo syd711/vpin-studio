@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,16 +30,16 @@ public class TextEditService {
   @Autowired
   private MameRomAliasService mameRomAliasService;
 
-  public TextFile getText(VPinFile file) {
-    TextFile textFile = new TextFile();
+  public TextFile getText(TextFile textFile) {
     try {
-      switch (file) {
+      VPinFile vPinFile = textFile.getvPinFile();
+      switch (vPinFile) {
         case DmdDeviceIni: {
           GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
-          String iniText =  Files.readString(filePath);
+          String iniText = Files.readString(filePath);
           //Remove BOM
           iniText = iniText.replace("\uFEFF", "");
           textFile.setContent(iniText);
@@ -55,7 +53,7 @@ public class TextEditService {
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + file);
+          throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
         }
       }
 
@@ -65,9 +63,10 @@ public class TextEditService {
     return textFile;
   }
 
-  public TextFile save(VPinFile file, String text) {
+  public TextFile save(TextFile textFile) {
     try {
-      switch (file) {
+      VPinFile vPinFile = textFile.getvPinFile();
+      switch (vPinFile) {
         case DmdDeviceIni: {
           GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
@@ -80,22 +79,22 @@ public class TextEditService {
           if (iniFile.delete()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8));
             out.write('\ufeff');
-            out.write(text);
+            out.write(textFile.getContent());
             out.close();
             LOG.info("Written " + iniFile.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
           }
-          return getText(file);
+          return textFile;
         }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
-          mameRomAliasService.saveAliasFile(defaultGameEmulator, text);
+          mameRomAliasService.saveAliasFile(defaultGameEmulator, textFile.getContent());
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + file);
+          throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
         }
       }
     } catch (IOException e) {
