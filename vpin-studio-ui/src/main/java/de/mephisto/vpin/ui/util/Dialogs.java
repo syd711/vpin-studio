@@ -75,11 +75,13 @@ public class Dialogs {
 
   public static boolean openTextEditor(VPinFile file) {
     FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, file.toString());
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, file.toString(), TextEditorController.class.getSimpleName());
     TextEditorController controller = (TextEditorController) stage.getUserData();
     controller.load(file);
-//    stage.setResizable(true);
-//    new FXResizeHelper(stage, 30, 6);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+
     stage.showAndWait();
     return controller.isSaved();
   }

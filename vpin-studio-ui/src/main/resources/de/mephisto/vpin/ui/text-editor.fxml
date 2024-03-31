@@ -21,7 +21,7 @@
       <BorderPane fx:id="root">
       
           <center>
-              <BorderPane fx:id="centerPane" prefHeight="700.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+              <BorderPane fx:id="centerPane" minHeight="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
                       <Insets />
                   </BorderPane.margin>
@@ -41,57 +41,69 @@
                </items>
             </ToolBar>
          </top>
-         <bottom>
+         <padding>
+            <Insets bottom="6.0" left="6.0" right="6.0" />
+         </padding>
+         <right>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" BorderPane.alignment="CENTER">
               <items>
-                  <BorderPane prefWidth="1024.0">
-                     <center>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
-                           <children>
-                            <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" styleClass="submit-button" text="Save &amp; Close" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="Save" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                     </center>
-                     <right>
-                        <GridPane prefHeight="35.0" prefWidth="310.0" BorderPane.alignment="CENTER">
-                          <columnConstraints>
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="219.200048828125" minWidth="10.0" prefWidth="219.200048828125" />
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="105.59995880126954" minWidth="10.0" prefWidth="36.799951171874994" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label fx:id="lastModified" text="-" />
-                              <Label text="Last Modified:" textFill="WHITE" GridPane.columnIndex="1" />
-                              <Label text="Size:" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label fx:id="size" layoutX="91.0" layoutY="10.0" text="-" GridPane.rowIndex="1" />
-                           </children>
-                        </GridPane>
-                     </right>
-                  </BorderPane>
+                  <BorderPane />
               </items>
             </ToolBar>
-         </bottom>
+         </right>
       </BorderPane>
    </center>
    <stylesheets>
       <URL value="@richtext.css" />
       <URL value="@stylesheet.css" />
    </stylesheets>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <right>
+            <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="Save" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" styleClass="submit-button" text="Save &amp; Close" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </right>
+         <left>
+            <GridPane prefHeight="35.0" prefWidth="310.0" BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="238.4" minWidth="10.0" prefWidth="92.79991912841797" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="218.40008087158202" minWidth="0.0" prefWidth="218.40008087158202" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="lastModified" text="-" GridPane.columnIndex="1" />
+                  <Label text="Last Modified:" textFill="WHITE" />
+                  <Label text="Size:" textFill="WHITE" GridPane.rowIndex="1" />
+                  <Label fx:id="size" layoutX="91.0" layoutY="10.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+               <BorderPane.margin>
+                  <Insets left="6.0" />
+               </BorderPane.margin>
+            </GridPane>
+         </left>
+         <padding>
+            <Insets bottom="8.0" left="6.0" right="16.0" top="6.0" />
+         </padding>
+      </BorderPane>
+   </bottom>
 </BorderPane>

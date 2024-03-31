@@ -4,13 +4,9 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.GameMedia;
-import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -30,11 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -75,8 +68,8 @@ public class VPXResource {
 
   @PutMapping("/sources/{id}")
   public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    String base64Source = (String) values.get("source");
-    return vpxService.saveSources(gameService.getGame(id), base64Source);
+    String source = (String) values.get("source");
+    return vpxService.importVBS(gameService.getGame(id), source);
   }
 
 
