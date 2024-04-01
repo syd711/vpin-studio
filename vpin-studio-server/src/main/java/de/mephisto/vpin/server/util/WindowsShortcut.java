@@ -31,12 +31,6 @@ public class WindowsShortcut
   private boolean isLocal;
   private String real_file;
 
-  public static void main(String[] args) throws IOException {
-    File startFile = new File("C:\\vPinball\\VPin-Studio", "server.bat");
-    File lnkFile = new File("E:\\temp", "server.lnk");
-    Files.createSymbolicLink(lnkFile.toPath(), startFile.toPath());
-  }
-
   /**
    * Provides a quick test to see if this could be a valid link !
    * If you try to instantiate a new WindowShortcut and the link is not valid,
