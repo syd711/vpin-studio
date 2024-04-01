@@ -212,10 +212,6 @@ public class LauncherController implements Initializable {
   private void installServer() {
     try {
       ServerInstallationUtil.install();
-      if (!ServerInstallationUtil.getAutostartFile().exists()) {
-        throw new UnsupportedOperationException(ServerInstallationUtil.getAutostartFile().getAbsolutePath() + " does not exist.\nRe-run installer as an admin.");
-      }
-
       Updater.restartServer();
       main.getTop().setVisible(false);
 

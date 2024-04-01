@@ -18,9 +18,15 @@
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
 
 - **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
-- Updated pinemhi.
-- Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
+
+ 
+- Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files. Finally allows **remote editing of VPX files** which was a long existing feature request.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
+
 - **Server Settings**: Added option to restart the VPin Studio Server.
+- Updated to a newer version of **pinemhi** (for fresh installs only).
+- **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is. 
 
 ### Bugfixes
 

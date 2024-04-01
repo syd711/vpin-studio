@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -175,12 +174,18 @@ public class SystemResource {
 
   @GetMapping("/autostart/installed")
   public boolean autostart() {
-    return ServerInstallationUtil.isInstalled();
+    return new File("./server.vbs").exists();
   }
 
   @GetMapping("/autostart/install")
   public boolean installService() {
     try {
+      File disabled = new File("./server.vbs.bak");
+      File file = new File("./server.vbs");
+      if (disabled.exists()) {
+        FileUtils.moveFile(disabled, file);//TODO mpf
+        return true;
+      }
       return ServerInstallationUtil.install();
     } catch (IOException e) {
       return false;
@@ -188,8 +193,11 @@ public class SystemResource {
   }
 
   @GetMapping("/autostart/uninstall")
-  public boolean uninstallService() {
-    return ServerInstallationUtil.uninstall();
+  public boolean uninstallService() throws IOException {
+    File file = new File("./server.vbs");
+    File disabled = new File("./server.vbs.bak");
+    FileUtils.moveFile(file, disabled);
+    return true;
   }
 
   @GetMapping("/version")

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.launcher;
 
-import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
@@ -44,13 +43,7 @@ public class InstallationDialogController implements Initializable, DialogContro
   private Button popperFolderBtn;
 
   @FXML
-  private Button autostartFolderBtn;
-
-  @FXML
   private TextField pinUPSystemFolderField;
-
-  @FXML
-  private TextField autostartFolderField;
 
   @FXML
   private BorderPane main;
@@ -66,7 +59,6 @@ public class InstallationDialogController implements Initializable, DialogContro
   private Stage stage;
   private PropertiesStore store;
   private File pinUPSystemInstallationFolder;
-  private File autostartFolder;
 
   private SystemInfo systemInfo = new SystemInfo();
 
@@ -83,8 +75,6 @@ public class InstallationDialogController implements Initializable, DialogContro
     LOG.info("*******************************************************************************************************");
 
     store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath());
-    store.set(SystemInfo.AUTOSTART_DIR, autostartFolder.getAbsolutePath());
-
     result = true;
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -110,27 +100,6 @@ public class InstallationDialogController implements Initializable, DialogContro
     }
   }
 
-  @FXML
-  private void onAutostartFolderBtn() {
-    DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (autostartFolder != null && autostartFolder.exists()) {
-      if(autostartFolder.isFile()) {
-        autostartFolder = autostartFolder.getParentFile();
-      }
-
-      directoryChooser.setInitialDirectory(autostartFolder);
-    }
-
-    directoryChooser.setTitle("Select Autostart Folder");
-    File selectedDirectory = directoryChooser.showDialog(stage);
-
-    if (selectedDirectory != null) {
-      this.autostartFolder = selectedDirectory;
-      this.autostartFolderField.setText(this.autostartFolder.getAbsolutePath());
-      validateFolders();
-    }
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.installBtn.setDisable(true);
@@ -144,9 +113,6 @@ public class InstallationDialogController implements Initializable, DialogContro
 
     pinUPSystemInstallationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
     pinUPSystemFolderField.setText(pinUPSystemInstallationFolder.getAbsolutePath());
-
-    autostartFolder = ServerInstallationUtil.getAutostartFile().getParentFile();
-    autostartFolderField.setText(autostartFolder.getAbsolutePath());
 
     validateFolders();
   }
@@ -164,12 +130,6 @@ public class InstallationDialogController implements Initializable, DialogContro
     if (!pinUPSystemInstallationFolder.exists()) {
       validationError.setVisible(true);
       validationErrorLabel.setText("PinUP Popper installation folder does not exist.");
-      return;
-    }
-
-    if (autostartFolder == null || !autostartFolder.exists()) {
-      validationError.setVisible(true);
-      validationErrorLabel.setText("The autostart folder is invalid.\nSelect the Windows autostart folder.");
       return;
     }
 

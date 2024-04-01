@@ -418,8 +418,6 @@
                                 <resource>
                                     <directory>./</directory>
                                     <includes>
-                                        <include>server.bat</include>
-                                        <include>server.vbs</include>
                                         <include>VPin-Studio-Server.l4j.ini</include>
                                     </includes>
                                 </resource>

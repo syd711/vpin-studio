@@ -322,7 +322,7 @@ public class TablesSidebarController implements Initializable {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
 
         String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
-        String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX.exe").getAbsolutePath();
+        String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();
         ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
         builder.start();
