@@ -64,6 +64,7 @@ public class TextEditService {
           String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent());
           textFile.setLastModified(new Date(gameFile.lastModified()));
           textFile.setPath(gameFile.getAbsolutePath());
+          textFile.setSize(vbs.getBytes().length);
           textFile.setContent(vbs);
           return textFile;
         }
@@ -113,7 +114,7 @@ public class TextEditService {
           File gameFile = game.getGameFile();
           VPXUtil.importVBS(gameFile, textFile.getContent());
           textFile.setLastModified(new Date(gameFile.lastModified()));
-          textFile.setSize(gameFile.length());
+          textFile.setSize(textFile.getContent().getBytes().length);
           LOG.info("Saved " + gameFile.getAbsolutePath()+ ", performing table table.");
           gameService.scanGame(textFile.getFileId());
           return textFile;
