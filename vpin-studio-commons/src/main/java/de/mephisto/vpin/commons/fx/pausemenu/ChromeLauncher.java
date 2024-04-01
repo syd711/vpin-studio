@@ -15,10 +15,10 @@ public class ChromeLauncher {
   private final static Logger LOG = LoggerFactory.getLogger(ChromeLauncher.class);
 
   private static boolean launched = false;
+  private static boolean kioskMode = true;
 
   public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url) {
     launched = true;
-    boolean kioskMode = true;
     try {
       int x = screenDisplay.getX();
       int y = screenDisplay.getY();
@@ -43,9 +43,9 @@ public class ChromeLauncher {
       }
 
       List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
-        "--app=\"data:text/html,<html><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
+        "--app=\"data:text/html,<html><head><title>vpin</title></head><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
         "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
-      if(kioskMode) {
+      if (kioskMode) {
         cmds = new ArrayList<>(cmds);
         cmds.add("--kiosk");
       }
