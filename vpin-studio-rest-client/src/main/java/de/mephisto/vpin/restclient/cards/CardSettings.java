@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CardSettings extends JsonSettings {
-  private String popperScreen = "Other2";
+  private String popperScreen = null;
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
