@@ -354,6 +354,7 @@ public class GamesResource {
               //clone additional files
               FileUtils.cloneFile(original.getDirectB2SFile(), uploadFile.getName());
               FileUtils.cloneFile(original.getPOVFile(), uploadFile.getName());
+              FileUtils.cloneFile(original.getIniFile(), uploadFile.getName());
               FileUtils.cloneFile(original.getResFile(), uploadFile.getName());
             }
             return true;
