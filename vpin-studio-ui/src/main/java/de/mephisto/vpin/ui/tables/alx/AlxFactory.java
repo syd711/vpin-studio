@@ -28,7 +28,7 @@ public class AlxFactory {
 
 
   public static void createTotalTimeTile(Pane root, List<TableAlxEntry> entries) {
-    int total = 0;
+    long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
     }
@@ -53,7 +53,7 @@ public class AlxFactory {
   }
 
   public static void createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
-    int total = 0;
+    long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getScores();
     }
@@ -71,7 +71,7 @@ public class AlxFactory {
 
 
   public static void createTotalHighScoresTile(Pane root, List<TableAlxEntry> entries) {
-    int total = 0;
+    long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getHighscores();
     }
@@ -88,7 +88,7 @@ public class AlxFactory {
   }
 
   public static void createAvgWeekTimeTile(Pane root, List<TableAlxEntry> entries, Date start) {
-    int total = 0;
+    long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
     }
@@ -123,7 +123,7 @@ public class AlxFactory {
   }
 
   public static void createTotalGamesPlayedTile(Pane root, List<TableAlxEntry> entries) {
-    int total = 0;
+    long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
     }
@@ -145,7 +145,7 @@ public class AlxFactory {
     Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getScores));
     Collections.reverse(statEntries);
 
-    int maxValue = 0;
+    long maxValue = 0;
     for (TableAlxEntry entry : statEntries) {
       if (entry.getScores() > maxValue) {
         maxValue = entry.getScores();
@@ -158,7 +158,7 @@ public class AlxFactory {
         continue;
       }
 
-      int percentage = alxEntry.getScores() * 100 / maxValue;
+      int percentage = (int) (alxEntry.getScores() * 100 / maxValue);
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
@@ -182,7 +182,7 @@ public class AlxFactory {
     Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
     Collections.reverse(statEntries);
 
-    int maxValue = 0;
+    long maxValue = 0;
     for (TableAlxEntry entry : statEntries) {
       if (entry.getTimePlayedSecs() > maxValue) {
         maxValue = entry.getTimePlayedSecs();
@@ -195,7 +195,7 @@ public class AlxFactory {
         continue;
       }
 
-      int percentage = alxEntry.getTimePlayedSecs() * 100 / maxValue;
+      int percentage = (int) (alxEntry.getTimePlayedSecs() * 100 / maxValue);
       String durationText = DurationFormatUtils.formatDuration(alxEntry.getTimePlayedSecs() * 1000, "HH 'hours', mm 'minutes'", false);
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
@@ -220,7 +220,7 @@ public class AlxFactory {
     Collections.sort(mostPlayedEntries, Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
     Collections.reverse(mostPlayedEntries);
 
-    int maxValue = 0;
+    long maxValue = 0;
     for (TableAlxEntry mostPlayedEntry : mostPlayedEntries) {
       if (mostPlayedEntry.getNumberOfPlays() > maxValue) {
         maxValue = mostPlayedEntry.getNumberOfPlays();
@@ -233,7 +233,7 @@ public class AlxFactory {
         continue;
       }
 
-      int percentage = alxEntry.getNumberOfPlays() * 100 / maxValue;
+      int percentage = (int) (alxEntry.getNumberOfPlays() * 100 / maxValue);
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)));
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
