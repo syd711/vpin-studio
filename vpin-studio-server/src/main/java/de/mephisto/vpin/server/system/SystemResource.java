@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
+import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -135,9 +136,24 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/clientupdate/{version}/download/start")
+  public boolean downloadClientUpdate(@PathVariable("version") String version) {
+    new Thread(() -> {
+      systemService.killProcesses("VPin-Studio.exe");
+      Thread.currentThread().setName("Client Update Downloader");
+      Updater.downloadUpdate(version, Updater.UI_ZIP);
+    }).start();
+    return true;
+  }
+
   @GetMapping("/update/download/status")
   public int updateDownloadStatus() {
     return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_ZIP_SIZE);
+  }
+
+  @GetMapping("/clientupdate/download/status")
+  public int updateClientDownloadStatus() {
+    return Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
   }
 
   @GetMapping("/update/install")
@@ -152,6 +168,26 @@ public class SystemResource {
       }
     }).start();
     return true;
+  }
+
+  @GetMapping("/clientupdate/install")
+  public boolean installRemoteClientUpdate() {
+    File uiZip = new File("./", Updater.UI_ZIP);
+    if (uiZip.exists()) {
+      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
+        return false;
+      }
+      if (!uiZip.delete()) {
+        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
+        return false;
+      }
+      return true;
+    }
+    else {
+      LOG.error("Failed to download client UI, missing file.");
+    }
+    return false;
   }
 
   @GetMapping("/restart")

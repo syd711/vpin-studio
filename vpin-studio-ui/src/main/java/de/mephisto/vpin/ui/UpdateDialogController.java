@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,16 @@ public class UpdateDialogController implements Initializable, DialogController {
   private Label clientLabel;
 
   @FXML
+  private Label remoteClientLabel;
+
+  @FXML
   private Label serverLabel;
 
   @FXML
   private ProgressBar clientProgress;
+
+  @FXML
+  private ProgressBar remoteClientProgress;
 
   @FXML
   private ProgressBar serverProgress;
@@ -42,16 +49,23 @@ public class UpdateDialogController implements Initializable, DialogController {
   private HBox footer;
 
   @FXML
+  private VBox remoteClientUpdate;
+
+  @FXML
   private Button closeBtn;
 
   private Service serverService;
   private Service clientService;
+  private Service remoteClientService;
 
   private boolean updateServer = false;
   private boolean updateClient = false;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    remoteClientUpdate.managedProperty().bindBidirectional(remoteClientUpdate.visibleProperty());
+    remoteClientUpdate.setVisible(!client.getSystemService().isLocal());
+
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
 
@@ -92,19 +106,25 @@ public class UpdateDialogController implements Initializable, DialogController {
   @FXML
   private void onClose(ActionEvent ae) {
     try {
-      if(serverService != null && serverService.isRunning()) {
+      if (serverService != null && serverService.isRunning()) {
         serverService.cancel();
       }
 
-      if(clientService != null && clientService.isRunning()) {
+      if (clientService != null && clientService.isRunning()) {
         clientService.cancel();
       }
-    }
-    catch (Exception e) {
+
+      if (remoteClientService != null && remoteClientService.isRunning()) {
+        remoteClientService.cancel();
+      }
+    } catch (Exception e) {
       LOG.warn("Failed to cancel update services: " + e.getMessage());
     }
-    Stage stage = (Stage) ((Button) ae.getSource()).getScene().getWindow();
-    stage.close();
+
+    if (ae != null) {
+      Stage stage = (Stage) ((Button) ae.getSource()).getScene().getWindow();
+      stage.close();
+    }
   }
 
   private void startServerUpdate(String newServerVersion, String newClientVersion) {
@@ -154,7 +174,12 @@ public class UpdateDialogController implements Initializable, DialogController {
             //finished
             if (updateClient) {
               Platform.runLater(() -> {
-                startClientUpdate(newClientVersion);
+                if (!client.getSystemService().isLocal()) {
+                  startRemoteClientUpdate(newServerVersion, newClientVersion);
+                }
+                else {
+                  startClientUpdate(newClientVersion);
+                }
               });
             }
 
@@ -166,11 +191,64 @@ public class UpdateDialogController implements Initializable, DialogController {
     serverService.start();
   }
 
+  private void startRemoteClientUpdate(String newServerVersion, String newClientVersion) {
+    remoteClientService = new Service() {
+      @Override
+      protected Task createTask() {
+        return new Task() {
+          @Override
+          protected Object call() throws Exception {
+            client.getSystemService().startRemoteClientUpdate(newServerVersion);
+            while (true) {
+              int progress = client.getSystemService().getRemoteClientProgress();
+              LOG.info("Server Remote Client Download: " + progress);
+              updateProgress(progress, 100);
+              Thread.sleep(1000);
+              Platform.runLater(() -> {
+                double p = Double.valueOf(progress) / 100.0;
+                remoteClientProgress.setProgress(p);
+              });
+
+              if (progress >= 100) {
+                break;
+              }
+            }
+            Platform.runLater(() -> {
+              remoteClientLabel.setText("Installing Remote Client Update");
+              remoteClientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+            });
+
+            boolean result = client.getSystemService().installRemoteClientUpdate();
+            Platform.runLater(() -> {
+              if (result) {
+                remoteClientLabel.setText("Update successful, the remote client has been updated to " + newServerVersion);
+              }
+              else {
+                remoteClientLabel.setText("Update failed, check server log for details.");
+              }
+
+              remoteClientProgress.setProgress(1f);
+
+              LOG.info("Server updated finished to " + client.getSystemService().getVersion());
+            });
+
+
+            Platform.runLater(() -> {
+              startClientUpdate(newClientVersion);
+            });
+            return null;
+          }
+        };
+      }
+    };
+    remoteClientService.start();
+  }
+
   private void startClientUpdate(String newVersion) {
     resetShowUpdateInfoFlag();
 
     String clientVersion = Studio.getVersion();
-    if(clientVersion != null && clientVersion.equals(newVersion)) {
+    if (clientVersion != null && clientVersion.equals(newVersion)) {
       try {
         Thread.sleep(2000);
       } catch (InterruptedException e) {
@@ -222,7 +300,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     try {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       uiSettings.setHideUpdateInfo(false);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS,uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     } catch (Exception e) {
       LOG.error("Failed to reset update info: " + e.getMessage(), e);
     }
@@ -230,6 +308,6 @@ public class UpdateDialogController implements Initializable, DialogController {
 
   @Override
   public void onDialogCancel() {
-    serverService.cancel();
+    onClose(null);
   }
 }
