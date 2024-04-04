@@ -14,11 +14,18 @@
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
 
 - **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
-- Updated pinemhi.
+- Updated **pinemhi** (available only for new installations).
 - Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
+- **VPX Script Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this does not offer much, but it will allow you to do some minor table adjustments.
+  
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
+
 - **Server Settings**: Added option to restart the VPin Studio Server.
+
 
 ### Bugfixes
 
 **NVOffsets**: Fixed problem that pinemhi is not able to read nvram files with offset. I worked around this problem by temporary renaming the .nv files parsing them.
 **UI Settings**: Fixed missing refresh of after changing VPS column visibility changes.
+**Table Statistics**: Fixed issue where tiles were not filled because of too large values.
+**Table Cloning**: Added missing cloning of .ini files.
