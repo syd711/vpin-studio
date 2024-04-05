@@ -136,24 +136,28 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
     if (USE_DEBOUNCE) {
-      KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
-        if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < DEBOUNCE) {
-          LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
-          return true;
+      if (overlayKey != null) {
+        KeyChecker keyChecker = new KeyChecker(overlayKey);
+        if (keyChecker.matches(nativeKeyEvent)) {
+          if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < DEBOUNCE) {
+            LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
+            return true;
+          }
+          timingMap.put(overlayKey, System.currentTimeMillis());
+          return false;
         }
-        timingMap.put(overlayKey, System.currentTimeMillis());
-        return false;
       }
 
-      keyChecker = new KeyChecker(pauseKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
-        if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < DEBOUNCE) {
-          LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
-          return true;
+      if (pauseKey != null) {
+        KeyChecker keyChecker = new KeyChecker(pauseKey);
+        if (keyChecker.matches(nativeKeyEvent)) {
+          if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < DEBOUNCE) {
+            LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
+            return true;
+          }
+          timingMap.put(pauseKey, System.currentTimeMillis());
+          return false;
         }
-        timingMap.put(pauseKey, System.currentTimeMillis());
-        return false;
       }
     }
     return false;
