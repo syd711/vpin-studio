@@ -46,6 +46,7 @@ public class ZipUtil {
       zis.closeEntry();
       zis.close();
 
+      LOG.info("Successfully extracted " + archiveFile.getAbsolutePath());
       return true;
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);

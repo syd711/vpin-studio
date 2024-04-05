@@ -34,3 +34,4 @@
 - **Table Statistics**: Fixed issue where tiles were not filled because of too large values.
 - **Table Cloning**: Added missing cloning of .ini files.
 - **VPX Commands**: Fixed VPX operations (start/stop/launch to edit) for Visual Pinball installations having a whitespace in the directory path.
+- **Overlay Key Events**: Added button debounce that fixes possible duplicated key events sent by input controllers.

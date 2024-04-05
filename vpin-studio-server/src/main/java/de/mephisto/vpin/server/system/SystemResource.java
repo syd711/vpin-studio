@@ -139,11 +139,31 @@ public class SystemResource {
   @GetMapping("/clientupdate/{version}/download/start")
   public boolean downloadClientUpdate(@PathVariable("version") String version) {
     new Thread(() -> {
-      systemService.killProcesses("VPin-Studio.exe");
       Thread.currentThread().setName("Client Update Downloader");
       Updater.downloadUpdate(version, Updater.UI_ZIP);
     }).start();
     return true;
+  }
+
+  @GetMapping("/clientupdate/install")
+  public boolean installRemoteClientUpdate() {
+    systemService.killProcesses("javaw.exe");
+    File uiZip = new File("./", Updater.UI_ZIP);
+    if (uiZip.exists()) {
+      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
+        return false;
+      }
+      if (!uiZip.delete()) {
+        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
+        return false;
+      }
+      return true;
+    }
+    else {
+      LOG.error("Failed to download client UI, missing file.");
+    }
+    return false;
   }
 
   @GetMapping("/update/download/status")
@@ -168,26 +188,6 @@ public class SystemResource {
       }
     }).start();
     return true;
-  }
-
-  @GetMapping("/clientupdate/install")
-  public boolean installRemoteClientUpdate() {
-    File uiZip = new File("./", Updater.UI_ZIP);
-    if (uiZip.exists()) {
-      if (!ZipUtil.unzip(uiZip, new File("./"))) {
-        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
-        return false;
-      }
-      if (!uiZip.delete()) {
-        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
-        return false;
-      }
-      return true;
-    }
-    else {
-      LOG.error("Failed to download client UI, missing file.");
-    }
-    return false;
   }
 
   @GetMapping("/restart")
