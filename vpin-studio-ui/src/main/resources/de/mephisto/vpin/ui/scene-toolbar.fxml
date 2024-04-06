@@ -59,7 +59,7 @@
                               <Tooltip text="Job Overview" />
                            </tooltip>
                            <graphic>
-                              <ProgressIndicator prefHeight="19.0" prefWidth="19.0">
+                              <ProgressIndicator fx:id="jobProgress" prefHeight="19.0" prefWidth="19.0">
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="6.0" top="-2.0" />
                                  </padding>

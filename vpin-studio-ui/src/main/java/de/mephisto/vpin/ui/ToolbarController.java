@@ -49,6 +49,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   @FXML
   private SplitMenuButton preferencesBtn;
 
+  @FXML
+  private ProgressIndicator jobProgress;
+
   private String newVersion;
 
   // Add a public no-args constructor
@@ -167,13 +170,16 @@ public class ToolbarController implements Initializable, StudioEventListener {
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
 
     this.jobBtn.setDisable(true);
+    this.jobProgress.setDisable(true);
+    this.jobProgress.setProgress(0);
+
     this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
 
     JobPoller.destroy();
-    JobPoller.create(this.jobBtn, this.messagesBtn);
+    JobPoller.create(this.jobBtn, this.jobProgress, this.messagesBtn);
 
     runUpdateCheck();
 

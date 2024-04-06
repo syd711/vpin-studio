@@ -44,6 +44,7 @@ public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
 
   public static final CountDownLatch latch = new CountDownLatch(1);
+  public static int TO_FRONT_DELAY = 2500;
 
   private BorderPane root;
 
@@ -127,7 +128,7 @@ public class OverlayWindowFX extends Application {
 
   public static void toFront(List<Stage> stages, boolean visible) {
     try {
-      Thread.sleep(2500);
+      Thread.sleep(TO_FRONT_DELAY);
       stages.forEach(s -> s.getScene().setCursor(Cursor.NONE));
     } catch (InterruptedException e) {
       throw new RuntimeException(e);

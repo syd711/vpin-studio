@@ -356,12 +356,8 @@ public class MenuController implements Initializable {
 
   public void showYouTubeVideo(PauseMenuItem item) {
     if (pauseMenuSettings != null) {
-      ChromeLauncher.showYouTubeVideo(backglassDisplay, item.getYouTubeUrl());
+      ChromeLauncher.showYouTubeVideo(backglassDisplay, item.getYouTubeUrl(), item.getName());
     }
-  }
-
-  public void showYouTubeVideo(String url) {
-    ChromeLauncher.showYouTubeVideo(backglassDisplay, url);
   }
 
   public void resetBrowser() {

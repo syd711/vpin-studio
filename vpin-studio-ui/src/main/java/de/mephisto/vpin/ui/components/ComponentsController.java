@@ -139,7 +139,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     preferencesChanged(PreferenceType.uiSettings);
 
-    NavigationController.setInitialController("scene-components.fxml", this, root);
     NavigationController.setBreadCrumb(Arrays.asList("System Manager"));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));

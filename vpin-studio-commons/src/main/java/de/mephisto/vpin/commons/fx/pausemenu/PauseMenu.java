@@ -212,7 +212,7 @@ public class PauseMenu extends Application {
               if (!videoTutorials.isEmpty()) {
                 VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
                 String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl);
+                ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
               }
             }
 

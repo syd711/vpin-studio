@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import org.slf4j.Logger;
@@ -16,8 +17,9 @@ public class ChromeLauncher {
 
   private static boolean launched = false;
   private static boolean kioskMode = true;
+  private static boolean useToTop = true;
 
-  public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url) {
+  public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url, String title) {
     launched = true;
     try {
       int x = screenDisplay.getX();
@@ -53,34 +55,22 @@ public class ChromeLauncher {
       String commandString = String.join(" ", cmds);
       LOG.info("Chrome Command: " + commandString);
 
-//      File cmdfile = new File(SystemInfo.RESOURCES, "chrome-launcher.bat");
-//      File logfile = new File(SystemInfo.RESOURCES, "chrome-launcher.log");
-//      if (cmdfile.exists()) {
-//        if (!cmdfile.delete()) {
-//          LOG.error("Failed to delete chrome launcher file");
-//        }
-//      }
-//      if (logfile.exists()) {
-//        if (!logfile.delete()) {
-//          LOG.error("Failed to delete chrome log file");
-//        }
-//      }
-//
-//      String logCommand = commandString + " >> chrome-launcher.log";
-//
-//      FileOutputStream out = new FileOutputStream(cmdfile);
-//      IOUtils.write(logCommand, out);
-//      out.close();
-//
-//      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("chrome-launcher.bat"));
-//      executor.setDir(new File(SystemInfo.RESOURCES));
-
-
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
       executor.setDir(chromeExe.getParentFile());
       executor.enableLogging(true);
       executor.executeCommandAsync();
       LOG.info(String.join(" ", cmds));
+
+      if (useToTop) {
+        new Thread(() -> {
+          try {
+            Thread.sleep(OverlayWindowFX.TO_FRONT_DELAY - 500);
+            NirCmd.setTopMost(title);
+          } catch (InterruptedException e) {
+            //ignore
+          }
+        }).start();
+      }
 
       OverlayWindowFX.toFront(PauseMenu.stage, true);
     } catch (Exception e) {
