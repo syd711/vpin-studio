@@ -53,6 +53,7 @@ public class PauseMenuScreensFactory {
         asset.setDuration(0);
         asset.setMimeType(defaultMediaItem.getMimeType());
         asset.setInputStream(imageStream);
+        asset.setName(defaultMediaItem.getName());
         asset.setUrl(client.getURL(defaultMediaItem.getUri()));
 
         PopperScreensManager.getInstance().showScreen(asset);

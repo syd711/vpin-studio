@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -37,12 +37,9 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static java.util.logging.Logger.getLogger;
 
@@ -82,6 +79,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
+    pauseMenuStage.setTitle("Pause Menu");
     pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
@@ -136,7 +134,6 @@ public class PauseMenu extends Application {
 
       scalePauseMenuStage(root, screenBounds);
       scene.setFill(Color.TRANSPARENT);
-      stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
       stage.setScene(scene);
 
       StateMananger.getInstance().init(loader.getController());
@@ -215,9 +212,6 @@ public class PauseMenu extends Application {
                 ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
               }
             }
-
-//            List<Stage> stages = screenAssets.stream().map(PopperScreenAsset::getScreenStage).collect(Collectors.toList());
-//            OverlayWindowFX.toFront(stages, visible);
           }
         });
 
@@ -249,9 +243,7 @@ public class PauseMenu extends Application {
       });
 
       try {
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("sendKeys.bat", "Visual Pinball Player", ""));
-        executor.setDir(new File("./resources"));
-        executor.executeCommand();
+        NirCmd.focusWindow("Visual Pinball Player");
       } catch (Exception e) {
         LOG.error("Failed to execute focus command: " + e.getMessage(), e);
       }

@@ -41,6 +41,7 @@ public class PopperScreensManager {
       scene.setCursor(Cursor.NONE);
 
       Stage screenStage = new Stage();
+      screenStage.setTitle("Asset: " + asset.getName());
       screenStage.setScene(scene);
       screenStage.initStyle(StageStyle.TRANSPARENT);
       screenStage.setAlwaysOnTop(true);

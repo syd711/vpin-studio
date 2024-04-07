@@ -259,6 +259,7 @@ public class OverlayWindowFX extends Application {
         }
 
         PopperScreenAsset asset = new PopperScreenAsset();
+        asset.setName(file.getName());
         asset.setDisplay(display);
         asset.setRotation(rotation);
         asset.setDuration(notificationTime);
@@ -295,6 +296,7 @@ public class OverlayWindowFX extends Application {
     overlayStage.setFullScreenExitHint("");
     overlayStage.setAlwaysOnTop(true);
     overlayStage.setFullScreen(true);
+    overlayStage.setTitle("VPin Studio Overlay");
     overlayStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
     PauseMenu.loadPauseMenu();

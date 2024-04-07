@@ -19,7 +19,7 @@
 - **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
 - Updated **pinemhi** (available only for new installations).
 - Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
-- **VPX Script Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this does not offer much, but it will allow you to do some quick table adjustments.
+- **VPX Script ~~Viewer~~ Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this does not offer much, but it will allow you to do some quick table adjustments.
   
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="600" />
 
@@ -29,10 +29,11 @@
 
 ### Bugfixes
 
-- **NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with offset. I worked around this problem by temporary renaming the .nv files before parsing them.
+- **NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with an offset. I worked around this problem by temporary renaming the .nv files before parsing them.
 - **UI Settings**: Fixed missing refresh after changing VPS visiblity preferences.
 - **Table Statistics**: Fixed issue where tiles were not filled because of too large values.
 - **Table Cloning**: Added missing cloning of .ini files.
 - **VPX Commands**: Fixed VPX operations (start/stop/launch to edit) for Visual Pinball installations having a whitespace in the directory path.
 - **Overlay Key Events**: Added button debounce that fixes possible duplicated key events sent by input controllers.
 - **GPU Usage**: Fixed high GPU usage caused by the disabled(!) progress indicator of the jobs dropdown menu (WTF???). 
+- **Pause Menu**: Added nircmd.exe for a better focus management with the pause menu.
