@@ -31,6 +31,7 @@
 
 - **NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with an offset. I worked around this problem by temporary renaming the .nv files before parsing them.
 - **UI Settings**: Fixed missing refresh after changing VPS visiblity preferences.
+- **Card Settings**: Fixed issue that the default screen "Other2" was set for fresh installations. It is empty now so that the user has to activate the card generation.
 - **Table Statistics**: Fixed issue where tiles were not filled because of too large values.
 - **Table Cloning**: Added missing cloning of .ini files.
 - **VPX Commands**: Fixed VPX operations (start/stop/launch to edit) for Visual Pinball installations having a whitespace in the directory path.

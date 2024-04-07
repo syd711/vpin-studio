@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
@@ -81,6 +82,7 @@ public class SystemResource {
     info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
+    info.setSystemId(SystemUtil.getBoardSerialNumber());
     info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
     return info;
   }
