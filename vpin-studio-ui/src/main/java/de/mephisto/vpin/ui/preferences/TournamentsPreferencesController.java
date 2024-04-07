@@ -63,7 +63,16 @@ public class TournamentsPreferencesController implements Initializable, Preferen
 
   @FXML
   private void onAccountDelete() {
+    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Delete VPin Mania Account", "Cancel", "Delete", "Delete your VPin Mania account?", "This will delete all active tournaments and recorded highscores.", "I understand, delete my account.");
+    if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
+      maniaClient.getCabinetClient().deleteCabinet();
 
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      registrationPanel.setVisible(cabinet == null);
+
+      settings = client.getTournamentsService().getSettings();
+      preferencesPanel.setVisible(cabinet != null);
+    }
   }
 
 
@@ -72,10 +81,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
     preferencesPanel.managedProperty().bindBidirectional(preferencesPanel.visibleProperty());
     registrationPanel.managedProperty().bindBidirectional(registrationPanel.visibleProperty());
 
-    SystemSummary systemSummary = client.getSystemService().getSystemSummary();
-
-    System.out.println(systemSummary.getSystemId());
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet(systemSummary.getSystemId());
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     registrationPanel.setVisible(cabinet == null);
 
     settings = client.getTournamentsService().getSettings();
@@ -101,7 +107,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
           Cabinet newCab = new Cabinet();
           newCab.setCreationDate(new Date());
           newCab.setSettings(new CabinetSettings());
-          Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, systemSummary.getSystemId(), bufferedImage, null);
+          Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
 
           settings.setEnabled(true);
           settings = client.getTournamentsService().saveSettings(settings);
