@@ -69,8 +69,6 @@ public class TournamentsPreferencesController implements Initializable, Preferen
 
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       registrationPanel.setVisible(cabinet == null);
-
-      settings = client.getTournamentsService().getSettings();
       preferencesPanel.setVisible(cabinet != null);
     }
   }
@@ -108,6 +106,8 @@ public class TournamentsPreferencesController implements Initializable, Preferen
           newCab.setCreationDate(new Date());
           newCab.setSettings(new CabinetSettings());
           Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
+          registrationPanel.setVisible(registeredCabinet == null);
+
 
           settings.setEnabled(true);
           settings = client.getTournamentsService().saveSettings(settings);

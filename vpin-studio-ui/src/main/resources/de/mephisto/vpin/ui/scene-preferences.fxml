@@ -54,7 +54,7 @@
                                     <Font size="13.0" />
                                  </font>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Service Settings" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
                            </children>
                         </VBox>
                         <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">

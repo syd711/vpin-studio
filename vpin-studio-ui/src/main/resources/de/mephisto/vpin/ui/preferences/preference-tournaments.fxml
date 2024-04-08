@@ -19,7 +19,7 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN MANIA PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Service Settings">
+            <Label styleClass="preference-subtitle" text="Account Settings">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -47,7 +47,6 @@
                   <Insets bottom="6.0" />
                </VBox.margin>
                <children>
-                  <Label layoutX="10.0" layoutY="22.0" styleClass="preference-subtitle" text="Account Settings" />
                   <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="error-title" text="Delete Account" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
