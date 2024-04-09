@@ -1,17 +1,13 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.AvatarFactory;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
+
+import java.io.InputStream;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;

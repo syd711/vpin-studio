@@ -118,10 +118,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
           try {
             String accountUuId = player.getTournamentUserUuid();
-            List<Account> accounts = maniaClient.getAccountClient().getAccounts();
-            Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(accountUuId)).findFirst();
-            if (first.isPresent()) {
-              maniaClient.getAccountClient().deleteAccount(first.get().getId());
+            Account acc = maniaClient.getAccountClient().getAccountByUuid(accountUuId);
+            if (acc != null) {
+              maniaClient.getAccountClient().deleteAccount(acc.getId());
             }
           } catch (Exception e) {
             LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);

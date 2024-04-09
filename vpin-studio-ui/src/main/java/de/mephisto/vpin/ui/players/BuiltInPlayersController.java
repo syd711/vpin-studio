@@ -149,10 +149,9 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
 
-            List<Account> accounts = maniaClient.getAccountClient().getAccounts();
-            Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(selection.getTournamentUserUuid())).findFirst();
-            if (first.isPresent()) {
-              maniaClient.getAccountClient().deleteAccount(first.get().getId());
+            Account acc = maniaClient.getAccountClient().getAccountByUuid(selection.getTournamentUserUuid());
+            if (acc != null) {
+              maniaClient.getAccountClient().deleteAccount(acc.getId());
             }
             tableView.getSelectionModel().clearSelection();
             onReload();

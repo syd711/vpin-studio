@@ -217,7 +217,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
           BufferedImage badge = ImageIO.read(asset);
 
-          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), badge));
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, accountByUuid, badge));
 
           if (!progressDialog.getResults().isEmpty()) {
             Object o = progressDialog.getResults().get(0);
@@ -298,12 +299,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
-          List<Account> accounts = maniaClient.getAccountClient().getAccounts();
-          Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(tournamentUserUuid)).findFirst();
-          if (first.isPresent()) {
-            maniaClient.getTournamentClient().addMember(selectedTournament, first.get());
+          Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
+          if (account != null) {
+            maniaClient.getTournamentClient().addMember(selectedTournament, account);
           }
-
           onReload();
         }
       } catch (Exception e) {
@@ -462,13 +461,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
     if (validConfig) {
-      List<Account> accounts = maniaClient.getAccountClient().getAccounts();
-      Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(defaultPlayer.getTournamentUserUuid())).findFirst();
-      if (first.isEmpty()) {
+      Account account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+      if (account == null) {
+        validConfig = false;
         WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
       }
-
-      validConfig = first.isPresent();
     }
     return validConfig;
   }
@@ -514,7 +511,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     boolean validTournamentSetupAvailable = isValidTournamentSetupAvailable();
     if (validTournamentSetupAvailable) {
       boolean disable = newSelection == null;
-      boolean isOwner = TournamentHelper.isOwner(newSelection.getTournament(), cabinet);
+      boolean isOwner = newSelection != null && TournamentHelper.isOwner(newSelection.getTournament(), cabinet);
 
       createBtn.setDisable(disable);
       editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
