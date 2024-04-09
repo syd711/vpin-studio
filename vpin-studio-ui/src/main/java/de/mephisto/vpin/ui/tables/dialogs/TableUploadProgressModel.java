@@ -54,11 +54,16 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getHighscoreCardsService().uploadTable(next,tableUploadDescriptor, gameId, emuId, percent -> {
+      int updatedGameId = Studio.client.getGameService().uploadTable(next, tableUploadDescriptor, gameId, emuId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
       progressResultModel.addProcessed();
+
+      TableUploadResult r = new TableUploadResult();
+      r.setUploadMode(tableUploadDescriptor);
+      r.setGameId(updatedGameId);
+      progressResultModel.getResults().add(r);
       percentage++;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);

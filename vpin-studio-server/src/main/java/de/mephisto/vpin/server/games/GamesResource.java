@@ -183,16 +183,17 @@ public class GamesResource {
 
 
   @PostMapping("/upload/table")
-  public Boolean uploadTable(@RequestParam(value = "file") MultipartFile file,
+  public int uploadTable(@RequestParam(value = "file") MultipartFile file,
                              @RequestParam(value = "gameId") int gameId,
                              @RequestParam(value = "emuId") int emuId,
                              @RequestParam(value = "mode") String modeString) {
     try {
       if (file == null) {
         LOG.error("Table upload request did not contain a file object.");
-        return false;
+        return -1;
       }
 
+      int returningGameId = -1;
       String originalFilename = file.getOriginalFilename();
       ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
       boolean keepExistingFilename = serverSettings.isVpxKeepFileNames();
@@ -239,7 +240,14 @@ public class GamesResource {
           File targetFile = new File(gameEmulator.getTablesFolder(), fileNameToExtract);
           if (keepExistingFilename) {
             uploadFile = new File(gameEmulator.getTablesFolder(), FilenameUtils.getBaseName(originalFilename) + ".vpx");
-            LOG.info("Kept existing filename \"" + uploadFile.getAbsolutePath() + "\"");
+            if(uploadFile.exists() && mode.equals(TableUploadDescriptor.uploadAndClone)) {
+              LOG.warn("Can't keep existing filename \"" + uploadFile.getAbsolutePath() + "\", because the file should be cloned...");
+              uploadFile = FileUtils.uniqueFile(uploadFile);
+              LOG.warn("... using \"" + uploadFile.getName() + "\" instead.");
+            }
+            else {
+              LOG.info("Kept existing filename \"" + uploadFile.getAbsolutePath() + "\"");
+            }
           }
           else {
             uploadFile = FileUtils.uniqueFile(targetFile);
@@ -264,12 +272,12 @@ public class GamesResource {
         switch (mode) {
           case upload: {
             //nothing, we are done here
-            return true;
+            return returningGameId;
           }
           case uploadAndImport: {
-            int importedGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
-            if (importedGameId >= 0) {
-              Game game = gameService.scanGame(importedGameId);
+            returningGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
+            if (returningGameId >= 0) {
+              Game game = gameService.scanGame(returningGameId);
               if (game != null) {
                 TableDetails tableDetails = vpsService.autoMatch(game, true);
                 if (tableDetails != null) {
@@ -277,7 +285,7 @@ public class GamesResource {
                 }
               }
             }
-            return true;
+            return returningGameId;
           }
           case uploadAndReplace: {
             //the game file has already been deleted at this point
@@ -318,21 +326,22 @@ public class GamesResource {
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
               gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
             }
-            break;
+            return returningGameId;
           }
           case uploadAndClone: {
-            int importedGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
-            if (importedGameId >= 0) {
+            returningGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
+            if (returningGameId >= 0) {
               String originalName = FilenameUtils.getBaseName(file.getOriginalFilename());
-              Game importedGame = gameService.scanGame(importedGameId);
+              Game importedGame = gameService.scanGame(returningGameId);
 
-              //update table details after new entry creation, but DO NOT TOUCH the game name
+              //update table details after new entry creation
               TableDetails tableDetails = popperService.getTableDetails(gameId);
               tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
               tableDetails.setGameFileName(uploadFile.getName());
               tableDetails.setGameDisplayName(originalName);
-              popperService.saveTableDetails(tableDetails, importedGameId, false);
-              popperService.updateTableFileUpdated(importedGameId);
+              tableDetails.setGameName(importedGame.getGameName()); //update the game name since this has changed
+              popperService.saveTableDetails(tableDetails, returningGameId, false);
+              popperService.updateTableFileUpdated(returningGameId);
               LOG.info("Created database clone entry with game name \"" + tableDetails.getGameName() + "\"");
 
               //clone popper media
@@ -345,7 +354,7 @@ public class GamesResource {
               FileUtils.cloneFile(original.getPOVFile(), uploadFile.getName());
               FileUtils.cloneFile(original.getResFile(), uploadFile.getName());
             }
-            return true;
+            return returningGameId;
           }
           default: {
             //ignore
@@ -356,6 +365,6 @@ public class GamesResource {
       LOG.error("Table upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table upload failed: " + e.getMessage());
     }
-    return false;
+    return -1;
   }
 }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -16,8 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -46,6 +49,21 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public void reload() {
     getRestClient().get(API + "games/reload", Boolean.class);
+  }
+
+  public int uploadTable(File file, TableUploadDescriptor tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "games/upload/table";
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      map.add("mode", tableUploadDescriptor.name());
+      map.add("gameId", gameId);
+      map.add("emuId", emuId);
+      ResponseEntity<Integer> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Integer.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("Table upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public boolean uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
@@ -80,7 +98,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
-        (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }

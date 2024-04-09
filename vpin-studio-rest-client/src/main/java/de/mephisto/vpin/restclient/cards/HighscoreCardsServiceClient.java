@@ -89,19 +89,4 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
-
-  public boolean uploadTable(File file, TableUploadDescriptor tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
-    try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/table";
-      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("mode", tableUploadDescriptor.name());
-      map.add("gameId", gameId);
-      map.add("emuId", emuId);
-      createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Boolean.class);
-      return true;
-    } catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
 }

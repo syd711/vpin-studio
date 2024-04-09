@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -21,6 +22,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.dialogs.TableUploadResult;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
@@ -70,6 +72,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -239,6 +242,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private TableFilterController tableFilterController;
   private List<Integer> filteredIds = new ArrayList<>();
+
+  private List<Consumer> reloadConsumers = new ArrayList<>();
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -446,13 +451,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void openUploadDialog() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    boolean updated = TableDialogs.openTableUploadDialog(game);
-    if (updated) {
-      onReload();
+    Optional<TableUploadResult> uploadResult = TableDialogs.openTableUploadDialog(game);
+    if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
+      Consumer<GameRepresentation> c = gameRepresentation -> {
+        TableUploadResult tableUploadResult = uploadResult.get();
+        Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
+        if (match.isPresent()) {
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(match.get());
 
-      if (this.games.contains(game)) {
-        tableView.getSelectionModel().select(game);
-      }
+          TableUploadDescriptor uploadMode = tableUploadResult.getUploadMode();
+          if (uploadMode.equals(TableUploadDescriptor.uploadAndClone) || uploadMode.equals(TableUploadDescriptor.uploadAndImport)) {
+            TableDialogs.openTableDataDialog(this, match.get());
+          }
+        }
+      };
+      reloadConsumers.add(c);
+      onReload();
     }
   }
 
@@ -474,7 +489,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       for (GameRepresentation game : selectedGames) {
         if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
           WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-            + "\" is used by at least one competition.", "Delete all competitions for this table first.");
+              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
           return;
         }
       }
@@ -543,7 +558,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onDismiss() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    if(game != null) {
+    if (game != null) {
       ValidationState validationState = game.getValidationState();
       DismissalUtil.dismissValidation(game, validationState);
     }
@@ -822,6 +837,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         setBusy(false);
         Platform.runLater(() -> {
           tableView.requestFocus();
+
+          for (Consumer reloadConsumer : reloadConsumers) {
+            reloadConsumer.accept(selection);
+          }
+          reloadConsumers.clear();
         });
       });
     }).start();
@@ -891,7 +911,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
-          "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
+            "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
@@ -1177,61 +1197,61 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
 
     tableView.setRowFactory(
-      tableView -> {
-        final TableRow<GameRepresentation> row = new TableRow<>();
-        final ContextMenu rowMenu = new ContextMenu();
+        tableView -> {
+          final TableRow<GameRepresentation> row = new TableRow<>();
+          final ContextMenu rowMenu = new ContextMenu();
 
-        MenuItem scanItem = new MenuItem("Scan");
-        scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
-        scanItem.setOnAction(actionEvent -> onTablesScan());
-        scanItem.setDisable(tableView.getSelectionModel().isEmpty());
-        rowMenu.getItems().add(scanItem);
+          MenuItem scanItem = new MenuItem("Scan");
+          scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
+          scanItem.setOnAction(actionEvent -> onTablesScan());
+          scanItem.setDisable(tableView.getSelectionModel().isEmpty());
+          rowMenu.getItems().add(scanItem);
 
-        MenuItem scanAllItem = new MenuItem("Scan All");
-        scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
-        scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
-        rowMenu.getItems().add(scanAllItem);
+          MenuItem scanAllItem = new MenuItem("Scan All");
+          scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
+          scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
+          rowMenu.getItems().add(scanAllItem);
 
-        rowMenu.getItems().add(new SeparatorMenuItem());
+          rowMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem validateItem = new MenuItem("Validate");
-        validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
-        validateItem.setDisable(tableView.getSelectionModel().isEmpty());
-        validateItem.setOnAction(actionEvent -> onValidate());
-        rowMenu.getItems().add(validateItem);
+          MenuItem validateItem = new MenuItem("Validate");
+          validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
+          validateItem.setDisable(tableView.getSelectionModel().isEmpty());
+          validateItem.setOnAction(actionEvent -> onValidate());
+          rowMenu.getItems().add(validateItem);
 
-        rowMenu.getItems().add(new SeparatorMenuItem());
+          rowMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem launchItem = new MenuItem("Launch");
-        launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
-        launchItem.setDisable(tableView.getSelectionModel().isEmpty());
-        launchItem.setOnAction(actionEvent -> onPlay());
-        rowMenu.getItems().add(launchItem);
+          MenuItem launchItem = new MenuItem("Launch");
+          launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
+          launchItem.setDisable(tableView.getSelectionModel().isEmpty());
+          launchItem.setOnAction(actionEvent -> onPlay());
+          rowMenu.getItems().add(launchItem);
 
-        rowMenu.getItems().add(new SeparatorMenuItem());
+          rowMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem exportItem = new MenuItem("Export");
-        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-        exportItem.setDisable(tableView.getSelectionModel().isEmpty());
-        exportItem.setOnAction(actionEvent -> onBackup());
-        rowMenu.getItems().add(exportItem);
+          MenuItem exportItem = new MenuItem("Export");
+          exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+          exportItem.setDisable(tableView.getSelectionModel().isEmpty());
+          exportItem.setOnAction(actionEvent -> onBackup());
+          rowMenu.getItems().add(exportItem);
 
-        rowMenu.getItems().add(new SeparatorMenuItem());
+          rowMenu.getItems().add(new SeparatorMenuItem());
 
 
-        MenuItem removeItem = new MenuItem("Delete");
-        removeItem.setOnAction(actionEvent -> onDelete());
-        removeItem.setDisable(tableView.getSelectionModel().isEmpty());
-        removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-        rowMenu.getItems().add(removeItem);
+          MenuItem removeItem = new MenuItem("Delete");
+          removeItem.setOnAction(actionEvent -> onDelete());
+          removeItem.setDisable(tableView.getSelectionModel().isEmpty());
+          removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+          rowMenu.getItems().add(removeItem);
 
-        // only display context menu for non-empty rows:
-        row.contextMenuProperty().bind(
-          Bindings.when(row.emptyProperty())
-            .then((ContextMenu) null)
-            .otherwise(rowMenu));
-        return row;
-      });
+          // only display context menu for non-empty rows:
+          row.contextMenuProperty().bind(
+              Bindings.when(row.emptyProperty())
+                  .then((ContextMenu) null)
+                  .otherwise(rowMenu));
+          return row;
+        });
 
 
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
