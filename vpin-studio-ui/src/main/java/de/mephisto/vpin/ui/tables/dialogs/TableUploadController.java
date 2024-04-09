@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -72,7 +74,7 @@ public class TableUploadController implements Initializable, DialogController {
   private Button cancelBtn;
 
   private File selection;
-  private boolean result = false;
+  private Optional<TableUploadResult> result = Optional.empty();
 
   private GameRepresentation game;
   private int gameId;
@@ -88,7 +90,6 @@ public class TableUploadController implements Initializable, DialogController {
   private void onUploadClick(ActionEvent event) {
     if (selection != null) {
       uploadBtn.setDisable(true);
-      result = true;
       try {
         TableUploadDescriptor descriptor = TableUploadDescriptor.upload;
         if (uploadAndImportRadio.isSelected()) {
@@ -107,7 +108,12 @@ public class TableUploadController implements Initializable, DialogController {
         });
 
         TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, gameId, descriptor, emulatorRepresentation.getId());
-        ProgressDialog.createProgressDialog(model);
+        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
+
+        List<Object> results = progressDialog.getResults();
+        if (!results.isEmpty()) {
+          result = Optional.of((TableUploadResult) results.get(0));
+        }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         stage.close();
@@ -123,7 +129,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     uploadBtn.setDisable(true);
@@ -142,7 +148,6 @@ public class TableUploadController implements Initializable, DialogController {
           this.cancelBtn.setDisable(false);
 
           if (analyze != null) {
-            result = false;
             WidgetFactory.showAlert(Studio.stage, analyze);
             this.fileNameField.setText("");
           }
@@ -166,7 +171,6 @@ public class TableUploadController implements Initializable, DialogController {
     keepDisplayNamesCheckbox.setDisable(true);
     keepNamesCheckbox.setDisable(true);
 
-    this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
@@ -236,10 +240,10 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void onDialogCancel() {
-    result = false;
+
   }
 
-  public boolean uploadFinished() {
+  public Optional<TableUploadResult> uploadFinished() {
     return result;
   }
 }
