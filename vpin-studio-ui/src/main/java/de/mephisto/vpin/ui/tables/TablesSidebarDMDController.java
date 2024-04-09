@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -95,7 +96,16 @@ public class TablesSidebarDMDController implements Initializable {
       Dialogs.editFile(ini);
     }
     else {
-      Dialogs.openTextEditor(VPinFile.DmdDeviceIni);
+      try {
+        boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
+        if (b) {
+          client.getMameService().clearCache();
+          EventManager.getInstance().notifyTablesChanged();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
+      }
     }
   }
 

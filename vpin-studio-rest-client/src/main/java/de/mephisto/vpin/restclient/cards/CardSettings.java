@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,10 +9,19 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CardSettings extends JsonSettings {
-  private String popperScreen = "Other2";
+  private String popperScreen = null;
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
+  private PopperScreen previewPopperScreen = PopperScreen.Other2;
+
+  public PopperScreen getPreviewPopperScreen() {
+    return previewPopperScreen;
+  }
+
+  public void setPreviewPopperScreen(PopperScreen previewPopperScreen) {
+    this.previewPopperScreen = previewPopperScreen;
+  }
 
   public String getPopperScreen() {
     return popperScreen;

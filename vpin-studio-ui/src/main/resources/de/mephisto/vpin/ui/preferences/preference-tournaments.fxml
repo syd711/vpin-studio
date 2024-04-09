@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
@@ -18,16 +19,15 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN MANIA PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Service Settings">
+            <Label styleClass="preference-subtitle" text="Account Settings">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
             <VBox fx:id="registrationPanel">
                <children>
-                  <Label styleClass="preference-description" text="Your build-in players can participate in VPin Mania tournaments." textFill="WHITE" />
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Enable VPin Mania to enable the registration options and views for them." textFill="WHITE" />
-                  <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" text="Enable VPin Mania Features">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Register for the VPin Mania online service to access various online features and tournaments." textFill="WHITE" />
+                  <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" text="Register Cabinet">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -35,6 +35,8 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="checkbox-description" text="Note that only your cabinet is registered and the account is bound to your cabinet." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="64.0" styleClass="checkbox-description" text="No additional personal data is stored for this." textFill="WHITE" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />
@@ -45,7 +47,21 @@
                   <Insets bottom="6.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="preference-subtitle" text="Dashboard URL">
+                  <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="error-title" text="Delete Account" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Label layoutX="10.0" layoutY="102.0" styleClass="preference-subtitle" text="Tournament Settings">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="172.0" styleClass="preference-description" text="If you want to organize tournaments, you can configure some pre-configured values here." textFill="WHITE" />
+                  <Label styleClass="default-headline" text="Dashboard URL">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -85,10 +101,13 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="Discord Invite Link">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="Discord Invite Link">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </Label>
                   <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="Add the invite link of your Discord server here. " textFill="WHITE" />
                   <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="It will be added to your tournaments so that people can join your server." textFill="WHITE" />
@@ -126,7 +145,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="131.0" styleClass="preference-subtitle" text="Tournament Description">
+                  <Label layoutX="10.0" layoutY="131.0" styleClass="default-headline" text="Tournament Description">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>

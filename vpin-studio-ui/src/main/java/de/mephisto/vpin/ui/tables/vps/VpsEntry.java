@@ -25,13 +25,13 @@ import java.util.List;
 public class VpsEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
-  public VpsEntry(String version, List<String> authors, String link, long changeDate) {
+  public VpsEntry(String version, List<String> authors, String link, long changeDate, String update) {
     this.setAlignment(Pos.BASELINE_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
     Label versionLabel = WidgetFactory.createDefaultLabel(version);
     versionLabel.setStyle("-fx-padding: 0 0 0 3px;-fx-font-size: 14px;");
     versionLabel.setPrefWidth(80);
-    if(!StringUtils.isEmpty(version)) {
+    if (!StringUtils.isEmpty(version)) {
       versionLabel.setTooltip(new Tooltip(version));
     }
     this.getChildren().add(versionLabel);
@@ -43,7 +43,7 @@ public class VpsEntry extends HBox {
     }
 
 
-    authorLabel.setPrefWidth(306);
+    authorLabel.setPrefWidth(286);
     this.getChildren().add(authorLabel);
 
     String abb = VpsUtil.abbreviate(link);
@@ -70,11 +70,20 @@ public class VpsEntry extends HBox {
     fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
     button.setGraphic(fontIcon);
 
+    Label label = new Label();
+    label.setPrefWidth(20);
     List<Node> children = new ArrayList<>();
-    if(abb.equals("Dropbox")) {
+    if (update != null) {
+      FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+      label.setGraphic(updateIcon);
+      label.setTooltip(new Tooltip("Update Available\n\n" + update));
+    }
+    children.add(label);
+
+    if (abb.equals("Dropbox")) {
       children.add(button);
     }
-    else if(abb.equals("Mega")) {
+    else if (abb.equals("Mega")) {
       children.add(spacer(5));
       button.setPrefWidth(60);
       children.add(button);
@@ -100,7 +109,6 @@ public class VpsEntry extends HBox {
     }
     this.getChildren().add(changedLabel);
   }
-
 
 
   public static Label spacer(int width) {

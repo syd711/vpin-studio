@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -40,6 +41,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Button shutdownBtn;
 
   @FXML
+  private Button restartBtn;
+
+  @FXML
   private ComboBox<String> mappingHsFileNameCombo;
 
   @FXML
@@ -54,6 +58,15 @@ public class ServerSettingsPreferencesController implements Initializable {
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getSystemService().systemShutdown();
       WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
+    }
+  }
+
+  @FXML
+  private void onRestart() {
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Server Restart", "Cancel", "Restart Server", "Are you sure you want to restart the VPin Studio Server?", null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getSystemService().restart();
+      ProgressDialog.createProgressDialog(new RestartProgressModel());
     }
   }
 

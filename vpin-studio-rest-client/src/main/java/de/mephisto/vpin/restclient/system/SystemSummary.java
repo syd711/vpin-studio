@@ -8,6 +8,15 @@ public class SystemSummary {
   private String pinupSystemDirectory;
   private ArchiveType archiveType;
   private boolean popper15;
+  private String systemId;
+
+  public String getSystemId() {
+    return systemId;
+  }
+
+  public void setSystemId(String systemId) {
+    this.systemId = systemId;
+  }
 
   public boolean isPopper15() {
     return popper15;

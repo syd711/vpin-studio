@@ -105,3 +105,4 @@ yarn-error.log*
 /resources/menu-profile/
 /resources/chrome-launcher.bat
 /resources/vpsdb.json.tmp
+/server-restart.bat

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -111,8 +112,17 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       }
     }
     else {
-      mediaView.setFitWidth(parent.getPrefWidth() - 12);
-      mediaView.setFitHeight(parent.getPrefHeight() - 50);
+      double prefWidth = parent.getPrefWidth();
+      if (prefWidth <= 0) {
+        prefWidth = ((Pane) parent.getParent()).getWidth();
+      }
+      double prefHeight = parent.getPrefHeight();
+      if (prefHeight <= 0) {
+        prefHeight = ((Pane) parent.getParent()).getHeight();
+      }
+
+      mediaView.setFitWidth(prefWidth - 12);
+      mediaView.setFitHeight(prefHeight - 50);
     }
 
     this.setCenter(mediaView);

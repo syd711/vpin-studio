@@ -2,41 +2,39 @@
 
 ### Changes
 
-- **Table Management**: Added support for **loading tables from sub-folders**. Up until now, the Studio did only assume that all VPX files and backglasses are located in the **Tables** folder of the emulator. While Popper supports sub-folders here, the Studio does now too. Because of the complexity, I disabled some additional operations for these tables, like the renaming option of the VPX file. **This required quite a lot of changes, so there might be some aftermath**.
-- **Table Management**: Added additional check for **PUP Pack** names during table scans. Some tables define this name in a separate variable that differs from the default ROM name. An additional field **Name** has been added to the PUP Pack section to show the effective PUP pack.
-- **Table Management**: Added **.ini** file uploads.
-- **Highscore Parsing**: Re-implemented all highscore parsers for all formats: VPReg.stg entries, text files and nvram files. Kudos here to **@ED209** here who provided me tons of highscore data to make this happen. Because of this data I was able to support way more tables.  
-- **Highscore Parsing**: Added support for single score tables in general (no matter if stored in nvram or text files, these were ignored before completely).
-- **Highscore Parsing**: Added some custom parsers, e.g. for "godzilla" or "monopoly" to support more tables.
-- **Pause Menu**: Removed internal browser option.
-- **Pause Menu**: Added view option "Style" to the preferences. You can now choose if entries should be rendered as part of the pause menu or if Popper assets of the "Info", "Help" and "Other2" screen should be shown on their configured screen locations. 
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/pause-menu.png" width="600" />
+- **UI Settings**: Converted the negative "Hide" description and checkboxes to positive "Show" descriptions.
+- **VPS Updates**: The VPS update calculation has been re-implemented so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.
+  
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-markers.png" width="300" />
 
-- Introduced **Default Player**: The build-in players dialog has an additional checkbox now to mark the default player of a cabinet. If set, the highscore filter won't filter anonymous highscores anymore. So for tables with anonymous highscores, the default initials will be used when Discord messages are posted. The flag will become more relevant in the future too when it comes to tournament setups.
+- **VPS Updates**: Added settings so that you can choose which update notifications to check.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/players/add-player.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/ui-settings.png" width="500" />
 
-- **Header Toolbar**: De-cluttered the toolbar by moving entries into a split menu. I also added a DOF Sync entry there.
+- **Table Uploads**: Added backup option so that tables are not simply overwritten but copied into a separate "Tables (Backups)" folder.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="300" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="600" />
 
-- **Backglass Management and Server Settings**: Added option to check the "Execute as EXE" flag for the server and individual backglass settings. It seems this may have quite some performance improvement when checked.
-- Updated shipped **VPBM** version to 2.1.
+- **Highscore Cards**: Added preview for table assets in case you decide to put your transparent highscore card above another Popper screen.
+- Updated **pinemhi** (available only for new installations).
+- Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
+- **VPX Script ~~Viewer~~ Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this does not offer much, but it will allow you to do some quick table adjustments.
+  
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="600" />
+
+- **Server Settings**: Added option to restart the VPin Studio Server.
+- **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is.
+- **VPin Studio Updates**: Added additional remote update for clients. When you update the installation from remote, the client installed on your cabinet will be updated to.
 
 ### Bugfixes
 
-- **Table Statistics**: Fixed possible "division by zero" error.
-- **Backglass Management**: Fixed accidental backglass save on selection.
-- **Backglass Manager**: Fixed a bunch of issues here, looks like I tested this one half asleep.
-- Fixed table overview errors of tables without VPS updates.
-- Fixed list sorting int the "Table Import" dialog.
-- Fixed list sorting in the "Backglass Manager" dialog.
-- Added several missing scroll bars for the table overview side sections.
-- **PUP Packs**: Added ROM aliases for PUP pack lookups.
-- **Subscription Channels**: For new subscription channel, a set of highscores was posted before the actual initial message. This has been fixed so that if no highscore filters are (player definitions) set, these score are now appended **after** the initial message.
-- **Subscription Channels**: Added support for tables with anonymous tables. Since anonymous highscore changes are not filtered anymore when a default user is set, subscription will now created for these type of tables too.
-- Added progress dialog for loading player highscore in the players section. This avoids possible concurrent database accesses when double-clicking a player.
-- Emulator Validation: The Studio can now start even if no emulator is found. This may happen when not folders have been set up in PinUP Popper.
-- **ROM Aliases**: Fixed possible error when used with multiple emulators.
-- **Highscore Card Preferences**: Fixed resetting the target screen to an empty entry to disable the generation.
+- **NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with an offset. I worked around this problem by temporary renaming the .nv files before parsing them.
+- **UI Settings**: Fixed missing refresh after changing VPS visiblity preferences.
+- **Card Settings**: Fixed issue that the default screen "Other2" was set for fresh installations. It is empty now so that the user has to activate the card generation.
+- **Table Statistics**: Fixed issue where tiles were not filled because of too large values.
+- **Table Cloning**: Added missing cloning of .ini files.
+- **VPX Commands**: Fixed VPX operations (start/stop/launch to edit) for Visual Pinball installations having a whitespace in the directory path.
+- **Overlay Key Events**: Added button debounce that fixes possible duplicated key events sent by input controllers.
+- **GPU Usage**: Fixed high GPU usage caused by the disabled(!) progress indicator of the jobs dropdown menu (WTF???). 
+- **Pause Menu**: Added nircmd.exe for a better focus management with the pause menu.

@@ -2,7 +2,6 @@ package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.*;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -14,8 +13,8 @@ public class VPSTest {
 
   @Test
   public void testDiff() {
-    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
-    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
     assertNotNull(vpsNew);
     assertNotNull(vpsOld);
     assertFalse(vpsNew.getTables().isEmpty());
@@ -27,6 +26,15 @@ public class VPSTest {
     for (VpsDiffer diffEntry : diff) {
       System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
     }
+  }
+  @Test
+  public void testDiffById() {
+    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
+    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+
+    VpsDiffer diff = VPS.getInstance().diffById(vpsOld.getTables(), vpsNew.getTables(), "O8BYvqQw98");
+    VPSChanges changes = diff.getChanges();
+    assertFalse(changes.isEmpty());
   }
 
 

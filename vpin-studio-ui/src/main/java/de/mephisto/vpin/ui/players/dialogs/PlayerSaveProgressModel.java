@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.FutureTask;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -115,8 +116,15 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       }
       else {
         if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-//          maniaClient.getAccountClient().deleteAccount(player.getTournamentUserUuid());
-          //TODO mania
+          try {
+            String accountUuId = player.getTournamentUserUuid();
+            Account acc = maniaClient.getAccountClient().getAccountByUuid(accountUuId);
+            if (acc != null) {
+              maniaClient.getAccountClient().deleteAccount(acc.getId());
+            }
+          } catch (Exception e) {
+            LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);
+          }
           player.setTournamentUserUuid(null);
         }
       }

@@ -240,6 +240,12 @@ public class GameEmulator {
     return tablesFolder;
   }
 
+  @NonNull
+  @JsonIgnore
+  public File getTableBackupsFolder() {
+    return new File(tablesFolder.getParentFile(), "Tables (Backups)/");
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

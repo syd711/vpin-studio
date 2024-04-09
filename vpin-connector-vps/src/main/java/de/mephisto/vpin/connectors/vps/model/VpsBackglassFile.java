@@ -1,10 +1,40 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class VpsBackglassFile extends VpsAuthoredUrls {
   private String id;
   private String comment;
+
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    if (!getAuthors().isEmpty()) {
+      builder.append("- Authors: ");
+      builder.append(String.join(", ", getAuthors()));
+      builder.append("\n");
+    }
+
+    if(getVersion() != null) {
+      builder.append("- Version: ");
+      builder.append(getVersion());
+      builder.append("\n");
+    }
+    if(comment != null) {
+      builder.append("- Comment: ");
+      builder.append(comment);
+      builder.append("\n");
+    }
+
+    builder.append("- Updated At: ");
+    builder.append(DateFormat.getDateTimeInstance().format(new Date(getUpdatedAt())));
+    return builder.toString();
+  }
+
+
   public String getId() {
     return id;
   }
@@ -19,28 +49,6 @@ public class VpsBackglassFile extends VpsAuthoredUrls {
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    String comment = getComment();
-    if (comment != null && comment.trim().length() > 0) {
-      builder.append(comment);
-    }
-    else {
-      builder.append(String.join(", ", getAuthors()));
-    }
-
-    if(getVersion() != null && getVersion().trim().length() > 0) {
-      builder.append(" ");
-      builder.append("(");
-      builder.append("Version ");
-      builder.append(getVersion());
-      builder.append(")");
-    }
-
-    return builder.toString();
   }
 
   @Override

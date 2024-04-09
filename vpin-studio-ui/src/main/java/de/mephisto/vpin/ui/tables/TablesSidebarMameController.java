@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -153,10 +154,15 @@ public class TablesSidebarMameController implements Initializable {
 //    else {
 //
 //    }
-    boolean b = Dialogs.openTextEditor(VPinFile.VPMAliasTxt);
-    if (b) {
-      client.getMameService().clearCache();
-      EventManager.getInstance().notifyTablesChanged();
+    try {
+      boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.VPMAliasTxt), "VPMAlias.txt");
+      if (b) {
+        client.getMameService().clearCache();
+        EventManager.getInstance().notifyTablesChanged();
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to open alias text file: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open alias text file: " + e.getMessage());
     }
   }
 

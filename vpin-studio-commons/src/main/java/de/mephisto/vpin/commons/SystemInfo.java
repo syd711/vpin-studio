@@ -16,11 +16,11 @@ public class SystemInfo {
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
-  public final static String AUTOSTART_DIR = "vpinstudio.user.autostartDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
+  public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
 
 
   @NonNull

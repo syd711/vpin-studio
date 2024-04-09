@@ -16,49 +16,65 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header-no-close.fxml" />
    </top>
    <center>
-      <VBox fx:id="root" spacing="6.0" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="root" spacing="12.0" BorderPane.alignment="TOP_LEFT">
          <children>
-            <HBox spacing="6.0">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
+            <VBox spacing="3.0">
                <children>
-                  <Label fx:id="titleLabel" text="Server Update Progress" textFill="WHITE">
+                  <HBox spacing="6.0">
+                     <children>
+                        <Label fx:id="titleLabel" text="VPin Studio Server Update Progress" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="400.0" text="Consider to define an exception for the Windows Defender if the Server update fails or is causing high CPU usage on startup." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ProgressBar fx:id="serverProgress" prefWidth="642.0" progress="0.0" />
+                  <HBox alignment="TOP_RIGHT">
+                     <children>
+                        <Label fx:id="serverLabel" text="-" textFill="WHITE" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="remoteClientUpdate" spacing="3.0">
+               <children>
+                  <Label fx:id="titleLabel111" text="VPin Studio Remote Client Update Progress" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip prefWidth="400.0" text="Consider to define an exception for the Windows Defender if the Server update fails or is causing high CPU usage on startup." wrapText="true" />
-                     </tooltip>
+                  <ProgressBar fx:id="remoteClientProgress" prefWidth="630.0" progress="0.0" />
+                  <HBox alignment="TOP_RIGHT">
+                     <children>
+                        <Label fx:id="remoteClientLabel" text="-" textFill="WHITE" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0">
+               <children>
+                  <Label fx:id="titleLabel11" text="VPin Studio Client Update Progress" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </Label>
+                  <ProgressBar fx:id="clientProgress" prefWidth="630.0" progress="0.0" />
+                  <HBox alignment="TOP_RIGHT">
+                     <children>
+                        <Label fx:id="clientLabel" text="-" textFill="WHITE" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-            <ProgressBar fx:id="serverProgress" prefWidth="642.0" progress="0.0">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </ProgressBar>
-            <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="124.0">
-               <children>
-                  <Label fx:id="serverLabel" text="-" textFill="WHITE" />
-               </children>
-            </HBox>
-            <Label fx:id="titleLabel11" layoutX="10.0" layoutY="102.0" text="Client Update Progress" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <ProgressBar fx:id="clientProgress" layoutX="10.0" layoutY="124.0" prefWidth="630.0" progress="0.0" />
-            <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="148.0">
-               <children>
-                  <Label fx:id="clientLabel" text="-" textFill="WHITE" />
-               </children>
-            </HBox>
+            </VBox>
             <HBox fx:id="footer" alignment="CENTER_RIGHT">
                <children>
                   <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="Close" />

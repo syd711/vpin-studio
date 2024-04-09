@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.dmd.DMDInstallationUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
@@ -166,13 +165,12 @@ public class VPXService {
     return null;
   }
 
-  public boolean saveSources(Game game, String base64Source) {
+  public boolean importVBS(Game game, String vbs) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
-          byte[] decoded = Base64.getDecoder().decode(base64Source);
-          VPXUtil.writeGameData(gameFile, decoded);
+          VPXUtil.importVBS(gameFile, vbs);
           LOG.info("Written table sources " + gameFile.getAbsolutePath());
           return true;
         } catch (IOException e) {

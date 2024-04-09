@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -42,6 +44,7 @@ public class OverlayWindowFX extends Application {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
 
   public static final CountDownLatch latch = new CountDownLatch(1);
+  public static int TO_FRONT_DELAY = 2500;
 
   private BorderPane root;
 
@@ -120,15 +123,19 @@ public class OverlayWindowFX extends Application {
   }
 
   public static void toFront(Stage stage, boolean visible) {
+    toFront(Arrays.asList(stage), visible);
+  }
+
+  public static void toFront(List<Stage> stages, boolean visible) {
     try {
-      Thread.sleep(2500);
-      stage.getScene().setCursor(Cursor.NONE);
+      Thread.sleep(TO_FRONT_DELAY);
+      stages.forEach(s -> s.getScene().setCursor(Cursor.NONE));
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
     Platform.runLater(() -> {
       if (visible) {
-        stage.toFront();
+        stages.stream().forEach(Stage::toFront);
       }
     });
   }
@@ -252,6 +259,7 @@ public class OverlayWindowFX extends Application {
         }
 
         PopperScreenAsset asset = new PopperScreenAsset();
+        asset.setName(file.getName());
         asset.setDisplay(display);
         asset.setRotation(rotation);
         asset.setDuration(notificationTime);
@@ -288,6 +296,7 @@ public class OverlayWindowFX extends Application {
     overlayStage.setFullScreenExitHint("");
     overlayStage.setAlwaysOnTop(true);
     overlayStage.setFullScreen(true);
+    overlayStage.setTitle("VPin Studio Overlay");
     overlayStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
 
     PauseMenu.loadPauseMenu();

@@ -16,14 +16,14 @@ public class TextEditResource {
   @Autowired
   private TextEditService textEditService;
 
-  @GetMapping("/{file}")
+  @PostMapping("/open")
   @ResponseBody
-  public TextFile getText(@PathVariable("file") VPinFile file) {
-    return textEditService.getText(file);
+  public TextFile getText(@RequestBody TextFile textFile) {
+    return textEditService.getText(textFile);
   }
 
-  @PutMapping("/{file}")
-  public TextFile save(@PathVariable("file") VPinFile file, @RequestBody Map<String, Object> values) {
-    return textEditService.save(file, (String)values.get("text"));
+  @PostMapping("/save")
+  public TextFile save(@RequestBody TextFile textFile) {
+    return textEditService.save(textFile);
   }
 }

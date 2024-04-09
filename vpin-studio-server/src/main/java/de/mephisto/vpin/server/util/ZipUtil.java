@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
 
-  public static void unzip(File archiveFile, File destinationDir) {
+  public static boolean unzip(File archiveFile, File destinationDir) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -45,8 +45,12 @@ public class ZipUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
+
+      LOG.info("Successfully extracted " + archiveFile.getAbsolutePath());
+      return true;
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      return false;
     }
   }
 

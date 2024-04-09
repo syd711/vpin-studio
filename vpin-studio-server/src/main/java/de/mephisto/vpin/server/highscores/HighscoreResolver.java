@@ -148,9 +148,8 @@ class HighscoreResolver {
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
       String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
       if (nvRamFileName.contains(" ")) {
-        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\"");
+        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
         nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
-        nvRamFileName = nvRamName + ".nv";
       }
 
       metadata.setFilename(nvRam.getCanonicalPath());
@@ -164,7 +163,7 @@ class HighscoreResolver {
       }
       metadata.setType(HighscoreType.NVRam);
 
-      return executePINemHi(nvRamFileName, nvRam);
+      return executePINemHi(nvRam);
     } catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
@@ -173,10 +172,10 @@ class HighscoreResolver {
     return null;
   }
 
-  private String executePINemHi(@NonNull String nvRamFileName, @NonNull File nvRam) throws Exception {
+  private String executePINemHi(@NonNull File nvRam) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRamFileName);
+      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
     } catch (Exception e) {
       throw e;
     }

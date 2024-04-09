@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.TextEditorController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
@@ -73,13 +73,15 @@ public class Dialogs {
     return true;
   }
 
-  public static boolean openTextEditor(VPinFile file) {
+  public static boolean openTextEditor(TextFile file, String title) throws Exception {
     FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, file.toString());
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, TextEditorController.class.getSimpleName());
     TextEditorController controller = (TextEditorController) stage.getUserData();
     controller.load(file);
-//    stage.setResizable(true);
-//    new FXResizeHelper(stage, 30, 6);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+
     stage.showAndWait();
     return controller.isSaved();
   }

@@ -2,16 +2,18 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
+import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -79,6 +82,7 @@ public class SystemResource {
     info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
+    info.setSystemId(SystemUtil.getBoardSerialNumber());
     info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
     return info;
   }
@@ -134,9 +138,44 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/clientupdate/{version}/download/start")
+  public boolean downloadClientUpdate(@PathVariable("version") String version) {
+    new Thread(() -> {
+      Thread.currentThread().setName("Client Update Downloader");
+      Updater.downloadUpdate(version, Updater.UI_ZIP);
+    }).start();
+    return true;
+  }
+
+  @GetMapping("/clientupdate/install")
+  public boolean installRemoteClientUpdate() {
+    systemService.killProcesses("javaw.exe");
+    File uiZip = new File("./", Updater.UI_ZIP);
+    if (uiZip.exists()) {
+      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
+        return false;
+      }
+      if (!uiZip.delete()) {
+        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
+        return false;
+      }
+      return true;
+    }
+    else {
+      LOG.error("Failed to download client UI, missing file.");
+    }
+    return false;
+  }
+
   @GetMapping("/update/download/status")
   public int updateDownloadStatus() {
     return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_ZIP_SIZE);
+  }
+
+  @GetMapping("/clientupdate/download/status")
+  public int updateClientDownloadStatus() {
+    return Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
   }
 
   @GetMapping("/update/install")
@@ -153,14 +192,38 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/restart")
+  public boolean restart() throws IOException {
+    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\nwscript server.vbs\nexit");
+    List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+        systemService.shutdown();
+      } catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
+    return true;
+  }
+
   @GetMapping("/autostart/installed")
   public boolean autostart() {
-    return ServerInstallationUtil.isInstalled();
+    return new File("./server.vbs").exists();
   }
 
   @GetMapping("/autostart/install")
   public boolean installService() {
     try {
+      File disabled = new File("./server.vbs.bak");
+      File file = new File("./server.vbs");
+      if (disabled.exists()) {
+        FileUtils.moveFile(disabled, file);//TODO mpf
+        return true;
+      }
       return ServerInstallationUtil.install();
     } catch (IOException e) {
       return false;
@@ -168,8 +231,11 @@ public class SystemResource {
   }
 
   @GetMapping("/autostart/uninstall")
-  public boolean uninstallService() {
-    return ServerInstallationUtil.uninstall();
+  public boolean uninstallService() throws IOException {
+    File file = new File("./server.vbs");
+    File disabled = new File("./server.vbs.bak");
+    FileUtils.moveFile(file, disabled);
+    return true;
   }
 
   @GetMapping("/version")

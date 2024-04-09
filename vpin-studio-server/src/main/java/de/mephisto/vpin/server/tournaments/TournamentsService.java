@@ -22,8 +22,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class TournamentsService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
-  private VPinManiaClient maniaClient;
-
   @Value("${vpinmania.server.host}")
   private String maniaHost;
 
@@ -53,16 +51,6 @@ public class TournamentsService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (Features.TOURNAMENTS_ENABLED) {
-      String cabinetId = SystemUtil.getBoardSerialNumber();
-      maniaClient = new VPinManiaClient(maniaHost, cabinetId);
-      LOG.info("VPin Mania client created for host " + maniaHost);
-    }
-  }
 
-  @VisibleForTesting
-  public void setCabinetId(String id) {
-    //TODO mania
-//    maniaClient.setCabinetId(id);
   }
 }

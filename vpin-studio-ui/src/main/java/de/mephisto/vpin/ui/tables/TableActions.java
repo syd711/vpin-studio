@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -15,9 +16,9 @@ public class TableActions {
 
   public static void onVpsReset(List<GameRepresentation> selectedItems) {
     try {
-      List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getUpdates().isEmpty()).collect(Collectors.toList());
+      List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getVpsUpdates().isEmpty()).collect(Collectors.toList());
       for (GameRepresentation gameRepresentation : collect) {
-        gameRepresentation.setUpdates(Collections.emptyList());
+        gameRepresentation.setUpdates(new VPSChanges());
         client.getGameService().saveGame(gameRepresentation);
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }

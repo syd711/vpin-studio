@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.games;
 
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
@@ -55,7 +56,7 @@ public class GameRepresentation {
   private int emulatorId;
   private String pupPackName;
   private Long templateId;
-  private List<String> updates = new ArrayList<>();
+  private VPSChanges vpsUpdates = new VPSChanges();
 
   public String getPupPackName() {
     return pupPackName;
@@ -81,12 +82,12 @@ public class GameRepresentation {
     this.dateAdded = dateAdded;
   }
 
-  public List<String> getUpdates() {
-    return updates;
+  public VPSChanges getVpsUpdates() {
+    return vpsUpdates;
   }
 
-  public void setUpdates(List<String> updates) {
-    this.updates = updates;
+  public void setUpdates(VPSChanges updates) {
+    this.vpsUpdates = updates;
   }
 
   public String getExtVersion() {

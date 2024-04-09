@@ -42,8 +42,9 @@ public class ImageCache extends VPinStudioClientService {
         imageCache.put(imageUrl, bytes);
         LOG.info("Cached image URL " + imageUrl + ", cache size: " + imageCache.size());
       }
-    } catch (IOException e) {
-      LOG.error("Failed to read image from URL: " + e.getMessage(), e);
+    } catch (Exception e) {
+      LOG.error("Failed to read image from URL: " + e.getMessage());
+      return null;
     }
 
     byte[] bytes = imageCache.get(imageUrl);

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -54,7 +55,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
-  private List<String> updates = new ArrayList<>();
+  private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
 
@@ -149,12 +150,12 @@ public class Game {
     this.disabled = disabled;
   }
 
-  public List<String> getUpdates() {
-    return updates;
+  public VPSChanges getVpsUpdates() {
+    return vpsChanges;
   }
 
-  public void setUpdates(List<String> updates) {
-    this.updates = updates;
+  public void setVpsUpdates(VPSChanges vpsChanges) {
+    this.vpsChanges = vpsChanges;
   }
 
   @JsonIgnore

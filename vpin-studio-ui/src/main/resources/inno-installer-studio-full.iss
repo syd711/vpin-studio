@@ -51,8 +51,6 @@ Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.vbs"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\server.bat"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -66,3 +64,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{localappdata}"
+
+[Registry]
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{app}\VPin-Studio-Server.bat"""; Flags: uninsdeletevalue

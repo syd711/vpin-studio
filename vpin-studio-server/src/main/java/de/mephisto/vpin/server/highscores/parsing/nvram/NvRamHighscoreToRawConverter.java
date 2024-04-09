@@ -6,6 +6,8 @@ import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.ScoreNvRamAdapt
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SinglePlayerScoreAdapter;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SkipFirstListScoreAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -30,16 +32,41 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SinglePlayerScoreAdapter());
   }
 
-  public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull String nvRamFileName) throws Exception {
+  public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull File nvRam) throws Exception {
+    boolean nvOffset = false;
+    File originalNVRamFile = nvRam;
+    File backedUpRamFile = nvRam;
+
     try {
-      List<String> commands = Arrays.asList(commandFile.getName(), nvRamFileName);
+      String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
+      String pinemHiSupportedNVRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
+      if (nvRamFileName.contains(" ")) {
+        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
+        pinemHiSupportedNVRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
+
+        //rename the original nvram file so that we can parse with the original name
+        originalNVRamFile = new File(nvRam.getParentFile(), pinemHiSupportedNVRamName + ".nv");
+        if (originalNVRamFile.exists()) {
+          backedUpRamFile = new File(nvRam.getParentFile(), originalNVRamFile.getName() + ".bak");
+          if (backedUpRamFile.exists()) {
+            backedUpRamFile.delete();
+          }
+          FileUtils.copyFile(originalNVRamFile, backedUpRamFile);
+          LOG.info("Temporary renamed original nvram file " + originalNVRamFile.getAbsolutePath() + " to " + backedUpRamFile.getAbsolutePath());
+          FileUtils.copyFile(nvRam, originalNVRamFile);
+          LOG.info("Temporary renamed actual nvram file " + nvRam.getAbsolutePath() + " to " + originalNVRamFile.getAbsolutePath());
+        }
+        nvOffset = true;
+      }
+
+      List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName());
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(commandFile.getParentFile());
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamFileName + ") failed: " + standardErrorFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed: " + standardErrorFromCommand;
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();
@@ -47,6 +74,11 @@ public class NvRamHighscoreToRawConverter {
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
       throw e;
+    } finally {
+      if (nvOffset && originalNVRamFile.delete()) {
+        FileUtils.copyFile(backedUpRamFile, originalNVRamFile);
+        LOG.info("Restored original nvram " + originalNVRamFile.getAbsolutePath());
+      }
     }
   }
 

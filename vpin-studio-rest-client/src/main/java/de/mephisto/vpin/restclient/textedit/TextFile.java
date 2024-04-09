@@ -3,10 +3,36 @@ package de.mephisto.vpin.restclient.textedit;
 import java.util.Date;
 
 public class TextFile {
+  private VPinFile vPinFile;
   private String content;
   private Date lastModified;
   private String path;
+  private int fileId;
   private long size;
+
+  public TextFile(VPinFile vPinFile) {
+    this.vPinFile = vPinFile;
+  }
+
+  public TextFile() {
+
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public VPinFile getvPinFile() {
+    return vPinFile;
+  }
+
+  public void setvPinFile(VPinFile vPinFile) {
+    this.vPinFile = vPinFile;
+  }
 
   public long getSize() {
     return size;
@@ -32,11 +58,11 @@ public class TextFile {
     this.lastModified = lastModified;
   }
 
-  public String getPath() {
-    return path;
+  public int getFileId() {
+    return fileId;
   }
 
-  public void setPath(String path) {
-    this.path = path;
+  public void setFileId(int fileId) {
+    this.fileId = fileId;
   }
 }

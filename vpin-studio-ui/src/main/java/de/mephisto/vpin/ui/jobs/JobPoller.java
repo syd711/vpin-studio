@@ -10,10 +10,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +27,7 @@ public class JobPoller {
   private static JobPoller instance;
 
   private final MenuButton jobMenu;
+  private final ProgressIndicator jobProgress;
   private final MenuButton messagesMenu;
 
   private final List<JobDescriptor> activeJobs = Collections.synchronizedList(new ArrayList<>());
@@ -43,15 +41,16 @@ public class JobPoller {
     }
   }
 
-  public static void create(MenuButton jobMenu, MenuButton messagesBtn) {
+  public static void create(MenuButton jobMenu, ProgressIndicator jobProgress, MenuButton messagesBtn) {
     if (instance == null) {
-      instance = new JobPoller(jobMenu, messagesBtn);
+      instance = new JobPoller(jobMenu, jobProgress, messagesBtn);
     }
   }
 
   //TODO throw UI out!
-  private JobPoller(MenuButton jobMenu, MenuButton messagesMenu) {
+  private JobPoller(MenuButton jobMenu, ProgressIndicator jobProgress, MenuButton messagesMenu) {
     this.jobMenu = jobMenu;
+    this.jobProgress = jobProgress;
     this.messagesMenu = messagesMenu;
     this.jobMenu.setStyle("-fx-background-color: #111111;");
     this.messagesMenu.setStyle("-fx-background-color: #111111;");
@@ -107,6 +106,8 @@ public class JobPoller {
 
   public void setPolling() {
     jobMenu.setDisable(false);
+    jobProgress.setProgress(-1);
+
     if (!service.isRunning()) {
       service.restart();
     }
@@ -114,7 +115,11 @@ public class JobPoller {
 
   private void refreshJobsUI(List<JobDescriptor> updatedJobList) {
     Platform.runLater(() -> {
-      jobMenu.setDisable(updatedJobList.isEmpty());
+      boolean disable = updatedJobList.isEmpty();
+      jobMenu.setDisable(disable);
+      jobProgress.setProgress(disable ? 0 : -1);
+      jobProgress.setVisible(!disable);
+
       if (jobMenu.isDisabled()) {
         jobMenu.setText("No active jobs");
       }

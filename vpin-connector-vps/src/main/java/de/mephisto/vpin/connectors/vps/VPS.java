@@ -289,6 +289,13 @@ public class VPS {
     this.tables = loadTables(null);
   }
 
+  public VpsDiffer diffById(List<VpsTable> oldTables, List<VpsTable> newTables, String id) {
+    Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equals(id)).findFirst();
+    Optional<VpsTable> newTable = newTables.stream().filter(t -> t.getId().equals(id)).findFirst();
+
+    return new VpsDiffer(newTable.orElse(null), oldTable.orElse(null));
+  }
+
   public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
     if (oldTables == null || newTables == null) {
       LOG.info("Skipping VPS diff, because lists are empty.");
@@ -300,9 +307,9 @@ public class VPS {
     for (VpsTable newTable : newTables) {
       Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
       VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
-      List<VpsDiffTypes> differences = tableDiff.getDifferences();
-      if (!differences.isEmpty()) {
-        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + differences.stream().map(Enum::name).collect(Collectors.joining(", ")));
+      VPSChanges changes = tableDiff.getChanges();
+      if (!changes.isEmpty()) {
+        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + changes.getChanges().stream().map(c -> c.getDiffType().toString()).collect(Collectors.joining(", ")));
         diff.add(tableDiff);
       }
     }

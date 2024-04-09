@@ -9,13 +9,8 @@ public enum VpsDiffTypes {
   sound,
   pupPack,
   wheel,
-  tables,
-  tableNew,
   tableNewVPX,
-  tableNewFP,
-  tableNewVersion,
   tableNewVersionVPX,
-  tableNewVersionFP,
   topper,
   tutorial,
   feature,
@@ -48,29 +43,14 @@ public enum VpsDiffTypes {
       case wheel: {
         return "Wheel Icon";
       }
-      case tables: {
-        return "Table added";
-      }
       case tutorial: {
-        return "Tutorial added";
-      }
-      case tableNew: {
-        return "New table added (VPX)";
+        return "Tutorial Added";
       }
       case tableNewVPX: {
-        return "New table added (VPX)";
+        return "New Table Added";
       }
       case tableNewVersionVPX: {
-        return "Table version updated (VPX)";
-      }
-      case tableNewVersion: {
-        return "Table version updated (VPX)";
-      }
-      case tableNewFP: {
-        return "New table added (FP)";
-      }
-      case tableNewVersionFP: {
-        return "Table version updated (FP)";
+        return "Table Version Updated";
       }
       case topper: {
         return "Topper";

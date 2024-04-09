@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.textedit.TextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -57,7 +55,7 @@ public class TextEditorController implements Initializable, DialogController {
   private Label lastModified;
 
   private RichText richText;
-  private VPinFile file;
+  private TextFile file;
 
   private boolean saved = false;
 
@@ -71,7 +69,8 @@ public class TextEditorController implements Initializable, DialogController {
     this.closeBtn.setDisable(true);
 
     try {
-      TextFile save = client.getTextEditorService().save(file, this.richText.getCodeArea().getText());
+      file.setContent(this.richText.getCodeArea().getText());
+      TextFile save = client.getTextEditorService().save(file);
       lastModified.setText(DateFormat.getDateTimeInstance().format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
     } catch (Exception ex) {
@@ -122,7 +121,7 @@ public class TextEditorController implements Initializable, DialogController {
     stage.close();
   }
 
-  public void load(VPinFile file) {
+  public void load(TextFile file) throws Exception {
     this.file = file;
     TextFile value = client.getTextEditorService().getText(file);
     lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
@@ -132,7 +131,6 @@ public class TextEditorController implements Initializable, DialogController {
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
-
 
     this.saveBtn.setDisable(false);
     this.saveAndCloseBtn.setDisable(false);

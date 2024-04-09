@@ -130,6 +130,15 @@
                            </VBox.margin>
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="If enabled, the existing display name of the table is kept insteaf of using the uploads file name." textFill="WHITE" />
+                        <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="Create backup from existing table." textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="78.0" styleClass="checkbox-description" text="If enabled, the existing VPX file will be copied into the &quot;Tables (Backups)&quot; folder of the emulator." textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets left="26.0" top="6.0" />

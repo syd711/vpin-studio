@@ -14,6 +14,7 @@ public class PopperScreenAsset {
   private InputStream inputStream;
   private String url;
   private int duration;
+  private String name;
 
   private MediaPlayer mediaPlayer;
 
@@ -23,6 +24,14 @@ public class PopperScreenAsset {
         mediaPlayer.dispose();
       }).start();
     }
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public MediaPlayer getMediaPlayer() {

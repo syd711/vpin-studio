@@ -223,7 +223,8 @@ public class Studio extends Application {
     try {
       if (Features.TOURNAMENTS_ENABLED) {
         TournamentConfig config = Studio.client.getTournamentsService().getConfig();
-        Studio.maniaClient = new VPinManiaClient(config.getUrl(), SystemUtil.getBoardSerialNumber());
+        SystemSummary summary =  Studio.client.getSystemService().getSystemSummary();
+        Studio.maniaClient = new VPinManiaClient(config.getUrl(), summary.getSystemId());
       }
     } catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());

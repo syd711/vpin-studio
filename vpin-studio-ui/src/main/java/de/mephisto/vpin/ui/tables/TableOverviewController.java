@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -955,7 +957,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnB2S.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isDirectB2SAvailable()) {
-        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.b2s.name())) {
+        if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -967,15 +969,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       try {
-        if (value.getUpdates() != null && !value.getUpdates().isEmpty()) {
+        if (!value.getVpsUpdates().isEmpty()) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
 
           Label label = new Label();
           label.setGraphic(updateIcon);
 
-          List<String> collect = value.getUpdates().stream().map(update -> "- " + VpsDiffTypes.valueOf(update)).collect(Collectors.toList());
-          String tooltip = "The table or its assets have received updates:\n\n" + String.join("\n", collect) + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
+          StringBuilder builder = new StringBuilder();
+          List<VPSChange> changes = value.getVpsUpdates().getChanges();
+          for (VPSChange change : changes) {
+            builder.append(change.toString(value.getExtTableId()));
+            builder.append("\n");
+          }
+
+          String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
           Tooltip tt = new Tooltip(tooltip);
+          tt.setStyle("-fx-font-weight: bold;");
           tt.setWrapText(true);
           tt.setMaxWidth(400);
           label.setTooltip(tt);
@@ -991,7 +1000,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPOV.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isPovAvailable() || value.isIniAvailable()) {
-        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.pov.name())) {
+        if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1010,7 +1019,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.isAltSoundAvailable()) {
-        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.altSound.name())) {
+        if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1022,7 +1031,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltColor.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.getAltColorType() != null) {
-        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.altColor.name())) {
+        if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1035,7 +1044,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       if (value.getPupPackName() != null) {
-        if (this.showVpsUpdates && value.getUpdates().contains(VpsDiffTypes.pupPack.name())) {
+        if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
@@ -1139,7 +1148,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           else if (column.equals(columnVPS)) {
             Collections.sort(tableView.getItems(), (o1, o2) -> {
-              if (o1.getUpdates() == null || o1.getUpdates().isEmpty()) {
+              if (o1.getVpsUpdates().isEmpty()) {
                 return -1;
               }
               return 1;
@@ -1418,7 +1427,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validationError.setVisible(c.getList().size() != 1);
 
     vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
-    vpsResetBtn.setDisable(c.getList().stream().filter(g -> g.getUpdates() != null && !g.getUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
+    vpsResetBtn.setDisable(c.getList().stream().filter(g -> g.getVpsUpdates() != null && !g.getVpsUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
 
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());
@@ -1559,6 +1568,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
+      columnVPS.setVisible(!uiSettings.isHideVPSUpdates());
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);

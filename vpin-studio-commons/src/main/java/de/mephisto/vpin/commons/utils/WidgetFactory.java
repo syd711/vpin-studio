@@ -492,10 +492,19 @@ public class WidgetFactory {
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
 
+    double prefWidth = parent.getPrefWidth();
+    if(prefWidth <= 0) {
+      prefWidth = ((Pane)parent.getParent()).getWidth();
+    }
+    double prefHeight = parent.getPrefHeight();
+    if(prefHeight <= 0) {
+      prefHeight =  ((Pane)parent.getParent()).getHeight();
+    }
+
     if (baseType.equals("image") && !audioOnly) {
       ImageView imageView = new ImageView();
-      imageView.setFitWidth(parent.getPrefWidth() - 10);
-      imageView.setFitHeight(parent.getPrefHeight() - 60);
+      imageView.setFitWidth(prefWidth - 10);
+      imageView.setFitHeight(prefHeight - 60);
       imageView.setPreserveRatio(true);
 
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));

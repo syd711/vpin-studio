@@ -65,7 +65,7 @@ public class Menu extends Application {
       }
 
       scene.setFill(Color.TRANSPARENT);
-      stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
+      stage.setTitle("Table Manager");
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
 
