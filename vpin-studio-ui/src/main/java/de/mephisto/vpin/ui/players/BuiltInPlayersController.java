@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -32,6 +33,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class BuiltInPlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
@@ -142,14 +144,18 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        if (selection.getTournamentUserUuid() != null) {
+        if (Features.TOURNAMENTS_ENABLED && selection.getTournamentUserUuid() != null) {
           Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
-            //TODO mania
-//            maniaClient.getAccountClient().deleteAccount(selection.getTournamentUserUuid());
-//            tableView.getSelectionModel().clearSelection();
-//            onReload();
+
+            List<Account> accounts = maniaClient.getAccountClient().getAccounts();
+            Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(selection.getTournamentUserUuid())).findFirst();
+            if (first.isPresent()) {
+              maniaClient.getAccountClient().deleteAccount(first.get().getId());
+            }
+            tableView.getSelectionModel().clearSelection();
+            onReload();
           }
         }
         else {

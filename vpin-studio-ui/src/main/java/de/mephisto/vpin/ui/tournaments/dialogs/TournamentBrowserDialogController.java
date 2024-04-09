@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchText;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -26,6 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -177,14 +179,13 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       });
     }, 300));
 
-    //TODO mania
-//    avatarColumn.setCellValueFactory(cellData -> {
-//      TournamentSearchResultItem value = cellData.getValue();
-//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
-//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-//      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
-//      return new SimpleObjectProperty<>(imageView);
-//    });
+    avatarColumn.setCellValueFactory(cellData -> {
+      TournamentSearchResultItem value = cellData.getValue();
+      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
+      return new SimpleObjectProperty<>(imageView);
+    });
 
     nameColumn.setCellValueFactory(cellData -> {
       TournamentSearchResultItem value = cellData.getValue();
@@ -257,9 +258,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         new Thread(() -> {
           Platform.runLater(() -> {
             for (TournamentSearchResultItem result : results) {
-              //TODO mania
-//              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
-//              client.getCachedUrlImage(avatarUrl);
+              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
+              client.getCachedUrlImage(avatarUrl);
             }
             tableView.setItems(FXCollections.observableList(results));
             if (!results.isEmpty()) {
@@ -290,8 +290,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     if (selection.isPresent()) {
       TournamentSearchResultItem item = selection.get();
 
-      //TODO mania
-//      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
+      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
 
       nameLabel.setText(item.getDisplayName());
       startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
@@ -305,10 +304,9 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       }
 
       ownerLabel.setText(item.getOwnerName());
-      //TODO mania
-//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
-//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-//      avatarPane.getChildren().add(imageView);
+      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      avatarPane.getChildren().add(imageView);
     }
   }
 

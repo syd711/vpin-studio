@@ -316,7 +316,7 @@ public class TournamentsController implements Initializable, StudioFXController 
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
       }
       else {
-        List<TournamentMember> memberList = new ArrayList<>(); //TODO mania maniaClient.getTournamentClient().getTournamentMembers(tournament);
+        List<TournamentMember> memberList = maniaClient.getTournamentClient().getTournamentMembers(tournament.getUuid());
         if (memberList.isEmpty()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No players have joined this tournament yet."));
         }

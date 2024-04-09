@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentEditDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentEditDialogController.class);
@@ -154,6 +156,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   private List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
+  private Cabinet cabinet;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -201,7 +204,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    if (TournamentHelper.isOwner(this.tournament)) {
+    if (TournamentHelper.isOwner(this.tournament, cabinet)) {
       ObservableList<TournamentTreeModel> items = this.tableView.getItems();
       List<String> tableEntries = new ArrayList<>();
       for (TournamentTreeModel item : items) {
@@ -271,7 +274,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.tournament = selectedTournament;
     this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(TournamentVisibility.privateTournament));
 
-    boolean isOwner = TournamentHelper.isOwner(selectedTournament);
+    boolean isOwner = TournamentHelper.isOwner(selectedTournament, cabinet);
     boolean editable = isOwner && !selectedTournament.isActive();
     if (tournament.getUuid() == null) {
       editable = true;
@@ -356,7 +359,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
               Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
               if (first.isPresent()) {
                 String vpsUrl = first.get();
-                String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
+                String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("=") + 1);
                 String[] split = idSegment.split("#");
                 VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
                 VpsTableVersion vpsVersion = null;
@@ -382,6 +385,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    cabinet = maniaClient.getCabinetClient().getCabinet();
+
     validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
@@ -518,7 +523,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {
       @Override
       public void onChanged(Change<? extends TournamentTreeModel> c) {
-        deleteTableBtn.setDisable(!TournamentHelper.isOwner(tournament) || c == null || c.getList().isEmpty());
+        deleteTableBtn.setDisable(!TournamentHelper.isOwner(tournament, cabinet) || c == null || c.getList().isEmpty());
       }
     });
 

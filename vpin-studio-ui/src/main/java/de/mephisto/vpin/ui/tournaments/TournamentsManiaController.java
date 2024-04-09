@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tournaments;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -143,6 +144,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private WaitOverlayController loaderController;
   private Account maniaAccount;
   private File tournamentBadgeFile;
+  private Cabinet cabinet;
 
 
   // Add a public no-args constructor
@@ -179,11 +181,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     String tournamentToken = WidgetFactory.showInputDialog(Studio.stage, "Join Tournament", "Enter the token of the private tournament you want to join.",
       "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
     if (tournamentToken != null) {
-      Tournament tournament = null;//TODO mania maniaClient.getTournamentClient().lookupTournament(tournamentToken);
+      Tournament tournament = maniaClient.getTournamentClient().lookupTournament(tournamentToken);
       if (tournament == null) {
         WidgetFactory.showAlert(Studio.stage, "No tournament was found for this token.");
       }
-      else if (TournamentHelper.isOwner(tournament)) {
+      else if (TournamentHelper.isOwner(tournament, cabinet)) {
         WidgetFactory.showAlert(Studio.stage, "You are the owner of tournament \"" + tournament.getDisplayName() + "\".");
       }
       else {
@@ -213,8 +215,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         if (defaultPlayer != null && defaultPlayer.isRegistered()) {
           AssetRepresentation avatar = defaultPlayer.getAvatar();
           ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
-          byte[] bytes = asset.readAllBytes();
-          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), bytes));
+          BufferedImage badge = ImageIO.read(asset);
+
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, defaultPlayer.toManiaAccount(), badge));
 
           if (!progressDialog.getResults().isEmpty()) {
             Object o = progressDialog.getResults().get(0);
@@ -294,8 +297,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         Tournament selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          Account acc = defaultPlayer.toManiaAccount();
-          maniaClient.getTournamentClient().addMember(selectedTournament, acc);
+          String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
+          List<Account> accounts = maniaClient.getAccountClient().getAccounts();
+          Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(tournamentUserUuid)).findFirst();
+          if (first.isPresent()) {
+            maniaClient.getTournamentClient().addMember(selectedTournament, first.get());
+          }
+
           onReload();
         }
       } catch (Exception e) {
@@ -327,7 +335,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get().getValue();
       Tournament tournament = tournamentTreeModel.getTournament();
-      boolean isOwner = TournamentHelper.isOwner(tournament);
+      boolean isOwner = TournamentHelper.isOwner(tournament, cabinet);
       if (isOwner) {
         deleteTournament(tournament);
       }
@@ -454,12 +462,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
     if (validConfig) {
-      //TODO mania
-//      Account account = maniaClient.getAccountClient().getAccount(defaultPlayer.getTournamentUserUuid());
-//      if (account == null) {
-//        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
-//      }
-//      validConfig = account != null;
+      List<Account> accounts = maniaClient.getAccountClient().getAccounts();
+      Optional<Account> first = accounts.stream().filter(a -> a.getUuid().equals(defaultPlayer.getTournamentUserUuid())).findFirst();
+      if (first.isEmpty()) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
+      }
+
+      validConfig = first.isPresent();
     }
     return validConfig;
   }
@@ -505,7 +514,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     boolean validTournamentSetupAvailable = isValidTournamentSetupAvailable();
     if (validTournamentSetupAvailable) {
       boolean disable = newSelection == null;
-      boolean isOwner = TournamentHelper.isOwner(newSelection.getTournament());
+      boolean isOwner = TournamentHelper.isOwner(newSelection.getTournament(), cabinet);
 
       createBtn.setDisable(disable);
       editBtn.setDisable(disable || !isOwner || newSelection.getTournament().isFinished());
@@ -539,6 +548,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @Override
   public void onViewActivated() {
+    cabinet = maniaClient.getCabinetClient().getCabinet();
+
     if (this.addBtn.isDisabled()) {
       this.onReload(Optional.empty());
     }
@@ -584,7 +595,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
   }
 
-  private File getTournamentBadge() {
+  private BufferedImage getTournamentBadge() {
     if (this.tournamentBadgeFile == null || !this.tournamentBadgeFile.exists()) {
       try {
         PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
@@ -595,20 +606,21 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
         tournamentBadgeFile = File.createTempFile("default-tournament-badge", ".png");
         tournamentBadgeFile.deleteOnExit();
-        BufferedImage toWrite = SwingFXUtils.fromFXImage(image, null);
-        ImageIO.write(toWrite, "png", tournamentBadgeFile);
+        return SwingFXUtils.fromFXImage(image, null);
       } catch (Exception e) {
         LOG.error("Error writing tournament badge file: " + e.getMessage(), e);
       }
     }
 
-    return this.tournamentBadgeFile;
+    return null;
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
     treeTableView.setShowRoot(false);
+
+    cabinet = maniaClient.getCabinetClient().getCabinet();
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));

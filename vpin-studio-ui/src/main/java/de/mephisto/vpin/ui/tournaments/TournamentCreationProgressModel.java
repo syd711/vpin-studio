@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Arrays;
@@ -20,12 +21,11 @@ public class TournamentCreationProgressModel extends ProgressModel<Tournament> {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentCreationProgressModel.class);
   private List<Tournament> tournaments;
   private final Account account;
-  private final byte[] badge;
-  private File badgeFile;
+  private final BufferedImage badge;
 
   private Iterator<Tournament> iterator;
 
-  public TournamentCreationProgressModel(Tournament tournament, Account account, byte[] badge) {
+  public TournamentCreationProgressModel(Tournament tournament, Account account, BufferedImage badge) {
     super("Creating Tournament \"" + tournament.getDisplayName() + "\"");
     this.tournaments = Arrays.asList(tournament);
     this.account = account;
@@ -59,11 +59,6 @@ public class TournamentCreationProgressModel extends ProgressModel<Tournament> {
   }
 
   @Override
-  public void finalizeModel(ProgressResultModel progressResultModel) {
-    this.badgeFile.delete();
-  }
-
-  @Override
   public String nextToString(Tournament game) {
     return "Saving Tournament";
   }
@@ -71,14 +66,7 @@ public class TournamentCreationProgressModel extends ProgressModel<Tournament> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, Tournament next) {
     try {
-      badgeFile = File.createTempFile("avatar", ".png");
-      badgeFile.deleteOnExit();
-
-      FileOutputStream out = new FileOutputStream(badgeFile);
-      IOUtils.write(badge, out);
-      out.close();
-
-      Tournament tournament = maniaClient.getTournamentClient().create(next, account, badgeFile);
+      Tournament tournament = maniaClient.getTournamentClient().create(next, account, badge);
       progressResultModel.getResults().add(tournament);
     } catch (Exception e) {
       LOG.error("Error creating tournament: " + e.getMessage(), e);
