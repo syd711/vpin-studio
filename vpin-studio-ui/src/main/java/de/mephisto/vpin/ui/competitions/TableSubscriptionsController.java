@@ -229,7 +229,10 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     client.clearWheelCache();
 
     tableView.setVisible(false);
-    tableStack.getChildren().add(loadingOverlay);
+
+    if (!tableStack.getChildren().contains(loadingOverlay)) {
+      tableStack.getChildren().add(loadingOverlay);
+    }
 
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);

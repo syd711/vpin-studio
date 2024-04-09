@@ -3,12 +3,12 @@ package de.mephisto.vpin.commons.fx.widgets;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -86,11 +86,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
     competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
-        "    -fx-border-style: solid solid solid solid;\n" +
-        "    -fx-border-color: #111111;\n" +
-        "    -fx-background-color: #111111;\n" +
-        "    -fx-background-radius: 6;" +
-        "    -fx-border-width: 1;");
+      "    -fx-border-style: solid solid solid solid;\n" +
+      "    -fx-border-color: #111111;\n" +
+      "    -fx-background-color: #111111;\n" +
+      "    -fx-background-radius: 6;" +
+      "    -fx-border-width: 1;");
 
     emptylabel = new Label(OFFLINE_EMPTY_TEXT);
     emptylabel.getStyleClass().add("preference-description");
@@ -116,16 +116,17 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     else {
       topBox.setVisible(true);
       emptylabel.setVisible(false);
-      GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
-      GameMediaRepresentation gameMedia = game.getGameMedia();
 
-      if(competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-        durationLabel.setText("Table Subscription");
-        tableNameLabel.setText("Current Scores");
-      }
-      else {
-        durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
-        tableNameLabel.setText(game.getGameDisplayName());
+      GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
+      if (game != null) {
+        if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+          durationLabel.setText("Table Subscription");
+          tableNameLabel.setText("Current Scores");
+        }
+        else {
+          durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+          tableNameLabel.setText(game.getGameDisplayName());
+        }
       }
 
       competitionLabel.setText(competition.getName());
@@ -150,7 +151,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       name2.setVisible(isActive);
       name3.setVisible(isActive);
 
-      if (competition.isActive()) {
+      if (competition.isActive() && game != null) {
         ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
         if (latestCompetitionScore != null) {
           List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
@@ -173,6 +174,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }
       }
 
+      if (game == null) {
+        return;
+      }
+
+      GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
@@ -186,8 +192,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
       Image image = new Image(OverlayWindowFX.client.getCompetitionBackground(competition.getGameId()));
       BackgroundImage myBI = new BackgroundImage(image,
-          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-          BackgroundSize.DEFAULT);
+        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        BackgroundSize.DEFAULT);
       topBox.setBackground(new Background(myBI));
     }
   }

@@ -3,11 +3,11 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -34,8 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -177,7 +177,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
-          help, help2);
+        help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -283,7 +283,10 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      InputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      if (gameMediaItem == null) {
+        gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
+      }
       Image image = new Image(gameMediaItem);
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
@@ -344,7 +347,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     });
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-        "Create a new competition by pressing the '+' button."));
+      "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
       refreshView(Optional.ofNullable(newSelection));

@@ -24,10 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 /*********************************************************************************************************************
@@ -266,7 +263,12 @@ public class GamesServiceClient extends VPinStudioClientService {
     if (this.games == null || this.games.isEmpty()) {
       this.games = this.getKnownGames();
     }
-    return this.games.stream().filter(g -> g.getId() == gameId).findFirst().orElseGet(null);
+
+    Optional<GameRepresentation> first = this.games.stream().filter(g -> g.getId() == gameId).findFirst();
+    if(first.isPresent()) {
+      return first.get();
+    }
+    return null;
   }
 
   public ScoreSummaryRepresentation getRecentScores(int count) {

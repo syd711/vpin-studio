@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -409,7 +410,11 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      InputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      if (gameMediaItem == null) {
+        gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
+      }
+
       Image image = new Image(gameMediaItem);
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
