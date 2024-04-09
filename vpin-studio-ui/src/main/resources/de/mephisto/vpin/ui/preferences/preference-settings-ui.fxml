@@ -216,6 +216,15 @@
                </VBox.margin>
             </CheckBox>
             <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="You only need this column if you are running an installation with multiple VPX emulators." textFill="WHITE" />
+            <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
                <VBox.margin>
                   <Insets top="24.0" />

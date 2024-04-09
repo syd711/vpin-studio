@@ -23,8 +23,17 @@ public class UISettings extends JsonSettings {
   private boolean hideUpdateInfo;
 
   private boolean hideEmulatorColumn = true;
+  private boolean autoEditTableData = true;
 
   private boolean autoFill = true;
+
+  public boolean isAutoEditTableData() {
+    return autoEditTableData;
+  }
+
+  public void setAutoEditTableData(boolean autoEditTableData) {
+    this.autoEditTableData = autoEditTableData;
+  }
 
   public boolean isVpsWheel() {
     return vpsWheel;

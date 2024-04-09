@@ -53,6 +53,9 @@ public class UISettingsPreferencesController implements Initializable {
   private CheckBox uiShowEmuColCheckbox;
 
   @FXML
+  private CheckBox autoEditCheckbox;
+
+  @FXML
   private CheckBox vpsAltSound;
   @FXML
   private CheckBox vpsAltColor;
@@ -216,6 +219,13 @@ public class UISettingsPreferencesController implements Initializable {
     uiShowEmuColCheckbox.setSelected(!uiSettings.isHideEmulatorColumn());
     uiShowEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideEmulatorColumn(!t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    autoEditCheckbox.setSelected(uiSettings.isAutoEditTableData());
+    autoEditCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setAutoEditTableData(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
