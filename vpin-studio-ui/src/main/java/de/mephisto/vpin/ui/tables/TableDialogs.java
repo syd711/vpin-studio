@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
@@ -250,10 +251,10 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<TableUploadResult> openTableUploadDialog(GameRepresentation game) {
+  public static Optional<TableUploadResult> openTableUploadDialog(GameRepresentation game, TableUploadDescriptor descriptor) {
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(game);
+    controller.setGame(game, descriptor);
     stage.showAndWait();
 
     return controller.uploadFinished();

@@ -132,7 +132,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+      new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     uploadBtn.setDisable(true);
@@ -227,7 +227,7 @@ public class TableUploadController implements Initializable, DialogController {
     });
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(GameRepresentation game, TableUploadDescriptor descriptor) {
     this.game = game;
 
     if (game != null) {
@@ -246,6 +246,21 @@ public class TableUploadController implements Initializable, DialogController {
       this.keepNamesCheckbox.setDisable(true);
       this.uploadAndCloneRadio.setDisable(true);
       this.gameId = -1;
+    }
+
+    switch (descriptor) {
+      case uploadAndClone: {
+        this.uploadAndCloneRadio.setSelected(true);
+        break;
+      }
+      case uploadAndImport: {
+        this.uploadAndImportRadio.setSelected(true);
+        break;
+      }
+      case uploadAndReplace: {
+        this.uploadAndReplaceRadio.setSelected(true);
+        break;
+      }
     }
   }
 

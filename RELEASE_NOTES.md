@@ -4,7 +4,7 @@
 
 
 - **UI Settings**: Converted the negative "Hide" description and checkboxes to positive "Show" descriptions.
-- **VPS Updates**: The VPS update calculation has been re-implemented so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.
+- **VPS Updates**: The VPS update calculation has been **re-implemented** so that less updates are fired. The new differencing returns the details of the updates now too. Additionally, you can see update markers in the VPS section now.
   
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/update-markers.png" width="500" />
 
@@ -27,6 +27,10 @@
 - **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is.
 - **VPin Studio Updates**: Added additional remote update for clients. When you update the installation from remote, the client installed on your cabinet will be updated to.
 - **Table Uploads**: The uploaded table is now selected after the upload is finished. The table data manager is opened then too. You can disable this behaviour in the settings.
+- **Table Overview Context Menu**: Improved table overview's table context menu.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/context-menu.png" width="600" />
+
 
 ### Bugfixes
 
