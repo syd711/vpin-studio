@@ -21,7 +21,7 @@
 - Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
 - **VPX Script ~~Viewer~~ Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this **does not offer much**, but it will allow you to do some quick table adjustments.
   
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="700" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="600" />
 
 - **Server Settings**: Added option to restart the VPin Studio Server.
 - **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is.
@@ -29,7 +29,7 @@
 - **Table Uploads**: The uploaded table is now selected after the upload is finished. The table data manager is opened then too. You can disable this behaviour in the settings.
 - **Table Overview Context Menu**: Improved table overview's table context menu.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/context-menu.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/context-menu.png" width="450" />
 
 
 ### Bugfixes
@@ -43,4 +43,4 @@
 - **VPX Commands**: Fixed VPX operations (start/stop/launch to edit) for Visual Pinball installations having a whitespace in the directory path.
 - **Overlay Key Events**: Added button debounce that fixes possible duplicated key events sent by input controllers.
 - **GPU Usage**: Fixed high GPU usage caused by the disabled(!) progress indicator of the jobs dropdown menu (WTF???). 
-- **Pause Menu**: Added nircmd.exe for a better focus management with the pause menu. The development there is still not finished and need polishing.
+- **Pause Menu**: Added nircmd.exe for a better focus management with the pause menu. The development there is still not finished and needs more polishing.
