@@ -301,6 +301,7 @@ public class GamesResource {
           }
           case uploadAndReplace: {
             //the game file has already been deleted at this point
+            returningGameId = gameId;
             TableDetails tableDetails = popperService.getTableDetails(gameId);
             tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 

@@ -440,19 +440,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onTableUpload() {
+    openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport);
+  }
+
+  private void openUploadDialogWithCheck(TableUploadDescriptor uploadDescriptor) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        openUploadDialog();
+        openUploadDialog(uploadDescriptor);
       }
       return;
     }
 
-    openUploadDialog();
+    openUploadDialog(uploadDescriptor);
   }
 
-  private void openUploadDialog() {
+  private void openUploadDialog(TableUploadDescriptor uploadDescriptor) {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<TableUploadResult> uploadResult = TableDialogs.openTableUploadDialog(game, TableUploadDescriptor.uploadAndImport);
+    Optional<TableUploadResult> uploadResult = TableDialogs.openTableUploadDialog(game, uploadDescriptor);
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
       Consumer<GameRepresentation> c = gameRepresentation -> {
         TableUploadResult tableUploadResult = uploadResult.get();
@@ -1313,19 +1317,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
     uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
     uploadAndImportTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadAndImportTableItem.setOnAction(actionEvent -> TableDialogs.openTableUploadDialog(tableView.getSelectionModel().getSelectedItem(), TableUploadDescriptor.uploadAndImport));
+    uploadAndImportTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
     ctxMenu.getItems().add(uploadAndImportTableItem);
 
     MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
     uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
     uploadAndReplaceTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadAndReplaceTableItem.setOnAction(actionEvent -> TableDialogs.openTableUploadDialog(tableView.getSelectionModel().getSelectedItem(), TableUploadDescriptor.uploadAndReplace));
+    uploadAndReplaceTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
     ctxMenu.getItems().add(uploadAndReplaceTableItem);
 
     MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
     uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
     uploadAndCloneTableItem.setDisable(tableView.getSelectionModel().isEmpty() || game == null || game.getGameFileName().contains("\\"));
-    uploadAndCloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableUploadDialog(tableView.getSelectionModel().getSelectedItem(), TableUploadDescriptor.uploadAndClone));
+    uploadAndCloneTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
     ctxMenu.getItems().add(uploadAndCloneTableItem);
 
     Menu uploadMenu = new Menu("Upload...");

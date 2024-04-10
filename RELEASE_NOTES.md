@@ -21,7 +21,7 @@
 - Added **vpxtool** from https://github.com/francisdb/vpxtool. This tool is used to import and export VB script from VPX files.
 - **VPX Script ~~Viewer~~ Editor(!)**: Finally, thanks to the **vpxtool** you now can not only view the VB script of a table, but also edit it and save it back to the VPX file. The editor for this **does not offer much**, but it will allow you to do some quick table adjustments.
   
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/script-viewer.png" width="700" />
 
 - **Server Settings**: Added option to restart the VPin Studio Server.
 - **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is.
