@@ -423,6 +423,17 @@ public class TableDataController implements Initializable, DialogController, Aut
         gNotes.setText(td.getgNotes());
         gDetails.setText(td.getgDetails());
         gLog.setText(td.getgLog());
+
+        if (uiSettings.isAutoFillScreenName()) {
+          String vpsTableMappingField = serverSettings.getMappingVpsTableId();
+          String vpsTableId = tableDetails.getMappedValue(vpsTableMappingField);
+          if (!StringUtils.isEmpty(vpsTableId)) {
+            VpsTable table = VPS.getInstance().getTableById(vpsTableId);
+            String displayName = table.getDisplayName();
+            gameDisplayName.setText(displayName);
+          }
+
+        }
       }
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
@@ -830,7 +841,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
         GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-        if(defaultConfiguration.getBounds().getHeight() < 1080) {
+        if (defaultConfiguration.getBounds().getHeight() < 1080) {
           BorderPane root = (BorderPane) stage.getScene().getRoot();
           root.setPrefHeight(820);
         }
@@ -846,9 +857,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     });
 
-    autoFillCheckbox.setSelected(uiSettings.isAutoFill());
+    autoFillCheckbox.setSelected(uiSettings.isAutoFillScreenName());
     autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      uiSettings.setAutoFill(newValue);
+      uiSettings.setAutoFillScreenName(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
@@ -1391,9 +1402,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
     tableDetails.setMappedValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
 
-    if (autoFillCheckbox.isSelected()) {
-      onAutoFill();
-    }
+    onAutoFill();
   }
 
   /**

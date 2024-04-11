@@ -86,7 +86,7 @@
                                                             <Tooltip text="Every table will be added to the first playlist that is found." />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                      <Label styleClass="default-text" text="Game Screen Name:*" textFill="WHITE" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -172,6 +172,32 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
                                                          </graphic>
                                                       </Button>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                         <children>
+                                                            <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Fill" textFill="WHITE">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="3.0" />
+                                                               </HBox.margin>
+                                                            </CheckBox>
+                                                            <Label>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="If enabled, the screen name will be updated on table version selection." wrapText="true" />
+                                                               </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="6.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
                               
                                     
                               
@@ -632,11 +658,6 @@
                                                             <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
                                                          </tooltip>
                                                       </SplitMenuButton>
-                                                      <CheckBox fx:id="autoFillCheckbox" layoutX="161.0" layoutY="15.0" mnemonicParsing="false" text="Auto-Fill on Selection" textFill="WHITE">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </CheckBox>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="12.0" />

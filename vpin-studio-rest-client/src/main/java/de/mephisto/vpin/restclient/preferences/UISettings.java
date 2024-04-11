@@ -23,9 +23,11 @@ public class UISettings extends JsonSettings {
   private boolean hideUpdateInfo;
 
   private boolean hideEmulatorColumn = true;
+
+  //open after upload
   private boolean autoEditTableData = true;
 
-  private boolean autoFill = true;
+  private boolean autoFillScreenName = true;
 
   public boolean isAutoEditTableData() {
     return autoEditTableData;
@@ -115,12 +117,12 @@ public class UISettings extends JsonSettings {
     this.vpsTutorial = vpsTutorial;
   }
 
-  public boolean isAutoFill() {
-    return autoFill;
+  public boolean isAutoFillScreenName() {
+    return autoFillScreenName;
   }
 
-  public void setAutoFill(boolean autoFill) {
-    this.autoFill = autoFill;
+  public void setAutoFillScreenName(boolean autoFillScreenName) {
+    this.autoFillScreenName = autoFillScreenName;
   }
 
   public boolean isHideEmulatorColumn() {

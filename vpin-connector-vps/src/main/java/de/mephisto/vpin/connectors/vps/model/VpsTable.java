@@ -145,7 +145,7 @@ public class VpsTable implements VPSEntity {
   }
 
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if(t.getTableFormat() == null) {
+    if (t.getTableFormat() == null) {
       return true;
     }
     return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty());
@@ -211,12 +211,15 @@ public class VpsTable implements VPSEntity {
 
   public String getDisplayName() {
     String result = this.name;
-    if(this.manufacturer != null && this.manufacturer.length() >0) {
-      result = result + " | " + this.manufacturer;
+    if (this.manufacturer != null && this.manufacturer.trim().length() > 0) {
+      result = result + " (" + this.manufacturer;
     }
 
-    if(this.year > 0) {
-      result = result + " (" + this.year + ")";
+    if (this.year > 0) {
+      result = result + " " + this.year + ")";
+    }
+    else {
+      result = result + ")";
     }
 
     return result;

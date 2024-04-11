@@ -44,3 +44,4 @@
 - **Overlay Key Events**: Added button debounce that fixes possible duplicated key events sent by input controllers.
 - **GPU Usage**: Fixed high GPU usage caused by the disabled(!) progress indicator of the jobs dropdown menu (WTF???). 
 - **Pause Menu**: Added nircmd.exe for a better focus management with the pause menu. The development there is still not finished and needs more polishing.
+- **System Manager**: Added inclusion for **-sc** suffixed packages of the VPinMAME component installer.
