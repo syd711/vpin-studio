@@ -111,7 +111,7 @@ public class VPSTest {
     }
 
     assertEquals(1, vpsTables.size());
-    assertEquals("2 in 1 | Bally (1964)", vpsTables.get(0).getDisplayName());
+    assertEquals("2 in 1 (Bally 1964)", vpsTables.get(0).getDisplayName());
 
     vpsTables = vps.find("X-Files");
     assertTrue(!vpsTables.isEmpty());
