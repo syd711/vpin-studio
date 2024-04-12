@@ -26,6 +26,7 @@
 - **Server Settings**: Added option to restart the VPin Studio Server.
 - **VPin Studio Installer**: Added registry option to auto-start the server. The installation will no longer ask for the auto-start folder but will use the registry instead. For existing users: you can keep the existing auto-start as is.
 - **VPin Studio Updates**: Added additional remote update for clients. When you update the installation from remote, the client installed on your cabinet will be updated to.
+- **Table Data Manager**: Changed label from "Game Display Name" to "Game Screen Name" (same like in Popper) and added auto-renmaing flag, so that the screen name is updated of VP-spreadsheet table selection. 
 - **Table Uploads**: The uploaded table is now selected after the upload is finished. The table data manager is opened then too. You can disable this behaviour in the settings.
 - **Table Overview Context Menu**: Improved table overview's table context menu.
 
@@ -35,7 +36,7 @@
 ### Bugfixes
 
 - **NVOffsets**: Fixed problem that **pinemhi** is not able to read nvram files with an offset. I worked around this problem by temporary renaming the .nv files before parsing them.
-- **UI Settings**: Fixed missing refresh after changing VPS visiblity preferences.
+- **UI Settings**: Fixed missing refresh after changing VPS visibility preferences.
 - **Card Settings**: Fixed issue that the default screen "Other2" was set for fresh installations. It is empty now so that the user has to activate the card generation.
 - **Table Statistics**: Fixed issue where tiles were not filled because of too large values.
 - **Table Cloning**: Added missing cloning of .ini files.
