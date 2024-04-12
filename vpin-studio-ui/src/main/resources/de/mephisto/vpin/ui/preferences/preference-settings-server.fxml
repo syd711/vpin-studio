@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,242 +18,247 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
-   <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
-         <children>
-            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Server Settings">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Label styleClass="preference-description" text="Overall service options can be configured here." textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" top="12.0" />
-               </VBox.margin>
-            </Label>
-            <GridPane alignment="BASELINE_RIGHT" prefWidth="708.0" vgap="3.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.8000244140625" minWidth="10.0" prefWidth="325.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="440.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
+   <center>
+      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-label" text="Start service when computer is started:" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                  <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Server Settings">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </Label>
-                  <Label fx:id="startupTimeLabel1" textFill="WHITE" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                  <Label styleClass="preference-description" text="Overall service options can be configured here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="12.0" />
+                     </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="serviceStartupCheckbox" mnemonicParsing="false" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Auto-shutdown Windows after being idle for" textFill="WHITE" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <GridPane alignment="BASELINE_RIGHT" prefWidth="708.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.8000244140625" minWidth="10.0" prefWidth="325.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="440.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
-                        <Spinner fx:id="idleSpinner" />
-                        <Label text="minutes" textFill="WHITE">
+                        <Label styleClass="preference-label" text="Start service when computer is started:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <HBox.margin>
-                              <Insets left="3.0" />
-                           </HBox.margin>
                         </Label>
+                        <Label fx:id="startupTimeLabel1" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="serviceStartupCheckbox" mnemonicParsing="false" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Auto-shutdown Windows after being idle for" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="idleSpinner" />
+                              <Label text="minutes" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="3.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Label text="(set to '0' to disable)" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="System Shutdown:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Button fx:id="shutdownBtn" mnemonicParsing="false" onAction="#onShutdown" styleClass="error-title" text="Shutdown System" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Label prefHeight="40.0" prefWidth="18.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled if connected from remote." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-                  <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Label text="(set to '0' to disable)" />
-                     </children>
-                  </HBox>
-                  <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="System Shutdown:" textFill="WHITE" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </GridPane>
+                  <Label styleClass="preference-description" text="Miscellaneous information about the VPin Studio Service." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="12.0" />
+                     </VBox.margin>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <GridPane.margin>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                     </GridPane.margin>
+                  <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefWidth="708.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.2000732421875" minWidth="10.0" prefWidth="199.599951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="568.400048828125" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
-                        <Button fx:id="shutdownBtn" mnemonicParsing="false" onAction="#onShutdown" styleClass="error-title" text="Shutdown System" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="Startup Time:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Version:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="versionLabel" layoutX="129.0" layoutY="15.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-label" text="VPin Studio Server Restart:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label prefHeight="40.0" prefWidth="18.0">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="Only enabled if connected from remote." wrapText="true" />
-                           </tooltip>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                           </graphic>
-                        </Label>
                      </children>
-                  </HBox>
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-            </GridPane>
-            <Label styleClass="preference-description" text="Miscellaneous information about the VPin Studio Service." textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="6.0" top="12.0" />
-               </VBox.margin>
-            </Label>
-            <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" prefWidth="708.0" vgap="3.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.2000732421875" minWidth="10.0" prefWidth="199.599951171875" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="568.400048828125" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Startup Time:" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </GridPane>
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </Label>
-                  <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Version:" textFill="WHITE" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="versionLabel" layoutX="129.0" layoutY="15.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label styleClass="preference-label" text="VPin Studio Server Restart:" textFill="WHITE" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="Create a copy of the VPin Studio database (with timestamp) as backup." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="The copy is created inside the servers installation folder under &quot;resources/backups&quot;." textFill="WHITE" />
+                  <Button mnemonicParsing="false" onAction="#onBackup" text="Create Backup">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Label layoutX="34.0" layoutY="360.0" styleClass="preference-subtitle" text="Table Data Mapping">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="498.0" styleClass="preference-description" text="This section lets you select the PinUP Popper database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="121.60007324218753" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </ComboBox>
+                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="VP-Spreadsheet Table Version Id:" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="(Used by some tables to write scores into)" textFill="WHITE" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="(The id for the overall table type on VPS)" textFill="WHITE" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="(The id of the version/mod of the table type)" textFill="WHITE" GridPane.rowIndex="5" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Label styleClass="preference-subtitle" text="Options">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
+                  <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch PinUP Popper on maintenance exit." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="624.0" styleClass="checkbox-description" text="When working remote, PinUP Popper can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
                </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-            </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup">
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="Create a copy of the VPin Studio database (with timestamp) as backup." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="The copy is created inside the servers installation folder under &quot;resources/backups&quot;." textFill="WHITE" />
-            <Button mnemonicParsing="false" onAction="#onBackup" text="Create Backup">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <Label layoutX="34.0" layoutY="360.0" styleClass="preference-subtitle" text="Table Data Mapping">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="498.0" styleClass="preference-description" text="This section lets you select the PinUP Popper database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
-            <GridPane hgap="3.0" vgap="3.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="121.60007324218753" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
-                  <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin></ComboBox>
-                  <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="VP-Spreadsheet Table Version Id:" textFill="WHITE" GridPane.rowIndex="4">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="(Used by some tables to write scores into)" textFill="WHITE" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="(The id for the overall table type on VPS)" textFill="WHITE" GridPane.rowIndex="3" />
-                  <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="(The id of the version/mod of the table type)" textFill="WHITE" GridPane.rowIndex="5" />
-               </children>
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </GridPane>
-            <Label styleClass="preference-subtitle" text="Options">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
-            <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch PinUP Popper on maintenance exit." textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </CheckBox>
-            <Label layoutX="34.0" layoutY="624.0" styleClass="checkbox-description" text="When working remote, PinUP Popper can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
-         </children>
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding>
-      </VBox>
-   </top>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
 </BorderPane>
