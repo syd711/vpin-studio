@@ -1,13 +1,12 @@
 package de.mephisto.vpin.server.pinemhi;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -158,8 +157,42 @@ public class PINemHiService implements InitializingBean {
   }
 
 
+  private void checkForUpdates() {
+    try {
+      List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-v");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(new File("resources/pinemhi"));
+      executor.executeCommand();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      String[] split = standardOutputFromCommand.toString().split("\n");
+      for (String s : split) {
+        if (s.contains("Version")) {
+          String version = s.trim().split(" ")[1];
+          String pinemhiVersion = systemService.getScoringDatabase().getPinemhiVersion();
+          if (version.equals(pinemhiVersion)) {
+            LOG.info("Using latest version of PINemHi (" + version + ")");
+          }
+          else {
+            LOG.info("PINemHi is outdated (" + version + " vs. " + pinemhiVersion + "), checking for updates.");
+            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi.ini", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
+            for (String resource : resources) {
+              File check = new File(SystemService.RESOURCES + "pinemhi/", resource);
+              LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
+              Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
+            }
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      LOG.error("Failed to check for pinemhi updates: " + e.getMessage(), e);
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
+    checkForUpdates();
     loadSettings();
     this.enabled = getAutoStart();
     if (enabled) {

@@ -94,6 +94,9 @@ public class TablesSidebarMameController implements Initializable {
   private CheckBox soundMode;
 
   @FXML
+  private CheckBox forceStereo;
+
+  @FXML
   private Button applyDefaultsBtn;
 
   @FXML
@@ -226,6 +229,7 @@ public class TablesSidebarMameController implements Initializable {
     useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
     colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
     soundMode.setSelected(defaultOptions.isSoundMode());
+    forceStereo.setSelected(defaultOptions.isSoundMode());
 
     saveDisabled = false;
     saveOptions();
@@ -258,6 +262,7 @@ public class TablesSidebarMameController implements Initializable {
     useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    forceStereo.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 
 
@@ -292,6 +297,7 @@ public class TablesSidebarMameController implements Initializable {
     useExternalDmd.setSelected(false);
     colorizeDmd.setSelected(false);
     soundMode.setSelected(false);
+    forceStereo.setSelected(false);
 
     this.errorBox.setVisible(false);
     this.applyDefaultsBtn.setDisable(!g.isPresent());
@@ -336,6 +342,7 @@ public class TablesSidebarMameController implements Initializable {
           useExternalDmd.setSelected(options.isUseExternalDmd());
           colorizeDmd.setSelected(options.isColorizeDmd());
           soundMode.setSelected(options.isSoundMode());
+          forceStereo.setSelected(options.isForceStereo());
 
           if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
             ValidationState validationState = options.getValidationStates().get(0);
@@ -362,6 +369,7 @@ public class TablesSidebarMameController implements Initializable {
     useExternalDmd.setDisable(b);
     colorizeDmd.setDisable(b);
     soundMode.setDisable(b);
+    forceStereo.setDisable(b);
   }
 
   private void saveOptions() {
@@ -383,6 +391,7 @@ public class TablesSidebarMameController implements Initializable {
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
     options.setSoundMode(soundMode.isSelected());
+    options.setForceStereo(forceStereo.isSelected());
 
     try {
       client.getMameService().saveOptions(options);

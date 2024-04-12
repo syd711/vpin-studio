@@ -31,6 +31,7 @@ public class MameService implements InitializingBean {
   private final static String KEY_USER_EXTERNAL_DMD = "showpindmd";
   private final static String KEY_COLORIZE_DMD = "dmd_colorize";
   private final static String KEY_SOUND_MODE = "sound_mode";
+  private final static String KEY_FORCE_STEREO = "force_stereo";
 
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
@@ -73,6 +74,7 @@ public class MameService implements InitializingBean {
       options.setUseExternalDmd(getBoolean(values, KEY_USER_EXTERNAL_DMD));
       options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
       options.setSoundMode(getBoolean(values, KEY_SOUND_MODE));
+      options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
     }
 
     mameCache.put(options.getRom().toLowerCase(), options);
@@ -97,6 +99,7 @@ public class MameService implements InitializingBean {
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.isSoundMode() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return getOptions(rom);

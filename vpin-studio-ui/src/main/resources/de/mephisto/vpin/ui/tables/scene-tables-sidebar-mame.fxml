@@ -127,6 +127,11 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="Force Stereo" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                         <Label layoutX="10.0" layoutY="10.0" text="Table Alias Settings" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />

@@ -57,6 +57,10 @@ public class Updater {
   }
 
   public static void download(String downloadUrl, File target) {
+    downloadAndOverwrite(downloadUrl, target, false);
+  }
+
+  public static void downloadAndOverwrite(String downloadUrl, File target, boolean overwrite) {
     try {
       LOG.info("Downloading " + downloadUrl);
       URL url = new URL(downloadUrl);
@@ -76,6 +80,11 @@ public class Updater {
       }
       in.close();
       fileOutputStream.close();
+      if(overwrite && target.exists() && !target.delete()) {
+        LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
+        return;
+      }
+
       if (!tmp.renameTo(target)) {
         LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
       }

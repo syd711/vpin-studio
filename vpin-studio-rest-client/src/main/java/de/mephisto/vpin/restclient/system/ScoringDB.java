@@ -95,6 +95,8 @@ public class ScoringDB {
     }
   }
 
+  private String pinemhiVersion;
+
   private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();
 
   private List<String> supportedNvRams = new ArrayList<>();
@@ -119,6 +121,14 @@ public class ScoringDB {
 
   public List<String> getIgnoredVPRegEntries() {
     return ignoredVPRegEntries;
+  }
+
+  public String getPinemhiVersion() {
+    return pinemhiVersion;
+  }
+
+  public void setPinemhiVersion(String pinemhiVersion) {
+    this.pinemhiVersion = pinemhiVersion;
   }
 
   public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {

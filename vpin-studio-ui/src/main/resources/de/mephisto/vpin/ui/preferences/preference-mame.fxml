@@ -106,6 +106,12 @@
                            </font>
                         </CheckBox>
                         <Label layoutX="10.0" layoutY="531.0" styleClass="checkbox-description" text="This can enable the use of alternative, external sound package recordings." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Force Stereo" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="741.0" styleClass="checkbox-description" text="Relevant for 7.1 systems. If checked, it won't try to use the center." textFill="WHITE" wrapText="true" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
