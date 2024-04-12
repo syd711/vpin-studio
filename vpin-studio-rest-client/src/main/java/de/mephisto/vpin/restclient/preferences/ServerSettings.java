@@ -6,7 +6,7 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean backupTableOnOverwrite = true;
-  private boolean launchPopperOnExit = true;
+  private boolean launchPopperOnExit = false;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
