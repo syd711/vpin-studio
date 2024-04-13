@@ -71,8 +71,8 @@ import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
 
 
-public class AssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetManagerDialogController.class);
+public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
+  private final static Logger LOG = LoggerFactory.getLogger(TableAssetManagerDialogController.class);
 //  public static final int MEDIA_SIZE = 280;
 
   @FXML

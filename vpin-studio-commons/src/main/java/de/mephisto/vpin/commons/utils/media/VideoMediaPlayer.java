@@ -91,10 +91,21 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     mediaView.setUserData(mediaItem);
     mediaView.setPreserveRatio(true);
 
+    double prefWidth = parent.getPrefWidth();
+    if (prefWidth <= 0) {
+      prefWidth = ((Pane) parent.getParent()).getWidth();
+    }
+    double prefHeight = parent.getPrefHeight();
+    if (prefHeight <= 0) {
+      prefHeight = ((Pane) parent.getParent()).getHeight();
+    }
+    prefWidth = prefWidth - 12;
+    prefHeight = prefHeight - 50;
+
     if (PopperScreen.PlayField.equals(screen)) {
       if (dialogRendering) {
-        mediaView.setFitWidth(MEDIA_SIZE);
-        mediaView.setFitHeight(MEDIA_SIZE);
+        mediaView.setFitWidth(prefWidth);
+        mediaView.setFitHeight(prefHeight);
         mediaView.setRotate(90);
       }
       else {
@@ -103,8 +114,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
     else if (PopperScreen.Loading.equals(screen)) {
       if (dialogRendering) {
-        mediaView.setFitWidth(MEDIA_SIZE);
-        mediaView.setFitHeight(MEDIA_SIZE);
+        mediaView.setFitWidth(prefWidth);
+        mediaView.setFitHeight(prefHeight);
         mediaView.setRotate(90);
       }
       else {
@@ -112,17 +123,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       }
     }
     else {
-      double prefWidth = parent.getPrefWidth();
-      if (prefWidth <= 0) {
-        prefWidth = ((Pane) parent.getParent()).getWidth();
-      }
-      double prefHeight = parent.getPrefHeight();
-      if (prefHeight <= 0) {
-        prefHeight = ((Pane) parent.getParent()).getHeight();
-      }
-
-      mediaView.setFitWidth(prefWidth - 12);
-      mediaView.setFitHeight(prefHeight - 50);
+      mediaView.setFitWidth(prefWidth);
+      mediaView.setFitHeight(prefHeight);
     }
 
     this.setCenter(mediaView);
