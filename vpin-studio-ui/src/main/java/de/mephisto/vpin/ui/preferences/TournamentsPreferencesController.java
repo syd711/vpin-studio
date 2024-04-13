@@ -95,6 +95,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
       if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
         try {
           PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+          PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
           Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
           if (!StringUtils.isEmpty(avatarEntry.getValue())) {
             image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
@@ -105,6 +106,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
           Cabinet newCab = new Cabinet();
           newCab.setCreationDate(new Date());
           newCab.setSettings(new CabinetSettings());
+          newCab.setDisplayName(systemName.getValue());
           Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
           registrationPanel.setVisible(registeredCabinet == null);
 

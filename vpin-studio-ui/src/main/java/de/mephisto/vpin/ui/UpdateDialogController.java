@@ -92,6 +92,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     }
     else {
       serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newServerVersion) + Updater.SERVER_ZIP);
+      remoteClientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newServerVersion) + Updater.UI_ZIP);
     }
 
     //execute updates

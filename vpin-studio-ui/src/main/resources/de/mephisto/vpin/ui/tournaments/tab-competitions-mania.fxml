@@ -51,7 +51,7 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="Reload Tournaments" />

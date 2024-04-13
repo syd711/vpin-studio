@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
-import de.mephisto.vpin.ui.tables.dialogs.AssetManagerDialogController;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -23,7 +23,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
   private final PopperScreen screen;
   private final List<String> suffixes;
   private TableOverviewController tablesController;
-  private AssetManagerDialogController dialogController;
+  private TableAssetManagerDialogController dialogController;
 
   public TableMediaFileDropEventHandler(TableOverviewController tablesController, PopperScreen screen, String... suffix) {
     this.tablesController = tablesController;
@@ -31,7 +31,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     this.suffixes = Arrays.asList(suffix);
   }
 
-  public TableMediaFileDropEventHandler(AssetManagerDialogController dialogController, PopperScreen screen, String... suffix) {
+  public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, PopperScreen screen, String... suffix) {
     this.dialogController = dialogController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);

@@ -149,8 +149,8 @@ public class TableDialogs {
     if (hd) {
       fxml = "dialog-table-asset-manager-hd.fxml";
     }
-    Stage stage = Dialogs.createStudioDialogStage(AssetManagerDialogController.class, fxml, "Asset Manager", null);
-    AssetManagerDialogController controller = (AssetManagerDialogController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
+    TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.setGame(overviewController, game, screen);
 
 //    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
