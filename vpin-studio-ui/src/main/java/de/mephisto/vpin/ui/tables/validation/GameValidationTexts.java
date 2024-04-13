@@ -130,6 +130,11 @@ public class GameValidationTexts {
         text = "Audio files of this ALT sound package are missing. Open the ALT sound editor for details.";
         break;
       }
+      case CODE_FORCE_STEREO: {
+        label = "Force Stereo not enabled.";
+        text = "Enable \"Force Stereo\" for this table in the VPinMAME settings.";
+        break;
+      }
       case CODE_PUP_PACK_FILE_MISSING: {
         label = "PUP pack media file missing.";
         if (state.getOptions().size() > 1) {

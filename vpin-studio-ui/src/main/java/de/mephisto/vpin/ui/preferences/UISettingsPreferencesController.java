@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -26,16 +29,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class UISettingsPreferencesController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(UISettingsPreferencesController.class);
 
   @FXML
   private BorderPane avatarBorderPane;
@@ -77,6 +82,8 @@ public class UISettingsPreferencesController implements Initializable {
   private CheckBox vpsWheel;
 
   private Tile avatar;
+  public static Debouncer debouncer = new Debouncer();
+  private Cabinet cabinet;
 
   @FXML
   private void onFileSelect(ActionEvent e) {
@@ -89,6 +96,9 @@ public class UISettingsPreferencesController implements Initializable {
     if (selection != null) {
       try {
         client.getPreferenceService().uploadVPinAvatar(selection);
+        if (Features.TOURNAMENTS_ENABLED && maniaClient.getCabinetClient() != null) {
+          maniaClient.getCabinetClient().updateAvatar(selection, null);
+        }
         refreshAvatar();
       } catch (Exception ex) {
         WidgetFactory.showAlert(Studio.stage, "Uploading avatar image failed.", "Please check the log file for details.", "Error: " + ex.getMessage());
@@ -113,8 +123,28 @@ public class UISettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    PreferenceBindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
+    if (Features.TOURNAMENTS_ENABLED) {
+      cabinet = maniaClient.getCabinetClient().getCabinet();
+      if (cabinet != null) {
+        vpinNameText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("cabinetName", () -> {
+          if (StringUtils.isEmpty(t1)) {
+            cabinet.setDisplayName(UIDefaults.VPIN_NAME);
+          }
+          else {
+            cabinet.setDisplayName(t1);
+          }
 
+          try {
+            maniaClient.getCabinetClient().update(cabinet);
+          } catch (Exception e) {
+            LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, "Error", "Failed to update cabinet name for VPin Mania: " + e.getMessage());
+          }
+        }, 500));
+      }
+    }
+
+    PreferenceBindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     uiShowVersion.setSelected(!uiSettings.isHideVersions());

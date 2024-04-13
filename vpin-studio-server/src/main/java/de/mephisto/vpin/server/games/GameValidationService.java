@@ -310,6 +310,37 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    validationStates = validateForceStereo(game);
+    if (!validationStates.isEmpty()) {
+      result.add(validationStates.get(0));
+      if (findFirst) {
+        return result;
+      }
+    }
+
+    return result;
+  }
+
+  private List<ValidationState> validateForceStereo(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+
+    if (isValidationEnabled(game, CODE_FORCE_STEREO)) {
+      MameOptions gameOptions = mameService.getOptions(game.getRom());
+      MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+
+      if (gameOptions.isExistInRegistry()) {
+        //no in registry, so check against defaults
+        if (!gameOptions.isForceStereo()) {
+          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+        }
+      }
+      else {
+        //no in registry, so check against defaults
+        if (!options.isColorizeDmd()) {
+          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+        }
+      }
+    }
     return result;
   }
 
@@ -372,7 +403,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (gameOptions.isExistInRegistry()) {
-      //no in registry, so check against defaults
       if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
         result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
       }
@@ -462,17 +492,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_AUDIO)
-        || codes.contains(CODE_NO_AUDIO_LAUNCH)
-        || codes.contains(CODE_NO_APRON)
-        || codes.contains(CODE_NO_INFO)
-        || codes.contains(CODE_NO_HELP)
-        || codes.contains(CODE_NO_TOPPER)
-        || codes.contains(CODE_NO_BACKGLASS)
-        || codes.contains(CODE_NO_DMD)
-        || codes.contains(CODE_NO_PLAYFIELD)
-        || codes.contains(CODE_NO_LOADING)
-        || codes.contains(CODE_NO_OTHER2)
-        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      || codes.contains(CODE_NO_AUDIO_LAUNCH)
+      || codes.contains(CODE_NO_APRON)
+      || codes.contains(CODE_NO_INFO)
+      || codes.contains(CODE_NO_HELP)
+      || codes.contains(CODE_NO_TOPPER)
+      || codes.contains(CODE_NO_BACKGLASS)
+      || codes.contains(CODE_NO_DMD)
+      || codes.contains(CODE_NO_PLAYFIELD)
+      || codes.contains(CODE_NO_LOADING)
+      || codes.contains(CODE_NO_OTHER2)
+      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
     return false;
@@ -485,17 +515,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-        || codes.contains(CODE_NO_ROM)
-        || codes.contains(CODE_ROM_NOT_EXISTS)
-        || codes.contains(CODE_VPX_NOT_EXISTS)
-        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+      || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+      || codes.contains(CODE_NO_ROM)
+      || codes.contains(CODE_ROM_NOT_EXISTS)
+      || codes.contains(CODE_VPX_NOT_EXISTS)
+      || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+      || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+      || codes.contains(CODE_FORCE_STEREO)
+      || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+      || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+      || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }
