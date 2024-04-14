@@ -1,3 +1,7 @@
+## Hotfix 2.16.2
+
+- **Validators**: Fixed several issues with the "Force Stereo" validator.
+
 ## Hotfix 2.16.1
 
 - **PINemHi**: Added auto-updater for PINemHi files that is independent from Studio updates.
@@ -9,8 +13,6 @@
 - **UI Preferences**: Fixed refresh issue when new avatar image has been uploaded.
 - **Table Data Manager**: Fixed missing renaming of VPX file that may leads to the error, that the VPX file is not found anymore.
 - **Table Uploads**: Upload and replace no longer applies the archive filename as target name for the VPX file.
-
-
 
 ## Release Notes 2.16.0
 

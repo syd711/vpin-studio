@@ -229,7 +229,7 @@ public class TablesSidebarMameController implements Initializable {
     useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
     colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
     soundMode.setSelected(defaultOptions.isSoundMode());
-    forceStereo.setSelected(defaultOptions.isSoundMode());
+    forceStereo.setSelected(defaultOptions.isForceStereo());
 
     saveDisabled = false;
     saveOptions();

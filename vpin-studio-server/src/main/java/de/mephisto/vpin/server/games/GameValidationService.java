@@ -336,8 +336,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
       else {
         //no in registry, so check against defaults
-        if (!options.isColorizeDmd()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+        if (!options.isForceStereo()) {
+          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
         }
       }
     }
