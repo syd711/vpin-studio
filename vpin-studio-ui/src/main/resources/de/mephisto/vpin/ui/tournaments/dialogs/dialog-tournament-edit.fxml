@@ -246,16 +246,62 @@
                                     <Insets top="4.0" />
                                  </VBox.margin>
                                  <children>
-                                    <TextArea fx:id="descriptionText" prefHeight="216.0" wrapText="true">
+                                    <TextArea fx:id="descriptionText" prefHeight="150.0" wrapText="true">
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
                                     </TextArea>
                                  </children>
                               </VBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label text="Website" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets top="12.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="The website that contains additional information about the tournament." wrapText="true" />
+                                       </tooltip>
+                                       <HBox.margin>
+                                          <Insets top="12.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox spacing="6.0">
+                                 <children>
+                                    <TextField fx:id="websiteLinkText" prefWidth="410.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </TextField>
+                                    <Button fx:id="openWesiteBtn" mnemonicParsing="false" onAction="#onWebsiteOpen" styleClass="external-component">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Reload table with data fetched from iscored.info" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                            <BorderPane.margin>
-                              <Insets left="12.0" />
+                              <Insets left="24.0" />
                            </BorderPane.margin>
                         </VBox>
                      </right>
@@ -427,7 +473,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                                        </graphic>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -436,7 +482,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                        </graphic>
                                     </Button>
                                 </items>

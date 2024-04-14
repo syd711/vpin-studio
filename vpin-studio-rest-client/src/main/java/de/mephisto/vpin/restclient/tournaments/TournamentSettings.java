@@ -7,6 +7,15 @@ public class TournamentSettings extends JsonSettings {
   private String defaultDiscordLink;
   private String defaultDashboardUrl;
   private String defaultDescription;
+  private String defaultWebsite;
+
+  public String getDefaultWebsite() {
+    return defaultWebsite;
+  }
+
+  public void setDefaultWebsite(String defaultWebsite) {
+    this.defaultWebsite = defaultWebsite;
+  }
 
   public boolean isEnabled() {
     return enabled;

@@ -42,6 +42,7 @@ public class TournamentSearchTableSummary extends VBox {
       Label titleLabel = new Label("(+" + (tournamentTables.size()-3) + ")");
       titleLabel.getStyleClass().add("default-headline");
       titleLabel.setTooltip(tt);
+
       getChildren().add(titleLabel);
     }
 

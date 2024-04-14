@@ -230,6 +230,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     newTournament.setDashboardUrl(settings.getDefaultDashboardUrl());
     newTournament.setDiscordLink(settings.getDefaultDiscordLink());
     newTournament.setDescription(settings.getDefaultDescription());
+    newTournament.setWebsite(settings.getDefaultWebsite());
 
     TreeItem<TournamentTreeModel> newTournamentModel = TournamentDialogs.openTournamentDialog("Create Tournament", newTournament);
     try {

@@ -57,6 +57,9 @@ public class TournamentsPreferencesController implements Initializable, Preferen
   private TextField discordLink;
 
   @FXML
+  private TextField websiteLink;
+
+  @FXML
   private TextArea descriptionText;
 
 
@@ -146,6 +149,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
     });
     dashboardUrl.setText(settings.getDefaultDashboardUrl());
     discordLink.setText(settings.getDefaultDiscordLink());
+    websiteLink.setText(settings.getDefaultWebsite());
     descriptionText.setText(settings.getDefaultDescription());
 
     dashboardUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("dashboardUrl", () -> {
@@ -160,6 +164,15 @@ public class TournamentsPreferencesController implements Initializable, Preferen
     discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
       try {
         settings.setDefaultDiscordLink(t1);
+        settings = client.getTournamentsService().saveSettings(settings);
+      } catch (Exception e) {
+        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+      }
+    }, 300));
+
+    websiteLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("websiteLink", () -> {
+      try {
+        settings.setDefaultWebsite(t1);
         settings = client.getTournamentsService().saveSettings(settings);
       } catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);

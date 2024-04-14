@@ -112,6 +112,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private TextField discordLinkText;
 
   @FXML
+  private TextField websiteLinkText;
+
+  @FXML
   private TextArea descriptionText;
 
   @FXML
@@ -134,6 +137,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private Button openDiscordBtn;
+
+  @FXML
+  private Button openWesiteBtn;
 
   @FXML
   private StackPane rootStack;
@@ -176,6 +182,21 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(discordLink));
+        } catch (Exception e) {
+          LOG.error("Failed to open discord link: " + e.getMessage(), e);
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onWebsiteOpen() {
+    String link = this.websiteLinkText.getText();
+    if (!StringUtils.isEmpty(link)) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(link));
         } catch (Exception e) {
           LOG.error("Failed to open discord link: " + e.getMessage(), e);
         }
@@ -237,9 +258,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
     this.openDiscordBtn.setDisable(true);
+    this.openWesiteBtn.setDisable(true);
 
     if (!StringUtils.isEmpty(this.discordLinkText.getText())) {
       openDiscordBtn.setDisable(false);
+    }
+    if (!StringUtils.isEmpty(this.websiteLinkText.getText())) {
+      openWesiteBtn.setDisable(false);
     }
 
     Date startDate = tournament.getStartDate();
@@ -300,6 +325,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.discordLinkText.setDisable(!isOwner);
     this.dashboardUrlField.setText(selectedTournament.getDashboardUrl());
     this.dashboardUrlField.setDisable(!isOwner);
+    this.websiteLinkText.setText(selectedTournament.getWebsite());
+    this.websiteLinkText.setDisable(!isOwner);
+
     this.visibilityCheckbox.setDisable(!isOwner);
 
     this.startDatePicker.setValue(selectedTournament.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -428,6 +456,19 @@ public class TournamentEditDialogController implements Initializable, DialogCont
           nameField.setText(sub);
         }
         tournament.setDisplayName(nameField.getText());
+        validate();
+      });
+    }, 500));
+
+    websiteLinkText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("websiteLinkText", () -> {
+      Platform.runLater(() -> {
+        if(websiteLinkText.getText() != null) {
+          if (websiteLinkText.getText().length() > 1024) {
+            String sub = websiteLinkText.getText().substring(0, 1024);
+            websiteLinkText.setText(sub);
+          }
+          tournament.setWebsite(websiteLinkText.getText());
+        }
         validate();
       });
     }, 500));

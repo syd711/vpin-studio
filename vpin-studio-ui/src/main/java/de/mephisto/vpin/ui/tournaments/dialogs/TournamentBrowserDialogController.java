@@ -80,6 +80,9 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private Hyperlink discordLink;
 
   @FXML
+  private Hyperlink websiteLink;
+
+  @FXML
   private Label descriptionText;
 
   @FXML
@@ -143,6 +146,24 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private void onPrevious() {
     int page = searchResult.getPage();
     doSearch(searchText.getText(), page - 1);
+  }
+
+  @FXML
+  private void onWebsiteOpen() {
+    if (this.selection.isPresent()) {
+      TournamentSearchResultItem item = selection.get();
+      String link = item.getWebsite();
+      if (!StringUtils.isEmpty(link)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(link));
+          } catch (Exception e) {
+            LOG.error("Failed to open website link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
   }
 
   @FXML
@@ -282,10 +303,12 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     endLabel.setText("-");
     remainingLabel.setText("-");
     discordLink.setText("-");
+    websiteLink.setText("-");
     ownerLabel.setText("-");
     descriptionText.setText("-");
     avatarPane.getChildren().removeAll(avatarPane.getChildren());
     saveBtn.setDisable(true);
+
 
     if (selection.isPresent()) {
       TournamentSearchResultItem item = selection.get();
@@ -298,6 +321,9 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       remainingLabel.setText(DateUtil.formatDuration(item.getStartDate(), item.getEndDate()));
       if (!StringUtils.isEmpty(item.getDiscordLink())) {
         discordLink.setText(item.getDiscordLink());
+      }
+      if (!StringUtils.isEmpty(item.getWebsite())) {
+        websiteLink.setText(item.getWebsite());
       }
       if (!StringUtils.isEmpty(item.getDescription())) {
         descriptionText.setText(item.getDescription());

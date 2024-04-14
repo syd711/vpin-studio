@@ -121,6 +121,9 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Hyperlink discordLink;
 
   @FXML
+  private Hyperlink websiteLink;
+
+  @FXML
   private VBox avatarPane;
 
   private TournamentsManiaController maniaController;
@@ -146,6 +149,25 @@ public class TournamentsController implements Initializable, StudioFXController 
             desktop.browse(new URI(link));
           } catch (Exception e) {
             LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void opnWebsiteOpen() {
+    if (this.tournamentTreeModel.isPresent()) {
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
+      Tournament tournament = treeModel.getTournament();
+      String link = tournament.getWebsite();
+      if (!StringUtils.isEmpty(link)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(link));
+          } catch (Exception e) {
+            LOG.error("Failed to open website link: " + e.getMessage(), e);
           }
         }
       }
@@ -257,6 +279,7 @@ public class TournamentsController implements Initializable, StudioFXController 
 
     copyTokenBtn.setDisable(tournamentTreeModel.isEmpty());
     discordLink.setText("-");
+    websiteLink.setText("-");
     dashboardLink.setText("-");
     uuidLabel.setText("-");
     startLabel.setText("-");
@@ -287,6 +310,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
+      websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");
       dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl() : "-");
       descriptionLabel.setText(tournament.getDescription());
     }

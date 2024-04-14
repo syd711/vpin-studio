@@ -74,6 +74,7 @@
                                           <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
@@ -142,12 +143,12 @@
                                                 </Button>
                                              </children>
                                           </HBox>
-                                          <Label layoutX="10.0" layoutY="150.0" text="Owner:" GridPane.rowIndex="9">
+                                          <Label layoutX="10.0" layoutY="150.0" text="Owner:" GridPane.rowIndex="10">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="ownerLabel" layoutX="120.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                          <Label fx:id="ownerLabel" layoutX="120.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -188,6 +189,16 @@
                                              </font>
                                           </Label>
                                           <Hyperlink fx:id="dashboardLink" onAction="#onDashboardOpen" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                             <GridPane.margin>
+                                                <Insets left="-4.0" />
+                                             </GridPane.margin>
+                                          </Hyperlink>
+                                          <Label layoutX="10.0" layoutY="284.0" text="Website:" GridPane.rowIndex="9">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Hyperlink fx:id="websiteLink" layoutX="134.0" layoutY="281.0" onAction="#opnWebsiteOpen" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                              <GridPane.margin>
                                                 <Insets left="-4.0" />
                                              </GridPane.margin>
