@@ -289,7 +289,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.iscoredReloadBtn.setDisable(!isOwner);
     this.addTableBtn.setDisable(!isOwner);
-    this.deleteTableBtn.setDisable(!isOwner);
+    this.deleteTableBtn.setDisable(!isOwner || selectedTournament.getId() > 0);
 
     tournamentBadgeCombo.setDisable(isOwner && tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());

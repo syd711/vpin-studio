@@ -38,7 +38,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <HBox prefHeight="100.0" prefWidth="480.0">
+            <HBox prefHeight="150.0" prefWidth="480.0">
                <children>
                   <ComboBox fx:id="versionsCombo" prefHeight="30.0" prefWidth="480.0" />
                </children>

@@ -37,4 +37,8 @@ public class TournamentsServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
+  public boolean synchronize() {
+    return getRestClient().get(API + "tournaments/synchronize", Boolean.class);
+  }
 }

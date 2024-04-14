@@ -251,6 +251,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
             if (o instanceof Tournament) {
               Tournament newT = (Tournament) o;
               Platform.runLater(() -> {
+                client.getTournamentsService().synchronize();
                 onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null, null))));
               });
             }
@@ -283,6 +284,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
               if (o instanceof Tournament) {
                 Tournament newT = (Tournament) o;
                 Platform.runLater(() -> {
+                  client.getTournamentsService().synchronize();
                   onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null, null))));
                 });
               }
@@ -332,6 +334,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentUpdateProgressModel(updatedTournament));
           if (!progressDialog.getResults().isEmpty()) {
             Tournament update = (Tournament) progressDialog.getResults().get(0);
+            client.getTournamentsService().synchronize();
             onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(update, null, null, null, null))));
           }
         } catch (Exception e) {
@@ -355,6 +358,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       else {
         unsubscribeTournament(tournament);
       }
+      client.getTournamentsService().synchronize();
     }
   }
 
@@ -369,6 +373,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 //      treeTableView.getSelectionModel().clearSelection();
 //      maniaClient.getTournamentClient().deleteTournament(tournament.getUuid());
+      client.getTournamentsService().synchronize();
       onReload(Optional.empty());
     }
   }
@@ -383,23 +388,24 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       treeTableView.getSelectionModel().clearSelection();
       maniaClient.getTournamentClient().deleteTournament(tournament.getId());
+      client.getTournamentsService().synchronize();
       onReload(Optional.empty());
     }
   }
 
   @FXML
   private void onFinish() {
-//    CompetitionRepresentation selection = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
-//    if (selection != null && selection.isActive()) {
-//      String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
-//      String helpText2 = "Finishing the competition will set the current leader as winner.";
-//
-//      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
-//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//        client.getCompetitionService().finishCompetition(selection);
-//        onReload();
-//      }
-//    }
+    TournamentTreeModel value = this.treeTableView.getSelectionModel().getSelectedItem().getValue();
+    if (value != null && value.getTournament().isActive()) {
+      String helpText1 = "The tournament is active for another " + value.getTournament().remainingDays() + " days.";
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Tournament '" +  value.getTournament().getDisplayName() + "'?", helpText1, null, "Finish Tournament");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        maniaClient.getTournamentClient().finishTournament(value.getTournament().getId());
+        client.getTournamentsService().synchronize();
+        onReload();
+      }
+    }
   }
 
   @FXML
@@ -541,18 +547,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       addBtn.setDisable(this.maniaAccount != null);
       browseBtn.setDisable(this.maniaAccount != null);
     }
-
-    if (model.isPresent()) {
-//      if (newSelection.getValidationState().getCode() > 0) {
-//        LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection);
-//        validationErrorLabel.setText(validationResult.getLabel());
-//        validationErrorText.setText(validationResult.getText());
-//      }
-    }
-    else {
-//      competitionsController.setCompetition(tournament.orElse(null)); //TODO
-    }
-
 
     NavigationController.setBreadCrumb(Arrays.asList("Tournaments"));
     if (model.isPresent()) {

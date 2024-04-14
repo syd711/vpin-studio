@@ -19,6 +19,11 @@ public class TournamentsResource {
     return tournamentsService.getConfig();
   }
 
+  @GetMapping("/synchronize")
+  public boolean synchronize() {
+    return tournamentsService.synchronize();
+  }
+
   @GetMapping
   public TournamentSettings getSettings() {
     return tournamentsService.getSettings();

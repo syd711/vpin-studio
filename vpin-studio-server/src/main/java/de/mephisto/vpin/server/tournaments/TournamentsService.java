@@ -65,6 +65,21 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
     return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
   }
 
+  public boolean synchronize() {
+    LOG.info("Running Tournament Synchronization");
+    return false;
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(propertyName)) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      this.tournamentsHighscoreChangeListener.setCabinet(cabinet);
+
+      LOG.info("Registered Tournaments HighscoreChangeListener");
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.TOURNAMENTS_ENABLED) {
@@ -76,16 +91,8 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
-    }
-  }
 
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(propertyName)) {
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-      this.tournamentsHighscoreChangeListener.setCabinet(cabinet);
-
-      LOG.info("Registered Tournaments HighscoreChangeListener");
+      synchronize();
     }
   }
 }
