@@ -221,6 +221,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
+    tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
 
     if (Features.TOURNAMENTS_ENABLED) {
       cabinet = maniaClient.getCabinetClient().getCabinet();
@@ -254,9 +255,6 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
     this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
-
-    TournamentSettings settings = client.getTournamentsService().getSettings();
-    this.tournamentGroup.setVisible(settings.isEnabled());
 
     this.nameField.requestFocus();
   }
