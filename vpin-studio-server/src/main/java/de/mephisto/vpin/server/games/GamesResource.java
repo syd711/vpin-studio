@@ -245,6 +245,10 @@ public class GamesResource {
         try {
           File temporaryArchive = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
           UploadUtil.upload(file, temporaryArchive);
+
+          //update the target name with the name from the archived VPX file
+          originalFilename = PackageUtil.contains(temporaryArchive, ".vpx");
+
           String fileNameToExtract = PackageUtil.contains(temporaryArchive, ".vpx");
           if (fileNameToExtract == null) {
             throw new IOException("No VPX file found in archive file " + temporaryArchive.getAbsolutePath());
