@@ -15,3 +15,5 @@
 - **Updater**: Added missing status label for the remote client update progress bar. 
 - **Asset Manager**: Fixed layout issues happening for playfield and loading previews for smaller screen resolutions.
 - **UI Preferences**: Fixed refresh issue when new avatar image has been uploaded.
+- **Table Data Manager**: Fixed missing renaming of VPX file that may leads to the error, that the VPX file is not found anymore. 
+- **Table Uploads**: Upload and replace no longer applies the archive filename as target name for the VPX file.  
