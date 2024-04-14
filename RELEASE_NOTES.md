@@ -14,3 +14,4 @@
 - **Preferences: Validators**: The validators are sorted alphabetically now.
 - **Updater**: Added missing status label for the remote client update progress bar. 
 - **Asset Manager**: Fixed layout issues happening for playfield and loading previews for smaller screen resolutions.
+- **UI Preferences**: Fixed refresh issue when new avatar image has been uploaded.

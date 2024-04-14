@@ -11,9 +11,9 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -94,15 +94,8 @@ public class UISettingsPreferencesController implements Initializable {
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
-      try {
-        client.getPreferenceService().uploadVPinAvatar(selection);
-        if (Features.TOURNAMENTS_ENABLED && maniaClient.getCabinetClient() != null) {
-          maniaClient.getCabinetClient().updateAvatar(selection, null);
-        }
-        refreshAvatar();
-      } catch (Exception ex) {
-        WidgetFactory.showAlert(Studio.stage, "Uploading avatar image failed.", "Please check the log file for details.", "Error: " + ex.getMessage());
-      }
+      ProgressDialog.createProgressDialog(new AvatarUploadProgressModel(selection));
+      refreshAvatar();
     }
   }
 
@@ -270,18 +263,17 @@ public class UISettingsPreferencesController implements Initializable {
       image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
     }
 
-    if (avatar == null) {
-      avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
-      avatarBorderPane.setCenter(avatar);
-    }
+    avatarBorderPane.setCenter(null);
+    avatar = TileBuilder.create()
+      .skinType(Tile.SkinType.IMAGE)
+      .prefSize(300, 300)
+      .backgroundColor(Color.TRANSPARENT)
+      .image(image)
+      .imageMask(Tile.ImageMask.ROUND)
+      .textSize(Tile.TextSize.BIGGER)
+      .textAlignment(TextAlignment.CENTER)
+      .build();
+    avatarBorderPane.setCenter(avatar);
     avatar.setImage(image);
   }
 }

@@ -1,24 +1,32 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.FutureTask;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -93,9 +101,29 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         this.uploadAvatar(player, this.avatarFile);
       }
 
-      if (tournamentPlayer) {
-        Account maniaAccount = player.toManiaAccount();
-        if (player.isRegistered()) {
+      player = client.getPlayerService().savePlayer(player);
+      client.clearCache();
+
+      progressResultModel.getResults().add(player);
+
+      if (Features.TOURNAMENTS_ENABLED) {
+        updateTournamentPlayer(player);
+      }
+    } catch (Exception ex) {
+      LOG.error("Failed to save player: " + ex.getMessage(), ex);
+      progressResultModel.getResults().add(ex.getMessage());
+    }
+  }
+
+  private void updateTournamentPlayer(PlayerRepresentation player) throws Exception {
+    //post process tournament player creation
+    if (tournamentPlayer) {
+      if (player.isRegistered()) {
+        Account maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+        if (maniaAccount != null) {
+          maniaAccount.setDisplayName(player.getName());
+          maniaAccount.setInitials(player.getInitials());
+
           Account update = maniaClient.getAccountClient().update(maniaAccount);
           if (update == null) {
             update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
@@ -104,38 +132,43 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           }
           else {
             if (this.avatarFile != null) {
-              maniaClient.getAccountClient().updateAvatar(maniaAccount, this.avatarFile, null);
+              maniaClient.getAccountClient().updateAvatar(maniaAccount, ImageIO.read(this.avatarFile), null);
             }
           }
-
         }
         else {
-          Account register = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
-          player.setTournamentUserUuid(register.getUuid());
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to update VPin Mania account: account not found.");
+          });
         }
       }
       else {
-        if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-          try {
-            String accountUuId = player.getTournamentUserUuid();
-            Account acc = maniaClient.getAccountClient().getAccountByUuid(accountUuId);
-            if (acc != null) {
-              maniaClient.getAccountClient().deleteAccount(acc.getId());
-            }
-          } catch (Exception e) {
-            LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);
-          }
-          player.setTournamentUserUuid(null);
+        Account maniaAccount = player.toManiaAccount();
+        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+        Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+        if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+          image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
         }
+        BufferedImage avatarImage = SwingFXUtils.fromFXImage(image, null);
+        Account register = maniaClient.getAccountClient().create(maniaAccount, avatarImage, null);
+        player.setTournamentUserUuid(register.getUuid());
+        client.getPlayerService().savePlayer(player);
       }
-
-      client.getPlayerService().savePlayer(player);
-      client.clearCache();
-
-      progressResultModel.getResults().add(player);
-    } catch (Exception ex) {
-      LOG.error("Failed to save player: " + ex.getMessage(), ex);
-      progressResultModel.getResults().add(ex.getMessage());
+    }
+    else {
+      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+        try {
+          String accountUuId = player.getTournamentUserUuid();
+          Account acc = maniaClient.getAccountClient().getAccountByUuid(accountUuId);
+          if (acc != null) {
+            maniaClient.getAccountClient().deleteAccount(acc.getId());
+          }
+        } catch (Exception e) {
+          LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);
+        }
+        player.setTournamentUserUuid(null);
+        client.getPlayerService().savePlayer(player);
+      }
     }
   }
 

@@ -3,15 +3,17 @@ package de.mephisto.vpin.ui.tournaments;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentEditDialogController;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.vps.dialogs.VPSTableSelectorDialogController;
 import de.mephisto.vpin.ui.vps.containers.VpsSelection;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 
 public class TournamentDialogs {
 
-  public static Tournament openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
+  public static TreeItem<TournamentTreeModel> openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentEditDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentEditDialogController controller = (TournamentEditDialogController) stage.getUserData();
     controller.setTournament(tournament);

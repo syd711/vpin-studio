@@ -254,12 +254,14 @@ public class TournamentsController implements Initializable, StudioFXController 
       Tournament tournament = treeModel.getTournament();
       TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
-      ownerLabel.setText(owner.getDisplayName());
+      if(owner != null) {
+        ownerLabel.setText(owner.getDisplayName());
+        avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
+      }
+
       nameLabel.setText(tournament.getDisplayName());
       visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(TournamentVisibility.publicTournament) ? "public" : "private");
       uuidLabel.setText(tournament.getUuid());
-      avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
-
 
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));

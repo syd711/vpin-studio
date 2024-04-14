@@ -7,9 +7,9 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -67,9 +68,31 @@ public class TournamentsPreferencesController implements Initializable, Preferen
     if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
       maniaClient.getCabinetClient().deleteCabinet();
 
+      List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
+      for (PlayerRepresentation player : players) {
+        if(player.getTournamentUserUuid() != null) {
+          player.setTournamentUserUuid(null);
+          try {
+            client.getPlayerService().savePlayer(player);
+            LOG.info("Resetted VPin Mania account for " + player);
+          } catch (Exception e) {
+            LOG.error("Failed to de-register player account: " + e.getMessage(), e);
+          }
+
+        }
+      }
+
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       registrationPanel.setVisible(cabinet == null);
       preferencesPanel.setVisible(cabinet != null);
+
+      settings.setEnabled(false);
+      try {
+        settings = client.getTournamentsService().saveSettings(settings);
+      } catch (Exception e) {
+        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save tournament settings: " + e.getMessage());
+      }
     }
   }
 

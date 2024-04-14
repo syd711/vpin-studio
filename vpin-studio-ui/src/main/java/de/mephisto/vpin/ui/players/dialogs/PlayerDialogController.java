@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
@@ -38,6 +40,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
@@ -74,6 +77,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   private Tile avatar;
 
   private File avatarFile;
+  private Cabinet cabinet;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -198,7 +202,8 @@ public class PlayerDialogController implements Initializable, DialogController {
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       adminRoleCheckbox.setSelected(player.isAdministrative());
-      tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
+      tournamentPlayerCheckbox.setSelected(cabinet != null && !StringUtils.isEmpty(player.getTournamentUserUuid()));
+      tournamentPlayerCheckbox.setDisable(cabinet == null);
       refreshAvatar();
     }
     else {
@@ -216,6 +221,10 @@ public class PlayerDialogController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
+
+    if (Features.TOURNAMENTS_ENABLED) {
+      cabinet = maniaClient.getCabinetClient().getCabinet();
+    }
 
     this.player = new PlayerRepresentation();
     nameField.setText(player.getName());

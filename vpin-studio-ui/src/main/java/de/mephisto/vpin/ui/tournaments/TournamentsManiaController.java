@@ -2,15 +2,11 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -52,7 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -195,51 +190,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @FXML
-  private void onCreate() {
-    Tournament t = new Tournament();
-    t.setDisplayName("New Tournament (Season 1)");
-    t.setVisibility(TournamentVisibility.publicTournament);
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    t.setEndDate(end);
-    t.setStartDate(DateUtil.today());
-
-    TournamentSettings settings = client.getTournamentsService().getSettings();
-    t.setDashboardUrl(settings.getDefaultDashboardUrl());
-    t.setDiscordLink(settings.getDefaultDiscordLink());
-    t.setDescription(settings.getDefaultDescription());
-
-    t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
-    try {
-      if (t != null) {
-        PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-        if (defaultPlayer != null && defaultPlayer.isRegistered()) {
-          AssetRepresentation avatar = defaultPlayer.getAvatar();
-          ByteArrayInputStream asset = client.getAsset(AssetType.AVATAR, avatar.getUuid());
-          BufferedImage badge = ImageIO.read(asset);
-
-          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
-          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(t, accountByUuid, badge));
-
-          if (!progressDialog.getResults().isEmpty()) {
-            Object o = progressDialog.getResults().get(0);
-            if (o instanceof Tournament) {
-              Tournament newT = (Tournament) o;
-              Platform.runLater(() -> {
-                onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null))));
-              });
-            }
-            else {
-              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create tournament: " + o);
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, e.getMessage());
-    }
-  }
-
-  @FXML
   private void onDownload() {
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
@@ -268,22 +218,81 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @FXML
+  private void onCreate() {
+    Tournament newTournament = new Tournament();
+    newTournament.setDisplayName("New Tournament (Season 1)");
+    newTournament.setVisibility(TournamentVisibility.publicTournament);
+    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    newTournament.setEndDate(end);
+    newTournament.setStartDate(DateUtil.today());
+
+    TournamentSettings settings = client.getTournamentsService().getSettings();
+    newTournament.setDashboardUrl(settings.getDefaultDashboardUrl());
+    newTournament.setDiscordLink(settings.getDefaultDiscordLink());
+    newTournament.setDescription(settings.getDefaultDescription());
+
+    TreeItem<TournamentTreeModel> newTournamentModel = TournamentDialogs.openTournamentDialog("Create Tournament", newTournament);
+    try {
+      if (newTournamentModel != null) {
+        PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+        if (defaultPlayer != null && defaultPlayer.isRegistered()) {
+          PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+          Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
+          if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+            image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
+          }
+          BufferedImage badge = SwingFXUtils.fromFXImage(image, null);
+
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(newTournamentModel, accountByUuid, badge));
+
+          if (!progressDialog.getResults().isEmpty()) {
+            Object o = progressDialog.getResults().get(0);
+            if (o instanceof Tournament) {
+              Tournament newT = (Tournament) o;
+              Platform.runLater(() -> {
+                onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null, null))));
+              });
+            }
+            else {
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create tournament: " + o);
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Error creating tournament: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, e.getMessage());
+    }
+  }
+
+  @FXML
   private void onDuplicate() {
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel model = selection.get().getValue();
       Tournament t = model.getTournament().cloneTournament();
-      t = TournamentDialogs.openTournamentDialog("Create Tournament", t);
-      if (t != null) {
+      TreeItem<TournamentTreeModel> newTournament = TournamentDialogs.openTournamentDialog("Create Tournament", t);
+      if (newTournament != null) {
         try {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           if (defaultPlayer != null && defaultPlayer.isRegistered()) {
-            t = maniaClient.getTournamentClient().create(t, defaultPlayer.toManiaAccount(), this.getTournamentBadge());
-            TreeItem<TournamentTreeModel> newModel = new TreeItem<>(new TournamentTreeModel(t, null, null, null));
-            onReload(Optional.of(newModel));
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(newTournament, defaultPlayer.toManiaAccount(), this.getTournamentBadge()));
+            if (!progressDialog.getResults().isEmpty()) {
+              Object o = progressDialog.getResults().get(0);
+              if (o instanceof Tournament) {
+                Tournament newT = (Tournament) o;
+                Platform.runLater(() -> {
+                  onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(newT, null, null, null, null))));
+                });
+              }
+              else {
+                WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create tournament: " + o);
+              }
+            }
           }
-
         } catch (Exception e) {
+          LOG.error("Error duplicating tournament: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -295,17 +304,18 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Tournament t = TournamentDialogs.openTournamentBrowserDialog();
     if (t != null) {
       try {
-        Tournament selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
+        TreeItem<TournamentTreeModel> selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
           Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
           if (account != null) {
-            maniaClient.getTournamentClient().addMember(selectedTournament, account);
+            maniaClient.getTournamentClient().addMember(selectedTournament.getValue().getTournament(), account);
           }
           onReload();
         }
       } catch (Exception e) {
+        LOG.error("Error browsing tournament: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
     }
@@ -316,12 +326,16 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get().getValue();
-      Tournament t = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
-      if (t != null) {
+      TreeItem<TournamentTreeModel> updatedTournament = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
+      if (updatedTournament != null) {
         try {
-          t = maniaClient.getTournamentClient().update(t);
-          onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(t, null, null, null))));
+          ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentUpdateProgressModel(updatedTournament));
+          if (!progressDialog.getResults().isEmpty()) {
+            Tournament update = (Tournament) progressDialog.getResults().get(0);
+            onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(update, null, null, null, null))));
+          }
         } catch (Exception e) {
+          LOG.error("Error editing tournament: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -570,12 +584,13 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private TreeItem<TournamentTreeModel> loadTreeModel() {
     List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
     LOG.info("Loaded " + tournaments.size() + " tournaments.");
-    TreeItem<TournamentTreeModel> root = new TreeItem<>(new TournamentTreeModel(null, null, null, null));
+    TreeItem<TournamentTreeModel> root = new TreeItem<>(new TournamentTreeModel(null, null, null, null, null));
     for (Tournament tournament : tournaments) {
       if (!tournament.getDisplayName().toLowerCase().contains(textfieldSearch.getText().toLowerCase())) {
         continue;
       }
-      TreeItem<TournamentTreeModel> treeModel = TournamentTreeModel.create(tournament);
+      List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+      TreeItem<TournamentTreeModel> treeModel = TournamentTreeModel.create(tournament, tournamentTables);
 
       root.getChildren().add(treeModel);
     }
@@ -629,7 +644,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     }
 
     columnName.setCellValueFactory(cellData -> {
-      if (!cellData.getValue().getChildren().isEmpty()) {
+      if (cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         return new SimpleObjectProperty(new TournamentCellContainer(value.getTournament()));
       }
@@ -638,7 +653,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
 
     columnTable.setCellValueFactory(cellData -> {
-      if (cellData.getValue().getChildren().isEmpty()) {
+      if (!cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
@@ -673,7 +688,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     columnStatus.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue().getValue();
       Tournament tournament = value.getTournament();
-      if (cellData.getValue().getChildren().isEmpty()) {
+      if (!cellData.getValue().getValue().isTournamentNode()) {
         GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
         if (game != null) {
           Label label = new Label("INSTALLED");
@@ -703,7 +718,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     });
 
     columnDate.setCellValueFactory(cellData -> {
-      if (!cellData.getValue().getChildren().isEmpty()) {
+      if (cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         return new SimpleObjectProperty(new DateCellContainer(value.getTournament()));
       }
@@ -711,7 +726,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     });
 
     columnVPSTable.setCellValueFactory(cellData -> {
-      if (cellData.getValue().getChildren().isEmpty()) {
+      if (!cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         VpsTable vpsTable = value.getVpsTable();
         return new SimpleObjectProperty(new VpsTableContainer(vpsTable));
@@ -720,7 +735,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     });
 
     columnVPSVersion.setCellValueFactory(cellData -> {
-      if (cellData.getValue().getChildren().isEmpty()) {
+      if (!cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
         VpsTableVersion vpsTableVersion = value.getVpsTableVersion();
         if (vpsTableVersion == null) {

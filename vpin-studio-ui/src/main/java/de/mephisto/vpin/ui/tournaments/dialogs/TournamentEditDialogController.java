@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -157,9 +158,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
   private Cabinet cabinet;
+  private TreeItem<TournamentTreeModel> result;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    result = null;
     this.tournament = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -186,7 +189,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     VpsSelection vpsSelection = TournamentDialogs.openTableSelectionDialog(stage);
     if (vpsSelection.getTable() != null) {
       GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsSelection.getTable(), vpsSelection.getVersion());
-      tableSelection.add(new TournamentTreeModel(null, gameByVpsTable, vpsSelection.getTable(), vpsSelection.getVersion()));
+
+      TournamentTable tournamentTable = new TournamentTable();
+      tournamentTable.setVpsTableId(vpsSelection.getTable().getId());
+      tournamentTable.setVpsVersionId(vpsSelection.getVersion().getId());
+      tournamentTable.setTournamentId(this.tournament.getId());
+      tournamentTable.setDisplayName(vpsSelection.getTable().getDisplayName());
+      tableSelection.add(new TournamentTreeModel(null, gameByVpsTable, tournamentTable, vpsSelection.getTable(), vpsSelection.getVersion()));
       reloadTables();
     }
   }
@@ -205,16 +214,14 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     if (TournamentHelper.isOwner(this.tournament, cabinet)) {
-      ObservableList<TournamentTreeModel> items = this.tableView.getItems();
-      List<String> tableEntries = new ArrayList<>();
-      for (TournamentTreeModel item : items) {
-        String entry = item.getVpsTable().getId() + "#";
-        if (item.getVpsTableVersion() != null) {
-          entry += item.getVpsTableVersion().getId();
+      List<TournamentTable> children = new ArrayList<>();
+      for (TournamentTreeModel tournamentTreeModel : this.tableSelection) {
+        if (!tournamentTreeModel.isTournamentNode()) {
+          children.add(tournamentTreeModel.getTournamentTable());
         }
-        tableEntries.add(entry);
       }
-      tournament.setTableIds(String.join(",", tableEntries));
+
+      this.result = TournamentTreeModel.create(this.tournament, children);
     }
     stage.close();
   }
@@ -267,7 +274,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @Override
   public void onDialogCancel() {
-    this.tournament = null;
+    this.result = null;
   }
 
   public void setTournament(Tournament selectedTournament) {
@@ -309,22 +316,18 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.tournament = selectedTournament;
 
-    List<String> tableIdList = this.tournament.getTableIdList();
-    for (String s : tableIdList) {
-      String[] split = s.split("#");
-      VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-      VpsTableVersion vpsVersion = null;
-      if (split.length == 2) {
-        vpsVersion = vpsTable.getVersion(split[1]);
-      }
+    List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(this.tournament.getId());
+    for (TournamentTable tournamentTable : tournamentTables) {
+      VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+      VpsTableVersion vpsVersion = vpsTable.getVersion(tournamentTable.getVpsVersionId());
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-      this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
+      this.tableSelection.add(new TournamentTreeModel(tournament, game, tournamentTable, vpsTable, vpsVersion));
     }
 
     if (!isOwner) {
       this.saveBtn.setText("Join Tournament");
     }
-    else if(isOwner && tournament.getUuid() != null) {
+    else if (isOwner && tournament.getUuid() != null) {
       this.saveBtn.setText("Update Tournament");
     }
 
@@ -370,7 +373,14 @@ public class TournamentEditDialogController implements Initializable, DialogCont
                 if (vpsTable != null) {
                   gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
                 }
-                this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
+
+                TournamentTable tournamentTable = new TournamentTable();
+                tournamentTable.setVpsTableId(vpsTable.getId());
+                tournamentTable.setVpsVersionId(vpsVersion.getId());
+                tournamentTable.setTournamentId(this.tournament.getId());
+                tournamentTable.setDisplayName(vpsTable.getDisplayName());
+
+                this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
                 this.tableView.refresh();
               }
             }
@@ -537,8 +547,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
   }
 
-  public Tournament getTournament() {
-    return tournament;
+  public TreeItem<TournamentTreeModel> getTournament() {
+    return result;
   }
 
   static class TournamentImageCell extends ListCell<String> {
