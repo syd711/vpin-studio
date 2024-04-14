@@ -76,11 +76,13 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
 
     Platform.runLater(() -> {
       highscoreList.getChildren().removeAll(highscoreList.getChildren());
+      highscoreList.getStyleClass().remove("media-container");
       if (playerScores.getScores().isEmpty()) {
         noScoreLabel.setVisible(true);
         noScoreLabel.setText("No scores found for this player.");
       }
       else {
+        highscoreList.getStyleClass().add("media-container");
         noScoreLabel.setVisible(false);
         for (ScoreRepresentation playerScore : playerScores.getScores()) {
           GameRepresentation game = client.getGameCached(playerScore.getGameId());
@@ -91,9 +93,9 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
           try {
             FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
             Pane row = loader.load();
-            row.setPrefWidth(600 - 48);
+            row.setPrefWidth(600);
             WidgetPlayerScoreController controller = loader.getController();
-            controller.setData(player, game, playerScore);
+            controller.setData(game, playerScore);
             highscoreList.getChildren().add(row);
           } catch (IOException e) {
             LOG.error("failed to load score component: " + e.getMessage(), e);

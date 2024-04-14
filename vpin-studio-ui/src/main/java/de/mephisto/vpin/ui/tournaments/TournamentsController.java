@@ -6,9 +6,11 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.fxml.FXML;
@@ -20,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -29,14 +32,12 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -205,34 +206,52 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshHighscores(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!highscoresPane.isExpanded()) {
       return;
     }
 
+    scoreList.getStyleClass().remove("media-container");
     scoreList.getChildren().removeAll(scoreList.getChildren());
-    if (tournamentTreeModel.isPresent() && tournamentTreeModel.get().isLeaf()) {
+    if (tournamentTreeModel.isPresent() && !tournamentTreeModel.get().getValue().isTournamentNode()) {
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
-      VpsTable vpsTable = value.getVpsTable();
       Tournament tournament = value.getTournament();
       List<TableScore> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
+      highscores = highscores.stream().filter(h -> h.getVpsTableId().equals(value.getVpsTable().getId())).collect(Collectors.toList());
+
       if (highscores.isEmpty()) {
         Label label = new Label("No scores found.");
         label.getStyleClass().add("default-text");
         scoreList.getChildren().add(label);
       }
       else {
-        Label label = new Label("Highscores for \"" + vpsTable.getDisplayName() + "\"");
-        label.getStyleClass().add("default-text");
-        scoreList.getChildren().add(label);
+        scoreList.getStyleClass().add("media-container");
+        Collections.sort(highscores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
+        int position = 1;
         for (TableScore highscore : highscores) {
-
+          GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
+          try {
+            FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
+            Pane row = loader.load();
+            row.setPrefWidth(600);
+            WidgetPlayerScoreController controller = loader.getController();
+            controller.setData(game, position, highscore);
+            scoreList.getChildren().add(row);
+            position++;
+          } catch (IOException e) {
+            LOG.error("failed to load score component: " + e.getMessage(), e);
+          }
         }
       }
+    }
+    else {
+      Label label = new Label("Select a table to view submitted scores.");
+      label.getStyleClass().add("default-text");
+      scoreList.getChildren().add(label);
     }
   }
 
   private void refreshMetaData(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!metaDataPane.isExpanded()) {
       return;
     }
 
@@ -254,7 +273,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       Tournament tournament = treeModel.getTournament();
       TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
-      if(owner != null) {
+      if (owner != null) {
         ownerLabel.setText(owner.getDisplayName());
         avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
       }
@@ -281,7 +300,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshDashboard(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!metaDataPane.isExpanded()) {
       return;
     }
 
@@ -307,7 +326,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshUsers(Optional<TreeItem<TournamentTreeModel>> model) {
-    if(!tournamentMembersPane.isExpanded()) {
+    if (!tournamentMembersPane.isExpanded()) {
       return;
     }
 

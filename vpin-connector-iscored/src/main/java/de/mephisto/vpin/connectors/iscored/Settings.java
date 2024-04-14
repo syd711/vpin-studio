@@ -11,6 +11,16 @@ public class Settings {
 
   private String adminApproval;
 
+  private String longNamesEnabled;
+
+  public String getLongNamesEnabled() {
+    return longNamesEnabled;
+  }
+
+  public void setLongNamesEnabled(String longNamesEnabled) {
+    this.longNamesEnabled = longNamesEnabled;
+  }
+
   public String getRoomName() {
     return roomName;
   }
@@ -30,6 +40,11 @@ public class Settings {
   @JsonIgnore
   public boolean isPublicScoresEnabled() {
     return Boolean.parseBoolean(this.publicScoreEntryEnabled.toLowerCase());
+  }
+
+  @JsonIgnore //do not use original name!
+  public boolean isLongNameInputEnabled() {
+    return Boolean.parseBoolean(this.longNamesEnabled.toLowerCase());
   }
 
   public String getPublicScoreEntryEnabled() {

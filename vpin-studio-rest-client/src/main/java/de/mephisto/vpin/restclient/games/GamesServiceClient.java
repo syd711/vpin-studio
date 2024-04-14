@@ -95,7 +95,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+        (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }
@@ -170,16 +170,21 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull VpsTable vpsTable, @Nullable VpsTableVersion vpsTableVersion) {
+    return getGameByVpsTable(vpsTable.getId(), vpsTableVersion != null ? vpsTableVersion.getId() : null);
+  }
+
+  @Nullable
+  public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     List<GameRepresentation> gamesCached = getGamesCached();
     GameRepresentation hit = null;
     for (GameRepresentation game : gamesCached) {
-      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTable.getId())) {
-        if (vpsTableVersion == null) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
+        if (vpsTableVersionId == null) {
           hit = game;
           break;
         }
 
-        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersion.getId())) {
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersionId)) {
           hit = game;
           break;
         }
@@ -265,7 +270,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
 
     Optional<GameRepresentation> first = this.games.stream().filter(g -> g.getId() == gameId).findFirst();
-    if(first.isPresent()) {
+    if (first.isPresent()) {
       return first.get();
     }
     return null;

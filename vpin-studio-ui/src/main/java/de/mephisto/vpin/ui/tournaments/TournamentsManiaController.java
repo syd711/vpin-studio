@@ -411,7 +411,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     client.clearWheelCache();
 
     treeTableView.setVisible(false);
-    tableStack.getChildren().add(loadingOverlay);
+
+    if (!tableStack.getChildren().contains(loadingOverlay)) {
+      tableStack.getChildren().add(loadingOverlay);
+    }
 
     textfieldSearch.setDisable(true);
     addBtn.setDisable(true);
@@ -561,12 +564,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   public void onViewActivated() {
     cabinet = maniaClient.getCabinetClient().getCabinet();
 
-    if (this.addBtn.isDisabled()) {
+    Platform.runLater(() -> {
+      this.addBtn.setDisable(!isValidTournamentSetupAvailable());
       this.onReload(Optional.empty());
-    }
-    else if (this.tournamentsController != null) {
-      refreshView(this.getSelection());
-    }
+    });
   }
 
   public void setTournamentsController(TournamentsController tournamentsController) {
@@ -778,7 +779,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
     validationError.setVisible(false);
     bindSearchField();
-    onViewActivated();
 
     EventManager.getInstance().addListener(this);
     onReload(Optional.empty());

@@ -8,9 +8,10 @@ import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.iscored.IScoredService;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,7 +36,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   private HighscoreService highscoreService;
 
   @Autowired
-  private SystemService systemService;
+  private PlayerService playerService;
+
+  @Autowired
+  private IScoredService iScoredService;
 
   private VPinManiaClient maniaClient;
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
@@ -67,7 +71,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
       TournamentConfig config = getConfig();
       maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
 
-      tournamentsHighscoreChangeListener = new TournamentsHighscoreChangeListener(maniaClient);
+      tournamentsHighscoreChangeListener = new TournamentsHighscoreChangeListener(maniaClient, playerService, iScoredService);
       highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
 
       preferencesService.addChangeListener(this);

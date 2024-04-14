@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
@@ -86,7 +88,7 @@ public class IScored {
         gameRoom.getGames().add(game);
       }
 
-      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis()-start) + "ms)");
+      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
       return gameRoom;
     }
 
@@ -124,4 +126,36 @@ public class IScored {
     }
     return query_pairs;
   }
+
+  public static boolean submitScore(GameRoom gameRoom, Game game, String playerName, String playerInitials, long highscore) {
+    BufferedInputStream in = null;
+    try {
+      String name = playerName;
+      if (!gameRoom.getSettings().isLongNameInputEnabled()) {
+        name = playerInitials;
+      }
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      URL url = new URL(BASE_URL + "/publicCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("POST"); // PUT is another valid option
+      conn.setDoOutput(true);
+
+      in = new BufferedInputStream(conn.getInputStream());
+      IOUtils.copy(in, out);
+
+      in.close();
+
+      out.flush();
+      out.close();
+      conn.disconnect();
+
+      LOG.info("Submitted new highscore to iscored game room \"" + gameRoom.getName() + "\"");
+      return true;
+    } catch (IOException e) {
+      LOG.error("Failed to submit iscored highscore: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
 }

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ public class Game {
   private int id;
   private String name;
   private List<Score> scores = new ArrayList<>();
-  private List<String> tags;
+  private List<String> tags = new ArrayList<>();
 
   public List<String> getTags() {
     return tags;

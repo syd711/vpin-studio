@@ -233,7 +233,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoreList">
+                              <VBox fx:id="scoreList" spacing="6.0">
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
@@ -288,15 +288,18 @@
                                        <children>
                                           <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="This tournament has no dashboard URL.">
                                              <VBox.margin>
-                                                <Insets bottom="12.0" />
+                                                <Insets />
                                              </VBox.margin>
+                                             <padding>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </padding>
                                           </Label>
-                                          <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="560.0" />
+                                          <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="580.0" />
                                        </children>
                                     </VBox>
                                  </content>
                                  <BorderPane.margin>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                    <Insets />
                                  </BorderPane.margin>
                               </ScrollPane>
                            </center>
@@ -326,6 +329,9 @@
               </panes>
             </Accordion>
          </children>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
       </VBox>
    </right>
 </BorderPane>

@@ -2,12 +2,12 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +21,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.ResourceBundle;
 
-public class WidgetPlayerScoreController extends WidgetController implements Initializable  {
+public class WidgetPlayerScoreController extends WidgetController implements Initializable {
 
   @FXML
   private StackPane rootStack;
@@ -53,10 +53,10 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(PlayerRepresentation player, GameRepresentation game, ScoreRepresentation score) {
+  public void setData(GameRepresentation game, ScoreRepresentation score) {
     GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
-    if(item != null) {
+    if (item != null) {
       ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
       Image image = new Image(gameMediaItem);
       wheelImageView.setImage(image);
@@ -75,6 +75,43 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     scoreLabel.setText(score.getScore());
 
     String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
+    changeDateLabel.setText("Updated: " + date);
+
+    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
+    BackgroundImage myBI = new BackgroundImage(backgroundImage,
+      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+      BackgroundSize.DEFAULT);
+    rootStack.setBackground(new Background(myBI));
+  }
+
+  public void setData(GameRepresentation game, int position, TableScore tableScore) {
+    if (game == null) {
+      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+      wheelImageView.setImage(wheel);
+    }
+    else {
+      GameMediaRepresentation gameMedia = game.getGameMedia();
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      if (item != null) {
+        ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        Image image = new Image(gameMediaItem);
+        wheelImageView.setImage(image);
+      }
+      else {
+        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+        wheelImageView.setImage(wheel);
+      }
+    }
+
+    tableLabel.setText(game.getGameDisplayName());
+
+    positionLabel.setText("#" + position);
+    nameLabel.setText(tableScore.getPlayerName() + " [" + tableScore.getPlayerInitials() + "]");
+
+    scoreLabel.setFont(getScoreFont());
+    scoreLabel.setText(tableScore.getScoreText());
+
+    String date = DateFormat.getDateTimeInstance().format(tableScore.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
 
     Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
