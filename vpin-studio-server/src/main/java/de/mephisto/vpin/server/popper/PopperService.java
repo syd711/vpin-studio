@@ -310,23 +310,27 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
       String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
-      if (!existingName.equalsIgnoreCase(name) || de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
-        if (game.getDirectB2SFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
-        }
+      if (!existingName.equalsIgnoreCase(name)) {
+        //everything depends on the VPX renaming
+        if (de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
+          //rename assets later
+          if (game.getDirectB2SFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
+          }
 
-        if (game.getPOVFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
-        }
+          if (game.getPOVFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
+          }
 
-        if (game.getResFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
-        }
+          if (game.getResFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
+          }
 
-        if (game.getIniFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
+          if (game.getIniFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
+          }
+          LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
         }
-        LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
       }
       else {
         //revert to old value
