@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PopperCustomOptionsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PopperCustomOptionsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -54,8 +54,10 @@
                   <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="If enabled the table audio is muted during table." textFill="WHITE" />
                   <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Joystick Axis Move" />
                   <Label layoutX="34.0" layoutY="815.0" styleClass="checkbox-description" text="Enable to support joystick axis moving mapped to buttons to allow joystick analogue movement in wheelbar." textFill="WHITE" />
-                  <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Volume Change (v1.4.6)" />
+                  <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Volume Change" />
                   <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="This will change volume back to original when returning from games. You can disable it with this." textFill="WHITE" />
+                  <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Alt Wheels" />
+                  <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="Use your own wheels for an altmode." textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
