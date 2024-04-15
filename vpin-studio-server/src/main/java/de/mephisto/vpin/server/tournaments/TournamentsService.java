@@ -3,10 +3,14 @@ package de.mephisto.vpin.server.tournaments;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -19,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -40,6 +46,9 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
   @Autowired
   private IScoredService iScoredService;
+
+  @Autowired
+  private GameService gameService;
 
   private VPinManiaClient maniaClient;
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
@@ -67,6 +76,19 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
   public boolean synchronize() {
     LOG.info("Running Tournament Synchronization");
+    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+    for (Tournament tournament : tournaments) {
+      if (!tournament.isFinished()) {
+        List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+        for (TournamentTable tournamentTable : tournamentTables) {
+          Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
+          if (gameByVpsTable != null) {
+
+          }
+        }
+      }
+    }
+
     return false;
   }
 

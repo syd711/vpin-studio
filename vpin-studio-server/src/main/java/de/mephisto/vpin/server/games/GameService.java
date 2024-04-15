@@ -43,7 +43,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,6 +116,25 @@ public class GameService implements InitializingBean {
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
+  }
+
+  public Game getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
+    List<Game> knownGames = getKnownGames();
+    Game hit = null;
+    for (Game game : knownGames) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
+        if (vpsTableVersionId == null) {
+          hit = game;
+          break;
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersionId)) {
+          hit = game;
+          break;
+        }
+      }
+    }
+    return hit;
   }
 
   /**
