@@ -1,6 +1,8 @@
 ## Hotfix 2.16.2
 
 - **Validators**: Fixed several issues with the "Force Stereo" validator.
+- **Popper Custom Options**: Added missing "useAltWheels" option.
+- **System Manager**: Fixed error when analyzing serum release artifacts.
 
 ## Hotfix 2.16.1
 

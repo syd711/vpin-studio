@@ -276,7 +276,14 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
 
   private void save() {
     try {
+      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+          Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+        }
+        return;
+      }
       Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+
     } catch (DatabaseLockException e) {
       LOG.error("Failed to save custom options: " + e.getMessage(), e);
       if (!Dialogs.openPopperRunningWarning(Studio.stage)) {
