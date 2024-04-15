@@ -28,6 +28,15 @@ public class PopperCustomOptions {
   private int launchTimeoutSecs = 60;
   private boolean joyAxisMove = false;
   private boolean volumeChange = true;
+  private boolean useAltWheels = false;
+
+  public boolean isUseAltWheels() {
+    return useAltWheels;
+  }
+
+  public void setUseAltWheels(boolean useAltWheels) {
+    this.useAltWheels = useAltWheels;
+  }
 
   public int getDelayReturn() {
     return delayReturn;
@@ -241,6 +250,8 @@ public class PopperCustomOptions {
     builder.append("JoyAxisMove=" + (joyAxisMove ? "1" : "0"));
     builder.append("\r\n");
     builder.append("VolumeChange=" + (volumeChange ? "1" : "0"));
+    builder.append("\r\n");
+    builder.append("useAltWheels=" + (useAltWheels ? "1" : "0"));
 
     return builder.toString();
   }
@@ -337,6 +348,10 @@ public class PopperCustomOptions {
               }
               case "VolumeChange": {
                 this.volumeChange = value == 1;
+                break;
+              }
+              case "useAltWheels": {
+                this.useAltWheels = value == 1;
                 break;
               }
             }

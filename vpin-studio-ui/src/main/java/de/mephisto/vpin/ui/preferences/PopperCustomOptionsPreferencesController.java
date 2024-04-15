@@ -81,6 +81,9 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   private CheckBox muteLaunchAudio;
 
   @FXML
+  private CheckBox useAltWheels;
+
+  @FXML
   private Spinner<Integer> wheelUpdateMS;
 
   @FXML
@@ -261,6 +264,12 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
     volumeChange.setSelected(customOptions.isVolumeChange());
     volumeChange.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       customOptions.setVolumeChange(t1);
+      save();
+    });
+
+    useAltWheels.setSelected(customOptions.isUseAltWheels());
+    useAltWheels.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      customOptions.setUseAltWheels(t1);
       save();
     });
   }
