@@ -8,7 +8,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -26,6 +25,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
+import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
@@ -50,6 +50,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -238,13 +240,13 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Label hintWebId;
 
   @FXML
-  private CheckBox autoFillCheckbox;
-
-  @FXML
   private Tab statisticsTab;
 
   @FXML
   private Tab scoreDataTab;
+
+  @FXML
+  private VBox detailsRoot;
 
   @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
@@ -267,6 +269,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
+  private PropperRenamingController propperRenamingController;
 
   @FXML
   private void onAssetManager(ActionEvent e) {
@@ -290,6 +293,10 @@ public class TableDataController implements Initializable, DialogController, Aut
       setMappedFieldValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
       tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
 
+      openVpsTableBtn.setDisable(false);
+      copyTableBtn.setDisable(false);
+      propperRenamingController.setVpsTable(vpsTable);
+
       TableInfo tableInfo = client.getVpxService().getTableInfo(game);
       String tableVersion = null;
       if (tableInfo != null) {
@@ -300,6 +307,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (version != null) {
         setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
         tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
+
+        propperRenamingController.setVpsTableVersion(version);
       }
 
       autoCompleteNameField.setText(vpsTable.getDisplayName());
@@ -343,17 +352,6 @@ public class TableDataController implements Initializable, DialogController, Aut
         gNotes.setText(td.getgNotes());
         gDetails.setText(td.getgDetails());
         gLog.setText(td.getgLog());
-
-        if (uiSettings.isAutoFillScreenName()) {
-          String vpsTableMappingField = serverSettings.getMappingVpsTableId();
-          String vpsTableId = tableDetails.getMappedValue(vpsTableMappingField);
-          if (!StringUtils.isEmpty(vpsTableId)) {
-            VpsTable table = VPS.getInstance().getTableById(vpsTableId);
-            String displayName = table.getDisplayName();
-            gameDisplayName.setText(displayName);
-          }
-
-        }
       }
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
@@ -577,7 +575,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableStatisticsController = loader.getController();
       statisticsTab.setContent(builtInRoot);
     } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
+      LOG.error("Failed to load dialog-table-data-tab-statistics.fxml: " + e.getMessage(), e);
     }
 
     try {
@@ -586,7 +584,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableScreensController = loader.getController();
       screensTab.setContent(builtInRoot);
     } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
+      LOG.error("Failed to load dialog-table-data-tab-screens.fxml: " + e.getMessage(), e);
     }
 
     try {
@@ -595,7 +593,16 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableDataTabScoreDataController = loader.getController();
       scoreDataTab.setContent(builtInRoot);
     } catch (IOException e) {
-      LOG.error("Failed to load tile: " + e.getMessage(), e);
+      LOG.error("Failed to load dialog-table-data-tab-scoredata.fxml: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PropperRenamingController.class.getResource("propper-renaming.fxml"));
+      Pane builtInRoot = loader.load();
+      propperRenamingController = loader.getController();
+      detailsRoot.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load propper-renaming.fxml: " + e.getMessage(), e);
     }
   }
 
@@ -613,7 +620,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
     tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
-
+    propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
 
     this.stage = stage;
     this.scene = stage.getScene();
@@ -641,12 +648,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (t.getCode() == KeyCode.PAGE_DOWN) {
         onNext(null);
       }
-    });
-
-    autoFillCheckbox.setSelected(uiSettings.isAutoFillScreenName());
-    autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      uiSettings.setAutoFillScreenName(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     TableDataController.lastTab = tab;
@@ -920,6 +921,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableById = VPS.getInstance().getTableById(vpsTableId);
       if (tableById != null) {
         autoCompleteNameField.setText(tableById.getDisplayName());
+        propperRenamingController.setVpsTable(tableById);
       }
     }
 
@@ -929,6 +931,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       VpsTableVersion tableVersion = tableById.getVersion(vpsTableVersionId);
       if (tableVersion != null) {
         tableVersionsCombo.setValue(tableVersion);
+        propperRenamingController.setVpsTableVersion(tableVersion);
       }
 
       openVpsTableVersionBtn.setDisable(tableVersion == null);
@@ -969,6 +972,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
     tableDetails.setMappedValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
 
+    propperRenamingController.setVpsTableVersion(newValue);
+
     onAutoFill();
   }
 
@@ -987,6 +992,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       String mappingVpsTableId = serverSettings.getMappingVpsTableId();
       setMappedFieldValue(mappingVpsTableId, vpsTable.getId());
+
+      propperRenamingController.setVpsTable(vpsTable);
     }
 
     openVpsTableVersionBtn.setDisable(true);

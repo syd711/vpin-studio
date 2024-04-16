@@ -27,7 +27,42 @@ public class UISettings extends JsonSettings {
   //open after upload
   private boolean autoEditTableData = true;
 
-  private boolean autoFillScreenName = true;
+  private boolean propperAuthorField = true;
+  private boolean propperModField = true;
+  private boolean propperVersionField = true;
+  private boolean propperVRField = true;
+
+  public boolean isPropperAuthorField() {
+    return propperAuthorField;
+  }
+
+  public void setPropperAuthorField(boolean propperAuthorField) {
+    this.propperAuthorField = propperAuthorField;
+  }
+
+  public boolean isPropperModField() {
+    return propperModField;
+  }
+
+  public void setPropperModField(boolean propperModField) {
+    this.propperModField = propperModField;
+  }
+
+  public boolean isPropperVersionField() {
+    return propperVersionField;
+  }
+
+  public void setPropperVersionField(boolean propperVersionField) {
+    this.propperVersionField = propperVersionField;
+  }
+
+  public boolean isPropperVRField() {
+    return propperVRField;
+  }
+
+  public void setPropperVRField(boolean propperVRField) {
+    this.propperVRField = propperVRField;
+  }
 
   public boolean isAutoEditTableData() {
     return autoEditTableData;
@@ -115,14 +150,6 @@ public class UISettings extends JsonSettings {
 
   public void setVpsTutorial(boolean vpsTutorial) {
     this.vpsTutorial = vpsTutorial;
-  }
-
-  public boolean isAutoFillScreenName() {
-    return autoFillScreenName;
-  }
-
-  public void setAutoFillScreenName(boolean autoFillScreenName) {
-    this.autoFillScreenName = autoFillScreenName;
   }
 
   public boolean isHideEmulatorColumn() {

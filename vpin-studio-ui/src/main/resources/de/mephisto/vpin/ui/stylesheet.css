@@ -1130,10 +1130,19 @@
 .edit-button:hover {
     -fx-background-color: #7777FF;
     -fx-border-style: solid solid solid solid;
-    -fx-border-width: 1 1 1 1;
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-border-radius: 3 3 3 3;
     -fx-border-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+}
+
+.custom-toggle-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button:selected {
+    -fx-background-color: #1E90FF; /* Selected button color */
+    -fx-text-fill: white; /* Text color when selected */
+    -fx-border-color: #1E90FF; /* Border color when selected */
+    -fx-border-radius: 5px; /* Rounded corners */
 }
