@@ -1,3 +1,9 @@
+## Hotfix 2.16.3
+
+- **Installer**: Fixed another critical error caused by new "Force Stereo" validator.
+- 
+
+
 ## Hotfix 2.16.2
 
 - **Validators**: Fixed several issues with the "Force Stereo" validator.
