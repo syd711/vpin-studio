@@ -1,3 +1,9 @@
+## Hotfix 2.16.3
+
+- **Installer**: Fixed critical error caused by the new "Force Stereo" validator.
+- **PUP Packs**: Fixed error in uploader.
+
+
 ## Hotfix 2.16.2
 
 - **Validators**: Fixed several issues with the "Force Stereo" validator.

@@ -130,7 +130,7 @@ public class PupPackUtil {
       return targetFolder;
     }
 
-    if (!targetFolder.startsWith(pupPackName) && !StringUtils.isEmpty(rom)) {
+    if ((StringUtils.isEmpty(pupPackName) || !targetFolder.startsWith(pupPackName)) && !StringUtils.isEmpty(rom)) {
       targetFolder = name;
       while (!targetFolder.startsWith(rom + "/") && targetFolder.contains("/")) {
         targetFolder = targetFolder.substring(targetFolder.indexOf("/") + 1);
