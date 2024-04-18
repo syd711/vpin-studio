@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -66,10 +67,10 @@ public class PropperRenamingController implements Initializable {
       screenNameField.setText(displayName.getText());
     }
     if (fileNameCheckBox.isSelected() && !fileName.getText().equals("-")) {
-      fileNameField.setText(fileName.getText());
+      fileNameField.setText(FileUtils.replaceWindowsChars(fileName.getText()));
     }
     if (gameNameCheckBox.isSelected() && !gameName.getText().equals("-")) {
-      gameNameField.setText(gameName.getText());
+      gameNameField.setText(FileUtils.replaceWindowsChars(gameName.getText()));
     }
   }
 

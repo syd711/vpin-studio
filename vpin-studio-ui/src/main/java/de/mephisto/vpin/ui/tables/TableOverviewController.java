@@ -11,7 +11,8 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -191,7 +192,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button vpsResetBtn;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
+  private ComboBox<Playlist> playlistCombo;
 
   @FXML
   private StackPane tableStack;
@@ -231,7 +232,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private Parent tablesLoadingOverlay;
   private TablesController tablesController;
-  private List<PlaylistRepresentation> playlists;
+  private List<Playlist> playlists;
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   private SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -464,6 +465,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (match.isPresent()) {
           tableView.getSelectionModel().clearSelection();
           tableView.getSelectionModel().select(match.get());
+          tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
 
           TableUploadDescriptor uploadMode = tableUploadResult.getUploadMode();
           if (uiSettings.isAutoEditTableData()) {
@@ -870,7 +872,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
-    List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
+    List<Playlist> pl = new ArrayList<>(playlists);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
@@ -1082,14 +1084,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPlaylists.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       HBox box = new HBox();
-      List<PlaylistRepresentation> matches = new ArrayList<>();
-      for (PlaylistRepresentation playlist : playlists) {
-        if (playlist.getGameIds().contains(value.getId())) {
+      List<Playlist> matches = new ArrayList<>();
+      for (Playlist playlist : playlists) {
+        if (playlist.containsGame(value.getId())) {
           matches.add(playlist);
         }
       }
 
-      for (PlaylistRepresentation match : matches) {
+      for (Playlist match : matches) {
         box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
         if (box.getChildren().size() == 3 && matches.size() > box.getChildren().size()) {
           Label label = new Label("+" + (matches.size() - box.getChildren().size()));
@@ -1435,7 +1437,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     List<GameRepresentation> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
 
-    PlaylistRepresentation playlist = playlistCombo.getValue();
+    Playlist playlist = playlistCombo.getValue();
 
     //if all tables are filtered...
     if (filteredIds.isEmpty() && !tableFilterController.getFilterSettings().isResetted()) {
@@ -1448,7 +1450,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         continue;
       }
 
-      if (playlist != null && !playlist.getGameIds().contains(game.getId())) {
+      if (playlist != null && !playlist.containsGame(game.getId())) {
         continue;
       }
 
@@ -1522,16 +1524,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return tableView.getSelectionModel().getSelectedItem();
   }
 
-  public List<PlaylistRepresentation> getPlaylists() {
+  public List<Playlist> getPlaylists() {
     return this.playlists;
   }
 
-  public void updatePlaylist(PlaylistRepresentation update) {
+  public void updatePlaylist(Playlist update) {
     int pos = this.playlists.indexOf(update);
     this.playlists.remove(update);
     this.playlists.add(pos, update);
 
-    List<PlaylistRepresentation> refreshedData = new ArrayList<>(this.playlists);
+    List<Playlist> refreshedData = new ArrayList<>(this.playlists);
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
 
@@ -1642,9 +1644,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
+    playlistCombo.valueProperty().addListener(new ChangeListener<Playlist>() {
       @Override
-      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlistRepresentation, PlaylistRepresentation t1) {
+      public void changed(ObservableValue<? extends Playlist> observableValue, Playlist Playlist, Playlist t1) {
         tableView.getSelectionModel().clearSelection();
         filterGames(games);
         tableView.setItems(data);

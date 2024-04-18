@@ -100,7 +100,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     if (importToPopper) {
       int gameId = pinUPConnector.importGame(file, emuId);
       if (gameId >= 0 && playListId >= 0) {
-        pinUPConnector.addToPlaylist(playListId, gameId);
+        pinUPConnector.addToPlaylist(playListId, gameId, 0);
       }
       return gameId;
     }

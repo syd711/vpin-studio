@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -119,6 +120,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private StackPane loaderStack;
+
+  @FXML
+  private Button folderBtn;
 
   // template editing
   @FXML
@@ -479,8 +483,28 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     this.templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
 
+  @FXML
+  private void onFolderBtn() {
+    try {
+      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      String popperScreen = cardSettings.getPopperScreen();
+      if (!StringUtils.isEmpty(popperScreen)) {
+        PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
+        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+        String mediaDir = gameEmulator.getMediaDirectory();
+        File screenDir = new File(mediaDir, screen.name());
+        new ProcessBuilder("explorer.exe", screenDir.getAbsolutePath()).start();
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to open media dialog: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open folder: " + e.getMessage());
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    folderBtn.setVisible(client.getSystemService().isLocal());
+
     try {
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));

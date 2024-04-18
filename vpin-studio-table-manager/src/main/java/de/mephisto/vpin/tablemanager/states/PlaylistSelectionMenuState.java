@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ public class PlaylistSelectionMenuState extends MenuState {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final MenuState parentState;
   private final MenuController menuController;
-  private final List<PlaylistRepresentation> playlists;
+  private final List<Playlist> playlists;
   private int index = 0;
 
   public PlaylistSelectionMenuState(MenuState parentState, MenuController menuController) {
@@ -37,14 +37,14 @@ public class PlaylistSelectionMenuState extends MenuState {
       index = playlists.size() - 1;
     }
 
-    PlaylistRepresentation playlistRepresentation = playlists.get(index);
-    if(playlistRepresentation == null) {
+    Playlist Playlist = playlists.get(index);
+    if(Playlist == null) {
       this.menuController.setArrowsVisible(false);
       this.menuController.setNameLabelText("Skip Playlist Selection");
     }
     else {
       this.menuController.setArrowsVisible(true);
-      this.menuController.setNameLabelText(playlistRepresentation.getName());
+      this.menuController.setNameLabelText(Playlist.getName());
     }
     return this;
   }
@@ -58,14 +58,14 @@ public class PlaylistSelectionMenuState extends MenuState {
       index++;
     }
 
-    PlaylistRepresentation playlistRepresentation = playlists.get(index);
-    if(playlistRepresentation == null) {
+    Playlist Playlist = playlists.get(index);
+    if(Playlist == null) {
       this.menuController.setArrowsVisible(false);
       this.menuController.setNameLabelText("Skip Playlist Selection");
     }
     else {
       this.menuController.setArrowsVisible(true);
-      this.menuController.setNameLabelText(playlistRepresentation.getName());
+      this.menuController.setNameLabelText(Playlist.getName());
     }
     return this;
   }

@@ -24,6 +24,8 @@ public class UISettings extends JsonSettings {
 
   private boolean hideEmulatorColumn = true;
 
+  private boolean autoApplyVpsData = true;
+
   //open after upload
   private boolean autoEditTableData = true;
 
@@ -31,6 +33,14 @@ public class UISettings extends JsonSettings {
   private boolean propperModField = true;
   private boolean propperVersionField = true;
   private boolean propperVRField = true;
+
+  public boolean isAutoApplyVpsData() {
+    return autoApplyVpsData;
+  }
+
+  public void setAutoApplyVpsData(boolean autoApplyVpsData) {
+    this.autoApplyVpsData = autoApplyVpsData;
+  }
 
   public boolean isPropperAuthorField() {
     return propperAuthorField;

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager.states;
 
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 
@@ -28,7 +28,7 @@ public class InstallConfirmationMenuState extends MenuState {
 
   @Override
   MenuState enter() {
-    List<PlaylistRepresentation> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
+    List<Playlist> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
     if(!playlists.isEmpty()) {
       return new PlaylistSelectionMenuState(this, menuController);
     }

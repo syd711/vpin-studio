@@ -15,6 +15,15 @@ public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
 
+  public static String replaceWindowsChars(String name) {
+    for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
+      if(name.contains(String.valueOf(invalidWindowsSpecificChar))) {
+        name = name.replaceAll(String.valueOf(invalidWindowsSpecificChar), "-");
+      }
+    }
+    return name;
+  }
+
   public static void cloneFile(File original, String updatedName) throws IOException {
     if (original.exists()) {
       String suffix = FilenameUtils.getExtension(original.getName());

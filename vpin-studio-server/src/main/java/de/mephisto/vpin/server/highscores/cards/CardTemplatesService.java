@@ -57,12 +57,14 @@ public class CardTemplatesService {
   }
 
   public CardTemplate getTemplateForGame(Game game) throws Exception {
-    Optional<TemplateMapping> byId = templateMappingRepository.findById((long) game.getId());
-    if (byId.isPresent()) {
-      TemplateMapping mapping = byId.get();
-      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
-      template.setId(mapping.getId());
-      return template;
+    if (game.getTemplateId() != null) {
+      Optional<TemplateMapping> byId = templateMappingRepository.findById(game.getTemplateId());
+      if (byId.isPresent()) {
+        TemplateMapping mapping = byId.get();
+        CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
+        template.setId(mapping.getId());
+        return template;
+      }
     }
 
     return getCardTemplate(CardTemplate.DEFAULT);
@@ -79,7 +81,7 @@ public class CardTemplatesService {
 
   public CardTemplate getTemplate(long templateId) throws Exception {
     Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
-    if(mapping.isPresent()) {
+    if (mapping.isPresent()) {
       TemplateMapping m = mapping.get();
       CardTemplate template = CardTemplate.fromJson(CardTemplate.class, m.getTemplateJson());
       template.setId(m.getId());

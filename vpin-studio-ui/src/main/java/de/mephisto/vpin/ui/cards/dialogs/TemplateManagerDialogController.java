@@ -416,7 +416,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
       templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "padding");
       templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
-      templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin");
+      templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override

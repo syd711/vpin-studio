@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,34 +19,51 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-
-  public List<PlaylistRepresentation> getStaticPlaylists() {
-    return Arrays.asList(getRestClient().get(API + "playlists/static", PlaylistRepresentation[].class));
+  public List<Playlist> getStaticPlaylists() {
+    return Arrays.asList(getRestClient().get(API + "playlists/static", Playlist[].class));
   }
 
-  public List<PlaylistRepresentation> getPlaylists() {
-    return Arrays.asList(getRestClient().get(API + "playlists", PlaylistRepresentation[].class));
+  public List<Playlist> getPlaylists() {
+    return Arrays.asList(getRestClient().get(API + "playlists", Playlist[].class));
   }
 
-  public PlaylistRepresentation getPlaylist(int playlistId) {
-    return getRestClient().get(API + "playlists/" + playlistId, PlaylistRepresentation.class);
+  public Playlist getPlaylist(int playlistId) {
+    return getRestClient().get(API + "playlists/" + playlistId, Playlist.class);
   }
 
 
-  public PlaylistRepresentation removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
+  public Playlist removeFromPlaylist(Playlist playlist, GameRepresentation game) {
     getRestClient().delete(API + "playlists/" + playlist.getId() + "/" + game.getId(), new HashMap<>());
     return getPlaylist(playlist.getId());
   }
 
-  public PlaylistRepresentation addToPlaylist(PlaylistRepresentation playlist, GameRepresentation game) throws Exception {
-    return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId(), new HashMap<>(), PlaylistRepresentation.class);
+  public Playlist updatePlaylistGame(Playlist playlist, GameRepresentation game, boolean fav, boolean globalFav) throws Exception {
+    int favMode = 0;
+    if (fav) {
+      favMode = 1;
+    }
+    if (globalFav) {
+      favMode = 2;
+    }
+    return getRestClient().put(API + "playlists/favs/" + playlist.getId() + "/" + game.getId() + "/" + favMode, new HashMap<>(), Playlist.class);
   }
 
-  public PlaylistRepresentation setPlaylistColor(PlaylistRepresentation playlist, String colorhex) throws Exception {
+  public Playlist addToPlaylist(Playlist playlist, GameRepresentation game, boolean fav, boolean globalFav) throws Exception {
+    int favMode = 0;
+    if (fav) {
+      favMode = 1;
+    }
+    if (globalFav) {
+      favMode = 2;
+    }
+    return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId() + "/" + favMode, new HashMap<>(), Playlist.class);
+  }
+
+  public Playlist setPlaylistColor(Playlist playlist, String colorhex) throws Exception {
     if (colorhex.startsWith("#")) {
       colorhex = colorhex.substring(1);
     }
     long color = Long.parseLong(colorhex, 16);
-    return getRestClient().put(API + "playlists/" + playlist.getId() + "/color/" + color, new HashMap<>(), PlaylistRepresentation.class);
+    return getRestClient().put(API + "playlists/" + playlist.getId() + "/color/" + color, new HashMap<>(), Playlist.class);
   }
 }

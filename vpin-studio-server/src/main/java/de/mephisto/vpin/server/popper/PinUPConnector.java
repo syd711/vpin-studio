@@ -746,10 +746,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
         }
         else {
-          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
         }
       }
       rs.close();
@@ -790,10 +790,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
         }
         else {
-          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
         }
 
         result.add(playlist);
@@ -822,21 +822,36 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
   }
 
-  public void addToPlaylist(int playlistId, int gameId) {
+  public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed) VALUES (?,?,?,?,?)");
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, isFav) VALUES (?,?,?,?,?,?)");
       preparedStatement.setInt(1, playlistId);
       preparedStatement.setInt(2, gameId);
       preparedStatement.setInt(3, 1);
       preparedStatement.setInt(4, 0);
       preparedStatement.setInt(5, 0);
+      preparedStatement.setInt(6, favMode);
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
       LOG.info("Added game " + gameId + " to playlist " + playlistId);
     } catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
+    Connection connect = this.connect();
+    String sql = "UPDATE PlayListDetails SET isFav = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+    } catch (Exception e) {
+      LOG.error("Failed to update playlist [" + sql + "]: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
@@ -1210,16 +1225,22 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   @NonNull
-  private List<Integer> getGameIdsFromPlaylist(int id) {
-    List<Integer> result = new ArrayList<>();
+  private List<PlaylistGame> getGameIdsFromPlaylist(int id) {
+    List<PlaylistGame> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE PlayListID = " + id);
 
       while (rs.next()) {
+        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        result.add(gameId);
+        game.setId(gameId);
+
+        int favMode = rs.getInt("isFav");
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+        result.add(game);
       }
 
       rs.close();
@@ -1233,16 +1254,22 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
 
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
-    List<Integer> result = new ArrayList<>();
+  private List<PlaylistGame> getGameIdsFromSqlPlaylist(String sql) {
+    List<PlaylistGame> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(sql);
 
       while (rs.next()) {
+        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        result.add(gameId);
+        game.setId(gameId);
+
+        int favMode = rs.getInt("isFav");
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+        result.add(game);
       }
 
       rs.close();

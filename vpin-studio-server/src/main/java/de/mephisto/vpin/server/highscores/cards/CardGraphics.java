@@ -267,7 +267,7 @@ public class CardGraphics {
       x = x + wheelWidth + template.getPadding();
     }
     else {
-      x = (remainingWidth - columnsWidth) / 2;
+      x = (imageWidth - columnsWidth) / 2;
     }
 
     yStart = yStart + g.getFont().getSize();

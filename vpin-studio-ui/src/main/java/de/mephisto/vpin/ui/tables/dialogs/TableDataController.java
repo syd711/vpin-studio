@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -247,6 +248,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private VBox detailsRoot;
+
+  @FXML
+  private CheckBox autoFillCheckbox;
 
   @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
@@ -520,7 +524,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     doSave(stage, true);
   }
 
-  private void doSave(Stage stage, boolean closeDialog) {
+  private synchronized void doSave(Stage stage, boolean closeDialog) {
     String updatedGameFileName = tableDetails.getGameFileName();
     if (!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
@@ -648,6 +652,12 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (t.getCode() == KeyCode.PAGE_DOWN) {
         onNext(null);
       }
+    });
+
+    autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
+    autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      uiSettings.setAutoApplyVpsData(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     TableDataController.lastTab = tab;
@@ -974,7 +984,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     propperRenamingController.setVpsTableVersion(newValue);
 
-    onAutoFill();
+    if (this.autoFillCheckbox.isSelected()) {
+      onAutoFill();
+    }
   }
 
   /**

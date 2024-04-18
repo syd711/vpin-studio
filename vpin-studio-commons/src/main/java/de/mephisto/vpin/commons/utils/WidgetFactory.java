@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
@@ -218,7 +218,7 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createPlaylistIcon(PlaylistRepresentation playlist) {
+  public static Label createPlaylistIcon(Playlist playlist) {
     Label label = new Label();
     label.setTooltip(new Tooltip(playlist.getName()));
     FontIcon fontIcon = new FontIcon();
@@ -527,12 +527,12 @@ public class WidgetFactory {
     return null;
   }
 
-  public static class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+  public static class PlaylistBackgroundImageListCell extends ListCell<Playlist> {
 
     public PlaylistBackgroundImageListCell() {
     }
 
-    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+    protected void updateItem(Playlist item, boolean empty) {
       super.updateItem(item, empty);
       setGraphic(null);
       setText(null);
