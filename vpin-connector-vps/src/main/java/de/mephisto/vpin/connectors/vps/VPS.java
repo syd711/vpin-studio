@@ -59,7 +59,7 @@ public class VPS {
   }
 
   public static String getVpsTableUrl(String tableId) {
-    return BASE_URL + "/?game=" + tableId;
+    return BASE_URL + "/?game=" + tableId + "&fileType=table";
   }
 
   public static VPS getInstance() {
