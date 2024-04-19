@@ -119,9 +119,6 @@ public class TournamentTableSelectorDialogController implements DialogController
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    this.tournamentTable = new TournamentTable();
-    this.tournamentTable.setEnabled(true);
-
     List<VpsTable> tables = VPS.getInstance().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
@@ -138,43 +135,6 @@ public class TournamentTableSelectorDialogController implements DialogController
       validate();
     });
 
-    startDatePicker.setValue(LocalDate.now());
-    startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      tournamentTable.setStartDate(date);
-      validate();
-    });
-
-    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
-    startTime.setValue("00:00");
-    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
-      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      tournamentTable.setStartDate(date);
-      validate();
-    });
-
-    Date startDate = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-    tournamentTable.setStartDate(startDate);
-
-
-    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
-    endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
-      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      tournamentTable.setEndDate(date);
-      validate();
-    });
-    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
-    endTime.setValue("00:00");
-    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
-      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      tournamentTable.setEndDate(date);
-      validate();
-    });
-
-    Date endDate = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-    tournamentTable.setEndDate(endDate);
-
-    statusCheckbox.setSelected(tournamentTable.isEnabled());
     statusCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -183,33 +143,14 @@ public class TournamentTableSelectorDialogController implements DialogController
       }
     });
 
+    startDatePicker.setValue(LocalDate.now());
+    endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
 
     customTimeCheckbox.setSelected(false);
     startDatePicker.setDisable(true);
     startTime.setDisable(true);
     endDatePicker.setDisable(true);
     endTime.setDisable(true);
-    customTimeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        startDatePicker.setDisable(!newValue);
-        startTime.setDisable(!newValue);
-        endDatePicker.setDisable(!newValue);
-        endTime.setDisable(!newValue);
-
-        if (newValue) {
-          Date startDate = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-          tournamentTable.setStartDate(startDate);
-
-          Date endDate = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-          tournamentTable.setEndDate(endDate);
-        }
-
-        validate();
-      }
-    });
-
-    validate();
 
     Platform.runLater(() -> nameField.requestFocus());
   }
@@ -218,6 +159,7 @@ public class TournamentTableSelectorDialogController implements DialogController
     this.tournament = tournament;
     this.tournamentTable = tournamentTable;
     this.customTimeCheckbox.setSelected(tournamentTable.getStartDate() != null);
+    this.statusCheckbox.setSelected(tournamentTable.isEnabled());
     customTimeCheckbox.setSelected(customTimeCheckbox.isSelected());
 
     startDatePicker.setDisable(!customTimeCheckbox.isSelected());
@@ -225,6 +167,9 @@ public class TournamentTableSelectorDialogController implements DialogController
     endDatePicker.setDisable(!customTimeCheckbox.isSelected());
     endTime.setDisable(!customTimeCheckbox.isSelected());
 
+
+    startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    startTime.setValue("00:00");
     if (tournamentTable.getStartDate() != null) {
       this.startDatePicker.setValue(tournamentTable.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.startDatePicker.setDisable(!customTimeCheckbox.isSelected());
@@ -232,6 +177,8 @@ public class TournamentTableSelectorDialogController implements DialogController
       this.startTime.setDisable(!customTimeCheckbox.isSelected());
     }
 
+    endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
+    endTime.setValue("00:00");
     if (tournamentTable.getEndDate() != null) {
       this.endDatePicker.setValue(tournamentTable.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
       this.endDatePicker.setDisable(!customTimeCheckbox.isSelected());
@@ -256,6 +203,49 @@ public class TournamentTableSelectorDialogController implements DialogController
       }
     }
 
+    startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      tournamentTable.setStartDate(date);
+      validate();
+    });
+    startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+      tournamentTable.setStartDate(date);
+      validate();
+    });
+
+    endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      tournamentTable.setEndDate(date);
+      validate();
+    });
+    endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
+      Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+      tournamentTable.setEndDate(date);
+      validate();
+    });
+
+
+    customTimeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        startDatePicker.setDisable(!newValue);
+        startTime.setDisable(!newValue);
+        endDatePicker.setDisable(!newValue);
+        endTime.setDisable(!newValue);
+
+        if (newValue && tournamentTable.getStartDate() == null) {
+          Date startDate = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
+          tournamentTable.setStartDate(startDate);
+
+          Date endDate = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
+          tournamentTable.setEndDate(endDate);
+        }
+
+        validate();
+      }
+    });
+
     validate();
   }
 
@@ -263,11 +253,7 @@ public class TournamentTableSelectorDialogController implements DialogController
     validationContainer.setVisible(true);
     this.okButton.setDisable(true);
 
-    if (!customTimeCheckbox.isSelected()) {
-      tournamentTable.setStartDate(null);
-      tournamentTable.setEndDate(null);
-    }
-    else {
+    if (customTimeCheckbox.isSelected()) {
       if (tournamentTable.getStartDate().getTime() >= tournamentTable.getEndDate().getTime()) {
         validationTitle.setText("Invalid start/end date set: The end date must be after the start date.");
         return;
@@ -282,7 +268,6 @@ public class TournamentTableSelectorDialogController implements DialogController
         validationTitle.setText("Invalid end date set: The start is not within the tournaments time range.");
         return;
       }
-
     }
 
 

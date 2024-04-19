@@ -219,7 +219,7 @@
                         </VBox>
                      </center>
                      <right>
-                        <VBox prefHeight="200.0" prefWidth="540.0" BorderPane.alignment="CENTER">
+                        <VBox prefHeight="200.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
@@ -383,7 +383,7 @@
                               </GridPane>
                            </children>
                            <BorderPane.margin>
-                              <Insets left="12.0" right="12.0" />
+                              <Insets left="24.0" right="12.0" />
                            </BorderPane.margin>
                         </VBox>
                      </center>

@@ -47,7 +47,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);
-    imageView.setFitWidth(130);
+    imageView.setFitWidth(100);
 
     this.getChildren().add(imageView);
 

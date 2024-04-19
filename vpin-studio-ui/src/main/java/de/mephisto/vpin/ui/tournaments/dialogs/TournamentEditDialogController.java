@@ -52,9 +52,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,19 +257,16 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private void doTableEdit(Stage stage, TournamentTreeModel selection) {
     TournamentTable updatedTournamentTable = TournamentDialogs.openTableSelectionDialog(stage, this.tournament, selection.getTournamentTable());
     if (updatedTournamentTable != null) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(updatedTournamentTable.getVpsTableId());
+      GameRepresentation game = client.getGameService().getGameByVpsTable(selection.getTournamentTable().getVpsTableId(), selection.getTournamentTable().getVpsVersionId());
+      selection.setGame(game);
+
+      VpsTable vpsTable = VPS.getInstance().getTableById(selection.getTournamentTable().getVpsTableId());
       VpsTableVersion vpsTableVersion = null;
       if (vpsTable != null) {
-        vpsTableVersion = vpsTable.getVersion(updatedTournamentTable.getVpsVersionId());
+        vpsTableVersion = vpsTable.getVersion(selection.getTournamentTable().getVpsVersionId());
       }
-
-      GameRepresentation game = client.getGameService().getGameByVpsTable(updatedTournamentTable.getVpsTableId(), updatedTournamentTable.getVpsVersionId());
-
-      selection.setGame(game);
-      selection.setTournamentTable(updatedTournamentTable);
       selection.setVpsTable(vpsTable);
       selection.setVpsTableVersion(vpsTableVersion);
-
       reloadTables();
     }
   }
@@ -412,11 +411,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
 
     Platform.runLater(() -> {
-      rootStack.getChildren().add(loadingOverlay);
       if (isOwner && this.tableSelection.isEmpty()) {
         loadIScoredTables();
       }
       else {
+        rootStack.getChildren().add(loadingOverlay);
         reloadTables();
       }
     });
@@ -454,6 +453,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
             }
 
             TournamentTable tournamentTable = new TournamentTable();
+            tournamentTable.setEnabled(!game.isDisabled());
             tournamentTable.setVpsTableId(vpsTable.getId());
             tournamentTable.setVpsVersionId(vpsVersion.getId());
             tournamentTable.setTournamentId(this.tournament.getId());
@@ -587,7 +587,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       else {
         label.setGraphic(WidgetFactory.createCheckIcon(null));
       }
-      label.setStyle(TournamentHelper.getIconColor(tournamentTable));
+
+      if (!tournamentTable.isEnabled()) {
+        ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf("#B0ABAB"));
+      }
+
       return new SimpleObjectProperty<>(label);
     });
 

@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tournaments.view.DateCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentCellContainer;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -43,6 +44,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,7 +76,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private TreeTableColumn<TournamentTreeModel, String> columnName;
 
   @FXML
-  private TreeTableColumn<TournamentTreeModel, String> columnTable;
+  private TreeTableColumn<TournamentTreeModel, Pane> columnTable;
 
   @FXML
   private TreeTableColumn<TournamentTreeModel, String> columnStatus;
@@ -400,7 +402,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (value != null && value.getTournament().isActive()) {
       String helpText1 = "The tournament is active for another " + value.getTournament().remainingDays() + " days.";
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Tournament '" +  value.getTournament().getDisplayName() + "'?", helpText1, null, "Finish Tournament");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Tournament '" + value.getTournament().getDisplayName() + "'?", helpText1, null, "Finish Tournament");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         maniaClient.getTournamentClient().finishTournament(value.getTournament().getId());
         client.getTournamentsService().synchronize();
@@ -654,6 +656,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
+          if (game != null) {
+            return new SimpleObjectProperty<>(new TournamentTableGameCellContainer(game, value.getTournamentTable()));
+          }
+
           Label label = new Label("- NOT INSTALLED -");
           label.getStyleClass().add("default-headline");
           Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
