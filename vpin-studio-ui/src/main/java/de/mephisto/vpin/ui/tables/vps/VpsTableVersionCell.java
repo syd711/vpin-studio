@@ -14,7 +14,7 @@ public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
     setGraphic(null);
     setText(null);
     if (item != null) {
-      setGraphic(new VpsVersionContainer(item));
+      setGraphic(new VpsVersionContainer(item, "", false));
     }
   }
 }

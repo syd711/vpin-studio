@@ -730,7 +730,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           return new SimpleObjectProperty<>("All versions allowed.");
         }
 
-        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournamentTable())));
+        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournamentTable()), true));
       }
       return null;
     });

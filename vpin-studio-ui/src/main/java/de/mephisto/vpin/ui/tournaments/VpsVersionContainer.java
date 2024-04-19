@@ -24,15 +24,11 @@ public class VpsVersionContainer extends VBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsVersionContainer.class);
   private final static int TITLE_WIDTH = 100;
 
-  public VpsVersionContainer(VpsTableVersion item) {
-    this(item, "");
-  }
-
-  public VpsVersionContainer(VpsTableVersion item, String customStyle) {
+  public VpsVersionContainer(VpsTableVersion item, String customStyle, boolean downloadAction) {
     super(3);
     setPadding(new Insets(3));
-    setMinHeight(130);
-    setMaxHeight(130);
+    setMinHeight(124);
+    setMaxHeight(124);
     setMaxWidth(500);
 
     String comment = item.getComment();
@@ -42,7 +38,7 @@ public class VpsVersionContainer extends VBox {
       this.getChildren().add(title);
     }
 
-    if(item.getAuthors() != null && item.getAuthors().size() > 0) {
+    if (item.getAuthors() != null && item.getAuthors().size() > 0) {
       String authors = String.join(", ", item.getAuthors());
       Label title = new Label(authors);
       title.getStyleClass().add("default-text");
@@ -80,27 +76,41 @@ public class VpsVersionContainer extends VBox {
     row = new HBox(6);
     Button button = new Button("Download Table");
 
-    button.setOnAction(event -> {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
+    if (downloadAction) {
+      button.setOnAction(event -> {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
+          } catch (Exception e) {
+            LOG.error("Failed to open link: " + e.getMessage());
+          }
+        }
+      });
+
+      FontIcon icon = new FontIcon("mdi2o-open-in-new");
+      icon.setIconSize(8);
+      icon.setIconColor(Paint.valueOf("#FFFFFF"));
+      button.setGraphic(icon);
+      button.setStyle("-fx-font-size: 12px;");
+      button.getStyleClass().add("external-component");
+      row.getChildren().add(button);
+    }
+    else {
+      List<String> features = item.getFeatures();
+      if (features != null) {
+        for (String feature : features) {
+          Label badge = new Label(feature);
+          badge.getStyleClass().add("white-label");
+          badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
+          badge.getStyleClass().add("vps-badge");
+          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";" + customStyle);
+          row.getChildren().add(badge);
         }
       }
-    });
-
-    FontIcon icon = new FontIcon("mdi2o-open-in-new");
-    icon.setIconSize(8);
-    icon.setIconColor(Paint.valueOf("#FFFFFF"));
-    button.setGraphic(icon);
-    button.setStyle("-fx-font-size: 12px;");
-    button.getStyleClass().add("external-component");
-    row.getChildren().add(button);
-
+    }
     this.getChildren().add(row);
 
-    row.setPadding(new Insets(3, 0,  6, 0));
+    row.setPadding(new Insets(3, 0, 6, 0));
   }
 }

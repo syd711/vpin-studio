@@ -33,9 +33,7 @@ public class TournamentDialogs {
   public static TournamentTable openTableSelectionDialog(Stage parent, Tournament tournament, TournamentTable tournamentTable) {
     Stage stage = Dialogs.createStudioDialogStage(parent, TournamentTableSelectorDialogController.class, "dialog-tournament-table-selector.fxml", "Tournament - Table Selection");
     TournamentTableSelectorDialogController controller = (TournamentTableSelectorDialogController) stage.getUserData();
-    if (tournamentTable != null) {
-      controller.setTournamentTable(tournament, tournamentTable);
-    }
+    controller.setTournamentTable(tournament, tournamentTable);
 
     stage.showAndWait();
 

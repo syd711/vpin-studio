@@ -215,8 +215,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   @FXML
   private void onTableAdd(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    TournamentTable tournamentTable = TournamentDialogs.openTableSelectionDialog(stage, this.tournament, null);
-    if (tournamentTable != null) {
+
+    TournamentTable tournamentTable = new TournamentTable();
+    tournamentTable.setEnabled(true);
+    TournamentTable result = TournamentDialogs.openTableSelectionDialog(stage, this.tournament, tournamentTable);
+    if (result != null) {
       tournamentTable.setTournamentId(this.tournament.getId());
 
       VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
@@ -628,7 +631,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         return new SimpleObjectProperty<>("All versions allowed.");
       }
       String customStyle = TournamentHelper.getLabelCss(cellData.getValue().getTournamentTable());
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {
