@@ -81,6 +81,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
       if (!tournament.isFinished()) {
         List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
         for (TournamentTable tournamentTable : tournamentTables) {
+          if(!tournamentTable.isActive()) {
+            LOG.info("Skippd tournament score submission for " + tournamentTable + ", the table is not active.");
+            continue;
+          }
           Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
           if (gameByVpsTable != null) {
 

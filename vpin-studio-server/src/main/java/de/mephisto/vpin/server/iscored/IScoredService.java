@@ -33,6 +33,10 @@ public class IScoredService {
 
           List<Game> games = gameRoom.getGames();
           for (Game game : games) {
+            if(game.isDisabled()) {
+              LOG.info("Skipped iScored score submission, because table " + game + " has disabled flag set.");
+            }
+
             List<String> tags = game.getTags();
             for (String tag : tags) {
               if (tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {

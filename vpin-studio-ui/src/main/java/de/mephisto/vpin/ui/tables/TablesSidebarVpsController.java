@@ -17,10 +17,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
-import de.mephisto.vpin.ui.tables.vps.VpsEntry;
-import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
-import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
+import de.mephisto.vpin.ui.tables.vps.*;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -454,6 +451,51 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           if (!StringUtils.isEmpty(backglassFile.getComment())) {
             entries.add(new VpsEntryComment(backglassFile.getComment()));
           }
+        }
+      }
+    }
+
+    if (!entries.isEmpty()) {
+      addSectionHeader(dataRoot, title);
+      dataRoot.getChildren().addAll(entries);
+    }
+  }
+
+
+  public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, List<VpsTableVersion> urls, boolean showUpdates) {
+    if (urls == null || urls.isEmpty()) {
+      return;
+    }
+
+    List<Node> entries = new ArrayList<>();
+    for (VpsTableVersion authoredUrl : urls) {
+      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
+      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
+        String version = authoredUrl.getVersion();
+        long updatedAt = authoredUrl.getUpdatedAt();
+        List<String> authors = authoredUrl.getAuthors();
+
+        for (VpsUrl vpsUrl : authoredUrlUrls) {
+          String url = vpsUrl.getUrl();
+          if (StringUtils.isEmpty(url)) {
+            continue;
+          }
+
+          if (vpsUrl.isBroken()) {
+            continue;
+          }
+
+          String updateText = null;
+          if(game != null && showUpdates) {
+            List<VPSChange> changes = game.getVpsUpdates().getChanges();
+            for (VPSChange change : changes) {
+              if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
+                updateText = change.toString(game.getExtTableId());
+                break;
+              }
+            }
+          }
+          entries.add(new VpsTableEntry(vpsTable.getId(), authoredUrl.getId(), version, authors, url, updatedAt, updateText));
         }
       }
     }
