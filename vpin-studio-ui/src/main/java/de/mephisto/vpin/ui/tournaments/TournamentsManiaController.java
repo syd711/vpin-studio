@@ -24,8 +24,6 @@ import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.vps.containers.VpsTableContainer;
-import de.mephisto.vpin.ui.vps.containers.VpsVersionContainer;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -83,9 +81,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   @FXML
   private TreeTableColumn<TournamentTreeModel, String> columnDate;
-
-  @FXML
-  private TreeTableColumn<TournamentTreeModel, String> columnVPSTable;
 
   @FXML
   private TreeTableColumn<TournamentTreeModel, String> columnVPSVersion;
@@ -727,15 +722,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       return null;
     });
 
-    columnVPSTable.setCellValueFactory(cellData -> {
-      if (!cellData.getValue().getValue().isTournamentNode()) {
-        TournamentTreeModel value = cellData.getValue().getValue();
-        VpsTable vpsTable = value.getVpsTable();
-        return new SimpleObjectProperty(new VpsTableContainer(vpsTable));
-      }
-      return null;
-    });
-
     columnVPSVersion.setCellValueFactory(cellData -> {
       if (!cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
@@ -744,7 +730,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           return new SimpleObjectProperty<>("All versions allowed.");
         }
 
-        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion));
+        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournamentTable())));
       }
       return null;
     });

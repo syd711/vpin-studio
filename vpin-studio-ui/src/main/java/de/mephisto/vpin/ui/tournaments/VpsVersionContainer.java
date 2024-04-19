@@ -1,18 +1,27 @@
-package de.mephisto.vpin.ui.vps.containers;
+package de.mephisto.vpin.ui.tournaments;
 
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class VpsVersionContainer extends VBox {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsVersionContainer.class);
   private final static int TITLE_WIDTH = 100;
 
   public VpsVersionContainer(VpsTableVersion item) {
@@ -21,9 +30,9 @@ public class VpsVersionContainer extends VBox {
 
   public VpsVersionContainer(VpsTableVersion item, String customStyle) {
     super(3);
-
-    setMinHeight(120);
-    setMaxHeight(120);
+    setPadding(new Insets(3));
+    setMinHeight(130);
+    setMaxHeight(130);
     setMaxWidth(500);
 
     String comment = item.getComment();
@@ -69,17 +78,27 @@ public class VpsVersionContainer extends VBox {
     this.getChildren().add(row);
 
     row = new HBox(6);
-    List<String> features = item.getFeatures();
-    if (features != null) {
-      for (String feature : features) {
-        Label badge = new Label(feature);
-        badge.getStyleClass().add("white-label");
-        badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
-        badge.getStyleClass().add("vps-badge");
-        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";" + customStyle);
-        row.getChildren().add(badge);
+    Button button = new Button("Download Table");
+
+    button.setOnAction(event -> {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
+        } catch (Exception e) {
+          LOG.error("Failed to open link: " + e.getMessage());
+        }
       }
-    }
+    });
+
+    FontIcon icon = new FontIcon("mdi2o-open-in-new");
+    icon.setIconSize(8);
+    icon.setIconColor(Paint.valueOf("#FFFFFF"));
+    button.setGraphic(icon);
+    button.setStyle("-fx-font-size: 12px;");
+    button.getStyleClass().add("external-component");
+    row.getChildren().add(button);
+
     this.getChildren().add(row);
 
     row.setPadding(new Insets(3, 0,  6, 0));

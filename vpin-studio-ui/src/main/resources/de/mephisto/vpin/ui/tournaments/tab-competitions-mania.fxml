@@ -29,8 +29,7 @@
                       <TreeTableColumn fx:id="columnName" prefWidth="330.0" text="Name" />
                         <TreeTableColumn fx:id="columnDate" prefWidth="260.0" style="-fx-alignment: CENTER;" text="Start /End" />
                         <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
-                      <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
-                        <TreeTableColumn fx:id="columnVPSTable" prefWidth="250.0" text="Table Data" />
+                      <TreeTableColumn fx:id="columnTable" prefWidth="360.0" text="Table" />
                         <TreeTableColumn fx:id="columnVPSVersion" prefWidth="400.0" text="Table Version" />
                     </columns>
                   </TreeTableView>

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.vps.containers;
+package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -64,29 +64,11 @@ public class VpsTableContainer extends VBox {
     this.getChildren().add(row);
 
     row = new HBox(6);
-    Button button = new Button("Download Table");
 
-    button.setOnAction(event -> {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
-    });
-
-    FontIcon icon = new FontIcon("mdi2o-open-in-new");
-    icon.setIconSize(8);
-    icon.setIconColor(Paint.valueOf("#FFFFFF"));
-    button.setGraphic(icon);
-    button.setStyle("-fx-font-size: 12px;");
-    button.getStyleClass().add("external-component");
 
     titleLabel = new Label("");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    row.getChildren().addAll(titleLabel, button);
+    row.getChildren().addAll(titleLabel);
 
 
     this.getChildren().add(row);
