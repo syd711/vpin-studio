@@ -8,3 +8,4 @@
 ### Bugfixes
 
 - **Card Generator**: Fixed template assignment. Embarrassing, but the actual template assignment did never worked when the actual cards have been generated.
+- **Card Generator**: Fixed padding setting whe used to determine the X position of the highscore. Note that this fix will affect your card design.
