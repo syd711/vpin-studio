@@ -3,7 +3,8 @@
 ### Changes
 
 - **PrOPPER Naming**: Added PrOPPER Naming to the Table Data Manager dialog. I also restructured the dialog, added the **Score Data** into a separate tab and moved the VPS assigment to the first tab with the new PrOPPER Naming input fields.
-  
+- **Playlists**: Added **Favorites** and **Global Favorites** options to playlist section.  
+- **Table Overview**: Added **Favorites** icon to the playlist column if the table has been marked as favorite or global favorite an a playlist.  
 
 ### Bugfixes
 

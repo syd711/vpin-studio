@@ -82,10 +82,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private Label validationTitle;
 
   @FXML
-  private CheckBox resetCheckbox;
+  private Label validationDescription;
 
   @FXML
-  private Label validationDescription;
+  private CheckBox resetCheckbox;
+
 
   @FXML
   private Label nvramLabel;

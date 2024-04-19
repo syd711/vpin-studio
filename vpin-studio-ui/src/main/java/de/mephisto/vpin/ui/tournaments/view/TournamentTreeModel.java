@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,11 +17,11 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TournamentTreeModel {
-  private final Tournament tournament;
-  private final TournamentTable tournamentTable;
-  private final VpsTableVersion vpsTableVersion;
-  private final VpsTable vpsTable;
-  private final GameRepresentation game;
+  private Tournament tournament;
+  private TournamentTable tournamentTable;
+  private VpsTableVersion vpsTableVersion;
+  private VpsTable vpsTable;
+  private GameRepresentation game;
 
   private boolean highscoreAvailable;
 
@@ -50,13 +51,37 @@ public class TournamentTreeModel {
     return tournamentNode;
   }
 
-  public TournamentTreeModel(Tournament tournament, GameRepresentation game, TournamentTable tournamentTable, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
+  public TournamentTreeModel(@Nullable Tournament tournament, @Nullable GameRepresentation game, @Nullable TournamentTable tournamentTable, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
     this.tournament = tournament;
     this.tournamentTable = tournamentTable;
     this.vpsTable = vpsTable;
     this.vpsTableVersion = vpsTableVersion;
     this.game = game;
 
+    if (game != null) {
+      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
+      highscoreAvailable = !StringUtils.isEmpty(summary.getRaw());
+    }
+  }
+
+  public void setTournament(Tournament tournament) {
+    this.tournament = tournament;
+  }
+
+  public void setTournamentTable(TournamentTable tournamentTable) {
+    this.tournamentTable = tournamentTable;
+  }
+
+  public void setVpsTableVersion(VpsTableVersion vpsTableVersion) {
+    this.vpsTableVersion = vpsTableVersion;
+  }
+
+  public void setVpsTable(VpsTable vpsTable) {
+    this.vpsTable = vpsTable;
+  }
+
+  public void setGame(GameRepresentation game) {
+    this.game = game;
     if (game != null) {
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
       highscoreAvailable = !StringUtils.isEmpty(summary.getRaw());

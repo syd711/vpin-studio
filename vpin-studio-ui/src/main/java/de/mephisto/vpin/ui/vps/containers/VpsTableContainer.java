@@ -20,6 +20,10 @@ public class VpsTableContainer extends VBox {
   private final static int TITLE_WIDTH = 100;
 
   public VpsTableContainer(VpsTable item) {
+    this(item, "");
+  }
+
+  public VpsTableContainer(VpsTable item, String customStyle) {
     super(3);
 
     String name = item.getName();
@@ -28,15 +32,15 @@ public class VpsTableContainer extends VBox {
     }
 
     Label title = new Label(name);
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
     this.getChildren().add(title);
 
     HBox row = new HBox(6);
     Label titleLabel = new Label("Year:");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;");
+    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     Label valueLabel = new Label(String.valueOf(item.getYear()));
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;");
+    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
 
     this.getChildren().add(row);
@@ -44,18 +48,18 @@ public class VpsTableContainer extends VBox {
     row = new HBox(6);
     titleLabel = new Label("Manufacturer:");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;");
+    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(item.getManufacturer());
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;");
+    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 
     row = new HBox(6);
     titleLabel = new Label("Type:");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;");
+    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(item.getType());
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;");
+    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 

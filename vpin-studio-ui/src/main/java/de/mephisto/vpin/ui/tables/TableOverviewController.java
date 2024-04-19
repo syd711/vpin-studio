@@ -12,7 +12,6 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -60,6 +59,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -1085,15 +1085,33 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation value = cellData.getValue();
       HBox box = new HBox();
       List<Playlist> matches = new ArrayList<>();
+      boolean fav = false;
       for (Playlist playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
+          if (!fav && (playlist.isFavGame(value.getId()) || playlist.isGlobalFavGame(value.getId()))) {
+            fav = true;
+          }
           matches.add(playlist);
         }
       }
 
+      if (fav) {
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
+        icon.setIconSize(24);
+        icon.setIconColor(Paint.valueOf("#FF9933"));
+        Label label = new Label();
+        label.setTooltip(new Tooltip("The game is marked as favorite on at least one playlist."));
+        label.setGraphic(icon);
+        box.getChildren().add(label);
+      }
+
+      int maxLength = 3;
+      if(fav) {
+        maxLength = 2;
+      }
       for (Playlist match : matches) {
         box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
-        if (box.getChildren().size() == 3 && matches.size() > box.getChildren().size()) {
+        if (box.getChildren().size() == maxLength && matches.size() > box.getChildren().size()) {
           Label label = new Label("+" + (matches.size() - box.getChildren().size()));
           label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
           box.getChildren().add(label);

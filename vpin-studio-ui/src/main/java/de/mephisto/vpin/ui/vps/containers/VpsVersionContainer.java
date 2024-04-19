@@ -16,6 +16,10 @@ public class VpsVersionContainer extends VBox {
   private final static int TITLE_WIDTH = 100;
 
   public VpsVersionContainer(VpsTableVersion item) {
+    this(item, "");
+  }
+
+  public VpsVersionContainer(VpsTableVersion item, String customStyle) {
     super(3);
 
     setMinHeight(120);
@@ -25,7 +29,7 @@ public class VpsVersionContainer extends VBox {
     String comment = item.getComment();
     if (comment != null && !comment.trim().isEmpty()) {
       Label title = new Label(comment);
-      title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+      title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
       this.getChildren().add(title);
     }
 
@@ -33,8 +37,9 @@ public class VpsVersionContainer extends VBox {
       String authors = String.join(", ", item.getAuthors());
       Label title = new Label(authors);
       title.getStyleClass().add("default-text");
+      title.setStyle(customStyle);
       if (comment == null || comment.trim().isEmpty()) {
-        title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+        title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
       }
       this.getChildren().add(title);
       if (comment == null || comment.trim().isEmpty()) {
@@ -47,9 +52,9 @@ public class VpsVersionContainer extends VBox {
     HBox row = new HBox(6);
     Label titleLabel = new Label("Version:");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;");
+    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     Label valueLabel = new Label(item.getVersion());
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;");
+    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
 
     this.getChildren().add(row);
@@ -57,9 +62,9 @@ public class VpsVersionContainer extends VBox {
     row = new HBox(6);
     titleLabel = new Label("Updated At:");
     titleLabel.setPrefWidth(TITLE_WIDTH);
-    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;");
+    titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(DateFormat.getDateInstance().format(new Date(item.getUpdatedAt())));
-    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;");
+    valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     row.getChildren().addAll(titleLabel, valueLabel);
     this.getChildren().add(row);
 
@@ -71,7 +76,7 @@ public class VpsVersionContainer extends VBox {
         badge.getStyleClass().add("white-label");
         badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
         badge.getStyleClass().add("vps-badge");
-        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
+        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";" + customStyle);
         row.getChildren().add(badge);
       }
     }
