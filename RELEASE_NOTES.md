@@ -16,8 +16,11 @@
 ### Bugfixes
 
 - **Card Generator**: Fixed template assignment. Embarrassing, but the actual template assignment did never worked when the actual cards have been generated :-/.
-- **Card Generator**: Fixed padding setting whe used to determine the X position of the highscore. Note that this fix will affect your card design.
+- **Card Generator**: Fixed miscellaneous calculations regarding the positioning of items.
+- **Card Generator**: Added new **margins** options for a better positioning. Note that this fix will affect your card design.
+- **Card Generator**: Added new **wheel size** option to determine the actual target size of the wheel image. Note that this fix will affect your card design.
+- **Card Generator**: Redesigned the input options and added more tooltips.
 - **VPS**: Fixed VPS deeplinks.
 - **VPS**: Improved logging. All update messages for VPS changes are now logged into a separate log file (will make life easier support-wise).
-- **Backglass Manager**: Added some minor label and tooltip improvements.
+- **Backglass Manager**: Some label and tooltip improvements.
 
