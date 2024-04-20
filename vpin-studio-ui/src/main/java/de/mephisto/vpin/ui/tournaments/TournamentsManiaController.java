@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tournaments;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -10,7 +9,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
@@ -31,7 +29,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -40,8 +37,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +45,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -651,31 +645,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-          if (game != null) {
-            return new SimpleObjectProperty<>(new TournamentTableGameCellContainer(game, value.getTournamentTable()));
-          }
-
-          Label label = new Label("- NOT INSTALLED -");
-          label.getStyleClass().add("default-headline");
-          Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-          if (game != null) {
-            label = new Label(game.getGameDisplayName());
-            label.getStyleClass().add("default-headline");
-            ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-            if (gameMediaItem != null) {
-              image = new Image(gameMediaItem);
-            }
-          }
-          HBox hBox = new HBox(3);
-          hBox.setAlignment(Pos.CENTER_LEFT);
-
-          ImageView view = new ImageView(image);
-          view.setPreserveRatio(true);
-          view.setSmooth(true);
-          view.setFitWidth(80);
-          hBox.getChildren().addAll(view, label);
-
-          return new SimpleObjectProperty(hBox);
+          return new SimpleObjectProperty<>(new TournamentTableGameCellContainer(game, value.getTournamentTable()));
         }
       }
 

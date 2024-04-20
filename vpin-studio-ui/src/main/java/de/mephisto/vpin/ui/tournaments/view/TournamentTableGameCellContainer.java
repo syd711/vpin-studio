@@ -1,10 +1,7 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -30,29 +27,25 @@ public class TournamentTableGameCellContainer extends HBox {
   public static final int LABEL_WIDTH = 76;
 
   public TournamentTableGameCellContainer(GameRepresentation game, TournamentTable tournamentTable) {
-    super(0);
+    super(3);
 
-    String name = game.getGameDisplayName();
+    String name = tournamentTable.getDisplayName();
     if (name.length() > 40) {
       name = name.substring(0, 39) + "...";
     }
 
-    InputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
-    if (gameMediaItem == null) {
-      gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    InputStream gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    if (game != null) {
+      InputStream gameItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+      if (gameItem != null) {
+        gameMediaItem = gameItem;
+      }
     }
     Image image = new Image(gameMediaItem);
-
-    GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
-    if (wheelMedia == null) {
-      image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
-    }
-
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);
     imageView.setFitWidth(100);
-    Tooltip.install(imageView, new Tooltip(game.getGameDisplayName()));
+    Tooltip.install(imageView, new Tooltip(tournamentTable.getDisplayName()));
 
     this.getChildren().add(imageView);
 
@@ -60,9 +53,16 @@ public class TournamentTableGameCellContainer extends HBox {
     this.getChildren().add(column);
 
     Label title = new Label(name);
-    title.setTooltip(new Tooltip(game.getGameDisplayName()));
+    title.setTooltip(new Tooltip(tournamentTable.getDisplayName()));
     title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + TournamentHelper.getLabelCss(tournamentTable));
     column.getChildren().add(title);
+
+    if (game == null) {
+      Label label = new Label("Table not installed");
+      label.setStyle("-fx-padding: 3 6 3 6;");
+      label.getStyleClass().add("error-title");
+      column.getChildren().add(label);
+    }
 
     if (tournamentTable.getStartDate() != null) {
       HBox row = new HBox(6);
@@ -111,12 +111,14 @@ public class TournamentTableGameCellContainer extends HBox {
     }
 
 
-    ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
-    if (StringUtils.isEmpty(summary.getRaw())) {
-      Label error = new Label("No valid highscore found.");
-      error.setStyle("-fx-padding: 3 6 3 6;");
-      error.getStyleClass().add("error-title");
-      column.getChildren().add(error);
+    if (game != null) {
+      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
+      if (StringUtils.isEmpty(summary.getRaw())) {
+        Label error = new Label("No valid highscore found.");
+        error.setStyle("-fx-padding: 3 6 3 6;");
+        error.getStyleClass().add("error-title");
+        column.getChildren().add(error);
+      }
     }
 
     setPadding(new Insets(3, 0, 6, 0));

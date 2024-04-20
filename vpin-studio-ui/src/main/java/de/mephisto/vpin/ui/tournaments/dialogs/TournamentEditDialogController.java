@@ -1,6 +1,9 @@
 package de.mephisto.vpin.ui.tournaments.dialogs;
 
-import de.mephisto.vpin.commons.fx.*;
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -19,12 +22,12 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
 import de.mephisto.vpin.ui.tournaments.TournamentHelper;
+import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
+import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
-import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -36,7 +39,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,7 +49,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -442,28 +443,44 @@ public class TournamentEditDialogController implements Initializable, DialogCont
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
           if (first.isPresent()) {
-            String vpsUrl = first.get();
-            String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("=") + 1);
-            String[] split = idSegment.split("#");
-            VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-            VpsTableVersion vpsVersion = null;
-            if (vpsTable != null && split.length > 1) {
-              vpsVersion = vpsTable.getVersion(split[1]);
-            }
-            GameRepresentation gameRep = null;
-            if (vpsTable != null) {
-              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-            }
+            try {
+              String vpsUrl = first.get();
+              URL url = new URL(vpsUrl);
+              String idSegment = url.getQuery();
 
-            TournamentTable tournamentTable = new TournamentTable();
-            tournamentTable.setEnabled(!game.isDisabled());
-            tournamentTable.setVpsTableId(vpsTable.getId());
-            tournamentTable.setVpsVersionId(vpsVersion.getId());
-            tournamentTable.setTournamentId(this.tournament.getId());
-            tournamentTable.setDisplayName(vpsTable.getDisplayName());
+              String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
+              if (tableId.contains("&")) {
+                tableId = tableId.substring(0, tableId.indexOf("&"));
+              }
+              else if (tableId.contains("#")) {
+                tableId = tableId.substring(0, tableId.indexOf("#"));
+              }
 
-            this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
-            this.tableView.refresh();
+              VpsTable vpsTable = VPS.getInstance().getTableById(tableId);
+
+              String[] split = vpsUrl.split("#");
+              VpsTableVersion vpsVersion = null;
+              if (vpsTable != null && split.length > 1) {
+                vpsVersion = vpsTable.getVersion(split[1]);
+              }
+              GameRepresentation gameRep = null;
+              if (vpsTable != null) {
+                gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+              }
+
+              TournamentTable tournamentTable = new TournamentTable();
+              tournamentTable.setEnabled(!game.isDisabled());
+              tournamentTable.setVpsTableId(vpsTable.getId());
+              tournamentTable.setVpsVersionId(vpsVersion.getId());
+              tournamentTable.setTournamentId(this.tournament.getId());
+              tournamentTable.setDisplayName(vpsTable.getDisplayName());
+
+              this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
+              this.tableView.refresh();
+            } catch (Exception e) {
+              LOG.error("Failed to parse table list: " + e.getMessage(), e);
+              WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
+            }
           }
         }
       }
@@ -600,23 +617,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     tableColumn.setCellValueFactory(cellData -> {
       GameRepresentation game = cellData.getValue().getGame();
-      if (game != null) {
-        return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, cellData.getValue().getTournamentTable()));
-      }
-
-      HBox cell = new HBox(12);
-      cell.setAlignment(Pos.CENTER_LEFT);
-      Image gameIcon = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
-      ImageView imageView = new ImageView(gameIcon);
-      imageView.setPreserveRatio(true);
-      imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
-      cell.getChildren().add(imageView);
-
-      Label label = new Label("Table not installed");
-      label.setStyle("-fx-padding: 3 6 3 6;");
-      label.getStyleClass().add("error-title");
-      cell.getChildren().add(label);
-      return new SimpleObjectProperty(cell);
+      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, cellData.getValue().getTournamentTable()));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
