@@ -51,4 +51,8 @@ public class IScoredService {
       LOG.error("Failed to load game room from " + tournament.getDashboardUrl() + ": " + e.getMessage(), e);
     }
   }
+
+  public boolean isIscoredGameRoomUrl(String dashboardUrl) {
+    return dashboardUrl.toLowerCase().contains("iscored.info") && dashboardUrl.contains("user=") && dashboardUrl.toLowerCase().contains("mode=public");
+  }
 }

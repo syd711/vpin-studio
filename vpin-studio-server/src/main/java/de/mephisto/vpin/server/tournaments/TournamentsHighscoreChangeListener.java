@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.tournaments;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -10,26 +13,35 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class TournamentsHighscoreChangeListener implements HighscoreChangeListener {
+@Service
+public class TournamentsHighscoreChangeListener implements HighscoreChangeListener, PreferenceChangedListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsHighscoreChangeListener.class);
 
-  private final VPinManiaClient maniaClient;
-  private final PlayerService playerService;
-  private final IScoredService iScoredService;
+  private VPinManiaClient maniaClient;
   private Cabinet cabinet;
 
-  public TournamentsHighscoreChangeListener(VPinManiaClient maniaClient, PlayerService playerService, IScoredService iScoredService) {
-    this.maniaClient = maniaClient;
-    this.playerService = playerService;
-    this.iScoredService = iScoredService;
-  }
+  private TournamentSettings tournamentSettings;
+
+  @Autowired
+  private PlayerService playerService;
+
+  @Autowired
+  private IScoredService iScoredService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
@@ -41,21 +53,26 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
         Score newScore = event.getNewScore();
 
         try {
-          TableScore tableScore = createTableScore(game, newScore);
-          if (tableScore != null) {
-            TableScore submit = maniaClient.getHighscoreClient().submit(tableScore);
-            LOG.info("Submitted VPinMania score " + submit);
+          TableScore newTableScore = createTableScore(game, newScore);
+          if (newTableScore != null) {
+            // General score submission!
+            TableScore createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
+            LOG.info("Submitted VPinMania score " + createdTableScore);
 
             List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
             for (Tournament tournament : tournaments) {
-              List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-              TournamentTable applicableTable = getApplicableTable(tournament, tournamentTables, tableScore);
-              if (applicableTable != null) {
-                maniaClient.getTournamentClient().addScore(tournament, submit);
-                LOG.info("Linked " + submit + " to " + tournament);
+              TournamentTable tournamentTable = findTournamentTable(tournament, createdTableScore);
+              if (tournamentTable != null) {
+                if (tournament.isActive()) {
+                  maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
+                  LOG.info("Linked " + createdTableScore + " to " + tournament);
 
-                if (tournament.getDashboardUrl() != null) {
-                  iScoredService.submitTableScore(tournament, applicableTable, tableScore);
+                  if (Features.ISCORED_ENABLED && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                    iScoredService.submitTableScore(tournament, tournamentTable, createdTableScore);
+                  }
+                }
+                else {
+                  LOG.info("Found " + tournamentTable + ", but it is not active.");
                 }
               }
             }
@@ -68,6 +85,11 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
         }
       }).start();
     }
+  }
+
+  private TournamentTable findTournamentTable(Tournament tournament, TableScore tableScore) {
+    List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+    return getApplicableTable(tournament, tournamentTables, tableScore);
   }
 
   private TournamentTable getApplicableTable(Tournament tournament, List<TournamentTable> tables, TableScore score) {
@@ -131,5 +153,23 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
   public void setCabinet(Cabinet cabinet) {
     this.cabinet = cabinet;
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.TOURNAMENTS_SETTINGS)) {
+      this.tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
+    }
+  }
+
+  public void setVPinManiaClient(VPinManiaClient maniaClient) {
+    this.maniaClient = maniaClient;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.maniaClient = null;
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
   }
 }

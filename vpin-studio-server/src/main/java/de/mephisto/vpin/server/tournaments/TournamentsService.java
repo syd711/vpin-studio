@@ -50,8 +50,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   @Autowired
   private GameService gameService;
 
-  private VPinManiaClient maniaClient;
+  @Autowired
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
+
+  private VPinManiaClient maniaClient;
 
   public TournamentConfig getConfig() {
     TournamentConfig config = new TournamentConfig();
@@ -112,7 +114,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
       TournamentConfig config = getConfig();
       maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
 
-      tournamentsHighscoreChangeListener = new TournamentsHighscoreChangeListener(maniaClient, playerService, iScoredService);
+      tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
       highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
 
       preferencesService.addChangeListener(this);
