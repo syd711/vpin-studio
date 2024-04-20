@@ -30,7 +30,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +105,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Slider borderSlider;
 
   @FXML
-  private Spinner<Integer> marginTopSpinner;
+  private Spinner<Integer> paddingSpinner;
+
+  @FXML
+  private Spinner<Integer> wheelSizeSpinner;
 
   @FXML
   private Spinner<Integer> wheelImageSpinner;
@@ -115,13 +117,19 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Spinner<Integer> rowSeparatorSpinner;
 
   @FXML
+  private Spinner<Integer> marginTopSpinner;
+  @FXML
+  private Spinner<Integer> marginRightSpinner;
+  @FXML
+  private Spinner<Integer> marginBottomSpinner;
+  @FXML
+  private Spinner<Integer> marginLeftSpinner;
+
+  @FXML
   private Slider alphaPercentageSpinner;
 
   @FXML
   private CheckBox renderRawHighscore;
-
-  @FXML
-  private FontIcon rawHighscoreHelp;
 
   @FXML
   private Button falbackUploadBtn;
@@ -306,12 +314,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Generating Card...");
 
-      rawHighscoreHelp.setCursor(javafx.scene.Cursor.HAND);
-
-      Tooltip tooltip = new Tooltip();
-      tooltip.setGraphic(rawHighscoreHelp);
-      Tooltip.install(rawHighscoreHelp, new Tooltip("The font size of the highscore text will be adapted according to the number of lines."));
-
       accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
@@ -353,7 +355,12 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     blurSlider.setValue(cardTemplate.getBlur());
     borderSlider.setValue(cardTemplate.getBorderWidth());
     alphaPercentageSpinner.setValue(cardTemplate.getTransparentPercentage());
-    marginTopSpinner.getValueFactory().setValue(cardTemplate.getPadding());
+    paddingSpinner.getValueFactory().setValue(cardTemplate.getPadding());
+    wheelSizeSpinner.getValueFactory().setValue(cardTemplate.getWheelSize());
+    marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
+    marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
+    marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
+    marginLeftSpinner.getValueFactory().setValue(cardTemplate.getMarginLeft());
     wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
 
@@ -414,9 +421,28 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
       templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
       templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
-      templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "padding");
+      templateBeanBinder.bindSpinner(wheelSizeSpinner, getCardTemplate(), "wheelSize");
+      templateBeanBinder.bindSpinner(paddingSpinner, getCardTemplate(), "padding");
+      templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "marginTop");
+      templateBeanBinder.bindSpinner(marginRightSpinner, getCardTemplate(), "marginRight");
+      templateBeanBinder.bindSpinner(marginBottomSpinner, getCardTemplate(), "marginBottom");
+      templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
       templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
+
+      renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          wheelSizeSpinner.setDisable(!newValue);
+        }
+      });
+
+      renderTitleCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          titleText.setDisable(!newValue);
+        }
+      });
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -432,6 +458,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
         rowSeparatorSpinner.setDisable(t1);
       });
 
+      titleText.setDisable(!renderTitleCheckbox.isSelected());
+      wheelSizeSpinner.setDisable(!renderWheelIconCheckbox.isSelected());
       wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
       rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     } catch (Exception e) {
@@ -538,7 +566,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @Override
   public void onResized(int x, int y, int width, int height) {
-    cardPreview.setFitWidth(width- 500);
+    cardPreview.setFitWidth(width - 500);
     cardPreview.setFitHeight(height - 200);
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
   }

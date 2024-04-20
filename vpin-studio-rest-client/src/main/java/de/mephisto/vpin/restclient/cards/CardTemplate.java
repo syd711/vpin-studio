@@ -17,12 +17,18 @@ public class CardTemplate extends JsonSettings {
   private String background = "Old Bumbers";
   private int borderWidth = 1;
   private int padding = 10;
+  private int marginTop = 10;
+  private int marginRight = 10;
+  private int marginBottom = 10;
+  private int marginLeft = 10;
   private int wheelPadding = 32;
   private int rowMargin = 5;
+  private int wheelSize = 200;
   private int blur = 6;
   private String fontColor = "#FFFFFF";
   private boolean grayScale = false;
   private boolean rawScore = true;
+
   private String scoreFontName = "Monospaced";
   private int scoreFontSize = 90;
   private String scoreFontStyle = "Regular";
@@ -33,12 +39,55 @@ public class CardTemplate extends JsonSettings {
   private int titleFontSize = 120;
   private String titleFontStyle = "Regular";
   private String title = "Highscores";
+
   private boolean useDirectB2S = true;
+
   private boolean transparentBackground = false;
   private int transparentPercentage = 0;
+
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
+
+  public int getWheelSize() {
+    return wheelSize;
+  }
+
+  public void setWheelSize(int wheelSize) {
+    this.wheelSize = wheelSize;
+  }
+
+  public int getMarginTop() {
+    return marginTop;
+  }
+
+  public void setMarginTop(int marginTop) {
+    this.marginTop = marginTop;
+  }
+
+  public int getMarginRight() {
+    return marginRight;
+  }
+
+  public void setMarginRight(int marginRight) {
+    this.marginRight = marginRight;
+  }
+
+  public int getMarginBottom() {
+    return marginBottom;
+  }
+
+  public void setMarginBottom(int marginBottom) {
+    this.marginBottom = marginBottom;
+  }
+
+  public int getMarginLeft() {
+    return marginLeft;
+  }
+
+  public void setMarginLeft(int marginLeft) {
+    this.marginLeft = marginLeft;
+  }
 
   public Long getId() {
     return id;

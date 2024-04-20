@@ -156,19 +156,6 @@
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
                                     </Slider>
-                                    <Label text="Padding:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="marginTopSpinner" editable="true" styleClass="widget-default">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </Spinner>
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -293,56 +280,73 @@
                            <content>
                               <VBox prefWidth="300.0" spacing="3.0" styleClass="accordion-container">
                                  <children>
-                                    <Label text="Title:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="titleText">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <BorderPane prefHeight="36.0">
-                                       <left>
-                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE" BorderPane.alignment="CENTER">
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label text="Padding:" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
-                                             <BorderPane.margin>
-                                                <Insets />
-                                             </BorderPane.margin>
-                                          </CheckBox>
-                                       </left>
-                                       <right>
-                                          <FontIcon fx:id="rawHighscoreHelp" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" BorderPane.alignment="CENTER">
-                                             <BorderPane.margin>
-                                                <Insets />
-                                             </BorderPane.margin>
-                                          </FontIcon>
-                                       </right>
+                                          </Label>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp1" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Determines the inner horizontal and vertical gaps between the card components." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                                       <children>
+                                          <Spinner fx:id="paddingSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label text="Margins (top/right/bottom/left):" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Determines the margins from the card's border." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
                                        <VBox.margin>
                                           <Insets top="12.0" />
                                        </VBox.margin>
-                                    </BorderPane>
-                                    <Label text="Wheel Image Padding:" textFill="WHITE">
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                                       <children>
+                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginRightSpinner" editable="true" layoutX="10.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginLeftSpinner" editable="true" layoutX="164.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default" />
-                                    <Label text="Row Separator:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default" />
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
                                        <font>
                                           <Font size="14.0" />
@@ -351,22 +355,105 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
+                                    <Label text="Title:" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets top="6.0" />
+                                          <Insets left="26.0" top="6.0" />
                                        </VBox.margin>
-                                    </CheckBox>
+                                    </Label>
+                                    <TextField fx:id="titleText">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin>
+                                    </TextField>
                                     <CheckBox fx:id="renderWheelIconCheckbox" layoutX="22.0" layoutY="284.0" mnemonicParsing="false" text="Render Wheel Icon">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets top="6.0" />
+                                          <Insets top="12.0" />
                                        </VBox.margin>
                                     </CheckBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" spacing="6.0">
+                                       <children>
+                                          <Label text="Wheel Size" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label>
+                                             <tooltip>
+                                                <Tooltip text="Determines the inner horizontal and vertical gaps between the card components." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="52.0" spacing="6.0">
+                                       <children>
+                                          <Spinner fx:id="wheelSizeSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT">
+                                       <children>
+                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="The font size of the highscore text will be adapted according to the number of lines." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <Label text="Wheel Image Padding:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="3.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default">
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin></Spinner>
+                                    <Label text="Row Separator:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="12.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default">
+                                       <VBox.margin>
+                                          <Insets left="26.0" />
+                                       </VBox.margin></Spinner>
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

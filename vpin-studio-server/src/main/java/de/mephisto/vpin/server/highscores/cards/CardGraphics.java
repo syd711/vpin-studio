@@ -122,7 +122,7 @@ public class CardGraphics {
     ImageUtil.setDefaultColor(g, template.getFontColor());
     int imageWidth = image.getWidth();
 
-    int currentY = template.getPadding();
+    int currentY = template.getMarginTop();
     if (template.isRenderTitle()) {
       String titleFontName = template.getTitleFontName();
       int titleFontStyle = ImageUtil.convertFontPosture(template.getTitleFontStyle());
@@ -131,7 +131,7 @@ public class CardGraphics {
 
       String title = template.getTitle();
       int titleWidth = g.getFontMetrics().stringWidth(title);
-      currentY = titleFontSize + template.getPadding();
+      currentY = titleFontSize;
       g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
       g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
 
@@ -146,15 +146,16 @@ public class CardGraphics {
 
       String tableName = game.getGameDisplayName();
       int width = g.getFontMetrics().stringWidth(tableName);
-      while (width > DEFAULT_MEDIA_SIZE - 24) {
+      while (width > DEFAULT_MEDIA_SIZE - template.getMarginLeft() - template.getMarginRight()) {
         tableFontSize = tableFontSize - 1;
         g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
         width = g.getFontMetrics().stringWidth(tableName);
       }
-      currentY = currentY + tableFontSize + template.getPadding();
-      g.drawString(tableName, imageWidth / 2 - width / 2, currentY);
+      currentY = currentY + tableFontSize;
+      int tableNameX = ((imageWidth - template.getMarginLeft() - template.getMarginRight()) / 2 - width / 2) + template.getMarginLeft();
+      g.drawString(tableName, tableNameX, currentY);
 
-      currentY = currentY + template.getPadding() * 2;
+      currentY = currentY + template.getPadding();
     }
 
     if (template.isRawScore()) {
@@ -204,7 +205,7 @@ public class CardGraphics {
     }
 
     //the wheelsize should match the height of three score entries
-    int scoreX = template.getPadding();
+    int scoreX = template.getMarginLeft();
     if (template.isRenderWheelIcon()) {
       scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
     }
@@ -216,13 +217,13 @@ public class CardGraphics {
   }
 
   private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
-    int wheelWidth = template.getPadding() * 2 + template.getTableFontSize() * 2;
+    int wheelWidth = template.getWheelSize();
     if (!template.isRenderWheelIcon()) {
       wheelWidth = 0;
     }
 
-    int remainingHeight = imageHeight - yStart - template.getPadding();
-    int remainingWidth = imageWidth - (2 * template.getPadding()) - wheelWidth;
+    int remainingHeight = imageHeight - yStart - template.getMarginBottom();
+    int remainingWidth = imageWidth - template.getMarginLeft() + template.getMarginRight() - wheelWidth;
     String raw = summary.getRaw().trim();
     String[] lines = raw.split("\n");
 
@@ -285,11 +286,6 @@ public class CardGraphics {
     return width;
   }
 
-  private int centerYToRemainingSpace(List<TextColumn> textColumns, int yStart, int remainingHeight) {
-    int maxHeight = computeMaxHeight(textColumns);
-    return yStart + ((remainingHeight - maxHeight) / 2);
-  }
-
   private void scaleDownToWidth(int imageWidth, Graphics g, List<TextColumn> textColumns) {
     int width = computeTotalWidth(textColumns);
     while (width >= imageWidth) {
@@ -297,16 +293,6 @@ public class CardGraphics {
       g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
       width = computeTotalWidth(textColumns);
     }
-  }
-
-  private int computeMaxHeight(List<TextColumn> columns) {
-    int height = 0;
-    for (TextColumn column : columns) {
-      if (column.getHeight() > height) {
-        height = column.getHeight();
-      }
-    }
-    return height;
   }
 
   private int computeTotalWidth(List<TextColumn> columns) {
