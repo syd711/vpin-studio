@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -53,6 +54,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Tab tableSubscriptionsTab;
 
   @FXML
+  private Tab iScoredSubscriptionsTab;
+
+  @FXML
   private Label createdAtLabel;
 
   @FXML
@@ -95,6 +99,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
   private TableSubscriptionsController tableSubscriptionsController;
+  private IScoredSubscriptionsController iScoredSubscriptionsController;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
@@ -148,6 +153,14 @@ public class CompetitionsController implements Initializable, StudioFXController
         tableSubscriptionsController.onReload();
       }
     }
+    else if (t1.intValue() == 3) {
+      if (iScoredSubscriptionsTab != null) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+        Optional<CompetitionRepresentation> selection = iScoredSubscriptionsController.getSelection();
+        updateSelection(selection);
+        iScoredSubscriptionsController.onReload();
+      }
+    }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
     }
@@ -181,7 +194,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
-          if(competition.getJoinMode() != null) {
+          if (competition.getJoinMode() != null) {
             JoinMode joinMode = JoinMode.valueOf(competition.getJoinMode());
             switch (joinMode) {
               case STRICT: {
@@ -200,7 +213,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           }
 
-          if(competition.getScoreLimit() == 0) {
+          if (competition.getScoreLimit() == 0) {
             scoreLimitLabel.setText("Table Defaults");
           }
           else {
@@ -256,7 +269,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             ownerBox.getChildren().addAll(view, label);
           }
 
-          if(competition.getStartDate() != null) {
+          if (competition.getStartDate() != null) {
             startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
             endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
           }
@@ -326,6 +339,14 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
       }
     }
+    else if (index == 3) {
+      if (competitionRepresentation.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions", competitionRepresentation.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+      }
+    }
     else {
       throw new UnsupportedOperationException("Invalid tab.");
     }
@@ -392,6 +413,22 @@ public class CompetitionsController implements Initializable, StudioFXController
     } catch (IOException e) {
       LOG.error("failed to load subscriptions: " + e.getMessage(), e);
     }
+
+    if (Features.ISCORED_ENABLED) {
+      try {
+        FXMLLoader loader = new FXMLLoader(IScoredSubscriptionsController.class.getResource("tab-competitions-iscored.fxml"));
+        Parent parent = loader.load();
+        iScoredSubscriptionsController = loader.getController();
+        iScoredSubscriptionsController.setCompetitionsController(this);
+        iScoredSubscriptionsTab.setContent(parent);
+      } catch (IOException e) {
+        LOG.error("failed to load subscriptions: " + e.getMessage(), e);
+      }
+    }
+    else {
+      tabPane.getTabs().remove(iScoredSubscriptionsTab);
+    }
+
   }
 
 }

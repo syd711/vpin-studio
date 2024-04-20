@@ -48,6 +48,14 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                      </graphic>
                   </Tab>
+                  <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="IScored Subscriptions">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                     </graphic>
+                  </Tab>
                     </tabs>
                     <BorderPane.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
