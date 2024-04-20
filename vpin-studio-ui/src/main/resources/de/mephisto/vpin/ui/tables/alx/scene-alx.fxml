@@ -29,7 +29,7 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>
@@ -47,7 +47,7 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>
@@ -65,7 +65,7 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>

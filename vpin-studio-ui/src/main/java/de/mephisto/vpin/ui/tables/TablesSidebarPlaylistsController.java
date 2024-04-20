@@ -111,7 +111,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
       for (Playlist playlist : playlists) {
         HBox root = new HBox();
-        root.setStyle("-fx-padding: 3 0 3 0;");
         root.setAlignment(Pos.BASELINE_LEFT);
         root.setSpacing(3);
         CheckBox gameCheckbox = new CheckBox();

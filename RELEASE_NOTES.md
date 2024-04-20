@@ -4,7 +4,7 @@
 
 - **PrOPPER Naming**: Added PrOPPER Naming to the Table Data Manager dialog. I also restructured the dialog, added the **Score Data** into a separate tab and moved the VPS assigment to the first tab with the new PrOPPER Naming input fields.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/propper-naming.png" width="600" />
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/propper-naming.png" width="700" />
 
 - **Playlists**: Added **Favorites** and **Global Favorites** options to playlist section.  
 - **Playlists**: Added **Favorites** icon to the **playlist column** in the table overview. The icon is shown if the table has been marked as favorite or global favorite on a playlist.

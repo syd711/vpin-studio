@@ -48,6 +48,12 @@ abstract public class AssetMediaPlayer extends BorderPane {
     if (getMediaPlayer() != null) {
       try {
         getMediaPlayer().stop();
+        LOG.info("Stopped " + this.url);
+      } catch (Exception e) {
+        LOG.info("Stopping media view: " + e.getMessage());
+      }
+
+      try {
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         final Future<?> future = executor.submit(() -> {
           getMediaPlayer().dispose();
@@ -55,8 +61,8 @@ abstract public class AssetMediaPlayer extends BorderPane {
 
         future.get(500, TimeUnit.MILLISECONDS);
         executor.shutdownNow();
-        LOG.info("Disposed " + this.url);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.info("Disposing media view: " + e.getMessage());
       }
     }
