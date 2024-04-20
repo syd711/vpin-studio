@@ -12,9 +12,11 @@
     </appender>
     <appender name="rollingFileVps" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>./vpin-studio-server-vps-updates.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>./vpin-studio-server-vps-updates.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <MaxHistory>2</MaxHistory>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>./vpin-studio-server-vps-updates.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>14</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{dd-MM HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
