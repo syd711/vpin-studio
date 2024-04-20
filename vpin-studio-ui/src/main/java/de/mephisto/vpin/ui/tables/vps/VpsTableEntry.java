@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
@@ -58,7 +59,10 @@ public class VpsTableEntry extends HBox {
     HBox versionBox = new HBox(3);
     versionBox.setPrefWidth(80);
     versionBox.setAlignment(Pos.BASELINE_LEFT);
-    versionBox.getChildren().add(copyBtn);
+
+    if(Features.TOURNAMENTS_ENABLED) {
+      versionBox.getChildren().add(copyBtn);
+    }
     versionBox.getChildren().add(versionLabel);
     this.getChildren().add(versionBox);
 
