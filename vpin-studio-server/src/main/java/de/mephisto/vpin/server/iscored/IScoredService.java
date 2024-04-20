@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.iscored;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
@@ -18,6 +19,11 @@ public class IScoredService {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
 
   public void submitTableScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
+    if(!Features.ISCORED_ENABLED) {
+      LOG.warn("iScored is not enabled");
+      return;
+    }
+
     try {
       String dashboardUrl = tournament.getDashboardUrl();
       if (dashboardUrl != null && dashboardUrl.contains("iscored")) {

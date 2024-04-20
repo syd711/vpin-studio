@@ -67,7 +67,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
                   maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
                   LOG.info("Linked " + createdTableScore + " to " + tournament);
 
-                  if (Features.ISCORED_ENABLED && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                  if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
                     iScoredService.submitTableScore(tournament, tournamentTable, createdTableScore);
                   }
                 }
