@@ -289,6 +289,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
             else {
               setText(backglass.getName());
 
+              if (!backglass.isVpxAvailable()) {
+                setTooltip(new Tooltip("The backglass file \"" + backglass.getName() + "\n has no matching VPX file."));
+              }
               FontIcon fontIcon = backglass.isVpxAvailable() ? null : WidgetFactory.createExclamationIcon();
               setGraphic(fontIcon);
             }
@@ -572,6 +575,11 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
       }
       else {
+        //VPX is not installed, but available!
+        if (newValue.isVpxAvailable()) {
+          gameLabel.setText("?");
+          gameFilenameLabel.setText("(Available, but not installed)");
+        }
         tmpTableSettings = null;
       }
 
