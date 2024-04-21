@@ -1,7 +1,10 @@
 ## Hotfix 2.17.2
 
-- Fixed "Open Folder" on-hover buttons (color and icon) in the media section.
 - Fixed playlist display errors. (Thanks to @spaceangel6998 helping out here!).
+
+## Hotfix 2.17.1
+
+- Fixed "Open Folder" on-hover buttons (color and icon) in the media section.
 
 ## Release Notes 2.17.0
 
