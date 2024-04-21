@@ -1238,13 +1238,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
 
-        try {
-          int favMode = rs.getInt(IS_FAV);
-          game.setFav(favMode == 1);
-          game.setGlobalFav(favMode == 2);
-        } catch (SQLException e) {
-//          game.setFavSupported(false);
-        }
+        int favMode = rs.getInt(IS_FAV);
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+
         result.add(game);
       }
 
@@ -1270,6 +1267,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
+        result.add(game);
       }
 
       rs.close();
