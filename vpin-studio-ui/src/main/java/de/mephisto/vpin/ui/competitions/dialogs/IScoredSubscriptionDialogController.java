@@ -57,9 +57,6 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private Button iscoredReloadBtn;
 
   @FXML
-  private Button deleteTableBtn;
-
-  @FXML
   private CheckBox iscoredScoresEnabled;
 
   @FXML
@@ -92,21 +89,13 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private Stage stage;
 
   private List<CompetitionRepresentation> result = new ArrayList<>();
+  private List<CompetitionRepresentation> selection = new ArrayList<>();
 
   @FXML
   private void onCancelClick(ActionEvent e) {
     result.clear();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
-  }
-
-  @FXML
-  private void onTableRemove(ActionEvent e) {
-    CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      result.remove(selectedItem);
-    }
-    tableView.refresh();
   }
 
   @FXML
@@ -118,17 +107,6 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   @Override
   public void onDialogCancel() {
     this.result.clear();
-  }
-
-  public void setCompetition(Stage stage, CompetitionRepresentation competition) {
-    this.stage = stage;
-    this.validationContainer.setVisible(false);
-
-    if (competition != null) {
-      this.deleteTableBtn.setDisable(true);
-      CompetitionRepresentation sub = new CompetitionRepresentation();
-
-    }
   }
 
   @FXML
@@ -188,6 +166,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
               if (gameRep != null) {
                 sub.setGameId(gameRep.getId());
               }
+              selection.add(sub);
               result.add(sub);
             } catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
@@ -195,7 +174,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
             }
           }
         }
-
+        saveBtn.setDisable(selection.isEmpty());
         this.tableView.setItems(FXCollections.observableList(this.result));
         this.tableView.refresh();
       }
@@ -207,7 +186,6 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nEnter an iScored Game Room URL to add tables."));
 
-    deleteTableBtn.setDisable(true);
     saveBtn.setDisable(true);
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
@@ -232,7 +210,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value));
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -252,17 +230,19 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     selectionColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation c = cellData.getValue();
       CheckBox checkBox = new CheckBox();
-      checkBox.selectedProperty().setValue(result.contains(c));
+      checkBox.selectedProperty().setValue(selection.contains(c));
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean newVal) {
           if(newVal) {
-            if(!result.contains(c)) {
-              result.add(c);
+            if(!selection.contains(c)) {
+              selection.add(c);
             }
           }
           else {
-            result.remove(c);
+            selection.remove(c);
           }
+          tableView.refresh();
+          saveBtn.setDisable(selection.isEmpty());
         }
       });
       return new SimpleObjectProperty<CheckBox>(checkBox);
@@ -271,7 +251,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<CompetitionRepresentation>() {
       @Override
       public void onChanged(Change<? extends CompetitionRepresentation> c) {
-        deleteTableBtn.setDisable(c == null);
+        saveBtn.setDisable(selection.isEmpty());
       }
     });
 
@@ -284,7 +264,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   private String getLabelCss(CompetitionRepresentation c) {
     String status = "";
-    if (!result.contains(c)) {
+    if (!selection.contains(c)) {
       status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
     }
     return status;

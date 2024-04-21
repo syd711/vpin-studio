@@ -107,7 +107,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   private void onCompetitionCreate() {
-    List<CompetitionRepresentation> result = CompetitionDialogs.openIScoredSubscriptionDialog(null);
+    List<CompetitionRepresentation> result = CompetitionDialogs.openIScoredSubscriptionDialog();
     if (!result.isEmpty()) {
       try {
 //        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));

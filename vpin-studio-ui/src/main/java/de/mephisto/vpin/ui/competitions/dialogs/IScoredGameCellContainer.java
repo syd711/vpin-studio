@@ -20,7 +20,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredGameCellContainer extends HBox {
 
-  public IScoredGameCellContainer(CompetitionRepresentation subscription) {
+  public IScoredGameCellContainer(CompetitionRepresentation subscription, String customStyles) {
     super(3);
 
     String name = subscription.getVpsTable().getName();
@@ -48,7 +48,7 @@ public class IScoredGameCellContainer extends HBox {
 
     Label title = new Label(name);
     title.setTooltip(new Tooltip(name));
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;");
+    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyles);
     column.getChildren().add(title);
 
     if (subscription.getGameId() == 0) {
