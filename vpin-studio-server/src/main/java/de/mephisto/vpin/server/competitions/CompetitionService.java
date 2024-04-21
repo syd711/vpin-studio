@@ -48,7 +48,7 @@ public class CompetitionService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private CompetitionValidator campaignValidationService;
+  private CompetitionValidator competitionValidator;
 
   @Autowired
   private TournamentsService maniaService;
@@ -86,28 +86,36 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getDiscordCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
+        .collect(Collectors.toList());
+  }
+
+
+  public List<Competition> getIScoredSubscriptions() {
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name())
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions(String rom) {
     return competitionsRepository
         .findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom)
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 

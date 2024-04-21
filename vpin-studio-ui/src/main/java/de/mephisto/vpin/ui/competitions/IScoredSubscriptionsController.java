@@ -1,24 +1,20 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
+import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -29,20 +25,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -56,10 +47,16 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   private TableView<CompetitionRepresentation> tableView;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnTable;
+  private TableColumn<CompetitionRepresentation, Label> statusColumn;
 
   @FXML
-  private TableColumn<CompetitionRepresentation, String> columnGameRoom;
+  private TableColumn<CompetitionRepresentation, String> tableColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> vpsTableColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> vpsTableVersionColumn;
 
   @FXML
   private Button deleteBtn;
@@ -110,16 +107,20 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     List<CompetitionRepresentation> result = CompetitionDialogs.openIScoredSubscriptionDialog();
     if (!result.isEmpty()) {
       try {
-//        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
-//        Platform.runLater(() -> {
-//          onReload();
-//          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-//        });
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscriptions", result));
+        Platform.runLater(() -> {
+          onReload();
+          if (!resultModel.getResults().isEmpty()) {
+            CompetitionRepresentation competitionRepresentation = (CompetitionRepresentation) resultModel.results.get(0);
+            tableView.getSelectionModel().select(competitionRepresentation);
+            tableView.scrollTo(competitionRepresentation);
+          }
+        });
       } catch (Exception e) {
+        LOG.error("Failed to create iScored subscription: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
-//      tableView.getSelectionModel().select(newCmp);
     }
   }
 
@@ -128,21 +129,15 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus(selection.getDiscordServerId()).getBotId()));
-      String help = "You are the owner of this subscription.";
-      String help2 = "The subscription and the corresponding channel will be deleted.";
+      String help = "The subscription will be deleted.";
+      String help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
 
-      if (!isOwner) {
-        help = "You are not the owner of this subscription.";
-        help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      }
-
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Subscription '" + selection.getName() + "'?",
-        help, help2, "Delete Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored Subscription '" + selection.getName() + "'?",
+        help, help2, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }
     }
@@ -165,8 +160,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       addBtn.setDisable(true);
       deleteBtn.setDisable(true);
       reloadBtn.setDisable(true);
-
-      tableView.setPlaceholder(new Label("                                         No IScored bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
@@ -181,7 +174,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     new Thread(() -> {
       CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-      competitions = client.getCompetitionService().getSubscriptions();
+      competitions = client.getCompetitionService().getIScoredSubscriptions();
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
@@ -229,41 +222,28 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    columnTable.setCellValueFactory(cellData -> {
+
+    statusColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGameCached(value.getGameId());
-      Label label = new Label("- not available anymore -");
-      label.getStyleClass().add("default-text");
-      label.setStyle(getLabelCss(value));
-      if (game != null) {
-        label = new Label(game.getGameDisplayName());
-        label.getStyleClass().add("default-text");
+      Label label = new Label();
+      if (value.getGameId() == 0) {
+        label.setGraphic(WidgetFactory.createExclamationIcon());
       }
-
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-
-      Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
-      if (gameMediaItem != null) {
-        image = new Image(gameMediaItem);
+      else {
+        label.setGraphic(WidgetFactory.createCheckIcon(null));
       }
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setSmooth(true);
-      view.setFitWidth(60);
-      view.setFitHeight(60);
-      hBox.getChildren().addAll(view, label);
-
-      return new SimpleObjectProperty(hBox);
+      return new SimpleObjectProperty<>(label);
     });
 
-    columnGameRoom.setCellValueFactory(cellData -> {
+    tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, getLabelCss(cellData.getValue())));
+    });
 
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-      return new SimpleObjectProperty(hBox);
+    vpsTableColumn.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      VpsTable vpsTable = value.getVpsTable();
+      return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
     });
 
     tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
@@ -299,15 +279,15 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
         CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
           TableColumn<CompetitionRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
-          if (column.equals(columnGameRoom)) {
+          if (column.equals(tableColumn)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getName()));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
             return true;
           }
-          else if (column.equals(columnTable)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> client.getGameCached(o.getGameId()).getGameDisplayName()));
+          else if (column.equals(vpsTableColumn)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVpsTable().getDisplayName()));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

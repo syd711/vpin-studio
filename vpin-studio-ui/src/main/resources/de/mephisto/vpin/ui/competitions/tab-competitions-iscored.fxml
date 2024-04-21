@@ -23,8 +23,11 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                                <TableColumn fx:id="columnTable" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                        <TableColumn fx:id="columnGameRoom" prefWidth="400.0" style="-fx-alignment: CENTER;" text="GameRoom" />
+                        <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Status" />
+                        <TableColumn fx:id="tableColumn" prefWidth="430.0" style="-fx-alignment: CENTER;" text="Your Table" />
+                        <TableColumn fx:id="columnGameRoom" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
+                        <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
+                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
                             </columns>
                         </TableView>
                     </children>

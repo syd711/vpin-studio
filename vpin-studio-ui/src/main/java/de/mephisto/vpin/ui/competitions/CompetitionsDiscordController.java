@@ -179,7 +179,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
         Platform.runLater(() -> {
           Platform.runLater(() -> {
             onReload();
@@ -201,7 +201,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", c));
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
           Platform.runLater(() -> {
             onReload();
             tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
@@ -228,7 +228,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
     CompetitionRepresentation c = CompetitionDialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", Arrays.asList(c)));
         onReload();
         tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
       } catch (Exception e) {
