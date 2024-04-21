@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
+import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -129,11 +131,10 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   private void onDelete() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      String help = "The subscription will be deleted.";
-      String help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
+      String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored Subscription '" + selection.getName() + "'?",
-        help, help2, "Delete iScored Subscription");
+        help, null, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -244,6 +245,14 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       CompetitionRepresentation value = cellData.getValue();
       VpsTable vpsTable = value.getVpsTable();
       return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
+    });
+
+    vpsTableVersionColumn.setCellValueFactory(cellData -> {
+      VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
+      if (vpsTableVersion == null) {
+        return new SimpleObjectProperty<>("All versions allowed.");
+      }
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
     });
 
     tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +

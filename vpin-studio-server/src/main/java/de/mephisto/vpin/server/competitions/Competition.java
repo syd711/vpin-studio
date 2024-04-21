@@ -54,6 +54,12 @@ public class Competition {
 
   private long discordServerId;
 
+  private String url;
+
+  private String vpsTableId;
+
+  private String vpsTableVersionId;
+
   private Date startDate;
 
   private Date endDate;
@@ -70,6 +76,30 @@ public class Competition {
 
   @Transient
   private ValidationState validationState;
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
+  public String getVpsTableId() {
+    return vpsTableId;
+  }
+
+  public void setVpsTableId(String vpsTableId) {
+    this.vpsTableId = vpsTableId;
+  }
+
+  public String getVpsTableVersionId() {
+    return vpsTableVersionId;
+  }
+
+  public void setVpsTableVersionId(String vpsTableVersionId) {
+    this.vpsTableVersionId = vpsTableVersionId;
+  }
 
   public int getScoreLimit() {
     return scoreLimit;
@@ -240,11 +270,15 @@ public class Competition {
   }
 
   public boolean isActive() {
-    if(!StringUtils.isEmpty(getWinnerInitials())) {
+    if (!StringUtils.isEmpty(getWinnerInitials())) {
       return false;
     }
 
     if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return true;
+    }
+
+    if (getType().equals(CompetitionType.ISCORED.name())) {
       return true;
     }
 

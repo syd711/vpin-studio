@@ -6,11 +6,11 @@ import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
-import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
@@ -29,16 +29,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -49,6 +45,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @FXML
   private ComboBox<String> badgeCombo;
+
+  @FXML
+  private CheckBox highscoreReset;
 
   @FXML
   private Button saveBtn;
@@ -94,6 +93,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   @FXML
   private void onCancelClick(ActionEvent e) {
     result.clear();
+    selection.clear();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -106,6 +106,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @Override
   public void onDialogCancel() {
+    selection.clear();
     this.result.clear();
   }
 
@@ -155,6 +156,10 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
 
               CompetitionRepresentation sub = new CompetitionRepresentation();
+              sub.setType(CompetitionType.ISCORED.name());
+              sub.setUrl(dashboardUrl);
+              sub.setName("iScord Subscription for '" + vpsTable.getName() + "'");
+              sub.setBadge(badgeCombo.getValue());
               GameRepresentation gameRep = null;
               if (vpsTable != null) {
                 gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
@@ -164,6 +169,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
                 sub.setVpsTableVersionId(vpsVersion.getId());
               }
               if (gameRep != null) {
+                sub.setRom(gameRep.getRom() != null ? gameRep.getRom() : gameRep.getTableName());
                 sub.setGameId(gameRep.getId());
               }
               selection.add(sub);
@@ -233,8 +239,8 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
       checkBox.selectedProperty().setValue(selection.contains(c));
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean newVal) {
-          if(newVal) {
-            if(!selection.contains(c)) {
+          if (newVal) {
+            if (!selection.contains(c)) {
               selection.add(c);
             }
           }
@@ -257,7 +263,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredTables());
     String latestUrl = LocalUISettings.getProperties(LocalUISettings.LAST_ISCORED_SELECTION);
-    if(latestUrl != null) {
+    if (latestUrl != null) {
       dashboardUrlField.setText(latestUrl);
     }
   }
@@ -271,6 +277,13 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   }
 
   public List<CompetitionRepresentation> getResult() {
+    this.result.clear();
+    for (CompetitionRepresentation competitionRepresentation : this.selection) {
+      competitionRepresentation.setBadge(badgeCombo.getValue());
+      competitionRepresentation.setHighscoreReset(highscoreReset.isSelected());
+      competitionRepresentation.setUuid(UUID.randomUUID().toString());
+      result.add(competitionRepresentation);
+    }
     return result;
   }
 }

@@ -306,6 +306,13 @@ public class CompetitionsController implements Initializable, StudioFXController
           metaDataPane.setExpanded(false);
           break;
         }
+        case ISCORED: {
+          competitionMembersPane.setDisable(true);
+          competitionMembersPane.setExpanded(false);
+          metaDataPane.setDisable(true);
+          metaDataPane.setExpanded(false);
+          break;
+        }
         default: {
           throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
         }

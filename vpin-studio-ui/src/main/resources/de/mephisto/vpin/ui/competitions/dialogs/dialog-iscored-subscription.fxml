@@ -150,10 +150,11 @@
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                              </columnConstraints>
                                              <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label layoutX="10.0" layoutY="117.0" text="Table Badges:" textFill="WHITE">
+                                                <Label layoutX="10.0" layoutY="117.0" text="Table Badges:" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -161,7 +162,7 @@
                                                       <Insets top="3.0" />
                                                    </padding>
                                                 </Label>
-                                                <HBox GridPane.columnIndex="1" GridPane.valignment="TOP">
+                                                <HBox GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                                    <children>
                                                       <ComboBox fx:id="badgeCombo" prefWidth="310.0" />
                                                       <Label layoutX="226.0" layoutY="16.0" textFill="WHITE">
@@ -174,7 +175,7 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <Label textFill="WHITE" GridPane.columnIndex="2">
+                                                <Label textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -191,6 +192,19 @@
                                                       <Insets top="3.0" />
                                                    </padding>
                                                 </Label>
+                                                <Label layoutX="10.0" layoutY="44.0" text="Highscore Reset:" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores of all tables" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
                                              </children>
                                              <VBox.margin>
                                                 <Insets top="6.0" />
