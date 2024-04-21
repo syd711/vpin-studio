@@ -2,22 +2,24 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.tournaments.TournamentHelper;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
-import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -27,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,19 +69,25 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private Pane validationContainer;
 
   @FXML
-  private TableView<IScoredSubscription> tableView;
+  private CheckBox selectAllCheckbox;
 
   @FXML
-  private TableColumn<IScoredSubscription, Label> statusColumn;
+  private TableView<CompetitionRepresentation> tableView;
 
   @FXML
-  private TableColumn<IScoredSubscription, String> tableColumn;
+  private TableColumn<CompetitionRepresentation, CheckBox> selectionColumn;
 
   @FXML
-  private TableColumn<IScoredSubscription, String> vpsTableColumn;
+  private TableColumn<CompetitionRepresentation, Label> statusColumn;
 
   @FXML
-  private TableColumn<IScoredSubscription, String> vpsTableVersionColumn;
+  private TableColumn<CompetitionRepresentation, String> tableColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> vpsTableColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> vpsTableVersionColumn;
 
   private Stage stage;
 
@@ -93,7 +102,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @FXML
   private void onTableRemove(ActionEvent e) {
-    IScoredSubscription selectedItem = tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       result.remove(selectedItem);
     }
@@ -117,7 +126,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     if (competition != null) {
       this.deleteTableBtn.setDisable(true);
-      IScoredSubscription sub = new IScoredSubscription();
+      CompetitionRepresentation sub = new CompetitionRepresentation();
 
     }
   }
@@ -130,13 +139,16 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     this.tableView.refresh();
     this.result.clear();
 
+    this.selectAllCheckbox.setSelected(true);
+
     if (!StringUtils.isEmpty(dashboardUrl)) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl));
       if (!progressDialog.getResults().isEmpty()) {
+        LocalUISettings.saveProperty(LocalUISettings.LAST_ISCORED_SELECTION, dashboardUrl);
+
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-        List<IScoredSubscription> subs = new ArrayList<>();
         List<Game> games = gameRoom.getGames();
         for (Game game : games) {
           List<String> tags = game.getTags();
@@ -162,21 +174,21 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
               if (vpsTable != null && split.length > 1) {
                 vpsVersion = vpsTable.getVersion(split[1]);
               }
+
+
+              CompetitionRepresentation sub = new CompetitionRepresentation();
               GameRepresentation gameRep = null;
               if (vpsTable != null) {
                 gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+                sub.setVpsTableId(vpsTable.getId());
               }
-
-              GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-              IScoredSubscription sub = new IScoredSubscription();
-              sub.setVpsTable(vpsTable);
-              sub.setiScoredGame(game);
-              sub.setVpsTableVersion(vpsVersion);
-              if (gameByVpsTable != null) {
-                sub.setGameId(gameByVpsTable.getId());
+              if (vpsVersion != null) {
+                sub.setVpsTableVersionId(vpsVersion.getId());
               }
-
-              subs.add(sub);
+              if (gameRep != null) {
+                sub.setGameId(gameRep.getId());
+              }
+              result.add(sub);
             } catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
@@ -184,7 +196,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
           }
         }
 
-        this.tableView.setItems(FXCollections.observableList(subs));
+        this.tableView.setItems(FXCollections.observableList(this.result));
         this.tableView.refresh();
       }
     }
@@ -198,19 +210,16 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     deleteTableBtn.setDisable(true);
     saveBtn.setDisable(true);
 
-
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
     badges.add(0, null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     badgeCombo.setItems(imageList);
-//    badgeCombo.setCellFactory(c -> new TournamentImageCell(client));
-//    badgeCombo.setButtonCell(new TournamentImageCell(client));
-
-    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredTables());
+    badgeCombo.setCellFactory(c -> new CompetitionOfflineDialogController.CompetitionImageListCell(client));
+    badgeCombo.setButtonCell(new CompetitionOfflineDialogController.CompetitionImageListCell(client));
 
 
     statusColumn.setCellValueFactory(cellData -> {
-      IScoredSubscription value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue();
       Label label = new Label();
       if (value.getGameId() == 0) {
         label.setGraphic(WidgetFactory.createExclamationIcon());
@@ -222,14 +231,14 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     });
 
     tableColumn.setCellValueFactory(cellData -> {
-      IScoredSubscription value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(new IScoredGameCellContainer(value));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
-      IScoredSubscription value = cellData.getValue();
+      CompetitionRepresentation value = cellData.getValue();
       VpsTable vpsTable = value.getVpsTable();
-      return new SimpleObjectProperty(new VpsTableContainer(vpsTable));
+      return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
@@ -237,58 +246,51 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, "", true));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), true));
     });
 
-    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<IScoredSubscription>() {
+    selectionColumn.setCellValueFactory(cellData -> {
+      CompetitionRepresentation c = cellData.getValue();
+      CheckBox checkBox = new CheckBox();
+      checkBox.selectedProperty().setValue(result.contains(c));
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean newVal) {
+          if(newVal) {
+            if(!result.contains(c)) {
+              result.add(c);
+            }
+          }
+          else {
+            result.remove(c);
+          }
+        }
+      });
+      return new SimpleObjectProperty<CheckBox>(checkBox);
+    });
+
+    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<CompetitionRepresentation>() {
       @Override
-      public void onChanged(Change<? extends IScoredSubscription> c) {
+      public void onChanged(Change<? extends CompetitionRepresentation> c) {
         deleteTableBtn.setDisable(c == null);
       }
     });
+
+    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredTables());
+    String latestUrl = LocalUISettings.getProperties(LocalUISettings.LAST_ISCORED_SELECTION);
+    if(latestUrl != null) {
+      dashboardUrlField.setText(latestUrl);
+    }
+  }
+
+  private String getLabelCss(CompetitionRepresentation c) {
+    String status = "";
+    if (!result.contains(c)) {
+      status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+    }
+    return status;
   }
 
   public List<CompetitionRepresentation> getResult() {
     return result;
-  }
-
-
-  class IScoredSubscription {
-    private int gameId;
-    private VpsTable vpsTable;
-    private VpsTableVersion vpsTableVersion;
-    private Game iScoredGame;
-
-    public Game getiScoredGame() {
-      return iScoredGame;
-    }
-
-    public void setiScoredGame(Game iScoredGame) {
-      this.iScoredGame = iScoredGame;
-    }
-
-    public int getGameId() {
-      return gameId;
-    }
-
-    public void setGameId(int gameId) {
-      this.gameId = gameId;
-    }
-
-    public VpsTable getVpsTable() {
-      return vpsTable;
-    }
-
-    public void setVpsTable(VpsTable vpsTable) {
-      this.vpsTable = vpsTable;
-    }
-
-    public VpsTableVersion getVpsTableVersion() {
-      return vpsTableVersion;
-    }
-
-    public void setVpsTableVersion(VpsTableVersion vpsTableVersion) {
-      this.vpsTableVersion = vpsTableVersion;
-    }
   }
 }

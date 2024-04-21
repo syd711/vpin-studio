@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ public class LocalUISettings {
   private final static Logger LOG = LoggerFactory.getLogger(LocalUISettings.class);
 
   public static final String LAST_FOLDER_SELECTION = "lastFolderSelection";
+  public static final String LAST_ISCORED_SELECTION = "iscoredUrl";
 
   private static PropertiesStore store;
 
@@ -18,6 +20,18 @@ public class LocalUISettings {
     File propertiesFile = new File("config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
+  }
+
+  public static void saveProperty(@NonNull String key, @NonNull String value) {
+    store.set(key, value);
+  }
+
+  @Nullable
+  public static String getProperties(@NonNull String key) {
+    if (store.containsKey(key)) {
+      return store.get(key);
+    }
+    return null;
   }
 
   public static void saveLastFolderLocation(@Nullable File file) {

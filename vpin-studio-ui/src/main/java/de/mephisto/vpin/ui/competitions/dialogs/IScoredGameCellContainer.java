@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.Studio;
@@ -19,10 +20,10 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredGameCellContainer extends HBox {
 
-  public IScoredGameCellContainer(IScoredSubscriptionDialogController.IScoredSubscription subscription) {
+  public IScoredGameCellContainer(CompetitionRepresentation subscription) {
     super(3);
 
-    String name = subscription.getiScoredGame().getName();
+    String name = subscription.getVpsTable().getName();
     if (name.length() > 40) {
       name = name.substring(0, 39) + "...";
     }

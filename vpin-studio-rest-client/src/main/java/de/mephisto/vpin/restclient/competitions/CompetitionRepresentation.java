@@ -1,8 +1,13 @@
 package de.mephisto.vpin.restclient.competitions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,7 +41,11 @@ public class CompetitionRepresentation {
 
   private long discordServerId;
 
-  private String externalId;
+  private String url;
+
+  private String vpsTableId;
+
+  private String vpsTableVersionId;
 
   private String winnerInitials;
 
@@ -50,12 +59,47 @@ public class CompetitionRepresentation {
 
   private String rom;
 
-  public String getExternalId() {
-    return externalId;
+  @Nullable
+  @JsonIgnore
+  public VpsTable getVpsTable() {
+    if (vpsTableId != null) {
+      return VPS.getInstance().getTableById(vpsTableId);
+    }
+    return null;
   }
 
-  public void setExternalId(String externalId) {
-    this.externalId = externalId;
+  @Nullable
+  @JsonIgnore
+  public VpsTableVersion getVpsTableVersion() {
+    VpsTable vpsTable = getVpsTable();
+    if (vpsTable != null && vpsTableVersionId != null) {
+      return vpsTable.getVersion(vpsTableVersionId);
+    }
+    return null;
+  }
+
+  public String getVpsTableId() {
+    return vpsTableId;
+  }
+
+  public void setVpsTableId(String vpsTableId) {
+    this.vpsTableId = vpsTableId;
+  }
+
+  public String getVpsTableVersionId() {
+    return vpsTableVersionId;
+  }
+
+  public void setVpsTableVersionId(String vpsTableVersionId) {
+    this.vpsTableVersionId = vpsTableVersionId;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public int getScoreLimit() {
