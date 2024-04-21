@@ -42,6 +42,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   public static final int DB_VERSION = 64;
+  public static final String IS_FAV = "isFav";
   private String dbFilePath;
 
   @Autowired
@@ -825,7 +826,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, isFav) VALUES (?,?,?,?,?,?)");
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, " + IS_FAV + ") VALUES (?,?,?,?,?,?)");
       preparedStatement.setInt(1, playlistId);
       preparedStatement.setInt(2, gameId);
       preparedStatement.setInt(3, 1);
@@ -845,7 +846,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
   public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
-    String sql = "UPDATE PlayListDetails SET isFav = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    String sql = "UPDATE PlayListDetails SET " + IS_FAV + " = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
     try {
       Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
@@ -1237,9 +1238,13 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
 
-        int favMode = rs.getInt("isFav");
-        game.setFav(favMode == 1);
-        game.setGlobalFav(favMode == 2);
+        try {
+          int favMode = rs.getInt(IS_FAV);
+          game.setFav(favMode == 1);
+          game.setGlobalFav(favMode == 2);
+        } catch (SQLException e) {
+//          game.setFavSupported(false);
+        }
         result.add(game);
       }
 
@@ -1266,7 +1271,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
 
-        int favMode = rs.getInt("isFav");
+        int favMode = rs.getInt(IS_FAV);
         game.setFav(favMode == 1);
         game.setGlobalFav(favMode == 2);
         result.add(game);
