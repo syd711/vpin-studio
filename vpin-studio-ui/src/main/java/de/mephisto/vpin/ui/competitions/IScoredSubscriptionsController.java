@@ -107,27 +107,19 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   private void onCompetitionCreate() {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
-      WidgetFactory.showAlert(Studio.stage, "Invalid Discord Configuration", "No default Discord server and category for subscriptions found.", "Open the Bot Settings in the preferences to configure the subscription settings.");
-      return;
-    }
-
-    CompetitionRepresentation c = CompetitionDialogs.openSubscriptionDialog(this.competitions, null);
-    if (c != null) {
-      CompetitionRepresentation newCmp = null;
+    List<CompetitionRepresentation> result = CompetitionDialogs.openIScoredSubscriptionDialog(null);
+    if (!result.isEmpty()) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
-        Platform.runLater(() -> {
-          onReload();
-          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-        });
+//        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
+//        Platform.runLater(() -> {
+//          onReload();
+//          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+//        });
       } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
-      tableView.getSelectionModel().select(newCmp);
+//      tableView.getSelectionModel().select(newCmp);
     }
   }
 

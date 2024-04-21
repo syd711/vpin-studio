@@ -36,6 +36,8 @@ public class CompetitionRepresentation {
 
   private long discordServerId;
 
+  private String externalId;
+
   private String winnerInitials;
 
   private String uuid;
@@ -47,6 +49,14 @@ public class CompetitionRepresentation {
   private boolean highscoreReset;
 
   private String rom;
+
+  public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
+  }
 
   public int getScoreLimit() {
     return scoreLimit;
@@ -269,6 +279,10 @@ public class CompetitionRepresentation {
       return true;
     }
 
+    if (getType().equals(CompetitionType.ISCORED.name())) {
+      return true;
+    }
+
     long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
@@ -277,6 +291,9 @@ public class CompetitionRepresentation {
 
   public boolean isPlanned() {
     if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return false;
+    }
+    if (getType().equals(CompetitionType.ISCORED.name())) {
       return false;
     }
     return getStartDate().after(new Date());
