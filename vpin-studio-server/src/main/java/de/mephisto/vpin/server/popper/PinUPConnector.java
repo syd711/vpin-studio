@@ -1270,11 +1270,6 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
-
-        int favMode = rs.getInt(IS_FAV);
-        game.setFav(favMode == 1);
-        game.setGlobalFav(favMode == 2);
-        result.add(game);
       }
 
       rs.close();
