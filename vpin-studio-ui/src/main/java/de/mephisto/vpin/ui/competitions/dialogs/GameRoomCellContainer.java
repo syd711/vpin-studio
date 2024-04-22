@@ -76,6 +76,5 @@ public class GameRoomCellContainer extends HBox {
       }
     });
     column.getChildren().add(hyperlink);
-    setPadding(new Insets(3, 0, 6, 0));
-  }
+    setPadding(new Insets(3, 0, 6, 0));}
 }

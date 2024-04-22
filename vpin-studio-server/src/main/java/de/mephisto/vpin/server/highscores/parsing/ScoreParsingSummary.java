@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
-import de.mephisto.vpin.server.util.ScoreHelper;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class ScoreParsingSummary {
       builder.append(" ");
       builder.append(score.getInitials());
       builder.append("   ");
-      builder.append(ScoreHelper.formatScore(String.valueOf(score.getScore())));
+      builder.append(ScoreFormatUtil.formatScore(String.valueOf(score.getScore())));
       builder.append("\n");
     }
     return builder.toString();
