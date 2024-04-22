@@ -6,6 +6,7 @@
 - **Table Data Manager**: The Popper field "Notes" remains untouched from the auto-fill function now.
 - **Studio Window**: Added (fixed) Studio version in the window title.
 - **Preferences**: Added **Help & Support** section, including a download option which zips and downloads all log files for ticket submissions.
+- **Highscore Cards**: Added **Render Positions** flag available for non-raw highscore templates. The padding value will be used as additional separator between the initials and the score value.
 
 ## Hotfix 2.17.2
 

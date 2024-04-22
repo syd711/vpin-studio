@@ -48,6 +48,15 @@ public class CardTemplate extends JsonSettings {
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
+  private boolean renderPositions = true;
+
+  public boolean isRenderPositions() {
+    return renderPositions;
+  }
+
+  public void setRenderPositions(boolean renderPositions) {
+    this.renderPositions = renderPositions;
+  }
 
   public int getWheelSize() {
     return wheelSize;
