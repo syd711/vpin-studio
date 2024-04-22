@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>2.17.0</version>
+    <version>2.17.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -126,7 +126,7 @@
         <version>2.6</version>
         <executions>
           <execution>
-            <id>copy-from-jdk</id>
+            <id>copy-from-jdk-win</id>
             <phase>package</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -136,6 +136,24 @@
               <resources>
                 <resource>
                   <directory>${basedir}/../java-runtime</directory>
+                  <excludes>
+                    <exclude>**/*.zip</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-from-jdk-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/runtime-linux</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../java-runtime-linux</directory>
                   <excludes>
                     <exclude>**/*.zip</exclude>
                   </excludes>
@@ -203,38 +221,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>full-installer-creation</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>ISCC.exe</executable>
-              <arguments>
-                <argument>${basedir}/target/classes/inno-installer-studio-full.iss</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>client-installer-creation</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>ISCC.exe</executable>
-              <arguments>
-                <argument>${basedir}/target/classes/inno-installer-studio-client.iss</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
         <version>1.4.0</version>
         <executions>
           <execution>
@@ -255,7 +241,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>zip-ui-jar</id>
+            <id>zip-ui-jar-linux</id>
             <phase>package</phase>
             <goals>
               <goal>exec</goal>
@@ -266,9 +252,27 @@
               <arguments>
                 <argument>a</argument>
                 <argument>-tzip</argument>
-                <argument>VPin-Studio-Client.zip</argument>
+                <argument>VPin-Studio-Client-Linux-x64.zip</argument>
+                <argument>runtime-linux/*</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>zip-rename-runtime-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>rn</argument>
+                <argument>VPin-Studio-Client-Linux-x64.zip</argument>
+                <argument>runtime-linux</argument>
+                <argument>runtime</argument>
               </arguments>
             </configuration>
           </execution>

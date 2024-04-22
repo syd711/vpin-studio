@@ -18,6 +18,7 @@ target/
 vpin-studio-server/target/
 vpin-studio-ui/target/
 java-runtime/
+java-runtime-linux/
 
 # Log file
 *.log

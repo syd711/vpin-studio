@@ -74,9 +74,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Extract Runtime
+      - name: Extract Windows Runtime
         run: |
           unzip -o java-runtime.zip -d ${{ github.workspace }}/java-runtime
+
+      - name: Extract Linux Runtime
+        run: |
+          unzip -o java-runtime-linux.zip -d ${{ github.workspace }}/java-runtime-linux
 
       - name: List files in the runtime folder
         run: |
