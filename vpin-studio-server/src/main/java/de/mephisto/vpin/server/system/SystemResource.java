@@ -16,15 +16,18 @@ import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +36,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
@@ -74,6 +78,49 @@ public class SystemResource {
       LOG.error("Error reading log: " + e.getMessage(), e);
     }
     return "";
+  }
+
+  @GetMapping("/download/logs")
+  public void downloadArchiveFile(HttpServletResponse response) {
+    InputStream in = null;
+    OutputStream out = null;
+    try {
+      File target = new File("vpin-studio-logs.zip");
+      if (target.exists() && !target.delete()) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete existing logs archive.");
+      }
+
+      FileOutputStream fos = new FileOutputStream(target);
+      ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+      File logs = new File("./");
+      File[] logFiles = logs.listFiles((dir, name) -> name.endsWith(".log"));
+      for (File logFile : logFiles) {
+        ZipUtil.zipFile(logFile, logFile.getName(), zipOut);
+      }
+      zipOut.close();
+      fos.close();
+
+      in = new FileInputStream(target);
+      out = response.getOutputStream();
+      IOUtils.copy(in, out);
+      response.flushBuffer();
+      LOG.info("Finished exporting log files.");
+    } catch (IOException ex) {
+      LOG.info("Error writing logs: " + ex.getLocalizedMessage(), ex);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing file to output stream");
+    } finally {
+      try {
+        if (in != null) {
+          in.close();
+        }
+        if (out != null) {
+          out.close();
+        }
+      } catch (IOException e) {
+        LOG.error("Erorr closing streams: " + e.getMessage(), e);
+      }
+    }
   }
 
   @GetMapping("/info")

@@ -1146,3 +1146,10 @@
     -fx-border-color: #333366; /* Border color when selected */
     -fx-border-radius: 5px; /* Rounded corners */
 }
+
+.color-palette .hyperlink, .color-palette .separator {
+    visibility: hidden;
+}
+.color-palette {
+    -fx-padding: 15 15 -30 15;
+}

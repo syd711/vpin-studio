@@ -1,3 +1,11 @@
+## Hotfix 2.17.3
+
+- **Table Overview**: Fixed context menu item "Upload Backglass".
+- **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.
+- **Table Imports**: Fixed **DateAdded** data field which had the wrong date format and wasn't picked up by SQL playlists this way.
+- **Table Data Manager**: The "Notes" field is auto filled any.
+- **Studio Window**: Added (fixed) Studio version in the window title.
+
 ## Hotfix 2.17.2
 
 - Fixed playlist display errors. (Thanks to @spaceangel6998 helping out here!).
