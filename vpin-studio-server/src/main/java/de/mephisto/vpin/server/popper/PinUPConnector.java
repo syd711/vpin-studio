@@ -654,7 +654,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, launchCustomVar);
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setString(7, ts);
