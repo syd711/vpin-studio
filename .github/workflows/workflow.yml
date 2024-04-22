@@ -82,6 +82,10 @@ jobs:
         run: |
           unzip -o java-runtime-linux.zip -d ${{ github.workspace }}/java-runtime-linux
 
+      - name: Extract OSX ARM Runtime
+        run: |
+          unzip -o java-runtime-osx-arm.zip -d ${{ github.workspace }}/java-runtime-osx-arm-x64
+
       - name: List files in the runtime folder
         run: |
           ls ${{ github.workspace }}/java-runtime/
@@ -116,6 +120,5 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
             ./Output/VPin-Studio/VPin-Studio-Server.zip
             ./Output/VPin-Studio/VPin-Studio.zip
-            ./Output/VPin-Studio/VPin-Studio-Client.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio

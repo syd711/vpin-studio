@@ -162,6 +162,24 @@
             </configuration>
           </execution>
           <execution>
+            <id>copy-from-jdk-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/runtime-osx-arm-x64</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../java-runtime-osx-arm-x64</directory>
+                  <excludes>
+                    <exclude>**/*.zip</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
             <id>copy-exe</id>
             <phase>package</phase>
             <goals>
@@ -272,6 +290,42 @@
                 <argument>rn</argument>
                 <argument>VPin-Studio-Client-Linux-x64.zip</argument>
                 <argument>runtime-linux</argument>
+                <argument>runtime</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>zip-ui-jar-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>a</argument>
+                <argument>-tzip</argument>
+                <argument>VPin-Studio-Client-OSX-arm-x64.zip</argument>
+                <argument>runtime-osx-arm-x64/*</argument>
+                <argument>vpin-studio-ui.jar</argument>
+                <argument>VPin-Studio.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>zip-rename-runtime-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>rn</argument>
+                <argument>VPin-Studio-Client-OSX-arm-x64.zip</argument>
+                <argument>runtime-osx-arm-x64</argument>
                 <argument>runtime</argument>
               </arguments>
             </configuration>
