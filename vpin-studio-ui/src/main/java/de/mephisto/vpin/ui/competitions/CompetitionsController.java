@@ -135,6 +135,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
+      checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
     else if (t1.intValue() == 1) {
@@ -142,6 +143,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
         updateSelection(selection);
+        checkTitledPanes(CompetitionType.DISCORD);
         discordController.onReload();
       }
     }
@@ -150,6 +152,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
         updateSelection(selection);
+        checkTitledPanes(CompetitionType.SUBSCRIPTION);
         tableSubscriptionsController.onReload();
       }
     }
@@ -158,6 +161,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
         Optional<CompetitionRepresentation> selection = iScoredSubscriptionsController.getSelection();
         updateSelection(selection);
+        checkTitledPanes(CompetitionType.ISCORED);
         iScoredSubscriptionsController.onReload();
       }
     }
@@ -172,7 +176,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
-    checkTitledPanes(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
@@ -278,44 +281,50 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private void checkTitledPanes(Optional<CompetitionRepresentation> cp) {
-    competitionMembersPane.setDisable(cp.isEmpty());
-    metaDataPane.setDisable(cp.isEmpty());
+  private void checkTitledPanes(CompetitionType competitionType) {
+    switch (competitionType) {
+      case DISCORD: {
+        competitionMembersPane.setDisable(false);
+        competitionMembersPane.setExpanded(true);
+        metaDataPane.setDisable(false);
+        metaDataPane.setExpanded(false);
 
-    if (cp.isPresent()) {
-      CompetitionType competitionType = CompetitionType.valueOf(cp.get().getType());
-      switch (competitionType) {
-        case DISCORD: {
-          competitionMembersPane.setDisable(false);
-          competitionMembersPane.setExpanded(true);
-          metaDataPane.setDisable(false);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        case SUBSCRIPTION: {
-          competitionMembersPane.setDisable(false);
-          competitionMembersPane.setExpanded(true);
-          metaDataPane.setDisable(false);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        case OFFLINE: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        case ISCORED: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        default: {
-          throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
-        }
+        metaDataPane.setVisible(true);
+        competitionMembersPane.setVisible(true);
+        break;
+      }
+      case SUBSCRIPTION: {
+        competitionMembersPane.setDisable(false);
+        competitionMembersPane.setExpanded(true);
+        metaDataPane.setDisable(false);
+        metaDataPane.setExpanded(false);
+
+        metaDataPane.setVisible(true);
+        competitionMembersPane.setVisible(true);
+        break;
+      }
+      case OFFLINE: {
+        competitionMembersPane.setDisable(true);
+        competitionMembersPane.setExpanded(false);
+        metaDataPane.setDisable(true);
+        metaDataPane.setExpanded(false);
+
+        metaDataPane.setVisible(false);
+        competitionMembersPane.setVisible(false);
+        break;
+      }
+      case ISCORED: {
+        competitionMembersPane.setDisable(true);
+        competitionMembersPane.setExpanded(false);
+        metaDataPane.setDisable(true);
+        metaDataPane.setExpanded(false);
+
+        metaDataPane.setVisible(false);
+        competitionMembersPane.setVisible(false);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
       }
     }
   }
@@ -363,7 +372,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     membersBox.getChildren().removeAll(membersBox.getChildren());
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
-      if (competitionMembersPane.isVisible()) {
+      if (competitionMembersPane.isVisible() && !competitionMembersPane.isDisabled()) {
         if (!competition.isActive()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The competition is not active."));
         }

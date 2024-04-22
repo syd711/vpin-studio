@@ -18,8 +18,6 @@ import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -28,8 +26,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,12 +87,14 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   private Stage stage;
 
-  private List<CompetitionRepresentation> result = new ArrayList<>();
-  private List<CompetitionRepresentation> selection = new ArrayList<>();
+  private final List<CompetitionRepresentation> tableList = new ArrayList<>();
+  private final List<CompetitionRepresentation> selection = new ArrayList<>();
+
+  private List<CompetitionRepresentation> existingCompetitions = new ArrayList<>();
 
   @FXML
   private void onCancelClick(ActionEvent e) {
-    result.clear();
+    tableList.clear();
     selection.clear();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -107,7 +109,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   @Override
   public void onDialogCancel() {
     selection.clear();
-    this.result.clear();
+    this.tableList.clear();
   }
 
   @FXML
@@ -116,7 +118,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     iscoredScoresEnabled.setSelected(false);
     this.tableView.setItems(FXCollections.emptyObservableList());
     this.tableView.refresh();
-    this.result.clear();
+    this.tableList.clear();
 
     this.selectAllCheckbox.setSelected(true);
 
@@ -172,8 +174,12 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
                 sub.setRom(gameRep.getRom() != null ? gameRep.getRom() : gameRep.getTableName());
                 sub.setGameId(gameRep.getId());
               }
-              selection.add(sub);
-              result.add(sub);
+
+              if (!containsExisting(sub)) {
+                selection.add(sub);
+              }
+
+              tableList.add(sub);
             } catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
@@ -181,7 +187,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
           }
         }
         saveBtn.setDisable(selection.isEmpty());
-        this.tableView.setItems(FXCollections.observableList(this.result));
+        this.tableView.setItems(FXCollections.observableList(this.tableList));
         this.tableView.refresh();
       }
     }
@@ -205,11 +211,21 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     statusColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label();
+      String iconColor = getIconColor(value);
+
       if (value.getGameId() == 0) {
-        label.setGraphic(WidgetFactory.createExclamationIcon());
+        FontIcon exclamationIcon = WidgetFactory.createExclamationIcon();
+        if (iconColor != null) {
+          exclamationIcon.setIconColor(Paint.valueOf(iconColor));
+        }
+        label.setGraphic(exclamationIcon);
       }
       else {
-        label.setGraphic(WidgetFactory.createCheckIcon(null));
+        FontIcon checkIcon = WidgetFactory.createCheckIcon(null);
+        if (iconColor != null) {
+          checkIcon.setIconColor(Paint.valueOf(iconColor));
+        }
+        label.setGraphic(checkIcon);
       }
       return new SimpleObjectProperty<>(label);
     });
@@ -230,28 +246,28 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), true));
+      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(cellData.getValue().getVpsTableId(), cellData.getValue().getVpsTableVersionId());
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), gameByVpsTable == null));
     });
 
     selectionColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation c = cellData.getValue();
       CheckBox checkBox = new CheckBox();
-      checkBox.selectedProperty().setValue(selection.contains(c));
-      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean newVal) {
-          if (newVal) {
-            if (!selection.contains(c)) {
-              selection.add(c);
-            }
+      checkBox.setDisable(containsExisting(c));
+      checkBox.selectedProperty().setValue(selection.contains(c) && !containsExisting(c));
+      checkBox.selectedProperty().addListener((ov, old_val, newVal) -> {
+        if (newVal) {
+          if (!selection.contains(c)) {
+            selection.add(c);
           }
-          else {
-            selection.remove(c);
-          }
-          tableView.refresh();
-          saveBtn.setDisable(selection.isEmpty());
         }
+        else {
+          selection.remove(c);
+        }
+        tableView.refresh();
+        saveBtn.setDisable(selection.isEmpty());
       });
-      return new SimpleObjectProperty<CheckBox>(checkBox);
+      return new SimpleObjectProperty<>(checkBox);
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<CompetitionRepresentation>() {
@@ -262,28 +278,50 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     });
 
     dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredTables());
-    String latestUrl = LocalUISettings.getProperties(LocalUISettings.LAST_ISCORED_SELECTION);
-    if (latestUrl != null) {
-      dashboardUrlField.setText(latestUrl);
+  }
+
+  private boolean containsExisting(CompetitionRepresentation c) {
+    for (CompetitionRepresentation existing : this.existingCompetitions) {
+      if (existing.getUrl() != null && existing.getUrl().equals(c.getUrl())
+        && existing.getVpsTableId() != null && existing.getVpsTableId().equals(c.getVpsTableId())
+        && existing.getVpsTableVersion() != null && existing.getVpsTableVersion().equals(c.getVpsTableVersion())) {
+        return true;
+      }
     }
+    return false;
   }
 
   private String getLabelCss(CompetitionRepresentation c) {
     String status = "";
-    if (!selection.contains(c)) {
+    if (!selection.contains(c) || containsExisting(c)) {
       status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
     }
     return status;
   }
 
-  public List<CompetitionRepresentation> getResult() {
-    this.result.clear();
+  public String getIconColor(CompetitionRepresentation c) {
+    if (!selection.contains(c) || containsExisting(c)) {
+      return "#B0ABAB";
+    }
+    return null;
+  }
+
+  public List<CompetitionRepresentation> getTableList() {
+    this.tableList.clear();
     for (CompetitionRepresentation competitionRepresentation : this.selection) {
       competitionRepresentation.setBadge(badgeCombo.getValue());
       competitionRepresentation.setHighscoreReset(highscoreReset.isSelected());
       competitionRepresentation.setUuid(UUID.randomUUID().toString());
-      result.add(competitionRepresentation);
+      tableList.add(competitionRepresentation);
     }
-    return result;
+    return tableList;
+  }
+
+  public void setData(List<CompetitionRepresentation> existingCompetitions) {
+    this.existingCompetitions = existingCompetitions;
+    String latestUrl = LocalUISettings.getProperties(LocalUISettings.LAST_ISCORED_SELECTION);
+    if (latestUrl != null) {
+      dashboardUrlField.setText(latestUrl);
+    }
   }
 }

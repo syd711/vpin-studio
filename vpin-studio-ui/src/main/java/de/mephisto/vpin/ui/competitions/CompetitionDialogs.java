@@ -61,14 +61,15 @@ public class CompetitionDialogs {
     return controller.getCompetition();
   }
 
-  public static List<CompetitionRepresentation> openIScoredSubscriptionDialog() {
+  public static List<CompetitionRepresentation> openIScoredSubscriptionDialog(List<CompetitionRepresentation> existingCompetitions) {
     String title = "Game Room Subscriptions";
     FXMLLoader fxmlLoader = new FXMLLoader(IScoredSubscriptionDialogController.class.getResource("dialog-iscored-subscription.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     IScoredSubscriptionDialogController controller = (IScoredSubscriptionDialogController) stage.getUserData();
+    controller.setData(existingCompetitions);
     stage.showAndWait();
 
-    return controller.getResult();
+    return controller.getTableList();
   }
 
   public static CompetitionRepresentation openOfflineCompetitionDialog(List<CompetitionRepresentation> all, CompetitionRepresentation selection) {
