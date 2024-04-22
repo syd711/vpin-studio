@@ -10,6 +10,7 @@ public class PauseMenuSettings extends JsonSettings {
   private String authorAllowList;
   private int videoScreen;
   private boolean renderTutorialLinks = true;
+  private int inputDebounceMs = 0;
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   public PauseMenuStyle getStyle() {
@@ -17,6 +18,14 @@ public class PauseMenuSettings extends JsonSettings {
       style = PauseMenuStyle.embedded;
     }
     return style;
+  }
+
+  public int getInputDebounceMs() {
+    return inputDebounceMs;
+  }
+
+  public void setInputDebounceMs(int inputDebounceMs) {
+    this.inputDebounceMs = inputDebounceMs;
   }
 
   public void setStyle(PauseMenuStyle style) {
