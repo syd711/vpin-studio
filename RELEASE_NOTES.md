@@ -3,8 +3,9 @@
 - **Table Overview**: Fixed context menu item "Upload Backglass".
 - **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.
 - **Table Imports**: Fixed **DateAdded** data field which had the wrong date format and wasn't picked up by SQL playlists this way.
-- **Table Data Manager**: The "Notes" field is auto filled any.
+- **Table Data Manager**: The Popper field "Notes" remains untouched from the auto-fill function now.
 - **Studio Window**: Added (fixed) Studio version in the window title.
+- **Preferences**: Added **Help & Support** section, including a download option which zips and downloads all log files for ticket submissions.
 
 ## Hotfix 2.17.2
 
