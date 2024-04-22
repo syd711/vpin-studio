@@ -16,9 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,60 +36,79 @@ public class IScored {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  public static GameRoom loadGameRoom(@NonNull String url) throws Exception {
-    long start = System.currentTimeMillis();
-    if (!url.toLowerCase().startsWith(BASE_URL.toLowerCase())) {
-      throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
-    }
+  private static Map<String, GameRoom> cache = new HashMap<>();
 
-    String userName = null;
-    if (url.contains("&")) {
-      Map<String, String> params = splitQuery(new URL(url));
-      if (!params.containsKey("user")) {
+  public static GameRoom getGameRoom(@NonNull String url) {
+    if (!cache.containsKey(url)) {
+      cache.put(url, loadGameRoom(url));
+    }
+    return cache.get(url);
+  }
+
+  public static void invalidate() {
+    cache.clear();
+  }
+
+  public static GameRoom loadGameRoom(@NonNull String url) {
+    try {
+      long start = System.currentTimeMillis();
+      if (!url.toLowerCase().startsWith(BASE_URL.toLowerCase())) {
         throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
       }
 
-      userName = params.get("user");
-    }
-    else {
-      userName = url.substring(BASE_URL.length() + 1).trim();
-    }
-
-    URL gameRoomURL = new URL(BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName);
-    GameRoom gameRoom = new GameRoom();
-
-    String json = loadJson(gameRoomURL);
-    if (json != null) {
-      GameRoomModel gameRoomModel = objectMapper.readValue(json, GameRoomModel.class);
-
-      gameRoom.setRoomID(gameRoomModel.getRoomID());
-      gameRoom.setSettings(gameRoomModel.getSettings());
-      gameRoom.setName(gameRoomModel.getSettings().getRoomName());
-
-      URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
-      String gamesInfo = loadJson(gamesInfoURL);
-      GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
-
-      URL gameScoresURL = new URL(BASE_URL + "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
-      String scoresInfo = loadJson(gameScoresURL);
-      Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
-
-      for (GameModel gameModel : games) {
-        Game game = new Game();
-        game.setId(gameModel.getGameID());
-        game.setName(gameModel.getGameName());
-        game.setTags(gameModel.getTags());
-
-        for (Score score : scores) {
-          if (score.getGame().equals(String.valueOf(game.getId()))) {
-            game.getScores().add(score);
-          }
+      String userName = null;
+      if (url.contains("&")) {
+        Map<String, String> params = splitQuery(new URL(url));
+        if (!params.containsKey("user")) {
+          throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
         }
-        gameRoom.getGames().add(game);
+
+        userName = params.get("user");
+      }
+      else {
+        userName = url.substring(BASE_URL.length() + 1).trim();
       }
 
-      LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
-      return gameRoom;
+      String readUrl = BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName;
+      URL gameRoomURL = new URL(readUrl);
+      GameRoom gameRoom = new GameRoom();
+      gameRoom.setUrl(url);
+
+      String json = loadJson(gameRoomURL);
+      if (json != null) {
+        GameRoomModel gameRoomModel = objectMapper.readValue(json, GameRoomModel.class);
+
+        gameRoom.setRoomID(gameRoomModel.getRoomID());
+        gameRoom.setSettings(gameRoomModel.getSettings());
+        gameRoom.setName(gameRoomModel.getSettings().getRoomName());
+
+        URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
+        String gamesInfo = loadJson(gamesInfoURL);
+        GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
+
+        URL gameScoresURL = new URL(BASE_URL + "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
+        String scoresInfo = loadJson(gameScoresURL);
+        Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
+
+        for (GameModel gameModel : games) {
+          Game game = new Game();
+          game.setId(gameModel.getGameID());
+          game.setName(gameModel.getGameName());
+          game.setTags(gameModel.getTags());
+
+          for (Score score : scores) {
+            if (score.getGame().equals(String.valueOf(game.getId()))) {
+              game.getScores().add(score);
+            }
+          }
+          gameRoom.getGames().add(game);
+        }
+
+        LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
+        return gameRoom;
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to load iScored Game Room: " + e.getMessage(), e);
     }
 
     return null;

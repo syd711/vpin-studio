@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -18,6 +18,8 @@ import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -41,8 +43,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class IScoredSubscriptionDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionDialogController.class);
 
-  private final Debouncer debouncer = new Debouncer();
-
   @FXML
   private ComboBox<String> badgeCombo;
 
@@ -51,9 +51,6 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @FXML
   private Button saveBtn;
-
-  @FXML
-  private Button iscoredReloadBtn;
 
   @FXML
   private CheckBox iscoredScoresEnabled;
@@ -114,6 +111,14 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @FXML
   private void loadIScoredTables() {
+    loadIScoredGameRoomTables(false);
+  }
+
+  private void loadIScoredGameRoomTables(boolean cached) {
+    if (!cached) {
+      IScored.invalidate();
+    }
+
     String dashboardUrl = this.dashboardUrlField.getText();
     iscoredScoresEnabled.setSelected(false);
     this.tableView.setItems(FXCollections.emptyObservableList());
@@ -277,7 +282,29 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
       }
     });
 
-    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredTables());
+    selectAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          selection.clear();
+          for (CompetitionRepresentation competitionRepresentation : tableList) {
+            if (containsExisting(competitionRepresentation)) {
+              continue;
+            }
+
+            selection.add(competitionRepresentation);
+          }
+        }
+        else {
+          selection.clear();
+        }
+
+        tableView.refresh();
+        saveBtn.setDisable(selection.isEmpty());
+      }
+    });
+
+    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredGameRoomTables(true));
   }
 
   private boolean containsExisting(CompetitionRepresentation c) {

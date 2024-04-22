@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
@@ -14,20 +15,28 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -90,6 +99,19 @@ public class CompetitionsController implements Initializable, StudioFXController
   private TitledPane competitionMembersPane;
 
   @FXML
+  private TitledPane dashboardPane;
+
+  @FXML
+  private WebView dashboardWebView;
+
+  @FXML
+  private Label dashboardStatusLabel;
+
+  @FXML
+  private Button dashboardBtn;
+
+
+  @FXML
   private VBox membersBox;
 
   @FXML
@@ -100,6 +122,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private CompetitionsDiscordController discordController;
   private TableSubscriptionsController tableSubscriptionsController;
   private IScoredSubscriptionsController iScoredSubscriptionsController;
+  private String lastDashboardUrl;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
@@ -120,14 +143,27 @@ public class CompetitionsController implements Initializable, StudioFXController
     tableSubscriptionsController.onViewActivated();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    loadTabs();
-    updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
-    });
-    accordion.setExpandedPane(metaDataPane);
+  @FXML
+  private void onDashboardOpen() {
+    if (this.competition.isPresent()) {
+      String dashboardUrl = competition.get().getUrl();
+      if (!StringUtils.isEmpty(dashboardUrl)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(dashboardUrl));
+          } catch (Exception e) {
+            LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onDashboardReload() {
+    WebEngine webEngine = dashboardWebView.getEngine();
+    webEngine.reload();
   }
 
   private void refreshView(Number t1) {
@@ -178,8 +214,30 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
+    refreshDashboard(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
   }
+
+  private void refreshDashboard(Optional<CompetitionRepresentation> competitionRepresentation) {
+    String dashboardUrl = null;
+    if (competitionRepresentation.isPresent()) {
+      dashboardUrl = competitionRepresentation.get().getUrl();
+    }
+    dashboardBtn.setDisable(dashboardUrl == null);
+    dashboardWebView.setVisible(dashboardUrl != null);
+    dashboardStatusLabel.setVisible(dashboardUrl == null);
+
+    if (dashboardUrl != null) {
+      WebEngine webEngine = dashboardWebView.getEngine();
+      webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
+
+      if (lastDashboardUrl == null || !lastDashboardUrl.equals(dashboardUrl)) {
+        lastDashboardUrl = dashboardUrl;
+        webEngine.load(dashboardUrl);
+      }
+    }
+  }
+
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
     uuidLabel.setText("-");
@@ -192,7 +250,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       String type = competitionRepresentation.get().getType();
       if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
-        if (metaDataPane.isVisible()) {
+        if (metaDataPane.isVisible() && metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
@@ -289,8 +347,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         metaDataPane.setDisable(false);
         metaDataPane.setExpanded(false);
 
-        metaDataPane.setVisible(true);
-        competitionMembersPane.setVisible(true);
+        dashboardPane.setDisable(true);
         break;
       }
       case SUBSCRIPTION: {
@@ -299,8 +356,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         metaDataPane.setDisable(false);
         metaDataPane.setExpanded(false);
 
-        metaDataPane.setVisible(true);
-        competitionMembersPane.setVisible(true);
+        dashboardPane.setDisable(true);
         break;
       }
       case OFFLINE: {
@@ -309,8 +365,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         metaDataPane.setDisable(true);
         metaDataPane.setExpanded(false);
 
-        metaDataPane.setVisible(false);
-        competitionMembersPane.setVisible(false);
+        dashboardPane.setDisable(true);
         break;
       }
       case ISCORED: {
@@ -319,8 +374,9 @@ public class CompetitionsController implements Initializable, StudioFXController
         metaDataPane.setDisable(true);
         metaDataPane.setExpanded(false);
 
-        metaDataPane.setVisible(false);
-        competitionMembersPane.setVisible(false);
+        dashboardPane.setDisable(false);
+        dashboardPane.setExpanded(true);
+
         break;
       }
       default: {
@@ -444,7 +500,17 @@ public class CompetitionsController implements Initializable, StudioFXController
     else {
       tabPane.getTabs().remove(iScoredSubscriptionsTab);
     }
-
   }
 
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    loadTabs();
+    updateSelection(Optional.empty());
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      refreshView(t1);
+    });
+    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+    checkTitledPanes(CompetitionType.OFFLINE);
+  }
 }

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
@@ -323,6 +324,15 @@
                                        </font>
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                    <Button fx:id="dashboardReloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="Reload" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                     </Button>
                                 </items>

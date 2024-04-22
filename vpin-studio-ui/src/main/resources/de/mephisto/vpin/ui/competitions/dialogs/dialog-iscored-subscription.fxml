@@ -200,7 +200,7 @@
                                                       <Insets top="3.0" />
                                                    </padding>
                                                 </Label>
-                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores of all tables" GridPane.columnIndex="1">
+                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores for selected tables" GridPane.columnIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -233,15 +233,15 @@
                            <center>
                               <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                                  <columns>
-                                    <TableColumn fx:id="selectionColumn" prefWidth="40.00005912780762" style="-fx-alignment: CENTER;">
+                                    <TableColumn fx:id="selectionColumn" prefWidth="40.00005912780762" sortable="false" style="-fx-alignment: CENTER;">
                                        <graphic>
                                           <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
                                        </graphic>
                                     </TableColumn>
-                                    <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Status" />
-                                    <TableColumn fx:id="tableColumn" prefWidth="430.0" style="-fx-alignment: CENTER;" text="Your Table" />
-                                    <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
-                                    <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" sortable="false" style="-fx-alignment: CENTER;" text="Status" />
+                                    <TableColumn fx:id="tableColumn" prefWidth="430.0" sortable="false" style="-fx-alignment: CENTER;" text="Your Table" />
+                                    <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" sortable="false" text="Virtual Pinball Spreadsheet Table" />
+                                    <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />
                                  </columns>
                               </TableView>
                            </center>

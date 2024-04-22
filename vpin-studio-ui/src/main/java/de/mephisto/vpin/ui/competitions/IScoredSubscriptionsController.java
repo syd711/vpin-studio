@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -13,6 +15,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
+import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
@@ -59,6 +62,9 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> vpsTableVersionColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, String> gameRoomColumn;
 
   @FXML
   private Button deleteBtn;
@@ -146,6 +152,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   public void onReload() {
+    IScored.invalidate();
     client.clearWheelCache();
 
     tableView.setVisible(false);
@@ -255,7 +262,16 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
     });
 
-    tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
+    gameRoomColumn.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      if(gameRoom == null) {
+        return new SimpleObjectProperty<>("Invalid Game Room URL");
+      }
+      return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom,  getLabelCss(cellData.getValue())));
+    });
+
+    tableView.setPlaceholder(new Label("                      Try iScored subscriptions!\n" +
       "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -360,13 +376,13 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(true);
       }
-      competitionWidgetController.setCompetition(CompetitionType.SUBSCRIPTION, competition.get());
+      competitionWidgetController.setCompetition(CompetitionType.ISCORED, competition.get());
     }
     else {
       if (competitionWidget.getTop() != null) {
         competitionWidget.getTop().setVisible(false);
       }
-      competitionWidgetController.setCompetition(CompetitionType.SUBSCRIPTION, null);
+      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
     }
     competitionsController.setCompetition(competition.orElse(null));
   }

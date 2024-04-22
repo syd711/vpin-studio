@@ -12,14 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class IScoredService {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
 
   public void submitTableScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
-    if(!Features.ISCORED_ENABLED) {
+    if (!Features.ISCORED_ENABLED) {
       LOG.warn("iScored is not enabled");
       return;
     }
@@ -37,20 +35,17 @@ public class IScoredService {
           String vpsTableId = tournamentTable.getVpsTableId();
           String vpsVersionId = tournamentTable.getVpsVersionId();
 
-          List<Game> games = gameRoom.getGames();
-          for (Game game : games) {
-            if(game.isDisabled()) {
-              LOG.info("Skipped iScored score submission, because table " + game + " has disabled flag set.");
-            }
-
-            List<String> tags = game.getTags();
-            for (String tag : tags) {
-              if (tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
-                IScored.submitScore(gameRoom, game, tableScore.getPlayerName(), tableScore.getPlayerInitials(), tableScore.getScore());
-                return;
-              }
-            }
+          Game gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
+          if (gameRoomGame == null) {
+            LOG.info("Skipped iScored score submission, because no game was found for " + tournament);
+            return;
           }
+
+          if (gameRoomGame.isDisabled()) {
+            LOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
+          }
+
+          IScored.submitScore(gameRoom, gameRoomGame, tableScore.getPlayerName(), tableScore.getPlayerInitials(), tableScore.getScore());
         }
       }
     } catch (Exception e) {

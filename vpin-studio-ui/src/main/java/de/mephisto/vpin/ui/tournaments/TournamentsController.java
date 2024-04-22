@@ -103,6 +103,9 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Button dashboardBtn;
 
   @FXML
+  private Button dashboardReloadBtn;
+
+  @FXML
   private Button copyTokenBtn;
 
   @FXML
@@ -153,6 +156,12 @@ public class TournamentsController implements Initializable, StudioFXController 
         }
       }
     }
+  }
+
+  @FXML
+  private void onDashboardReload() {
+    WebEngine webEngine = dashboardWebView.getEngine();
+    webEngine.reload();
   }
 
   @FXML
@@ -335,6 +344,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       dashboardUrl = tournament.getDashboardUrl();
     }
     dashboardBtn.setDisable(dashboardUrl == null);
+    dashboardReloadBtn.setDisable(dashboardUrl == null);
     dashboardWebView.setVisible(dashboardUrl != null);
     dashboardStatusLabel.setVisible(dashboardUrl == null);
 
