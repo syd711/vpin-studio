@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -28,11 +29,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class VpsTableEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTableEntry.class);
 
   public VpsTableEntry(String tableId, String versionId, String version, List<String> authors, String link, long changeDate, String update) {
-    this.setAlignment(Pos.BASELINE_LEFT);
+    this.setAlignment(Pos.CENTER_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
 
     Button copyBtn = new Button();
@@ -58,7 +61,7 @@ public class VpsTableEntry extends HBox {
 
     HBox versionBox = new HBox(3);
     versionBox.setPrefWidth(80);
-    versionBox.setAlignment(Pos.BASELINE_LEFT);
+    versionBox.setAlignment(Pos.CENTER_LEFT);
 
     if(Features.TOURNAMENTS_ENABLED) {
       versionBox.getChildren().add(copyBtn);
@@ -72,9 +75,21 @@ public class VpsTableEntry extends HBox {
       authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
     }
 
+    GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
+    HBox authorBox =new HBox(6);
+    authorBox.setAlignment(Pos.CENTER_LEFT);
+    if(gameByVpsTable != null) {
+      FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
+      checkboxIcon.setIconSize(14);
+      checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
+      authorBox.getChildren().add(checkboxIcon);
 
-    authorLabel.setPrefWidth(286);
-    this.getChildren().add(authorLabel);
+      authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+    }
+    authorBox.setPrefWidth(286);
+
+    authorBox.getChildren().add(authorLabel);
+    this.getChildren().add(authorBox);
 
     String abb = VpsUtil.abbreviate(link);
     String color = VpsUtil.getColor(abb);
