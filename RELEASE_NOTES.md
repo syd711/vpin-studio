@@ -10,6 +10,11 @@
 - **Script Editing**: User your favorite development IDE for editing scripts! You can edit VB script now with any editor that is linked to the file suffix **.vbs**. Select the default program for .vbs files on your operating system and Studio will open and save(!) the changed VB sources automatically back to the remote VPX file.
 - **VPS Overview**: Added list of all available table versions, including an indicator of your installed version.
 
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/vps-marker.png" width="600" />
+
+- **VPS Mapping**: Added reset button in the Table Data Manager and the VPS table section to unlink a VPS mapping from a table.
+
+
 ### Bugfixes
 
 - **Table Overview**: Fixed context menu item "Upload Backglass".
