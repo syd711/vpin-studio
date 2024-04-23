@@ -84,7 +84,6 @@ public class VBSManager {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open vbs file: " + e.getMessage());
       }
     }
-
   }
 
   private File writeVbsFile(GameRepresentation game, String content) throws IOException {
