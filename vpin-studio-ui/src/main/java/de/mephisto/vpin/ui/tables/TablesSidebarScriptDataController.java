@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -205,21 +206,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onEdit() {
-    try {
-      if (this.game.isPresent()) {
-        TextFile textFile = new TextFile(VPinFile.VBScript);
-        textFile.setFileId(this.game.get().getId());
-        boolean b = Dialogs.openTextEditor(textFile, this.game.get().getGameFileName());
-        if (b) {
-          client.getMameService().clearCache();
-          EventManager.getInstance().notifyTablesChanged();
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to open table VPS: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPS file: " + e.getMessage());
-    }
-
+    VBSManager.getInstance().edit(this.game);
   }
 
   @FXML

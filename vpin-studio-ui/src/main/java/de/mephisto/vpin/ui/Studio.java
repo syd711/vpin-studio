@@ -12,10 +12,12 @@ import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -49,6 +51,8 @@ public class Studio extends Application {
   public static VPinStudioClient client;
   public static VPinManiaClient maniaClient;
 
+  private static HostServices hostServices;
+
   public static void main(String[] args) {
     launch(args);
   }
@@ -58,6 +62,8 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     Studio.stage = stage;
+    Studio.hostServices = getHostServices();
+
     Locale.setDefault(Locale.ENGLISH);
     StudioUpdatePreProcessing.execute();
 
@@ -84,6 +90,10 @@ public class Studio extends Application {
     else {
       loadLauncher(stage);
     }
+  }
+
+  public static HostServices getStudioHostServices() {
+    return hostServices;
   }
 
   public static void loadLauncher(Stage stage) {
@@ -196,6 +206,9 @@ public class Studio extends Application {
         client.setErrorHandler(errorHandler);
         stage.show();
         splash.hide();
+
+        //launch VPSMonitor
+        VBSManager.getInstance();
       });
 
     } catch (Exception e) {
