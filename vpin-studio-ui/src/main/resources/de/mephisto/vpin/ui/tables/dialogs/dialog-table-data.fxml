@@ -230,6 +230,9 @@
                                                          <graphic>
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                                                          </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Resets the assigned VPS table mapping." />
+                                                         </tooltip>
                                                       </Button>
                                                       <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Meta Data" textFill="WHITE">
                                                          <font>

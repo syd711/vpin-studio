@@ -282,15 +282,29 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" onAction="#onUpdate" text="Refresh Data">
+          <Button mnemonicParsing="false" onAction="#onUpdate">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Download the latest VPS database." />
+               </tooltip>
             </Button>
             <Separator orientation="VERTICAL" />
+            <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" text="Reset" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Resets the assigned VPS table mapping." />
+               </tooltip>
+            </Button>
             <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset Updates" textFill="WHITE">
                <font>
                   <Font size="14.0" />

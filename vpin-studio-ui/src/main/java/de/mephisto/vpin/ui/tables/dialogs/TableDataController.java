@@ -288,7 +288,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVpsReset() {
-//    setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), null);
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
 
