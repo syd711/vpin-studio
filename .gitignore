@@ -76,6 +76,7 @@ hs_err_pid*
 /doftest/DirectOutputTest/bin/Debug/
 /doftest/DirectOutputTest/obj/Debug/
 /doftest/.vs/DirectOutputTest/
+/doftest/*.zip
 /resources/b2s-raw/
 
 npm-debug.log*
