@@ -2,9 +2,11 @@ package de.mephisto.vpin.ui.tables.vbsedit;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -75,12 +78,19 @@ public class VbsMonitoringService {
                 debouncer.debounce("modified", () -> {
                   try {
                     File changedFile = new File(vbsFolder, changed.toFile().getName());
+                    String gameName = FilenameUtils.getBaseName(changedFile.getName());
+
                     LOG.info("VBS monitor: " + changedFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
                     TextFile textFile = new TextFile(VPinFile.VBScript);
-                    textFile.setFileId(FilenameUtils.getBaseName(changedFile.getName()));
+                    textFile.setFileId(gameName);
                     textFile.setContent(org.apache.commons.io.FileUtils.readFileToString(changedFile, StandardCharsets.UTF_8));
                     client.getTextEditorService().save(textFile);
                     LOG.info("Imported vbs file " + changed.toFile().getAbsolutePath());
+
+                    List<GameRepresentation> gamesByGameName = client.getGameService().getGamesByGameName(gameName);
+                    for (GameRepresentation gameRepresentation : gamesByGameName) {
+                      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+                    }
                   } catch (Exception e) {
                     LOG.error("Failed to save vbs file: " + e.getMessage(), e);
                     Platform.runLater(() -> {
