@@ -91,7 +91,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     Platform.runLater(() -> {
-      if (!StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
+      if (Features.TOURNAMENTS_ENABLED && !StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
         Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
         if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
           return;
