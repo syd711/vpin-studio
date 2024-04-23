@@ -105,12 +105,13 @@ public class FileUtils {
     return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
   }
 
-  public static void writeBatch(String name, String content) throws IOException {
+  public static File writeBatch(String name, String content) throws IOException {
     File path = new File("./" + name);
     if (path.exists()) {
       path.delete();
     }
     Files.write(path.toPath(), content.getBytes());
+    return path;
   }
 
   public static boolean deleteFolder(File folder) {

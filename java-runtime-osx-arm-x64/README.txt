@@ -1,1 +1,1 @@
-put an unpacked JRE+FX 11 for linux here
+zulu-11.jre/Contents/Home/readme.txt

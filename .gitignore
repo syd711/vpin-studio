@@ -36,14 +36,12 @@ java-runtime-osx-x64/
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 *.iml
 *.gz
 *.log
 *.vpa
-
 
 /*.jar
 
@@ -56,6 +54,7 @@ hs_err_pid*
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
+/resources/component-archives/**
 /resources/VPReg/*
 /resources/vpa2/*
 /resources/vpa/*
@@ -103,6 +102,7 @@ yarn-error.log*
 /testsystem/vPinball/**/*.png
 /testsystem/vPinball/**/*.mp3
 /testsystem/vPinball/**/*.mp4
+/testsystem/vPinball/**/*.zip
 /resources/backglassdesigner/Projects/**
 /config/settings.properties
 /resources/menu-profile/

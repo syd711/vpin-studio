@@ -63,7 +63,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     boolean maintenanceMode = EventManager.getInstance().isMaintenanceMode();
     if (!maintenanceMode) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Maintenance Mode", "Switch cabinet to maintenance mode?",
-        "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
+          "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         return;
       }
@@ -124,31 +124,28 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private void runUpdateCheck() {
     try {
       updateBtn.setVisible(false);
-      String os = System.getProperty("os.name");
-      if (os.contains("Windows")) {
-        new Thread(() -> {
-          String serverVersion = client.getSystemService().getVersion();
-          String clientVersion = Studio.getVersion();
+      new Thread(() -> {
+        String serverVersion = client.getSystemService().getVersion();
+        String clientVersion = Studio.getVersion();
 
-          String updateServerVersion = Updater.checkForUpdate(serverVersion);
-          String updateClientVersion = Updater.checkForUpdate(clientVersion);
+        String updateServerVersion = Updater.checkForUpdate(serverVersion);
+        String updateClientVersion = Updater.checkForUpdate(clientVersion);
 
-          if (updateClientVersion != null) {
-            Platform.runLater(() -> {
-              newVersion = updateClientVersion;
-              updateBtn.setText("Version " + updateClientVersion + " available");
-              updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
-            });
-          }
-          else if (updateServerVersion != null) {
-            Platform.runLater(() -> {
-              newVersion = updateServerVersion;
-              updateBtn.setText("Version " + updateServerVersion + " available");
-              updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
-            });
-          }
-        }).start();
-      }
+        if (updateClientVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateClientVersion;
+            updateBtn.setText("Version " + updateClientVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
+          });
+        }
+        else if (updateServerVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateServerVersion;
+            updateBtn.setText("Version " + updateServerVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
+          });
+        }
+      }).start();
     } catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
     }

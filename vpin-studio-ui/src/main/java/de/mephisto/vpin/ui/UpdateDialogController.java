@@ -82,12 +82,22 @@ public class UpdateDialogController implements Initializable, DialogController {
       clientLabel.setText("The client is already running on version " + clientVersion);
     }
     else {
-      clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
+      String os = System.getProperty("os.name");
+      boolean winUpdate = os.contains("Windows");
+      if(winUpdate) {
+        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
+      }
+      else {
+        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_JAR_ZIP);
+      }
     }
 
     if (!updateServer) {
       serverProgress.setDisable(true);
       serverProgress.setProgress(1f);
+      remoteClientProgress.setDisable(true);
+      remoteClientProgress.setProgress(1f);
+      remoteClientLabel.setText("The remote client is already running on version " + serverVersion);
       serverLabel.setText("The server is already running on version " + serverVersion);
     }
     else {
@@ -258,6 +268,9 @@ public class UpdateDialogController implements Initializable, DialogController {
       return;
     }
 
+    String os = System.getProperty("os.name");
+    LOG.info("Updater resolved OS name '" + os + "'");
+    boolean winUpdate = os.contains("Windows");
     clientService = new Service() {
       @Override
       protected Task createTask() {
@@ -265,11 +278,21 @@ public class UpdateDialogController implements Initializable, DialogController {
           @Override
           protected Object call() throws Exception {
             new Thread(() -> {
-              Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
+              if (winUpdate) {
+                Updater.downloadUpdate(newVersion, Updater.UI_ZIP);
+              }
+              else {
+                Updater.downloadUpdate(newVersion, Updater.UI_JAR_ZIP);
+              }
             }).start();
             Thread.sleep(1000);
             while (true) {
-              int progress = Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
+              String file = Updater.UI_JAR_ZIP;
+              if (winUpdate) {
+                file = Updater.UI_ZIP;
+              }
+
+              int progress = Updater.getDownloadProgress(file, Updater.UI_ZIP_SIZE);
               LOG.info("Client Update Download: " + progress);
               updateProgress(progress, 100);
               Thread.sleep(1000);
