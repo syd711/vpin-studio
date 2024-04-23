@@ -210,9 +210,20 @@ public class CardGraphics {
       scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
     }
     int scoreY = currentY;
-    for (String score : scores) {
+
+    for (Score score : summary.getScores()) {
+      int initialX = scoreX;
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
-      g.drawString(score, scoreX, scoreY);
+
+      String renderString = score.getPlayerInitials() + " ";
+      if (template.isRenderPositions()) {
+        renderString = score.getPosition() + ". " + renderString;
+      }
+      int singleScoreWidth = g.getFontMetrics().stringWidth(renderString);
+      g.drawString(renderString, initialX, scoreY);
+
+      initialX = initialX + singleScoreWidth + template.getPadding();
+      g.drawString(score.getScore(), initialX, scoreY);
     }
   }
 

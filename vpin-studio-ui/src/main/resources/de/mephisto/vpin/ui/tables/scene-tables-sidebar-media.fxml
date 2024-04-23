@@ -28,9 +28,9 @@
                                     <right>
                                         <HBox fx:id="hbox_PlayField" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_PlayField" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_PlayField" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -67,9 +67,9 @@
                                     <right>
                                         <HBox fx:id="hbox_GameHelp" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_GameHelp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_GameHelp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -107,9 +107,9 @@
                                     <right>
                                         <HBox fx:id="hbox_GameInfo" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_GameInfo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_GameInfo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -146,9 +146,9 @@
                                     <right>
                                         <HBox fx:id="hbox_DMD" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_DMD" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_DMD" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -185,9 +185,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Topper" spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_Topper" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Topper" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                  </children>
@@ -224,9 +224,9 @@
                                     <right>
                                         <HBox fx:id="hbox_BackGlass" spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_BackGlass" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_BackGlass" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                  </children>
@@ -263,9 +263,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Loading" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Loading" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Loading" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -302,9 +302,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Menu" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Menu" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Menu" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -341,9 +341,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Other2" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Other2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Other2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -380,9 +380,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Wheel" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Wheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Wheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -416,9 +416,9 @@
                                     <right>
                                         <HBox fx:id="hbox_AudioLaunch" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_AudioLaunch" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_AudioLaunch" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>
@@ -460,9 +460,9 @@
                                     <right>
                                         <HBox fx:id="hbox_Audio" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Audio" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="external-component">
+                                                <Button fx:id="btn_Audio" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
                                                 </Button>
                                             </children>

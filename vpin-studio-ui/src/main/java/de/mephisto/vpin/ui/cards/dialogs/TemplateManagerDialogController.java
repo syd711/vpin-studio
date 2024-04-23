@@ -150,6 +150,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private CheckBox renderWheelIconCheckbox;
 
   @FXML
+  private CheckBox renderPositionsCheckbox;
+
+  @FXML
   private Pane previewPanel;
 
   @FXML
@@ -369,6 +372,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
+    renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
     templateBeanBinder.setPaused(false);
 
@@ -403,6 +407,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
       templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
       templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
+      templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
 
       imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
@@ -456,6 +461,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
+        renderPositionsCheckbox.setDisable(t1);
       });
 
       titleText.setDisable(!renderTitleCheckbox.isSelected());

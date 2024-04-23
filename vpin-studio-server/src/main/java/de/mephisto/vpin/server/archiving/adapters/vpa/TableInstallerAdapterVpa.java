@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 
 public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
@@ -93,7 +94,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
+        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
         game = gameService.getGame(newGameId);
       }
 

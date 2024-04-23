@@ -454,6 +454,14 @@
                                        <VBox.margin>
                                           <Insets left="26.0" />
                                        </VBox.margin></Spinner>
+                                    <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="Render Positions" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="26.0" top="12.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

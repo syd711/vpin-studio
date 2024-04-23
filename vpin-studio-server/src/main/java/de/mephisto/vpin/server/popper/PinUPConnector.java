@@ -42,6 +42,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   public static final int DB_VERSION = 64;
+  public static final String IS_FAV = "isFav";
+  public static final String POPPER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   private String dbFilePath;
 
   @Autowired
@@ -279,7 +281,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
       PreparedStatement preparedStatement = connect.prepareStatement(stmt);
 
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setObject(1, ts);
@@ -321,11 +323,11 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       stmtBuilder.append("'NumPlayers' = ?, ");
       params.add(tableDetails.getNumberOfPlayers());
       stmtBuilder.append("'TAGS' = ?, ");
-      params.add(tableDetails.getTags());
+      params.add(tableDetails.getTags() != null ? tableDetails.getTags() : "");
       stmtBuilder.append("'Category' = ?, ");
-      params.add(tableDetails.getCategory());
+      params.add(tableDetails.getCategory() != null ? tableDetails.getCategory() : "");
       stmtBuilder.append("'Author' = ?, ");
-      params.add(tableDetails.getAuthor());
+      params.add(tableDetails.getAuthor() != null ? tableDetails.getAuthor() : "");
       stmtBuilder.append("'sysVolume' = ?, ");
       params.add(tableDetails.getVolume());
       stmtBuilder.append("'LaunchCustomVar' = ?, ");
@@ -343,9 +345,9 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       stmtBuilder.append("'DOFStuff' = ?, ");
       params.add(tableDetails.getDof());
       stmtBuilder.append("'IPDBNum' = ?, ");
-      params.add(tableDetails.getIPDBNum());
+      params.add(tableDetails.getIPDBNum() != null ? tableDetails.getIPDBNum() : "");
       stmtBuilder.append("'AltRunMode' = ?, ");
-      params.add(tableDetails.getAltRunMode());
+      params.add(tableDetails.getAltRunMode() != null ? tableDetails.getAltRunMode() : "");
       stmtBuilder.append("'WebLinkURL' = ?, ");
       params.add(tableDetails.getUrl());
       stmtBuilder.append("'DesignedBy' = ?, ");
@@ -357,7 +359,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       stmtBuilder.append("'CUSTOM3' = ?, ");
       params.add(tableDetails.getCustom3());
       stmtBuilder.append("'MediaSearch' = ?, ");
-      params.add(tableDetails.getMediaSearch());
+      params.add(tableDetails.getMediaSearch() != null ? tableDetails.getMediaSearch() : "");
       stmtBuilder.append("'Special' = ?, ");
       params.add(tableDetails.getSpecial());
 
@@ -391,7 +393,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         index++;
       }
 
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
 
@@ -624,7 +626,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public int importGame(@NonNull File file, int emuId) {
     GameEmulator gameEmulator = getGameEmulator(emuId);
     String baseName = FilenameUtils.getBaseName(file.getName());
-    String formattedBaseName = baseName.replaceAll(" ", "");
+    String formattedBaseName = baseName.replaceAll(" ", "-");
     Game gameByName = getGameByName(formattedBaseName);
     int count = 1;
     while (gameByName != null) {
@@ -635,7 +637,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
-    return importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null);
+    return importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
   }
 
   /**
@@ -644,27 +646,39 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
    *
    * @return the generated game id.
    */
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar) {
+  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated) " +
+        "VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
-      preparedStatement.setString(6, launchCustomVar);
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      preparedStatement.setString(6, launchCustomVar != null ? launchCustomVar : "");
+
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setString(7, ts);
+      preparedStatement.setString(8, sdf.format(dateFileUpdated));
+
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
       LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
-          return keys.getInt(1);
+          int id = keys.getInt(1);
+          Game game = getGame(id);
+          updateGamesField(game, "Author", "");
+          updateGamesField(game, "TAGS", "");
+          updateGamesField(game, "Category", "");
+          updateGamesField(game, "MediaSearch", "");
+          updateGamesField(game, "IPDBNum", "");
+          updateGamesField(game, "AltRunMode", "");
+          return id;
         }
       }
     } catch (Exception e) {
@@ -825,7 +839,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, isFav) VALUES (?,?,?,?,?,?)");
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, " + IS_FAV + ") VALUES (?,?,?,?,?,?)");
       preparedStatement.setInt(1, playlistId);
       preparedStatement.setInt(2, gameId);
       preparedStatement.setInt(3, 1);
@@ -845,7 +859,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
   public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
-    String sql = "UPDATE PlayListDetails SET isFav = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    String sql = "UPDATE PlayListDetails SET " + IS_FAV + " = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
     try {
       Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
@@ -1237,9 +1251,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         int gameId = rs.getInt("GameID");
         game.setId(gameId);
 
-        int favMode = rs.getInt("isFav");
+        int favMode = rs.getInt(IS_FAV);
         game.setFav(favMode == 1);
         game.setGlobalFav(favMode == 2);
+
         result.add(game);
       }
 

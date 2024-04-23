@@ -18,6 +18,9 @@ target/
 vpin-studio-server/target/
 vpin-studio-ui/target/
 java-runtime/
+java-runtime-linux/
+java-runtime-osx-arm-x64/
+java-runtime-osx-x64/
 
 # Log file
 *.log
@@ -33,14 +36,12 @@ java-runtime/
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 *.iml
 *.gz
 *.log
 *.vpa
-
 
 /*.jar
 
@@ -53,6 +54,8 @@ hs_err_pid*
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
+/resources/component-archives/**
+/resources/directoutputconfig.zip
 /resources/VPReg/*
 /resources/vpa2/*
 /resources/vpa/*
@@ -73,6 +76,7 @@ hs_err_pid*
 /doftest/DirectOutputTest/bin/Debug/
 /doftest/DirectOutputTest/obj/Debug/
 /doftest/.vs/DirectOutputTest/
+/doftest/*.zip
 /resources/b2s-raw/
 
 npm-debug.log*
@@ -100,6 +104,7 @@ yarn-error.log*
 /testsystem/vPinball/**/*.png
 /testsystem/vPinball/**/*.mp3
 /testsystem/vPinball/**/*.mp4
+/testsystem/vPinball/**/*.zip
 /resources/backglassdesigner/Projects/**
 /config/settings.properties
 /resources/menu-profile/

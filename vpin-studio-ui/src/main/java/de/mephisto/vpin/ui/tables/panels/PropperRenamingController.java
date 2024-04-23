@@ -185,7 +185,7 @@ public class PropperRenamingController implements Initializable {
       }
 
       if (gameNameCheckBox.isSelected()) {
-        gameName.setText(builder.toString());
+        gameName.setText(builder.toString().replaceAll(" ", "-"));
       }
 
 

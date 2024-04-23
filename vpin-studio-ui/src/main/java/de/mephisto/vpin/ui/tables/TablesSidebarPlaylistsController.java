@@ -99,8 +99,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      boolean locked= client.getPinUPPopperService().isPinUPPopperRunning();
-      if(locked) {
+      boolean locked = client.getPinUPPopperService().isPinUPPopperRunning();
+      if (locked) {
         emptyDataBox.setVisible(false);
         dataRoot.setVisible(false);
         errorBox.setVisible(true);
@@ -139,7 +139,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
             try {
               playlist.getGame(game.getId()).setFav(t1);
 
-              if(t1) {
+              if (t1) {
                 client.getPlaylistsService().updatePlaylistGame(playlist, game, t1, false);
               }
               else {
@@ -159,7 +159,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
             try {
               playlist.getGame(game.getId()).setGlobalFav(t1);
-              if(t1) {
+              if (t1) {
                 client.getPlaylistsService().updatePlaylistGame(playlist, game, false, t1);
               }
               else {
@@ -172,7 +172,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
             }
           }
         });
-
 
 
         gameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -221,9 +220,18 @@ public class TablesSidebarPlaylistsController implements Initializable {
         entry.setCenter(root);
 
         HBox favLists = new HBox(6);
-        favLists.setPadding(new Insets(0, 0, 12, 27));
-        favLists.getChildren().add(favCheckbox);
-        favLists.getChildren().add(globalFavCheckbox);
+        if (playlist.isSqlPlayList()) {
+          favLists.setPadding(new Insets(0, 0, 12, 55));
+          Label label = new Label("(SQL Playlist)");
+          label.getStyleClass().add("default-text");
+          label.setStyle("-fx-font-size: 12px;");
+          favLists.getChildren().add(label);
+        }
+        else {
+          favLists.setPadding(new Insets(0, 0, 12, 27));
+          favLists.getChildren().add(favCheckbox);
+          favLists.getChildren().add(globalFavCheckbox);
+        }
         entry.setBottom(favLists);
         dataBox.getChildren().add(entry);
       }

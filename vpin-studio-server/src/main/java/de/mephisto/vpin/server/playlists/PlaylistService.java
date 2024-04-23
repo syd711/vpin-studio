@@ -42,6 +42,7 @@ public class PlaylistService {
     pinUPConnector.addToPlaylist(playlistId, gameId, favMode);
     return pinUPConnector.getPlayList(playlistId);
   }
+
   public Playlist updatePlaylistGame(int playlistId, int gameId, int favMode) {
     pinUPConnector.updatePlaylistGame(playlistId, gameId, favMode);
     return pinUPConnector.getPlayList(playlistId);

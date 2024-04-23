@@ -148,6 +148,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onSupport(ActionEvent event) throws IOException {
+    load("preference-support.fxml", event);
+  }
+
+  @FXML
   private void onVPXValidation(ActionEvent event) throws IOException {
     load("preference-validators_vpx.fxml", event);
   }

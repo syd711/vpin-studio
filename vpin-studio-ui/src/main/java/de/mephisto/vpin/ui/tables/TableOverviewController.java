@@ -1369,7 +1369,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     MenuItem uploadB2SItem = new MenuItem("Upload Backglass");
     uploadB2SItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
     uploadB2SItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadB2SItem.setOnAction(actionEvent -> onValidate());
+    uploadB2SItem.setOnAction(actionEvent -> onBackglassUpload());
     uploadMenu.getItems().add(uploadB2SItem);
 
     MenuItem dmdItem = new MenuItem("Upload DMD Pack");
