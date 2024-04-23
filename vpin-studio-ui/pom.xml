@@ -378,6 +378,25 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
+                        <id>copy-installation-notes</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./</directory>
+                                    <includes>
+                                        <include>installation.txt</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>copy-from-jdk-win</id>
                         <!-- here the phase you need -->
                         <phase>package</phase>
@@ -592,6 +611,7 @@
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
+                                <argument>installation.txt</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -633,6 +653,7 @@
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
+                                <argument>installation.txt</argument>
                             </arguments>
                         </configuration>
                     </execution>
