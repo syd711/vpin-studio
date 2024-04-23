@@ -331,6 +331,10 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
           if (game.getIniFile().exists()) {
             de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
           }
+
+          if (game.getVBSFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getVBSFile(), name);
+          }
           LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
         }
       }
