@@ -342,6 +342,12 @@ public class Game {
 
   @NonNull
   @JsonIgnore
+  public File getVBSFile() {
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
+  }
+
+  @NonNull
+  @JsonIgnore
   public File getResFile() {
     return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }

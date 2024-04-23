@@ -237,6 +237,10 @@ public class GameService implements InitializingBean {
         if (!FileUtils.delete(game.getIniFile())) {
           success = false;
         }
+
+        if (!FileUtils.delete(game.getVBSFile())) {
+          success = false;
+        }
       }
 
       if (descriptor.isDeleteDirectB2s()) {
