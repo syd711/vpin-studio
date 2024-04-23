@@ -209,6 +209,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private SplitMenuButton autoFillBtn;
 
   @FXML
+  private Button vpsResetBtn;
+
+  @FXML
   private TextField nameField;
 
   @FXML
@@ -281,6 +284,17 @@ public class TableDataController implements Initializable, DialogController, Aut
     Platform.runLater(() -> {
       TableDialogs.openTableAssetsDialog(overviewController, this.game, PopperScreen.BackGlass);
     });
+  }
+
+  @FXML
+  private void onVpsReset() {
+//    setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), null);
+    tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
+    tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
+
+    autoCompleteNameField.setText("");
+    refreshVersionsCombo(null);
+    propperRenamingController.setVpsTable(null);
   }
 
   @FXML

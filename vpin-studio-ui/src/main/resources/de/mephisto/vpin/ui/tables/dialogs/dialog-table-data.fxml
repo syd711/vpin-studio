@@ -223,6 +223,14 @@
                                                             <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
                                                          </tooltip>
                                                       </SplitMenuButton>
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                                                         </graphic>
+                                                      </Button>
                                                       <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Meta Data" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
