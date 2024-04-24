@@ -13,7 +13,7 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/vps-marker.png" width="600" />
 
 - **VPS Mapping**: Added reset button in the Table Data Manager and the VPS table section to unlink a VPS mapping from a table.
-
+- **Card Template Designer**: Added "Background Canvas" option. This additional background square can be used to improve the readability of the scores. 
 
 ### Bugfixes
 

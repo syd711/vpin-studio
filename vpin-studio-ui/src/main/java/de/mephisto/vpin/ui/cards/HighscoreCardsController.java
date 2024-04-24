@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.SystemFolderUtil;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -485,25 +486,20 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onFolderBtn() {
-    try {
-      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      String popperScreen = cardSettings.getPopperScreen();
-      if (!StringUtils.isEmpty(popperScreen)) {
-        PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-        String mediaDir = gameEmulator.getMediaDirectory();
-        File screenDir = new File(mediaDir, screen.name());
-        new ProcessBuilder("explorer.exe", screenDir.getAbsolutePath()).start();
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to open media dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open folder: " + e.getMessage());
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    String popperScreen = cardSettings.getPopperScreen();
+    if (!StringUtils.isEmpty(popperScreen)) {
+      PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      String mediaDir = gameEmulator.getMediaDirectory();
+      File screenDir = new File(mediaDir, screen.name());
+      SystemFolderUtil.openFolder(screenDir);
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    folderBtn.setVisible(client.getSystemService().isLocal());
+    folderBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
 
     try {
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);

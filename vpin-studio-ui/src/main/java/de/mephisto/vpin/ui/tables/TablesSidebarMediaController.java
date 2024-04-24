@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.JFXHelper;
+import de.mephisto.vpin.ui.util.SystemFolderUtil;
 import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -488,19 +489,19 @@ public class TablesSidebarMediaController implements Initializable {
     top_Other2.setVisible(false);
     top_Wheel.setVisible(false);
 
-    boolean isLocal = Studio.client.getSystemService().isLocal();
-    btn_Audio.setVisible(isLocal);
-    btn_AudioLaunch.setVisible(isLocal);
-    btn_Topper.setVisible(isLocal);
-    btn_Loading.setVisible(isLocal);
-    btn_PlayField.setVisible(isLocal);
-    btn_BackGlass.setVisible(isLocal);
-    btn_GameInfo.setVisible(isLocal);
-    btn_GameHelp.setVisible(isLocal);
-    btn_Menu.setVisible(isLocal);
-    btn_DMD.setVisible(isLocal);
-    btn_Other2.setVisible(isLocal);
-    btn_Wheel.setVisible(isLocal);
+    boolean isOpenFolderSupported = SystemFolderUtil.isFolderActionSupported();
+    btn_Audio.setVisible(isOpenFolderSupported);
+    btn_AudioLaunch.setVisible(isOpenFolderSupported);
+    btn_Topper.setVisible(isOpenFolderSupported);
+    btn_Loading.setVisible(isOpenFolderSupported);
+    btn_PlayField.setVisible(isOpenFolderSupported);
+    btn_BackGlass.setVisible(isOpenFolderSupported);
+    btn_GameInfo.setVisible(isOpenFolderSupported);
+    btn_GameHelp.setVisible(isOpenFolderSupported);
+    btn_Menu.setVisible(isOpenFolderSupported);
+    btn_DMD.setVisible(isOpenFolderSupported);
+    btn_Other2.setVisible(isOpenFolderSupported);
+    btn_Wheel.setVisible(isOpenFolderSupported);
 
 
     Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;

@@ -4,14 +4,15 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.SystemFolderUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -181,7 +182,7 @@ public class TablesSidebarController implements Initializable {
       try {
         String url = VPS.BASE_URL;
         GameRepresentation selection = this.tablesController.getSelection();
-        if(selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+        if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
           url = VPS.getVpsTableUrl(selection.getExtTableId());
         }
         Desktop.getDesktop().browse(new URI(url));
@@ -200,13 +201,13 @@ public class TablesSidebarController implements Initializable {
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
             GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-            new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getUserDirectory()).getAbsolutePath()).start();
+            SystemFolderUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
             return;
           }
         }
 
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getNvramDirectory()).getAbsolutePath()).start();
+        SystemFolderUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
       }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -218,9 +219,8 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+        SystemFolderUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
-
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -233,13 +233,8 @@ public class TablesSidebarController implements Initializable {
         SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
         File pupFolder = new File(systemSummary.getPinupSystemDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
-        if (gamePupFolder.exists()) {
-          new ProcessBuilder("explorer.exe", gamePupFolder.getAbsolutePath()).start();
-          return;
-        }
+        SystemFolderUtil.openFolder(gamePupFolder, new File(systemSummary.getPinupSystemDirectory(), "PUPVideos"));
       }
-      SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-      new ProcessBuilder("explorer.exe", new File(systemSummary.getPinupSystemDirectory(), "PUPVideos").getAbsolutePath()).start();
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -251,11 +246,7 @@ public class TablesSidebarController implements Initializable {
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
-        if (altSoundFolder.exists()) {
-          new ProcessBuilder("explorer.exe", altSoundFolder.getAbsolutePath()).start();
-          return;
-        }
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltSoundDirectory()).getAbsolutePath()).start();
+        SystemFolderUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
     } catch (
       Exception e) {
@@ -270,11 +261,7 @@ public class TablesSidebarController implements Initializable {
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
-        if (folder.exists()) {
-          new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
-          return;
-        }
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getAltColorDirectory()).getAbsolutePath()).start();
+        SystemFolderUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -286,7 +273,7 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+        SystemFolderUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -302,13 +289,13 @@ public class TablesSidebarController implements Initializable {
           GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
           File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
           File dmdFolder = new File(tablesFolder, dmdPackage.getName());
-          new ProcessBuilder("explorer.exe", dmdFolder.getAbsolutePath()).start();
+          SystemFolderUtil.openFolder(dmdFolder);
           return;
         }
       }
 
       GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-      new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+      SystemFolderUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -378,16 +365,16 @@ public class TablesSidebarController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
     popperTitleButtonArea.managedProperty().bindBidirectional(popperTitleButtonArea.visibleProperty());
-    popperTitleButtonArea.setVisible(client.getSystemService().isLocal());
-    altSoundExplorerBtn.setVisible(client.getSystemService().isLocal());
-    altColorExplorerBtn.setVisible(client.getSystemService().isLocal());
-    directb2sBtn.setVisible(client.getSystemService().isLocal());
-    scriptBtn.setVisible(client.getSystemService().isLocal());
-    nvramExplorerBtn.setVisible(client.getSystemService().isLocal());
-    tablesBtn.setVisible(client.getSystemService().isLocal());
-    povBtn.setVisible(client.getSystemService().isLocal());
-    pupBackBtn.setVisible(client.getSystemService().isLocal());
-    dmdBtn.setVisible(client.getSystemService().isLocal());
+    popperTitleButtonArea.setVisible(SystemFolderUtil.isFolderActionSupported());
+    altSoundExplorerBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    altColorExplorerBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    directb2sBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    scriptBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    nvramExplorerBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    tablesBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    povBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    pupBackBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    dmdBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
   }
 
   private void loadSidePanels() {

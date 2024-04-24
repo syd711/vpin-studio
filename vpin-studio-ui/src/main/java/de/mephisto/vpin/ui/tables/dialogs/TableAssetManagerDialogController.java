@@ -28,6 +28,7 @@ import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
+import de.mephisto.vpin.ui.util.SystemFolderUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -217,17 +218,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onFolderBtn() {
-    try {
-      if (this.gameMedia != null) {
-        int emulatorId = this.game.getEmulatorId();
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
-        String mediaDir = gameEmulator.getMediaDirectory();
-        File screenDir = new File(mediaDir, screen.name());
-        new ProcessBuilder("explorer.exe", screenDir.getAbsolutePath()).start();
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to open media dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open folder: " + e.getMessage());
+    if (this.gameMedia != null) {
+      int emulatorId = this.game.getEmulatorId();
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
+      String mediaDir = gameEmulator.getMediaDirectory();
+      File screenDir = new File(mediaDir, screen.name());
+      SystemFolderUtil.openFolder(screenDir);
     }
   }
 
@@ -484,8 +480,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
     this.addAudioBlank.managedProperty().bindBidirectional(this.addAudioBlank.visibleProperty());
 
-    this.folderBtn.setVisible(client.getSystemService().isLocal());
-    this.folderSeparator.setVisible(client.getSystemService().isLocal());
+    this.folderBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
+    this.folderSeparator.setVisible(SystemFolderUtil.isFolderActionSupported());
 
     try {
       encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);
