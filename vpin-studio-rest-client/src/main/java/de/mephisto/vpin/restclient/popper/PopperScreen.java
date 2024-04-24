@@ -40,6 +40,15 @@ public enum PopperScreen {
     if (BackGlass.name().equalsIgnoreCase(name)) {
       return BackGlass;
     }
+    if ("Apron/FullDMD".equalsIgnoreCase(name)) {
+      return Menu;
+    }
+    if ("Music".equalsIgnoreCase(name)) {
+      return Audio;
+    }
+    if (Topper.name().equalsIgnoreCase(name)) {
+      return Topper;
+    }
     return null;
   }
 

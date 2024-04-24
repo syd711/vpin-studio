@@ -183,7 +183,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;
-    List<String> altExeList = getAltExeList();
+    List<String> altExeList = Collections.emptyList();//getAltExeList();
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);

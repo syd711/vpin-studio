@@ -220,8 +220,7 @@
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
@@ -236,8 +235,8 @@
                                     <Insets top="3.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="When the overlay key is pressed for a paused game, the pause menu will be shown. " textFill="WHITE" />
-                              <Label styleClass="checkbox-description" text="This saves one key binding." textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="When the overlay key is pressed for a paused game, " textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="the pause menu will be shown instead. This saves one key binding." textFill="WHITE" />
                            </children>
                         </VBox>
                         <Label styleClass="preference-label" text="Pause Menu Key:" textFill="WHITE" GridPane.rowIndex="1">
@@ -251,21 +250,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <children>
-                              <CheckBox fx:id="autoplayCheckbox" layoutX="10.0" layoutY="13.0" mnemonicParsing="false" text="Auto-Play Videos" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="In &quot;Embedded Mode&quot;: Instruction videos will start on selection." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="In &quot;Popper Screens Mode&quot;: Instruction videos will start on pause." textFill="WHITE" />
-                           </children>
-                        </VBox>
-                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -273,7 +258,7 @@
                               <Insets top="4.0" />
                            </GridPane.margin>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <TextField fx:id="videoAuthorsAllowList" promptText="e.g. &quot;Kongedam&quot;">
                                  <VBox.margin>
@@ -285,24 +270,6 @@
                               </TextField>
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
                            </children>
-                        </VBox>
-                        <Label layoutX="11.0" layoutY="156.0" styleClass="preference-label" text="Tutorial Video Options:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <CheckBox fx:id="renderTutorialLinks" mnemonicParsing="false" text="Render Virtual Pinball Spreadsheet Tutorial Video Entries" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label styleClass="checkbox-description" text="You can also download tutorial videos from VPU instead of using these YouTube links." textFill="WHITE" />
-                           </children>
-                           <padding>
-                              <Insets top="2.0" />
-                           </padding>
                         </VBox>
                         <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
@@ -323,16 +290,34 @@
                                     <Tooltip prefWidth="400.0" text="When the Popper screens are used, the first assets of the &quot;Other2&quot;, &quot;Info&quot; and &quot;Help&quot; screens are shown on the configured screen locations." wrapText="true" />
                                  </tooltip>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE">
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="193.0" styleClass="preference-label" text="Tutorial Video Screen:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <ComboBox fx:id="tutorialScreenCombo" prefHeight="30.0" />
+                              <Label>
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                                 <HBox.margin>
-                                    <Insets left="24.0" />
-                                 </HBox.margin>
-                              </Button>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="Select the target screen where the browser should be opened for the playback of tutorial videos." wrapText="true" />
+                                 </tooltip>
+                              </Label>
                            </children>
                         </HBox>
+                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
                      </children>
                      <opaqueInsets>
                         <Insets />

@@ -28,4 +28,5 @@
 - **Table Overview**: Fixed context menu item "Upload Backglass".
 - **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.
 - **Studio Window**: Added (fixed) Studio version in the window title.
-- **PUP Pack Column**: Fixed wrong PUP pack indicator. The indicator has been shown for table that declare a **pGameName** value, but it has not been checked if the PUP pack actually exist. 
+- **PUP Pack Column**: Fixed wrong PUP pack indicator. The indicator has been shown for table that declare a **pGameName** value, but it has not been checked if the PUP pack actually exist.
+- **Table Data Manager**: Removed duplicate entries from the "Alternative Launcher" combo-box. The list is now solely filled with the available .exe files of the default VPX emulator.
