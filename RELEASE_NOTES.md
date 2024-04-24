@@ -1,3 +1,8 @@
+## Hotfix 2.17.3
+
+- Fixed initialization of Popper database fields when tables are imported. These missing initalizations caused issues with playlists.
+- Fixed "Upload and Replaced" where additional files (.directb2s, ...) have not been renamed.
+
 ## Hotfix 2.17.2
 
 - Fixed playlist display errors. (Thanks to @spaceangel6998 helping out here!).
