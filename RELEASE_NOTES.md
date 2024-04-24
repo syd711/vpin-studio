@@ -7,6 +7,10 @@
 - **Preferences**: Added **Help & Support** section, including a download option which zips and downloads all log files for **ticket submissions**.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/help.png" width="500" />
+  
+- **Preferences**: Added **Network Settings** to the UI preferences. You can input the **network share** of your VPin there. After restarting the Studio, you can access the remote folders via the yellow-ish folder buttons that have only been available when working on the cabinet before.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/network-share.png" width="500" />
 
 - **Table Data Manager**: The Popper field "Notes" remains untouched from the auto-fill function now.
 - **Script Editing**: Use your favorite development IDE for editing scripts! You can edit VB script now with any editor that is linked to the file suffix **.vbs**. Select the default program for .vbs files on your operating system and Studio will open and save(!) the changed VB sources automatically back to the remote VPX file.
@@ -23,3 +27,4 @@
 - **Table Overview**: Fixed context menu item "Upload Backglass".
 - **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.
 - **Studio Window**: Added (fixed) Studio version in the window title.
+- **PUP Pack Column**: Fixed errorneous PUP pack indicator. The indicator has been shown for table that declare a **pGameName** value, but it has not been checked if the PUP pack actually exist. 

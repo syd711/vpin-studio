@@ -574,8 +574,15 @@ public class GameService implements InitializingBean {
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
+
+    //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
-    game.setPupPack(pupPackService.getPupPack(game));
+    PupPack pupPack = pupPackService.getPupPack(game);
+    if (pupPack != null) {
+      game.setPupPack(pupPack);
+      game.setPupPackName(pupPack.getName());
+    }
+
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));

@@ -1050,7 +1050,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getPupPackName())) {
+      if (value.isPupPackAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
