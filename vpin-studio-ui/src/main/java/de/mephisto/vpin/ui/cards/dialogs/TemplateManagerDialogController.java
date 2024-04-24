@@ -153,6 +153,30 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private CheckBox renderPositionsCheckbox;
 
   @FXML
+  private CheckBox renderCanvasCheckbox;
+
+  @FXML
+  private Slider canvasAlphaPercentageSlider;
+
+  @FXML
+  private ColorPicker canvasColorSelector;
+
+  @FXML
+  private Spinner<Integer> canvasXSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasYSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasWidthSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasHeightSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasBorderRadiusSpinner;
+
+  @FXML
   private Pane previewPanel;
 
   @FXML
@@ -374,6 +398,24 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
+    templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
+
+    renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
+    canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
+    canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
+    canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
+    canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
+    canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
+    canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
+
+    canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasYSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasWidthSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasHeightSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasBorderRadiusSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+
     templateBeanBinder.setPaused(false);
 
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), true);
@@ -390,6 +432,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
 
       templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
+      templateBeanBinder.bindColorPicker(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
       templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
       useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -408,6 +451,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
       templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
       templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
+      templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
 
       imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
@@ -426,6 +470,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
       templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
       templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
+      templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, getCardTemplate(), "canvasAlphaPercentage");
       templateBeanBinder.bindSpinner(wheelSizeSpinner, getCardTemplate(), "wheelSize");
       templateBeanBinder.bindSpinner(paddingSpinner, getCardTemplate(), "padding");
       templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "marginTop");
@@ -434,6 +479,12 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
       templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
+
+      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 720);
+      templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
 
       renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -462,6 +513,16 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
         renderPositionsCheckbox.setDisable(t1);
+      });
+
+      renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+        canvasAlphaPercentageSlider.setDisable(!t1);
+        canvasColorSelector.setDisable(!t1);
+        canvasXSpinner.setDisable(!t1);
+        canvasYSpinner.setDisable(!t1);
+        canvasWidthSpinner.setDisable(!t1);
+        canvasHeightSpinner.setDisable(!t1);
+        canvasBorderRadiusSpinner.setDisable(!t1);
       });
 
       titleText.setDisable(!renderTitleCheckbox.isSelected());

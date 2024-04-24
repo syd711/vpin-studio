@@ -119,9 +119,13 @@ public class CardGraphics {
    */
   private void renderCardData(BufferedImage image, Game game) throws Exception {
     Graphics g = image.getGraphics();
-    ImageUtil.setDefaultColor(g, template.getFontColor());
     int imageWidth = image.getWidth();
 
+    if(template.isRenderCanvas()) {
+      renderCanvas(image, g);
+    }
+
+    ImageUtil.setDefaultColor(g, template.getFontColor());
     int currentY = template.getMarginTop();
     if (template.isRenderTitle()) {
       String titleFontName = template.getTitleFontName();
@@ -164,6 +168,16 @@ public class CardGraphics {
     else {
       renderScorelist(game, g, template.getTitle(), currentY); //TODO why title?
     }
+  }
+
+  private void renderCanvas(BufferedImage image, Graphics g) {
+    Color decode = Color.decode("#FFFFFF");
+    if(template.getCanvasBackground() != null) {
+      decode = Color.decode(template.getCanvasBackground());
+    }
+    int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
+    g.setColor(new Color(decode.getRed(), decode.getGreen(), decode.getBlue(), value));
+    g.fillRoundRect(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
   }
 
   private void renderScorelist(Game game, Graphics g, String title, int currentY) throws IOException {
