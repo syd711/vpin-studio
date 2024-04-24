@@ -292,16 +292,7 @@ public class TablesSidebarMediaController implements Initializable {
       GameEmulatorRepresentation emulator = Studio.client.getPinUPPopperService().getGameEmulator(selection.getEmulatorId());
       File emulatorFolder = new File(emulator.getMediaDirectory());
       File file = new File(emulatorFolder, screen);
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not PinUP Popper media folder for screen \"" + screen + "\"");
-        return;
-      }
-
-      try {
-        new ProcessBuilder("explorer.exe", file.getAbsolutePath()).start();
-      } catch (Exception ex) {
-        LOG.error("Failed to open Explorer: " + ex.getMessage(), e);
-      }
+      SystemFolderUtil.openFolder(file);
     }
   }
 

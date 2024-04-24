@@ -14,7 +14,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class SystemFolderUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemFolderUtil.class);
 
-  private static String publicUrl = "\\\\localhost\\vPinball";
+  private static String publicUrl = "\\\\localhost\\vPinball\\";
 
   public static boolean isFolderActionSupported() {
     return isLocal() || (!StringUtils.isEmpty(publicUrl) && isWindows());
@@ -43,13 +43,18 @@ public class SystemFolderUtil {
         try {
           String path = folder.getAbsolutePath();
 
+          String url = publicUrl;
+          while (url.endsWith("\\")) {
+            url = url.substring(0, url.lastIndexOf("\\"));
+          }
+
           String[] split = publicUrl.split("\\\\");
           if (split.length > 0) {
             String segment = split[split.length - 1];
             if (path.contains(segment)) {
               path = path.substring(path.indexOf(segment) + segment.length());
 
-              String remotePath = publicUrl + path;
+              String remotePath = url + path;
               new ProcessBuilder("explorer.exe", remotePath).start();
             }
           }
@@ -62,7 +67,7 @@ public class SystemFolderUtil {
   }
 
   private static boolean isLocal() {
-    return client.getSystemService().isLocal();
+    return false; //client.getSystemService().isLocal();
   }
 
   private static boolean isWindows() {

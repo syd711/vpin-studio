@@ -59,7 +59,7 @@ public class TextEditService {
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = pinUPConnector.getGameByName(textFile.getFileId());
+          Game game = pinUPConnector.getGame(textFile.getFileId());
           File gameFile = game.getGameFile();
           String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent());
           textFile.setLastModified(new Date(gameFile.lastModified()));
@@ -110,7 +110,7 @@ public class TextEditService {
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = pinUPConnector.getGameByName(textFile.getFileId());
+          Game game = pinUPConnector.getGame(textFile.getFileId());
           if(game != null) {
             File gameFile = game.getGameFile();
             VPXUtil.importVBS(gameFile, textFile.getContent());
