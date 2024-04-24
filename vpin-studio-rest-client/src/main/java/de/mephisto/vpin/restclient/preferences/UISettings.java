@@ -34,6 +34,16 @@ public class UISettings extends JsonSettings {
   private boolean propperVersionField = true;
   private boolean propperVRField = true;
 
+  private String winNetworkShare;
+
+  public String getWinNetworkShare() {
+    return winNetworkShare;
+  }
+
+  public void setWinNetworkShare(String winNetworkShare) {
+    this.winNetworkShare = winNetworkShare;
+  }
+
   public boolean isAutoApplyVpsData() {
     return autoApplyVpsData;
   }

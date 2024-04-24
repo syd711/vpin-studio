@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.SystemFolderUtil;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -70,7 +70,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   }
 
   protected void initialize() {
-    openFolderButton.setDisable(!SystemFolderUtil.isFolderActionSupported());
+    openFolderButton.setDisable(!SystemUtil.isFolderActionSupported());
 
     client.getPreferenceService().addListener(this);
 
@@ -130,7 +130,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   protected void openFolder(File file) {
     try {
       if (file.exists()) {
-        SystemFolderUtil.openFolder(file);
+        SystemUtil.openFolder(file);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder\"" + file.getAbsolutePath() + "\" does not exist.");

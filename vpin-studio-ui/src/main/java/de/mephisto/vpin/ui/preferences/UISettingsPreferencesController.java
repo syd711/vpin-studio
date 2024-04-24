@@ -15,14 +15,16 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -47,6 +49,15 @@ public class UISettingsPreferencesController implements Initializable {
 
   @FXML
   private TextField vpinNameText;
+
+  @FXML
+  private TextField winNetworkShare;
+
+  @FXML
+  private Button winNetworkShareTestBtn;
+
+  @FXML
+  private Label winNetworkShareStatusLabel;
 
   @FXML
   private CheckBox uiShowVersion;
@@ -84,6 +95,7 @@ public class UISettingsPreferencesController implements Initializable {
   private Tile avatar;
   public static Debouncer debouncer = new Debouncer();
   private Cabinet cabinet;
+  private String networkShareTestPath;
 
   @FXML
   private void onFileSelect(ActionEvent e) {
@@ -97,6 +109,12 @@ public class UISettingsPreferencesController implements Initializable {
       ProgressDialog.createProgressDialog(new AvatarUploadProgressModel(selection));
       refreshAvatar();
     }
+  }
+
+  @FXML
+  private void onWinShareTest() {
+    SystemUtil.publicUrl = winNetworkShare.getText();
+    SystemUtil.openFolder(new File(networkShareTestPath));
   }
 
   @FXML
@@ -116,6 +134,8 @@ public class UISettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    networkShareTestPath = client.getPinUPPopperService().getDefaultGameEmulator().getInstallationDirectory();
+
     if (Features.TOURNAMENTS_ENABLED) {
       cabinet = maniaClient.getCabinetClient().getCabinet();
       if (cabinet != null) {
@@ -253,7 +273,48 @@ public class UISettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
+    winNetworkShare.setText(uiSettings.getWinNetworkShare());
+    winNetworkShare.setDisable(!SystemUtil.isWindows());
+    winNetworkShareStatusLabel.setVisible(SystemUtil.isWindows() && !StringUtils.isEmpty(winNetworkShare.getText()));
+    winNetworkShare.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        debouncer.debounce("winNetworkShare", () -> {
+          uiSettings.setWinNetworkShare(newValue);
+
+          boolean visible = SystemUtil.isWindows() && !StringUtils.isEmpty(newValue);
+          winNetworkShareStatusLabel.setVisible(visible);
+          refreshNetworkStatusLabel(newValue);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        }, 300);
+      }
+    });
+    winNetworkShareTestBtn.setDisable(!SystemUtil.isWindows());
+    refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
+
     refreshAvatar();
+  }
+
+  private void refreshNetworkStatusLabel(String newValue) {
+    winNetworkShareTestBtn.setDisable(true);
+    Platform.runLater(() -> {
+      String path = SystemUtil.resolveNetworkPath(newValue, networkShareTestPath);
+      if (StringUtils.isEmpty(newValue) || !SystemUtil.isWindows()) {
+        winNetworkShareStatusLabel.setVisible(false);
+        return;
+      }
+
+      if (!newValue.startsWith("\\\\")) {
+        winNetworkShareStatusLabel.setText("Network path must with \"\\\\\".");
+      }
+      else if (path == null) {
+        winNetworkShareStatusLabel.setText("No matching path with VPX installation found, using test folder \"" + networkShareTestPath + "\"");
+      }
+      else {
+        winNetworkShareStatusLabel.setText("Test Folder: " + path);
+        winNetworkShareTestBtn.setDisable(false);
+      }
+    });
   }
 
   private void refreshAvatar() {

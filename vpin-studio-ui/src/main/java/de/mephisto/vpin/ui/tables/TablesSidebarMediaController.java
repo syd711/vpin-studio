@@ -13,7 +13,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.JFXHelper;
-import de.mephisto.vpin.ui.util.SystemFolderUtil;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.VisibilityHoverListener;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -292,7 +292,7 @@ public class TablesSidebarMediaController implements Initializable {
       GameEmulatorRepresentation emulator = Studio.client.getPinUPPopperService().getGameEmulator(selection.getEmulatorId());
       File emulatorFolder = new File(emulator.getMediaDirectory());
       File file = new File(emulatorFolder, screen);
-      SystemFolderUtil.openFolder(file);
+      SystemUtil.openFolder(file);
     }
   }
 
@@ -480,7 +480,7 @@ public class TablesSidebarMediaController implements Initializable {
     top_Other2.setVisible(false);
     top_Wheel.setVisible(false);
 
-    boolean isOpenFolderSupported = SystemFolderUtil.isFolderActionSupported();
+    boolean isOpenFolderSupported = SystemUtil.isFolderActionSupported();
     btn_Audio.setVisible(isOpenFolderSupported);
     btn_AudioLaunch.setVisible(isOpenFolderSupported);
     btn_Topper.setVisible(isOpenFolderSupported);

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -228,6 +229,63 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="138.0" styleClass="preference-description" text="Using windows network share (e.g. \\localhost\vPinball) allows to to access remote folders of your VPin." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="942.0" styleClass="preference-description" text="Note that this feature is only supported for Windows clients. The share should be the root folder of your Baller installation." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="964.0" styleClass="preference-description" text="You have to restart the Studio after applying changes." textFill="WHITE" />
+                  <GridPane alignment="BASELINE_RIGHT">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.0" minWidth="10.0" prefWidth="188.3999267578125" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="560.7999023437501" minWidth="10.0" prefWidth="552.0000732421875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="570.0" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="Windows Network Share:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="winNetworkShare" prefHeight="30.0" prefWidth="430.0" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component" text="Test" textFill="WHITE" GridPane.columnIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="DirectB2S Folder" />
+                           </tooltip>
+                           <GridPane.margin>
+                              <Insets left="6.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <Label fx:id="winNetworkShareStatusLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
                   <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
                      <VBox.margin>
                         <Insets top="24.0" />

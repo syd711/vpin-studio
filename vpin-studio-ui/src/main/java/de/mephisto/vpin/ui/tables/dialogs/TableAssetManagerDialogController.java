@@ -28,7 +28,7 @@ import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import de.mephisto.vpin.ui.util.SystemFolderUtil;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
@@ -223,7 +222,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
       String mediaDir = gameEmulator.getMediaDirectory();
       File screenDir = new File(mediaDir, screen.name());
-      SystemFolderUtil.openFolder(screenDir);
+      SystemUtil.openFolder(screenDir);
     }
   }
 
@@ -480,8 +479,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
     this.addAudioBlank.managedProperty().bindBidirectional(this.addAudioBlank.visibleProperty());
 
-    this.folderBtn.setVisible(SystemFolderUtil.isFolderActionSupported());
-    this.folderSeparator.setVisible(SystemFolderUtil.isFolderActionSupported());
+    this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+    this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
     try {
       encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);

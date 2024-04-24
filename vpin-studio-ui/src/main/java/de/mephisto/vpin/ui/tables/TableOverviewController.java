@@ -1050,12 +1050,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     columnPUPPack.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
-      if (value.getPupPackName() != null) {
+      if (!StringUtils.isEmpty(value.getPupPackName())) {
         if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           HBox checkAndUpdateIcon = WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon(getIconColor(value)));
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
+        Tooltip.install(checkboxIcon, new Tooltip(value.getPupPackName()));
+        return new SimpleObjectProperty(checkboxIcon);
       }
       return new SimpleStringProperty("");
     });

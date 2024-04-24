@@ -4,8 +4,6 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.textedit.TextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -193,7 +191,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (this.game.isPresent()) {
       try {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.get().getEmulatorId());
-        SystemFolderUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       } catch (Exception e) {
         LOG.error("Failed to open Explorer: " + e.getMessage(), e);
       }
