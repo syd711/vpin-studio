@@ -23,6 +23,9 @@ import java.util.*;
  ********************************************************************************************************************/
 public class PinUPPopperServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private static final int CACHE_SIZE = 300;
+
+  private List<TableAssetSearch> cache = new ArrayList<>();
 
   public PinUPPopperServiceClient(VPinStudioClient client) {
     super(client);
@@ -193,11 +196,32 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
-  public TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+  public synchronized TableAssetSearch getCached(PopperScreen screen, String term) {
+    for (TableAssetSearch s : this.cache) {
+      if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
+        return s;
+      }
+    }
+
+    return null;
+  }
+
+  public synchronized TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+    TableAssetSearch cached = getCached(screen, term);
+    if (cached != null) {
+      return cached;
+    }
+
     TableAssetSearch search = new TableAssetSearch();
     search.setTerm(term);
     search.setScreen(screen);
-    return getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    cache.add(result);
+
+    if (cache.size() > CACHE_SIZE) {
+      cache.remove(0);
+    }
+    return result;
   }
 
   public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game, boolean append) throws Exception {
@@ -211,5 +235,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public void clearCache() {
     getRestClient().clearCache("popper/emulators");
+    this.cache.clear();
   }
 }

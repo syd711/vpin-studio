@@ -304,13 +304,13 @@ public class TableFilterController implements Initializable {
 
   private void applyFilter() {
     if (filterSettings.isResetted()) {
-      filterButton.getStyleClass().remove("filter-button-selected");
-      filterRoot.getStyleClass().remove("filter-selected");
+      filterButton.getStyleClass().remove("toggle-button-selected");
+      filterRoot.getStyleClass().remove("toggle-selected");
     }
     else {
-      filterRoot.getStyleClass().add("filter-selected");
-      if (!filterButton.getStyleClass().contains("filter-button-selected")) {
-        filterButton.getStyleClass().add("filter-button-selected");
+      filterRoot.getStyleClass().add("toggle-selected");
+      if (!filterButton.getStyleClass().contains("toggle-button-selected")) {
+        filterButton.getStyleClass().add("toggle-button-selected");
       }
     }
 

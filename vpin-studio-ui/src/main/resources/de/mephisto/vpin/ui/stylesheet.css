@@ -28,11 +28,11 @@
     -fx-border-width: 1;
 }
 
-.filter-button-selected {
+.toggle-button-selected {
     -fx-background-color: #6666FFAA;
 }
 
-.filter-selected {
+.toggle-selected {
 }
 
 /**

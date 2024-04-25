@@ -59,10 +59,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -359,21 +357,35 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onSearch() {
     String term = searchField.getText().trim();
     if (!StringUtils.isEmpty(term)) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
-      List<Object> results = progressDialog.getResults();
-      if (!results.isEmpty()) {
-        TableAssetSearch assetSearch = (TableAssetSearch) results.get(0);
-        ObservableList<TableAsset> assets = FXCollections.observableList(assetSearch.getResult());
-        serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-        serverAssetsList.setItems(assets);
-        serverAssetsList.refresh();
-        return;
-      }
+      TableAssetSearch assetSearch = searchPopper(screen, term);
+      ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
+      serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+      serverAssetsList.setItems(assets);
+      serverAssetsList.refresh();
+      return;
     }
 
     serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
     serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
     serverAssetsList.refresh();
+  }
+
+  private TableAssetSearch searchPopper(PopperScreen screen, String term) {
+    TableAssetSearch cached = client.getPinUPPopperService().getCached(screen, term);
+    if(cached != null) {
+      return cached;
+    }
+
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
+    List<Object> results = progressDialog.getResults();
+    if (!results.isEmpty()) {
+      return (TableAssetSearch) results.get(0);
+    }
+
+    TableAssetSearch empty = new TableAssetSearch();
+    empty.setResult(Collections.emptyList());
+    empty.setScreen(screen);
+    return empty;
   }
 
   @FXML
@@ -556,7 +568,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     serverAssetsList.setPlaceholder(new Label("No assets found."));
     assetList.setPlaceholder(new Label("No assets found."));
 
-    EventManager.getInstance().addListener(this);
+    if (!isEmbeddedMode()) {
+      EventManager.getInstance().addListener(this);
+    }
 
     Label label = new Label("No asset preview activated.");
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
@@ -641,7 +655,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    if(isEmbeddedMode()) {
+    if (isEmbeddedMode()) {
       assetList.prefHeightProperty().bind(root.prefHeightProperty());
     }
   }
@@ -714,10 +728,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+    if (this.game != null && game != null && this.game.getId() == game.getId()) {
+      return;
+    }
+
     this.overviewController = overviewController;
     this.game = game;
 
-    if(screen == null) {
+    if (screen == null) {
       screen = PopperScreen.Wheel;
     }
     this.screen = screen;
@@ -840,7 +858,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void refreshTableMediaView() {
-    if(!isEmbeddedMode()) {
+    if (!isEmbeddedMode()) {
       this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
     }
     if (screen.equals(PopperScreen.Wheel)) {

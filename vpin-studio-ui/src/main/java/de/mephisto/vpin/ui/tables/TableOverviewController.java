@@ -313,7 +313,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     if (assetManagerMode) {
       tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), tableView.getSelectionModel().getSelectedItem(), PopperScreen.Wheel);
+      assetManagerViewBtn.getStyleClass().add("toggle-selected");
+      if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
+        assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+      }
     }
+    else {
+      assetManagerViewBtn.getStyleClass().remove("toggle-selected");
+      assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+    }
+
 
     columnPlayfield.setVisible(assetManagerMode);
     columnBackglass.setVisible(assetManagerMode);
