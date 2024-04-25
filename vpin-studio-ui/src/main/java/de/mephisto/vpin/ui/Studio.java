@@ -200,6 +200,16 @@ public class Studio extends Application {
               Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
               ke.consume();
             }
+            if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
+              stage.setWidth(1920);
+              stage.setHeight(1080);
+              ke.consume();
+            }
+            if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
+              stage.setWidth(2560);
+              stage.setHeight(1440);
+              ke.consume();
+            }
           }
         });
 

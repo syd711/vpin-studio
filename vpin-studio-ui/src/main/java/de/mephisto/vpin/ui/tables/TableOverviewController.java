@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
@@ -9,6 +10,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.popper.Playlist;
@@ -42,6 +44,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -126,6 +129,42 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentation, String> columnDateAdded;
 
   @FXML
+  private TableColumn<GameRepresentation, String> columnPlayfield;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnBackglass;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnLoading;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnWheel;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnDMD;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnTopper;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnFullDMD;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnAudio;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnAudioLaunch;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnInfo;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnHelp;
+
+  @FXML
+  private TableColumn<GameRepresentation, String> columnOther2;
+
+  @FXML
   private TableView<GameRepresentation> tableView;
 
   @FXML
@@ -145,6 +184,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private Button tableEditBtn;
+
+  @FXML
+  private Button assetManagerViewBtn;
 
   @FXML
   private Button backglassBtn;
@@ -235,7 +277,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private List<Playlist> playlists;
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
@@ -247,6 +289,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private final List<Consumer> reloadConsumers = new ArrayList<>();
 
+  private boolean assetManagerMode = false;
+
   // Add a public no-args constructor
   public TableOverviewController() {
   }
@@ -257,6 +301,45 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onBackglassManager() {
     TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController());
+  }
+
+  @FXML
+  private void onAssetView() {
+    tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
+
+    assetManagerMode = !assetManagerMode;
+    tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
+    tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
+
+    if (assetManagerMode) {
+      tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), tableView.getSelectionModel().getSelectedItem(), PopperScreen.Wheel);
+    }
+
+    columnPlayfield.setVisible(assetManagerMode);
+    columnBackglass.setVisible(assetManagerMode);
+    columnLoading.setVisible(assetManagerMode);
+    columnWheel.setVisible(assetManagerMode);
+    columnDMD.setVisible(assetManagerMode);
+    columnTopper.setVisible(assetManagerMode);
+    columnFullDMD.setVisible(assetManagerMode);
+    columnAudio.setVisible(assetManagerMode);
+    columnAudioLaunch.setVisible(assetManagerMode);
+    columnInfo.setVisible(assetManagerMode);
+    columnHelp.setVisible(assetManagerMode);
+    columnOther2.setVisible(assetManagerMode);
+
+    columnVersion.setVisible(!assetManagerMode);
+    columnEmulator.setVisible(!assetManagerMode && !uiSettings.isHideEmulatorColumn());
+    columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
+    columnRom.setVisible(!assetManagerMode);
+    columnB2S.setVisible(!assetManagerMode);
+    columnPUPPack.setVisible(!assetManagerMode);
+    columnAltSound.setVisible(!assetManagerMode);
+    columnAltColor.setVisible(!assetManagerMode);
+    columnPOV.setVisible(!assetManagerMode);
+    columnHSType.setVisible(!assetManagerMode);
+    columnPlaylists.setVisible(!assetManagerMode);
+    columnDateAdded.setVisible(!assetManagerMode);
   }
 
   @FXML
@@ -1056,7 +1139,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           return new SimpleObjectProperty(checkAndUpdateIcon);
         }
         FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
-        Tooltip.install(checkboxIcon, new Tooltip(value.getPupPackName()));
         return new SimpleObjectProperty(checkboxIcon);
       }
       return new SimpleStringProperty("");
@@ -1108,7 +1190,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       int maxLength = 3;
-      if(fav) {
+      if (fav) {
         maxLength = 2;
       }
       for (Playlist match : matches) {
@@ -1123,6 +1205,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       box.setStyle("-fx-padding: 3 0 0 0;");
       return new SimpleObjectProperty(box);
     });
+
+    columnPlayfield.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.PlayField)));
+    columnBackglass.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.BackGlass)));
+    columnLoading.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Loading)));
+    columnWheel.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Wheel)));
+    columnDMD.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.DMD)));
+    columnTopper.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Topper)));
+    columnFullDMD.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Menu)));
+    columnAudio.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Audio)));
+    columnAudioLaunch.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.AudioLaunch)));
+    columnInfo.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.GameInfo)));
+    columnHelp.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.GameHelp)));
+    columnOther2.setCellValueFactory(cellData -> new SimpleObjectProperty(createAssetStatus(cellData.getValue(), PopperScreen.Other2)));
 
 
     tableView.setItems(data);
@@ -1286,6 +1381,35 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
     });
+  }
+
+  private Node createAssetStatus(GameRepresentation value, PopperScreen popperScreen) {
+    GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
+    if (defaultMediaItem != null) {
+      String mimeType = defaultMediaItem.getMimeType();
+      Label label = new Label();
+      label.setTooltip(new Tooltip(defaultMediaItem.getName()));
+      if (mimeType.contains("audio")) {
+        label.setGraphic(WidgetFactory.createIcon("mdi2m-music-note"));
+      }
+      else if (mimeType.contains("image")) {
+        label.setGraphic(WidgetFactory.createIcon("mdi2i-image"));
+      }
+      else if (mimeType.contains("video")) {
+        label.setGraphic(WidgetFactory.createIcon("mdi2m-movie"));
+      }
+
+      FontIcon fontIcon = (FontIcon) label.getGraphic();
+      fontIcon.setIconSize(18);
+      label.setCursor(Cursor.HAND);
+      label.setOnMouseClicked(event -> showAssetDetails(popperScreen));
+      return label;
+    }
+    return new Label("");
+  }
+
+  private void showAssetDetails(PopperScreen popperScreen) {
+
   }
 
   private void refreshContextMenu(TableView<GameRepresentation> tableView, ContextMenu ctxMenu, GameRepresentation game) {
@@ -1519,6 +1643,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
+  public void setVisible(boolean b) {
+    if (!b) {
+      tablesController.getAssetViewSideBarController().setVisible(b);
+      tablesController.getTablesSideBarController().setVisible(b);
+    }
+    else {
+      tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
+      tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
+    }
+
+  }
+
   @Override
   public void onViewActivated() {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
@@ -1719,14 +1855,29 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
     });
+
+    columnPlayfield.setVisible(false);
+    columnBackglass.setVisible(false);
+    columnLoading.setVisible(false);
+    columnWheel.setVisible(false);
+    columnDMD.setVisible(false);
+    columnTopper.setVisible(false);
+    columnFullDMD.setVisible(false);
+    columnAudio.setVisible(false);
+    columnAudioLaunch.setVisible(false);
+    columnInfo.setVisible(false);
+    columnHelp.setVisible(false);
+    columnOther2.setVisible(false);
+
+    assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      columnEmulator.setVisible(!uiSettings.isHideEmulatorColumn());
-      columnVPS.setVisible(!uiSettings.isHideVPSUpdates());
+      columnEmulator.setVisible(!assetManagerMode && !uiSettings.isHideEmulatorColumn());
+      columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);

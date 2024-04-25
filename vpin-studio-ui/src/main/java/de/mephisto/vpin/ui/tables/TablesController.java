@@ -74,6 +74,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
 
   @FXML
+  private TablesAssetViewSidebarController assetViewSideBarController; //fxml magic! Not unused
+
+  @FXML
   private StackPane editorRootStack;
 
   private Node sidePanelRoot;
@@ -157,7 +160,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     Platform.runLater(() -> {
       if (t1.intValue() == 0) {
         NavigationController.setBreadCrumb(Arrays.asList("Tables"));
-        tablesSideBarController.setVisible(true);
+        tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
         tableOverviewController.initSelection();
@@ -165,7 +168,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (t1.intValue() == 1) {
         NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
         vpsTablesController.refresh(vpsTablesController.getSelection());
@@ -173,7 +176,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (t1.intValue() == 2) {
         NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
         root.setRight(null);
@@ -181,7 +184,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
         repositoryController.initSelection();
@@ -200,6 +203,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public TableOverviewController getTableOverviewController() {
     return tableOverviewController;
+  }
+
+  public TablesAssetViewSidebarController getAssetViewSideBarController() {
+    return assetViewSideBarController;
   }
 
   public VpsTablesSidebarController getVpsTablesSidebarController() {

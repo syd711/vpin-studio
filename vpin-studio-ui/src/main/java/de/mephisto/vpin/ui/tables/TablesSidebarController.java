@@ -621,7 +621,7 @@ public class TablesSidebarController implements Initializable {
 
   private void refreshView(Optional<GameRepresentation> g) {
     Platform.runLater(() -> {
-      if (titledPaneMedia.isExpanded()) {
+      if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
         this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
       }
       else {
@@ -696,6 +696,10 @@ public class TablesSidebarController implements Initializable {
 
   public TitledPane getTitledPaneDMD() {
     return titledPaneDMD;
+  }
+
+  public TitledPane getTitledPaneMedia() {
+    return titledPaneMedia;
   }
 
   public TitledPane getTitledPaneAltColor() {

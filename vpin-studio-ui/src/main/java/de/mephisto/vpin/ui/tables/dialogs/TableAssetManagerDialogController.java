@@ -25,10 +25,7 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -69,6 +66,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
@@ -358,21 +356,21 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onSearch() {
     String term = searchField.getText().trim();
     if (!StringUtils.isEmpty(term)) {
-      try {
-        TableAssetSearch result = client.getPinUPPopperService().searchTableAsset(screen, term);
-        ObservableList<TableAsset> assets = FXCollections.observableList(result.getResult());
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
+      List<Object> results = progressDialog.getResults();
+      if (!results.isEmpty()) {
+        TableAssetSearch assetSearch = (TableAssetSearch) results.get(0);
+        ObservableList<TableAsset> assets = FXCollections.observableList(assetSearch.getResult());
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
         serverAssetsList.refresh();
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
+        return;
       }
     }
-    else {
-      serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-      serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
-      serverAssetsList.refresh();
-    }
+
+    serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+    serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
+    serverAssetsList.refresh();
   }
 
   @FXML
@@ -528,13 +526,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-    tablesCombo.getItems().addAll(gameRepresentations);
-    tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      searchField.setText("");
-      this.setGame(overviewController, t1, this.screen);
-    });
+    if (!isEmbeddedMode()) {
+      List<GameRepresentation> games = client.getGameService().getGamesCached();
+      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+      tablesCombo.getItems().addAll(gameRepresentations);
+      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+        searchField.setText("");
+      });
+    }
+
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
@@ -631,6 +631,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
+  private boolean isEmbeddedMode() {
+    return this.tablesCombo == null;
+  }
+
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
     if (mediaItems.isEmpty()) {
@@ -698,54 +702,63 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.overviewController = overviewController;
     this.game = game;
     this.screen = screen;
-    this.tablesCombo.setValue(game);
+
+    if (!isEmbeddedMode()) {
+      this.tablesCombo.setValue(game);
+    }
     this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
 
-    String term = game.getGameDisplayName();
-    term = term.replaceAll("the", "");
-    term = term.replaceAll("The", "");
-    term = term.replaceAll(", ", "");
-    term = term.replaceAll("-", "");
-    term = term.replaceAll("'", "");
-    term = term.replaceAll("\\(", "");
-    term = term.replaceAll("\\)", "");
-    term = term.replaceAll("\\[", "");
-    term = term.replaceAll("\\]", "");
-    term = term.replaceAll("MOD", "");
-    term = term.replaceAll("VOW", "");
-    term = term.replaceAll("VR ", "");
-    term = term.replaceAll("Room ", "");
+    if (game == null) {
+      searchField.setText("");
+    }
+    else {
+      String term = game.getGameDisplayName();
+      term = term.replaceAll("the", "");
+      term = term.replaceAll("The", "");
+      term = term.replaceAll(", ", "");
+      term = term.replaceAll("-", "");
+      term = term.replaceAll("'", "");
+      term = term.replaceAll("\\(", "");
+      term = term.replaceAll("\\)", "");
+      term = term.replaceAll("\\[", "");
+      term = term.replaceAll("\\]", "");
+      term = term.replaceAll("MOD", "");
+      term = term.replaceAll("VOW", "");
+      term = term.replaceAll("VR ", "");
+      term = term.replaceAll("Room ", "");
 
-    String[] terms = term.split(" ");
+      String[] terms = term.split(" ");
 
-    List<String> sanitizedTerms = new ArrayList<>();
-    for (String s : terms) {
-      if (!StringUtils.isEmpty(s)) {
-        String value = s.trim();
-        try {
-          if (value.length() == 4) {
-            Integer.parseInt(value);
-            continue;
+      List<String> sanitizedTerms = new ArrayList<>();
+      for (String s : terms) {
+        if (!StringUtils.isEmpty(s)) {
+          String value = s.trim();
+          try {
+            if (value.length() == 4) {
+              Integer.parseInt(value);
+              continue;
+            }
+          } catch (NumberFormatException e) {
           }
-        } catch (NumberFormatException e) {
+
+          sanitizedTerms.add(s.trim());
         }
 
-        sanitizedTerms.add(s.trim());
+        if (sanitizedTerms.size() == 2) {
+          break;
+        }
       }
 
-      if (sanitizedTerms.size() == 2) {
-        break;
+      if (StringUtils.isEmpty(this.searchField.getText())) {
+        if (sanitizedTerms.isEmpty()) {
+          this.searchField.setText(game.getGameDisplayName());
+        }
+        else {
+          this.searchField.setText(String.join(" ", sanitizedTerms));
+        }
       }
     }
 
-    if (StringUtils.isEmpty(this.searchField.getText())) {
-      if (sanitizedTerms.isEmpty()) {
-        this.searchField.setText(game.getGameDisplayName());
-      }
-      else {
-        this.searchField.setText(String.join(" ", sanitizedTerms));
-      }
-    }
 
     refreshTableMediaView();
     onSearch();
@@ -815,19 +828,29 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
     this.addAudioBlank.setVisible(screen.equals(PopperScreen.AudioLaunch));
 
-    gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
-    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
-    ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
-    assetList.getItems().removeAll(assetList.getItems());
-    assetList.setItems(assets);
-    assetList.refresh();
+    if (game != null) {
+      gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
+      List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
+      ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
+      assetList.getItems().removeAll(assetList.getItems());
+      assetList.setItems(assets);
+      assetList.refresh();
 
-    if (!items.isEmpty()) {
-      assetList.getSelectionModel().select(0);
+      if (!items.isEmpty()) {
+        assetList.getSelectionModel().select(0);
+      }
+
+      boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+      this.addToPlaylistBtn.setDisable(!convertable);
     }
+    else {
+      assetList.setItems(FXCollections.emptyObservableList());
+      assetList.refresh();
+      addToPlaylistBtn.setDisable(true);
 
-    boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
-    this.addToPlaylistBtn.setDisable(!convertable);
+      serverAssetsList.setItems(FXCollections.emptyObservableList());
+      serverAssetsList.refresh();
+    }
 
     refreshTableView();
   }
