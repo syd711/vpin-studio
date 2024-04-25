@@ -17,9 +17,9 @@
 
 <BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
-            <VBox>
+            <VBox maxHeight="1.7976931348623157E308">
                <children>
                   <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <top>
@@ -393,6 +393,6 @@
       </VBox>
    </top>
    <center>
-      <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="200.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
+      <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="100.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
    </center>
 </BorderPane>

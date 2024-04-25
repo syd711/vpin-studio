@@ -164,7 +164,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private TableOverviewController overviewController;
   private GameRepresentation game;
-  private PopperScreen screen;
+  private PopperScreen screen = PopperScreen.Wheel;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
   private Node lastHover;
@@ -372,7 +372,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private TableAssetSearch searchPopper(PopperScreen screen, String term) {
     TableAssetSearch cached = client.getPinUPPopperService().getCached(screen, term);
-    if(cached != null) {
+    if (cached != null) {
       return cached;
     }
 
@@ -728,18 +728,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
-    if (this.game != null && game != null && this.game.getId() == game.getId()) {
-      return;
-    }
-
     this.overviewController = overviewController;
     this.game = game;
-
-    if (screen == null) {
-      screen = PopperScreen.Wheel;
-    }
-    this.screen = screen;
     this.searchField.setText("");
+    if (screen != null) {
+      this.screen = screen;
+    }
 
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);

@@ -233,6 +233,23 @@
     -fx-cursor: hand;
 }
 
+.table-media-button {
+    -fx-font-color: #FFFFFF;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #FFFFFF;
+}
+
+.table-media-button:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 16px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 /**
  * Window Toolbar
  */

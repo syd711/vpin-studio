@@ -1396,7 +1396,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
     if (defaultMediaItem != null) {
       String mimeType = defaultMediaItem.getMimeType();
-      Label label = new Label();
+      Button label = new Button();
+      label.getStyleClass().add("table-media-button");
       label.setTooltip(new Tooltip(defaultMediaItem.getName()));
       if (mimeType.contains("audio")) {
         label.setGraphic(WidgetFactory.createIcon("mdi2m-music-note"));
@@ -1410,16 +1411,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       FontIcon fontIcon = (FontIcon) label.getGraphic();
       fontIcon.setIconSize(18);
-      label.setCursor(Cursor.HAND);
-      label.setOnMouseClicked(event -> showAssetDetails(popperScreen));
+
+      label.setOnAction(event -> showAssetDetails(value, popperScreen));
       return label;
     }
     return new Label("");
   }
 
-  private void showAssetDetails(PopperScreen popperScreen) {
-    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-    this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), selectedItem, popperScreen);
+  private void showAssetDetails(GameRepresentation game, PopperScreen popperScreen) {
+    tableView.getSelectionModel().clearSelection();
+    tableView.getSelectionModel().select(game);
+    Platform.runLater(() ->{
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, popperScreen);
+    });
   }
 
   private void refreshContextMenu(TableView<GameRepresentation> tableView, ContextMenu ctxMenu, GameRepresentation game) {
@@ -1885,6 +1889,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHelp.setVisible(false);
     columnOther2.setVisible(false);
 
+    assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
     assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 

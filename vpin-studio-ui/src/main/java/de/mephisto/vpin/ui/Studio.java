@@ -176,7 +176,7 @@ public class Studio extends Application {
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
-        stage.setMinHeight(800);
+        stage.setMinHeight(900);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 
