@@ -235,7 +235,6 @@
 
 .table-media-button {
     -fx-font-color: #FFFFFF;
-    -fx-font-size : 16px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #FFFFFF;
@@ -243,9 +242,19 @@
 
 .table-media-button:hover {
     -fx-font-color: #fff8f8;
-    -fx-font-size : 16px;
-    -fx-background-color: transparent;
+    -fx-background-color: #283335;
     -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.table-media-button-selected {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: black;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: green;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }

@@ -52,6 +52,9 @@ import java.util.Optional;
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
+  public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String DISABLED_COLOR = "#B0ABAB";
+
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
     label.setStyle("-fx-font-size: 14px;");

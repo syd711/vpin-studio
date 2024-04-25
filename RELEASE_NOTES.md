@@ -14,7 +14,7 @@
 
 - **Table Data Manager**: The Popper field "Notes" remains untouched from the auto-fill function now.
 - **Script Editing**: Use your favorite development IDE for editing scripts! You can edit VB script now with any editor that is linked to the file suffix **.vbs**. Select the default program for .vbs files on your operating system and Studio will open and save(!) the changed VB sources automatically back to the remote VPX file.
-- **VPS Overview**: Added list of all available table versions, including an indicator of your installed version.
+- **VPS Table Overview**: Added list of all available table versions, including an indicator of your installed version.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/vps-marker.png" width="600" />
 

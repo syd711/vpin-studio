@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
@@ -44,7 +45,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -290,6 +290,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final List<Consumer> reloadConsumers = new ArrayList<>();
 
   private boolean assetManagerMode = false;
+  private List<String> ignoredMedia;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -1396,24 +1397,31 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
     if (defaultMediaItem != null) {
       String mimeType = defaultMediaItem.getMimeType();
-      Button label = new Button();
-      label.getStyleClass().add("table-media-button");
-      label.setTooltip(new Tooltip(defaultMediaItem.getName()));
+      Button btn = new Button();
+      btn.getStyleClass().add("table-media-button");
+      btn.setTooltip(new Tooltip(defaultMediaItem.getName()));
       if (mimeType.contains("audio")) {
-        label.setGraphic(WidgetFactory.createIcon("mdi2m-music-note"));
+        btn.setGraphic(WidgetFactory.createIcon("bi-music-note-beamed"));
       }
       else if (mimeType.contains("image")) {
-        label.setGraphic(WidgetFactory.createIcon("mdi2i-image"));
+        btn.setGraphic(WidgetFactory.createIcon("bi-card-image"));
       }
       else if (mimeType.contains("video")) {
-        label.setGraphic(WidgetFactory.createIcon("mdi2m-movie"));
+        btn.setGraphic(WidgetFactory.createIcon("bi-film"));
       }
 
-      FontIcon fontIcon = (FontIcon) label.getGraphic();
-      fontIcon.setIconSize(18);
+      FontIcon fontIcon = (FontIcon) btn.getGraphic();
+      fontIcon.setIconSize(20);
+      if (ignoredMedia.contains(popperScreen.name())) {
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+      }
 
-      label.setOnAction(event -> showAssetDetails(value, popperScreen));
-      return label;
+      btn.setOnAction(event -> {
+//        btn.getStyleClass().removeAll();
+//        btn.getStyleClass().add("table-media-button-selected");
+        showAssetDetails(value, popperScreen);
+      });
+      return btn;
     }
     return new Label("");
   }
@@ -1421,7 +1429,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void showAssetDetails(GameRepresentation game, PopperScreen popperScreen) {
     tableView.getSelectionModel().clearSelection();
     tableView.getSelectionModel().select(game);
-    Platform.runLater(() ->{
+    Platform.runLater(() -> {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, popperScreen);
     });
   }
@@ -1776,7 +1784,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private String getLabelCss(GameRepresentation value) {
     String status = "";
     if (value.isDisabled()) {
-      status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
     }
     return status;
   }
@@ -1870,6 +1878,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnEmulator.setVisible(false);
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
+    preferencesChanged(PreferenceNames.IGNORED_MEDIA, null);
 
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
@@ -1902,6 +1911,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    else if (key.equals(PreferenceNames.IGNORED_MEDIA)) {
+      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.IGNORED_MEDIA);
+      ignoredMedia = preference.getCSVValue();
     }
   }
 

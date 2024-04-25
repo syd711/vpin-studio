@@ -666,6 +666,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
+    borderPane.setStyle(null);
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
     }

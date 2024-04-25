@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
+import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
@@ -36,10 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -63,7 +62,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Button deleteBtn;
 
   @FXML
-  private Button duplicateBtn;
+  private Button applyBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -217,6 +216,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   @FXML
+  private void onApply(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
+    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, this.templateCombo.getSelectionModel().getSelectedItem().getId()));
+    stage.close();
+  }
+
+  @FXML
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
@@ -325,28 +332,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   @FXML
   private void onFontScoreSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    try {
-      this.deleteBtn.setDisable(true);
-      this.renameBtn.setDisable(true);
-
-      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(items));
-
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      waitOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Generating Card...");
-
-      accordion.setExpandedPane(backgroundSettingsPane);
-
-      cardPreview.setPreserveRatio(true);
-    } catch (Exception e) {
-      LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
-    }
   }
 
   public CardTemplate getCardTemplate() {
@@ -576,7 +561,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       return;
     }
 
-    int offset = 36;
     Platform.runLater(() -> {
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
@@ -595,9 +579,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           });
 
         }).start();
-//        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
-//        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
-
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
@@ -611,6 +592,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   public void setHighscoreCardsController(HighscoreCardsController highscoreCardsController) {
     this.highscoreCardsController = highscoreCardsController;
     templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
+    this.applyBtn.setText("Close and apply to \"" + highscoreCardsController.getSelectedTable().getGameDisplayName() + "\"");
     initBindings();
 
     templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
@@ -636,5 +618,27 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     cardPreview.setFitWidth(width - 500);
     cardPreview.setFitHeight(height - 200);
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      this.deleteBtn.setDisable(true);
+      this.renameBtn.setDisable(true);
+
+      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+      templateCombo.setItems(FXCollections.observableList(items));
+
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      waitOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Generating Card...");
+
+      accordion.setExpandedPane(backgroundSettingsPane);
+
+      cardPreview.setPreserveRatio(true);
+    } catch (Exception e) {
+      LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
+    }
   }
 }

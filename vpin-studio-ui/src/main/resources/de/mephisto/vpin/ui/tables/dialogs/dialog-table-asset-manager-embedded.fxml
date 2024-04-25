@@ -393,6 +393,6 @@
       </VBox>
    </top>
    <center>
-      <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="100.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
+      <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="70.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
    </center>
 </BorderPane>
