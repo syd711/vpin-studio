@@ -57,9 +57,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private boolean showPauseInsteadOfOverlay = false;
   private String pauseKey;
   private String resetKey;
-
-  private final static boolean USE_DEBOUNCE = true;
-  private final static int DEBOUNCE = 1000;
+  private long inputDeboundeMs;
 
   private Map<String, Long> timingMap = new ConcurrentHashMap<>();
 
@@ -135,11 +133,11 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   }
 
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
-    if (USE_DEBOUNCE) {
-      if (overlayKey != null) {
+    if (inputDeboundeMs > 0) {
+      if (!StringUtils.isEmpty(overlayKey)) {
         KeyChecker keyChecker = new KeyChecker(overlayKey);
         if (keyChecker.matches(nativeKeyEvent)) {
-          if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < DEBOUNCE) {
+          if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDeboundeMs) {
             LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
             return true;
           }
@@ -148,10 +146,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }
       }
 
-      if (pauseKey != null) {
+      if (!StringUtils.isEmpty(pauseKey)) {
         KeyChecker keyChecker = new KeyChecker(pauseKey);
         if (keyChecker.matches(nativeKeyEvent)) {
-          if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < DEBOUNCE) {
+          if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDeboundeMs) {
             LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
             return true;
           }
@@ -278,6 +276,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
           showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
+          inputDeboundeMs = 1000;
           pauseKey = pauseMenuSettings.getKey();
           LOG.info("Pause key has been updated to: " + pauseKey);
           break;
