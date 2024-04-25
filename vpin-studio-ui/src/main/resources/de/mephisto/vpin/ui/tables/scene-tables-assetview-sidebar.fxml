@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="assetSidebarVBox" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesAssetViewSidebarController">
+<VBox fx:id="assetSidebarVBox" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesAssetViewSidebarController">
    <children>
-      <TitledPane fx:id="titledPaneDefaultBackground" collapsible="false" prefWidth="600.0">
+      <TitledPane fx:id="titledPaneDefaultBackground" collapsible="false">
          <graphic>
-            <BorderPane prefWidth="560.0">
+            <BorderPane>
                <left>
                   <Label text="Asset Manager" BorderPane.alignment="CENTER" />
                </left>

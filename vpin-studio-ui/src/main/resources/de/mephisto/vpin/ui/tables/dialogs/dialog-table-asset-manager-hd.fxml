@@ -145,7 +145,7 @@
                                     </BorderPane>
                                     <BorderPane fx:id="screenWheel" layoutX="308.0" layoutY="466.0" prefHeight="140.0" prefWidth="130.0" styleClass="media-container">
                                        <bottom>
-                                          <Label text="Wheel Image" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                          <Label text="Wheel" textFill="WHITE" BorderPane.alignment="CENTER" />
                                        </bottom>
                                        <top>
                                           <BorderPane fx:id="top_Wheel" BorderPane.alignment="TOP_RIGHT">

@@ -49,6 +49,11 @@
                                               <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                               <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="180.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
                                     <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
+                                    <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="Wheel">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
                                     <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="Playfield">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
@@ -60,11 +65,6 @@
                                        </graphic>
                                     </TableColumn>
                                     <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="Loading">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                       </graphic>
-                                    </TableColumn>
-                                    <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="Wheel">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                        </graphic>

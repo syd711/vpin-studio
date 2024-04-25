@@ -705,8 +705,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
+      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
     }
-    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
 
     if (game == null) {
       searchField.setText("");
@@ -820,7 +820,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void refreshTableMediaView() {
-    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    if(!isEmbeddedMode()) {
+      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    }
     if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
     }
