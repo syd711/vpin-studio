@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -32,12 +33,16 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +51,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class BackglassManagerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerDialogController.class);
@@ -95,6 +101,11 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   @FXML
   private ImageView dmdThumbnailImage;
 
+  @FXML
+  private Button downloadBackglassBtn;
+
+  @FXML
+  private Button downloadDMDBtn;
 
   //-- Editors
 
@@ -180,6 +191,41 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       TableDialogs.directBackglassUpload(stage, game);
+    }
+  }
+
+  @FXML
+  private void onBackglassDownload() {
+    byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
+    export(bytesEncoded);
+  }
+
+  @FXML
+  private void onDMDDownload() {
+    byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
+    export(bytesEncoded);
+  }
+
+  private void export(byte[] bytesEncoded) {
+    if (bytesEncoded != null) {
+      StudioFolderChooser chooser = new StudioFolderChooser();
+      chooser.setTitle("Select Target Folder");
+      File targetFolder = chooser.showOpenDialog(stage);
+
+      if (targetFolder != null) {
+        try {
+          File targetFile = new File(targetFolder, this.tableData.getName() + ".png");
+          targetFile = FileUtils.uniqueFile(targetFile);
+          FileOutputStream fileOutputStream = new FileOutputStream(targetFile);
+          IOUtils.write(bytesEncoded, fileOutputStream);
+          fileOutputStream.close();
+
+          WidgetFactory.showInformation(stage, "Export Finished", "Written \"" + targetFile.getName() + "\".");
+        } catch (IOException e) {
+          LOG.error("Failed to download backglass image: " + e.getMessage(), e);
+          WidgetFactory.showAlert(stage, "Error", "Failed to download backglass image: " + e.getMessage());
+        }
+      }
     }
   }
 
@@ -551,6 +597,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    downloadBackglassBtn.setDisable(true);
+    downloadDMDBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     gameLabel.setText("-");
@@ -603,6 +651,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
         }
         thumbnailImage.setImage(image);
+        downloadBackglassBtn.setDisable(false);
         resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {
@@ -614,6 +663,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (dmdBytesEncoded != null) {
         Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
         dmdThumbnailImage.setImage(image);
+        downloadDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {

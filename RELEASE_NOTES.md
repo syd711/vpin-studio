@@ -23,9 +23,11 @@
 - **Highscore Cards**: Added **Margins** option to the template designer. The padding value will be used as additional separator between the initials and the score value.
 - **Point of View Section**: Removed **Export** button. I think it's time to let go here.
 - **Pause Menu**: After taking some turns here I once again changed the Pause Menu preferences. You "simply" choose the design and the target screen for the tutorial videos. This way, you can decide on your own, where the YouTube videos should be played. Using the backglass here as default didn't work out so well, since it wasn't always possible to bring the Chrome browser in front of the current PUP video. This may not be the end of the road, but I hope it works at least better than before.
+- **Backglass Manager**: Added download button for the backglass and DMD image.
 
 ### Bugfixes
 
+- **Key Events**: Fixed issue with empty overlay key assignment which led to flood of log entries.
 - **Table Overview**: Fixed context menu item "Upload Backglass".
 - **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.
 - **Studio Window**: Added (fixed) Studio version in the window title.
