@@ -74,6 +74,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 //  public static final int MEDIA_SIZE = 280;
 
   @FXML
+  private BorderPane root;
+
+  @FXML
   private ComboBox<GameRepresentation> tablesCombo;
 
   @FXML
@@ -402,8 +405,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       try {
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(getPreviewWidth());
-          imageView.setFitHeight(getPreviewHeight());
+          imageView.setFitWidth(getServerAssetPreviewWidth());
+          imageView.setFitHeight(getServerAssetPreviewHeight());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(assetUrl);
@@ -425,12 +428,20 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private double getPreviewWidth() {
+  private double getServerAssetPreviewWidth() {
     return serverAssetMediaPane.getPrefWidth() - 10;
   }
 
-  private double getPreviewHeight() {
+  private double getServerAssetPreviewHeight() {
     return serverAssetMediaPane.getPrefHeight() - 10;
+  }
+
+  private double getLocalAssetPreviewWidth() {
+    return mediaPane.getPrefWidth() - 10;
+  }
+
+  private double getLocalAssetPreviewHeight() {
+    return mediaPane.getPrefHeight() - 10;
   }
 
   @FXML
@@ -611,8 +622,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(getPreviewWidth());
-          imageView.setFitHeight(getPreviewHeight());
+          imageView.setFitWidth(getLocalAssetPreviewHeight());
+          imageView.setFitHeight(getLocalAssetPreviewWidth());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(url);
@@ -629,6 +640,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
       }
     });
+
+    if(isEmbeddedMode()) {
+      assetList.prefHeightProperty().bind(root.prefHeightProperty());
+    }
   }
 
   private boolean isEmbeddedMode() {
@@ -701,7 +716,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
+
+    if(screen == null) {
+      screen = PopperScreen.Wheel;
+    }
     this.screen = screen;
+    this.searchField.setText("");
 
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);

@@ -1409,7 +1409,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void showAssetDetails(PopperScreen popperScreen) {
-
+    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), selectedItem, popperScreen);
   }
 
   private void refreshContextMenu(TableView<GameRepresentation> tableView, ContextMenu ctxMenu, GameRepresentation game) {
@@ -1615,7 +1616,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validationError.setVisible(false);
     validationErrorLabel.setText("");
     validationErrorText.setText("");
-    this.tablesController.getTablesSideBarController().setGame(g);
+
+    if (assetManagerMode) {
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), null);
+    }
+    else {
+      this.tablesController.getTablesSideBarController().setGame(g);
+    }
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       validationError.setVisible(game.getValidationState().getCode() > 0 && !game.getIgnoredValidations().contains(-1));

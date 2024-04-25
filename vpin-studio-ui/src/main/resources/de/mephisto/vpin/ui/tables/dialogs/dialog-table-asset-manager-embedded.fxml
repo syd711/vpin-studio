@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
+<BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -80,7 +80,7 @@
                               </BorderPane>
                            </right>
                            <center>
-                              <ListView fx:id="serverAssetsList" prefHeight="250.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                              <ListView fx:id="serverAssetsList" prefHeight="220.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
                            </center>
                         </BorderPane>
                      </top>
@@ -103,6 +103,9 @@
                            </HBox>
                         </VBox>
                      </bottom>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
                   </BorderPane>
                </children>
             </VBox>
@@ -281,8 +284,25 @@
                   </Pane>
                </left>
                <center>
-                  <BorderPane fx:id="mediaPane" maxHeight="250.0" maxWidth="250.0" prefHeight="250.0" prefWidth="250.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                  <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+                     <center>
+                        <BorderPane fx:id="mediaPane" maxHeight="280.0" maxWidth="280.0" prefHeight="280.0" prefWidth="280.0" styleClass="media-container" />
+                     </center>
+                     <BorderPane.margin>
+                        <Insets left="12.0" />
+                     </BorderPane.margin>
+                     <top>
+                        <Label styleClass="default-headline" text="Asset Preview" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets top="6.0" />
+                           </BorderPane.margin>
+                        </Label>
+                     </top>
+                  </BorderPane>
                </center>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
             </BorderPane>
             <ToolBar>
                <items>
@@ -373,6 +393,6 @@
       </VBox>
    </top>
    <center>
-      <ListView fx:id="assetList" prefHeight="200.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
+      <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="200.0" styleClass="pretty-list-view" BorderPane.alignment="TOP_LEFT" />
    </center>
 </BorderPane>
