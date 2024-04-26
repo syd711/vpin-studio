@@ -575,8 +575,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No assets found."));
-    assetList.setPlaceholder(new Label("No assets found."));
+    serverAssetsList.setPlaceholder(new Label("No Popper assets found for this screen and table."));
+    assetList.setPlaceholder(new Label("No assets found for this screen and table."));
 
     if (!isEmbeddedMode()) {
       EventManager.getInstance().addListener(this);

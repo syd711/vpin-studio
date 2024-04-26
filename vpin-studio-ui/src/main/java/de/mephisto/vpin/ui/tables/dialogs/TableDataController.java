@@ -544,7 +544,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private synchronized void doSave(Stage stage, boolean closeDialog) {
     String updatedGameFileName = tableDetails.getGameFileName();
-    if (!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+    if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
     }
 
@@ -566,7 +566,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(this.tableDetails, game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
-      tableDataTabScoreDataController.refreshScannedValues();
+      if (game.isVpxGame()) {
+        tableDataTabScoreDataController.refreshScannedValues();
+      }
     } catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -646,6 +648,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
     }
     else {
+      gameFileName.setDisable(true);
+      autoFillBtn.setVisible(false);
       detailsRoot.getChildren().remove(propertRenamingRoot);
       this.tabPane.getTabs().remove(scoreDataTab);
       this.fixVersionBtn.setVisible(false);
@@ -704,7 +708,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     });
     gameFileName.setText(tableDetails.getGameFileName());
-    gameFileName.setDisable(tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"));
+    gameFileName.setDisable(tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\") || !game.isVpxGame());
     gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
       if (FileUtils.isValidFilename(newValue)) {
         tableDetails.setGameFileName(newValue);

@@ -657,7 +657,10 @@ public class GameService implements InitializingBean {
 
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
-    return highscoreService.getHighscoreFiles(game);
+    if(game.isVpxGame()) {
+      return highscoreService.getHighscoreFiles(game);
+    }
+    return new HighscoreFiles();
   }
 
   public GameScoreValidation getGameScoreValidation(int id) {

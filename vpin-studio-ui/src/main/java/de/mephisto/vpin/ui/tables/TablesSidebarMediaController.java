@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -466,6 +467,8 @@ public class TablesSidebarMediaController implements Initializable {
       else if (node instanceof ImageView) {
         ((ImageView) node).setImage(null);
       }
+
+      WidgetFactory.createNoMediaLabel(parent);
     }
   }
 
