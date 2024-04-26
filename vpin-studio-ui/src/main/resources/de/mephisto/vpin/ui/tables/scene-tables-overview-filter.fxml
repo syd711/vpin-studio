@@ -49,16 +49,19 @@
       </VBox>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="230.0">
+            <VBox fx:id="titlePaneRoot" maxHeight="1.7976931348623157E308" prefWidth="230.0">
                <children>
                   <Label styleClass="default-title" text="Table Validators">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets />
                      </VBox.margin>
+                     <padding>
+                        <Insets top="3.0" />
+                     </padding>
                   </Label>
                   <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Table Assets">
                      <VBox.margin>
-                        <Insets top="-6.0" />
+                        <Insets />
                      </VBox.margin>
                   </CheckBox>
                   <HBox fx:id="configurationIssuesFilter" spacing="6.0">

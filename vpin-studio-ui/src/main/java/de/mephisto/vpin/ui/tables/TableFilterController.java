@@ -340,7 +340,5 @@ public class TableFilterController implements Initializable {
     tableAssetFilters.setVisible(vpxMode);
     vpsFilters.setVisible(vpxMode);
     configurationIssuesFilter.setVisible(vpxMode);
-
-    filterRoot.requestLayout();
   }
 }
