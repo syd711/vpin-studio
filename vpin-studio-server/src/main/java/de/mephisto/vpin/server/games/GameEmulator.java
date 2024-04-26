@@ -2,18 +2,21 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
-  private final File installationFolder;
-  private final File tablesFolder;
+  private File installationFolder;
+  private File tablesFolder;
   private File backglassServerDirectory;
   private final File gameMediaFolder;
   private final File mameFolder;
@@ -41,6 +44,8 @@ public class GameEmulator {
   private final String vpxExeName;
   private final String gameExt;
 
+  private boolean vpxEmulator;
+
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.name = emulator.getName();
@@ -54,9 +59,14 @@ public class GameEmulator {
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
 
-    this.installationFolder = new File(emulator.getEmuLaunchDir());
-    this.tablesFolder = new File(emulator.getDirGames());
-    this.backglassServerDirectory = new File(emulator.getDirGames());
+    if (emulator.getEmuLaunchDir() != null) {
+      this.installationFolder = new File(emulator.getEmuLaunchDir());
+    }
+
+    if (emulator.getDirGames() != null) {
+      this.tablesFolder = new File(emulator.getDirGames());
+      this.backglassServerDirectory = new File(emulator.getDirGames());
+    }
 
     this.gameMediaFolder = new File(emulator.getDirMedia());
     this.musicFolder = new File(installationFolder, "Music");
@@ -80,6 +90,16 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+
+    this.vpxEmulator = emulator.isVisualPinball();
+  }
+
+  public boolean isVpxEmulator() {
+    return vpxEmulator;
+  }
+
+  public void setVpxEmulator(boolean vpxEmulator) {
+    this.vpxEmulator = vpxEmulator;
   }
 
   public String getGameFileName(@NonNull File file) {
@@ -151,11 +171,15 @@ public class GameEmulator {
   }
 
   public List<String> getAltExeNames() {
-    String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
-    if (exeFiles == null) {
-      exeFiles = new String[]{};
+    if (isVpxEmulator() && installationFolder != null && installationFolder.exists()) {
+      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+      if (exeFiles == null) {
+        exeFiles = new String[]{};
+      }
+      return Arrays.asList(exeFiles);
     }
-    return Arrays.asList(exeFiles);
+
+    return Collections.emptyList();
   }
 
   @NonNull
@@ -240,10 +264,13 @@ public class GameEmulator {
     return tablesFolder;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getTableBackupsFolder() {
-    return new File(tablesFolder.getParentFile(), "Tables (Backups)/");
+    if (isVpxEmulator()) {
+      return new File(tablesFolder.getParentFile(), "Tables (Backups)/");
+    }
+    return null;
   }
 
   @Override
@@ -263,6 +290,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getVPXExe().getName() + " [" + tablesDirectory + "])";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getName() + " [" + tablesDirectory + "])";
   }
 }

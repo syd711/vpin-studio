@@ -57,7 +57,16 @@ public class GameRepresentation {
   private String pupPackName;
   private Long templateId;
   private boolean pupPackAvailable;
+  private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
+
+  public boolean isVpxGame() {
+    return vpxGame;
+  }
+
+  public void setVpxGame(boolean vpxGame) {
+    this.vpxGame = vpxGame;
+  }
 
   public String getPupPackName() {
     return pupPackName;

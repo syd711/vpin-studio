@@ -22,8 +22,6 @@ public class UISettings extends JsonSettings {
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
 
-  private boolean hideEmulatorColumn = true;
-
   private boolean autoApplyVpsData = true;
 
   //open after upload
@@ -170,14 +168,6 @@ public class UISettings extends JsonSettings {
 
   public void setVpsTutorial(boolean vpsTutorial) {
     this.vpsTutorial = vpsTutorial;
-  }
-
-  public boolean isHideEmulatorColumn() {
-    return hideEmulatorColumn;
-  }
-
-  public void setHideEmulatorColumn(boolean hideEmulatorColumn) {
-    this.hideEmulatorColumn = hideEmulatorColumn;
   }
 
   public boolean isHideVersions() {

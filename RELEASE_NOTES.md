@@ -24,6 +24,7 @@
 - **Point of View Section**: Removed **Export** button. I think it's time to let go here.
 - **Pause Menu**: After taking some turns here I once again changed the Pause Menu preferences. You "simply" choose the design and the target screen for the tutorial videos. This way, you can decide on your own, where the YouTube videos should be played. Using the backglass here as default didn't work out so well, since it wasn't always possible to bring the Chrome browser in front of the current PUP video. This may not be the end of the road, but I hope it works at least better than before.
 - **Backglass Manager**: Added download button for the backglass and DMD image.
+- **Table Overview**: The **Emulator Column** is now always shown, its visibility is no longer configurable.
 
 ### Bugfixes
 

@@ -188,6 +188,8 @@
                     <top>
                         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                             <items>
+                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                        <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -268,7 +270,7 @@
                               <Tooltip text="Open VPS Entry" />
                            </tooltip>
                         </Button>
-                        <Separator layoutX="724.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Separator fx:id="vpsSeparator" layoutX="724.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -349,7 +351,7 @@
                               <Tooltip text="Delete table and assets" />
                            </tooltip>
                                 </Button>
-                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="backglassBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -358,7 +360,7 @@
                               <Tooltip text="Open Backglass Manager" />
                            </tooltip>
                         </Button>
-                        <Separator layoutX="527.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Separator fx:id="b2sManagerSeparator" layoutX="527.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
                           <items>
                             <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
@@ -418,7 +420,7 @@
                                         <Tooltip text="Kill all VPX and PinUP Popper processes." />
                                     </tooltip>
                                 </Button>
-                                <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Separator fx:id="stopSeparator" layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />

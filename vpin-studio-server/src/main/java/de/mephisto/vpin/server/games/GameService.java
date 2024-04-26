@@ -43,10 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -439,8 +436,9 @@ public class GameService implements InitializingBean {
       game = pinUPConnector.getGame(gameId);
       if (game != null) {
         applyGameDetails(game, null, true);
-        highscoreService.scanScore(game);
-
+        if (game.isVpxGame()) {
+          highscoreService.scanScore(game);
+        }
         return getGame(gameId);
       }
       else {
@@ -506,6 +504,24 @@ public class GameService implements InitializingBean {
       gameDetails = gameDetailsRepository.findByPupId(game.getId());
     }
 
+    if (!game.isVpxGame()) {
+      if (gameDetails == null) {
+        gameDetails = new GameDetails();
+        gameDetails.setCreatedAt(new Date());
+        gameDetails.setUpdatedAt(new Date());
+        gameDetails.setPupId(game.getId());
+        gameDetails = gameDetailsRepository.saveAndFlush(gameDetails);
+      }
+
+      game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
+      List<ValidationState> validate = gameValidator.validate(game, true);
+      if (validate.isEmpty()) {
+        validate.add(GameValidationStateFactory.empty());
+      }
+      game.setValidationState(validate.get(0));
+      return;
+    }
+
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 
@@ -533,6 +549,8 @@ public class GameService implements InitializingBean {
       gameDetails.setPupId(game.getId());
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+
+
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
 

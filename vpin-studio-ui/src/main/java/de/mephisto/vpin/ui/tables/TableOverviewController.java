@@ -87,6 +87,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   @FXML
+  private Separator vpsSeparator;
+  @FXML
+  private Separator deleteSeparator;
+  @FXML
+  private Separator b2sManagerSeparator;
+  @FXML
+  private Separator stopSeparator;
+
+  @FXML
   private TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
@@ -128,6 +137,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private TableColumn<GameRepresentation, String> columnDateAdded;
 
+
   @FXML
   private TableColumn<GameRepresentation, String> columnPlayfield;
 
@@ -166,6 +176,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private TableView<GameRepresentation> tableView;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
   private TextField textfieldSearch;
@@ -339,7 +352,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnOther2.setVisible(assetManagerMode);
 
     columnVersion.setVisible(!assetManagerMode);
-    columnEmulator.setVisible(!assetManagerMode && !uiSettings.isHideEmulatorColumn());
+    columnEmulator.setVisible(!assetManagerMode);
     columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
     columnRom.setVisible(!assetManagerMode);
     columnB2S.setVisible(!assetManagerMode);
@@ -872,6 +885,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
 
     refreshPlaylists();
+    refreshEmulators();
 
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -969,6 +983,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
+  }
+
+
+  private void refreshEmulators() {
+    this.emulatorCombo.setDisable(true);
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulatorsUncached());
+    emulators.add(0, null);
+    this.emulatorCombo.setItems(FXCollections.observableList(emulators));
+    this.emulatorCombo.setDisable(false);
   }
 
   private void bindSearchField() {
@@ -1614,6 +1637,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     String filterValue = textfieldSearch.textProperty().getValue();
 
     Playlist playlist = playlistCombo.getValue();
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
 
     //if all tables are filtered...
     if (filteredIds.isEmpty() && !tableFilterController.getFilterSettings().isResetted()) {
@@ -1623,6 +1647,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     for (GameRepresentation game : games) {
       if (!filteredIds.isEmpty() && !filteredIds.contains(game.getId())) {
+        continue;
+      }
+
+      if (emulator != null && game.getEmulatorId() != emulator.getId()) {
+        continue;
+      }
+
+      if (emulator == null && !game.isVpxGame()) {
         continue;
       }
 
@@ -1808,6 +1840,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    vpsSeparator.managedProperty().bindBidirectional(this.vpsSeparator.visibleProperty());
+    deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
+    b2sManagerSeparator.managedProperty().bindBidirectional(this.b2sManagerSeparator.visibleProperty());
+    stopSeparator.managedProperty().bindBidirectional(this.stopSeparator.visibleProperty());
+
+    this.vpsBtn.managedProperty().bindBidirectional(this.vpsBtn.visibleProperty());
+    this.vpsResetBtn.managedProperty().bindBidirectional(this.vpsResetBtn.visibleProperty());
+    this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
+    this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
+    this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
+    this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
+    this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
+    this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
+    this.backupBtn.managedProperty().bindBidirectional(this.backupBtn.visibleProperty());
+    this.backglassBtn.managedProperty().bindBidirectional(this.backglassBtn.visibleProperty());
+
     new Thread(() -> {
       try {
         VPS.getInstance().update();
@@ -1832,7 +1880,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tableFilterController = loader.getController();
       tableFilterController.setTableController(this);
     } catch (IOException e) {
-      LOG.error("Failed to load loading filter: " + e.getMessage());
+      LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 
 
@@ -1848,6 +1896,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (!data.isEmpty()) {
           tableView.getSelectionModel().select(0);
         }
+      }
+    });
+
+    emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+        tableView.getSelectionModel().clearSelection();
+        filterGames(games);
+        tableView.setItems(data);
+
+        if (!data.isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+
+        refreshViewForEmulator(newValue);
       }
     });
 
@@ -1885,7 +1948,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     view5.setFitHeight(18);
     backglassBtn.setGraphic(view5);
 
-    columnEmulator.setVisible(false);
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
     preferencesChanged(PreferenceNames.IGNORED_MEDIA, null);
@@ -1912,11 +1974,42 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
+  private void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
+    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+
+    this.vpsBtn.setVisible(vpxMode);
+    this.vpsResetBtn.setVisible(vpxMode);
+    this.importBtn.setVisible(vpxMode);
+    this.uploadTableBtn.setVisible(vpxMode);
+    this.deleteBtn.setVisible(vpxMode);
+    this.scanBtn.setVisible(vpxMode);
+    this.playBtn.setVisible(vpxMode);
+    this.stopBtn.setVisible(vpxMode);
+    this.backupBtn.setVisible(vpxMode);
+    this.backglassBtn.setVisible(vpxMode);
+
+    vpsSeparator.setVisible(vpxMode);
+    deleteSeparator.setVisible(vpxMode);
+    b2sManagerSeparator.setVisible(vpxMode);
+    stopSeparator.setVisible(vpxMode);
+
+    columnVersion.setVisible(vpxMode);
+    columnEmulator.setVisible(vpxMode);
+    columnVPS.setVisible(vpxMode);
+    columnRom.setVisible(vpxMode);
+    columnB2S.setVisible(vpxMode);
+    columnStatus.setVisible(vpxMode);
+    columnPUPPack.setVisible(vpxMode);
+    columnAltSound.setVisible(vpxMode);
+    columnAltColor.setVisible(vpxMode);
+    columnPOV.setVisible(vpxMode);
+    columnHSType.setVisible(vpxMode);
+  }
+
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      columnEmulator.setVisible(!assetManagerMode && !uiSettings.isHideEmulatorColumn());
       columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {

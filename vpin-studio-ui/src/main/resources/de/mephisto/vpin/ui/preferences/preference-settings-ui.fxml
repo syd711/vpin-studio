@@ -120,6 +120,15 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the version stored in PinUP Popper" textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
+                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
                   <CheckBox fx:id="uiShowVPSUpdates" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Show VPS table updates in table overview." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -211,24 +220,6 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <CheckBox fx:id="uiShowEmuColCheckbox" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" text="Show &quot;Emulator&quot; column in table overview." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="You only need this column if you are running an installation with multiple VPX emulators." textFill="WHITE" />
-                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">
                      <VBox.margin>
                         <Insets top="24.0" />

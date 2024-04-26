@@ -94,7 +94,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
-    boolean isVPX = game.getEmulator().isVpx();
+    boolean isVPX = game.isVpxGame();
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {
@@ -123,7 +123,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+    if (isVPX && isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
         List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (Game rawGame : otherGamesWithSameRom) {
@@ -138,7 +138,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
@@ -276,7 +276,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
 
-    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
       if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
         if (findFirst) {
@@ -285,7 +285,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
         if (findFirst) {

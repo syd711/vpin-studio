@@ -74,7 +74,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   }
 
   public GameList getImportTables() {
-    List<GameEmulator> emulators = pinUPConnector.getGameEmulators();
+    List<GameEmulator> emulators = pinUPConnector.getVpxGameEmulators();
     GameList list = new GameList();
     for (GameEmulator emulator : emulators) {
       File vpxTablesFolder = emulator.getTablesFolder();

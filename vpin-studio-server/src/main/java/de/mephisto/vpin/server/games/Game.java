@@ -72,6 +72,10 @@ public class Game {
     return pupPackName;
   }
 
+  public boolean isVpxGame() {
+    return this.emulator.isVpxEmulator();
+  }
+
   public void setPupPackName(String pupPackName) {
     this.pupPackName = pupPackName;
   }
