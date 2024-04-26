@@ -382,15 +382,11 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void refreshMedia(GameMediaRepresentation gameMedia, boolean preview) {
     Platform.runLater(() -> {
-      PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_MEDIA);
-      List<String> ignoreScreenNames = entry.getCSVValue();
-
       PopperScreen[] values = PopperScreen.values();
       for (PopperScreen value : values) {
         BorderPane screen = this.getScreenBorderPaneFor(value);
-        boolean ignored = ignoreScreenNames.contains(value.name());
         GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(value);
-        WidgetFactory.createMediaContainer(Studio.client, screen, item, ignored, preview);
+        WidgetFactory.createMediaContainer(Studio.client, screen, item, preview);
       }
     });
   }

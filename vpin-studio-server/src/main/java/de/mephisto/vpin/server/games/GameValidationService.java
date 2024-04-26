@@ -457,13 +457,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
-    if (mediaCodeToScreen.containsKey(code)) {
-      PopperScreen popperScreen = mediaCodeToScreen.get(code);
-      if (preferences.getIgnoredMedia() != null && Arrays.asList(preferences.getIgnoredMedia().split(",")).contains(popperScreen.name())) {
-        return false;
-      }
-    }
-
     List<Integer> ignoredValidations = game.getIgnoredValidations();
     if (ignoredValidations.contains(code)) {
       return false;

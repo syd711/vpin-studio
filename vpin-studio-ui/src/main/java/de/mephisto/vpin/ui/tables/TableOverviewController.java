@@ -18,7 +18,6 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.NavigationController;
@@ -303,7 +302,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final List<Consumer> reloadConsumers = new ArrayList<>();
 
   private boolean assetManagerMode = false;
-  private List<String> ignoredMedia;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -1444,10 +1442,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       fontIcon.setIconSize(20);
-      if (ignoredMedia.contains(popperScreen.name())) {
-        tt.append("Status:\t Ignored");
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-      }
+//      if (ignoredMedia.contains(popperScreen.name())) {
+//        tt.append("Status:\t Ignored");
+//        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+//      }
 
       btn.setOnAction(event -> {
 //        btn.getStyleClass().removeAll();
@@ -1951,7 +1949,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
-    preferencesChanged(PreferenceNames.IGNORED_MEDIA, null);
 
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
@@ -2018,10 +2015,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    }
-    else if (key.equals(PreferenceNames.IGNORED_MEDIA)) {
-      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.IGNORED_MEDIA);
-      ignoredMedia = preference.getCSVValue();
     }
   }
 

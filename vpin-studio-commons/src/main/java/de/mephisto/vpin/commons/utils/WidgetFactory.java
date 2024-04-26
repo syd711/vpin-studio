@@ -440,21 +440,12 @@ public class WidgetFactory {
     }
   }
 
-  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
+  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
         ((AssetMediaPlayer) node).disposeMedia();
       }
-    }
-
-    if (ignored) {
-      Label label = new Label("Screen is ignored");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      if (mediaItem != null) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-      }
-      parent.setCenter(label);
     }
 
     if (mediaItem == null) {
@@ -475,7 +466,7 @@ public class WidgetFactory {
       parent.setCenter(label);
     }
 
-    if (!ignored && previewEnabled && mediaItem != null) {
+    if (previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
     }
   }

@@ -22,8 +22,6 @@ public class Preferences {
 
   private String ignoredValidations;
 
-  private String ignoredMedia;
-
   private String systemName;
 
   private String systemPreset;
@@ -404,14 +402,6 @@ public class Preferences {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getIgnoredMedia() {
-    return ignoredMedia;
-  }
-
-  public void setIgnoredMedia(String ignoredMedia) {
-    this.ignoredMedia = ignoredMedia;
   }
 
   public String getIgnoredValidations() {
