@@ -214,7 +214,7 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       }
     }
 
-    if(!StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+    if (!StringUtils.isEmpty(term) && term.trim().contains(" ")) {
       term = term.split(" ")[0];
       for (TableAssetSearch s : this.cache) {
         if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
@@ -238,11 +238,11 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
 
     if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
-      String[] split = term.split(" ");
-      search.setTerm(split[0]);
-      result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+      String[] split = term.trim().split(" ");
+      return searchTableAsset(screen, split[0]);
     }
 
+    cache.add(result);
     if (cache.size() > CACHE_SIZE) {
       cache.remove(0);
     }

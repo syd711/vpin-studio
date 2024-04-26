@@ -53,6 +53,11 @@ public class PopperAssetSearchProgressModel extends ProgressModel<String> {
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return true;
+  }
+
+  @Override
   public String nextToString(String term) {
     return "Search Popper for '" + term + "'";
   }

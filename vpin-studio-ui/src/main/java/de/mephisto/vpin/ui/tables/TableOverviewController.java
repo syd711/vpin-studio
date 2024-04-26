@@ -1910,7 +1910,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       @Override
       public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
         tableView.getSelectionModel().clearSelection();
-        refreshViewForEmulator(newValue);
+        refreshViewForEmulator();
         tableFilterController.applyFilter();
       }
     });
@@ -1975,7 +1975,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
-  private void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
+  private void refreshViewForEmulator() {
+    GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
