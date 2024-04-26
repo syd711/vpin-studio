@@ -346,7 +346,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
     });
 
-    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
@@ -546,7 +546,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     }
 
     filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getPinUPPopperService().getGameEmulators().size()) {
+    if (emuIds.size() != client.getPinUPPopperService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
     }

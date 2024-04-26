@@ -66,9 +66,6 @@ public class UISettingsPreferencesController implements Initializable {
   private CheckBox uiShowVPSUpdates;
 
   @FXML
-  private CheckBox uiShowEmuColCheckbox;
-
-  @FXML
   private CheckBox autoEditCheckbox;
 
   @FXML
@@ -257,13 +254,6 @@ public class UISettingsPreferencesController implements Initializable {
       vpsToppper.setDisable(disabledSelection);
       vpsTutorial.setDisable(disabledSelection);
       vpsWheel.setDisable(disabledSelection);
-    });
-
-    uiShowEmuColCheckbox.setSelected(!uiSettings.isHideEmulatorColumn());
-    uiShowEmuColCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHideEmulatorColumn(!t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });
 
     autoEditCheckbox.setSelected(uiSettings.isAutoEditTableData());

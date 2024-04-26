@@ -458,9 +458,7 @@ public class WidgetFactory {
     }
 
     if (mediaItem == null) {
-      Label label = new Label("No media found");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      parent.setCenter(label);
+      createNoMediaLabel(parent);
     }
 
     if (!previewEnabled) {
@@ -480,6 +478,12 @@ public class WidgetFactory {
     if (!ignored && previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
     }
+  }
+
+  public static void createNoMediaLabel(BorderPane parent) {
+    Label label = new Label("No media found");
+    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+    parent.setCenter(label);
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {

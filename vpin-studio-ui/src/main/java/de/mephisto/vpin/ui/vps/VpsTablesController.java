@@ -173,7 +173,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
         int installed = 0;
         int unmapped = 0;
-        if (!client.getPinUPPopperService().getGameEmulators().isEmpty()) {
+        if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
           for (VpsTable vpsTable : vpsTables) {
             GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
             if (gameByVpsTable != null) {
@@ -183,7 +183,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
         }
 
 
-        List<GameRepresentation> gamesCached = client.getGameService().getGamesCached();
+        List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
         for (GameRepresentation gameRepresentation : gamesCached) {
           if (StringUtils.isEmpty(gameRepresentation.getExtTableId())) {
             unmapped++;
@@ -213,7 +213,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     installedColumn.setCellValueFactory(cellData -> {
       VpsTable value = cellData.getValue();
-      if (!client.getPinUPPopperService().getGameEmulators().isEmpty()) {
+      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
         if (gameByVpsTable != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
@@ -388,7 +388,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     editBtn.setDisable(true);
     openBtn.setDisable(newSelection.isEmpty());
 
-    if (newSelection.isPresent() && !client.getPinUPPopperService().getGameEmulators().isEmpty()) {
+    if (newSelection.isPresent() && !client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
       GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
       editBtn.setDisable(gameByVpsTable == null);
     }

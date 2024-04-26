@@ -42,6 +42,6 @@ public class TablesAssetViewSidebarController implements Initializable {
   }
 
   public void setGame(TableOverviewController tableOverviewController, GameRepresentation game, PopperScreen popperScreen) {
-    dialogController. setGame(tableOverviewController, game, popperScreen);
+    dialogController.setGame(tableOverviewController, game, popperScreen);
   }
 }

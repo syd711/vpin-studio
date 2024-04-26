@@ -21,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
@@ -462,6 +464,11 @@ public class TablesSidebarMediaController implements Initializable {
       if (node instanceof AssetMediaPlayer) {
         ((AssetMediaPlayer) node).disposeMedia();
       }
+      else if (node instanceof ImageView) {
+        ((ImageView) node).setImage(null);
+      }
+
+      WidgetFactory.createNoMediaLabel(parent);
     }
   }
 
@@ -518,13 +525,13 @@ public class TablesSidebarMediaController implements Initializable {
         List<MediaView> mediaViews = JFXHelper.getMediaPlayers(mediaRoot);
         for (MediaView mediaView : mediaViews) {
           MediaPlayer mediaPlayer = mediaView.getMediaPlayer();
-          if(newValue) {
-            if(mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
+          if (newValue) {
+            if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)) {
               mediaPlayer.play();
             }
           }
           else {
-            if(mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+            if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
               mediaPlayer.pause();
             }
           }

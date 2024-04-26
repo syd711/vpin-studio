@@ -17,6 +17,16 @@ public class GameEmulatorRepresentation {
   private String mameDirectory;
   private String nvramDirectory;
 
+  public boolean vpxEmulator;
+
+  public boolean isVpxEmulator() {
+    return vpxEmulator;
+  }
+
+  public void setVpxEmulator(boolean vpxEmulator) {
+    this.vpxEmulator = vpxEmulator;
+  }
+
   public String getName() {
     return name;
   }

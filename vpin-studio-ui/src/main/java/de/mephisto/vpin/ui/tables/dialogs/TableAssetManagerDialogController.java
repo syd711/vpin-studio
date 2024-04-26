@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -162,12 +163,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private Button addAudioBlank;
 
+  @FXML
+  private Label previewTitleLabel;
+
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private PopperScreen screen = PopperScreen.Wheel;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
-  private Node lastHover;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -353,21 +356,28 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
 
+  private final static int DEBOUNCE_MS = 100;
+  private final Debouncer debouncer = new Debouncer();
+
   @FXML
   private void onSearch() {
-    String term = searchField.getText().trim();
-    if (!StringUtils.isEmpty(term)) {
-      TableAssetSearch assetSearch = searchPopper(screen, term);
-      ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
-      serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-      serverAssetsList.setItems(assets);
-      serverAssetsList.refresh();
-      return;
-    }
+    debouncer.debounce("popperSearch", () -> {
+      Platform.runLater(() -> {
+        String term = searchField.getText().trim();
+        if (!StringUtils.isEmpty(term)) {
+          TableAssetSearch assetSearch = searchPopper(screen, term);
+          ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
+          serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+          serverAssetsList.setItems(assets);
+          serverAssetsList.refresh();
+          return;
+        }
 
-    serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-    serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
-    serverAssetsList.refresh();
+        serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+        serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
+        serverAssetsList.refresh();
+      });
+    }, DEBOUNCE_MS);
   }
 
   private TableAssetSearch searchPopper(PopperScreen screen, String term) {
@@ -565,8 +575,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No assets found."));
-    assetList.setPlaceholder(new Label("No assets found."));
+    serverAssetsList.setPlaceholder(new Label("No Popper assets found for this screen and table."));
+    assetList.setPlaceholder(new Label("No assets found for this screen and table."));
 
     if (!isEmbeddedMode()) {
       EventManager.getInstance().addListener(this);
@@ -666,7 +676,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
-    borderPane.setStyle(null);
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
     }
@@ -675,14 +684,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     if (clicked) {
+      if (this.lastSelected != null) {
+        this.lastSelected.setStyle(null);
+      }
+
       if (this.screen.equals(s)) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
         this.lastSelected = borderPane;
         return;
-      }
-
-      if (this.lastSelected != null) {
-        this.lastSelected.setStyle(null);
       }
       borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
       this.lastSelected = borderPane;
@@ -701,7 +710,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         borderPane.setStyle(null);
       }
     }
-    this.lastHover = borderPane;
   }
 
   private void disposeServerAssetPreview() {
@@ -729,6 +737,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+    debouncer.debounce("setGame", () -> {
+      Platform.runLater(() -> {
+        setGameInternal(overviewController, game, screen);
+      });
+    }, DEBOUNCE_MS);
+  }
+
+  private void setGameInternal(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");
@@ -888,6 +904,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     refreshTableView();
+    if (previewTitleLabel != null) {
+      Node node = this.lastSelected;
+      if (node == null) {
+        node = screenWheel;
+      }
+      Label nameLabel = (Label) ((BorderPane) node).getBottom();
+      previewTitleLabel.setText(nameLabel.getText());
+    }
   }
 
   @Override

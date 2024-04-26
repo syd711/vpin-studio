@@ -23,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,9 +41,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
-
-  @FXML
-  private VBox root;
 
   @FXML
   private Accordion tableAccordion;
@@ -88,9 +86,6 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TitledPane titledPaneAltColor;
-
-  @FXML
-  private TitledPane titledPaneAltSound;
 
   @FXML
   private CheckBox mediaPreviewCheckbox;
@@ -375,6 +370,18 @@ public class TablesSidebarController implements Initializable {
     povBtn.setVisible(SystemUtil.isFolderActionSupported());
     pupBackBtn.setVisible(SystemUtil.isFolderActionSupported());
     dmdBtn.setVisible(SystemUtil.isFolderActionSupported());
+
+    titledPaneDefaultBackground.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneHighscores.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPanePov.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneAudio.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneDirectB2s.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPanePUPPack.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneDMD.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneMame.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneVps.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneAltColor.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+    titledPaneMetadata.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
   }
 
   private void loadSidePanels() {
@@ -678,12 +685,42 @@ public class TablesSidebarController implements Initializable {
     tableAccordion.setVisible(b);
   }
 
-  public TitledPane getTitledPanePov() {
-    return titledPanePov;
+  public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
+    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+
+    if (!vpxMode) {
+      tableAccordion.getPanes().remove(titledPaneDefaultBackground);
+      tableAccordion.getPanes().remove(titledPaneHighscores);
+      tableAccordion.getPanes().remove(titledPanePov);
+      tableAccordion.getPanes().remove(titledPaneAudio);
+      tableAccordion.getPanes().remove(titledPaneDirectB2s);
+      tableAccordion.getPanes().remove(titledPanePUPPack);
+      tableAccordion.getPanes().remove(titledPaneDMD);
+      tableAccordion.getPanes().remove(titledPaneMame);
+      tableAccordion.getPanes().remove(titledPaneVps);
+      tableAccordion.getPanes().remove(titledPaneAltColor);
+      tableAccordion.getPanes().remove(titledPaneMetadata);
+    }
+    else {
+      if (tableAccordion.getPanes().size() == 3) {
+        tableAccordion.getPanes().add(titledPaneDirectB2s);
+        tableAccordion.getPanes().add(titledPaneDMD);
+        tableAccordion.getPanes().add(titledPanePUPPack);
+        tableAccordion.getPanes().add(titledPaneAudio);
+        tableAccordion.getPanes().add(titledPaneAltColor);
+        tableAccordion.getPanes().add(titledPanePov);
+        tableAccordion.getPanes().add(titledPaneHighscores);
+        tableAccordion.getPanes().add(titledPaneMame);
+        tableAccordion.getPanes().add(titledPaneVps);
+        tableAccordion.getPanes().add(titledPaneMetadata);
+        tableAccordion.getPanes().add(titledPaneDefaultBackground);
+      }
+    }
+
   }
 
-  public TitledPane getTitledPaneAudio() {
-    return titledPaneAudio;
+  public TitledPane getTitledPanePov() {
+    return titledPanePov;
   }
 
   public TitledPane getTitledPaneDirectB2s() {
@@ -707,6 +744,6 @@ public class TablesSidebarController implements Initializable {
   }
 
   public TitledPane getTitledPaneAltSound() {
-    return titledPaneAltSound;
+    return titledPaneAudio;
   }
 }

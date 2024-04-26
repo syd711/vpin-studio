@@ -270,11 +270,11 @@ public class TableDialogs {
   }
 
   public static void openAutoFillAll() {
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getGamesCached().size() + " tables?",
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
       "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
       "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
+      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }
@@ -293,10 +293,10 @@ public class TableDialogs {
   }
 
   public static void openAutoMatchAll() {
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getGamesCached().size() + " tables?",
+    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
       "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
     if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getGamesCached(), result.isChecked()));
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }

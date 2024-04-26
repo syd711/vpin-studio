@@ -155,23 +155,29 @@ public class FilterSettings {
     this.versionUpdates = versionUpdates;
   }
 
-  public boolean isResetted() {
+  public boolean isResetted(boolean vpxMode) {
+    if(vpxMode) {
+      return !this.missingAssets
+        && !this.otherIssues
+        && !this.noHighscoreSettings
+        && !this.noHighscoreSupport
+        && !this.notPlayed
+        && !this.noVpsMapping
+        && !this.vpsUpdates
+        && !this.versionUpdates
+        && !this.withAltColor
+        && !this.withAltSound
+        && !this.withBackglass
+        && !this.withPovIni
+        && !this.withPupPack
+        && !this.withNVOffset
+        && !this.withAlias
+        && this.gameStatus == -1;
+    }
+
     return !this.missingAssets
-      && !this.otherIssues
-      && !this.noHighscoreSettings
-      && !this.noHighscoreSupport
       && !this.notPlayed
-      && !this.noVpsMapping
-      && !this.vpsUpdates
-      && !this.versionUpdates
-      && !this.withAltColor
-      && !this.withAltSound
-      && !this.withBackglass
-      && !this.withPovIni
-      && !this.withPupPack
-      && !this.withNVOffset
-      && !this.withAlias
-      && this.gameStatus == -1
-      && this.emulatorId == -1;
+      && this.gameStatus == -1;
+
   }
 }

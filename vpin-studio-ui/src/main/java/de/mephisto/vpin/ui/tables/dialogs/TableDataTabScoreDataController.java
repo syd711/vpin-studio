@@ -230,6 +230,10 @@ public class TableDataTabScoreDataController implements Initializable {
 
 
   public void refreshScannedValues() {
+    if (!game.isVpxGame()) {
+      return;
+    }
+
     scannedRomName.setText(gameDetails.getRomName());
     applyRomBtn.setDisable(StringUtils.isEmpty(gameDetails.getRomName()));
 

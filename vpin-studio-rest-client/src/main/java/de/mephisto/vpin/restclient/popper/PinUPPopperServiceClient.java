@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
  * Popper
@@ -73,6 +75,15 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulators() {
     return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
+  }
+
+  public List<GameEmulatorRepresentation> getVpxGameEmulators() {
+    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  }
+
+  public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
+    return Arrays.asList(getRestClient().get(API + "popper/emulators", GameEmulatorRepresentation[].class));
   }
 
   public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
@@ -203,6 +214,15 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       }
     }
 
+    if(!StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+      term = term.split(" ")[0];
+      for (TableAssetSearch s : this.cache) {
+        if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
+          return s;
+        }
+      }
+    }
+
     return null;
   }
 
@@ -216,7 +236,12 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     search.setTerm(term);
     search.setScreen(screen);
     TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
-    cache.add(result);
+
+    if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+      String[] split = term.split(" ");
+      search.setTerm(split[0]);
+      result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    }
 
     if (cache.size() > CACHE_SIZE) {
       cache.remove(0);

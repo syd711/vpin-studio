@@ -1,3 +1,9 @@
+.debug {
+    -fx-border-style: solid;
+    -fx-border-color: green;
+    -fx-border-width: 2;
+}
+
 /**
  * Colors
  */
