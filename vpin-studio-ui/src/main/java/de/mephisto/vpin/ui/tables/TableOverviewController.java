@@ -1998,12 +1998,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setVisible(vpxMode);
     columnRom.setVisible(vpxMode);
     columnB2S.setVisible(vpxMode);
-    columnStatus.setVisible(vpxMode);
     columnPUPPack.setVisible(vpxMode);
     columnAltSound.setVisible(vpxMode);
     columnAltColor.setVisible(vpxMode);
     columnPOV.setVisible(vpxMode);
     columnHSType.setVisible(vpxMode);
+
+    tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
   }
 
   @Override

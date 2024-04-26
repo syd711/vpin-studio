@@ -236,6 +236,8 @@ public class TablesSidebarPopperController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      autoFillBtn.setVisible(game.isVpxGame());
+
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
       extrasPanel.setVisible(tableDetails.isPopper15());
@@ -333,6 +335,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
 
     Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));

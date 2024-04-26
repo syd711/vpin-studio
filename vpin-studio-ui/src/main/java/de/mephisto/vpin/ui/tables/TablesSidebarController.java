@@ -90,9 +90,6 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPaneAltColor;
 
   @FXML
-  private TitledPane titledPaneAltSound;
-
-  @FXML
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
@@ -678,12 +675,24 @@ public class TablesSidebarController implements Initializable {
     tableAccordion.setVisible(b);
   }
 
-  public TitledPane getTitledPanePov() {
-    return titledPanePov;
+  public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
+    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+
+    titledPaneDefaultBackground.setVisible(vpxMode);
+    titledPaneHighscores.setVisible(vpxMode);
+    titledPanePov.setVisible(vpxMode);
+    titledPaneAudio.setVisible(vpxMode);
+    titledPaneDirectB2s.setVisible(vpxMode);
+    titledPanePUPPack.setVisible(vpxMode);
+    titledPaneDMD.setVisible(vpxMode);
+    titledPaneMame.setVisible(vpxMode);
+    titledPaneVps.setVisible(vpxMode);
+    titledPaneAltColor.setVisible(vpxMode);
+    titledPaneMetadata.setVisible(vpxMode);
   }
 
-  public TitledPane getTitledPaneAudio() {
-    return titledPaneAudio;
+  public TitledPane getTitledPanePov() {
+    return titledPanePov;
   }
 
   public TitledPane getTitledPaneDirectB2s() {
@@ -707,6 +716,6 @@ public class TablesSidebarController implements Initializable {
   }
 
   public TitledPane getTitledPaneAltSound() {
-    return titledPaneAltSound;
+    return titledPaneAudio;
   }
 }
