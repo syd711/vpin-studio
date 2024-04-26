@@ -188,8 +188,6 @@
                     <top>
                         <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                             <items>
-                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
-                        <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -201,6 +199,8 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                            </graphic>
                         </Button>
+                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                        <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                     <font>
                                         <Font size="14.0" />

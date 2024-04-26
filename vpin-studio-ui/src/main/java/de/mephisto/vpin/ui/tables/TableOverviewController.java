@@ -845,6 +845,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
   public synchronized void onRefresh(FilterSettings filterSettings) {
+    GameEmulatorRepresentation value = this.emulatorCombo.getValue();
     tableView.setVisible(false);
 
     setBusy(true);
@@ -857,7 +858,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           filterGames(games);
           tableView.setItems(data);
           tableView.refresh();
-          if (filterSettings.isResetted()) {
+
+          GameEmulatorRepresentation emulator = getEmulatorSelection();
+          if (filterSettings.isResetted(emulator == null || emulator.isVpxEmulator())) {
             labelTableCount.setText(games.size() + " tables");
           }
           else {
@@ -1644,7 +1647,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameEmulatorRepresentation emulator = emulatorCombo.getValue();
 
     //if all tables are filtered...
-    if (filteredIds.isEmpty() && !tableFilterController.getFilterSettings().isResetted()) {
+    if (filteredIds.isEmpty() && !tableFilterController.getFilterSettings().isResetted(emulator == null || emulator.isVpxEmulator())) {
       data = FXCollections.emptyObservableList();
       return;
     }
@@ -1907,8 +1910,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       @Override
       public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
         tableView.getSelectionModel().clearSelection();
-        filterGames(games);
-        tableView.setItems(data);
+        tableFilterController.applyFilter();
 
         if (!data.isEmpty()) {
           tableView.getSelectionModel().select(0);
@@ -1979,6 +1981,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
+    tableFilterController.setEmulator(newValue);
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
     this.vpsBtn.setVisible(vpxMode);
@@ -2064,5 +2067,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public Button getFilterButton() {
     return this.filterBtn;
+  }
+
+  public GameEmulatorRepresentation getEmulatorSelection() {
+    return this.emulatorCombo.getSelectionModel().getSelectedItem();
   }
 }

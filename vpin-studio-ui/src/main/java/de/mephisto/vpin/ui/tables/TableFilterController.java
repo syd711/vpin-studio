@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -34,9 +35,6 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private VBox filterPanel;
-
-  @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -87,6 +85,18 @@ public class TableFilterController implements Initializable {
   private VBox filterRoot;
 
   @FXML
+  private Node configurationFilters;
+
+  @FXML
+  private Node tableAssetFilters;
+
+  @FXML
+  private Node configurationIssuesFilter;
+
+  @FXML
+  private Node vpsFilters;
+
+  @FXML
   private ComboBox<TableStatus> statusCombo;
 
   private boolean visible = false;
@@ -99,7 +109,8 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private void onReset() {
-    if (!filterSettings.isResetted()) {
+    GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
+    if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       updateSettings(new FilterSettings());
       applyFilter();
     }
@@ -171,23 +182,64 @@ public class TableFilterController implements Initializable {
     }
   }
 
+  private void updateSettings(FilterSettings filterSettings) {
+    updatesDisabled = true;
+    statusCombo.setValue(null);
+    missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
+    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
+    vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
+    versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
+    notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
+    noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
+    noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
+    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
+    withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
+    withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
+    withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
+    withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
+    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
+    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
+    withAliasCheckBox.setSelected(filterSettings.isWithAlias());
+    updatesDisabled = false;
+  }
+
+  public void applyFilter() {
+    GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
+    if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
+      filterButton.getStyleClass().remove("toggle-button-selected");
+      filterRoot.getStyleClass().remove("toggle-selected");
+    }
+    else {
+      filterRoot.getStyleClass().add("toggle-selected");
+      if (!filterButton.getStyleClass().contains("toggle-button-selected")) {
+        filterButton.getStyleClass().add("toggle-button-selected");
+      }
+    }
+
+    if (updatesDisabled) {
+      return;
+    }
+
+    Platform.runLater(() -> {
+      tableOverviewController.onRefresh(filterSettings);
+    });
+  }
+
+  public FilterSettings getFilterSettings() {
+    return filterSettings;
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     filterRoot.setVisible(false);
+    configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());
+    tableAssetFilters.managedProperty().bindBidirectional(tableAssetFilters.visibleProperty());
+    vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());
+    configurationIssuesFilter.managedProperty().bindBidirectional(configurationIssuesFilter.visibleProperty());
 
     List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getPinUPPopperService().getGameEmulators());
     gameEmulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-    emulatorCombo.setItems(emulators);
-    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-      if (t1 == null) {
-        filterSettings.setEmulatorId(-1);
-      }
-      else {
-        filterSettings.setEmulatorId(t1.getId());
-      }
-      applyFilter();
-    });
 
     filterSettings = new FilterSettings();
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
@@ -280,50 +332,15 @@ public class TableFilterController implements Initializable {
     });
   }
 
-  private void updateSettings(FilterSettings filterSettings) {
-    updatesDisabled = true;
-    emulatorCombo.setValue(null);
-    statusCombo.setValue(null);
-    missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
-    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
-    vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
-    versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
-    notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
-    noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
-    noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
-    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
-    withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
-    withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
-    withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
-    withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
-    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
-    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
-    withAliasCheckBox.setSelected(filterSettings.isWithAlias());
-    updatesDisabled = false;
-  }
+  public void setEmulator(GameEmulatorRepresentation value) {
+    filterSettings.setEmulatorId(value != null ? value.getId() : -1);
 
-  private void applyFilter() {
-    if (filterSettings.isResetted()) {
-      filterButton.getStyleClass().remove("toggle-button-selected");
-      filterRoot.getStyleClass().remove("toggle-selected");
-    }
-    else {
-      filterRoot.getStyleClass().add("toggle-selected");
-      if (!filterButton.getStyleClass().contains("toggle-button-selected")) {
-        filterButton.getStyleClass().add("toggle-button-selected");
-      }
-    }
+    boolean vpxMode = value == null || value.isVpxEmulator();
+    configurationFilters.setVisible(vpxMode);
+    tableAssetFilters.setVisible(vpxMode);
+    vpsFilters.setVisible(vpxMode);
+    configurationIssuesFilter.setVisible(vpxMode);
 
-    if (updatesDisabled) {
-      return;
-    }
-
-    Platform.runLater(() -> {
-      tableOverviewController.onRefresh(filterSettings);
-    });
-  }
-
-  public FilterSettings getFilterSettings() {
-    return filterSettings;
+    filterRoot.requestLayout();
   }
 }

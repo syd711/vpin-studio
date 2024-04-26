@@ -19,156 +19,145 @@
    <children>
       <VBox>
          <children>
-            <VBox prefHeight="120.0">
+            <BorderPane>
+               <left>
+                  <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                     <children>
+                        <Hyperlink onAction="#onReset" text="Reset All">
+                           <HBox.margin>
+                              <Insets left="-5.0" top="-9.0" />
+                           </HBox.margin>
+                        </Hyperlink>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="7.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </left>
+               <right>
+                  <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                     </graphic>
+                  </Button>
+               </right>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children>
+      </VBox>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox fx:id="titlePaneRoot" prefWidth="230.0">
                <children>
-                  <BorderPane>
-                     <left>
-                        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-                           <children>
-                              <Hyperlink onAction="#onReset" text="Reset All">
-                                 <HBox.margin>
-                                    <Insets left="-5.0" top="-9.0" />
-                                 </HBox.margin>
-                              </Hyperlink>
-                           </children>
-                           <BorderPane.margin>
-                              <Insets top="7.0" />
-                           </BorderPane.margin>
-                        </HBox>
-                     </left>
-                     <right>
-                        <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
+                  <Label styleClass="default-title" text="Table Validators">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Table Assets">
+                     <VBox.margin>
+                        <Insets top="-6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <HBox fx:id="configurationIssuesFilter" spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="otherIssuesCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Configuration Issues" />
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
-                        </Button>
-                     </right>
-                  </BorderPane>
-                  <Label text="Emulator" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing Popper assets." wrapText="true" />
+                           </tooltip>
+                           <HBox.margin>
+                              <Insets top="19.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox fx:id="tableAssetFilters">
+                     <children>
+                        <Label styleClass="default-title" text="Table Asset Filters">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass Available" />
+                        <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="PUP Pack Available" />
+                        <CheckBox fx:id="withPovIniCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="INI/POV File Available" />
+                        <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Color Available" />
+                        <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Sound Available" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="configurationFilters">
+                     <children>
+                        <Label styleClass="default-title" text="Configuration Filters">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Highscore Settings" />
+                        <CheckBox fx:id="noVpsMappingCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Mapping" />
+                        <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="NVOffset Set" />
+                        <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ROM Alias Set" />
+                        <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
+                     </children>
+                  </VBox>
+                  <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <ComboBox fx:id="emulatorCombo" prefHeight="30.0">
+                  <Label layoutX="21.0" layoutY="71.0" text="Table Status" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="statusCombo" prefHeight="30.0">
                      <VBox.margin>
-                        <Insets bottom="12.0" top="6.0" />
+                        <Insets top="6.0" />
                      </VBox.margin>
                   </ComboBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
+                     <children>
+                        <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Based on launches from PinUP Popper" wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox fx:id="vpsFilters">
+                     <children>
+                        <CheckBox fx:id="vpsUpdatesCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="VPS Updates Available" />
+                        <CheckBox fx:id="versionUpdatesCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="New Version Available" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                  </VBox>
                </children>
             </VBox>
-            <ScrollPane hbarPolicy="NEVER">
-               <content>
-                  <VBox fx:id="titlePaneRoot" minHeight="150.0" prefWidth="230.0">
-                     <children>
-                        <Label styleClass="default-title" text="Table Validators">
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Table Assets">
-                           <VBox.margin>
-                              <Insets top="-6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <HBox spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="otherIssuesCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Configuration Issues" />
-                              <Label>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing Popper assets." wrapText="true" />
-                                 </tooltip>
-                                 <HBox.margin>
-                                    <Insets top="19.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label layoutX="21.0" layoutY="21.0" styleClass="default-title" text="Table Asset Filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass Available">
-                           <VBox.margin>
-                              <Insets top="-6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <CheckBox fx:id="withPupPackCheckBox" layoutX="21.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="PUP Pack Available" />
-                        <CheckBox fx:id="withPovIniCheckBox" layoutX="21.0" layoutY="176.0" mnemonicParsing="false" styleClass="preference-checkbox" text="INI/POV File Available" />
-                        <CheckBox fx:id="withAltColorCheckBox" layoutX="21.0" layoutY="215.0" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Color Available" />
-                        <CheckBox fx:id="withAltSoundCheckBox" layoutX="21.0" layoutY="253.0" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Sound Available" />
-                        <Label layoutX="21.0" layoutY="21.0" styleClass="default-title" text="Configuration Filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="noHighscoreSettingsCheckBox" layoutX="21.0" layoutY="356.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Highscore Settings">
-                           <VBox.margin>
-                              <Insets top="-6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <CheckBox fx:id="noVpsMappingCheckBox" layoutX="21.0" layoutY="410.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Mapping" />
-                        <CheckBox fx:id="withNVOffsetCheckBox" layoutX="10.0" layoutY="442.0" mnemonicParsing="false" styleClass="preference-checkbox" text="NVOffset Set" />
-                        <CheckBox fx:id="withAliasCheckBox" layoutX="10.0" layoutY="480.0" mnemonicParsing="false" styleClass="preference-checkbox" text="ROM Alias Set" />
-                        <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label layoutX="21.0" layoutY="71.0" text="Table Status" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="statusCombo" prefHeight="30.0">
-                           <VBox.margin>
-                              <Insets top="6.0" />
-                           </VBox.margin>
-                        </ComboBox>
-                        <CheckBox fx:id="vpsUpdatesCheckBox" layoutX="21.0" layoutY="181.0" mnemonicParsing="false" styleClass="preference-checkbox" text="VPS Updates Available">
-                           <VBox.margin>
-                              <Insets top="-6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <CheckBox fx:id="versionUpdatesCheckBox" layoutX="21.0" layoutY="365.0" mnemonicParsing="false" styleClass="preference-checkbox" text="New Version Available" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
-                           <children>
-                              <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />
-                              <Label>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Based on launches from PinUP Popper" wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <CheckBox fx:id="noHighscoreSupportCheckBox" layoutX="21.0" layoutY="394.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
-                     </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </children>
-         <VBox.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </VBox.margin>
-      </VBox>
+         </content>
+      </ScrollPane>
    </children>
    <styleClass>
       <String fx:value="base-component" />
       <String fx:value="filter-component" />
    </styleClass>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
 </VBox>
