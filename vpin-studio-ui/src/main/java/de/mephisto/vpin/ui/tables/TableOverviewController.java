@@ -1399,20 +1399,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       String mimeType = defaultMediaItem.getMimeType();
       Button btn = new Button();
       btn.getStyleClass().add("table-media-button");
-      btn.setTooltip(new Tooltip(defaultMediaItem.getName()));
+      StringBuilder tt = new StringBuilder();
+      tt.append("Name:\t ");
+      tt.append(defaultMediaItem.getName());
+      tt.append("\n");
       if (mimeType.contains("audio")) {
+        tt.append("Type:\t Audio\n");
         btn.setGraphic(WidgetFactory.createIcon("bi-music-note-beamed"));
       }
       else if (mimeType.contains("image")) {
+        tt.append("Type:\t Picture\n");
         btn.setGraphic(WidgetFactory.createIcon("bi-card-image"));
       }
       else if (mimeType.contains("video")) {
+        tt.append("Type:\t Video\n");
         btn.setGraphic(WidgetFactory.createIcon("bi-film"));
       }
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       fontIcon.setIconSize(20);
       if (ignoredMedia.contains(popperScreen.name())) {
+        tt.append("Status:\t Ignored");
         fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
       }
 
@@ -1421,6 +1428,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 //        btn.getStyleClass().add("table-media-button-selected");
         showAssetDetails(value, popperScreen);
       });
+      Tooltip tooltip = new Tooltip(tt.toString());
+      tooltip.setWrapText(true);
+      btn.setTooltip(tooltip);
       return btn;
     }
     return new Label("");

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -216,6 +217,12 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     search.setTerm(term);
     search.setScreen(screen);
     TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+      String[] split = term.split(" ");
+      search.setTerm(split[0]);
+      result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    }
+
     cache.add(result);
 
     if (cache.size() > CACHE_SIZE) {

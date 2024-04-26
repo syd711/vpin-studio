@@ -162,12 +162,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private Button addAudioBlank;
 
+  @FXML
+  private Label previewTitleLabel;
+
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private PopperScreen screen = PopperScreen.Wheel;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
-  private Node lastHover;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -666,7 +668,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
-    borderPane.setStyle(null);
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
     }
@@ -675,14 +676,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     if (clicked) {
+      if (this.lastSelected != null) {
+        this.lastSelected.setStyle(null);
+      }
+
       if (this.screen.equals(s)) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
         this.lastSelected = borderPane;
         return;
-      }
-
-      if (this.lastSelected != null) {
-        this.lastSelected.setStyle(null);
       }
       borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
       this.lastSelected = borderPane;
@@ -701,7 +702,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         borderPane.setStyle(null);
       }
     }
-    this.lastHover = borderPane;
   }
 
   private void disposeServerAssetPreview() {
@@ -888,6 +888,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     refreshTableView();
+    if (previewTitleLabel != null) {
+      Node node = this.lastSelected;
+      if (node == null) {
+        node = screenWheel;
+      }
+      Label nameLabel = (Label) ((BorderPane) node).getBottom();
+      previewTitleLabel.setText(nameLabel.getText());
+    }
   }
 
   @Override
