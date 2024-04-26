@@ -206,7 +206,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onScanAll() {
-    boolean scanned = TableDialogs.openScanAllDialog(client.getGameService().getGamesCached());
+    boolean scanned = TableDialogs.openScanAllDialog(client.getGameService().getVpxGamesCached());
     if (scanned) {
       EventManager.getInstance().notifyTablesChanged();
     }

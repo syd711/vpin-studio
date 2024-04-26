@@ -234,7 +234,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
   }
 
   private void refreshTables(@Nullable String filterRom) {
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> games = client.getGameService().getVpxGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (StringUtils.isEmpty(game.getRom())) {

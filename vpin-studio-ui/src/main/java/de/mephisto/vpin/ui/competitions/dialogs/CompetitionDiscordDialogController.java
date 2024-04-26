@@ -526,7 +526,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> games = client.getGameService().getVpxGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (StringUtils.isEmpty(game.getRom())) {

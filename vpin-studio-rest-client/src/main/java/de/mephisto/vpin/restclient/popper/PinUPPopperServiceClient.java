@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
  * Popper
@@ -74,6 +75,11 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulators() {
     return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
+  }
+
+  public List<GameEmulatorRepresentation> getVpxGameEmulators() {
+    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
 
   public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {

@@ -53,7 +53,7 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameRepresentation> gamesCached = client.getGameService().getGamesCached();
+    List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
 
     List<GameRepresentation> filtered = gamesCached.stream().filter(g -> g.getHighscoreType() != null).collect(Collectors.toList());
     tablesCombo.setItems(FXCollections.observableList(filtered));

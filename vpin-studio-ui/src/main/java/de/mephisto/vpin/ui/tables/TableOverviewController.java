@@ -1493,103 +1493,105 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     assetsItem.setDisable(tableView.getSelectionModel().isEmpty());
     ctxMenu.getItems().add(assetsItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    if (game.isVpxGame()) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem scanItem = new MenuItem("Scan");
-    scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
-    scanItem.setOnAction(actionEvent -> onTablesScan());
-    scanItem.setDisable(tableView.getSelectionModel().isEmpty());
-    ctxMenu.getItems().add(scanItem);
+      MenuItem scanItem = new MenuItem("Scan");
+      scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
+      scanItem.setOnAction(actionEvent -> onTablesScan());
+      scanItem.setDisable(tableView.getSelectionModel().isEmpty());
+      ctxMenu.getItems().add(scanItem);
 
-    MenuItem scanAllItem = new MenuItem("Scan All");
-    scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
-    scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
-    ctxMenu.getItems().add(scanAllItem);
+      MenuItem scanAllItem = new MenuItem("Scan All");
+      scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
+      scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
+      ctxMenu.getItems().add(scanAllItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem importsItem = new MenuItem("Import Tables");
-    importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
-    importsItem.setOnAction(actionEvent -> onImport());
-    ctxMenu.getItems().add(importsItem);
+      MenuItem importsItem = new MenuItem("Import Tables");
+      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
+      importsItem.setOnAction(actionEvent -> onImport());
+      ctxMenu.getItems().add(importsItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
-    uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    uploadAndImportTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadAndImportTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
-    ctxMenu.getItems().add(uploadAndImportTableItem);
+      MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
+      uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadAndImportTableItem.setDisable(tableView.getSelectionModel().isEmpty());
+      uploadAndImportTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
+      ctxMenu.getItems().add(uploadAndImportTableItem);
 
-    MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
-    uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    uploadAndReplaceTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadAndReplaceTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
-    ctxMenu.getItems().add(uploadAndReplaceTableItem);
+      MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
+      uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadAndReplaceTableItem.setDisable(tableView.getSelectionModel().isEmpty());
+      uploadAndReplaceTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
+      ctxMenu.getItems().add(uploadAndReplaceTableItem);
 
-    MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
-    uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    uploadAndCloneTableItem.setDisable(tableView.getSelectionModel().isEmpty() || game == null || game.getGameFileName().contains("\\"));
-    uploadAndCloneTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
-    ctxMenu.getItems().add(uploadAndCloneTableItem);
+      MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
+      uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadAndCloneTableItem.setDisable(tableView.getSelectionModel().isEmpty() || game == null || game.getGameFileName().contains("\\"));
+      uploadAndCloneTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
+      ctxMenu.getItems().add(uploadAndCloneTableItem);
 
-    Menu uploadMenu = new Menu("Upload...");
+      Menu uploadMenu = new Menu("Upload...");
 
-    MenuItem altColorFilesItem = new MenuItem("Upload ALT Color Files");
-    altColorFilesItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    altColorFilesItem.setDisable(tableView.getSelectionModel().isEmpty());
-    altColorFilesItem.setOnAction(actionEvent -> onAltColorUpload());
-    uploadMenu.getItems().add(altColorFilesItem);
+      MenuItem altColorFilesItem = new MenuItem("Upload ALT Color Files");
+      altColorFilesItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      altColorFilesItem.setDisable(tableView.getSelectionModel().isEmpty());
+      altColorFilesItem.setOnAction(actionEvent -> onAltColorUpload());
+      uploadMenu.getItems().add(altColorFilesItem);
 
-    MenuItem altSoundItem = new MenuItem("Upload ALT Sound Pack");
-    altSoundItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    altSoundItem.setDisable(tableView.getSelectionModel().isEmpty());
-    altSoundItem.setOnAction(actionEvent -> onAltSoundUpload());
-    uploadMenu.getItems().add(altSoundItem);
+      MenuItem altSoundItem = new MenuItem("Upload ALT Sound Pack");
+      altSoundItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      altSoundItem.setDisable(tableView.getSelectionModel().isEmpty());
+      altSoundItem.setOnAction(actionEvent -> onAltSoundUpload());
+      uploadMenu.getItems().add(altSoundItem);
 
-    MenuItem uploadB2SItem = new MenuItem("Upload Backglass");
-    uploadB2SItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    uploadB2SItem.setDisable(tableView.getSelectionModel().isEmpty());
-    uploadB2SItem.setOnAction(actionEvent -> onBackglassUpload());
-    uploadMenu.getItems().add(uploadB2SItem);
+      MenuItem uploadB2SItem = new MenuItem("Upload Backglass");
+      uploadB2SItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadB2SItem.setDisable(tableView.getSelectionModel().isEmpty());
+      uploadB2SItem.setOnAction(actionEvent -> onBackglassUpload());
+      uploadMenu.getItems().add(uploadB2SItem);
 
-    MenuItem dmdItem = new MenuItem("Upload DMD Pack");
-    dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    dmdItem.setDisable(tableView.getSelectionModel().isEmpty());
-    dmdItem.setOnAction(actionEvent -> onDMDUpload());
-    uploadMenu.getItems().add(dmdItem);
+      MenuItem dmdItem = new MenuItem("Upload DMD Pack");
+      dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      dmdItem.setDisable(tableView.getSelectionModel().isEmpty());
+      dmdItem.setOnAction(actionEvent -> onDMDUpload());
+      uploadMenu.getItems().add(dmdItem);
 
-    MenuItem iniItem = new MenuItem("Upload INI File");
-    iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    iniItem.setDisable(tableView.getSelectionModel().isEmpty());
-    iniItem.setOnAction(actionEvent -> onIniUpload());
-    uploadMenu.getItems().add(iniItem);
+      MenuItem iniItem = new MenuItem("Upload INI File");
+      iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      iniItem.setDisable(tableView.getSelectionModel().isEmpty());
+      iniItem.setOnAction(actionEvent -> onIniUpload());
+      uploadMenu.getItems().add(iniItem);
 
-    MenuItem musicItem = new MenuItem("Upload Music Pack");
-    musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    musicItem.setDisable(tableView.getSelectionModel().isEmpty());
-    musicItem.setOnAction(actionEvent -> onMusicUpload());
-    uploadMenu.getItems().add(musicItem);
+      MenuItem musicItem = new MenuItem("Upload Music Pack");
+      musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      musicItem.setDisable(tableView.getSelectionModel().isEmpty());
+      musicItem.setOnAction(actionEvent -> onMusicUpload());
+      uploadMenu.getItems().add(musicItem);
 
-    MenuItem povItem = new MenuItem("Upload POV File");
-    povItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    povItem.setDisable(tableView.getSelectionModel().isEmpty());
-    povItem.setOnAction(actionEvent -> onPOVUpload());
-    uploadMenu.getItems().add(povItem);
+      MenuItem povItem = new MenuItem("Upload POV File");
+      povItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      povItem.setDisable(tableView.getSelectionModel().isEmpty());
+      povItem.setOnAction(actionEvent -> onPOVUpload());
+      uploadMenu.getItems().add(povItem);
 
-    MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
-    pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    pupPackItem.setDisable(tableView.getSelectionModel().isEmpty());
-    pupPackItem.setOnAction(actionEvent -> onPupPackUpload());
-    uploadMenu.getItems().add(pupPackItem);
+      MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
+      pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      pupPackItem.setDisable(tableView.getSelectionModel().isEmpty());
+      pupPackItem.setOnAction(actionEvent -> onPupPackUpload());
+      uploadMenu.getItems().add(pupPackItem);
 
-    MenuItem romsItem = new MenuItem("Upload ROMs");
-    romsItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-    romsItem.setDisable(tableView.getSelectionModel().isEmpty());
-    romsItem.setOnAction(actionEvent -> onRomsUpload());
-    uploadMenu.getItems().add(romsItem);
+      MenuItem romsItem = new MenuItem("Upload ROMs");
+      romsItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      romsItem.setDisable(tableView.getSelectionModel().isEmpty());
+      romsItem.setOnAction(actionEvent -> onRomsUpload());
+      uploadMenu.getItems().add(romsItem);
 
-    ctxMenu.getItems().add(uploadMenu);
+      ctxMenu.getItems().add(uploadMenu);
+    }
 
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -1606,30 +1608,32 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     validateAllItem.setOnAction(actionEvent -> onValidateAll());
     ctxMenu.getItems().add(validateAllItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    if (game.isVpxGame()) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem launchItem = new MenuItem("Launch");
-    launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
-    launchItem.setDisable(tableView.getSelectionModel().isEmpty());
-    launchItem.setOnAction(actionEvent -> onPlay());
-    ctxMenu.getItems().add(launchItem);
+      MenuItem launchItem = new MenuItem("Launch");
+      launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
+      launchItem.setDisable(tableView.getSelectionModel().isEmpty());
+      launchItem.setOnAction(actionEvent -> onPlay());
+      ctxMenu.getItems().add(launchItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem exportItem = new MenuItem("Export");
-    exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-    exportItem.setDisable(tableView.getSelectionModel().isEmpty());
-    exportItem.setOnAction(actionEvent -> onBackup());
-    ctxMenu.getItems().add(exportItem);
+      MenuItem exportItem = new MenuItem("Export");
+      exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+      exportItem.setDisable(tableView.getSelectionModel().isEmpty());
+      exportItem.setOnAction(actionEvent -> onBackup());
+      ctxMenu.getItems().add(exportItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
 
-    MenuItem removeItem = new MenuItem("Delete");
-    removeItem.setOnAction(actionEvent -> onDelete());
-    removeItem.setDisable(tableView.getSelectionModel().isEmpty());
-    removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-    ctxMenu.getItems().add(removeItem);
+      MenuItem removeItem = new MenuItem("Delete");
+      removeItem.setOnAction(actionEvent -> onDelete());
+      removeItem.setDisable(tableView.getSelectionModel().isEmpty());
+      removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+      ctxMenu.getItems().add(removeItem);
+    }
   }
 
   private void filterGames(List<GameRepresentation> games) {
