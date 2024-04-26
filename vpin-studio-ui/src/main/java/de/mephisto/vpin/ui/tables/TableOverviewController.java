@@ -1910,13 +1910,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       @Override
       public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
         tableView.getSelectionModel().clearSelection();
-        tableFilterController.applyFilter();
-
-        if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-
         refreshViewForEmulator(newValue);
+        tableFilterController.applyFilter();
       }
     });
 
@@ -2000,16 +1995,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     b2sManagerSeparator.setVisible(vpxMode);
     stopSeparator.setVisible(vpxMode);
 
-    columnVersion.setVisible(vpxMode);
-    columnEmulator.setVisible(vpxMode);
-    columnVPS.setVisible(vpxMode);
-    columnRom.setVisible(vpxMode);
-    columnB2S.setVisible(vpxMode);
-    columnPUPPack.setVisible(vpxMode);
-    columnAltSound.setVisible(vpxMode);
-    columnAltColor.setVisible(vpxMode);
-    columnPOV.setVisible(vpxMode);
-    columnHSType.setVisible(vpxMode);
+    columnVersion.setVisible(vpxMode && !assetManagerMode);
+    columnEmulator.setVisible(vpxMode && !assetManagerMode);
+    columnVPS.setVisible(vpxMode && !assetManagerMode);
+    columnRom.setVisible(vpxMode && !assetManagerMode);
+    columnB2S.setVisible(vpxMode && !assetManagerMode);
+    columnPUPPack.setVisible(vpxMode && !assetManagerMode);
+    columnAltSound.setVisible(vpxMode && !assetManagerMode);
+    columnAltColor.setVisible(vpxMode && !assetManagerMode);
+    columnPOV.setVisible(vpxMode && !assetManagerMode);
+    columnHSType.setVisible(vpxMode && !assetManagerMode);
 
     tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
   }

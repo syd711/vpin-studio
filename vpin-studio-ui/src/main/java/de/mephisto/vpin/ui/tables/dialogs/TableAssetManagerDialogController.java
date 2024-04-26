@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -355,21 +356,28 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
 
+  private final static int DEBOUNCE_MS = 100;
+  private final Debouncer debouncer = new Debouncer();
+
   @FXML
   private void onSearch() {
-    String term = searchField.getText().trim();
-    if (!StringUtils.isEmpty(term)) {
-      TableAssetSearch assetSearch = searchPopper(screen, term);
-      ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
-      serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-      serverAssetsList.setItems(assets);
-      serverAssetsList.refresh();
-      return;
-    }
+    debouncer.debounce("popperSearch", () -> {
+      Platform.runLater(() -> {
+        String term = searchField.getText().trim();
+        if (!StringUtils.isEmpty(term)) {
+          TableAssetSearch assetSearch = searchPopper(screen, term);
+          ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
+          serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+          serverAssetsList.setItems(assets);
+          serverAssetsList.refresh();
+          return;
+        }
 
-    serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-    serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
-    serverAssetsList.refresh();
+        serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+        serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
+        serverAssetsList.refresh();
+      });
+    }, DEBOUNCE_MS);
   }
 
   private TableAssetSearch searchPopper(PopperScreen screen, String term) {
@@ -729,6 +737,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+    debouncer.debounce("setGame", () -> {
+      Platform.runLater(() -> {
+        setGameInternal(overviewController, game, screen);
+      });
+    }, DEBOUNCE_MS);
+  }
+
+  private void setGameInternal(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");
