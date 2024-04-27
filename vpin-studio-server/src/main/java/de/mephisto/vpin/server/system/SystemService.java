@@ -337,7 +337,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        if (cmdName.contains("Visual Pinball") || cmdName.contains("VisualPinball") || cmdName.contains("VPinball")) {
+        if (cmdName.toLowerCase().contains("Visual Pinball".toLowerCase()) || cmdName.toLowerCase().contains("VisualPinball".toLowerCase()) || cmdName.toLowerCase().contains("VPinball".toLowerCase())) {
           return true;
         }
       }

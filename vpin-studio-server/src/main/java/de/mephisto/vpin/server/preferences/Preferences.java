@@ -73,10 +73,10 @@ public class Preferences {
 
   private String pauseMenuSettings;
 
-  @Column(length = 1024)
+  private String validationSettings;
+
   private String uiSettings;
 
-  @Column(length = 1024)
   private String serverSettings;
 
   @Column(length = 1024)
@@ -104,6 +104,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getValidationSettings() {
+    return validationSettings;
+  }
+
+  public void setValidationSettings(String validationSettings) {
+    this.validationSettings = validationSettings;
+  }
 
   public String getDofSettings() {
     return dofSettings;

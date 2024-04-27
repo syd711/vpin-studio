@@ -26,12 +26,13 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If the screen has been disabled in the PinUP Popper settings, the validator checkbox is disabled." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Use the asset management view to check the validity of table assets." textFill="WHITE" />
             <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="522.800048828125" minWidth="10.0" prefWidth="183.20000000000005" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="471.4" minWidth="10.0" prefWidth="162.40005493164062" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="295.99994506835935" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="471.4" minWidth="10.0" prefWidth="188.7999755859375" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="187.2000244140625" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="94.39999999999998" />
               </columnConstraints>
               <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -59,32 +60,45 @@
                   <CheckBox fx:id="GameInfo_33" layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Info / Flyer" GridPane.rowIndex="4" />
                   <CheckBox fx:id="GameHelp_34" layoutX="364.0" layoutY="90.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Help" GridPane.rowIndex="5" />
                   <CheckBox fx:id="Topper_35" layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Topper" GridPane.rowIndex="6" />
-                  <CheckBox fx:id="BackGlass_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Backglass" GridPane.rowIndex="7" />
-                  <CheckBox fx:id="DMD_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="DMD" GridPane.rowIndex="8" />
-                  <CheckBox fx:id="Loading_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Loading" GridPane.rowIndex="10" />
-                  <CheckBox fx:id="PlayField_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Playfield" GridPane.rowIndex="9" />
-                  <CheckBox fx:id="Other2_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Other2" GridPane.rowIndex="11" />
-                  <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Wheel Image" GridPane.rowIndex="12" />
-                  <Label styleClass="default-headline" text="Screen Validators" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Required" GridPane.columnIndex="1" />
-                  <ComboBox fx:id="Audio_30_Options" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="AudioLaunch_31_Options" layoutX="194.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="Menu_32_Options" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <ComboBox fx:id="GameInfo_33_Options" layoutX="194.0" layoutY="112.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <ComboBox fx:id="GameHelp_34_Options" layoutX="194.0" layoutY="145.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <ComboBox fx:id="Topper_35_Options" layoutX="194.0" layoutY="179.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <ComboBox fx:id="BackGlass_36_Options" layoutX="194.0" layoutY="212.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                  <ComboBox fx:id="DMD_37_Options" layoutX="194.0" layoutY="246.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <ComboBox fx:id="PlayField_38_Options" layoutX="194.0" layoutY="280.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                  <ComboBox fx:id="Loading_39_Options" layoutX="194.0" layoutY="313.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                  <ComboBox fx:id="Other2_40_Options" layoutX="194.0" layoutY="347.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                  <ComboBox fx:id="Wheel_41_Options" layoutX="194.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <CheckBox fx:id="BackGlass_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Backglass" GridPane.rowIndex="10" />
+                  <CheckBox fx:id="DMD_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="DMD" GridPane.rowIndex="7" />
+                  <CheckBox fx:id="Loading_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Loading" GridPane.rowIndex="9" />
+                  <CheckBox fx:id="PlayField_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Playfield" GridPane.rowIndex="12" />
+                  <CheckBox fx:id="Other2_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Other2" GridPane.rowIndex="8" />
+                  <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Wheel Image" GridPane.rowIndex="11" />
+                  <Label styleClass="default-headline" text="Screen" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Preference" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="Audio_30_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="AudioLaunch_31_Options" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="Menu_32_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="GameInfo_33_Options" layoutX="194.0" layoutY="112.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <ComboBox fx:id="GameHelp_34_Options" layoutX="194.0" layoutY="145.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <ComboBox fx:id="Topper_35_Options" layoutX="194.0" layoutY="179.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <ComboBox fx:id="BackGlass_36_Options" layoutX="194.0" layoutY="212.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <ComboBox fx:id="DMD_37_Options" layoutX="194.0" layoutY="246.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <ComboBox fx:id="PlayField_38_Options" layoutX="194.0" layoutY="280.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <ComboBox fx:id="Loading_39_Options" layoutX="194.0" layoutY="313.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <ComboBox fx:id="Other2_40_Options" layoutX="194.0" layoutY="347.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <ComboBox fx:id="Wheel_41_Options" layoutX="194.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                  <Label layoutX="194.0" layoutY="15.0" styleClass="default-headline" text="Preferred Media" GridPane.columnIndex="2" />
+                  <ComboBox fx:id="Audio_30_Media" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="AudioLaunch_31_Media" layoutX="383.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="Menu_32_Media" layoutX="383.0" layoutY="78.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="GameInfo_33_Media" layoutX="383.0" layoutY="112.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <ComboBox fx:id="GameHelp_34_Media" layoutX="383.0" layoutY="145.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <ComboBox fx:id="Topper_35_Media" layoutX="383.0" layoutY="179.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                  <ComboBox fx:id="BackGlass_36_Media" layoutX="383.0" layoutY="212.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+                  <ComboBox fx:id="DMD_37_Media" layoutX="383.0" layoutY="246.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                  <ComboBox fx:id="PlayField_38_Media" layoutX="383.0" layoutY="280.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                  <ComboBox fx:id="Loading_39_Media" layoutX="383.0" layoutY="313.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+                  <ComboBox fx:id="Other2_40_Media" layoutX="383.0" layoutY="347.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                  <ComboBox fx:id="Wheel_41_Media" layoutX="383.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
                </children>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
-                  <Insets top="6.0" />
+                  <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
          </children>
