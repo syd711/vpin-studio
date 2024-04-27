@@ -21,7 +21,7 @@
 - **VPS Mapping**: Added reset button in the Table Data Manager and the VPS table section to unlink a VPS mapping from a table.
 - **Highscore Cards**: Added **Background Canvas** option to the template designer. This additional background square can be used to improve the readability of the scores. 
 - **Highscore Cards**: Added **Margins** option to the template designer. The padding value will be used as additional separator between the initials and the score value.
-- **Point of View Section**: Removed **Export** button. I think it's time to let go here.
+- **Point of View (POV) Section**: Removed **Export** button. I think it's time to let go here.
 - **Pause Menu**: After taking some turns here I once again changed the Pause Menu preferences. You "simply" choose the design and the target screen for the tutorial videos. This way, you can decide on your own, where the YouTube videos should be played. Using the backglass here as default didn't work out so well, since it wasn't always possible to bring the Chrome browser in front of the current PUP video. This may not be the end of the road, but I hope it works at least better than before.
 - **Backglass Manager**: Added download button for the backglass and DMD image.
 - **Table Overview**: The **Emulator Column** is now always shown, its visibility is no longer configurable.
