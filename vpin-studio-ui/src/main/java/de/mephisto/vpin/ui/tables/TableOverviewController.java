@@ -48,7 +48,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
@@ -77,7 +76,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -86,13 +84,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   @FXML
-  private Separator vpsSeparator;
-  @FXML
   private Separator deleteSeparator;
-  @FXML
-  private Separator b2sManagerSeparator;
-  @FXML
-  private Separator stopSeparator;
 
   @FXML
   private TableColumn<GameRepresentation, Label> columnDisplayName;
@@ -201,13 +193,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button assetManagerViewBtn;
 
   @FXML
-  private Button backglassBtn;
-
-  @FXML
   private SplitMenuButton validateBtn;
-
-  @FXML
-  private MenuItem validateAllBtn;
 
   @FXML
   private Button assetManagerBtn;
@@ -231,19 +217,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button importBtn;
 
   @FXML
-  private Button backupBtn;
-
-  @FXML
   private SplitMenuButton uploadTableBtn;
 
   @FXML
   private Button reloadBtn;
-
-  @FXML
-  private Button vpsBtn;
-
-  @FXML
-  private Button vpsResetBtn;
 
   @FXML
   private ComboBox<Playlist> playlistCombo;
@@ -302,6 +279,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final List<Consumer> reloadConsumers = new ArrayList<>();
 
   private boolean assetManagerMode = false;
+  private ImageView iconPopperEdit;
+  private ImageView iconPopperMedia;
+  private ImageView iconVpsReset;
+  private ImageView iconVps;
+  private TableOverviewContextMenu contextMenuController;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -311,12 +293,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private List<GameRepresentation> games;
 
   @FXML
-  private void onBackglassManager() {
+  public void onBackglassManager() {
     TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController());
   }
 
   @FXML
-  private void onAssetView() {
+  public void onAssetView() {
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 
     assetManagerMode = !assetManagerMode;
@@ -364,7 +346,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onAltSoundUpload() {
+  public void onAltSoundUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.openAltSoundUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
@@ -375,7 +357,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onAltColorUpload() {
+  public void onAltColorUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
@@ -386,19 +368,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onRomsUpload() {
+  public void onRomsUpload() {
     TableDialogs.onRomUploads(tablesController.getTablesSideBarController());
   }
 
 
   @FXML
-  private void onMusicUpload() {
+  public void onMusicUpload() {
     TableDialogs.onMusicUploads(tablesController.getTablesSideBarController());
   }
 
 
   @FXML
-  private void onPupPackUpload() {
+  public void onPupPackUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
@@ -409,7 +391,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onBackglassUpload() {
+  public void onBackglassUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.directBackglassUpload(stage, selectedItems.get(0));
@@ -420,7 +402,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onIniUpload() {
+  public void onIniUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       TableDialogs.iniUpload(stage, selectedItems.get(0));
@@ -428,7 +410,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onDMDUpload() {
+  public void onDMDUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.openDMDUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
@@ -439,7 +421,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onPOVUpload() {
+  public void onPOVUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.openPovUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0));
@@ -450,13 +432,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onMediaEdit() {
+  public void onMediaEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
     TableDialogs.openTableAssetsDialog(this, selectedItems, PopperScreen.BackGlass);
   }
 
   @FXML
-  private void onVps() {
+  public void onVps() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
     if (selectedItems != null && !StringUtils.isEmpty(selectedItems.getExtTableVersionId())) {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -471,7 +453,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onVpsReset() {
+  public void onVpsReset() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     TableActions.onVpsReset(selectedItems);
   }
@@ -482,7 +464,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onTableEdit() {
+  public void onTableEdit() {
     GameRepresentation selectedItems = tableView.getSelectionModel().getSelectedItem();
     if (selectedItems != null) {
       if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
@@ -496,13 +478,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onBackup() {
+  public void onBackup() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     TableDialogs.openTablesBackupDialog(selectedItems);
   }
 
   @FXML
-  private void onPlay() {
+  public void onPlay() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -523,16 +505,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onStop() {
+  public void onStop() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getPinUPPopperService().terminatePopper();
     }
-  }
-
-  @FXML
-  private void onEmulatorSelect() {
-
   }
 
   @FXML
@@ -544,11 +521,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onTableUpload() {
+  public void onTableUpload() {
     openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport);
   }
 
-  private void openUploadDialogWithCheck(TableUploadDescriptor uploadDescriptor) {
+  public void openUploadDialogWithCheck(TableUploadDescriptor uploadDescriptor) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
@@ -585,7 +562,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onDelete() {
+  public void onDelete() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         deleteSelection();
@@ -625,7 +602,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onTablesScan() {
+  public void onTablesScan() {
     List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
     if (selectedItems.size() == 1) {
@@ -638,7 +615,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onTablesScanAll() {
+  public void onTablesScanAll() {
     boolean scanned = TableDialogs.openScanAllDialog(this.games);
     if (scanned) {
       this.onReload();
@@ -646,7 +623,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onImport() {
+  public void onImport() {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         TableDialogs.openTableImportDialog();
@@ -658,13 +635,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onValidate() {
+  public void onValidate() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     TableDialogs.openValidationDialog(new ArrayList<>(selectedItems), false);
   }
 
   @FXML
-  private void onValidateAll() {
+  public void onValidateAll() {
     TableDialogs.openValidationDialog(games, true);
   }
 
@@ -897,11 +874,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tableEditBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.uploadTableBtn.setDisable(true);
-    this.backupBtn.setDisable(true);
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
-    this.vpsBtn.setDisable(true);
-    this.vpsResetBtn.setDisable(true);
 
     setBusy(true);
 
@@ -922,7 +896,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             GameRepresentation gameRepresentation = updatedGame.get();
             tableView.getSelectionModel().select(gameRepresentation);
             this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
-            this.backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
           }
         }
         else if (!games.isEmpty()) {
@@ -932,9 +905,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           this.validateBtn.setDisable(false);
           this.deleteBtn.setDisable(false);
           this.tableEditBtn.setDisable(false);
-
-          GameRepresentation gameRepresentation = games.get(0);
-          this.vpsBtn.setDisable(StringUtils.isEmpty(gameRepresentation.getExtTableVersionId()));
         }
         else {
           this.validationErrorLabel.setText("No tables found");
@@ -1367,14 +1337,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         final ContextMenu menu = new ContextMenu();
 
         ListChangeListener<GameRepresentation> changeListener = (ListChangeListener.Change<? extends GameRepresentation> c) ->
-          refreshContextMenu(tableView, menu, this.tableView.getSelectionModel().getSelectedItem());
+          contextMenuController.refreshContextMenu(tableView, menu, this.tableView.getSelectionModel().getSelectedItem());
 
         row.itemProperty().addListener((obs, oldItem, newItem) -> {
           if (newItem == null) {
             menu.getItems().clear();
           }
           else {
-            refreshContextMenu(tableView, menu, newItem);
+            contextMenuController.refreshContextMenu(tableView, menu, newItem);
           }
         });
 
@@ -1466,175 +1436,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Platform.runLater(() -> {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, popperScreen);
     });
-  }
-
-  private void refreshContextMenu(TableView<GameRepresentation> tableView, ContextMenu ctxMenu, GameRepresentation game) {
-    ctxMenu.getItems().clear();
-
-    Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView view3 = new ImageView(image3);
-    view3.setFitWidth(18);
-    view3.setFitHeight(18);
-
-    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView view4 = new ImageView(image4);
-    view4.setFitWidth(18);
-    view4.setFitHeight(18);
-
-
-    MenuItem dataItem = new MenuItem("Edit Table Data");
-    dataItem.setGraphic(view4);
-    dataItem.setOnAction(actionEvent -> onTableEdit());
-    dataItem.setDisable(tableView.getSelectionModel().isEmpty());
-    ctxMenu.getItems().add(dataItem);
-
-    MenuItem assetsItem = new MenuItem("Edit Table Assets");
-    assetsItem.setGraphic(view3);
-    assetsItem.setOnAction(actionEvent -> onMediaEdit());
-    assetsItem.setDisable(tableView.getSelectionModel().isEmpty());
-    ctxMenu.getItems().add(assetsItem);
-
-    if (game.isVpxGame()) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem scanItem = new MenuItem("Scan");
-      scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
-      scanItem.setOnAction(actionEvent -> onTablesScan());
-      scanItem.setDisable(tableView.getSelectionModel().isEmpty());
-      ctxMenu.getItems().add(scanItem);
-
-      MenuItem scanAllItem = new MenuItem("Scan All");
-      scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
-      scanAllItem.setOnAction(actionEvent -> onTablesScanAll());
-      ctxMenu.getItems().add(scanAllItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem importsItem = new MenuItem("Import Tables");
-      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
-      importsItem.setOnAction(actionEvent -> onImport());
-      ctxMenu.getItems().add(importsItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
-      uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndImportTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-      uploadAndImportTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
-      ctxMenu.getItems().add(uploadAndImportTableItem);
-
-      MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
-      uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndReplaceTableItem.setDisable(tableView.getSelectionModel().isEmpty());
-      uploadAndReplaceTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
-      ctxMenu.getItems().add(uploadAndReplaceTableItem);
-
-      MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
-      uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndCloneTableItem.setDisable(tableView.getSelectionModel().isEmpty() || game == null || game.getGameFileName().contains("\\"));
-      uploadAndCloneTableItem.setOnAction(actionEvent -> openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
-      ctxMenu.getItems().add(uploadAndCloneTableItem);
-
-      Menu uploadMenu = new Menu("Upload...");
-
-      MenuItem altColorFilesItem = new MenuItem("Upload ALT Color Files");
-      altColorFilesItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      altColorFilesItem.setDisable(tableView.getSelectionModel().isEmpty());
-      altColorFilesItem.setOnAction(actionEvent -> onAltColorUpload());
-      uploadMenu.getItems().add(altColorFilesItem);
-
-      MenuItem altSoundItem = new MenuItem("Upload ALT Sound Pack");
-      altSoundItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      altSoundItem.setDisable(tableView.getSelectionModel().isEmpty());
-      altSoundItem.setOnAction(actionEvent -> onAltSoundUpload());
-      uploadMenu.getItems().add(altSoundItem);
-
-      MenuItem uploadB2SItem = new MenuItem("Upload Backglass");
-      uploadB2SItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadB2SItem.setDisable(tableView.getSelectionModel().isEmpty());
-      uploadB2SItem.setOnAction(actionEvent -> onBackglassUpload());
-      uploadMenu.getItems().add(uploadB2SItem);
-
-      MenuItem dmdItem = new MenuItem("Upload DMD Pack");
-      dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      dmdItem.setDisable(tableView.getSelectionModel().isEmpty());
-      dmdItem.setOnAction(actionEvent -> onDMDUpload());
-      uploadMenu.getItems().add(dmdItem);
-
-      MenuItem iniItem = new MenuItem("Upload INI File");
-      iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      iniItem.setDisable(tableView.getSelectionModel().isEmpty());
-      iniItem.setOnAction(actionEvent -> onIniUpload());
-      uploadMenu.getItems().add(iniItem);
-
-      MenuItem musicItem = new MenuItem("Upload Music Pack");
-      musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      musicItem.setDisable(tableView.getSelectionModel().isEmpty());
-      musicItem.setOnAction(actionEvent -> onMusicUpload());
-      uploadMenu.getItems().add(musicItem);
-
-      MenuItem povItem = new MenuItem("Upload POV File");
-      povItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      povItem.setDisable(tableView.getSelectionModel().isEmpty());
-      povItem.setOnAction(actionEvent -> onPOVUpload());
-      uploadMenu.getItems().add(povItem);
-
-      MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
-      pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      pupPackItem.setDisable(tableView.getSelectionModel().isEmpty());
-      pupPackItem.setOnAction(actionEvent -> onPupPackUpload());
-      uploadMenu.getItems().add(pupPackItem);
-
-      MenuItem romsItem = new MenuItem("Upload ROMs");
-      romsItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      romsItem.setDisable(tableView.getSelectionModel().isEmpty());
-      romsItem.setOnAction(actionEvent -> onRomsUpload());
-      uploadMenu.getItems().add(romsItem);
-
-      ctxMenu.getItems().add(uploadMenu);
-    }
-
-
-    ctxMenu.getItems().add(new SeparatorMenuItem());
-
-    MenuItem validateItem = new MenuItem("Validate");
-    validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
-    validateItem.setDisable(tableView.getSelectionModel().isEmpty());
-    validateItem.setOnAction(actionEvent -> onValidate());
-    ctxMenu.getItems().add(validateItem);
-
-    MenuItem validateAllItem = new MenuItem("Validate All");
-    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
-    validateAllItem.setDisable(tableView.getSelectionModel().isEmpty());
-    validateAllItem.setOnAction(actionEvent -> onValidateAll());
-    ctxMenu.getItems().add(validateAllItem);
-
-    if (game.isVpxGame()) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem launchItem = new MenuItem("Launch");
-      launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
-      launchItem.setDisable(tableView.getSelectionModel().isEmpty());
-      launchItem.setOnAction(actionEvent -> onPlay());
-      ctxMenu.getItems().add(launchItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem exportItem = new MenuItem("Export");
-      exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-      exportItem.setDisable(tableView.getSelectionModel().isEmpty());
-      exportItem.setOnAction(actionEvent -> onBackup());
-      ctxMenu.getItems().add(exportItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-
-      MenuItem removeItem = new MenuItem("Delete");
-      removeItem.setOnAction(actionEvent -> onDelete());
-      removeItem.setDisable(tableView.getSelectionModel().isEmpty());
-      removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-      ctxMenu.getItems().add(removeItem);
-    }
   }
 
   private void filterGames(List<GameRepresentation> games) {
@@ -1788,22 +1589,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
-    backupBtn.setDisable(true);
     playBtn.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
     validationError.setVisible(c.getList().size() != 1);
 
-    vpsBtn.setDisable(c.getList().size() != 1 || StringUtils.isEmpty(c.getList().get(0).getExtTableId()));
-    vpsResetBtn.setDisable(c.getList().stream().filter(g -> g.getVpsUpdates() != null && !g.getVpsUpdates().isEmpty()).collect(Collectors.toList()).isEmpty());
-
     if (c.getList().isEmpty()) {
       refreshView(Optional.empty());
     }
     else {
       GameRepresentation gameRepresentation = c.getList().get(0);
-      backupBtn.setDisable(!gameRepresentation.isGameFileAvailable());
       playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
       refreshView(Optional.ofNullable(gameRepresentation));
     }
@@ -1845,21 +1641,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpsSeparator.managedProperty().bindBidirectional(this.vpsSeparator.visibleProperty());
-    deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
-    b2sManagerSeparator.managedProperty().bindBidirectional(this.b2sManagerSeparator.visibleProperty());
-    stopSeparator.managedProperty().bindBidirectional(this.stopSeparator.visibleProperty());
+    contextMenuController = new TableOverviewContextMenu(this);
 
-    this.vpsBtn.managedProperty().bindBidirectional(this.vpsBtn.visibleProperty());
-    this.vpsResetBtn.managedProperty().bindBidirectional(this.vpsResetBtn.visibleProperty());
+    deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
+
     this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
     this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
-    this.backupBtn.managedProperty().bindBidirectional(this.backupBtn.visibleProperty());
-    this.backglassBtn.managedProperty().bindBidirectional(this.backglassBtn.visibleProperty());
 
     new Thread(() -> {
       try {
@@ -1917,35 +1708,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     bindSearchField();
 
 
-    Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
-    ImageView view = new ImageView(image);
-    view.setFitWidth(18);
-    view.setFitHeight(18);
-    vpsBtn.setGraphic(view);
-
-    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setFitWidth(18);
-    view2.setFitHeight(18);
-    vpsResetBtn.setGraphic(view2);
-
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView view3 = new ImageView(image3);
-    view3.setFitWidth(18);
-    view3.setFitHeight(18);
-    assetManagerBtn.setGraphic(view3);
+    iconPopperMedia = new ImageView(image3);
+    iconPopperMedia.setFitWidth(18);
+    iconPopperMedia.setFitHeight(18);
+    assetManagerBtn.setGraphic(iconPopperMedia);
 
     Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView view4 = new ImageView(image4);
-    view4.setFitWidth(18);
-    view4.setFitHeight(18);
-    tableEditBtn.setGraphic(view4);
+    iconPopperEdit = new ImageView(image4);
+    iconPopperEdit.setFitWidth(18);
+    iconPopperEdit.setFitHeight(18);
+    tableEditBtn.setGraphic(iconPopperEdit);
 
-    Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
-    ImageView view5 = new ImageView(image5);
-    view5.setFitWidth(18);
-    view5.setFitHeight(18);
-    backglassBtn.setGraphic(view5);
+    Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
+    ImageView view6 = new ImageView(image6);
+    view6.setFitWidth(18);
+    view6.setFitHeight(18);
+    assetManagerViewBtn.setGraphic(view6);
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
@@ -1977,21 +1756,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableFilterController.setEmulator(newValue);
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
-    this.vpsBtn.setVisible(vpxMode);
-    this.vpsResetBtn.setVisible(vpxMode);
     this.importBtn.setVisible(vpxMode);
     this.uploadTableBtn.setVisible(vpxMode);
     this.deleteBtn.setVisible(vpxMode);
     this.scanBtn.setVisible(vpxMode);
     this.playBtn.setVisible(vpxMode);
     this.stopBtn.setVisible(vpxMode);
-    this.backupBtn.setVisible(vpxMode);
-    this.backglassBtn.setVisible(vpxMode);
 
-    vpsSeparator.setVisible(vpxMode);
     deleteSeparator.setVisible(vpxMode);
-    b2sManagerSeparator.setVisible(vpxMode);
-    stopSeparator.setVisible(vpxMode);
 
     columnVersion.setVisible(vpxMode && !assetManagerMode);
     columnEmulator.setVisible(vpxMode && !assetManagerMode);

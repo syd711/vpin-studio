@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
@@ -76,8 +77,23 @@ public class ValidatorsScreensPreferencesController implements Initializable {
           settingsCheckboxes.add(checkBox);
         }
       }
-      if (node instanceof Parent)
+      if (node instanceof Parent) {
         findAllCheckboxes((Parent) node, settingsCheckboxes);
+      }
+    }
+  }
+
+  private static void findAllOptions(Parent parent, List<ComboBox> optionComboBoxes) {
+    for (Node node : parent.getChildrenUnmodifiable()) {
+      if (node instanceof ComboBox) {
+        ComboBox comboBox = (ComboBox) node;
+        if (comboBox.getId() != null) {
+          optionComboBoxes.add(comboBox);
+        }
+      }
+      if (node instanceof Parent) {
+        findAllOptions((Parent) node, optionComboBoxes);
+      }
     }
   }
 }
