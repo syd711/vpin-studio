@@ -55,7 +55,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
     client.getPreferenceService().setPreferences(prefs);
-    PreferencesController.markDirty(PreferenceType.serverSettings);
+    PreferencesController.markDirty(PreferenceType.validationSettings);
   }
 
   @FXML
@@ -72,6 +72,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     config.setOption(optionCombo.getValue());
 
     client.getPreferenceService().setJsonPreference(PreferenceNames.VALIDATION_SETTINGS, validationSettings);
+    PreferencesController.markDirty(PreferenceType.validationSettings);
   }
 
 

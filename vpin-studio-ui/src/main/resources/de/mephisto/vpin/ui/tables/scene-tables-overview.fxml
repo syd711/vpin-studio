@@ -84,16 +84,6 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                        </graphic>
                                     </TableColumn>
-                                    <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" sortable="false" style="-fx-alignment: CENTER;" text="Audio">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                       </graphic>
-                                    </TableColumn>
-                                    <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="124.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Audio Launch">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                       </graphic>
-                                    </TableColumn>
                                     <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" sortable="false" style="-fx-alignment: CENTER;" text="Info">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
@@ -105,6 +95,16 @@
                                        </graphic>
                                     </TableColumn>
                                     <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" sortable="false" style="-fx-alignment: CENTER;" text="Other2">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" sortable="false" style="-fx-alignment: CENTER;" text="Audio">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="124.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Audio Launch">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                        </graphic>

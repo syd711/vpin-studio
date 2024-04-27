@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -279,6 +280,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private boolean assetManagerMode = false;
   private TableOverviewContextMenu contextMenuController;
   private TableOverviewColumnSorter tableOverviewColumnSorter;
+  private List<String> ignoredValidations;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -315,18 +317,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     boolean vpxMode = emulatorCombo.getValue() == null || emulatorCombo.getValue().isVpxEmulator();
 
-    columnPlayfield.setVisible(assetManagerMode);
-    columnBackglass.setVisible(assetManagerMode);
-    columnLoading.setVisible(assetManagerMode);
-    columnWheel.setVisible(assetManagerMode);
-    columnDMD.setVisible(assetManagerMode);
-    columnTopper.setVisible(assetManagerMode);
-    columnFullDMD.setVisible(assetManagerMode);
-    columnAudio.setVisible(assetManagerMode);
-    columnAudioLaunch.setVisible(assetManagerMode);
-    columnInfo.setVisible(assetManagerMode);
-    columnHelp.setVisible(assetManagerMode);
-    columnOther2.setVisible(assetManagerMode);
+    refreshViewAssetColumns(assetManagerMode);
+
 
     columnVersion.setVisible(!assetManagerMode && vpxMode);
     columnEmulator.setVisible(!assetManagerMode);
@@ -340,6 +332,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode);
     columnDateAdded.setVisible(!assetManagerMode);
+  }
+
+  private void refreshViewAssetColumns(boolean assetManagerMode) {
+    columnPlayfield.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.PlayField.getValidationCode())));
+    columnBackglass.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.BackGlass.getValidationCode())));
+    columnLoading.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Loading.getValidationCode())));
+    columnWheel.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Wheel.getValidationCode())));
+    columnDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.DMD.getValidationCode())));
+    columnTopper.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Topper.getValidationCode())));
+    columnFullDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Menu.getValidationCode())));
+    columnAudio.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Audio.getValidationCode())));
+    columnAudioLaunch.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.AudioLaunch.getValidationCode())));
+    columnInfo.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameInfo.getValidationCode())));
+    columnHelp.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameHelp.getValidationCode())));
+    columnOther2.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Other2.getValidationCode())));
   }
 
   @FXML
@@ -1322,10 +1329,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         btn.setGraphic(icon);
       }
 
-      btn.setOnAction(event -> {
-        showAssetDetails(value, popperScreen);
-      });
-
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       if (config.getOption().equals(ValidatorOption.empty)) {
         fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1367,6 +1370,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     Tooltip tooltip = new Tooltip(tt.toString());
     tooltip.setWrapText(true);
     btn.setTooltip(tooltip);
+    btn.setOnAction(event -> {
+      showAssetDetails(value, popperScreen);
+    });
     return btn;
   }
 
@@ -1666,6 +1672,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
     preferencesChanged(PreferenceNames.VALIDATION_SETTINGS, null);
+    preferencesChanged(PreferenceNames.IGNORED_VALIDATIONS, null);
 
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
@@ -1728,6 +1735,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else if (key.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    }
+    else if (key.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
+      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.IGNORED_VALIDATIONS);
+      ignoredValidations = preference.getCSVValue();
+      refreshViewAssetColumns(assetManagerMode);
     }
   }
 
