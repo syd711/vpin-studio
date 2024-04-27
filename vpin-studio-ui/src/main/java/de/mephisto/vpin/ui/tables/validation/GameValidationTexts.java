@@ -14,7 +14,7 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
  */
 public class GameValidationTexts {
 
-  private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or disable the screen in the preferences.";
+  private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or format.";
 
   public static LocalizedValidation validate(@NonNull GameRepresentation game) {
     String label = null;

@@ -18,8 +18,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -40,7 +39,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,7 +59,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -87,46 +84,46 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Separator deleteSeparator;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnDisplayName;
+  TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnVersion;
+  TableColumn<GameRepresentation, Label> columnVersion;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnEmulator;
+  TableColumn<GameRepresentation, Label> columnEmulator;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnVPS;
+  TableColumn<GameRepresentation, String> columnVPS;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnRom;
+  TableColumn<GameRepresentation, Label> columnRom;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnB2S;
+  TableColumn<GameRepresentation, String> columnB2S;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnStatus;
+  TableColumn<GameRepresentation, String> columnStatus;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnPUPPack;
+  TableColumn<GameRepresentation, String> columnPUPPack;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnAltSound;
+  TableColumn<GameRepresentation, String> columnAltSound;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnAltColor;
+  TableColumn<GameRepresentation, String> columnAltColor;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnPOV;
+  TableColumn<GameRepresentation, String> columnPOV;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnHSType;
+  TableColumn<GameRepresentation, String> columnHSType;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnPlaylists;
+  TableColumn<GameRepresentation, String> columnPlaylists;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnDateAdded;
+  TableColumn<GameRepresentation, String> columnDateAdded;
 
 
   @FXML
@@ -272,6 +269,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private String lastKeyInput = "";
   private UISettings uiSettings;
   private ServerSettings serverSettings;
+  private ValidationSettings validationSettings;
 
   private TableFilterController tableFilterController;
   private List<Integer> filteredIds = new ArrayList<>();
@@ -279,11 +277,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private final List<Consumer> reloadConsumers = new ArrayList<>();
 
   private boolean assetManagerMode = false;
-  private ImageView iconPopperEdit;
-  private ImageView iconPopperMedia;
-  private ImageView iconVpsReset;
-  private ImageView iconVps;
   private TableOverviewContextMenu contextMenuController;
+  private TableOverviewColumnSorter tableOverviewColumnSorter;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -318,6 +313,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
 
+    boolean vpxMode = emulatorCombo.getValue() == null || emulatorCombo.getValue().isVpxEmulator();
+
     columnPlayfield.setVisible(assetManagerMode);
     columnBackglass.setVisible(assetManagerMode);
     columnLoading.setVisible(assetManagerMode);
@@ -331,16 +328,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHelp.setVisible(assetManagerMode);
     columnOther2.setVisible(assetManagerMode);
 
-    columnVersion.setVisible(!assetManagerMode);
+    columnVersion.setVisible(!assetManagerMode && vpxMode);
     columnEmulator.setVisible(!assetManagerMode);
-    columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
-    columnRom.setVisible(!assetManagerMode);
-    columnB2S.setVisible(!assetManagerMode);
-    columnPUPPack.setVisible(!assetManagerMode);
-    columnAltSound.setVisible(!assetManagerMode);
-    columnAltColor.setVisible(!assetManagerMode);
-    columnPOV.setVisible(!assetManagerMode);
-    columnHSType.setVisible(!assetManagerMode);
+    columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
+    columnRom.setVisible(!assetManagerMode && vpxMode);
+    columnB2S.setVisible(!assetManagerMode && vpxMode);
+    columnPUPPack.setVisible(!assetManagerMode && vpxMode);
+    columnAltSound.setVisible(!assetManagerMode && vpxMode);
+    columnAltColor.setVisible(!assetManagerMode && vpxMode);
+    columnPOV.setVisible(!assetManagerMode && vpxMode);
+    columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode);
     columnDateAdded.setVisible(!assetManagerMode);
   }
@@ -1227,109 +1224,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setItems(data);
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
-    tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
-      @Override
-      public Boolean call(TableView<GameRepresentation> gameRepresentationTableView) {
-        GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-        if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
-          TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
-          if (column.equals(columnDisplayName)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnVersion)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getVersion())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnEmulator)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getEmulatorId()));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnDateAdded)) {
-            Collections.sort(tableView.getItems(), (o1, o2) -> {
-              Date date1 = o1.getDateAdded() == null ? new Date() : o1.getDateAdded();
-              Date date2 = o2.getDateAdded() == null ? new Date() : o2.getDateAdded();
-              return date1.compareTo(date2);
-            });
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnB2S)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnVPS)) {
-            Collections.sort(tableView.getItems(), (o1, o2) -> {
-              if (o1.getVpsUpdates().isEmpty()) {
-                return -1;
-              }
-              return 1;
-            });
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnPUPPack)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getPupPackName())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnAltColor)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getAltColorType())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnAltSound)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltSoundAvailable));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnRom)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getRom())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnPOV)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPovAvailable));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnHSType)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getHighscoreType())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-        }
-        return true;
-      }
-    });
+    tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
 
     tableView.setRowFactory(
       tableView -> {
@@ -1355,33 +1250,30 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       });
 
 
-    tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent event) {
-        if (Keys.isSpecial(event)) {
-          return;
-        }
+    tableView.setOnKeyPressed(event -> {
+      if (Keys.isSpecial(event)) {
+        return;
+      }
 
-        String text = event.getText();
+      String text = event.getText();
 
-        long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
-        if (timeDiff > 800) {
-          lastKeyInputTime = System.currentTimeMillis();
-          lastKeyInput = text;
-        }
-        else {
-          lastKeyInputTime = System.currentTimeMillis();
-          lastKeyInput = lastKeyInput + text;
-          text = lastKeyInput;
-        }
+      long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
+      if (timeDiff > 800) {
+        lastKeyInputTime = System.currentTimeMillis();
+        lastKeyInput = text;
+      }
+      else {
+        lastKeyInputTime = System.currentTimeMillis();
+        lastKeyInput = lastKeyInput + text;
+        text = lastKeyInput;
+      }
 
-        for (GameRepresentation game : data) {
-          if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
-            tableView.getSelectionModel().clearSelection();
-            tableView.getSelectionModel().select(game);
-            tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
-            break;
-          }
+      for (GameRepresentation game : data) {
+        if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(game);
+          tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
+          break;
         }
       }
     });
@@ -1389,45 +1281,93 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private Node createAssetStatus(GameRepresentation value, PopperScreen popperScreen) {
     GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
+    ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
+
+    StringBuilder tt = new StringBuilder();
+    Button btn = new Button();
+    btn.getStyleClass().add("table-media-button");
+
     if (defaultMediaItem != null) {
       String mimeType = defaultMediaItem.getMimeType();
-      Button btn = new Button();
-      btn.getStyleClass().add("table-media-button");
-      StringBuilder tt = new StringBuilder();
       tt.append("Name:\t ");
       tt.append(defaultMediaItem.getName());
       tt.append("\n");
       if (mimeType.contains("audio")) {
         tt.append("Type:\t Audio\n");
-        btn.setGraphic(WidgetFactory.createIcon("bi-music-note-beamed"));
+        FontIcon icon = WidgetFactory.createIcon("bi-music-note-beamed");
+        if (!config.getMedia().equals(ValidatorMedia.audio)) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+        }
+
+        btn.setGraphic(icon);
       }
       else if (mimeType.contains("image")) {
         tt.append("Type:\t Picture\n");
-        btn.setGraphic(WidgetFactory.createIcon("bi-card-image"));
+        FontIcon icon = WidgetFactory.createIcon("bi-card-image");
+        if (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+        }
+        btn.setGraphic(icon);
       }
       else if (mimeType.contains("video")) {
         tt.append("Type:\t Video\n");
+        FontIcon icon = WidgetFactory.createIcon("bi-film");
+        if (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+        }
+        btn.setGraphic(icon);
+      }
+
+      btn.setOnAction(event -> {
+        showAssetDetails(value, popperScreen);
+      });
+
+      FontIcon fontIcon = (FontIcon) btn.getGraphic();
+      if (config.getOption().equals(ValidatorOption.empty)) {
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        tt.append("This asset should remain empty.\n");
+      }
+
+    }
+    else {
+      if (config.getMedia().equals(ValidatorMedia.image)) {
+        btn.setGraphic(WidgetFactory.createIcon("bi-card-image"));
+      }
+      else if (config.getMedia().equals(ValidatorMedia.audio)) {
+        btn.setGraphic(WidgetFactory.createIcon("bi-music-note-beamed"));
+      }
+      else if (config.getMedia().equals(ValidatorMedia.video)) {
         btn.setGraphic(WidgetFactory.createIcon("bi-film"));
+      }
+      else if (config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+        btn.setGraphic(WidgetFactory.createIcon("bi-images"));
       }
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
-      fontIcon.setIconSize(20);
-//      if (ignoredMedia.contains(popperScreen.name())) {
-//        tt.append("Status:\t Ignored");
-//        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-//      }
-
-      btn.setOnAction(event -> {
-//        btn.getStyleClass().removeAll();
-//        btn.getStyleClass().add("table-media-button-selected");
-        showAssetDetails(value, popperScreen);
-      });
-      Tooltip tooltip = new Tooltip(tt.toString());
-      tooltip.setWrapText(true);
-      btn.setTooltip(tooltip);
-      return btn;
+      tt.append("Preferred Asset Type: " + config.getMedia().getDisplayName() + "\n");
+      tt.append("No asset selected.\n");
+      if (config.getOption().equals(ValidatorOption.empty)) {
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+        tt.append("This asset should remain empty.\n");
+      }
+      else if (config.getOption().equals(ValidatorOption.optional)) {
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+        tt.append("This asset is optional.\n");
+      }
+      else if (config.getOption().equals(ValidatorOption.mandatory)) {
+        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        tt.append("This asset is mandatory.\n");
+      }
     }
-    return new Label("");
+
+    Tooltip tooltip = new Tooltip(tt.toString());
+    tooltip.setWrapText(true);
+    btn.setTooltip(tooltip);
+    return btn;
   }
 
   private void showAssetDetails(GameRepresentation game, PopperScreen popperScreen) {
@@ -1556,10 +1496,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return tableView.getSelectionModel().getSelectedItem();
   }
 
-  public List<Playlist> getPlaylists() {
-    return this.playlists;
-  }
-
   public void updatePlaylist(Playlist update) {
     int pos = this.playlists.indexOf(update);
     this.playlists.remove(update);
@@ -1642,6 +1578,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     contextMenuController = new TableOverviewContextMenu(this);
+    tableOverviewColumnSorter = new TableOverviewColumnSorter(this);
 
     deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
 
@@ -1709,13 +1646,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    iconPopperMedia = new ImageView(image3);
+    ImageView iconPopperMedia = new ImageView(image3);
     iconPopperMedia.setFitWidth(18);
     iconPopperMedia.setFitHeight(18);
     assetManagerBtn.setGraphic(iconPopperMedia);
 
     Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    iconPopperEdit = new ImageView(image4);
+    ImageView iconPopperEdit = new ImageView(image4);
     iconPopperEdit.setFitWidth(18);
     iconPopperEdit.setFitHeight(18);
     tableEditBtn.setGraphic(iconPopperEdit);
@@ -1728,6 +1665,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
+    preferencesChanged(PreferenceNames.VALIDATION_SETTINGS, null);
 
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
@@ -1787,6 +1725,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    else if (key.equals(PreferenceNames.VALIDATION_SETTINGS)) {
+      validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
   }
 

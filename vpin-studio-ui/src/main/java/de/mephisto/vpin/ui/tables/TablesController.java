@@ -148,12 +148,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
-
-    Image image2 = new Image(Studio.class.getResourceAsStream("vpx.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setFitWidth(18);
-    view2.setFitHeight(18);
-    tablesTab.setGraphic(view2);
   }
 
   private void refreshTabSelection(Number t1) {

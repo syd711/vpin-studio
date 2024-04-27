@@ -54,6 +54,9 @@ public class WidgetFactory {
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DISABLED_COLOR = "#B0ABAB";
+  public static final String ERROR_COLOR = "#FF3333";
+  public static final String OK_COLOR = "#66FF66";
+  public static final String UPDATE_COLOR = "#FF9933";
 
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
@@ -100,7 +103,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateStar() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(14);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2f-flare");
     return fontIcon;
   }
@@ -109,7 +112,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     return fontIcon;
   }
@@ -137,7 +140,7 @@ public class WidgetFactory {
   public static FontIcon createAlertIcon(String s) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }

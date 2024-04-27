@@ -668,7 +668,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
-    List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
+    List<GameMediaItemRepresentation> mediaItems = new ArrayList<>();
+    if (gameMedia != null) {
+      mediaItems = gameMedia.getMediaItems(s);
+    }
+
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
     }
@@ -730,10 +734,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
-    setGameInternal(overviewController, game, screen);
-  }
-
-  private void setGameInternal(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");
