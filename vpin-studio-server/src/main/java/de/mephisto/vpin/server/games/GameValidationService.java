@@ -11,8 +11,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -24,6 +23,7 @@ import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -91,6 +91,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private Preferences preferences;
   private ServerSettings serverSettings;
+  private ValidationSettings validationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
@@ -156,8 +157,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
 
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
-      List<File> audio = game.getPinUPMedia(PopperScreen.Audio);
-      if (audio.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.Audio)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
         if (findFirst) {
           return result;
@@ -166,8 +166,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
-      List<File> audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
-      if (audioLaunch.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.AudioLaunch)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
         if (findFirst) {
           return result;
@@ -176,8 +175,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
-      List<File> apron = game.getPinUPMedia(PopperScreen.Menu);
-      if (apron.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.Menu)) {
         result.add(GameValidationStateFactory.create(CODE_NO_APRON));
         if (findFirst) {
           return result;
@@ -186,8 +184,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_INFO)) {
-      List<File> info = game.getPinUPMedia(PopperScreen.GameInfo);
-      if (info.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.GameInfo)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
         if (findFirst) {
           return result;
@@ -196,8 +193,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_HELP)) {
-      List<File> help = game.getPinUPMedia(PopperScreen.GameHelp);
-      if (help.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.GameHelp)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
         if (findFirst) {
           return result;
@@ -206,8 +202,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_TOPPER)) {
-      List<File> topper = game.getPinUPMedia(PopperScreen.Topper);
-      if (topper.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.Topper)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
         if (findFirst) {
           return result;
@@ -216,8 +211,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_BACKGLASS)) {
-      List<File> backglass = game.getPinUPMedia(PopperScreen.BackGlass);
-      if (backglass.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.BackGlass)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
         if (findFirst) {
           return result;
@@ -226,8 +220,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_DMD)) {
-      List<File> dmd = game.getPinUPMedia(PopperScreen.DMD);
-      if (dmd.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.DMD)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
         if (findFirst) {
           return result;
@@ -236,8 +229,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_PLAYFIELD)) {
-      List<File> playfield = game.getPinUPMedia(PopperScreen.PlayField);
-      if (playfield.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.PlayField)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
         if (findFirst) {
           return result;
@@ -246,8 +238,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
-      List<File> loading = game.getPinUPMedia(PopperScreen.Loading);
-      if (loading.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.PlayField)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
         if (findFirst) {
           return result;
@@ -256,8 +247,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_OTHER2)) {
-      List<File> other2 = game.getPinUPMedia(PopperScreen.Other2);
-      if (other2.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.Other2)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
         if (findFirst) {
           return result;
@@ -266,8 +256,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
-      List<File> wheels = game.getPinUPMedia(PopperScreen.Wheel);
-      if (wheels.isEmpty()) {
+      if (!validScreenAssets(game, PopperScreen.Wheel)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
         if (findFirst) {
           return result;
@@ -319,6 +308,36 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     return result;
+  }
+
+  private boolean validScreenAssets(Game game, PopperScreen popperScreen) {
+    List<File> screenAssets = game.getPinUPMedia(popperScreen);
+    ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
+    if (!screenAssets.isEmpty()) {
+      if (config.getOption().equals(ValidatorOption.empty)) {
+        return false;
+      }
+
+      for (File file : screenAssets) {
+        String mimeType = MimeTypeUtil.determineMimeType(file);
+        if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
+          return false;
+        }
+        if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+          return false;
+        }
+        if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+          return false;
+        }
+      }
+    }
+    else {
+      if (config.getOption().equals(ValidatorOption.mandatory)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private List<ValidationState> validateForceStereo(Game game) {
@@ -487,17 +506,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_AUDIO)
-        || codes.contains(CODE_NO_AUDIO_LAUNCH)
-        || codes.contains(CODE_NO_APRON)
-        || codes.contains(CODE_NO_INFO)
-        || codes.contains(CODE_NO_HELP)
-        || codes.contains(CODE_NO_TOPPER)
-        || codes.contains(CODE_NO_BACKGLASS)
-        || codes.contains(CODE_NO_DMD)
-        || codes.contains(CODE_NO_PLAYFIELD)
-        || codes.contains(CODE_NO_LOADING)
-        || codes.contains(CODE_NO_OTHER2)
-        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      || codes.contains(CODE_NO_AUDIO_LAUNCH)
+      || codes.contains(CODE_NO_APRON)
+      || codes.contains(CODE_NO_INFO)
+      || codes.contains(CODE_NO_HELP)
+      || codes.contains(CODE_NO_TOPPER)
+      || codes.contains(CODE_NO_BACKGLASS)
+      || codes.contains(CODE_NO_DMD)
+      || codes.contains(CODE_NO_PLAYFIELD)
+      || codes.contains(CODE_NO_LOADING)
+      || codes.contains(CODE_NO_OTHER2)
+      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
     return false;
@@ -510,18 +529,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-        || codes.contains(CODE_NO_ROM)
-        || codes.contains(CODE_ROM_NOT_EXISTS)
-        || codes.contains(CODE_VPX_NOT_EXISTS)
-        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-        || codes.contains(CODE_FORCE_STEREO)
-        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+      || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+      || codes.contains(CODE_NO_ROM)
+      || codes.contains(CODE_ROM_NOT_EXISTS)
+      || codes.contains(CODE_VPX_NOT_EXISTS)
+      || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+      || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+      || codes.contains(CODE_FORCE_STEREO)
+      || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+      || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+      || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+      || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }
@@ -649,12 +668,16 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     preferences = preferencesService.getPreferences();
     preferencesService.addChangeListener(this);
     this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    if (propertyName.equals(PreferenceNames.VALIDATION_SETTINGS)) {
+      validationSettings = preferencesService.getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
     preferences = preferencesService.getPreferences();
   }

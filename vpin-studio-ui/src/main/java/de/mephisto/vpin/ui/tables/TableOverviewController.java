@@ -668,6 +668,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss Selection");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new TableDismissAllProgressModel(selectedItems));
+        onReload();
       }
     }
   }
@@ -1290,6 +1291,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
+    boolean ignored = ignoredValidations.contains(String.valueOf(popperScreen.getValidationCode()));
 
     StringBuilder tt = new StringBuilder();
     Button btn = new Button();
@@ -1303,7 +1305,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (mimeType.contains("audio")) {
         tt.append("Type:\t Audio\n");
         FontIcon icon = WidgetFactory.createIcon("bi-music-note-beamed");
-        if (!config.getMedia().equals(ValidatorMedia.audio)) {
+        if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
           tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
         }
@@ -1313,7 +1315,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       else if (mimeType.contains("image")) {
         tt.append("Type:\t Picture\n");
         FontIcon icon = WidgetFactory.createIcon("bi-card-image");
-        if (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+        if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
           tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
         }
@@ -1322,7 +1324,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       else if (mimeType.contains("video")) {
         tt.append("Type:\t Video\n");
         FontIcon icon = WidgetFactory.createIcon("bi-film");
-        if (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+        if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
           tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
         }
@@ -1330,7 +1332,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
-      if (config.getOption().equals(ValidatorOption.empty)) {
+      if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
         fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
         tt.append("This asset should remain empty.\n");
       }
@@ -1353,17 +1355,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       tt.append("Preferred Asset Type: " + config.getMedia().getDisplayName() + "\n");
       tt.append("No asset selected.\n");
-      if (config.getOption().equals(ValidatorOption.empty)) {
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-        tt.append("This asset should remain empty.\n");
-      }
-      else if (config.getOption().equals(ValidatorOption.optional)) {
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-        tt.append("This asset is optional.\n");
-      }
-      else if (config.getOption().equals(ValidatorOption.mandatory)) {
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-        tt.append("This asset is mandatory.\n");
+
+      if (!ignored) {
+        if (config.getOption().equals(ValidatorOption.empty)) {
+          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          tt.append("This asset should remain empty.\n");
+        }
+        else if (config.getOption().equals(ValidatorOption.optional)) {
+          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          tt.append("This asset is optional.\n");
+        }
+        else if (config.getOption().equals(ValidatorOption.mandatory)) {
+          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+          tt.append("This asset is mandatory.\n");
+        }
       }
     }
 

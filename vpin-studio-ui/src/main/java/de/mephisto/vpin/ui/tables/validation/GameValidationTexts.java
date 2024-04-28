@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.validation;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -61,62 +62,62 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_AUDIO: {
-        label = "No audio media set.";
+        label = invalidAssetMessage("Audio");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_AUDIO_LAUNCH: {
-        label = "No audio launch media set.";
+        label = invalidAssetMessage("Audio Launch");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_APRON: {
-        label = "No full DMD media set.";
+        label = invalidAssetMessage("Full DMD");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_INFO: {
-        label = "No info card set.";
+        label = invalidAssetMessage("Info");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_HELP: {
-        label = "No help card set.";
+        label = invalidAssetMessage("Help");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_TOPPER: {
-        label = "No topper media set.";
+        label = invalidAssetMessage("Topper");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_BACKGLASS: {
-        label = "No backglass media set.";
+        label = invalidAssetMessage("Backglass");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_DMD: {
-        label = "No DMD media set.";
+        label = invalidAssetMessage("DMD");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_LOADING: {
-        label = "No loading video set.";
+        label = invalidAssetMessage("Loading");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_PLAYFIELD: {
-        label = "No playfield video set.";
+        label = invalidAssetMessage("Playfield");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_OTHER2: {
-        label = "No media for \"Other2\" set.";
+        label = invalidAssetMessage("Other2");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_WHEEL_IMAGE: {
-        label = "No wheel icon set.";
+        label = invalidAssetMessage("Wheel");
         text = NO_MEDIA_TEXT;
         break;
       }
@@ -181,5 +182,9 @@ public class GameValidationTexts {
 
 
     return new LocalizedValidation(label, text);
+  }
+
+  private static String invalidAssetMessage(String name) {
+    return "Invalid \"" + name + "\" screen setup.";
   }
 }

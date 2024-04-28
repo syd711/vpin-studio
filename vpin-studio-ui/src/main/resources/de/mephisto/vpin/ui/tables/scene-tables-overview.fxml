@@ -104,7 +104,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                        </graphic>
                                     </TableColumn>
-                                    <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="124.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Audio Launch">
+                                    <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" sortable="false" style="-fx-alignment: CENTER;" text="Audio L.">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                        </graphic>
