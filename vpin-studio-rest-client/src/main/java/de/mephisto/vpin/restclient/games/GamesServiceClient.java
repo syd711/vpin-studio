@@ -82,13 +82,13 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) throws Exception {
+  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
     try {
       return Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class));
     } catch (Exception e) {
       LOG.error("Failed to filter games: " + e.getMessage(), e);
-      throw e;
     }
+    return null;
   }
 
   public List<GameRepresentation> getGamesByRom(String rom) {

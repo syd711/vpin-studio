@@ -42,6 +42,7 @@
 
 ### Bugfixes
 
+- **Table Overview Refresh**: Fixed issue that all tables have been reloaded on changes. The "single table refresh" broke when the filters had been introduced and I didn't notice this before. 
 - **Key Events**: Fixed issue with empty overlay key assignment which led to flood of log entries.
 - **Table Overview**: Fixed context menu item "Upload Backglass".
 - **Color Picker**: Disabled **custom** color picking, since the dialog seems to be broken.

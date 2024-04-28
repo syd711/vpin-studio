@@ -724,10 +724,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     //if the refreshed game is part of the current filter, refresh the whole view, not only the game
     if (filteredIds.contains(refreshedGame.getId())) {
-      Platform.runLater(() -> {
-        onRefresh(tableFilterController.getFilterSettings());
-      });
-      return;
+      boolean reloadNeeded = onRefresh(tableFilterController.getFilterSettings());
+      if (reloadNeeded) {
+        return;
+      }
     }
 
     Platform.runLater(() -> {
@@ -826,20 +826,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
 
-  public synchronized void onRefresh(FilterSettings filterSettings) {
-    GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    tableView.setVisible(false);
+  /**
+   * @return true if the filtered list did change and reload is required
+   */
+  public synchronized boolean onRefresh(FilterSettings filterSettings) {
+    List<Integer> integers = client.getGameService().filterGames(filterSettings);
+    if (integers == null || integers.equals(this.filteredIds)) {
+      tableView.refresh();
+      return false;
+    }
 
-    setBusy(true);
+    Platform.runLater(() -> {
+      tableView.setVisible(false);
+      setBusy(true);
+    });
 
     new Thread(() -> {
       try {
-        List<Integer> integers = client.getGameService().filterGames(filterSettings);
         Platform.runLater(() -> {
           setFilterIds(integers);
           filterGames(games);
           tableView.setItems(data);
-          tableView.refresh();
 
           GameEmulatorRepresentation emulator = getEmulatorSelection();
           if (filterSettings.isResetted(emulator == null || emulator.isVpxEmulator())) {
@@ -855,6 +862,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
     }).start();
+    return true;
   }
 
   @FXML
