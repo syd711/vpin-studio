@@ -832,7 +832,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public synchronized boolean onRefresh(FilterSettings filterSettings) {
     List<Integer> integers = client.getGameService().filterGames(filterSettings);
     if (integers == null || integers.equals(this.filteredIds)) {
-      tableView.refresh();
       return false;
     }
 
@@ -1643,12 +1642,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playlistCombo.valueProperty().addListener(new ChangeListener<Playlist>() {
       @Override
       public void changed(ObservableValue<? extends Playlist> observableValue, Playlist Playlist, Playlist t1) {
+        GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
         tableView.getSelectionModel().clearSelection();
         filterGames(games);
         tableView.setItems(data);
 
         if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
+          if (data.contains(selectedItem)) {
+            tableView.getSelectionModel().select(selectedItem);
+          }
+          else {
+            tableView.getSelectionModel().select(0);
+          }
         }
       }
     });

@@ -227,6 +227,10 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   }
 
   public synchronized TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+    term =term.replaceAll("/", "");
+    term =term.replaceAll("&", " ");
+    term =term.replaceAll(",", " ");
+
     TableAssetSearch cached = getCached(screen, term);
     if (cached != null) {
       return cached;
