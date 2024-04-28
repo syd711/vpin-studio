@@ -646,7 +646,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onValidateAll() {
-    TableDialogs.openValidationDialog(games, true);
+    boolean done = TableDialogs.openValidationDialog(games, true);
+    if (done) {
+      onReload();
+    }
   }
 
   @FXML
@@ -668,7 +671,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss Selection");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new TableDismissAllProgressModel(selectedItems));
-        onReload();
       }
     }
   }
@@ -1291,7 +1293,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
-    boolean ignored = ignoredValidations.contains(String.valueOf(popperScreen.getValidationCode()));
+    boolean ignored = value.getIgnoredValidations().contains(popperScreen.getValidationCode());
 
     StringBuilder tt = new StringBuilder();
     Button btn = new Button();
