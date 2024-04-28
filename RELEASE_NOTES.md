@@ -5,7 +5,7 @@
 - **Clients for Linux and OSX (ARM)**: New zip files are available now in the release artifacts. Make sure to read the **installation-notes.txt** inside the zip files. I managed to modify the updater for the systems too. Note that I can only offer limited support regarding OSX! 
 - **Preferences**: Added **Help & Support** section, including a download option which zips and downloads all log files for **ticket submissions**.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/help.png" width="700" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/help.png" width="500" />
   
 - **Preferences**: Added **Network Settings** to the UI preferences. You can input the **network share** of your VPin there. After restarting the Studio, you can access the remote folders via the yellow-ish folder buttons that have only been available when working on the cabinet before.
 
@@ -29,13 +29,20 @@
 
 - **Table Overview**: The **Emulator Column** is now always shown, its visibility is no longer configurable.
 - **Table Overview Tabs**: The **VPX Tables** has been renamed to **All Tables** and the VPX icon has been removed again, since all emulators are supported now.
-- 
 - **Table Overview Toolbar De-Cluttering**: With the new emulator combo, it was about time to clean up the main toolbar:
   - The **Backglass Manager** button has been moved into the context menu.
   - The **VPS** buttons have been moved into the context menu.
   - The **Export** have been moved into the context menu.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/toolbar.png" width="700" />
+
+- **Asset Manager**: The **Asset Management** is now available as an additional view. The existing **Asset Management** dialog is still available, but you can toggle the table management into a separate view which only **shows you the assets of all tables and all screens at once**. 
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-management-view.png" width="700" />
+
+- **Screen Validators**: The preference page has been re-vamped, including additional preferences. This way, you can exactly define what screens should have which media.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/screen-validators.png" width="500" />
 
 - **Screen Preferences**: This section has been removed in order to streamline the table validators. The section was only used to pre-select (or disable) the corresponding asset validators which felt too cumbersome.
 - **Overlay & Card Settings:** Added **Input Debounce** configuration that should avoid possible duplicated input events (experimental).
@@ -50,3 +57,4 @@
 - **PUP Pack Column**: Fixed wrong PUP pack indicator. The indicator has been shown for table that declare a **pGameName** value, but it has not been checked if the PUP pack actually exist.
 - **Table Data Manager**: Removed duplicate entries from the "Alternative Launcher" combo-box. The list is now solely filled with the available .exe files of the default VPX emulator.
 - **Asset Management**: Improved search suggestions so that it is more likely to get results from the search based on the table name.
+- **Backglass Manager**: Adapted layout a bit so that the dialog fits for HD resolutions.
