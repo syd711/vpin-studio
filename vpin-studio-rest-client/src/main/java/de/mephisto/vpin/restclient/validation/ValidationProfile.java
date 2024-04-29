@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.validation;
 
+import de.mephisto.vpin.restclient.popper.PopperScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,24 @@ public class ValidationProfile {
     }
     ValidationConfig newConfig = new ValidationConfig();
     newConfig.setValidationCode(validationCode);
+    newConfig.setOption(ValidatorOption.optional);
+
+    switch (validationCode) {
+      case GameValidationCode.CODE_NO_AUDIO:
+      case GameValidationCode.CODE_NO_AUDIO_LAUNCH: {
+        newConfig.setMedia(ValidatorMedia.audio);
+        break;
+      }
+      case GameValidationCode.CODE_NO_WHEEL_IMAGE:
+      case GameValidationCode.CODE_NO_INFO:
+      case GameValidationCode.CODE_NO_OTHER2: {
+        newConfig.setMedia(ValidatorMedia.image);
+        break;
+      }
+      default: {
+        newConfig.setMedia(ValidatorMedia.imageOrVideo);
+      }
+    }
     configurations.add(newConfig);
     return newConfig;
   }
