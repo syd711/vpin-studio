@@ -831,14 +831,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
    */
   public synchronized boolean onRefresh(FilterSettings filterSettings) {
     List<Integer> integers = client.getGameService().filterGames(filterSettings);
-    if (integers == null || integers.equals(this.filteredIds)) {
+    if (integers == null || (!this.filteredIds.isEmpty() && integers.equals(this.filteredIds))) {
       return false;
     }
 
-    Platform.runLater(() -> {
-      tableView.setVisible(false);
-      setBusy(true);
-    });
+    tableView.setVisible(false);
+    setBusy(true);
 
     new Thread(() -> {
       try {
@@ -854,6 +852,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           else {
             labelTableCount.setText(data.size() + " of " + games.size() + " tables");
           }
+          tableView.refresh();
           setBusy(false);
         });
       } catch (Exception e) {
