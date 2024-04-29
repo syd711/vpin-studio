@@ -115,67 +115,13 @@ public class ValidatorsScreensPreferencesController implements Initializable {
   }
 
   private void initMedia(ValidationProfile defaultProfile, ComboBox<ValidatorMedia> mediaCombo, int id) {
-    Optional<ValidationConfig> config = defaultProfile.getConfig(id);
-    if (config.isPresent()) {
-      mediaCombo.setValue(config.get().getMedia());
-      return;
-    }
-
-    switch (id) {
-      case GameValidationCode.CODE_NO_AUDIO: {
-        mediaCombo.setValue(ValidatorMedia.audio);
-        break;
-      }
-      case GameValidationCode.CODE_NO_AUDIO_LAUNCH: {
-        mediaCombo.setValue(ValidatorMedia.audio);
-        break;
-      }
-      case GameValidationCode.CODE_NO_WHEEL_IMAGE: {
-        mediaCombo.setValue(ValidatorMedia.image);
-        break;
-      }
-      case GameValidationCode.CODE_NO_INFO: {
-        mediaCombo.setValue(ValidatorMedia.image);
-        break;
-      }
-      case GameValidationCode.CODE_NO_OTHER2: {
-        mediaCombo.setValue(ValidatorMedia.image);
-        break;
-      }
-      default: {
-        mediaCombo.setValue(ValidatorMedia.imageOrVideo);
-      }
-    }
+    ValidationConfig config = defaultProfile.getOrCreateConfig(id);
+    mediaCombo.setValue(config.getMedia());
   }
 
   private void initOption(ValidationProfile defaultProfile, ComboBox<ValidatorOption> optionCombo, int id) {
-    Optional<ValidationConfig> config = defaultProfile.getConfig(id);
-    if (config.isPresent()) {
-      optionCombo.setValue(config.get().getOption());
-      return;
-    }
-
-    switch (id) {
-      case GameValidationCode.CODE_NO_WHEEL_IMAGE: {
-        optionCombo.setValue(ValidatorOption.mandatory);
-        break;
-      }
-      case GameValidationCode.CODE_NO_BACKGLASS: {
-        optionCombo.setValue(ValidatorOption.mandatory);
-        break;
-      }
-      case GameValidationCode.CODE_NO_PLAYFIELD: {
-        optionCombo.setValue(ValidatorOption.mandatory);
-        break;
-      }
-      case GameValidationCode.CODE_NO_LOADING: {
-        optionCombo.setValue(ValidatorOption.mandatory);
-        break;
-      }
-      default: {
-        optionCombo.setValue(ValidatorOption.optional);
-      }
-    }
+    ValidationConfig config = defaultProfile.getOrCreateConfig(id);
+    optionCombo.setValue(config.getOption());
   }
 
   private static void findAllCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {
