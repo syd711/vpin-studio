@@ -36,10 +36,8 @@ java-runtime-osx-x64/
 *.war
 *.nar
 *.ear
-*.tar.gz
 *.rar
 *.iml
-*.gz
 *.log
 *.vpa
 

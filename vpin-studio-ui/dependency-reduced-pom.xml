@@ -168,13 +168,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/../Output/VPin-Studio/runtime-linux</outputDirectory>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../java-runtime-linux</directory>
-                  <excludes>
-                    <exclude>**/*.zip</exclude>
-                  </excludes>
+                  <directory>${basedir}/../</directory>
+                  <includes>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>
@@ -186,13 +186,13 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/../Output/VPin-Studio/runtime-osx-arm-x64</outputDirectory>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../java-runtime-osx-arm-x64</directory>
-                  <excludes>
-                    <exclude>**/*.zip</exclude>
-                  </excludes>
+                  <directory>${basedir}/../</directory>
+                  <includes>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>
@@ -228,7 +228,8 @@
                 <resource>
                   <directory>./</directory>
                   <includes>
-                    <include>VPin-Studio.sh</include>
+                    <include>VPin-Studio-linux_x64.sh</include>
+                    <include>VPin-Studio-macosx_aarch64.sh</include>
                   </includes>
                 </resource>
               </resources>
@@ -305,10 +306,10 @@
               <arguments>
                 <argument>a</argument>
                 <argument>-tzip</argument>
-                <argument>VPin-Studio-Client-Linux-x64.zip</argument>
-                <argument>runtime-linux/*</argument>
+                <argument>VPin-Studio-Client-linux-x64.zip</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
-                <argument>VPin-Studio.sh</argument>
+                <argument>VPin-Studio-linux_x64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
                 <argument>installation.txt</argument>
               </arguments>
@@ -325,9 +326,9 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>rn</argument>
-                <argument>VPin-Studio-Client-Linux-x64.zip</argument>
-                <argument>runtime-linux</argument>
-                <argument>runtime</argument>
+                <argument>VPin-Studio-Client-linux-x64.zip</argument>
+                <argument>VPin-Studio-linux_x64.sh</argument>
+                <argument>VPin-Studio.sh</argument>
               </arguments>
             </configuration>
           </execution>
@@ -343,10 +344,10 @@
               <arguments>
                 <argument>a</argument>
                 <argument>-tzip</argument>
-                <argument>VPin-Studio-Client-OSX-arm-x64.zip</argument>
-                <argument>runtime-osx-arm-x64/*</argument>
+                <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
-                <argument>VPin-Studio.sh</argument>
+                <argument>VPin-Studio-macosx_aarch64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
                 <argument>installation.txt</argument>
               </arguments>
@@ -363,9 +364,9 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>rn</argument>
-                <argument>VPin-Studio-Client-OSX-arm-x64.zip</argument>
-                <argument>runtime-osx-arm-x64</argument>
-                <argument>runtime</argument>
+                <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
+                <argument>VPin-Studio-macosx_aarch64.sh</argument>
+                <argument>VPin-Studio.sh</argument>
               </arguments>
             </configuration>
           </execution>

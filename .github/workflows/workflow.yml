@@ -120,8 +120,8 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
             ./Output/VPin-Studio/VPin-Studio-Server.zip
             ./Output/VPin-Studio/VPin-Studio.zip
-            ./Output/VPin-Studio/VPin-Studio-Client-Linux-x64.zip
-            ./Output/VPin-Studio/VPin-Studio-Client-OSX-arm-x64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-macosx_aarch64.zip
             ./Output/VPin-Studio/vpin-studio-ui-jar.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
