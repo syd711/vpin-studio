@@ -316,23 +316,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>zip-rename-runtime-linux</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
-              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
-              <arguments>
-                <argument>rn</argument>
-                <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                <argument>VPin-Studio-linux_x64.sh</argument>
-                <argument>VPin-Studio.sh</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
             <id>zip-ui-jar-osx-arm</id>
             <phase>package</phase>
             <goals>
@@ -350,23 +333,6 @@
                 <argument>VPin-Studio-macosx_aarch64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
                 <argument>installation.txt</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>zip-rename-runtime-osx-arm</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
-              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
-              <arguments>
-                <argument>rn</argument>
-                <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
-                <argument>VPin-Studio-macosx_aarch64.sh</argument>
-                <argument>VPin-Studio.sh</argument>
               </arguments>
             </configuration>
           </execution>
