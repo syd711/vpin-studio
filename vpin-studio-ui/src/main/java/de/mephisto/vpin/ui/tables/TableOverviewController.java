@@ -332,6 +332,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode);
     columnDateAdded.setVisible(!assetManagerMode);
+
+    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    tableView.getSelectionModel().clearSelection();
+    if (selectedItem != null) {
+      tableView.getSelectionModel().select(selectedItem);
+    }
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {
