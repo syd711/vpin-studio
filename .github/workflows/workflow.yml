@@ -78,14 +78,6 @@ jobs:
         run: |
           unzip -o java-runtime.zip -d ${{ github.workspace }}/java-runtime
 
-      - name: Extract Linux Runtime
-        run: |
-          unzip -o java-runtime-linux.zip -d ${{ github.workspace }}/java-runtime-linux
-
-      - name: Extract OSX ARM Runtime
-        run: |
-          unzip -o java-runtime-osx-arm.zip -d ${{ github.workspace }}/java-runtime-osx-arm-x64
-
       - name: List files in the runtime folder
         run: |
           ls ${{ github.workspace }}/java-runtime/

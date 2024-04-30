@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>2.17.3</version>
+    <version>2.18.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -251,6 +251,38 @@
                   </includes>
                 </resource>
               </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>full-installer-creation</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>ISCC.exe</executable>
+              <arguments>
+                <argument>${basedir}/target/classes/inno-installer-studio-full.iss</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>client-installer-creation</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>ISCC.exe</executable>
+              <arguments>
+                <argument>${basedir}/target/classes/inno-installer-studio-client.iss</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>
