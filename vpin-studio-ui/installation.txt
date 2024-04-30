@@ -1,7 +1,7 @@
-The "execute" permissions for the "VPin-Studio.sh" file are not set.
+The "execute" permissions for the "VPin-Studio_***.sh" file is not set.
 You have to open a command line and execute
 
-chmod u+x VPin-Studio.sh
+chmod a+x VPin-Studio_***.sh
 
-After that, you can start the Studio client by invoking "./VPin-Studio.sh".
+After that, you can start the Studio client by invoking "./VPin-Studio_***.sh".
 
