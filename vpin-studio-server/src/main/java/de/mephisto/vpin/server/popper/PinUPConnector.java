@@ -626,7 +626,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public int importGame(@NonNull File file, int emuId) {
     GameEmulator gameEmulator = getGameEmulator(emuId);
     String baseName = FilenameUtils.getBaseName(file.getName());
-    String formattedBaseName = baseName.replaceAll(" ", "-");
+    String formattedBaseName = baseName;
     Game gameByName = getGameByName(formattedBaseName);
     int count = 1;
     while (gameByName != null) {

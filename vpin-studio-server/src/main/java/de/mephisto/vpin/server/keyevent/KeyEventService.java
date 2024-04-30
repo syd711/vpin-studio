@@ -134,7 +134,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
     if (inputDeboundeMs > 0) {
-      if (overlayKey != null) {
+      if (!StringUtils.isEmpty(overlayKey)) {
         KeyChecker keyChecker = new KeyChecker(overlayKey);
         if (keyChecker.matches(nativeKeyEvent)) {
           if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDeboundeMs) {
@@ -146,7 +146,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }
       }
 
-      if (pauseKey != null) {
+      if (!StringUtils.isEmpty(pauseKey)) {
         KeyChecker keyChecker = new KeyChecker(pauseKey);
         if (keyChecker.matches(nativeKeyEvent)) {
           if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDeboundeMs) {

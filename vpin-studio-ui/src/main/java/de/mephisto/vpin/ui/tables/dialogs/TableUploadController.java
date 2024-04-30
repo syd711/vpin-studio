@@ -173,6 +173,7 @@ public class TableUploadController implements Initializable, DialogController {
 
     keepDisplayNamesCheckbox.setDisable(true);
     keepNamesCheckbox.setDisable(true);
+    backupTableOnOverwriteCheckbox.setDisable(true);
 
     this.selection = null;
     this.uploadBtn.setDisable(true);

@@ -313,20 +313,21 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
       String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
       String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
       if (!existingName.equalsIgnoreCase(name)) {
-        //everything depends on the VPX renaming
-        if (de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
-          //rename assets later
-          if (game.getDirectB2SFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
-          }
+        if (game.getGameFile().exists()) {
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name);
+        }
 
-          if (game.getPOVFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
-          }
+        if (game.getDirectB2SFile().exists()) {
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
+        }
 
-          if (game.getResFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
-          }
+        if (game.getPOVFile().exists()) {
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
+        }
+
+        if (game.getResFile().exists()) {
+          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
+        }
 
           if (game.getIniFile().exists()) {
             de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
@@ -336,7 +337,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
             de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getVBSFile(), name);
           }
           LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
-        }
+
       }
       else {
         //revert to old value
