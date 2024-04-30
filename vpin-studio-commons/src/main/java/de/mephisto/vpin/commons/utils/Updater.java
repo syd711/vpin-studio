@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,8 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Updater {
@@ -25,8 +30,8 @@ public class Updater {
   public final static long SERVER_ZIP_SIZE = 122 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
-  public final static String UI_EXE = "VPin-Studio.exe";
-  public final static long UI_ZIP_SIZE = 84 * 1000 * 1000;
+  public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
+  public final static long UI_ZIP_SIZE = 86 * 1000 * 1000;
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
@@ -80,7 +85,7 @@ public class Updater {
       }
       in.close();
       fileOutputStream.close();
-      if(overwrite && target.exists() && !target.delete()) {
+      if (overwrite && target.exists() && !target.delete()) {
         LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
         return;
       }
@@ -115,21 +120,55 @@ public class Updater {
   }
 
   public static boolean installClientUpdate() throws IOException {
-    String cmds = "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
-    FileUtils.writeBatch("update-client.bat", cmds);
-    LOG.info("Written temporary batch: " + cmds);
-    List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(getBasePath());
-    executor.executeCommandAsync();
-    new Thread(() -> {
+    String os = System.getProperty("os.name");
+    if (os.contains("Windows")) {
+      String cmds = "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
+      FileUtils.writeBatch("update-client.bat", cmds);
+      LOG.info("Written temporary batch: " + cmds);
+      List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(getBasePath());
+      executor.executeCommandAsync();
+      new Thread(() -> {
+        try {
+          Thread.sleep(2000);
+          System.exit(0);
+        } catch (InterruptedException e) {
+          //ignore
+        }
+      }).start();
+    }
+    else {
       try {
-        Thread.sleep(2000);
-        System.exit(0);
-      } catch (InterruptedException e) {
-        //ignore
+        String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
+        File file = FileUtils.writeBatch("update-client.sh", cmds);
+        LOG.info("Written temporary bash: " + cmds);
+
+        Set<PosixFilePermission> perms = new HashSet<>();
+        perms.add(PosixFilePermission.OWNER_READ);
+        perms.add(PosixFilePermission.OWNER_WRITE);
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+        Files.setPosixFilePermissions(file.toPath(), perms);
+        LOG.info("Applied execute permissions to : " + file.getAbsolutePath());
+
+        List<String> commands = Arrays.asList("./update-client.sh");
+        SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
+        executor.setDir(getBasePath());
+        executor.enableLogging(true);
+        executor.executeCommandAsync();
+        new Thread(() -> {
+          try {
+            LOG.info("Exiting Studio");
+            Thread.sleep(2000);
+            System.exit(0);
+          } catch (InterruptedException e) {
+            //ignore
+          }
+        }).start();
+      } catch (Exception e) {
+        LOG.error("Failed to execute update: " + e.getMessage(), e);
       }
-    }).start();
+    }
     return true;
   }
 

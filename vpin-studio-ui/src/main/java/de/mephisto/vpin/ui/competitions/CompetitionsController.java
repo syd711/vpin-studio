@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.competitions;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
@@ -13,20 +15,28 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,6 +61,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Tab tableSubscriptionsTab;
+
+  @FXML
+  private Tab iScoredSubscriptionsTab;
 
   @FXML
   private Label createdAtLabel;
@@ -86,6 +99,19 @@ public class CompetitionsController implements Initializable, StudioFXController
   private TitledPane competitionMembersPane;
 
   @FXML
+  private TitledPane dashboardPane;
+
+  @FXML
+  private WebView dashboardWebView;
+
+  @FXML
+  private Label dashboardStatusLabel;
+
+  @FXML
+  private Button dashboardBtn;
+
+
+  @FXML
   private VBox membersBox;
 
   @FXML
@@ -95,6 +121,8 @@ public class CompetitionsController implements Initializable, StudioFXController
   private CompetitionsOfflineController offlineController;
   private CompetitionsDiscordController discordController;
   private TableSubscriptionsController tableSubscriptionsController;
+  private IScoredSubscriptionsController iScoredSubscriptionsController;
+  private String lastDashboardUrl;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
 
@@ -115,14 +143,27 @@ public class CompetitionsController implements Initializable, StudioFXController
     tableSubscriptionsController.onViewActivated();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    loadTabs();
-    updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
-    });
-    accordion.setExpandedPane(metaDataPane);
+  @FXML
+  private void onDashboardOpen() {
+    if (this.competition.isPresent()) {
+      String dashboardUrl = competition.get().getUrl();
+      if (!StringUtils.isEmpty(dashboardUrl)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(dashboardUrl));
+          } catch (Exception e) {
+            LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onDashboardReload() {
+    WebEngine webEngine = dashboardWebView.getEngine();
+    webEngine.reload();
   }
 
   private void refreshView(Number t1) {
@@ -130,6 +171,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
+      checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
     else if (t1.intValue() == 1) {
@@ -137,6 +179,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
         updateSelection(selection);
+        checkTitledPanes(CompetitionType.DISCORD);
         discordController.onReload();
       }
     }
@@ -145,7 +188,17 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
         updateSelection(selection);
+        checkTitledPanes(CompetitionType.SUBSCRIPTION);
         tableSubscriptionsController.onReload();
+      }
+    }
+    else if (t1.intValue() == 3) {
+      if (iScoredSubscriptionsTab != null) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+        Optional<CompetitionRepresentation> selection = iScoredSubscriptionsController.getSelection();
+        updateSelection(selection);
+        checkTitledPanes(CompetitionType.ISCORED);
+        iScoredSubscriptionsController.onReload();
       }
     }
     else {
@@ -159,11 +212,32 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
-    checkTitledPanes(competitionRepresentation);
     refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
+    refreshDashboard(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
   }
+
+  private void refreshDashboard(Optional<CompetitionRepresentation> competitionRepresentation) {
+    String dashboardUrl = null;
+    if (competitionRepresentation.isPresent()) {
+      dashboardUrl = competitionRepresentation.get().getUrl();
+    }
+    dashboardBtn.setDisable(dashboardUrl == null);
+    dashboardWebView.setVisible(dashboardUrl != null);
+    dashboardStatusLabel.setVisible(dashboardUrl == null);
+
+    if (dashboardUrl != null) {
+      WebEngine webEngine = dashboardWebView.getEngine();
+      webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
+
+      if (lastDashboardUrl == null || !lastDashboardUrl.equals(dashboardUrl)) {
+        lastDashboardUrl = dashboardUrl;
+        webEngine.load(dashboardUrl);
+      }
+    }
+  }
+
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
     uuidLabel.setText("-");
@@ -176,12 +250,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       String type = competitionRepresentation.get().getType();
       if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
-        if (metaDataPane.isVisible()) {
+        if (metaDataPane.isVisible() && metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
-          if(competition.getJoinMode() != null) {
+          if (competition.getJoinMode() != null) {
             JoinMode joinMode = JoinMode.valueOf(competition.getJoinMode());
             switch (joinMode) {
               case STRICT: {
@@ -200,7 +274,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           }
 
-          if(competition.getScoreLimit() == 0) {
+          if (competition.getScoreLimit() == 0) {
             scoreLimitLabel.setText("Table Defaults");
           }
           else {
@@ -256,7 +330,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             ownerBox.getChildren().addAll(view, label);
           }
 
-          if(competition.getStartDate() != null) {
+          if (competition.getStartDate() != null) {
             startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
             endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
           }
@@ -265,37 +339,48 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private void checkTitledPanes(Optional<CompetitionRepresentation> cp) {
-    competitionMembersPane.setDisable(cp.isEmpty());
-    metaDataPane.setDisable(cp.isEmpty());
+  private void checkTitledPanes(CompetitionType competitionType) {
+    switch (competitionType) {
+      case DISCORD: {
+        competitionMembersPane.setDisable(false);
+        competitionMembersPane.setExpanded(true);
+        metaDataPane.setDisable(false);
+        metaDataPane.setExpanded(false);
 
-    if (cp.isPresent()) {
-      CompetitionType competitionType = CompetitionType.valueOf(cp.get().getType());
-      switch (competitionType) {
-        case DISCORD: {
-          competitionMembersPane.setDisable(false);
-          competitionMembersPane.setExpanded(true);
-          metaDataPane.setDisable(false);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        case SUBSCRIPTION: {
-          competitionMembersPane.setDisable(false);
-          competitionMembersPane.setExpanded(true);
-          metaDataPane.setDisable(false);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        case OFFLINE: {
-          competitionMembersPane.setDisable(true);
-          competitionMembersPane.setExpanded(false);
-          metaDataPane.setDisable(true);
-          metaDataPane.setExpanded(false);
-          break;
-        }
-        default: {
-          throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
-        }
+        dashboardPane.setDisable(true);
+        break;
+      }
+      case SUBSCRIPTION: {
+        competitionMembersPane.setDisable(false);
+        competitionMembersPane.setExpanded(true);
+        metaDataPane.setDisable(false);
+        metaDataPane.setExpanded(false);
+
+        dashboardPane.setDisable(true);
+        break;
+      }
+      case OFFLINE: {
+        competitionMembersPane.setDisable(true);
+        competitionMembersPane.setExpanded(false);
+        metaDataPane.setDisable(true);
+        metaDataPane.setExpanded(false);
+
+        dashboardPane.setDisable(true);
+        break;
+      }
+      case ISCORED: {
+        competitionMembersPane.setDisable(true);
+        competitionMembersPane.setExpanded(false);
+        metaDataPane.setDisable(true);
+        metaDataPane.setExpanded(false);
+
+        dashboardPane.setDisable(false);
+        dashboardPane.setExpanded(true);
+
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
       }
     }
   }
@@ -326,6 +411,14 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
       }
     }
+    else if (index == 3) {
+      if (competitionRepresentation.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions", competitionRepresentation.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+      }
+    }
     else {
       throw new UnsupportedOperationException("Invalid tab.");
     }
@@ -335,7 +428,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     membersBox.getChildren().removeAll(membersBox.getChildren());
     if (cp.isPresent()) {
       CompetitionRepresentation competition = cp.get();
-      if (competitionMembersPane.isVisible()) {
+      if (competitionMembersPane.isVisible() && !competitionMembersPane.isDisabled()) {
         if (!competition.isActive()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The competition is not active."));
         }
@@ -392,6 +485,32 @@ public class CompetitionsController implements Initializable, StudioFXController
     } catch (IOException e) {
       LOG.error("failed to load subscriptions: " + e.getMessage(), e);
     }
+
+    if (Features.ISCORED_ENABLED) {
+      try {
+        FXMLLoader loader = new FXMLLoader(IScoredSubscriptionsController.class.getResource("tab-competitions-iscored.fxml"));
+        Parent parent = loader.load();
+        iScoredSubscriptionsController = loader.getController();
+        iScoredSubscriptionsController.setCompetitionsController(this);
+        iScoredSubscriptionsTab.setContent(parent);
+      } catch (IOException e) {
+        LOG.error("failed to load subscriptions: " + e.getMessage(), e);
+      }
+    }
+    else {
+      tabPane.getTabs().remove(iScoredSubscriptionsTab);
+    }
   }
 
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    loadTabs();
+    updateSelection(Optional.empty());
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      refreshView(t1);
+    });
+    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+    checkTitledPanes(CompetitionType.OFFLINE);
+  }
 }

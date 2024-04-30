@@ -127,7 +127,7 @@ public class BackglassService {
 
   public List<DirectB2S> getBackglasses() {
     List<DirectB2S> result = new ArrayList<>();
-    List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+    List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       File tablesFolder = gameEmulator.getTablesFolder();
       Collection<File> files = org.apache.commons.io.FileUtils.listFiles(tablesFolder, new String[]{"directb2s"}, true);

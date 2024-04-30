@@ -34,6 +34,11 @@ public class CompetitionResource {
     return competitionService.getSubscriptions();
   }
 
+  @GetMapping("/iscored")
+  public List<Competition> getIScoredSubscriptions() {
+    return competitionService.getIScoredSubscriptions();
+  }
+
   @GetMapping("/{id}")
   public Competition getCompetition(@PathVariable("id") int id) {
     Competition c = competitionService.getCompetition(id);

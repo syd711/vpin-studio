@@ -155,9 +155,9 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScanAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getGamesCached().size() + " tables?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getVpxGamesCached().size() + " tables?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getGamesCached()));
+      ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getVpxGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }

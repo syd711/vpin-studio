@@ -74,7 +74,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   }
 
   public GameList getImportTables() {
-    List<GameEmulator> emulators = pinUPConnector.getGameEmulators();
+    List<GameEmulator> emulators = pinUPConnector.getVpxGameEmulators();
     GameList list = new GameList();
     for (GameEmulator emulator : emulators) {
       File vpxTablesFolder = emulator.getTablesFolder();
@@ -212,15 +212,17 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
               }
             }
 
-            if (overwrite || StringUtils.isEmpty(tableDetails.getNotes())) {
-              if (!StringUtils.isEmpty(tableVersion.getComment())) {
-                tableDetails.setNotes(tableVersion.getComment());
-              }
-            }
-
             if (overwrite || (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null)) {
               if (tableInfo != null) {
-                tableDetails.setgDetails(tableInfo.getTableDescription());
+                StringBuilder details = new StringBuilder();
+                if (!StringUtils.isEmpty(tableVersion.getComment())) {
+                  details.append("VPS Comment:\n");
+                  details.append(tableVersion.getComment());
+                }
+                String tableDescription = tableInfo.getTableDescription();
+                details.append("\n\n");
+                details.append(tableDescription);
+                tableDetails.setgDetails(details.toString());
               }
             }
 
@@ -294,24 +296,25 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
     //fix input and save input
     String gameFilename = updatedTableDetails.getGameFileName();
-    if (!gameFilename.endsWith(".vpx")) {
+    if (game.isVpxGame() && !gameFilename.endsWith(".vpx")) {
       gameFilename = gameFilename + ".vpx";
       updatedTableDetails.setGameFileName(gameFilename);
     }
     pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
 
     //for upload and replace, we do not need any renaming
-    if (!renamingChecks) {
-      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
-      return updatedTableDetails;
-    }
+    if (game.isVpxGame()) {
+      if (!renamingChecks) {
+        runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+        return updatedTableDetails;
+      }
 
-    //rename game filename which results in renaming VPX related files
-    if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
-      String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-      String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
-      if (!existingName.equalsIgnoreCase(name)) {
-        if (game.getGameFile().exists()) {
+      //rename game filename which results in renaming VPX related files
+      if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
+        String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
+        String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
+        if (!existingName.equalsIgnoreCase(name)) {
+          if (game.getGameFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name);
         }
 
@@ -330,22 +333,28 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
         if (game.getIniFile().exists()) {
           de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
         }
-        LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
-      }
-      else {
+if (game.getVBSFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getVBSFile(), name);
+          }        LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
+
+        else {
         //revert to old value
         updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
         pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
-        LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
+        LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");}
       }
     }
+
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
       renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
     }
 
-    runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+    if (game.isVpxGame()) {
+      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+    }
+
     return updatedTableDetails;
   }
 

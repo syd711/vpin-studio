@@ -123,7 +123,7 @@ public class MameRomAliasService implements InitializingBean {
 
   public void clearCache() {
     aliasMappingCache.clear();
-    List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+    List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       aliasMappingCache.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
     }

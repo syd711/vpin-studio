@@ -95,15 +95,16 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         if (showPauseInsteadOfOverlay && vpxRunning) {
           LOG.info("Toggle pause menu show (Key " + overlayKey + ")");
           OverlayWindowFX.getInstance().togglePauseMenu();
+          return;
         }
-        else {
-          if (systemService.isPopperMenuRunning(processes)) {
-            this.overlayVisible = !overlayVisible;
-            Platform.runLater(() -> {
-              LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
-              OverlayWindowFX.getInstance().showOverlay(overlayVisible);
-            });
-          }
+
+        if (systemService.isPopperMenuRunning(processes)) {
+          this.overlayVisible = !overlayVisible;
+          Platform.runLater(() -> {
+            LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
+            OverlayWindowFX.getInstance().showOverlay(overlayVisible);
+          });
+          return;
         }
       }
     }
@@ -118,6 +119,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         else {
           OverlayWindowFX.getInstance().exitPauseMenu();
         }
+        return;
       }
     }
 
@@ -276,7 +278,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
           showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
-          inputDeboundeMs = 1000;
+          inputDeboundeMs = pauseMenuSettings.getInputDebounceMs();
           pauseKey = pauseMenuSettings.getKey();
           LOG.info("Pause key has been updated to: " + pauseKey);
           break;

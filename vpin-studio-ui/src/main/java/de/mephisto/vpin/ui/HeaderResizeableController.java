@@ -90,7 +90,9 @@ public class HeaderResizeableController implements Initializable {
         int x = (int) stage.getX();
         int width = (int) stage.getWidth();
         int height = (int) stage.getHeight();
-        LocalUISettings.saveLocation(x, y, width, height);
+        if (width > 0 && height > 0) {
+          LocalUISettings.saveLocation(x, y, width, height);
+        }
       }, 500);
     }
   }
@@ -113,13 +115,13 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
-    titleLabel.setText("VPin Studio - " + Studio.getVersion());
+    titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
     }
-    titleLabel.setText("VPin Studio - " + name);
+    titleLabel.setText("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
     stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());

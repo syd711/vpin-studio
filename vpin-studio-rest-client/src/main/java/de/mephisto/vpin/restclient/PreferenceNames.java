@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient;
 
 public interface PreferenceNames {
   String IGNORED_VALIDATIONS = "ignoredValidations";
-  String IGNORED_MEDIA = "ignoredMedia";
+  String VALIDATION_SETTINGS = "validationSettings";
 
   String SYSTEM_NAME = "systemName";
   String SYSTEM_PRESET = "systemPreset";

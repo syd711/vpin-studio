@@ -30,6 +30,9 @@
                </children>
             </HBox>
          </children>
+         <padding>
+            <Insets top="3.0" />
+         </padding>
       </StackPane>
    </top>
    <center>

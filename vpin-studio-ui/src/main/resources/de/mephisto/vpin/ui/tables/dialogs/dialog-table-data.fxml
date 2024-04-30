@@ -192,7 +192,7 @@
                                                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                              </VBox.margin>
                                           </VBox>
-                                          <VBox styleClass="navigation-panel">
+                                          <VBox fx:id="vpsPanel" styleClass="navigation-panel">
                                              <children>
                                                 <Label styleClass="default-title" text="Virtual Pinball Spreadsheet Entry" textFill="WHITE">
                                                    <font>
@@ -223,6 +223,17 @@
                                                             <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
                                                          </tooltip>
                                                       </SplitMenuButton>
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Resets the assigned VPS table mapping." />
+                                                         </tooltip>
+                                                      </Button>
                                                       <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Meta Data" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
@@ -912,7 +923,7 @@
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gNotes" prefHeight="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
+                                                <Label styleClass="default-text" text="Notes:" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>

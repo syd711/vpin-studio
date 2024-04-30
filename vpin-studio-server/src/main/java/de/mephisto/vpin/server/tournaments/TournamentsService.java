@@ -77,22 +77,26 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   }
 
   public boolean synchronize() {
-    LOG.info("Running Tournament Synchronization");
-    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-    for (Tournament tournament : tournaments) {
-      if (!tournament.isFinished()) {
-        List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-        for (TournamentTable tournamentTable : tournamentTables) {
-          if(!tournamentTable.isActive()) {
-            LOG.info("Skippd tournament score submission for " + tournamentTable + ", the table is not active.");
-            continue;
-          }
-          Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
-          if (gameByVpsTable != null) {
+    try {
+      LOG.info("Running Tournament Synchronization");
+      List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+      for (Tournament tournament : tournaments) {
+        if (!tournament.isFinished()) {
+          List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+          for (TournamentTable tournamentTable : tournamentTables) {
+            if (!tournamentTable.isActive()) {
+              LOG.info("Skippd tournament score submission for " + tournamentTable + ", the table is not active.");
+              continue;
+            }
+            Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
+            if (gameByVpsTable != null) {
 
+            }
           }
         }
       }
+    } catch (Exception e) {
+      LOG.error("Failed to synchronize tournaments: " + e.getMessage(), e);
     }
 
     return false;

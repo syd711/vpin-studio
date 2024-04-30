@@ -160,7 +160,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
         String archiveBaseName = FilenameUtils.getBaseName(selectedItem.getFilename());
         Optional<GameRepresentation> first = games.stream().filter(g -> FilenameUtils.getBaseName(g.getGameFileName()).equals(archiveBaseName)).findFirst();
         if (first.isPresent()) {
-          WidgetFactory.showAlert(stage, "Table Exists", "Delete the existing table before restoring it.");
+          WidgetFactory.showAlert(stage, "Table Exists", "Delete the existing table \"" + first.get().getGameDisplayName() + "\" before restoring it.");
           return;
         }
       }

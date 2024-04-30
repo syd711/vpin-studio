@@ -52,10 +52,7 @@ public class PauseMenuItemsFactory {
       }
     }
 
-
-    if (pauseMenuSettings.getStyle() == null
-      || (pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens) && !pauseMenuSettings.isAutoplay())
-      || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
       createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
     }
     return pauseMenuItems;
@@ -83,7 +80,7 @@ public class PauseMenuItemsFactory {
   public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {
     List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
-    if (pauseMenuSettings.isRenderTutorialLinks() && !StringUtils.isEmpty(extTableId)) {
+    if (!StringUtils.isEmpty(extTableId)) {
       VpsTable tableById = VPS.getInstance().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();

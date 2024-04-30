@@ -31,6 +31,7 @@
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="cancelBtn1" layoutX="1175.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="default-button" text="Close" />
+            <Button fx:id="applyBtn" layoutX="1332.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApply" styleClass="submit-button" text="Close And Apply" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
@@ -454,6 +455,150 @@
                                        <VBox.margin>
                                           <Insets left="26.0" />
                                        </VBox.margin></Spinner>
+                                    <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="Render Positions" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="26.0" top="12.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane layoutX="10.0" layoutY="41.0" text="Canvas Settings">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <content>
+                        <ScrollPane hbarPolicy="NEVER">
+                           <content>
+                              <VBox styleClass="accordion-container">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="renderCanvasCheckbox" mnemonicParsing="false" text="Use Background Canvas">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp12" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Adds an additional background layer so that it improves the readability of the score text." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label text="Color" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <ColorPicker fx:id="canvasColorSelector">
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </ColorPicker>
+                                    <Label text="Alpha Percentage:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Slider fx:id="canvasAlphaPercentageSlider" maxWidth="330.0" prefWidth="330.0">
+                                       <padding>
+                                          <Insets bottom="12.0" top="6.0" />
+                                       </padding>
+                                    </Slider>
+                                    <HBox spacing="12.0">
+                                       <children>
+                                          <VBox>
+                                             <children>
+                                                <Label text="Position X" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Spinner fx:id="canvasXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                             </children>
+                                          </VBox>
+                                          <VBox layoutX="10.0" layoutY="10.0">
+                                             <children>
+                                                <Label text="Position Y" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Spinner fx:id="canvasYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="22.0" layoutY="175.0" spacing="12.0">
+                                       <children>
+                                          <VBox>
+                                             <children>
+                                                <Label text="Width" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Spinner fx:id="canvasWidthSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                             </children>
+                                          </VBox>
+                                          <VBox layoutX="10.0" layoutY="10.0">
+                                             <children>
+                                                <Label text="Height" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Spinner fx:id="canvasHeightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <Label text="Border Radius" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="3.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Spinner fx:id="canvasBorderRadiusSpinner" editable="true" maxWidth="110.0" styleClass="widget-default" />
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

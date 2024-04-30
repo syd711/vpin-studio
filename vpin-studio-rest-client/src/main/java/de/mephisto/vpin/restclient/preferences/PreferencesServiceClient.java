@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;

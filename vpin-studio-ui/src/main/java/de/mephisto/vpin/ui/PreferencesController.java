@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.preferences.ScreensPreferencesController;
+import de.mephisto.vpin.ui.preferences.UISettingsPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -144,7 +144,12 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-validators_pinuppopper.fxml", event);
+    load("preference-validators-screens.fxml", event);
+  }
+
+  @FXML
+  private void onSupport(ActionEvent event) throws IOException {
+    load("preference-support.fxml", event);
   }
 
   @FXML
@@ -160,11 +165,6 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onArchiveManager(ActionEvent event) throws IOException {
     load("preference-table_manager.fxml", event);
-  }
-
-  @FXML
-  private void onScreens(ActionEvent event) throws IOException {
-    load("preference-screens.fxml", event);
   }
 
   @FXML
@@ -292,7 +292,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     lastScreen = screen;
 
     try {
-      FXMLLoader loader = new FXMLLoader(ScreensPreferencesController.class.getResource(screen));
+      FXMLLoader loader = new FXMLLoader(UISettingsPreferencesController.class.getResource(screen));
       Node node = loader.load();
       prefsMain.setCenter(node);
     } catch (Exception e) {

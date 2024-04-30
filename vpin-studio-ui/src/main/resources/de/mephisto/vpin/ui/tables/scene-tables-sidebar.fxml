@@ -9,15 +9,15 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="root" minWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
-    <children>
-        <Accordion fx:id="tableAccordion">
+
+<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+   <center>
+        <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <panes>
-                <TitledPane fx:id="titledPaneMedia" prefHeight="1110.0" prefWidth="600.0">
+                <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
@@ -200,7 +200,8 @@
                         <Label text="ALT Sound" BorderPane.alignment="CENTER" />
                      </left>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
             <TitledPane fx:id="titledPaneAltColor" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
@@ -225,7 +226,8 @@
                         </Label>
                      </left>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPanePov" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
@@ -335,7 +337,8 @@
                         </Button>
                      </right>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPaneMetadata" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
@@ -360,7 +363,8 @@
                         </Button>
                      </right>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
@@ -382,5 +386,5 @@
                 </TitledPane>
             </panes>
         </Accordion>
-    </children>
-</VBox>
+   </center>
+</BorderPane>

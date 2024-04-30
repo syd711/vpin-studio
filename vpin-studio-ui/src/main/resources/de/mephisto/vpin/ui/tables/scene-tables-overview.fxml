@@ -35,7 +35,7 @@
                                   <children>
                                       <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                           <columns>
-                                              <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="50.0" style="-fx-alignment: CENTER;" text="Status" />
+                                              <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                               <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                     <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
                                     <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="VPS Updates" />
@@ -48,7 +48,67 @@
                                               <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                               <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                               <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="180.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
-                                    <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Date Added" />
+                                    <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
+                                    <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Wheel">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Playfield">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Backglass">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Loading">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" sortable="false" style="-fx-alignment: CENTER;" text="DMD">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" sortable="false" style="-fx-alignment: CENTER;" text="Topper">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Full DMD">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" sortable="false" style="-fx-alignment: CENTER;" text="Info">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Help">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" sortable="false" style="-fx-alignment: CENTER;" text="Other2">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" sortable="false" style="-fx-alignment: CENTER;" text="Audio">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
+                                    <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" sortable="false" style="-fx-alignment: CENTER;" text="Audio L.">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
+                                       </graphic>
+                                    </TableColumn>
                                           </columns>
                                       </TableView>
                                   </children>
@@ -139,6 +199,8 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                            </graphic>
                         </Button>
+                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                        <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                                 <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
                                     <font>
                                         <Font size="14.0" />
@@ -156,8 +218,19 @@
                            </tooltip>
                                 </Button>
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="229.0" />
+                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
                         <Separator layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Asset Manager" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
@@ -181,23 +254,6 @@
                            </tooltip>
                         </Button>
                         <Separator layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <Button fx:id="vpsResetBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Reset VPS updates indicators" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="vpsBtn" layoutX="588.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVps" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Open VPS Entry" />
-                           </tooltip>
-                        </Button>
-                        <Separator layoutX="724.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -278,16 +334,7 @@
                               <Tooltip text="Delete table and assets" />
                            </tooltip>
                                 </Button>
-                                <Separator layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <Button fx:id="backglassBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Open Backglass Manager" />
-                           </tooltip>
-                        </Button>
-                        <Separator layoutX="527.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                                <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
                           <items>
                             <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
@@ -345,18 +392,6 @@
                                     </graphic>
                                     <tooltip>
                                         <Tooltip text="Kill all VPX and PinUP Popper processes." />
-                                    </tooltip>
-                                </Button>
-                                <Separator layoutX="788.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                                <Button fx:id="backupBtn" layoutX="596.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" textFill="WHITE">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export" iconSize="18" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Exports the selected table into the local repository." />
                                     </tooltip>
                                 </Button>
                             </items>

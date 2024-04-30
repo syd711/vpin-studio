@@ -142,6 +142,7 @@ public class PropperRenamingController implements Initializable {
   private void refreshNames() {
     displayNameCheckBox.setDisable(vpsTable == null);
     gameNameCheckBox.setDisable(vpsTable == null);
+    fileNameCheckBox.setDisable(vpsTable == null);
     fileName.setDisable(vpsTable == null);
 
     if (tableDetails.getGameFileName() != null && (tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"))) {

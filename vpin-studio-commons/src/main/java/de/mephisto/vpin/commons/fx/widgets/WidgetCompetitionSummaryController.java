@@ -1,6 +1,8 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -56,6 +58,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   private Label name3;
 
   @FXML
+  private Label name4;
+
+  @FXML
+  private Label name5;
+
+  @FXML
   private Label firstLabel;
 
   @FXML
@@ -63,6 +71,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   @FXML
   private Label thirdLabel;
+
+  @FXML
+  private Label fourthLabel;
+
+  @FXML
+  private Label fifthLabel;
 
   @FXML
   private Label scoreLabel1;
@@ -73,8 +87,15 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   @FXML
   private Label scoreLabel3;
 
+  @FXML
+  private Label scoreLabel4;
+
+  @FXML
+  private Label scoreLabel5;
+
   private Label emptylabel;
 
+  private final static String ISCORED_EMPTY_TEXT = "                        No iScored subscriptoin found.\nAdd iScored subscriptions to compete with other players.";
   private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
   private final static String ONLINE_EMPTY_TEXT = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
 
@@ -84,7 +105,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
       "    -fx-border-style: solid solid solid solid;\n" +
       "    -fx-border-color: #111111;\n" +
@@ -92,7 +112,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       "    -fx-background-radius: 6;" +
       "    -fx-border-width: 1;");
 
-    emptylabel = new Label(OFFLINE_EMPTY_TEXT);
+    emptylabel = new Label("");
     emptylabel.getStyleClass().add("preference-description");
     emptylabel.setPadding(new Insets(100, 0, 120, 40));
     competitionStack.getChildren().add(emptylabel);
@@ -106,76 +126,127 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       if (competitionType.equals(CompetitionType.DISCORD)) {
         emptylabel.setText(ONLINE_EMPTY_TEXT);
       }
+      else if (competitionType.equals(CompetitionType.OFFLINE)) {
+        emptylabel.setText(OFFLINE_EMPTY_TEXT);
+      }
+      else if (competitionType.equals(CompetitionType.ISCORED)) {
+        emptylabel.setText(ISCORED_EMPTY_TEXT);
+      }
       else {
         emptylabel.setText(OFFLINE_EMPTY_TEXT);
       }
       durationLabel.setText("");
       emptylabel.setVisible(true);
       topBox.setVisible(false);
+
+      return;
+    }
+
+    topBox.setVisible(true);
+    emptylabel.setVisible(false);
+
+    GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
+    if (game != null) {
+      if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+        durationLabel.setText("Table Subscription");
+        tableNameLabel.setText("Top Scores");
+      }
+      else if (competitionType.equals(CompetitionType.ISCORED)) {
+        durationLabel.setText("iScored Subscription");
+        tableNameLabel.setText("Top Scores");
+      }
+      else {
+        durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+        tableNameLabel.setText(game.getGameDisplayName());
+      }
+    }
+
+    competitionLabel.setText(competition.getName());
+
+    boolean isActive = competition.isActive();
+    firstLabel.setVisible(isActive);
+    secondLabel.setVisible(isActive);
+    thirdLabel.setVisible(isActive);
+    scoreLabel1.setVisible(isActive);
+    scoreLabel2.setVisible(isActive);
+    scoreLabel3.setVisible(isActive);
+    scoreLabel4.setVisible(isActive);
+    scoreLabel5.setVisible(isActive);
+
+    name1.setText("-");
+    name2.setText("-");
+    name3.setText("-");
+    name4.setText("-");
+    name5.setText("-");
+
+    scoreLabel1.setText("0");
+    scoreLabel2.setText("0");
+    scoreLabel3.setText("0");
+    scoreLabel4.setText("0");
+    scoreLabel5.setText("0");
+
+    name1.setVisible(isActive);
+    name2.setVisible(isActive);
+    name3.setVisible(isActive);
+    name4.setVisible(isActive);
+    name5.setVisible(isActive);
+
+    if (!competition.isActive() || game == null) {
+      return;
+    }
+
+    ScoreSummaryRepresentation latestCompetitionScore = null;
+    if (competitionType.equals(CompetitionType.ISCORED)) {
+      GameRoom gameRoom = IScored.getGameRoom(competition.getUrl());
+      if (gameRoom != null) {
+        latestCompetitionScore = ScoreSummaryRepresentation.forGameRoom(gameRoom, competition.getVpsTableId(), competition.getVpsTableVersionId());
+      }
     }
     else {
-      topBox.setVisible(true);
-      emptylabel.setVisible(false);
+      latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
+    }
 
-      GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
-      if (game != null) {
-        if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-          durationLabel.setText("Table Subscription");
-          tableNameLabel.setText("Current Scores");
-        }
-        else {
-          durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
-          tableNameLabel.setText(game.getGameDisplayName());
-        }
+    if (latestCompetitionScore != null) {
+      List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
+
+      int index = 0;
+      if (index <= scores.size()) {
+        ScoreRepresentation score1 = scores.get(index);
+        name1.setText(formatScoreText(score1));
+        scoreLabel1.setFont(getCompetitionScoreFont());
+        scoreLabel1.setText(score1.getScore());
       }
 
-      competitionLabel.setText(competition.getName());
-
-      boolean isActive = competition.isActive();
-      firstLabel.setVisible(isActive);
-      secondLabel.setVisible(isActive);
-      thirdLabel.setVisible(isActive);
-      scoreLabel1.setVisible(isActive);
-      scoreLabel2.setVisible(isActive);
-      scoreLabel3.setVisible(isActive);
-
-      name1.setText("-");
-      name2.setText("-");
-      name3.setText("-");
-
-      scoreLabel1.setText("0");
-      scoreLabel2.setText("0");
-      scoreLabel3.setText("0");
-
-      name1.setVisible(isActive);
-      name2.setVisible(isActive);
-      name3.setVisible(isActive);
-
-      if (competition.isActive() && game != null) {
-        ScoreSummaryRepresentation latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
-        if (latestCompetitionScore != null) {
-          List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
-          if (scores.size() >= 3) {
-            ScoreRepresentation score1 = scores.get(0);
-            name1.setText(formatScoreText(score1));
-            scoreLabel1.setFont(getCompetitionScoreFont());
-            scoreLabel1.setText(score1.getScore());
-
-            ScoreRepresentation score2 = scores.get(1);
-            name2.setText(formatScoreText(score2));
-            scoreLabel2.setFont(getCompetitionScoreFont());
-            scoreLabel2.setText(score2.getScore());
-
-            ScoreRepresentation score3 = scores.get(2);
-            name3.setText(formatScoreText(score3));
-            scoreLabel3.setFont(getCompetitionScoreFont());
-            scoreLabel3.setText(score3.getScore());
-          }
-        }
+      index++;
+      if (index < scores.size()) {
+        ScoreRepresentation score2 = scores.get(index);
+        name2.setText(formatScoreText(score2));
+        scoreLabel2.setFont(getCompetitionScoreFont());
+        scoreLabel2.setText(score2.getScore());
       }
 
-      if (game == null) {
-        return;
+      index++;
+      if (index < scores.size()) {
+        ScoreRepresentation score3 = scores.get(index);
+        name3.setText(formatScoreText(score3));
+        scoreLabel3.setFont(getCompetitionScoreFont());
+        scoreLabel3.setText(score3.getScore());
+      }
+
+      index++;
+      if (index < scores.size()) {
+        ScoreRepresentation score4 = scores.get(index);
+        name4.setText(formatScoreText(score4));
+        scoreLabel4.setFont(getCompetitionScoreFont());
+        scoreLabel4.setText(score4.getScore());
+      }
+
+      index++;
+      if (index < scores.size()) {
+        ScoreRepresentation score5 = scores.get(index);
+        name5.setText(formatScoreText(score5));
+        scoreLabel5.setFont(getCompetitionScoreFont());
+        scoreLabel5.setText(score5.getScore());
       }
 
       GameMediaRepresentation gameMedia = game.getGameMedia();
@@ -189,13 +260,13 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         Image wheel = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
         competitionWheelImage.setImage(wheel);
       }
-
-      Image image = new Image(OverlayWindowFX.client.getCompetitionBackground(competition.getGameId()));
-      BackgroundImage myBI = new BackgroundImage(image,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-      topBox.setBackground(new Background(myBI));
     }
+
+    Image image = new Image(OverlayWindowFX.client.getCompetitionBackground(competition.getGameId()));
+    BackgroundImage myBI = new BackgroundImage(image,
+      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+      BackgroundSize.DEFAULT);
+    topBox.setBackground(new Background(myBI));
   }
 
   private String formatScoreText(ScoreRepresentation score) {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="assetSidebarVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesAssetViewSidebarController">
+   <children>
+      <TitledPane fx:id="titledPaneDefaultBackground" collapsible="false" maxHeight="1.7976931348623157E308">
+         <graphic>
+            <BorderPane maxHeight="1.7976931348623157E308">
+               <left>
+                  <Label text="Asset Manager" BorderPane.alignment="CENTER" />
+               </left>
+            </BorderPane>
+         </graphic>
+      </TitledPane>
+   </children>
+</VBox>

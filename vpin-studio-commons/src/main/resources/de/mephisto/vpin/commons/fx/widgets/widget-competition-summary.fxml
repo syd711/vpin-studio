@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController">
     <center>
         <StackPane fx:id="competitionStack" BorderPane.alignment="CENTER">
             <children>
@@ -24,7 +24,7 @@
                             <children>
                                 <Label fx:id="competitionLabel" text="-" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="36.0" />
+                                        <Font name="System Bold" size="32.0" />
                                     </font>
                                     <VBox.margin>
                                         <Insets />
@@ -32,7 +32,7 @@
                                 </Label>
                                 <Label fx:id="durationLabel" text="-" textFill="WHITE">
                                     <font>
-                                        <Font size="24.0" />
+                                        <Font size="20.0" />
                                     </font>
                                     <VBox.margin>
                                         <Insets bottom="12.0" />
@@ -40,14 +40,14 @@
                                 </Label>
                                 <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="22.0" text="-" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="24.0" />
+                                        <Font name="System Bold" size="20.0" />
                                     </font>
                                 </Label>
                                 <BorderPane>
                                     <left>
                                         <Label fx:id="firstLabel" text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                         </Label>
                                     </left>
@@ -64,7 +64,7 @@
                                                 <Insets left="12.0" />
                                             </BorderPane.margin>
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                         </Label>
                                     </center>
@@ -73,7 +73,7 @@
                                     <left>
                                         <Label fx:id="secondLabel" text="#2" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                         </Label>
                                     </left>
@@ -90,7 +90,7 @@
                                                 <Insets left="12.0" />
                                             </BorderPane.margin>
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                         </Label>
                                     </center>
@@ -99,7 +99,7 @@
                                     <left>
                                         <Label fx:id="thirdLabel" text="#3" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                         </Label>
                                     </left>
@@ -113,7 +113,7 @@
                                     <center>
                                         <Label fx:id="name3" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <font>
-                                                <Font size="24.0" />
+                                                <Font size="20.0" />
                                             </font>
                                             <BorderPane.margin>
                                                 <Insets left="12.0" />
@@ -121,6 +121,58 @@
                                         </Label>
                                     </center>
                                 </BorderPane>
+                        <BorderPane layoutX="10.0" layoutY="136.0">
+                           <left>
+                              <Label fx:id="fourthLabel" text="#4" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </left>
+                           <right>
+                              <Label fx:id="scoreLabel4" text="0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                           </right>
+                           <center>
+                              <Label fx:id="name4" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                 <BorderPane.margin>
+                                    <Insets left="12.0" />
+                                 </BorderPane.margin>
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                        </BorderPane>
+                        <BorderPane layoutX="10.0" layoutY="242.0">
+                           <left>
+                              <Label fx:id="fifthLabel" text="#5" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </left>
+                           <right>
+                              <Label fx:id="scoreLabel5" text="0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                           </right>
+                           <center>
+                              <Label fx:id="name5" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                 <BorderPane.margin>
+                                    <Insets left="12.0" />
+                                 </BorderPane.margin>
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                        </BorderPane>
                             </children>
                             <HBox.margin>
                                 <Insets bottom="12.0" top="12.0" />

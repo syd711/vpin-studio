@@ -34,7 +34,7 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox layoutX="10.0" layoutY="10.0" minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
@@ -52,7 +52,7 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox layoutX="489.0" layoutY="10.0" minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>

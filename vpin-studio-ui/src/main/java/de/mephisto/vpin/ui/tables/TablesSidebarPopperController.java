@@ -236,6 +236,8 @@ public class TablesSidebarPopperController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      autoFillBtn.setVisible(game.isVpxGame());
+
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
       extrasPanel.setVisible(tableDetails.isPopper15());
@@ -302,6 +304,9 @@ public class TablesSidebarPopperController implements Initializable {
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      isMod.setText("-");
+      status.setText("-");
+      emulatorLabel.setText("-");
       dateAdded.setText("-");
       gameName.setText("-");
       gameFileName.setText("-");
@@ -323,7 +328,17 @@ public class TablesSidebarPopperController implements Initializable {
       altRunMode.setText("-");
       url.setText("-");
       designedBy.setText("-");
-      notes.setText("-");
+      notes.setText("");
+      gDetails.setText("");
+      gLog.setText("");
+      gPlayLog.setText("");
+      gNotes.setText("");
+      webDbId.setText("-");
+      custom2.setText("-");
+      custom3.setText("-");
+      custom4.setText("-");
+      custom5.setText("-");
+      gameVersion.setText("-");
     }
   }
 
@@ -333,6 +348,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
 
     Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));

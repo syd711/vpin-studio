@@ -64,6 +64,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return new ArrayList<>(this.emulators.values());
   }
 
+  public List<GameEmulator> getVpxGameEmulators() {
+    return this.emulators.values().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  }
+
   public List<GameEmulator> getBackglassGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
     return gameEmulators.stream().filter(e -> {
@@ -74,13 +78,13 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public GameEmulator getDefaultGameEmulator() {
     Collection<GameEmulator> values = emulators.values();
     for (GameEmulator value : values) {
-      if (value.getDescription() != null && value.getDescription().contains("default")) {
+      if (value.getDescription() != null && value.isVpxEmulator() && value.getDescription().contains("default")) {
         return value;
       }
     }
 
     for (GameEmulator value : values) {
-      if (value.getNvramFolder().exists()) {
+      if (value.isVpxEmulator() && value.getNvramFolder().exists()) {
         return value;
       }
       else {
@@ -183,7 +187,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;
-    List<String> altExeList = getAltExeList();
+    List<String> altExeList = Collections.emptyList();//getAltExeList();
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
@@ -626,7 +630,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public int importGame(@NonNull File file, int emuId) {
     GameEmulator gameEmulator = getGameEmulator(emuId);
     String baseName = FilenameUtils.getBaseName(file.getName());
-    String formattedBaseName = baseName;
+    String formattedBaseName = baseName;//.replaceAll(" ", "-");
     Game gameByName = getGameByName(formattedBaseName);
     int count = 1;
     while (gameByName != null) {
@@ -1435,7 +1439,6 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         manifest.setgNotes(gNotes);
         manifest.setgPlayLog(gPlayLog);
         manifest.setgDetails(gDetails);
-
       }
       rs.close();
       statement.close();
@@ -1538,7 +1541,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
-  private static boolean isValidVPXEmulator(Emulator emulator) {
+  public static boolean isValidVPXEmulator(Emulator emulator) {
     if (!emulator.isVisualPinball()) {
       return false;
     }
@@ -1578,13 +1581,20 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     this.emulators.clear();
     for (Emulator emulator : ems) {
       try {
-        if (!isValidVPXEmulator(emulator)) {
+        if (!emulator.isVisible()) {
+          continue;
+        }
+
+        if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
           continue;
         }
 
         GameEmulator gameEmulator = new GameEmulator(emulator);
         emulators.put(emulator.getId(), gameEmulator);
-        initVisualPinballXScripts(emulator);
+
+        if (gameEmulator.isVpxEmulator()) {
+          initVisualPinballXScripts(emulator);
+        }
         LOG.info("Loaded Emulator: " + gameEmulator);
       } catch (Exception e) {
         LOG.error("Emulator initialization failed: " + e.getMessage(), e);

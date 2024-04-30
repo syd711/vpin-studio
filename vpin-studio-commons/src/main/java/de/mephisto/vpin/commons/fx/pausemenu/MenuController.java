@@ -82,7 +82,7 @@ public class MenuController implements Initializable {
   private int selectionIndex = 0;
 
   private PopperScreen cardScreen;
-  private PinUPPlayerDisplay backglassDisplay;
+  private PinUPPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
@@ -111,10 +111,10 @@ public class MenuController implements Initializable {
     return pauseMenuSettings;
   }
 
-  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, PinUPPlayerDisplay backglassDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
-    this.backglassDisplay = backglassDisplay;
+    this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
     this.customViewController.setGame(game, gameStatus);
     enterMenuItemSelection();
@@ -356,13 +356,11 @@ public class MenuController implements Initializable {
 
   public void showYouTubeVideo(PauseMenuItem item) {
     if (pauseMenuSettings != null) {
-      ChromeLauncher.showYouTubeVideo(backglassDisplay, item.getYouTubeUrl(), item.getName());
+      ChromeLauncher.showYouTubeVideo(tutorialScreen, item.getYouTubeUrl(), item.getName());
     }
   }
 
   public void resetBrowser() {
-    if (pauseMenuSettings != null && pauseMenuSettings.isRenderTutorialLinks()) {
-      ChromeLauncher.exitBrowser();
-    }
+    ChromeLauncher.exitBrowser();
   }
 }

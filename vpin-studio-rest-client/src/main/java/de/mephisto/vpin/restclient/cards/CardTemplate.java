@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class CardTemplate extends JsonSettings {
@@ -48,6 +46,88 @@ public class CardTemplate extends JsonSettings {
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
+  private boolean renderPositions = true;
+  private boolean renderCanvas = false;
+
+  private int canvasX = 100;
+  private int canvasY = 100;
+  private int canvasWidth = 100;
+  private int canvasHeight = 100;
+  private String canvasBackground;
+  private int canvasAlphaPercentage = 0;
+  private int canvasBorderRadius = 0;
+
+  public int getCanvasBorderRadius() {
+    return canvasBorderRadius;
+  }
+
+  public void setCanvasBorderRadius(int canvasBorderRadius) {
+    this.canvasBorderRadius = canvasBorderRadius;
+  }
+
+  public boolean isRenderCanvas() {
+    return renderCanvas;
+  }
+
+  public void setRenderCanvas(boolean renderCanvas) {
+    this.renderCanvas = renderCanvas;
+  }
+
+  public int getCanvasX() {
+    return canvasX;
+  }
+
+  public void setCanvasX(int canvasX) {
+    this.canvasX = canvasX;
+  }
+
+  public int getCanvasY() {
+    return canvasY;
+  }
+
+  public void setCanvasY(int canvasY) {
+    this.canvasY = canvasY;
+  }
+
+  public int getCanvasWidth() {
+    return canvasWidth;
+  }
+
+  public void setCanvasWidth(int canvasWidth) {
+    this.canvasWidth = canvasWidth;
+  }
+
+  public int getCanvasHeight() {
+    return canvasHeight;
+  }
+
+  public void setCanvasHeight(int canvasHeight) {
+    this.canvasHeight = canvasHeight;
+  }
+
+  public String getCanvasBackground() {
+    return canvasBackground;
+  }
+
+  public void setCanvasBackground(String canvasBackground) {
+    this.canvasBackground = canvasBackground;
+  }
+
+  public int getCanvasAlphaPercentage() {
+    return canvasAlphaPercentage;
+  }
+
+  public void setCanvasAlphaPercentage(int canvasAlphaPercentage) {
+    this.canvasAlphaPercentage = canvasAlphaPercentage;
+  }
+
+  public boolean isRenderPositions() {
+    return renderPositions;
+  }
+
+  public void setRenderPositions(boolean renderPositions) {
+    this.renderPositions = renderPositions;
+  }
 
   public int getWheelSize() {
     return wheelSize;

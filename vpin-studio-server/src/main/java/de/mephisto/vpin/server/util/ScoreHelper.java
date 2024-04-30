@@ -10,17 +10,6 @@ import java.text.DecimalFormat;
 public class ScoreHelper {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreHelper.class);
 
-  public static String formatScore(String score) {
-    try {
-      DecimalFormat decimalFormat = new DecimalFormat("#.##");
-      decimalFormat.setGroupingUsed(true);
-      decimalFormat.setGroupingSize(3);
-      return decimalFormat.format(Long.parseLong(score));
-    } catch (NumberFormatException e) {
-      LOG.error("Failed to read number from '" +score + "': " + e.getMessage());
-      return "0";
-    }
-  }
 
   public static String formatScoreEntry(ScoreSummary summary, int index) {
     StringBuilder builder = new StringBuilder("#");

@@ -159,7 +159,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", Arrays.asList(c)));
         Platform.runLater(() -> {
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));

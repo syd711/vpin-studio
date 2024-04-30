@@ -186,31 +186,40 @@ public class PauseMenu extends Application {
 
       //reload card settings to resolve actual target screen
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
       PopperScreen cardScreen = null;
       if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
         cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
       }
 
-      PinUPPlayerDisplay backglassDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
-      PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+      PopperScreen tutorialScreen = PopperScreen.BackGlass;
+      if (pauseMenuSettings.getVideoScreen() != null) {
+        tutorialScreen = pauseMenuSettings.getVideoScreen();
+      }
+
+      PinUPPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
 
       visible = true;
       GameRepresentation game = client.getGameService().getGame(status.getGameId());
-      StateMananger.getInstance().setGame(game, status, cardScreen, backglassDisplay, pauseMenuSettings);
+      StateMananger.getInstance().setGame(game, status, cardScreen, tutorialDisplay, pauseMenuSettings);
       stage.getScene().setCursor(Cursor.NONE);
       new Thread(() -> {
         Platform.runLater(() -> {
           screenAssets.clear();
-          if (pauseMenuSettings.getStyle().equals(PauseMenuStyle.popperScreens)) {
+          PauseMenuStyle style = pauseMenuSettings.getStyle();
+          if (style == null) {
+            style = PauseMenuStyle.embedded;
+          }
+
+          if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
             screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
 
-            if (pauseMenuSettings.isAutoplay()) {
-              List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
-              if (!videoTutorials.isEmpty()) {
-                VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
-                String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                ChromeLauncher.showYouTubeVideo(backglassDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
-              }
+            List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+            if (!videoTutorials.isEmpty()) {
+              VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
+              String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
+              ChromeLauncher.showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
             }
           }
         });

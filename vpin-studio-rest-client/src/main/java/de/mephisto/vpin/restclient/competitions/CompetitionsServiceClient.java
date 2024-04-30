@@ -60,6 +60,11 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
   }
 
+
+  public List<CompetitionRepresentation> getIScoredSubscriptions() {
+    return Arrays.asList(getRestClient().get(API + "competitions/iscored", CompetitionRepresentation[].class));
+  }
+
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
     return Arrays.asList(getRestClient().get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
   }

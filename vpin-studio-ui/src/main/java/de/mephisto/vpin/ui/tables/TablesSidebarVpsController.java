@@ -123,6 +123,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button vpsResetBtn;
 
   @FXML
+  private Button vpsLinkResetBtn;
+
+  @FXML
   private Hyperlink ipdbLink;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -135,6 +138,21 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   public TablesSidebarVpsController() {
   }
 
+  @FXML
+  private void onVpsLinkReset() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = this.game.get();
+        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
+        tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
+        tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
+        client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+      } catch (Exception e) {
+        LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
+      }
+    }
+  }
 
   @FXML
   private void onCopyTable() {
@@ -239,6 +257,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     this.game = game;
     this.refreshView(game);
     this.tableVersionsCombo.valueProperty().addListener(this);
+    this.vpsResetBtn.setDisable(game.isEmpty() || game.get().getVpsUpdates().isEmpty());
   }
 
   /**
@@ -301,8 +320,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsTableVersionId)) {
         PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
-        List<String> csvValue = entry.getCSVValue();
-        if (!csvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
+        List<String> ignoredCsvValue = entry.getCSVValue();
+        if (!game.getIgnoredValidations().contains(GameValidationCode.CODE_VPS_MAPPING_MISSING) && !ignoredCsvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
           errorBox.setVisible(true);
           validationState = new ValidationState();
           validationState.setCode(GameValidationCode.CODE_VPS_MAPPING_MISSING);
@@ -372,6 +391,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     boolean doFilter = filterCheckbox.isSelected();
 
+    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false);
+
     if (!doFilter || game.get().getPupPackName() != null) {
       addSection(dataRoot, "PUP Pack", game.get(), VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack());
     }
@@ -434,7 +455,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
 
           String updateText = null;
-          if(game != null && showUpdates) {
+          if (game != null && showUpdates) {
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
             for (VPSChange change : changes) {
               if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
@@ -486,7 +507,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
 
           String updateText = null;
-          if(game != null && showUpdates) {
+          if (game != null && showUpdates) {
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
             for (VPSChange change : changes) {
               if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
@@ -522,7 +543,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         String url = "https://www.youtube.com/watch?v=" + youtubeId;
 
         String updateText = null;
-        if(game != null && showUpdateIndicator) {
+        if (game != null && showUpdateIndicator) {
           List<VPSChange> changes = game.getVpsUpdates().getChanges();
           for (VPSChange change : changes) {
             if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
@@ -594,6 +615,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
+    ImageView iconVpsReset = new ImageView(image2);
+    iconVpsReset.setFitWidth(18);
+    iconVpsReset.setFitHeight(18);
+    vpsResetBtn.setGraphic(iconVpsReset);
+
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
 
     vpsResetBtn.managedProperty().bindBidirectional(vpsResetBtn.visibleProperty());
@@ -601,7 +628,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
-    vpsResetBtn.setVisible(false);
+    vpsResetBtn.setDisable(true);
     openTableVersionBtn.setDisable(true);
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
@@ -619,12 +646,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     refreshSheetData(tables);
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
-
-    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setFitWidth(18);
-    view2.setFitHeight(18);
-    vpsResetBtn.setGraphic(view2);
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     client.getPreferenceService().addListener(this);
