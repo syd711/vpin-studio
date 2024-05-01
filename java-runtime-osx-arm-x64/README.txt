@@ -1,1 +1,0 @@
-zulu-11.jre/Contents/Home/readme.txt

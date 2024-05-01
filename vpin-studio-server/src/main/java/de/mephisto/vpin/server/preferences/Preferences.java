@@ -22,8 +22,6 @@ public class Preferences {
 
   private String ignoredValidations;
 
-  private String ignoredMedia;
-
   private String systemName;
 
   private String systemPreset;
@@ -75,10 +73,10 @@ public class Preferences {
 
   private String pauseMenuSettings;
 
-  @Column(length = 1024)
+  private String validationSettings;
+
   private String uiSettings;
 
-  @Column(length = 1024)
   private String serverSettings;
 
   @Column(length = 1024)
@@ -106,6 +104,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getValidationSettings() {
+    return validationSettings;
+  }
+
+  public void setValidationSettings(String validationSettings) {
+    this.validationSettings = validationSettings;
+  }
 
   public String getDofSettings() {
     return dofSettings;
@@ -404,14 +410,6 @@ public class Preferences {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getIgnoredMedia() {
-    return ignoredMedia;
-  }
-
-  public void setIgnoredMedia(String ignoredMedia) {
-    this.ignoredMedia = ignoredMedia;
   }
 
   public String getIgnoredValidations() {

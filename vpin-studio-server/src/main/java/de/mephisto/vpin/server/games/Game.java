@@ -66,10 +66,14 @@ public class Game {
   }
 
   public String getPupPackName() {
-    if(this.pupPack != null) {
+    if (this.pupPack != null) {
       return this.pupPack.getName();
     }
     return pupPackName;
+  }
+
+  public boolean isVpxGame() {
+    return this.emulator.isVpxEmulator();
   }
 
   public void setPupPackName(String pupPackName) {
@@ -155,7 +159,9 @@ public class Game {
   }
 
   public void setVpsUpdates(VPSChanges vpsChanges) {
-    this.vpsChanges = vpsChanges;
+    if (vpsChanges != null) {
+      this.vpsChanges = vpsChanges;
+    }
   }
 
   @JsonIgnore

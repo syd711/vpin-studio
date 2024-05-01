@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -17,12 +18,16 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
  * Popper
  ********************************************************************************************************************/
 public class PinUPPopperServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private static final int CACHE_SIZE = 300;
+
+  private List<TableAssetSearch> cache = new ArrayList<>();
 
   public PinUPPopperServiceClient(VPinStudioClient client) {
     super(client);
@@ -70,6 +75,15 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulators() {
     return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
+  }
+
+  public List<GameEmulatorRepresentation> getVpxGameEmulators() {
+    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  }
+
+  public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
+    return Arrays.asList(getRestClient().get(API + "popper/emulators", GameEmulatorRepresentation[].class));
   }
 
   public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
@@ -193,11 +207,50 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
-  public TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+  public synchronized TableAssetSearch getCached(PopperScreen screen, String term) {
+    for (TableAssetSearch s : this.cache) {
+      if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
+        return s;
+      }
+    }
+
+    if (!StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+      term = term.split(" ")[0];
+      for (TableAssetSearch s : this.cache) {
+        if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
+          return s;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  public synchronized TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
+    term =term.replaceAll("/", "");
+    term =term.replaceAll("&", " ");
+    term =term.replaceAll(",", " ");
+
+    TableAssetSearch cached = getCached(screen, term);
+    if (cached != null) {
+      return cached;
+    }
+
     TableAssetSearch search = new TableAssetSearch();
     search.setTerm(term);
     search.setScreen(screen);
-    return getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+
+    if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+      String[] split = term.trim().split(" ");
+      return searchTableAsset(screen, split[0]);
+    }
+
+    cache.add(result);
+    if (cache.size() > CACHE_SIZE) {
+      cache.remove(0);
+    }
+    return result;
   }
 
   public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game, boolean append) throws Exception {
@@ -211,5 +264,6 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public void clearCache() {
     getRestClient().clearCache("popper/emulators");
+    this.cache.clear();
   }
 }

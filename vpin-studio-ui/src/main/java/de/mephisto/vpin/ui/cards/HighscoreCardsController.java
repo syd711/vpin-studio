@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -201,7 +202,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     new Thread(() -> {
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-        games = client.getGameService().getGamesCached();
+        games = client.getGameService().getVpxGamesCached();
         cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
         filterGames(games);
@@ -410,7 +411,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getPinUPPopperService().getGameEmulators().size()) {
+    if (emuIds.size() != client.getPinUPPopperService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
     }
@@ -485,25 +486,20 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onFolderBtn() {
-    try {
-      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      String popperScreen = cardSettings.getPopperScreen();
-      if (!StringUtils.isEmpty(popperScreen)) {
-        PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-        String mediaDir = gameEmulator.getMediaDirectory();
-        File screenDir = new File(mediaDir, screen.name());
-        new ProcessBuilder("explorer.exe", screenDir.getAbsolutePath()).start();
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to open media dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open folder: " + e.getMessage());
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    String popperScreen = cardSettings.getPopperScreen();
+    if (!StringUtils.isEmpty(popperScreen)) {
+      PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      String mediaDir = gameEmulator.getMediaDirectory();
+      File screenDir = new File(mediaDir, screen.name());
+      SystemUtil.openFolder(screenDir);
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    folderBtn.setVisible(client.getSystemService().isLocal());
+    folderBtn.setVisible(SystemUtil.isFolderActionSupported());
 
     try {
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
@@ -651,7 +647,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     client.getPreferenceService().addListener(this);
 
-    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox(gameEmulator.getName());

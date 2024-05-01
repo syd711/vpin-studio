@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
+import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
@@ -36,10 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -63,7 +62,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Button deleteBtn;
 
   @FXML
-  private Button duplicateBtn;
+  private Button applyBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -153,6 +152,30 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private CheckBox renderPositionsCheckbox;
 
   @FXML
+  private CheckBox renderCanvasCheckbox;
+
+  @FXML
+  private Slider canvasAlphaPercentageSlider;
+
+  @FXML
+  private ColorPicker canvasColorSelector;
+
+  @FXML
+  private Spinner<Integer> canvasXSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasYSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasWidthSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasHeightSpinner;
+
+  @FXML
+  private Spinner<Integer> canvasBorderRadiusSpinner;
+
+  @FXML
   private Pane previewPanel;
 
   @FXML
@@ -190,6 +213,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
         }
       }
     }
+  }
+
+  @FXML
+  private void onApply(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
+    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, this.templateCombo.getSelectionModel().getSelectedItem().getId()));
+    stage.close();
   }
 
   @FXML
@@ -303,28 +334,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    try {
-      this.deleteBtn.setDisable(true);
-      this.renameBtn.setDisable(true);
-
-      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(items));
-
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      waitOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Generating Card...");
-
-      accordion.setExpandedPane(backgroundSettingsPane);
-
-      cardPreview.setPreserveRatio(true);
-    } catch (Exception e) {
-      LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
-    }
-  }
-
   public CardTemplate getCardTemplate() {
     return this.templateCombo.getValue();
   }
@@ -374,6 +383,24 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
+    templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
+
+    renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
+    canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
+    canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
+    canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
+    canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
+    canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
+    canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
+
+    canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasYSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasWidthSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasHeightSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    canvasBorderRadiusSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+
     templateBeanBinder.setPaused(false);
 
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), true);
@@ -390,6 +417,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
 
       templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
+      templateBeanBinder.bindColorPicker(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
       templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
       useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -408,6 +436,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
       templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
       templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
+      templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
 
       imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
@@ -426,6 +455,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
       templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
       templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
+      templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, getCardTemplate(), "canvasAlphaPercentage");
       templateBeanBinder.bindSpinner(wheelSizeSpinner, getCardTemplate(), "wheelSize");
       templateBeanBinder.bindSpinner(paddingSpinner, getCardTemplate(), "padding");
       templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "marginTop");
@@ -434,6 +464,12 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
       templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
+
+      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1280);
+      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 720);
+      templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
 
       renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -462,6 +498,16 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
         renderPositionsCheckbox.setDisable(t1);
+      });
+
+      renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+        canvasAlphaPercentageSlider.setDisable(!t1);
+        canvasColorSelector.setDisable(!t1);
+        canvasXSpinner.setDisable(!t1);
+        canvasYSpinner.setDisable(!t1);
+        canvasWidthSpinner.setDisable(!t1);
+        canvasHeightSpinner.setDisable(!t1);
+        canvasBorderRadiusSpinner.setDisable(!t1);
       });
 
       titleText.setDisable(!renderTitleCheckbox.isSelected());
@@ -515,7 +561,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       return;
     }
 
-    int offset = 36;
     Platform.runLater(() -> {
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
@@ -534,9 +579,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           });
 
         }).start();
-//        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
-//        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
-
       } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
@@ -550,6 +592,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   public void setHighscoreCardsController(HighscoreCardsController highscoreCardsController) {
     this.highscoreCardsController = highscoreCardsController;
     templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
+    this.applyBtn.setText("Close and apply to \"" + highscoreCardsController.getSelectedTable().getGameDisplayName() + "\"");
     initBindings();
 
     templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
@@ -575,5 +618,27 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     cardPreview.setFitWidth(width - 500);
     cardPreview.setFitHeight(height - 200);
     refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    try {
+      this.deleteBtn.setDisable(true);
+      this.renameBtn.setDisable(true);
+
+      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+      templateCombo.setItems(FXCollections.observableList(items));
+
+      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      waitOverlay = loader.load();
+      WaitOverlayController ctrl = loader.getController();
+      ctrl.setLoadingMessage("Generating Card...");
+
+      accordion.setExpandedPane(backgroundSettingsPane);
+
+      cardPreview.setPreserveRatio(true);
+    } catch (Exception e) {
+      LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
+    }
   }
 }

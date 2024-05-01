@@ -95,15 +95,16 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         if (showPauseInsteadOfOverlay && vpxRunning) {
           LOG.info("Toggle pause menu show (Key " + overlayKey + ")");
           OverlayWindowFX.getInstance().togglePauseMenu();
+          return;
         }
-        else {
-          if (systemService.isPopperMenuRunning(processes)) {
-            this.overlayVisible = !overlayVisible;
-            Platform.runLater(() -> {
-              LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
-              OverlayWindowFX.getInstance().showOverlay(overlayVisible);
-            });
-          }
+
+        if (systemService.isPopperMenuRunning(processes)) {
+          this.overlayVisible = !overlayVisible;
+          Platform.runLater(() -> {
+            LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
+            OverlayWindowFX.getInstance().showOverlay(overlayVisible);
+          });
+          return;
         }
       }
     }
@@ -118,6 +119,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         else {
           OverlayWindowFX.getInstance().exitPauseMenu();
         }
+        return;
       }
     }
 

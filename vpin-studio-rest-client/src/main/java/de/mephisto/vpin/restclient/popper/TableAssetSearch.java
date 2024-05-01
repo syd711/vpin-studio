@@ -10,7 +10,7 @@ public class TableAssetSearch {
   private PopperScreen screen;
   private String term;
 
-  List<TableAsset> result;
+  private List<TableAsset> result;
 
   public PopperScreen getScreen() {
     return screen;
@@ -34,5 +34,25 @@ public class TableAssetSearch {
 
   public void setResult(List<TableAsset> result) {
     this.result = result;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TableAssetSearch)) return false;
+
+    TableAssetSearch that = (TableAssetSearch) o;
+
+    if (screen != that.screen) return false;
+    if (term != null ? !term.equals(that.term) : that.term != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = screen != null ? screen.hashCode() : 0;
+    result = 31 * result + (term != null ? term.hashCode() : 0);
+    return result;
   }
 }

@@ -36,10 +36,8 @@ java-runtime-osx-x64/
 *.war
 *.nar
 *.ear
-*.tar.gz
 *.rar
 *.iml
-*.gz
 *.log
 *.vpa
 
@@ -86,6 +84,8 @@ yarn-error.log*
 .vs/devine-web/v16/.suo
 .vs/VSWorkspaceState.json
 .vs/slnx.sqlite
+
+vpin-studio-logs.zip
 
 /resources/highscore-card-sample.png
 /Output/

@@ -176,7 +176,7 @@ public class Studio extends Application {
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
-        stage.setMinHeight(800);
+        stage.setMinHeight(950);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 
@@ -198,6 +198,16 @@ public class Studio extends Application {
           public void handle(KeyEvent ke) {
             if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
               Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
+              ke.consume();
+            }
+            if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
+              stage.setWidth(1920);
+              stage.setHeight(1080);
+              ke.consume();
+            }
+            if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
+              stage.setWidth(2560);
+              stage.setHeight(1440);
               ke.consume();
             }
           }

@@ -39,6 +39,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -256,6 +257,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private CheckBox autoFillCheckbox;
 
   @FXML
+  private Node vpsPanel;
+
+  @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
   private AutoCompleteTextField autoCompleteNameField;
 
@@ -277,6 +281,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
   private PropperRenamingController propperRenamingController;
+  private Pane propertRenamingRoot;
 
   @FXML
   private void onAssetManager(ActionEvent e) {
@@ -539,7 +544,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private synchronized void doSave(Stage stage, boolean closeDialog) {
     String updatedGameFileName = tableDetails.getGameFileName();
-    if (!updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+    if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
     }
 
@@ -561,7 +566,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(this.tableDetails, game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
-      tableDataTabScoreDataController.refreshScannedValues();
+      if (game.isVpxGame()) {
+        tableDataTabScoreDataController.refreshScannedValues();
+      }
     } catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
@@ -606,18 +613,18 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScoreDataController.class.getResource("dialog-table-data-tab-scoredata.fxml"));
-      Parent builtInRoot = loader.load();
+      Parent scoreDataRoot = loader.load();
       tableDataTabScoreDataController = loader.getController();
-      scoreDataTab.setContent(builtInRoot);
+      scoreDataTab.setContent(scoreDataRoot);
     } catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-scoredata.fxml: " + e.getMessage(), e);
     }
 
     try {
       FXMLLoader loader = new FXMLLoader(PropperRenamingController.class.getResource("propper-renaming.fxml"));
-      Pane builtInRoot = loader.load();
+      propertRenamingRoot = loader.load();
       propperRenamingController = loader.getController();
-      detailsRoot.getChildren().add(builtInRoot);
+      detailsRoot.getChildren().add(propertRenamingRoot);
     } catch (IOException e) {
       LOG.error("Failed to load propper-renaming.fxml: " + e.getMessage(), e);
     }
@@ -636,8 +643,18 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
     highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
-    tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
-    propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
+    if (game.isVpxGame()) {
+      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+      propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
+    }
+    else {
+      gameFileName.setDisable(true);
+      autoFillBtn.setVisible(false);
+      detailsRoot.getChildren().remove(propertRenamingRoot);
+      this.tabPane.getTabs().remove(scoreDataTab);
+      this.fixVersionBtn.setVisible(false);
+      this.vpsPanel.setVisible(false);
+    }
 
     this.stage = stage;
     this.scene = stage.getScene();
@@ -691,7 +708,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     });
     gameFileName.setText(tableDetails.getGameFileName());
-    gameFileName.setDisable(tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"));
+    gameFileName.setDisable(tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\") || !game.isVpxGame());
     gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
       if (FileUtils.isValidFilename(newValue)) {
         tableDetails.setGameFileName(newValue);

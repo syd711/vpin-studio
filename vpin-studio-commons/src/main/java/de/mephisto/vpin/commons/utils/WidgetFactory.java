@@ -52,6 +52,12 @@ import java.util.Optional;
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
+  public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String DISABLED_COLOR = "#B0ABAB";
+  public static final String ERROR_COLOR = "#FF3333";
+  public static final String OK_COLOR = "#66FF66";
+  public static final String UPDATE_COLOR = "#FF9933";
+
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
     label.setStyle("-fx-font-size: 14px;");
@@ -97,7 +103,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateStar() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(14);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2f-flare");
     return fontIcon;
   }
@@ -106,7 +112,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     return fontIcon;
   }
@@ -134,7 +140,7 @@ public class WidgetFactory {
   public static FontIcon createAlertIcon(String s) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -437,7 +443,7 @@ public class WidgetFactory {
     }
   }
 
-  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
+  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
@@ -445,19 +451,8 @@ public class WidgetFactory {
       }
     }
 
-    if (ignored) {
-      Label label = new Label("Screen is ignored");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      if (mediaItem != null) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-      }
-      parent.setCenter(label);
-    }
-
     if (mediaItem == null) {
-      Label label = new Label("No media found");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      parent.setCenter(label);
+      createNoMediaLabel(parent);
     }
 
     if (!previewEnabled) {
@@ -474,9 +469,15 @@ public class WidgetFactory {
       parent.setCenter(label);
     }
 
-    if (!ignored && previewEnabled && mediaItem != null) {
+    if (previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
     }
+  }
+
+  public static void createNoMediaLabel(BorderPane parent) {
+    Label label = new Label("No media found");
+    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+    parent.setCenter(label);
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {

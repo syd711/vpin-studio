@@ -22,8 +22,6 @@ public class UISettings extends JsonSettings {
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
 
-  private boolean hideEmulatorColumn = true;
-
   private boolean autoApplyVpsData = true;
 
   //open after upload
@@ -33,6 +31,16 @@ public class UISettings extends JsonSettings {
   private boolean propperModField = true;
   private boolean propperVersionField = true;
   private boolean propperVRField = true;
+
+  private String winNetworkShare;
+
+  public String getWinNetworkShare() {
+    return winNetworkShare;
+  }
+
+  public void setWinNetworkShare(String winNetworkShare) {
+    this.winNetworkShare = winNetworkShare;
+  }
 
   public boolean isAutoApplyVpsData() {
     return autoApplyVpsData;
@@ -160,14 +168,6 @@ public class UISettings extends JsonSettings {
 
   public void setVpsTutorial(boolean vpsTutorial) {
     this.vpsTutorial = vpsTutorial;
-  }
-
-  public boolean isHideEmulatorColumn() {
-    return hideEmulatorColumn;
-  }
-
-  public void setHideEmulatorColumn(boolean hideEmulatorColumn) {
-    this.hideEmulatorColumn = hideEmulatorColumn;
   }
 
   public boolean isHideVersions() {

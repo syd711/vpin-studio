@@ -321,7 +321,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private String getLabelCss(CompetitionRepresentation c) {
     String status = "";
     if (!selection.contains(c) || containsExisting(c)) {
-      status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
     }
     return status;
   }

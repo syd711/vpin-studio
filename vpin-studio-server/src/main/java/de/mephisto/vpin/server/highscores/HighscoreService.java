@@ -359,6 +359,9 @@ public class HighscoreService implements InitializingBean {
   //TODO rename
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game) {
+    if (!game.isVpxGame()) {
+      throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");
+    }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
     updateHighscore(game, highscoreMetadata);
     return highscoreMetadata;
@@ -609,7 +612,7 @@ public class HighscoreService implements InitializingBean {
     try {
       List<File> vpRegFiles = new ArrayList<>();
       vpRegEntries.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File vpRegFile = gameEmulator.getVPRegFile();
         if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
@@ -628,7 +631,7 @@ public class HighscoreService implements InitializingBean {
   public void refreshHighscoreFiles() {
     try {
       highscoreFiles.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getGameEmulators();
+      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
         if (files != null) {

@@ -39,6 +39,9 @@ public class DismissalUtil {
     if (ignoredValidations == null) {
       ignoredValidations = new ArrayList<>();
     }
+    else {
+      ignoredValidations = new ArrayList<>(ignoredValidations);
+    }
 
     if (!ignoredValidations.contains(validationState.getCode())) {
       ignoredValidations.add(validationState.getCode());

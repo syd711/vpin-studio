@@ -48,7 +48,6 @@ abstract public class AssetMediaPlayer extends BorderPane {
     if (getMediaPlayer() != null) {
       try {
         getMediaPlayer().stop();
-        LOG.info("Stopped " + this.url);
       } catch (Exception e) {
         LOG.info("Stopping media view: " + e.getMessage());
       }

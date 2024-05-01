@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
 
@@ -98,6 +99,17 @@ public class SystemResource {
       for (File logFile : logFiles) {
         ZipUtil.zipFile(logFile, logFile.getName(), zipOut);
       }
+
+//      File studioDB = new File(RESOURCES, "vpin-studio.db");
+//      if (studioDB.exists()) {
+//        ZipUtil.zipFile(studioDB, studioDB.getName(), zipOut);
+//      }
+
+      File popperDB = systemService.getPinUPDatabaseFile();
+      if (popperDB.exists()) {
+        ZipUtil.zipFile(popperDB, popperDB.getName(), zipOut);
+      }
+
       zipOut.close();
       fos.close();
 

@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /*********************************************************************************************************************
@@ -33,7 +34,7 @@ import java.util.*;
 public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private List<GameRepresentation> games = new ArrayList<>();
+  private List<GameRepresentation> allGames = new ArrayList<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
@@ -41,7 +42,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
 
   public void clearCache() {
-    this.games = new ArrayList<>();
+    this.allGames = new ArrayList<>();
   }
 
   public void reload() {
@@ -81,17 +82,17 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) throws Exception {
+  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
     try {
       return Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class));
     } catch (Exception e) {
       LOG.error("Failed to filter games: " + e.getMessage(), e);
-      throw e;
     }
+    return null;
   }
 
   public List<GameRepresentation> getGamesByRom(String rom) {
-    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> gameList = this.getVpxGamesCached();
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
@@ -120,11 +121,11 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getGame(int id) {
     try {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
-      if (gameRepresentation != null && !this.games.isEmpty()) {
-        int index = this.games.indexOf(gameRepresentation);
+      if (gameRepresentation != null && !this.allGames.isEmpty()) {
+        int index = this.allGames.indexOf(gameRepresentation);
         if (index != -1) {
-          this.games.remove(index);
-          this.games.add(index, gameRepresentation);
+          this.allGames.remove(index);
+          this.allGames.add(index, gameRepresentation);
         }
       }
       return gameRepresentation;
@@ -138,7 +139,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       List<Integer> unknowns = Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
       if (!unknowns.isEmpty()) {
-        this.games.clear();
+        this.allGames.clear();
       }
       return unknowns;
     } catch (Exception e) {
@@ -149,8 +150,8 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getKnownGames() {
     try {
-      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
-      return this.games;
+      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
+      return this.allGames;
     } catch (Exception e) {
       LOG.error("Failed to read knowns games: " + e.getMessage(), e);
     }
@@ -158,10 +159,10 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   @Deprecated
-  public List<GameRepresentation> getGames() {
+  public List<GameRepresentation> getAllGames() {
     try {
-      this.games = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
-      return this.games;
+      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
+      return this.allGames;
     } catch (Exception e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
       throw e;
@@ -258,18 +259,22 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesCached() {
-    if (this.games == null || this.games.isEmpty()) {
-      this.games = this.getKnownGames();
+    if (this.allGames == null || this.allGames.isEmpty()) {
+      this.allGames = this.getKnownGames();
     }
-    return this.games;
+    return this.allGames;
+  }
+
+  public List<GameRepresentation> getVpxGamesCached() {
+    return getGamesCached().stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
   }
 
   public GameRepresentation getGameCached(int gameId) {
-    if (this.games == null || this.games.isEmpty()) {
-      this.games = this.getKnownGames();
+    if (this.allGames == null || this.allGames.isEmpty()) {
+      this.allGames = this.getKnownGames();
     }
 
-    Optional<GameRepresentation> first = this.games.stream().filter(g -> g.getId() == gameId).findFirst();
+    Optional<GameRepresentation> first = this.allGames.stream().filter(g -> g.getId() == gameId).findFirst();
     if (first.isPresent()) {
       return first.get();
     }

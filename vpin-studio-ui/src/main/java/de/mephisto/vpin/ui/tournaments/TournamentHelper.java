@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tournaments;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
@@ -31,7 +32,7 @@ public class TournamentHelper {
   public static String getLabelCss(TournamentTable value) {
     String status = "";
     if (!value.isEnabled()) {
-      status = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
     }
     return status;
   }

@@ -257,6 +257,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     this.game = game;
     this.refreshView(game);
     this.tableVersionsCombo.valueProperty().addListener(this);
+    this.vpsResetBtn.setDisable(game.isEmpty() || game.get().getVpsUpdates().isEmpty());
   }
 
   /**
@@ -389,6 +390,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText(DateFormat.getDateInstance().format(new Date(vpsTable.getUpdatedAt())));
 
     boolean doFilter = filterCheckbox.isSelected();
+
+    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false);
 
     if (!doFilter || game.get().getPupPackName() != null) {
       addSection(dataRoot, "PUP Pack", game.get(), VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack());
@@ -612,6 +615,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
+    ImageView iconVpsReset = new ImageView(image2);
+    iconVpsReset.setFitWidth(18);
+    iconVpsReset.setFitHeight(18);
+    vpsResetBtn.setGraphic(iconVpsReset);
+
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
 
     vpsResetBtn.managedProperty().bindBidirectional(vpsResetBtn.visibleProperty());
@@ -619,7 +628,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     dataRoot.managedProperty().bindBidirectional(dataRoot.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
 
-    vpsResetBtn.setVisible(false);
+    vpsResetBtn.setDisable(true);
     openTableVersionBtn.setDisable(true);
     copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
@@ -637,12 +646,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     refreshSheetData(tables);
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
-
-    Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setFitWidth(18);
-    view2.setFitHeight(18);
-    vpsResetBtn.setGraphic(view2);
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     client.getPreferenceService().addListener(this);

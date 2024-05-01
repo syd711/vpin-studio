@@ -39,7 +39,9 @@ public class PreferenceBindingUtil {
     StringProperty stringProperty = new SimpleStringProperty();
     Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
     comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> client.getPreferenceService().setPreference(preference, t1));
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> {
+      client.getPreferenceService().setPreference(preference, t1);
+    });
   }
 
   public static void bindCheckbox(CheckBox checkbox, String preference, boolean defaultValue) {

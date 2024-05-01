@@ -16,7 +16,7 @@ public class ChromeLauncher {
   private final static Logger LOG = LoggerFactory.getLogger(ChromeLauncher.class);
 
   private static boolean launched = false;
-  private static boolean kioskMode = true;
+  private static boolean kioskMode = false;
   private static boolean useToTop = true;
 
   public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url, String title) {

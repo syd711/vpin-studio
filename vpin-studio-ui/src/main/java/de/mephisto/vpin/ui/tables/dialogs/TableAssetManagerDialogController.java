@@ -25,9 +25,7 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
+import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -55,25 +53,26 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetManagerDialogController.class);
 //  public static final int MEDIA_SIZE = 280;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private ComboBox<GameRepresentation> tablesCombo;
@@ -163,12 +162,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private Button addAudioBlank;
 
+  @FXML
+  private Label previewTitleLabel;
+
   private TableOverviewController overviewController;
   private GameRepresentation game;
-  private PopperScreen screen;
+  private PopperScreen screen = PopperScreen.Wheel;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
-  private Node lastHover;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -217,17 +218,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onFolderBtn() {
-    try {
-      if (this.gameMedia != null) {
-        int emulatorId = this.game.getEmulatorId();
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
-        String mediaDir = gameEmulator.getMediaDirectory();
-        File screenDir = new File(mediaDir, screen.name());
-        new ProcessBuilder("explorer.exe", screenDir.getAbsolutePath()).start();
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to open media dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open folder: " + e.getMessage());
+    if (this.gameMedia != null) {
+      int emulatorId = this.game.getEmulatorId();
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
+      String mediaDir = gameEmulator.getMediaDirectory();
+      File screenDir = new File(mediaDir, screen.name());
+      SystemUtil.openFolder(screenDir);
     }
   }
 
@@ -358,26 +354,41 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
-
   @FXML
   private void onSearch() {
-    String term = searchField.getText().trim();
-    if (!StringUtils.isEmpty(term)) {
-      try {
-        TableAssetSearch result = client.getPinUPPopperService().searchTableAsset(screen, term);
-        ObservableList<TableAsset> assets = FXCollections.observableList(result.getResult());
+    Platform.runLater(() -> {
+      String term = searchField.getText().trim();
+      if (!StringUtils.isEmpty(term)) {
+        TableAssetSearch assetSearch = searchPopper(screen, term);
+        ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
         serverAssetsList.refresh();
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
+        return;
       }
-    }
-    else {
+
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
       serverAssetsList.refresh();
+    });
+  }
+
+  private TableAssetSearch searchPopper(PopperScreen screen, String term) {
+    TableAssetSearch cached = client.getPinUPPopperService().getCached(screen, term);
+    if (cached != null) {
+      return cached;
     }
+
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
+    List<Object> results = progressDialog.getResults();
+    if (!results.isEmpty()) {
+      return (TableAssetSearch) results.get(0);
+    }
+
+    TableAssetSearch empty = new TableAssetSearch();
+    empty.setResult(Collections.emptyList());
+    empty.setScreen(screen);
+    return empty;
   }
 
   @FXML
@@ -409,8 +420,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       try {
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(getPreviewWidth());
-          imageView.setFitHeight(getPreviewHeight());
+          imageView.setFitWidth(getServerAssetPreviewWidth());
+          imageView.setFitHeight(getServerAssetPreviewHeight());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(assetUrl);
@@ -432,12 +443,20 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private double getPreviewWidth() {
+  private double getServerAssetPreviewWidth() {
     return serverAssetMediaPane.getPrefWidth() - 10;
   }
 
-  private double getPreviewHeight() {
+  private double getServerAssetPreviewHeight() {
     return serverAssetMediaPane.getPrefHeight() - 10;
+  }
+
+  private double getLocalAssetPreviewWidth() {
+    return mediaPane.getPrefWidth() - 10;
+  }
+
+  private double getLocalAssetPreviewHeight() {
+    return mediaPane.getPrefHeight() - 10;
   }
 
   @FXML
@@ -484,8 +503,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
     this.addAudioBlank.managedProperty().bindBidirectional(this.addAudioBlank.visibleProperty());
 
-    this.folderBtn.setVisible(client.getSystemService().isLocal());
-    this.folderSeparator.setVisible(client.getSystemService().isLocal());
+    this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+    this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
     try {
       encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);
@@ -533,13 +552,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
-    ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-    tablesCombo.getItems().addAll(gameRepresentations);
-    tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-      searchField.setText("");
-      this.setGame(overviewController, t1, this.screen);
-    });
+    if (!isEmbeddedMode()) {
+      List<GameRepresentation> games = client.getGameService().getGamesCached();
+      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+      tablesCombo.getItems().addAll(gameRepresentations);
+      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+        searchField.setText("");
+      });
+    }
+
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
@@ -547,10 +568,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No assets found."));
-    assetList.setPlaceholder(new Label("No assets found."));
+    serverAssetsList.setPlaceholder(new Label("No Popper assets found for this screen and table."));
+    assetList.setPlaceholder(new Label("No assets found for this screen and table."));
 
-    EventManager.getInstance().addListener(this);
+    if (!isEmbeddedMode()) {
+      EventManager.getInstance().addListener(this);
+    }
 
     Label label = new Label("No asset preview activated.");
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
@@ -616,8 +639,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (baseType.equals("image")) {
           ImageView imageView = new ImageView();
-          imageView.setFitWidth(getPreviewWidth());
-          imageView.setFitHeight(getPreviewHeight());
+          imageView.setFitWidth(getLocalAssetPreviewHeight());
+          imageView.setFitHeight(getLocalAssetPreviewWidth());
           imageView.setPreserveRatio(true);
 
           Image image = new Image(url);
@@ -634,10 +657,22 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
       }
     });
+
+    if (isEmbeddedMode()) {
+      assetList.prefHeightProperty().bind(root.prefHeightProperty());
+    }
+  }
+
+  private boolean isEmbeddedMode() {
+    return this.tablesCombo == null;
   }
 
   private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
-    List<GameMediaItemRepresentation> mediaItems = gameMedia.getMediaItems(s);
+    List<GameMediaItemRepresentation> mediaItems = new ArrayList<>();
+    if (gameMedia != null) {
+      mediaItems = gameMedia.getMediaItems(s);
+    }
+
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
     }
@@ -646,14 +681,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     if (clicked) {
+      if (this.lastSelected != null) {
+        this.lastSelected.setStyle(null);
+      }
+
       if (this.screen.equals(s)) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
         this.lastSelected = borderPane;
         return;
-      }
-
-      if (this.lastSelected != null) {
-        this.lastSelected.setStyle(null);
       }
       borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
       this.lastSelected = borderPane;
@@ -672,7 +707,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         borderPane.setStyle(null);
       }
     }
-    this.lastHover = borderPane;
   }
 
   private void disposeServerAssetPreview() {
@@ -702,55 +736,67 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
-    this.screen = screen;
-    this.tablesCombo.setValue(game);
-    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    this.searchField.setText("");
+    if (screen != null) {
+      this.screen = screen;
+    }
 
-    String term = game.getGameDisplayName();
-    term = term.replaceAll("the", "");
-    term = term.replaceAll("The", "");
-    term = term.replaceAll(", ", "");
-    term = term.replaceAll("-", "");
-    term = term.replaceAll("'", "");
-    term = term.replaceAll("\\(", "");
-    term = term.replaceAll("\\)", "");
-    term = term.replaceAll("\\[", "");
-    term = term.replaceAll("\\]", "");
-    term = term.replaceAll("MOD", "");
-    term = term.replaceAll("VOW", "");
-    term = term.replaceAll("VR ", "");
-    term = term.replaceAll("Room ", "");
+    if (!isEmbeddedMode()) {
+      this.tablesCombo.setValue(game);
+      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    }
 
-    String[] terms = term.split(" ");
+    if (game == null) {
+      searchField.setText("");
+    }
+    else {
+      String term = game.getGameDisplayName();
+      term = term.replaceAll("the", "");
+      term = term.replaceAll("The", "");
+      term = term.replaceAll(", ", "");
+      term = term.replaceAll("-", "");
+      term = term.replaceAll("'", "");
+      term = term.replaceAll("\\(", "");
+      term = term.replaceAll("\\)", "");
+      term = term.replaceAll("\\[", "");
+      term = term.replaceAll("\\]", "");
+      term = term.replaceAll("MOD", "");
+      term = term.replaceAll("VOW", "");
+      term = term.replaceAll("VR ", "");
+      term = term.replaceAll("Room ", "");
 
-    List<String> sanitizedTerms = new ArrayList<>();
-    for (String s : terms) {
-      if (!StringUtils.isEmpty(s)) {
-        String value = s.trim();
-        try {
-          if (value.length() == 4) {
-            Integer.parseInt(value);
-            continue;
+      String[] terms = term.split(" ");
+
+      List<String> sanitizedTerms = new ArrayList<>();
+      for (String s : terms) {
+        if (!StringUtils.isEmpty(s)) {
+          String value = s.trim();
+          try {
+            if (value.length() == 4) {
+              Integer.parseInt(value);
+              continue;
+            }
+          } catch (NumberFormatException e) {
           }
-        } catch (NumberFormatException e) {
+
+          sanitizedTerms.add(s.trim());
         }
 
-        sanitizedTerms.add(s.trim());
+        if (sanitizedTerms.size() == 2) {
+          break;
+        }
       }
 
-      if (sanitizedTerms.size() == 2) {
-        break;
+      if (StringUtils.isEmpty(this.searchField.getText())) {
+        if (sanitizedTerms.isEmpty()) {
+          this.searchField.setText(game.getGameDisplayName());
+        }
+        else {
+          this.searchField.setText(String.join(" ", sanitizedTerms));
+        }
       }
     }
 
-    if (StringUtils.isEmpty(this.searchField.getText())) {
-      if (sanitizedTerms.isEmpty()) {
-        this.searchField.setText(game.getGameDisplayName());
-      }
-      else {
-        this.searchField.setText(String.join(" ", sanitizedTerms));
-      }
-    }
 
     refreshTableMediaView();
     onSearch();
@@ -812,7 +858,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   public void refreshTableMediaView() {
-    this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    if (!isEmbeddedMode()) {
+      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+    }
     if (screen.equals(PopperScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
     }
@@ -820,21 +868,39 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
     this.addAudioBlank.setVisible(screen.equals(PopperScreen.AudioLaunch));
 
-    gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
-    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
-    ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
-    assetList.getItems().removeAll(assetList.getItems());
-    assetList.setItems(assets);
-    assetList.refresh();
+    if (game != null) {
+      gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
+      List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
+      ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
+      assetList.getItems().removeAll(assetList.getItems());
+      assetList.setItems(assets);
+      assetList.refresh();
 
-    if (!items.isEmpty()) {
-      assetList.getSelectionModel().select(0);
+      if (!items.isEmpty()) {
+        assetList.getSelectionModel().select(0);
+      }
+
+      boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+      this.addToPlaylistBtn.setDisable(!convertable);
+    }
+    else {
+      assetList.setItems(FXCollections.emptyObservableList());
+      assetList.refresh();
+      addToPlaylistBtn.setDisable(true);
+
+      serverAssetsList.setItems(FXCollections.emptyObservableList());
+      serverAssetsList.refresh();
     }
 
-    boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
-    this.addToPlaylistBtn.setDisable(!convertable);
-
     refreshTableView();
+    if (previewTitleLabel != null) {
+      Node node = this.lastSelected;
+      if (node == null) {
+        node = screenWheel;
+      }
+      Label nameLabel = (Label) ((BorderPane) node).getBottom();
+      previewTitleLabel.setText(nameLabel.getText());
+    }
   }
 
   @Override

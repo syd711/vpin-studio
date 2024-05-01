@@ -40,7 +40,7 @@ public class VBSManager {
   public void edit(Optional<GameRepresentation> game) {
     try {
       TextFile textFile = new TextFile(VPinFile.VBScript);
-      textFile.setFileId(game.get().getGameName());
+      textFile.setFileId(game.get().getId());
 
       if (game.isPresent()) {
         if (embeddedEditing) {
@@ -88,7 +88,7 @@ public class VBSManager {
 
   private File writeVbsFile(GameRepresentation game, String content) throws IOException {
     monitoringService.setPaused(true);
-    String name = game.getGameName() + ".vbs";
+    String name = game.getGameName() + "[" + game.getId() + "].vbs";
     File vbsFile = new File(vpsFolder, name);
     if (!vpsFolder.exists()) {
       vpsFolder.mkdirs();

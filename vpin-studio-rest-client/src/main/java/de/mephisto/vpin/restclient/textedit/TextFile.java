@@ -7,7 +7,7 @@ public class TextFile {
   private String content;
   private Date lastModified;
   private String path;
-  private String fileId;
+  private int fileId;
   private long size;
 
   public TextFile(VPinFile vPinFile) {
@@ -58,11 +58,11 @@ public class TextFile {
     this.lastModified = lastModified;
   }
 
-  public String getFileId() {
+  public int getFileId() {
     return fileId;
   }
 
-  public void setFileId(String fileId) {
+  public void setFileId(int fileId) {
     this.fileId = fileId;
   }
 }
