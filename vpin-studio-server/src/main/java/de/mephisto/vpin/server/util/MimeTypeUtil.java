@@ -19,12 +19,26 @@ public class MimeTypeUtil {
         if (suffix.endsWith("apng")) {
           mimeType = "image/apng";
         }
-
-        if (mimeType == null && suffix.endsWith("png")) {
+        else if (suffix.endsWith("png")) {
           mimeType = "image/png";
         }
-        else if (mimeType == null && suffix.endsWith("mp4")) {
+        else if (suffix.endsWith("jpg")) {
+          mimeType = "image/jpg";
+        }
+        else if (suffix.endsWith("mp3")) {
+          mimeType = "audio.mp3";
+        }
+        else if (suffix.endsWith("ogg")) {
+          mimeType = "audio.ogg";
+        }
+        else if (suffix.endsWith("mp4")) {
           mimeType = "video/mp4";
+        }
+        else if (suffix.endsWith("avi")) {
+          mimeType = "video/avi";
+        }
+        else{
+          LOG.error("Failed to determine mime type for " + file.getAbsolutePath());
         }
       }
       return mimeType;

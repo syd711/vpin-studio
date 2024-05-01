@@ -321,14 +321,16 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
       for (File file : screenAssets) {
         String mimeType = MimeTypeUtil.determineMimeType(file);
-        if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
-          return false;
-        }
-        if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-          return false;
-        }
-        if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-          return false;
+        if(mimeType != null) {
+          if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
+            return false;
+          }
+          if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return false;
+          }
+          if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return false;
+          }
         }
       }
     }
