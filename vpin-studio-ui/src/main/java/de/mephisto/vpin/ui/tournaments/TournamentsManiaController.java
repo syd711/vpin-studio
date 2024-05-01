@@ -501,6 +501,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     else if (tournament.isPlanned()) {
       status = "-fx-font-color: #FF9933;-fx-text-fill:#FF9933;-fx-font-weight: bold;";
     }
+    else if (tournament.isFinished()) {
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
+    }
     return status;
   }
 
@@ -645,7 +648,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         VpsTable vpsTable = value.getVpsTable();
         if (vpsTable != null) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-          return new SimpleObjectProperty<>(new TournamentTableGameCellContainer(game, value.getTournamentTable()));
+          return new SimpleObjectProperty<>(new TournamentTableGameCellContainer(game, value.getTournament(), value.getTournamentTable()));
         }
       }
 
@@ -700,7 +703,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           return new SimpleObjectProperty<>("All versions allowed.");
         }
 
-        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournamentTable()), true));
+        GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
+        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournament(), value.getTournamentTable()), gameByVpsTable == null));
       }
       return null;
     });

@@ -617,12 +617,12 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     tableColumn.setCellValueFactory(cellData -> {
       GameRepresentation game = cellData.getValue().getGame();
-      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, cellData.getValue().getTournamentTable()));
+      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, tournament, cellData.getValue().getTournamentTable()));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
       VpsTable vpsTable = cellData.getValue().getVpsTable();
-      String customStyle = TournamentHelper.getLabelCss(cellData.getValue().getTournamentTable());
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
       return new SimpleObjectProperty(new VpsTableContainer(vpsTable, customStyle));
     });
 
@@ -631,7 +631,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
-      String customStyle = TournamentHelper.getLabelCss(cellData.getValue().getTournamentTable());
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
     });
 

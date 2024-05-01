@@ -62,7 +62,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
             for (Tournament tournament : tournaments) {
               TournamentTable tournamentTable = findTournamentTable(tournament, createdTableScore);
               if (tournamentTable != null) {
-                if (tournament.isActive()) {
+                if (tournament.isActive() && tournamentTable.isActive()) {
                   maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
                   LOG.info("Linked " + createdTableScore + " to " + tournament);
 
@@ -71,7 +71,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
                   }
                 }
                 else {
-                  LOG.info("Found " + tournamentTable + ", but it is not active.");
+                  LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
                 }
               }
             }
