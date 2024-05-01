@@ -104,7 +104,7 @@ public class VpsVersionContainer extends VBox {
           badge.getStyleClass().add("white-label");
           badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
           badge.getStyleClass().add("vps-badge");
-          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";" + customStyle);
+          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
           row.getChildren().add(badge);
         }
       }

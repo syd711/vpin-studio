@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.tournaments;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -68,7 +67,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
                   LOG.info("Linked " + createdTableScore + " to " + tournament);
 
                   if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                    iScoredService.submitTableScore(tournament, tournamentTable, createdTableScore);
+                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore);
                   }
                 }
                 else {

@@ -206,7 +206,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
     }
 
-    if (latestCompetitionScore != null) {
+    if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
       List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
 
       int index = 0;

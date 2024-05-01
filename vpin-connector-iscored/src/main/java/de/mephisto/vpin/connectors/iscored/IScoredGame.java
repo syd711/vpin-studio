@@ -1,12 +1,10 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Game {
+public class IScoredGame {
   private int id;
   private String name;
   private List<Score> scores = new ArrayList<>();
@@ -56,9 +54,9 @@ public class Game {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Game)) return false;
+    if (!(o instanceof IScoredGame)) return false;
 
-    Game game = (Game) o;
+    IScoredGame game = (IScoredGame) o;
 
     if (id != game.id) return false;
     return Objects.equals(name, game.name);

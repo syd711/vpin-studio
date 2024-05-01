@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.Game;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
@@ -438,8 +438,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-        List<Game> games = gameRoom.getGames();
-        for (Game game : games) {
+        List<IScoredGame> games = gameRoom.getGames();
+        for (IScoredGame game : games) {
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
           if (first.isPresent()) {

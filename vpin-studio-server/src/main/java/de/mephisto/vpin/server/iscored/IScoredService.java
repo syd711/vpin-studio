@@ -1,12 +1,13 @@
 package de.mephisto.vpin.server.iscored;
 
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.server.highscores.Score;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class IScoredService {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
 
-  public void submitTableScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
+  public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
     if (!Features.ISCORED_ENABLED) {
       LOG.warn("iScored is not enabled");
       return;
@@ -35,7 +36,7 @@ public class IScoredService {
           String vpsTableId = tournamentTable.getVpsTableId();
           String vpsVersionId = tournamentTable.getVpsVersionId();
 
-          Game gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
+          IScoredGame gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
           if (gameRoomGame == null) {
             LOG.info("Skipped iScored score submission, because no game was found for " + tournament);
             return;
@@ -55,5 +56,22 @@ public class IScoredService {
 
   public boolean isIscoredGameRoomUrl(String dashboardUrl) {
     return dashboardUrl.toLowerCase().contains("iscored.info") && dashboardUrl.contains("user=") && dashboardUrl.toLowerCase().contains("mode=public");
+  }
+
+  public void submitScore(String url, Score newScore, String vpsTableId, String vpsVersionId) {
+    GameRoom gameRoom = IScored.getGameRoom(url);
+    if (gameRoom != null) {
+      IScoredGame iScoredGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
+      if (iScoredGame != null) {
+        String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
+        IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
+      }
+      else {
+        LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "'");
+      }
+    }
+    else {
+      LOG.warn("No iScored game room found for " + url);
+    }
   }
 }

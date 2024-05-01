@@ -76,11 +76,6 @@ public class PlayerService {
       return null;
     }
 
-    Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);
-    if (discordPlayer != null) {
-      return discordPlayer;
-    }
-
     List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
     if (players.size() > 1) {
       LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
@@ -88,6 +83,11 @@ public class PlayerService {
 
     if (!players.isEmpty()) {
       return players.get(0);
+    }
+
+    Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);
+    if (discordPlayer != null) {
+      return discordPlayer;
     }
 
     return null;
