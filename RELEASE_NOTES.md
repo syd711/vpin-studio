@@ -1,3 +1,7 @@
+## Hotfix 2.18.2
+
+- Fixed remote script editing when using non-Windows clients. 
+ 
 ## Hotfix 2.18.1
 
 - Fixed critical error caused by the new asset validation and files with unknown mime types. 

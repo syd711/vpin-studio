@@ -26,8 +26,7 @@ public class VBSManager {
   private final VbsMonitoringService monitoringService = new VbsMonitoringService();
   private final File vpsFolder = new File("./resources/vbs/");
 
-  private boolean embeddedEditing = false;
-
+  private boolean embeddedEditing = !System.getProperty("os.name").contains("Windows");
 
   private VBSManager() {
     monitoringService.startMonitoring(vpsFolder);
