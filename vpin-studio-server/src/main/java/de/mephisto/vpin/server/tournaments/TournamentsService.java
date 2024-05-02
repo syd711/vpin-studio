@@ -3,23 +3,18 @@ package de.mephisto.vpin.server.tournaments;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
+import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
+import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,14 +23,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class TournamentsService implements InitializingBean, PreferenceChangedListener {
+public class TournamentsService implements InitializingBean, PreferenceChangedListener, PopperStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
   @Value("${vpinmania.server.host}")
@@ -49,6 +40,9 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
   @Autowired
   private TournamentSynchronizer tournamentSynchronizer;
+
+  @Autowired
+  private PopperService popperService;
 
   @Autowired
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
@@ -107,6 +101,22 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
       tournamentSynchronizer.setClient(maniaClient);
       tournamentSynchronizer.synchronize();
+
+      popperService.addPopperStatusChangeListener(this);
     }
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    new Thread(() -> {
+      Game game = event.getGame();
+      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
+      tournamentSynchronizer.synchronize(game);
+    }).start();
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+
   }
 }

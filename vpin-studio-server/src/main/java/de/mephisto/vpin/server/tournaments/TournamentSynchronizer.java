@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,8 +39,8 @@ public class TournamentSynchronizer {
 
   @Autowired
   private TournamentTablesRepository tournamentTablesRepository;
-  private VPinManiaClient maniaClient;
 
+  private VPinManiaClient maniaClient;
 
   public boolean synchronize(TournamentMetaData metaData) {
     Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
@@ -81,6 +82,22 @@ public class TournamentSynchronizer {
   public boolean synchronize() {
     List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
     return synchronize(tournaments);
+  }
+
+  public boolean synchronize(Game game) {
+    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+    List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
+    List<Tournament> filtered = new ArrayList<>();
+    for (TournamentTableInfo tournamentTableInfo : byGameId) {
+      Optional<Tournament> first = tournaments.stream().filter(t -> t.getId() == tournamentTableInfo.getTournamentId()).findFirst();
+      if (first.isPresent()) {
+        Tournament tournament = first.get();
+        if (!filtered.contains(tournament)) {
+          filtered.add(tournament);
+        }
+      }
+    }
+    return synchronize(filtered);
   }
 
   public boolean synchronize(List<Tournament> tournaments) {

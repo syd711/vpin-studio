@@ -11,6 +11,8 @@ public interface TournamentTablesRepository extends JpaRepository<TournamentTabl
 
   Optional<TournamentTableInfo> findByTournamentIdAndVpsTableIdAndVpsTableVersionId(long tournamentId, String vpsTableId, String vpsVersionId);
 
+  List<TournamentTableInfo> findByGameId(int gameId);
+
   List<TournamentTableInfo> findByTournamentIdAndStarted(long tournamentId, boolean started);
 
   void deleteAllByTournamentId(long tournamentId);
