@@ -1,6 +1,6 @@
 ## Hotfix 2.18.2
 
-- Fixed remote script editing when using non-Windows clients. 
+- Added deletion of temporary exported .vbs files.
  
 ## Hotfix 2.18.1
 
