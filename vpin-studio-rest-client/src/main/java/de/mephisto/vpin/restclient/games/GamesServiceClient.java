@@ -247,17 +247,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<GameRepresentation> getGamesWithScores() {
-    List<GameRepresentation> gameList = this.getGamesCached();
-    List<GameRepresentation> result = new ArrayList<>();
-    for (GameRepresentation gameRepresentation : gameList) {
-      if (!StringUtils.isEmpty(gameRepresentation.getHighscoreType())) {
-        result.add(gameRepresentation);
-      }
-    }
-    return result;
-  }
-
   public List<GameRepresentation> getGamesCached() {
     if (this.allGames == null || this.allGames.isEmpty()) {
       this.allGames = this.getKnownGames();

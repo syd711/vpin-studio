@@ -4,9 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.TournamentHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -119,8 +117,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
 
     if (game != null) {
-      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
-      if (StringUtils.isEmpty(summary.getRaw())) {
+      if (StringUtils.isEmpty(game.getHighscoreType())) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

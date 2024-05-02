@@ -18,7 +18,7 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class TournamentCellContainer extends HBox {
   private final static int TITLE_WIDTH = 60;
 
-  public TournamentCellContainer(Tournament tournament) {
+  public TournamentCellContainer(Tournament tournament, List<TournamentTable> tournamentTables) {
     super(6);
 
     String badgeUrl = maniaClient.getTournamentClient().getBadgeUrl(tournament);
@@ -48,7 +48,6 @@ public class TournamentCellContainer extends HBox {
     titleLabel.getStyleClass().add("default-headline");
     titleLabel.setStyle(TournamentHelper.getLabelCss(tournament));
 
-    List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
     valueLabel = new Label(String.valueOf(tournamentTables.size()));
     valueLabel.getStyleClass().add("default-text");
     valueLabel.setStyle(TournamentHelper.getLabelCss(tournament));

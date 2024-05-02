@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -14,8 +15,11 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.players.PlayerService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -42,7 +47,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   private HighscoreService highscoreService;
 
   @Autowired
-  private PlayerService playerService;
+  private SystemService systemService;
 
   @Autowired
   private IScoredService iScoredService;
@@ -79,19 +84,14 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   public boolean synchronize() {
     try {
       LOG.info("Running Tournament Synchronization");
+
+      //this returns only my tournaments since the cabinet id is passed
       List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
       for (Tournament tournament : tournaments) {
         if (!tournament.isFinished()) {
           List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
           for (TournamentTable tournamentTable : tournamentTables) {
-            if (!tournamentTable.isActive()) {
-              LOG.info("Skippd tournament score submission for " + tournamentTable + ", the table is not active.");
-              continue;
-            }
-            Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
-            if (gameByVpsTable != null) {
 
-            }
           }
         }
       }
