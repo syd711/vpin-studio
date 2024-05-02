@@ -181,7 +181,11 @@ public class VPXUtil {
       executor.setDir(new File("./resources"));
       executor.executeCommand();
 
-      return org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
+      String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
+      if (!vbsFile.delete()) {
+        LOG.error("Failed to delete VBS file " + vbsFile.getAbsolutePath());
+      }
+      return script;
     } catch (Exception e) {
       LOG.error("Exporting VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
