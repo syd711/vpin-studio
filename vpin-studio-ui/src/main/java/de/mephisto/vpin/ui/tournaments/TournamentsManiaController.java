@@ -410,7 +410,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         "Go to the players section and select the default player of your VPin!"));
 
       tableStack.getChildren().remove(loadingOverlay);
+      treeTableView.setRoot(null);
       treeTableView.setVisible(true);
+      treeTableView.refresh();
       return;
     }
 
