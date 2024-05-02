@@ -34,7 +34,7 @@ public class DateCellContainer extends VBox {
     titleLabel.setStyle(TournamentHelper.getLabelCss(tournament));
     titleLabel.setPrefWidth(TITLE_WIDTH);
     titleLabel.getStyleClass().add("default-headline");
-    valueLabel = new Label(DateFormat.getDateTimeInstance().format(tournament.getEndDate()));
+    valueLabel = new Label(tournament.getEndDate() != null ? DateFormat.getDateTimeInstance().format(tournament.getEndDate()) : "-");
     valueLabel.getStyleClass().add("default-text");
     valueLabel.setStyle(TournamentHelper.getLabelCss(tournament));
     row.getChildren().addAll(titleLabel, valueLabel);

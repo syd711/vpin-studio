@@ -628,10 +628,19 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         if (game != null) {
           Label label = new Label("INSTALLED");
           label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;-fx-font-weight: bold;");
+
+          if (tournament.isFinished()) {
+            label.setStyle(WidgetFactory.DISABLED_COLOR);
+          }
           return new SimpleObjectProperty(label);
         }
         Label label = new Label("NOT\nINSTALLED");
         label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333;-fx-font-weight: bold;");
+
+        if (tournament.isFinished()) {
+          label.setStyle(WidgetFactory.DISABLED_COLOR);
+        }
+
         return new SimpleObjectProperty(label);
       }
       else {

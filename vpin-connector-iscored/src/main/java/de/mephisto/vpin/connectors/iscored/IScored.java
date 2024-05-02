@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class IScored {
@@ -148,6 +149,23 @@ public class IScored {
   }
 
   public static boolean submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
+    List<Score> scores = game.getScores();
+    for (Score score : scores) {
+      if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
+        try {
+          long l = Long.parseLong(score.getScore());
+          if (l > highscore) {
+            LOG.info("Found existing score: " + score + " and skipped submission of new score value of " + highscore);
+            return false;
+          }
+        } catch (NumberFormatException e) {
+          LOG.error("Failed to parse " + score);
+          return false;
+        }
+      }
+    }
+
+
     LOG.info("Submitting score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
     BufferedInputStream in = null;
     try {

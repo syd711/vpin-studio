@@ -326,7 +326,7 @@ public class TournamentsController implements Initializable, StudioFXController 
 
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
-      endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
+      endLabel.setText(tournament.getEndDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()) : "-");
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
       websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");

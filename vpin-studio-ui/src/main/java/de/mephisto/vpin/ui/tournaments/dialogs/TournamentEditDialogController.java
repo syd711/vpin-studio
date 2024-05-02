@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
@@ -654,11 +654,14 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   }
 
   public TournamentCreationModel getTournamentData() {
-    TournamentCreationModel model = new TournamentCreationModel();
-    model.setNewTournamentModel(this.result);
-    model.setResetHighscore(highscoreReset.isSelected());
-    model.setBadge(tournamentBadgeCombo.getValue());
-    return model;
+    if (result != null) {
+      TournamentCreationModel model = new TournamentCreationModel();
+      model.setNewTournamentModel(this.result);
+      model.setResetHighscore(highscoreReset.isSelected());
+      model.setBadge(tournamentBadgeCombo.getValue());
+      return model;
+    }
+    return null;
   }
 
   static class TournamentImageCell extends ListCell<String> {

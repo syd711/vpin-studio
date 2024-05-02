@@ -47,8 +47,10 @@ public class TournamentSynchronizer {
       List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
       for (TournamentTable tournamentTable : tournamentTables) {
         TournamentTableInfo info = createTournamentTableInfo(metaData, tournamentTable);
-        TournamentTableInfo tournamentTableInfo = tournamentTablesRepository.saveAndFlush(info);
-        LOG.info("\tWritten " + tournamentTableInfo);
+        if (info.getGameId() != 0) {
+          TournamentTableInfo tournamentTableInfo = tournamentTablesRepository.saveAndFlush(info);
+          LOG.info("\tWritten " + tournamentTableInfo);
+        }
       }
       return true;
     }
@@ -63,6 +65,7 @@ public class TournamentSynchronizer {
     TournamentTableInfo info = new TournamentTableInfo();
     info.setTournamentId(metaData.getTournamentId());
     info.setBadge(metaData.getBadge());
+    info.setHighscoreReset(metaData.isResetHighscores());
     info.setStartDate(tournamentTable.getStartDate());
     info.setEndDate(tournamentTable.getEndDate());
     info.setVpsTableId(tournamentTable.getVpsTableId());
@@ -82,7 +85,7 @@ public class TournamentSynchronizer {
 
   public boolean synchronize(List<Tournament> tournaments) {
     try {
-      LOG.info("S---------------------Synchronization of Tournaments-----------------------------");
+      LOG.info("-----------------------Synchronization of Tournaments-----------------------------");
       //this returns only my tournaments since the cabinet id is passed
       for (Tournament tournament : tournaments) {
         LOG.info("  Synchronization of " + tournament);
@@ -99,7 +102,7 @@ public class TournamentSynchronizer {
           if (maniaTournamentTable.isFinished()) {
             Optional<TournamentTableInfo> tableInfo = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), maniaTournamentTable.getVpsTableId(), maniaTournamentTable.getVpsVersionId());
             if (tableInfo.isPresent()) {
-              finishTable(tournament, tableInfo.get());
+              finishTable(tableInfo.get());
             }
           }
         }
@@ -109,27 +112,27 @@ public class TournamentSynchronizer {
         for (TournamentTableInfo tournamentTableInfo : tournamentTableInfos) {
           Game game = gameService.getGame(tournamentTableInfo.getGameId());
           if (game == null) {
-            finishTable(tournament, tournamentTableInfo);
-          }
-        }
-
-        //fill up tables that have been added later on
-        for (TournamentTable maniaTournamentTable : maniaTournamentTables) {
-          Optional<TournamentTableInfo> tableInfo = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), maniaTournamentTable.getVpsTableId(), maniaTournamentTable.getVpsVersionId());
-          if (tableInfo.isEmpty()) {
-            TournamentTableInfo tournamentTableInfo = createTournamentTableInfo(metaData, maniaTournamentTable);
-            if (tournamentTableInfo.getGameId() != 0) {
-              TournamentTableInfo newInfo = tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
-              LOG.info("\tAdded missing " + newInfo + " for " + tournament);
-            }
-            else {
-              LOG.info(maniaTournamentTable + " has no matching game.");
-            }
+            finishTable(tournamentTableInfo);
           }
         }
 
         //start active tables
         if (tournament.isActive()) {
+          //fill up tables that have been added later on
+          for (TournamentTable maniaTournamentTable : maniaTournamentTables) {
+            Optional<TournamentTableInfo> tableInfo = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), maniaTournamentTable.getVpsTableId(), maniaTournamentTable.getVpsVersionId());
+            if (tableInfo.isEmpty()) {
+              TournamentTableInfo tournamentTableInfo = createTournamentTableInfo(metaData, maniaTournamentTable);
+              if (tournamentTableInfo.getGameId() != 0) {
+                TournamentTableInfo newInfo = tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
+                LOG.info("\tAdded missing " + newInfo + " for " + tournament);
+              }
+              else {
+                LOG.info("\t" + maniaTournamentTable + " has no matching game.");
+              }
+            }
+          }
+
           List<TournamentTableInfo> unstartedTables = tournamentTablesRepository.findByTournamentIdAndStarted(tournament.getId(), false);
           startTables(tournament, unstartedTables, metaData);
         }
@@ -140,8 +143,7 @@ public class TournamentSynchronizer {
       List<TournamentTableInfo> all = tournamentTablesRepository.findAll();
       List<TournamentTableInfo> corpses = all.stream().filter(t -> !tournamentIds.contains(t.getTournamentId())).collect(Collectors.toList());
       for (TournamentTableInfo corps : corpses) {
-        tournamentTablesRepository.deleteById(corps.getId());
-        LOG.info("\tDeleted non-existing " + corps);
+        finishTable(corps);
       }
       LOG.info("----------------------------/end of sync -------------------------------------------");
     } catch (Exception e) {
@@ -156,7 +158,7 @@ public class TournamentSynchronizer {
       Optional<TournamentTableInfo> tournamentId = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
       if (tournamentId.isPresent()) {
         TournamentTableInfo tournamentTableInfo = tournamentId.get();
-        finishTable(tournament, tournamentTableInfo);
+        finishTable(tournamentTableInfo);
       }
     }
   }
@@ -167,18 +169,17 @@ public class TournamentSynchronizer {
     }
   }
 
-  private void finishTable(Tournament tournament, TournamentTableInfo tournamentTableInfo) {
+  private void finishTable(TournamentTableInfo tournamentTableInfo) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
       GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
       if (gameMediaItem != null) {
         WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
         augmenter.deAugment();
-        LOG.info("\tDe-augmented " + tournamentTableInfo);
       }
     }
     tournamentTablesRepository.deleteById(tournamentTableInfo.getId());
-    LOG.info("\tDeleted finished " + tournamentTableInfo);
+    LOG.info("\tDeleted " + tournamentTableInfo);
   }
 
 
@@ -201,6 +202,9 @@ public class TournamentSynchronizer {
           LOG.info("\tResetted highscore for " + game);
         }
       }
+
+      tournamentTableInfo.setStarted(true);
+      tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
     }
   }
 

@@ -42,6 +42,9 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private TournamentSynchronizer tournamentSynchronizer;
+
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     if (cabinet != null) {
@@ -57,6 +60,9 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
             // General score submission!
             TableScore createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
             LOG.info("Submitted VPinMania score " + createdTableScore);
+
+            //sync info before submitting
+            tournamentSynchronizer.synchronize();
 
             List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
             for (Tournament tournament : tournaments) {

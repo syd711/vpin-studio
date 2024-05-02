@@ -140,7 +140,7 @@ public class WheelAugmenter {
 
   private boolean deAugment(File backup, File target) {
     if (backup.exists()) {
-      if (!target.delete()) {
+      if (target.exists() && !target.delete()) {
         LOG.warn("Failed to delete augmented file '" + target.getAbsolutePath() + "'");
         return false;
       }
