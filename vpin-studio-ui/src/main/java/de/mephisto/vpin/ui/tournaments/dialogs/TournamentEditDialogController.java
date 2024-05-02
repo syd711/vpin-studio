@@ -20,10 +20,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
-import de.mephisto.vpin.ui.tournaments.TournamentHelper;
-import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
-import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -82,6 +79,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private ComboBox<String> tournamentBadgeCombo;
+
+  @FXML
+  private CheckBox highscoreReset;
 
   @FXML
   private ComboBox<String> startTime;
@@ -653,8 +653,12 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
   }
 
-  public TreeItem<TournamentTreeModel> getTournament() {
-    return result;
+  public TournamentCreationModel getTournamentData() {
+    TournamentCreationModel model = new TournamentCreationModel();
+    model.setNewTournamentModel(this.result);
+    model.setResetHighscore(highscoreReset.isSelected());
+    model.setBadge(tournamentBadgeCombo.getValue());
+    return model;
   }
 
   static class TournamentImageCell extends ListCell<String> {

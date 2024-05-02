@@ -46,6 +46,11 @@ public class WheelAugmenter {
     this.backupWheelIconThumbnailSm = new File(vsThumbsFolder, wheelIconThumbnailSm.getName());
   }
 
+
+  public boolean isAugmented() {
+    return backupWheelIcon.exists() && wheelIconThumbnail.exists();
+  }
+
   public File getBackupWheelIcon() {
     return backupWheelIcon;
   }
@@ -107,6 +112,7 @@ public class WheelAugmenter {
       BufferedImage thumbnailSm = ImageUtil.resizeImage(thumbnail, 90);
       ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
 
+      LOG.info("Augmented " + wheelIconThumbnail.getAbsolutePath());
     } catch (Exception e) {
       LOG.error("Wheel augmentation failed: " + e.getMessage(), e);
     }
