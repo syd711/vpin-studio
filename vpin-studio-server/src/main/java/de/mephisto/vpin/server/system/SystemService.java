@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
@@ -296,7 +295,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public File getBagdeFile(String badge) {
+  public File getBadgeFile(String badge) {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
     return new File(folder, badge + ".png");
   }

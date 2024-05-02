@@ -50,9 +50,6 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   private SystemService systemService;
 
   @Autowired
-  private IScoredService iScoredService;
-
-  @Autowired
   private GameService gameService;
 
   @Autowired
@@ -92,6 +89,21 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
           List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
           for (TournamentTable tournamentTable : tournamentTables) {
 
+            if (!tournamentTable.isActive()) {
+//              if (game != null && tournament.ge) {
+//                GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+//                if(gameMediaItem != null) {
+//                  WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
+//                  if(!augmenter.isAugmented()) {
+//                    File badgeFile = systemService.getBagdeFile(badge);
+//                    augmenter.augment();
+//                  }
+//                }
+//              }
+            }
+            else {
+
+            }
           }
         }
       }

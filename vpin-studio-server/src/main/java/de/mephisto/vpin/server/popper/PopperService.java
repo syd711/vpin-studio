@@ -385,7 +385,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
 
-      File badgeFile = systemService.getBagdeFile(badge);
+      File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
         augmenter.augment(badgeFile);
       }
