@@ -90,19 +90,25 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.TOURNAMENTS_ENABLED) {
-      TournamentConfig config = getConfig();
-      maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+      try {
+        TournamentConfig config = getConfig();
+        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaClient.getTournamentClient().getTournaments();
 
-      tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
-      highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
+        tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
+        highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
 
-      preferencesService.addChangeListener(this);
-      preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
+        preferencesService.addChangeListener(this);
+        preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
 
-      tournamentSynchronizer.setClient(maniaClient);
-      tournamentSynchronizer.synchronize();
+        tournamentSynchronizer.setClient(maniaClient);
+        tournamentSynchronizer.synchronize();
 
-      popperService.addPopperStatusChangeListener(this);
+        popperService.addPopperStatusChangeListener(this);
+      } catch (Exception e) {
+        Features.TOURNAMENTS_ENABLED = false;
+        LOG.info("Error initializing tournament service: " + e.getMessage(), e);
+      }
     }
   }
 

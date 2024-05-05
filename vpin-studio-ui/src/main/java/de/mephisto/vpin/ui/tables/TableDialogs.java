@@ -181,6 +181,15 @@ public class TableDialogs {
     return true;
   }
 
+  public static boolean openNotesDialog(GameRepresentation game) {
+    Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Table Notes");
+    TableNotesController controller = (TableNotesController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
+
+    return true;
+  }
+
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

@@ -35,6 +35,8 @@ public class GameDetails {
   @Column(length = 1024)
   public String updates;
 
+  private String notes;
+
   private Long templateId;
 
   private String romName;
@@ -81,6 +83,14 @@ public class GameDetails {
 
   public String getExtTableId() {
     return extTableId;
+  }
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
   }
 
   @Deprecated // stored this in Popper

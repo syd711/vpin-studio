@@ -248,7 +248,7 @@
 
 .table-media-button:hover {
     -fx-font-color: #fff8f8;
-    -fx-background-color: #283335;
+    -fx-background-color: #28333566;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;

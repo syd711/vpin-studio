@@ -519,6 +519,7 @@ public class GameService implements InitializingBean {
         validate.add(GameValidationStateFactory.empty());
       }
       game.setValidationState(validate.get(0));
+      game.setNotes(gameDetails.getNotes());
       return;
     }
 
@@ -549,7 +550,6 @@ public class GameService implements InitializingBean {
       gameDetails.setPupId(game.getId());
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
-
 
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
@@ -592,6 +592,7 @@ public class GameService implements InitializingBean {
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
+    game.setNotes(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
@@ -604,6 +605,7 @@ public class GameService implements InitializingBean {
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
+
 
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
@@ -627,6 +629,7 @@ public class GameService implements InitializingBean {
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
+    gameDetails.setNotes(game.getNotes());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getVpsUpdates() != null) {
       VPSChanges vpsUpdates = game.getVpsUpdates();

@@ -220,7 +220,7 @@ public class PupPacksService implements InitializingBean {
         Thread.currentThread().setName("PUP Pack Scanner");
         refresh();
       } catch (Exception e) {
-        LOG.error("Erorr in PUP Pack Scanner thread: " + e.getMessage(), e);
+        LOG.error("Error in PUP Pack Scanner thread: " + e.getMessage(), e);
       }
     }).start();
   }

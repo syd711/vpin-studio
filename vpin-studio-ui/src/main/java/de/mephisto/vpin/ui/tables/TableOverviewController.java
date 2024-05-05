@@ -43,6 +43,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -1170,13 +1171,44 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
+      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
       if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {
-          return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
+          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
         }
       }
 
-      return new SimpleObjectProperty(WidgetFactory.createCheckIcon(getIconColor(value)));
+      Button btn = new Button();
+      btn.getStyleClass().add("table-media-button");
+      HBox graphics = new HBox(3);
+      graphics.setAlignment(Pos.CENTER_RIGHT);
+      graphics.setMinWidth(34);
+      graphics.getChildren().add(statusIcon);
+
+      if (!StringUtils.isEmpty(value.getNotes())) {
+        String notes = value.getNotes();
+        Tooltip tooltip = new Tooltip(value.getNotes());
+        tooltip.setWrapText(true);
+        btn.setTooltip(tooltip);
+
+        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+        icon.setIconSize(16);
+        graphics.getChildren().add(0, icon);
+
+        if (notes.contains("//ERROR")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        }
+        else if (notes.contains("//TODO")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+        }
+      }
+
+      btn.setGraphic(graphics);
+      btn.setOnAction(event -> {
+        TableDialogs.openNotesDialog(value);
+      });
+
+      return new SimpleObjectProperty(btn);
     });
 
     columnDateAdded.setCellValueFactory(cellData -> {

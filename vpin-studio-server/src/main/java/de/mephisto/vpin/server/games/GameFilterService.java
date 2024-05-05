@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -63,6 +64,19 @@ public class GameFilterService {
       }
       if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
         continue;
+      }
+
+      NoteType noteType = filterSettings.getNoteType();
+      if (noteType != null) {
+        if (noteType.equals(NoteType.Any) && StringUtils.isEmpty(game.getNotes())) {
+          continue;
+        }
+        if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//ERROR"))) {
+          continue;
+        }
+        if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//TODO"))) {
+          continue;
+        }
       }
 
       List<ValidationState> states = gameService.validate(game);

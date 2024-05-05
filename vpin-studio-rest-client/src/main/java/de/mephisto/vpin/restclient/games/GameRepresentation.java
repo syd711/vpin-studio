@@ -33,6 +33,7 @@ public class GameRepresentation {
   private boolean disabled;
   private boolean updateAvailable;
   private int id;
+  private String notes;
   private Date modified;
   private GameMediaRepresentation gameMedia;
   private boolean directB2SAvailable;
@@ -59,6 +60,14 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
   public boolean isVpxGame() {
     return vpxGame;

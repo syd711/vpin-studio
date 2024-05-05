@@ -18,6 +18,15 @@ public class FilterSettings {
   private boolean withNVOffset;
   private boolean withAlias;
   private int gameStatus = -1;
+  private NoteType noteType;
+
+  public NoteType getNoteType() {
+    return noteType;
+  }
+
+  public void setNoteType(NoteType noteType) {
+    this.noteType = noteType;
+  }
 
   public boolean isWithNVOffset() {
     return withNVOffset;
@@ -172,11 +181,13 @@ public class FilterSettings {
         && !this.withPupPack
         && !this.withNVOffset
         && !this.withAlias
+        && this.noteType == null
         && this.gameStatus == -1;
     }
 
     return !this.missingAssets
       && !this.notPlayed
+      && this.noteType == null
       && this.gameStatus == -1;
 
   }

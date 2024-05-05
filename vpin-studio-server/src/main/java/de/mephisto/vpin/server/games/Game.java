@@ -55,6 +55,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
+  private String notes;
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
@@ -70,6 +71,14 @@ public class Game {
       return this.pupPack.getName();
     }
     return pupPackName;
+  }
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
   }
 
   public boolean isVpxGame() {
