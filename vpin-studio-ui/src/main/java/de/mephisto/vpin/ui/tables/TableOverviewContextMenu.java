@@ -1,15 +1,24 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class TableOverviewContextMenu {
+  private final static Logger LOG = LoggerFactory.getLogger(TableOverviewContextMenu.class);
 
   private final TableOverviewController tableOverviewController;
 
@@ -46,6 +55,11 @@ public class TableOverviewContextMenu {
     ImageView iconVps = new ImageView(image);
     iconVps.setFitWidth(18);
     iconVps.setFitHeight(18);
+
+    Image imageVpbm = new Image(Studio.class.getResourceAsStream("vpbm-128.png"));
+    ImageView iconVpbm = new ImageView(imageVpbm);
+    iconVpbm.setFitWidth(18);
+    iconVpbm.setFitHeight(18);
 
     Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
     ImageView iconVpsReset = new ImageView(image2);
@@ -206,6 +220,22 @@ public class TableOverviewContextMenu {
       exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
       exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
       ctxMenu.getItems().add(exportItem);
+
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+
+      MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+      vpbmItem.setGraphic(iconVpbm);
+      vpbmItem.setOnAction(actionEvent -> {
+        new Thread(() -> {
+          List<String> commands = Arrays.asList("vPinBackupManager.exe");
+          LOG.info("Executing vpbm: " + String.join(" ", commands));
+          File dir = new File("./resources/", "vpbm");
+          SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+          executor.setDir(dir);
+          executor.executeCommandAsync();
+        }).start();
+      });
+      ctxMenu.getItems().add(vpbmItem);
 
       ctxMenu.getItems().add(new SeparatorMenuItem());
 

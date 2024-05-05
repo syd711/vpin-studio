@@ -20,7 +20,6 @@ import java.util.*;
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
-  private static final boolean DELETE_VBS_TEMP_FILES = true;
 
   public static String readScript(@NonNull File file) {
     try {
@@ -150,7 +149,7 @@ public class VPXUtil {
     return content;
   }
 
-  public static void importVBS(@NonNull File vpxFile, String vps) throws IOException {
+  public static void importVBS(@NonNull File vpxFile, String vps, boolean keepVbsFile) throws IOException {
     try {
       File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
       if (vbsFile.exists()) {
@@ -164,12 +163,16 @@ public class VPXUtil {
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
+
+      if (!keepVbsFile && !vbsFile.delete()) {
+        LOG.error("Failed to delete VBS import file " + vbsFile.getAbsolutePath());
+      }
     } catch (Exception e) {
       LOG.error("Importing VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
   }
 
-  public static String exportVBS(@NonNull File vpxFile, String vps) throws IOException {
+  public static String exportVBS(@NonNull File vpxFile, String vps, boolean keepVbsFile) throws IOException {
     try {
       File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
       if (vbsFile.exists()) {
@@ -183,9 +186,8 @@ public class VPXUtil {
       executor.executeCommand();
 
       String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
-
-      if (DELETE_VBS_TEMP_FILES && !vbsFile.delete()) {
-        LOG.error("Failed to delete VBS file " + vbsFile.getAbsolutePath());
+      if (!keepVbsFile && !vbsFile.delete()) {
+        LOG.error("Failed to delete VBS export file " + vbsFile.getAbsolutePath());
       }
       return script;
     } catch (Exception e) {

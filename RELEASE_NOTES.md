@@ -1,12 +1,15 @@
 ## 2.18.2
 
-- **Table Management**: Added deletion of temporary exported .vbs files.
+- **Server Settings**: Added option to delete .vbs files on import/export when script editing is started. The option is disabled by default.
 - **Table Management**: Fixed context menu action "Reset VPS Updates".
 - **Table Management / Popper Media View**: Added delete button to the on-hover actions of the "PinUP Popper Media" section.
 - **Highscore Cards**: Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
 - **Highscore Cards**: Fixed missing refresh of the "Popper Background" tab panel after applying templates.
 - **Table Management / VPin MAME View**: Fixed possible breaking of settings when double-clicking the reload the button.
-- **Popper Table/Launch Events**: Fixed listening to the table start and exit events so that these are properly triggered for tables that are located in subfolders too. Highscore cards for these tables have not been updated on exit. 
+- **Popper Table/Launch Events**: Fixed listening to the table start and exit events so that these are properly triggered for tables that are located in subfolders too. Highscore cards for these tables have not been updated on exit.
+- **VPBM**: Added latest updates (including orphaned content finder) and added entry to context menu in table overview.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/orphaned-children.png" width="500" />
 
  
 ## 2.18.1

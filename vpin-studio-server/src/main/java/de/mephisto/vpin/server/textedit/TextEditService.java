@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.textedit;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.games.Game;
@@ -7,6 +9,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -36,8 +39,13 @@ public class TextEditService {
   @Autowired
   private MameRomAliasService mameRomAliasService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   public TextFile getText(TextFile textFile) {
     try {
+      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
@@ -61,7 +69,7 @@ public class TextEditService {
         case VBScript: {
           Game game = pinUPConnector.getGame(textFile.getFileId());
           File gameFile = game.getGameFile();
-          String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent());
+          String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
           textFile.setLastModified(new Date(gameFile.lastModified()));
           textFile.setPath(gameFile.getAbsolutePath());
           textFile.setSize(vbs.getBytes().length);
@@ -81,6 +89,8 @@ public class TextEditService {
 
   public TextFile save(TextFile textFile) {
     try {
+      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
@@ -113,7 +123,7 @@ public class TextEditService {
           Game game = pinUPConnector.getGame(textFile.getFileId());
           if(game != null) {
             File gameFile = game.getGameFile();
-            VPXUtil.importVBS(gameFile, textFile.getContent());
+            VPXUtil.importVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
             textFile.setLastModified(new Date(gameFile.lastModified()));
             textFile.setSize(textFile.getContent().getBytes().length);
             LOG.info("Saved " + gameFile.getAbsolutePath()+ ", performing table table.");
