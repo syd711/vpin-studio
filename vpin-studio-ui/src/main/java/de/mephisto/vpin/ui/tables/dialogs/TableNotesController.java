@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class TableNotesController implements Initializable, DialogController {
 
   @FXML
   private TextArea textArea;
+
+  @FXML
+  private Label titleLabel;
 
   private GameRepresentation game;
 
@@ -75,6 +79,7 @@ public class TableNotesController implements Initializable, DialogController {
   public void setGame(GameRepresentation game) {
     this.game = game;
     this.textArea.setText(game.getNotes());
+    this.titleLabel.setText("Comments for \"" + game.getGameDisplayName() + "\"");
   }
 
   @Override

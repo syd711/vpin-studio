@@ -49,7 +49,7 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="10.0" layoutY="92.0" styleClass="default-headline" text="Comments" textFill="WHITE">
+                  <Label fx:id="titleLabel" layoutX="10.0" layoutY="92.0" styleClass="default-headline" text="Comments" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

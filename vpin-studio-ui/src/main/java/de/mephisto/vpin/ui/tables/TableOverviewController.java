@@ -1205,6 +1205,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       btn.setGraphic(graphics);
       btn.setOnAction(event -> {
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().select(value);
         TableDialogs.openNotesDialog(value);
       });
 

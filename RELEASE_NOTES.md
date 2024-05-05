@@ -4,6 +4,6 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/notes.png" width="500" />
 
-- **Table Management / Filters**:
+- **Table Management / Filters**: Added filter option to filter for different comment types.
 
 ### Bugfixes
