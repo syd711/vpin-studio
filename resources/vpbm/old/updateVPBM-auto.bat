@@ -31,7 +31,7 @@ rmdir /s /q Help Resources runtimes
 
 rem perform install
 echo VPBM Updater: Installing new version
-start 7z.exe -aoa x "C:\Users\matth\AppData\Local\Temp\vpinBackupManager\vPinBackupManager-update-2.3.zip"
+start 7z.exe -aoa x "C:\Users\matth\AppData\Local\Temp\vpinBackupManager\vPinBackupManager-update-2.4.zip"
 timeout /t 5 /nobreak
 del /q 7z.exe
 (goto) 2>nul & del "%~f0"
