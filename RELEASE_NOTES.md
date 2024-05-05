@@ -1,8 +1,10 @@
-## Hotfix 2.18.2
+## 2.18.2
 
 - Added deletion of temporary exported .vbs files.
+- Fixed context menu action "Reset VPS Updates".
+- Added delete button to the on-hover actions of the "PinUP Popper Media" section.
  
-## Hotfix 2.18.1
+## 2.18.1
 
 - Fixed critical error caused by the new asset validation and files with unknown mime types. 
 

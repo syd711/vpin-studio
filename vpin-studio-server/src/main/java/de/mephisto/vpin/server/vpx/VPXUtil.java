@@ -20,6 +20,7 @@ import java.util.*;
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
+  private static final boolean DELETE_VBS_TEMP_FILES = true;
 
   public static String readScript(@NonNull File file) {
     try {
@@ -182,7 +183,8 @@ public class VPXUtil {
       executor.executeCommand();
 
       String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
-      if (!vbsFile.delete()) {
+
+      if (DELETE_VBS_TEMP_FILES && !vbsFile.delete()) {
         LOG.error("Failed to delete VBS file " + vbsFile.getAbsolutePath());
       }
       return script;
