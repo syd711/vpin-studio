@@ -19,6 +19,19 @@
 <body>
     <h3><span>&nbsp;&nbsp;VPBM Change Log</span></h3>
     <dl>
+        <dt><strong>Version 2.2</strong></dt>
+        <dd>
+            <li>Enhanced ability to backup/restore/delete individual file content (added in Version 2.1) from installed games or backup files rather than requiring full game backup/restores to bring games in synch. These options are available in the <strong>Selected Game Content</strong>, <strong>Selected Game Filter Variables</strong>, <strong>Selected Game Custom Filters</strong> and <strong>Selected Game Pinup Details</strong> panels when differences are found between backup and installed games.</li>
+            <li>Replaced toggle buttons with radio buttons in the Selected Game Display Control panel to make selected option clearer.</li>
+            <li>Added a [GAMEFOLDER] filter variable which can be used to represent the path to a game from the emulator base directory - this is extracted from the <strong>Games Folder</strong> stored within Pinup System for the games emulator and any specific game path stored in the games <strong>Filename</strong> value.</li>
+            <li>Added better description of how to copy game variables to new custom filters.</li>
+            <li>Added a <strong>Refresh All</strong> button to the main <strong>Installed Games</strong> panel to avoid the need to use the <strong>File</strong> menu.</li>
+            <li>Added checks for CSV, XML, and VPReg content when determining files used by other games in delete operations.</li>
+            <li>Added description of offset file used in <strong>Selected Game Content</strong> panel when game is currently using an offset file for NVRAM.</li>
+            <li>Added support for games stored in sub-folders of an emulators main <strong>Games Folder</strong> as configured in Pinup System.</li>
+            <li>Added the <strong>Orphaned Content Manager</strong> dialog under <strong>Utilities</strong> menu to present user ability to locate and manage game files not currently being used.</li>
+            <li>Added the <strong>Force Rescan of All Games at Startup</strong> setting which is enabled by default (this is the original behaviour). Users can now disable this behaviour, meaning that at startup, games are only scanned if VPBM does not detect details of a previous scan. When enabled, all previous scan results are removed meaning all games are re-scanned.</li>
+        </dd>
         <dt><strong>Version 2.1</strong></dt>
         <dd>
             <li>Added functionality to allow backup/restore/delete of individual content from backups and system.</li>
