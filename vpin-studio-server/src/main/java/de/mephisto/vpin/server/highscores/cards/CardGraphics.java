@@ -121,7 +121,7 @@ public class CardGraphics {
     Graphics g = image.getGraphics();
     int imageWidth = image.getWidth();
 
-    if(template.isRenderCanvas()) {
+    if (template.isRenderCanvas()) {
       renderCanvas(image, g);
     }
 
@@ -172,7 +172,7 @@ public class CardGraphics {
 
   private void renderCanvas(BufferedImage image, Graphics g) {
     Color decode = Color.decode("#FFFFFF");
-    if(template.getCanvasBackground() != null) {
+    if (template.getCanvasBackground() != null) {
       decode = Color.decode(template.getCanvasBackground());
     }
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
@@ -182,23 +182,6 @@ public class CardGraphics {
 
   private void renderScorelist(Game game, Graphics g, String title, int currentY) throws IOException {
     g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), template.getScoreFontSize()));
-    int count = 0;
-    int scoreWidth = 0;
-
-    List<String> scores = new ArrayList<>();
-    for (Score score : summary.getScores()) {
-      String scoreString = score.getPosition() + ". " + score.getPlayerInitials() + " " + score.getScore();
-      scores.add(scoreString);
-
-      int singleScoreWidth = g.getFontMetrics().stringWidth(title);
-      if (scoreWidth < singleScoreWidth) {
-        scoreWidth = singleScoreWidth;
-      }
-      count++;
-      if (count == 3) {
-        break;
-      }
-    }
 
     currentY = currentY + template.getTableFontSize() / 2;
 
@@ -225,6 +208,7 @@ public class CardGraphics {
     }
     int scoreY = currentY;
 
+    int count = 0;
     for (Score score : summary.getScores()) {
       int initialX = scoreX;
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
@@ -238,6 +222,12 @@ public class CardGraphics {
 
       initialX = initialX + singleScoreWidth + template.getPadding();
       g.drawString(score.getScore(), initialX, scoreY);
+
+      count++;
+
+      if (template.getMaxScores() > 0 && count == template.getMaxScores()) {
+        break;
+      }
     }
   }
 

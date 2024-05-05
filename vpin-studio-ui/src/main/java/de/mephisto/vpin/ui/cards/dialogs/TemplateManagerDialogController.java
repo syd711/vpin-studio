@@ -116,6 +116,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Spinner<Integer> rowSeparatorSpinner;
 
   @FXML
+  private Spinner<Integer> maxScoresSpinner;
+
+  @FXML
   private Spinner<Integer> marginTopSpinner;
   @FXML
   private Spinner<Integer> marginRightSpinner;
@@ -374,12 +377,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
     marginLeftSpinner.getValueFactory().setValue(cardTemplate.getMarginLeft());
     wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
+    maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
 
     updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
 
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
+    maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
@@ -463,6 +468,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSpinner(marginBottomSpinner, getCardTemplate(), "marginBottom");
       templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
       templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
+      templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
 
       templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1280);
@@ -495,6 +501,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
       templateBeanBinder.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+        maxScoresSpinner.setDisable(t1);
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
         renderPositionsCheckbox.setDisable(t1);
@@ -513,6 +520,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       titleText.setDisable(!renderTitleCheckbox.isSelected());
       wheelSizeSpinner.setDisable(!renderWheelIconCheckbox.isSelected());
       wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
+      maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
       rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     } catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
