@@ -1,6 +1,6 @@
 ## 2.18.2
 
-- **Server Settings**: Added option to delete .vbs files on import/export when script editing is started. The option is disabled by default.
+- **Server Settings**: Added option to keep the imported/exported .vbs files when script editing is started. The option is enabled by default.
 - **Table Management**: Fixed context menu action "Reset VPS Updates".
 - **Table Management / Popper Media View**: Added delete button to the on-hover actions of the "PinUP Popper Media" section.
 - **Highscore Cards**: Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
