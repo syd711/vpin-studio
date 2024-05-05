@@ -178,12 +178,6 @@ public class TablesSidebarMameController implements Initializable {
     Platform.runLater(() -> {
       new Thread(() -> {
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-
-        Platform.runLater(() -> {
-          this.refreshView(this.game);
-          this.reloadBtn.setDisable(false);
-          saveDisabled = false;
-        });
       }).start();
     });
   }
@@ -269,6 +263,7 @@ public class TablesSidebarMameController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     saveDisabled = true;
+    this.reloadBtn.setDisable(game.isEmpty());
     this.refreshView(game);
     saveDisabled = false;
   }

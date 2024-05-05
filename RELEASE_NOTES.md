@@ -5,6 +5,7 @@
 - **Table Management / Popper Media View**: Added delete button to the on-hover actions of the "PinUP Popper Media" section.
 - **Highscore Cards**: Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
 - **Highscore Cards**: Fixed missing refresh of the "Popper Background" tab panel after applying templates.
+- **Table Management / VPin MAME View**: Fixed possible breaking of settings when double-clicking the reload the button.
 
  
 ## 2.18.1
