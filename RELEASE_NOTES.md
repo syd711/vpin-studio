@@ -1,9 +1,10 @@
 ## 2.18.2
 
-- Added deletion of temporary exported .vbs files.
-- Fixed context menu action "Reset VPS Updates".
-- Added delete button to the on-hover actions of the "PinUP Popper Media" section.
-- Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
+- **Table Management**: Added deletion of temporary exported .vbs files.
+- **Table Management**: Fixed context menu action "Reset VPS Updates".
+- **Table Management / Popper Media View**: Added delete button to the on-hover actions of the "PinUP Popper Media" section.
+- **Highscore Cards**: Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
+- **Highscore Cards**: Fixed missing refresh of the "Popper Background" tab panel after applying templates.
 
  
 ## 2.18.1

@@ -360,6 +360,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           cardPreview.setVisible(true);
 
           Platform.runLater(() -> {
+            refreshPopperPreview();
             refreshRawPreview(game);
             previewStack.getChildren().remove(waitOverlay);
             updateTransparencySettings(this.templateCombo.getSelectionModel().getSelectedItem().isTransparentBackground());
@@ -459,7 +460,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     previewPanel.setVisible(!c.getList().isEmpty());
 
     this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
-    refreshPopperPreview();
     if (c.getList().isEmpty()) {
       refreshPreview(Optional.empty(), false);
     }
