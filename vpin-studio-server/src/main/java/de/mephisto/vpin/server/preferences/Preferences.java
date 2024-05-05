@@ -75,6 +75,8 @@ public class Preferences {
 
   private String validationSettings;
 
+  private String notificationSettings;
+
   private String uiSettings;
 
   private String serverSettings;
@@ -104,6 +106,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getNotificationSettings() {
+    return notificationSettings;
+  }
+
+  public void setNotificationSettings(String notificationSettings) {
+    this.notificationSettings = notificationSettings;
+  }
 
   public String getValidationSettings() {
     return validationSettings;
