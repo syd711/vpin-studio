@@ -70,7 +70,7 @@ public class PopperResource {
   private Game resolveGame(String table) {
     File tableFile = new File(table.trim());
     Game game = gameService.getGameByFilename(tableFile.getName());
-    if (game == null) {
+    if (game == null && tableFile.getParentFile() != null) {
       game = gameService.getGameByFilename(tableFile.getParentFile().getName() + "\\" + tableFile.getName());
     }
     LOG.info("PopperResource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
