@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -33,7 +33,7 @@ public class TournamentTableGameCellContainer extends HBox {
       name = name.substring(0, 39) + "...";
     }
 
-    InputStream gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (game != null) {
       InputStream gameItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
       if (gameItem != null) {

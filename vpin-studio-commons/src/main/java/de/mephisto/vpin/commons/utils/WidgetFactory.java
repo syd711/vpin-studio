@@ -238,7 +238,7 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-    stage.getIcons().add(new Image(OverlayWindowFX.class.getResourceAsStream("logo-64.png")));
+    stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
     return stage;
   }
 

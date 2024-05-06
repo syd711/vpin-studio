@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.notifications;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.ServerFXListener;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -13,7 +15,6 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import javafx.scene.image.Image;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NotificationService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener {
+public class NotificationService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, ServerFXListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -72,19 +73,28 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (Features.NOTIFICATIONS_ENABLED) {
-      preferencesService.addChangeListener(this);
-      highscoreService.addHighscoreChangeListener(this);
-      preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+    try {
+      if (Features.NOTIFICATIONS_ENABLED) {
+        ServerFX.addListener(this);
 
-      if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
-        Notification startup = new Notification();
-        startup.setImage(null);
-        startup.setTitle1("VPin Studio Server");
-        startup.setTitle2("The server has been started.");
-        startup.setTitle3("Version " + systemService.getVersion());
-        showNotification(startup);
+        preferencesService.addChangeListener(this);
+        highscoreService.addHighscoreChangeListener(this);
+        preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
       }
+    } catch (Exception e) {
+      LOG.error("Failed to initialize " + this + ": " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void toolkitRead() {
+    if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
+      Notification startup = new Notification();
+      startup.setImage(null);
+      startup.setTitle1("VPin Studio Server");
+      startup.setTitle2("The server has been started.");
+      startup.setTitle3("Version " + systemService.getVersion());
+      showNotification(startup);
     }
   }
 }

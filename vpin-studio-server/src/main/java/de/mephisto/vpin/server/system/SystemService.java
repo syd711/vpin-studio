@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
@@ -484,7 +484,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean setMaintenanceMode(boolean enabled) {
     Platform.runLater(() -> {
-      OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
+      ServerFX.getInstance().setMaintenanceVisible(enabled);
     });
     return enabled;
   }

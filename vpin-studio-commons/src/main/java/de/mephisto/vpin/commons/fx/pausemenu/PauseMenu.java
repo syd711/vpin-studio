@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
@@ -66,7 +66,7 @@ public class PauseMenu extends Application {
   }
 
   public static void main(String[] args) {
-    OverlayWindowFX.client = new VPinStudioClient("localhost");
+    ServerFX.client = new VPinStudioClient("localhost");
     PRODUCTION_USE = false;
     launch(args);
     PauseMenu.togglePauseMenu();
@@ -224,12 +224,12 @@ public class PauseMenu extends Application {
           }
         });
 
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
+        ServerFX.toFront(stage, visible);
+        ServerFX.toFront(stage, visible);
+        ServerFX.toFront(stage, visible);
+        ServerFX.toFront(stage, visible);
       }).start();
-      OverlayWindowFX.forceShow(stage);
+      ServerFX.forceShow(stage);
     }
     else {
       exitPauseMenu();

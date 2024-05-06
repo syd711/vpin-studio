@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -32,7 +32,7 @@ public class IScoredGameCellContainer extends HBox {
       name = name.substring(0, 39) + "...";
     }
 
-    InputStream gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (subscription.getGameId() > 0) {
       InputStream gameItem = client.getGameMediaItem(subscription.getGameId(), PopperScreen.Wheel);
       if (gameItem != null) {

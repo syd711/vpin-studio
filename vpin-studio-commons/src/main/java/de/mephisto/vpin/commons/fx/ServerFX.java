@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,8 +41,8 @@ import java.util.concurrent.CountDownLatch;
  * |
  * -x
  */
-public class OverlayWindowFX extends Application {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayWindowFX.class);
+public class ServerFX extends Application {
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(ServerFX.class);
 
   public static final CountDownLatch latch = new CountDownLatch(1);
   public static int TO_FRONT_DELAY = 2500;
@@ -51,7 +52,7 @@ public class OverlayWindowFX extends Application {
   public static OverlayClient client;
   private OverlayController overlayController;
 
-  private static OverlayWindowFX INSTANCE = null;
+  private static ServerFX INSTANCE = null;
 
   private Stage overlayStage;
   private Stage maintenanceStage;
@@ -60,7 +61,7 @@ public class OverlayWindowFX extends Application {
 
   private PopperScreenController highscoreCardController;
 
-  public static OverlayWindowFX getInstance() {
+  public static ServerFX getInstance() {
     return INSTANCE;
   }
 
@@ -68,10 +69,19 @@ public class OverlayWindowFX extends Application {
     Application.launch(args);
   }
 
+  public static List<ServerFXListener> listeners = new ArrayList<>();
+
+  public static void addListener(ServerFXListener listener) {
+    listeners.add(listener);
+  }
+
   public static void waitForOverlay() {
     try {
       latch.await();
       LOG.info("OverlayFX creation finished.");
+      for (ServerFXListener listener : listeners) {
+        listener.toolkitRead();
+      }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -100,12 +110,12 @@ public class OverlayWindowFX extends Application {
         LOG.error("Failed to init dashboard: " + e.getMessage(), e);
       }
       new Thread(() -> {
-        OverlayWindowFX.toFront(overlayStage, overlayVisible);
-        OverlayWindowFX.toFront(overlayStage, overlayVisible);
-        OverlayWindowFX.toFront(overlayStage, overlayVisible);
-        OverlayWindowFX.toFront(overlayStage, overlayVisible);
+        ServerFX.toFront(overlayStage, overlayVisible);
+        ServerFX.toFront(overlayStage, overlayVisible);
+        ServerFX.toFront(overlayStage, overlayVisible);
+        ServerFX.toFront(overlayStage, overlayVisible);
       }).start();
-      OverlayWindowFX.forceShow(overlayStage);
+      ServerFX.forceShow(overlayStage);
 
       overlayController.refreshData();
     }
@@ -194,7 +204,7 @@ public class OverlayWindowFX extends Application {
     maintenanceStage.setFullScreenExitHint("");
     maintenanceStage.setAlwaysOnTop(true);
     maintenanceStage.setFullScreen(true);
-    maintenanceStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
+    maintenanceStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
     try {
       String resource = "scene-maintenance.fxml";
@@ -297,7 +307,7 @@ public class OverlayWindowFX extends Application {
     overlayStage.setAlwaysOnTop(true);
     overlayStage.setFullScreen(true);
     overlayStage.setTitle("VPin Studio Overlay");
-    overlayStage.getScene().getStylesheets().add(OverlayWindowFX.class.getResource("stylesheet.css").toExternalForm());
+    overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
     PauseMenu.loadPauseMenu();
     latch.countDown();

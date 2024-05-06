@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -69,7 +69,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         limit = 8;
       }
 
-      ScoreSummaryRepresentation scoreSummary = OverlayWindowFX.client.getRecentScores(limit);
+      ScoreSummaryRepresentation scoreSummary = ServerFX.client.getRecentScores(limit);
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
 
@@ -83,7 +83,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
           }
           else {
             for (ScoreRepresentation score : scores) {
-              GameRepresentation game = OverlayWindowFX.client.getGameCached(score.getGameId());
+              GameRepresentation game = ServerFX.client.getGameCached(score.getGameId());
               if(game == null) {
                 continue;
               }

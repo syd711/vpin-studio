@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.keyevent;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
@@ -82,7 +82,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       LOG.info("Hiding overlay since key '" + nativeKeyEvent.getKeyChar() + "' was pressed.");
       this.overlayVisible = false;
       Platform.runLater(() -> {
-        OverlayWindowFX.getInstance().showOverlay(false);
+        ServerFX.getInstance().showOverlay(false);
       });
       return;
     }
@@ -94,7 +94,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         boolean vpxRunning = systemService.isVPXRunning(processes);
         if (showPauseInsteadOfOverlay && vpxRunning) {
           LOG.info("Toggle pause menu show (Key " + overlayKey + ")");
-          OverlayWindowFX.getInstance().togglePauseMenu();
+          ServerFX.getInstance().togglePauseMenu();
           return;
         }
 
@@ -102,7 +102,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
           this.overlayVisible = !overlayVisible;
           Platform.runLater(() -> {
             LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
-            OverlayWindowFX.getInstance().showOverlay(overlayVisible);
+            ServerFX.getInstance().showOverlay(overlayVisible);
           });
           return;
         }
@@ -114,10 +114,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       if (keyChecker.matches(nativeKeyEvent)) {
         boolean vpxRunning = systemService.isVPXRunning();
         if (vpxRunning) {
-          OverlayWindowFX.getInstance().togglePauseMenu();
+          ServerFX.getInstance().togglePauseMenu();
         }
         else {
-          OverlayWindowFX.getInstance().exitPauseMenu();
+          ServerFX.getInstance().exitPauseMenu();
         }
         return;
       }
@@ -178,7 +178,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
           //ignore
         }
         this.overlayVisible = true;
-        OverlayWindowFX.getInstance().showOverlay(overlayVisible);
+        ServerFX.getInstance().showOverlay(overlayVisible);
       }
     });
   }
@@ -216,15 +216,15 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     GlobalScreen.addNativeKeyListener(this);
 
     new Thread(() -> {
-      OverlayWindowFX.main(new String[]{});
+      ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");
     }).start();
 
     shutdownThread = new ShutdownThread(preferencesService, queue);
     shutdownThread.start();
 
-    OverlayWindowFX.client = overlayClient;
-    OverlayWindowFX.waitForOverlay();
+    ServerFX.client = overlayClient;
+    ServerFX.waitForOverlay();
     LOG.info("Finished initialization of OverlayWindowFX");
 
     new VPinStudioServerTray();
