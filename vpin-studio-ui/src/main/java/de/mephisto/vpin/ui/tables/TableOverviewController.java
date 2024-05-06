@@ -20,10 +20,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableUploadResult;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
@@ -40,6 +37,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -53,10 +51,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -1755,6 +1750,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
     assetManagerViewBtn.setVisible(Features.ASSET_MODE);
+
+    new TableOverviewDragDropHandler(this);
   }
 
   private void refreshViewForEmulator() {
@@ -1822,6 +1819,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public StackPane getTableStack() {
     return this.tableStack;
+  }
+
+  public StackPane getLoaderStack() {
+    return loaderStack;
   }
 
   public TableView getTableView() {

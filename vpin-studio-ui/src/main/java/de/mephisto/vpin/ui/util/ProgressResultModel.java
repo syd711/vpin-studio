@@ -19,7 +19,7 @@ public class ProgressResultModel {
   }
 
   public void setProgress(double progress) {
-    if(this.progressBar.isVisible()) {
+    if (this.progressBar.isVisible()) {
       this.progressBar.setProgress(progress);
     }
   }

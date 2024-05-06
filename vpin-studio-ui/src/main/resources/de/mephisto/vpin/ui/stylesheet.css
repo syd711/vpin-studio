@@ -1179,6 +1179,12 @@
     -fx-border-radius: 5px; /* Rounded corners */
 }
 
+.dnd-dashed-border {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-style: segments(15, 15, 15, 15);
+}
+
 /**
  * Color Picker custom color hiding
 .color-palette .hyperlink, .color-palette .separator {
