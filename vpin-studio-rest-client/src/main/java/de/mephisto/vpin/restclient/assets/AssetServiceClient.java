@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -44,8 +45,12 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
     try {
+      if (screen == null) {
+        return null;
+      }
+
       String url = API + "poppermedia/" + id + "/" + screen.name();
       if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
         byte[] bytes = getRestClient().readBinary(url);
