@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.server.util.ZipUtil;
-import org.apache.commons.lang3.StringUtils;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

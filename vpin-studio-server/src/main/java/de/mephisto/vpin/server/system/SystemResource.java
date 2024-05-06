@@ -13,7 +13,7 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
-import de.mephisto.vpin.server.util.ZipUtil;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

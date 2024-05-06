@@ -19,7 +19,7 @@ import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.ZipUtil;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;

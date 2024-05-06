@@ -22,7 +22,6 @@ import java.util.List;
 
 public class TableOverviewDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewDragDropHandler.class);
-  private final TableOverviewController tableOverviewController;
   private DnDOverlayController controller;
 
   private Parent dndLoadingOverlay;
@@ -30,7 +29,6 @@ public class TableOverviewDragDropHandler {
   private List<String> suffixes = Arrays.asList("vpx", "zip", "rar");
 
   public TableOverviewDragDropHandler(TableOverviewController tableOverviewController) {
-    this.tableOverviewController = tableOverviewController;
 
     try {
       FXMLLoader loader = new FXMLLoader(DnDOverlayController.class.getResource("overlay-dnd.fxml"));

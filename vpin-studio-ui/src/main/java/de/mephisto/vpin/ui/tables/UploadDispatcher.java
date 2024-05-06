@@ -13,6 +13,7 @@ public class UploadDispatcher {
     String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
     switch (extension) {
       case "zip": {
+        dispatchZip(file, game);
         break;
       }
       case "vpx": {
@@ -20,5 +21,9 @@ public class UploadDispatcher {
         break;
       }
     }
+  }
+
+  private static void dispatchZip(File file, GameRepresentation game) {
+
   }
 }

@@ -1,5 +1,6 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.commons.utils;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -8,7 +9,6 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,8 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.commons.utils;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
 
 import java.io.*;
 import java.util.zip.ZipEntry;

@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ZipUtil;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
