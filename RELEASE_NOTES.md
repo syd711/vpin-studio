@@ -1,3 +1,7 @@
+## 2.18.3
+
+- **Highscore Cards**: Re-enabled the custom color picker for the card designer. I've hidden the link to this picker before because it has some focus issues, but it's better to have a bad solution for custom colors than nothing.
+
 ## 2.18.2
 
 - **Server Settings**: Added option to keep the imported/exported .vbs files when script editing is started. The option is enabled by default.
