@@ -47,6 +47,47 @@
                   </WebView>
                </children>
             </StackPane>
+            <BorderPane fx:id="footer">
+               <center>
+                  <StackPane BorderPane.alignment="CENTER">
+                     <children>
+                        <StackPane fx:id="footerStack">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@footer.png" />
+                                 </image>
+                              </ImageView>
+                              <BorderPane maxWidth="1080.0">
+                                 <StackPane.margin>
+                                    <Insets top="-90.0" />
+                                 </StackPane.margin>
+                                 <center>
+                                    <Label fx:id="nameLabel" text="Loading Tables..." textFill="WHITE">
+                                       <font>
+                                          <Font size="36.0" />
+                                       </font>
+                                    </Label>
+                                 </center>
+                                 <left>
+                                    <FontIcon fx:id="arrowLeft" iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <right>
+                                    <FontIcon fx:id="arrowRight" iconColor="WHITE" iconLiteral="mdi2a-arrow-right-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
+                                 </right>
+                              </BorderPane>
+                           </children>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </StackPane>
+                     </children>
+                  </StackPane>
+               </center>
+               <StackPane.margin>
+                  <Insets />
+               </StackPane.margin>
+            </BorderPane>
             <ImageView fitHeight="440.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" StackPane.alignment="CENTER">
                <image>
                   <Image url="@row.png" />

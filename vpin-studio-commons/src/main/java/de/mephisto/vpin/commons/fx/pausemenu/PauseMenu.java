@@ -177,6 +177,9 @@ public class PauseMenu extends Application {
         LOG.info("Skipped showing start menu: no game status found.");
         return;
       }
+      else {
+        LOG.info("Launching pause menu for game id " + status.getGameId());
+      }
 
       togglePauseKey(0);
 
