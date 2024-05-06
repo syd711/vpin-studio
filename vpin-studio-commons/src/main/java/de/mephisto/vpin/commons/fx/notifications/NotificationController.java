@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,9 @@ public class NotificationController implements Initializable {
   @FXML
   private ImageView rowImageView;
 
+  @FXML
+  private VBox labelContainer;
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -36,9 +40,23 @@ public class NotificationController implements Initializable {
   }
 
   public void setNotification(Notification notification) {
-    logoImageView.setImage(notification.getImage());
-    title1.setText(notification.getTitle1());
-    title2.setText(notification.getTitle2());
+    if (notification.getImage() != null) {
+      logoImageView.setImage(notification.getImage());
+    }
+
+    if (notification.getTitle1() != null) {
+      title1.setText(notification.getTitle1());
+    }
+    else {
+      title1.setText("");
+    }
+
+    if (notification.getTitle2() != null) {
+      title2.setText(notification.getTitle2());
+    }
+    else{
+      title2.setText("");
+    }
 
     if (!StringUtils.isEmpty(notification.getTitle3())) {
       title3.setText(notification.getTitle3());

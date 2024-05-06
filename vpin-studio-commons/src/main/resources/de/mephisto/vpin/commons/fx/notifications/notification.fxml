@@ -37,9 +37,9 @@
                   <Insets left="1300.0" />
                </StackPane.margin>
             </ImageView>
-            <VBox alignment="CENTER_LEFT">
+            <VBox fx:id="labelContainer" alignment="CENTER_LEFT">
                <StackPane.margin>
-                  <Insets left="130.0" />
+                  <Insets left="400.0" />
                </StackPane.margin>
                <children>
                   <Label fx:id="title1" text="TITLE" textFill="WHITE">

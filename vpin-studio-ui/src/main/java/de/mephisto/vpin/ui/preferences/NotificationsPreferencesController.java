@@ -20,9 +20,6 @@ public class NotificationsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationsPreferencesController.class);
 
   @FXML
-  private CheckBox discordMessagesCheckbox;
-
-  @FXML
   private CheckBox highscoresCheckbox;
 
   @FXML
@@ -42,12 +39,6 @@ public class NotificationsPreferencesController implements Initializable {
       notificationSettings.setDurationSec(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     }, 300));
-
-    discordMessagesCheckbox.setSelected(notificationSettings.isDiscordMessageNotification());
-    discordMessagesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      notificationSettings.setDiscordMessageNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
-    });
 
     highscoresCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
     highscoresCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

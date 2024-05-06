@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
 import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,25 +12,29 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 public class NotificationStage {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationStage.class);
 
   private final static int WIDTH = 2400;
-  public static final int OFFSET = 50;
+  public static final int OFFSET = 30;
   private static double scaling = 0.5;
-
   private final Notification notification;
-  private final NotificationSettings notificationSettings;
+  private NotificationController notificationController;
+
+  private BorderPane root;
   private Transition inTransition;
   private Transition outTransition;
   private Stage stage;
 
-  public NotificationStage(Notification notification, NotificationSettings notificationSettings) {
+  public NotificationStage(Notification notification) {
     this.notification = notification;
-    this.notificationSettings = notificationSettings;
     stage = new Stage();
     stage.setTitle("Pause Menu");
     stage.initStyle(StageStyle.TRANSPARENT);
@@ -44,33 +47,33 @@ public class NotificationStage {
 
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
-      BorderPane root = loader.load();
-      NotificationController controller = loader.getController();
-      controller.setNotification(notification);
+      root = loader.load();
+      notificationController = loader.getController();
+      notificationController.setNotification(notification);
       scaleStage(root, screenBounds);
 
       if (screenBounds.getWidth() > screenBounds.getHeight()) {
         LOG.info("Window Mode: Landscape");
         root.setRotate(-90);
-        root.setTranslateY((screenBounds.getHeight()) + OFFSET);
-        root.setTranslateX(-(WIDTH * scaling / 2) + OFFSET);
-        inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(WIDTH * scaling));
-        outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (WIDTH * scaling));
+        root.setTranslateY((screenBounds.getHeight() / 2));
+        root.setTranslateX(-(screenBounds.getWidth() / 2));
+        inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
+        outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (screenBounds.getHeight() / 2));
+
+        stage.setY(screenBounds.getHeight() / 2);
+        stage.setX(0);
+        scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
+      }
+      else {
+        LOG.info("Window Mode: Portrait");
+        root.setTranslateY(-(screenBounds.getHeight() / 2) + ((WIDTH * scaling) / 2));
+        root.setTranslateX(-(WIDTH * scaling) / 2 / 2);
+        inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
+        outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getHeight() / 2));
 
         stage.setY(0);
         stage.setX(0);
         scene = new Scene(root, WIDTH * scaling, screenBounds.getHeight());
-      }
-      else {
-        LOG.info("Window Mode: Portrait");
-        root.setTranslateY(-(WIDTH * scaling / 2) - OFFSET);
-        root.setTranslateX(-(screenBounds.getWidth() / 2 - ((WIDTH * scaling) / 2) + (WIDTH * scaling)));
-        inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling));
-        outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(WIDTH * scaling));
-
-        stage.setY(0);
-        stage.setX(0);
-        scene = new Scene(root, screenBounds.getWidth(), WIDTH * scaling);
       }
 
       scene.setFill(Color.TRANSPARENT);
@@ -81,39 +84,66 @@ public class NotificationStage {
   }
 
 
+  public void move() {
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    Transition transition = null;
+    if (screenBounds.getWidth() > screenBounds.getHeight()) {
+      transition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);
+    }
+    else {
+      transition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);
+    }
+    transition.play();
+  }
+
   public void show() {
-    startTransition();
+    startTransitions();
     stage.show();
   }
 
-  private void startTransition() {
+  private void startTransitions() {
     Platform.runLater(() -> {
+      outTransition.onFinishedProperty().set(event1 -> {
+        stage.close();
+      });
+
       inTransition.onFinishedProperty().set(event -> {
-        try {
-          Thread.sleep(notificationSettings.getDurationSec() * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        outTransition.onFinishedProperty().set(event1 -> stage.close());
-        outTransition.play();
+        NotificationStageService.getInstance().setLocked(false);
+        new Thread(() -> {
+          try {
+            ThreadUtils.sleep(Duration.of(notification.getDurationSec(), ChronoUnit.SECONDS));
+          } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+          }
+          Platform.runLater(() -> {
+            outTransition.play();
+          });
+        }).start();
       });
       inTransition.play();
     });
   }
 
   private static void scaleStage(BorderPane root, Rectangle2D screenBounds) {
-    double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-    if (max > 2560) {
-      scaling = 0.5;
+    if (screenBounds.getWidth() > screenBounds.getHeight()) {
+      double targetSize = screenBounds.getHeight() / 2;
+      scaling = targetSize / WIDTH;
     }
-    else if (max > 1920) {
-      scaling = 0.4;
+    else {
+      double targetSize = screenBounds.getWidth() / 2;
+      scaling = targetSize / WIDTH;
     }
+
     root.setScaleX(scaling);
     root.setScaleY(scaling);
   }
 
   public Stage getStage() {
     return stage;
+  }
+
+  @Override
+  public String toString() {
+    return "Notification Stage [" + notification + "]";
   }
 }

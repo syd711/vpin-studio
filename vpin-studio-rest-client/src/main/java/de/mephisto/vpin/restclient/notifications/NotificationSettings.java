@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.JsonSettings;
 public class NotificationSettings extends JsonSettings {
   private boolean startupNotification = true;
   private boolean highscoreUpdatedNotification = true;
-  private boolean discordMessageNotification = true;
 
   private int durationSec = 5;
 
@@ -31,13 +30,5 @@ public class NotificationSettings extends JsonSettings {
 
   public void setHighscoreUpdatedNotification(boolean highscoreUpdatedNotification) {
     this.highscoreUpdatedNotification = highscoreUpdatedNotification;
-  }
-
-  public boolean isDiscordMessageNotification() {
-    return discordMessageNotification;
-  }
-
-  public void setDiscordMessageNotification(boolean discordMessageNotification) {
-    this.discordMessageNotification = discordMessageNotification;
   }
 }

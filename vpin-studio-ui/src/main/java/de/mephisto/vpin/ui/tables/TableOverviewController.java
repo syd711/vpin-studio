@@ -1207,7 +1207,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       btn.setOnAction(event -> {
         tableView.getSelectionModel().clearSelection();
         tableView.getSelectionModel().select(value);
-        TableDialogs.openNotesDialog(value);
+        Platform.runLater(() -> {
+          TableDialogs.openNotesDialog(value);
+        });
       });
 
       return new SimpleObjectProperty(btn);
