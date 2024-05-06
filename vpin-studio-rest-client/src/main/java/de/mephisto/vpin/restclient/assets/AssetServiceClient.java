@@ -45,6 +45,7 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
+  @Nullable
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
     try {
       if (screen == null) {
