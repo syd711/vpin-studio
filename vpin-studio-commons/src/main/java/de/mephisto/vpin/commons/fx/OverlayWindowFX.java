@@ -220,6 +220,7 @@ public class OverlayWindowFX extends Application {
 
   public void testPauseMenu(int gameId, int duration) {
     Platform.runLater(() -> {
+      LOG.info("Received pause menu test event for game id " + gameId);
       GameStatus gameStatus = new GameStatus();
       gameStatus.setGameId(gameId);
       gameStatus.setStarted(new Date());
