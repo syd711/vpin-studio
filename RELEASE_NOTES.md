@@ -5,5 +5,8 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/notes.png" width="700" />
 
 - **Table Management / Filters**: Added filter option to filter for different comment types.
+- **Preferences / PinVol & Volume**: Added option to set the initial system volume when the cabinet/VPin Server is started.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/volume-control.png" width="400" />
 
 ### Bugfixes
