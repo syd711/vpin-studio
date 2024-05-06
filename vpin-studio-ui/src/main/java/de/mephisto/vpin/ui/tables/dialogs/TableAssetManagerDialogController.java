@@ -553,7 +553,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
       tablesCombo.getItems().addAll(gameRepresentations);
       tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        searchField.setText("");
+        this.setGame(this.overviewController, t1, PopperScreen.Audio);
       });
     }
 
