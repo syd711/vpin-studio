@@ -81,9 +81,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private BorderPane serverAssetMediaPane;
 
   @FXML
-  private Button previewBtn;
-
-  @FXML
   private Button downloadBtn;
 
   @FXML
@@ -543,7 +540,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Wheel, screenWheel, t1, false));
     screenWheel.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Wheel, screenWheel, true, true));
 
-    previewBtn.setDisable(true);
     downloadBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
@@ -593,7 +589,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
         disposeServerAssetPreview();
-        previewBtn.setDisable(tableAsset == null);
         downloadBtn.setVisible(false);
 
         Label label = new Label("No asset preview activated.");
@@ -603,9 +598,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
 
     this.serverAssetsList.setOnMouseClicked(click -> {
-      if (click.getClickCount() == 2) {
-        onPreview();
-      }
+      onPreview();
     });
 
 
