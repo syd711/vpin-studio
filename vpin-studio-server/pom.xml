@@ -384,6 +384,7 @@
                                     <directory>../resources/</directory>
                                     <includes>
                                         <include>backgrounds/*</include>
+                                        <include>themes/**</include>
                                         <include>pinemhi/**</include>
                                         <include>vpbm/**</include>
                                         <include>nvrams/**</include>

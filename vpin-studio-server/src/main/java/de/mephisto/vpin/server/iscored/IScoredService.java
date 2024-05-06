@@ -1,21 +1,32 @@
 package de.mephisto.vpin.server.iscored;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.notifications.NotificationService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IScoredService {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
+
+  @Autowired
+  private NotificationService notificationService;
+
+  @Autowired
+  private GameService gameService;
 
   public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
     if (!Features.ISCORED_ENABLED) {
@@ -29,7 +40,7 @@ public class IScoredService {
         GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
         if (gameRoom != null) {
           if (!gameRoom.getSettings().isPublicScoresEnabled()) {
-            LOG.warn("Cancelling iscord score submission, public score submission is not enabled!");
+            LOG.warn("Cancelling iScord score submission, public score submission is not enabled!");
             return;
           }
 
@@ -65,6 +76,17 @@ public class IScoredService {
       if (iScoredGame != null) {
         String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
         IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
+
+
+        if (Features.NOTIFICATIONS_ENABLED) {
+          Game game = gameService.getGame(newScore.getGameId());
+          Notification notification = new Notification();
+          notification.setImage(game.getWheelImage());
+          notification.setTitle1(game.getGameDisplayName());
+          notification.setTitle2("An iScored highscore has been posted!");
+          notification.setTitle3(newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
+          notificationService.showNotification(notification);
+        }
       }
       else {
         LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "'");
