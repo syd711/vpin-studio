@@ -7,9 +7,18 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepDisplayNames;
   private boolean backupTableOnOverwrite = true;
   private boolean launchPopperOnExit = false;
+  private int volume = 0;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
 
   public boolean isBackupTableOnOverwrite() {
     return backupTableOnOverwrite;

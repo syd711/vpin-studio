@@ -1,12 +1,11 @@
 package de.mephisto.vpin.server.pinvol;
 
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.client.PinVolServiceClient;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.KeyChecker;
-import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +54,6 @@ public class PinVolService implements InitializingBean {
     return systemService.killProcesses("PinVol");
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    this.enabled = getPinVolAutoStart();
-    if (enabled) {
-      startPinVol();
-      LOG.info("Auto-started PinVol");
-    }
-  }
-
   private static void startPinVol() {
     File exe = new File("resources", "PinVol.exe");
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
@@ -74,8 +64,29 @@ public class PinVolService implements InitializingBean {
   }
 
   public boolean isPinVolKey(NativeKeyEvent event) {
-    if(enabled) {
+    if (enabled) {
       return keyManager.isPinVolKey(event);
+    }
+    return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.enabled = getPinVolAutoStart();
+    if (enabled) {
+      startPinVol();
+      LOG.info("Auto-started PinVol");
+    }
+
+    setSystemVolume();
+  }
+
+  public boolean setSystemVolume() {
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    if (serverSettings.getVolume() > 0) {
+      NirCmd.setVolume(serverSettings.getVolume());
+      LOG.info("Applied initial system volume.");
+      return true;
     }
     return false;
   }
