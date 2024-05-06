@@ -5,8 +5,17 @@ import de.mephisto.vpin.restclient.JsonSettings;
 public class NotificationSettings extends JsonSettings {
   private boolean startupNotification = true;
   private boolean highscoreUpdatedNotification = true;
+  private boolean iScoredNotification = true;
 
   private int durationSec = 5;
+
+  public boolean isiScoredNotification() {
+    return iScoredNotification;
+  }
+
+  public void setiScoredNotification(boolean iScoredNotification) {
+    this.iScoredNotification = iScoredNotification;
+  }
 
   public int getDurationSec() {
     return durationSec;

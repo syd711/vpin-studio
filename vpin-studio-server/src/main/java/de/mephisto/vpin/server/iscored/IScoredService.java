@@ -8,25 +8,35 @@ import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.notifications.NotificationService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IScoredService {
+public class IScoredService implements PreferenceChangedListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
 
   @Autowired
   private NotificationService notificationService;
 
   @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
   private GameService gameService;
+
+  private NotificationSettings notificationSettings;
 
   public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
     if (!Features.ISCORED_ENABLED) {
@@ -77,8 +87,7 @@ public class IScoredService {
         String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
         IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
 
-
-        if (Features.NOTIFICATIONS_ENABLED) {
+        if (Features.NOTIFICATIONS_ENABLED && notificationSettings.isiScoredNotification()) {
           Game game = gameService.getGame(newScore.getGameId());
           Notification notification = new Notification();
           notification.setImage(game.getWheelImage());
@@ -95,5 +104,18 @@ public class IScoredService {
     else {
       LOG.warn("No iScored game room found for " + url);
     }
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
+      notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
   }
 }

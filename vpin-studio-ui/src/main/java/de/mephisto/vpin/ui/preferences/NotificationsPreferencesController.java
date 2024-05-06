@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import javafx.fxml.FXML;
@@ -7,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,13 @@ public class NotificationsPreferencesController implements Initializable {
   private CheckBox startUpCheckbox;
 
   @FXML
+  private CheckBox iScoredCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
+
+  @FXML
+  private VBox iScoredSettings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -51,5 +59,14 @@ public class NotificationsPreferencesController implements Initializable {
       notificationSettings.setStartupNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
+
+    iScoredCheckbox.setSelected(notificationSettings.isiScoredNotification());
+    iScoredCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setiScoredNotification(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
+
+    iScoredSettings.managedProperty().bindBidirectional(iScoredSettings.visibleProperty());
+    iScoredSettings.setVisible(Features.ISCORED_ENABLED);
   }
 }
