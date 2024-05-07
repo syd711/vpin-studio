@@ -133,23 +133,19 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private void scalePlayfieldForSidebar() {
     mediaView.setFitWidth(250);
-    if (!portraitMode) {
-      mediaView.rotateProperty().set(90);
-      mediaView.setFitWidth(440);
-      mediaView.setX(0);
-      mediaView.setY(0);
-      mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
-    }
+    mediaView.rotateProperty().set(90);
+    mediaView.setFitWidth(440);
+    mediaView.setX(0);
+    mediaView.setY(0);
+    mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
   }
 
   private void scaleLoadingForSidebar() {
     mediaView.setFitWidth(150);
-    if (!portraitMode) {
-      mediaView.rotateProperty().set(90);
-      mediaView.setFitWidth(70);
-      mediaView.setX(0);
-      mediaView.setY(0);
-    }
+    mediaView.rotateProperty().set(90);
+    mediaView.setFitWidth(70);
+    mediaView.setX(0);
+    mediaView.setY(0);
   }
 
   public void scaleForDialog(String screen) {

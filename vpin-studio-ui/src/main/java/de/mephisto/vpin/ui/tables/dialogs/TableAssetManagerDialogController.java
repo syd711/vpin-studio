@@ -35,6 +35,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,6 +45,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -431,7 +433,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+          Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+          boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
           new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
         }
       } catch (Exception e) {
@@ -605,7 +608,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
-        boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
 
         if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
