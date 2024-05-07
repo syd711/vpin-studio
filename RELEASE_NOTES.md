@@ -6,6 +6,7 @@
 - **Table Management / Asset Manager**: Changed asset preview so that a regular selection will preview the Popper asset, no double-clicking required anymore.
 - **Table Management / Asset Manager Dialog**: Fixed previous/next buttons and table selection that broke when introducing the asset manager view.
 - **Pause Menu**: Fixed configuration issues and improved error handling.
+- **Asset Management**: Fixed preview for playfield and loading videos when running in portrait mode.
 
 ## 2.18.2
 
