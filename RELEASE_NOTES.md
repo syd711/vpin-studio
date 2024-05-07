@@ -1,9 +1,11 @@
 ## 2.18.3
 
 - **Highscore Cards**: Re-enabled the custom color picker for the card designer. I've hidden the link to this picker before because it has some focus issues, but it's better to have a bad solution for custom colors than nothing.
+- **Highscore Cards**: Converted template name in the overview list into buttons so that templates can be edited directly.
 - **Table Management / PinUP Popper Media Section**: Fixed gear icon button so that it navigates to the media settings.
 - **Table Management / Asset Manager**: Changed asset preview so that a regular selection will preview the Popper asset, no double-clicking required anymore.
 - **Table Management / Asset Manager Dialog**: Fixed previous/next buttons and table selection that broke when introducing the asset manager view.
+- **Pause Menu**: Fixed configuration issues and improved error handling.
 
 ## 2.18.2
 

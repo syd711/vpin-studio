@@ -108,7 +108,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnTemplate;
+  private TableColumn<GameRepresentation, Button> columnTemplate;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
@@ -566,19 +566,24 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     columnTemplate.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
+
+      CardTemplate template = cardTemplates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
       if (value.getTemplateId() != null) {
         Optional<CardTemplate> first = cardTemplates.stream().filter(g -> g.getId().equals(value.getTemplateId())).findFirst();
         if (first.isPresent()) {
-          CardTemplate template = first.get();
-          Label label = new Label(template.getName());
-          label.getStyleClass().add("default-text");
-          return new SimpleObjectProperty(label);
+          template = first.get();
         }
       }
 
-      Label label = new Label(CardTemplate.DEFAULT);
-      label.getStyleClass().add("default-text");
-      return new SimpleObjectProperty(label);
+      Button button = new Button(template.getName());
+      button.setOnAction(event -> {
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().select(value);
+        Platform.runLater(() -> {
+          onTemplateEdit();
+        });
+      });
+      return new SimpleObjectProperty(button);
     });
 
 
