@@ -7,6 +7,8 @@
 - **Table Management / Asset Manager Dialog**: Fixed previous/next buttons and table selection that broke when introducing the asset manager view.
 - **Pause Menu**: Fixed configuration issues and improved error handling.
 - **Asset Management**: Fixed preview for playfield and loading videos when running in portrait mode.
+- **Table Data Manager**: Fixed "Fix Version" button + action.
+- **Table Asset Management**: Forcing audio out to play only one audio file at a time.
 
 ## 2.18.2
 

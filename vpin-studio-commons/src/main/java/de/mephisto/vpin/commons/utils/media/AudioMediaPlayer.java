@@ -23,10 +23,14 @@ import org.slf4j.LoggerFactory;
 public class AudioMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
 
+  private static AudioMediaPlayer activePlayer = null;
+
   @Nullable
   private final GameMediaItemRepresentation mediaItem;
   private ProgressBar progressBar;
   private DoubleBinding binding;
+  private MediaView mediaView;
+  private FontIcon fontIcon;
 
   public AudioMediaPlayer(@NonNull BorderPane parent, @NonNull String url) {
     this(parent, null, url);
@@ -39,7 +43,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   }
 
   private void render() {
-    FontIcon fontIcon = new FontIcon();
+    fontIcon = new FontIcon();
     fontIcon.setIconSize(48);
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     fontIcon.setIconLiteral("bi-play");
@@ -85,7 +89,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     });
 
 
-    MediaView mediaView = new MediaView(mediaPlayer);
+    mediaView = new MediaView(mediaPlayer);
     mediaPlayer.setOnEndOfMedia(() -> {
       fontIcon.setIconLiteral("bi-play");
       mediaView.getMediaPlayer().stop();
@@ -105,6 +109,16 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
         mediaView.getMediaPlayer().setCycleCount(1);
         mediaView.getMediaPlayer().play();
         fontIcon.setIconLiteral("bi-stop");
+
+        if(activePlayer != null && !activePlayer.equals(this)) {
+          try {
+            activePlayer.mediaView.getMediaPlayer().pause();
+            activePlayer.fontIcon.setIconLiteral("bi-play");
+          } catch (Exception e) {
+            //ignore
+          }
+        }
+        activePlayer = this;
       }
       else {
         progressBar.setVisible(false);
