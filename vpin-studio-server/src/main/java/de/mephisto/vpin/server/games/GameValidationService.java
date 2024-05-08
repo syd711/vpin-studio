@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.Preferences;
@@ -283,7 +285,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    List<ValidationState> validationStates = validateAltSound(game);
+    List<ValidationState> validationStates = validateRecordings(game);
+    if (!validationStates.isEmpty()) {
+      result.add(validationStates.get(0));
+      if (findFirst) {
+        return result;
+      }
+    }
+
+    validationStates = validateAltSound(game);
     if (!validationStates.isEmpty()) {
       result.add(validationStates.get(0));
       if (findFirst) {
@@ -321,7 +331,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
       for (File file : screenAssets) {
         String mimeType = MimeTypeUtil.determineMimeType(file);
-        if(mimeType != null) {
+        if (mimeType != null) {
           if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
             return false;
           }
@@ -359,6 +369,34 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         //no in registry, so check against defaults
         if (!options.isForceStereo()) {
           result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<ValidationState> validateRecordings(Game game) {
+    Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
+    PopperScreen[] values = PopperScreen.values();
+    List<ValidationState> result = new ArrayList<>();
+    for (PopperScreen screen : values) {
+      if (!(PopperScreen.BackGlass.equals(screen) || PopperScreen.PlayField.equals(screen))) {
+        continue;
+      }
+
+      if (media.containsKey(screen.name())) {
+        List<GameMediaItem> gameMediaItems = media.get(screen.name());
+        for (GameMediaItem gameMediaItem : gameMediaItems) {
+          String name = gameMediaItem.getName();
+          Date modified = new Date(gameMediaItem.getFile().lastModified());
+          if (name.endsWith(".mp4")) {
+            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
+            }
+            if (game.getGameFile().exists() && new Date(game.getGameFile().lastModified()).after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
+            }
+          }
         }
       }
     }
@@ -508,17 +546,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_AUDIO)
-      || codes.contains(CODE_NO_AUDIO_LAUNCH)
-      || codes.contains(CODE_NO_APRON)
-      || codes.contains(CODE_NO_INFO)
-      || codes.contains(CODE_NO_HELP)
-      || codes.contains(CODE_NO_TOPPER)
-      || codes.contains(CODE_NO_BACKGLASS)
-      || codes.contains(CODE_NO_DMD)
-      || codes.contains(CODE_NO_PLAYFIELD)
-      || codes.contains(CODE_NO_LOADING)
-      || codes.contains(CODE_NO_OTHER2)
-      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+        || codes.contains(CODE_NO_AUDIO_LAUNCH)
+        || codes.contains(CODE_NO_APRON)
+        || codes.contains(CODE_NO_INFO)
+        || codes.contains(CODE_NO_HELP)
+        || codes.contains(CODE_NO_TOPPER)
+        || codes.contains(CODE_NO_BACKGLASS)
+        || codes.contains(CODE_NO_DMD)
+        || codes.contains(CODE_NO_PLAYFIELD)
+        || codes.contains(CODE_NO_LOADING)
+        || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
     return false;
@@ -531,18 +569,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-      || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-      || codes.contains(CODE_NO_ROM)
-      || codes.contains(CODE_ROM_NOT_EXISTS)
-      || codes.contains(CODE_VPX_NOT_EXISTS)
-      || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-      || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-      || codes.contains(CODE_FORCE_STEREO)
-      || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-      || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-      || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-      || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-      || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_NO_ROM)
+        || codes.contains(CODE_ROM_NOT_EXISTS)
+        || codes.contains(CODE_VPX_NOT_EXISTS)
+        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+        || codes.contains(CODE_FORCE_STEREO)
+        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }
