@@ -285,15 +285,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    List<ValidationState> validationStates = validateRecordings(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
+//    List<ValidationState> validationStates = validateRecordings(game);
+//    if (!validationStates.isEmpty()) {
+//      result.add(validationStates.get(0));
+//      if (findFirst) {
+//        return result;
+//      }
+//    }
 
-    validationStates = validateAltSound(game);
+    List<ValidationState> validationStates = validateAltSound(game);
     if (!validationStates.isEmpty()) {
       result.add(validationStates.get(0));
       if (findFirst) {

@@ -146,7 +146,7 @@ public class GameValidationTexts {
         if (state.getOptions().size() > 1) {
           label = "PUP pack media files missing.";
         }
-        if(state.getOptions().size() > 2) {
+        if (state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
           text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
         }
