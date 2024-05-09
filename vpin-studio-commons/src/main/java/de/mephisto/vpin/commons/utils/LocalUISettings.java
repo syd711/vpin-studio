@@ -52,18 +52,24 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(int x, int y, int width, int height) {
-    store.set("x", x);
-    store.set("y", y);
-    store.set("width", width);
-    store.set("height", height);
-    LOG.info("Saved window position to store.");
+    if(x >= 0 && y >= 0) {
+      store.set("x", x);
+      store.set("y", y);
+      store.set("width", width);
+      store.set("height", height);
+      LOG.info("Saved window position to store.");
+    }
   }
 
   public static void saveLocation(String id, int x, int y, int width, int height) {
-    store.set(id + ".x", x);
-    store.set(id + ".y", y);
-    store.set(id + ".width", width);
-    store.set(id + ".height", height);
+    if(x >= 0 && y >= 0) {
+      store.set("x", x);
+      store.set("y", y);
+      store.set(id + ".x", x);
+      store.set(id + ".y", y);
+      store.set(id + ".width", width);
+      store.set(id + ".height", height);
+    }
     LOG.info("Saved window position to store for " + id);
   }
 

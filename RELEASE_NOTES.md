@@ -9,7 +9,8 @@
 - **Asset Management**: Fixed preview for playfield and loading videos when running in portrait mode.
 - **Table Data Manager**: Fixed "Fix Version" button + action.
 - **Table Asset Management**: Forcing audio out to play only one audio file at a time.
-- **Table Asset Management**: Improved text of the validator message that is shown when assets do not match with the screen validator configuration. 
+- **Table Asset Management**: Improved text of the validator message that is shown when assets do not match with the screen validator configuration.
+- **Window Positioning**: Fixed wrong window positioning when opened after the Studio has been closed being minimized.
 
 ## 2.18.2
 
