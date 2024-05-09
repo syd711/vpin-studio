@@ -15,11 +15,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NotificationStageService extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationStageService.class);
 
-  private static NotificationStageService INSTANCE = new NotificationStageService();
+  private final static NotificationStageService INSTANCE = new NotificationStageService();
 
   private final static int MAX_NOTIFICATIONS = 3;
 
-  private final static Queue<Notification> queue = new ConcurrentLinkedQueue();
+  private final static Queue<Notification> queue = new ConcurrentLinkedQueue<>();
   private final static Queue<NotificationStage> stages = new ConcurrentLinkedQueue<>();
   private final static AtomicBoolean locked = new AtomicBoolean(false);
 
@@ -89,7 +89,7 @@ public class NotificationStageService extends Application {
     notification3.setDurationSec(3);
 
     showNotification(notification1);
-    showNotification(notification2);
-    showNotification(notification3);
+//    showNotification(notification2);
+//    showNotification(notification3);
   }
 }

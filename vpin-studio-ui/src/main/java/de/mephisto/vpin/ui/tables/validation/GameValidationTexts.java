@@ -136,12 +136,17 @@ public class GameValidationTexts {
         text = "Enable \"Force Stereo\" for this table in the VPinMAME settings.";
         break;
       }
+      case CODE_OUTDATED_RECORDING: {
+        label = "Outdated recording found.";
+        text = "The file \"" + state.getOptions().get(0) + "\" is newer than the recording \"" + state.getOptions().get(1) + "\" of screen \"" + state.getOptions().get(2) + "\"";
+        break;
+      }
       case CODE_PUP_PACK_FILE_MISSING: {
         label = "PUP pack media file missing.";
         if (state.getOptions().size() > 1) {
           label = "PUP pack media files missing.";
         }
-        if(state.getOptions().size() > 2) {
+        if (state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
           text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
         }

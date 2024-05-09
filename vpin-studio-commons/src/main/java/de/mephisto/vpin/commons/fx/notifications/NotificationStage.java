@@ -67,7 +67,9 @@ public class NotificationStage {
       else {
         LOG.info("Window Mode: Portrait");
         root.setTranslateY(-(screenBounds.getHeight() / 2) + ((WIDTH * scaling) / 2));
-        root.setTranslateX(-(WIDTH * scaling) / 2 / 2);
+
+        double xTranslation = -(WIDTH * scaling) / 2 + getPortraitOffset(screenBounds);
+        root.setTranslateX(-(2 * xTranslation));
         inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
         outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getHeight() / 2));
 
@@ -81,6 +83,14 @@ public class NotificationStage {
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
+  }
+
+  private static int getPortraitOffset(Rectangle2D screenBounds) {
+    if (screenBounds.getHeight() == 2560) {
+      return 100;
+    }
+
+    return 100;
   }
 
 
