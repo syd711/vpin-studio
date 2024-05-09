@@ -37,7 +37,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -411,7 +410,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onIniUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.iniUpload(stage, selectedItems.get(0));
+      TableDialogs.directIniUpload(stage, selectedItems.get(0));
     }
   }
 
@@ -1534,6 +1533,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+    new TableOverviewDragDropHandler(tablesController);
     this.onReload();
   }
 
@@ -1750,8 +1750,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
     assetManagerViewBtn.setVisible(Features.ASSET_MODE);
-
-    new TableOverviewDragDropHandler(this);
   }
 
   private void refreshViewForEmulator() {

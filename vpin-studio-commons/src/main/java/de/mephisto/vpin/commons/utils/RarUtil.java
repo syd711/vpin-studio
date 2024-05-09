@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -45,6 +46,10 @@ public class RarUtil {
       LOG.error("Failed to check rar file \"" + archiveFile.getAbsolutePath() + "\": " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public static void main(String[]args) throws SevenZipNativeInitializationException {
+    RarUtil.contains(new File("E:\\downloads\\AC'DC (Stern 2012).zip"), "vpx");
   }
 
   public static boolean unrarTargetFile(File archiveFile, File targetFile, String name) {

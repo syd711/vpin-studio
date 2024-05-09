@@ -116,7 +116,31 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean iniUpload(Stage stage, GameRepresentation game) {
+  public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      String help2 = null;
+      if (game.isDirectB2SAvailable()) {
+        help2 = "The existing directb2 file of this table will be overwritten.";
+      }
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
+      if (result.get().equals(ButtonType.OK)) {
+        Platform.runLater(() -> {
+          String analyze = DirectB2SArchiveAnalyzer.analyze(file);
+          if (!StringUtils.isEmpty(analyze)) {
+            WidgetFactory.showAlert(Studio.stage, "Error", analyze);
+          }
+          else {
+            DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+            ProgressDialog.createProgressDialog(model);
+          }
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static boolean directIniUpload(Stage stage, GameRepresentation game) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .ini File");
     fileChooser.getExtensionFilters().addAll(
@@ -130,7 +154,44 @@ public class TableDialogs {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
         }
         else {
+
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directIniUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        if (game.isIniAvailable()) {
+          help2 = "The existing .ini file of this table will be overwritten.";
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directPovUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        if (game.isPovAvailable()) {
+          help2 = "The existing .pov file of this table will be overwritten.";
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
       });

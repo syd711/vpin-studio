@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -23,17 +24,13 @@ public class PovUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(PovUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final TablesSidebarController tablesSidebarController;
   private final int gameId;
   private final File file;
-  private final String altSoundType;
 
-  public PovUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String fileType) {
+  public PovUploadProgressModel(int gameId, String title, File file) {
     super(title);
-    this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;
     this.file = file;
-    this.altSoundType = fileType;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -60,7 +57,7 @@ public class PovUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getVpxService().uploadPov(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getVpxService().uploadPov(next, AssetType.POV.name(), gameId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

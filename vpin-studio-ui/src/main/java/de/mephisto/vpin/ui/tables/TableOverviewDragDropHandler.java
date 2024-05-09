@@ -26,10 +26,10 @@ public class TableOverviewDragDropHandler {
 
   private Parent dndLoadingOverlay;
 
-  private List<String> suffixes = Arrays.asList("vpx", "zip", "rar");
+  private final List<String> suffixes = Arrays.asList("vpx", "zip", "rar", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz");
 
-  public TableOverviewDragDropHandler(TableOverviewController tableOverviewController) {
-
+  public TableOverviewDragDropHandler(TablesController tablesController) {
+    TableOverviewController tableOverviewController = tablesController.getTableOverviewController();
     try {
       FXMLLoader loader = new FXMLLoader(DnDOverlayController.class.getResource("overlay-dnd.fxml"));
       dndLoadingOverlay = loader.load();
@@ -50,7 +50,7 @@ public class TableOverviewDragDropHandler {
 
         for (File file : files) {
           String extension = FilenameUtils.getExtension(file.getName());
-          if (!suffixes.contains(extension)) {
+          if (!suffixes.contains(extension.toLowerCase())) {
             return;
           }
         }
@@ -68,6 +68,7 @@ public class TableOverviewDragDropHandler {
           dndLoadingOverlay.setTranslateY(tableView.getTranslateY());
 
           controller.setViewParams(tableView.getWidth(), tableView.getHeight());
+          controller.setGame(tablesController.getTableOverviewController().getSelection());
           loaderStack.getChildren().add(dndLoadingOverlay);
         }
       }
@@ -104,7 +105,7 @@ public class TableOverviewDragDropHandler {
           loaderStack.getChildren().remove(dndLoadingOverlay);
 
           GameRepresentation selection = tableOverviewController.getSelection();
-          UploadDispatcher.dispatch(files.get(0), selection);
+          UploadDispatcher.dispatch(tablesController, files.get(0), selection);
         });
       }
     });

@@ -59,7 +59,7 @@ public class PovUploadController implements Initializable, DialogController {
       stage.close();
 
       Platform.runLater(() -> {
-        PovUploadProgressModel model = new PovUploadProgressModel(tablesSidebarController, this.game.getId(), "POV Upload", selection, "pov");
+        PovUploadProgressModel model = new PovUploadProgressModel(this.game.getId(), "POV Upload", selection);
         ProgressDialog.createProgressDialog(model);
       });
     }
