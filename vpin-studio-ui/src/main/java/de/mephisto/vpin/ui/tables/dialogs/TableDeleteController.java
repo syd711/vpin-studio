@@ -102,6 +102,7 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    result = false;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }

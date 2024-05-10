@@ -108,7 +108,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnTemplate;
+  private TableColumn<GameRepresentation, Button> columnTemplate;
 
   @FXML
   private TableColumn<GameRepresentation, String> columnStatus;
@@ -201,6 +201,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     new Thread(() -> {
       Platform.runLater(() -> {
+        tableView.getSelectionModel().getSelectedItems().removeListener(this);
+
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         games = client.getGameService().getVpxGamesCached();
         cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
@@ -209,6 +211,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         tableView.setItems(data);
 
         tableView.refresh();
+        tableView.getSelectionModel().getSelectedItems().addListener(this);
 
         if (selection != null) {
           final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
@@ -333,18 +336,17 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    refreshRawPreview(game);
-    if (!game.isPresent()) {
-      return;
-    }
-
     int offset = 36;
     Platform.runLater(() -> {
-      this.generateBtn.setDisable(!game.isPresent());
-      this.openImageBtn.setDisable(!game.isPresent());
+      this.generateBtn.setDisable(game.isEmpty());
+      this.openImageBtn.setDisable(game.isEmpty());
 
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
+
+      if (game.isEmpty()) {
+        return;
+      }
 
       try {
         new Thread(() -> {
@@ -358,6 +360,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           cardPreview.setVisible(true);
 
           Platform.runLater(() -> {
+            refreshPopperPreview();
+            refreshRawPreview(game);
             previewStack.getChildren().remove(waitOverlay);
             updateTransparencySettings(this.templateCombo.getSelectionModel().getSelectedItem().isTransparentBackground());
           });
@@ -456,7 +460,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     previewPanel.setVisible(!c.getList().isEmpty());
 
     this.templateCombo.valueProperty().removeListener(templateComboChangeListener);
-    refreshPopperPreview();
     if (c.getList().isEmpty()) {
       refreshPreview(Optional.empty(), false);
     }
@@ -563,19 +566,24 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     columnTemplate.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
+
+      CardTemplate template = cardTemplates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
       if (value.getTemplateId() != null) {
         Optional<CardTemplate> first = cardTemplates.stream().filter(g -> g.getId().equals(value.getTemplateId())).findFirst();
         if (first.isPresent()) {
-          CardTemplate template = first.get();
-          Label label = new Label(template.getName());
-          label.getStyleClass().add("default-text");
-          return new SimpleObjectProperty(label);
+          template = first.get();
         }
       }
 
-      Label label = new Label(CardTemplate.DEFAULT);
-      label.getStyleClass().add("default-text");
-      return new SimpleObjectProperty(label);
+      Button button = new Button(template.getName());
+      button.setOnAction(event -> {
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().select(value);
+        Platform.runLater(() -> {
+          onTemplateEdit();
+        });
+      });
+      return new SimpleObjectProperty(button);
     });
 
 
@@ -714,7 +722,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
     if (id > 0) {
-      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      GameRepresentation refreshedGame = client.getGameService().getGameCached(id);
       Platform.runLater(() -> {
         tableView.getSelectionModel().getSelectedItems().removeListener(this);
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();

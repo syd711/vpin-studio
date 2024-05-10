@@ -18,20 +18,22 @@
 
 <body>
     <h3><span>&nbsp;&nbsp;Overview</span></h3>
-    <p>The <strong>Selected Game Content</strong> panel provides a read only view of game files and related content that make up a game and its settings. This content includes:</p>
+    <p>The <strong>Selected Game Content</strong> panel provides view of game files and related content that make up a game and its settings.</p>
+	<p>The displayed information allows users to see what values have been found (when viewing current game content) or what values have been stored in the backup file (when viewing backup game content).</p>
+	<p>This content includes:</p>
     <ol>
         <li>All emulator defined game files, as dictated by configured game filters. Examples includes game/table files, as well as B2S and POV files, VPinMAME ROM, and alt colour/sound files or BAM game config files.</li>
         <li>Any Pup Pack content for the game from within the Pinup System PupVideo directory.</li>
         <li>Any Pinup Popper frontend game media files found in the Pinup System POPMedia directory structure.</li>
         <li>For emulators that make use of registry settings to store game information, a set of registry values used by the game.</li>
     </ol>
-    <p>As mentioned above, this information is read only and allows users to see what values have been found (when viewing current game content) or what values have been stored in the backup file (when viewing backup game content).</p>
-    <p>The source of information viewed in this panel is determined by the selections made in the <a href="./selectedGameDisplayControl.html">Selected Game Display Control</a> panel.</p>
+    <img src="img/SelectedGameContent.gif" width="380" alt="Selected Game Content">
+    <p>The source of information viewed in this panel is determined by the selections made in the <a href="./selectedGameDisplayControl.html">Selected Game Display Control Panel</a>.</p>
     <ol>
-        <li>If <strong>Disk</strong> is selected, the displayed content is taken from the currently active Pinup Popper database.</li>
-        <li>If <strong>Backup</strong> is selected, the displayed content is taken from the currently games backup file.</li>
+        <li>If <strong>Display Current Content</strong> is checked, the displayed content is taken from the games as currently installed.</li>
+        <li>If <strong>Display Backup Content</strong> is checked, the displayed content is taken from the games backup file.</li>
     </ol>
-    <img src="img/SelectedGameContent.gif" width="448" alt="Selected Game Content">
+    <p>There are two components that make up this panel, these are listed here and described in further detail below.</p>
     <br />
     <hr>
 
@@ -57,9 +59,23 @@
         <li>Pinup system - containing Pup Pack content and POP media files that were found</li>
         <li>Registry settings - containing details of game specific registry settings.</li>
     </ol>
-    <p>Expanding the tree and navigating to a file item will show the full path to the file on either the file system (when <strong>Current</strong> is selected in the <a href="./selectedGameDisplayControl.html">Selected Game Display Control</a> panel) or within the backup file. Double clicking on a file entry will attempt to open the file using the default Windows application associated with the file.</p>
+    <p>Expanding the tree and navigating to a file item will show the full path to the file on either the file system (when <strong>Current</strong> is selected in the <a href="./selectedGameDisplayControl.html">Selected Game Display Control Panel</a>) or within the backup file. Double clicking on a file entry will attempt to open the file using the default Windows application associated with the file.</p>
     <p>Contents of the registry node (if present) provides a quick way of viewing current registry settings for the game.</p>
-
+    
+    <hr>
+	<h3><span>&nbsp;&nbsp;Update of Game Content</span></h3>
+	
+	<p>The <strong>Selected Game Content</strong> panel will highlight when there are differences identified between the system and backup by highlighting the panels border in an error color. Additionally the files for which differences exist will use colour coding to help to identify the type of difference detected. These files will also trigger right context menu options to allow the differences to be corrected. Using this context menu can save the need to perform another full game backup or restore.</p>
+	<p>The differences that may occur are:</p>
+	<ol>
+		<li><strong>File only occurs in the current system</strong>: The file is highlighted in green when viewing the current system, the file will not be seen when viewing the backup. The context menu when viewing the current system will allow the file to be backed up or deleted.</li>
+		<li><strong>File only occurs in the backup</strong>: The file is not seen when viewing the current system, the file is highlighted in green when viewing the backup. The context menu when viewing the backup will allow the file to be restored or deleted from the backup.</li>
+		<li><strong>File occurs in both systems but has different content</strong>: The file is highlighted in red when viewing both the current system and the backup. The context menu will provide an option to backup or restore the file and to either delete the file or the file backup (whichever content is being viewed).</li>
+	</ol><p>In the case where it is content in the <strong>VPReg.stg</strong> file corresponding to the selected game that differs, the context menu options will appear on the <strong>VPReg.stg</strong> file itself rather than individual content.</p>
+	<p>The image below shows a case where the games POV file has differences between the backup and the system and the backup content is being viewed.</p>
+	<img src="img/selectedGameContentContextMenu.jpg" width="380" alt="selected Game Content Context Menu">
+	<p>If differences were found in either the <strong>Selected Game Filter Variables</strong> or the <strong>Selected Game Custom Filters</strong> panels, then the option to update files with differences is removed from the <strong>Current Game Content</strong> panel for all files otherthan the game file itself. This is because the values of filter variables and custom filters influences the file content displayed in the <strong>Current Game Content</strong> panel. As a result, these differences must be fixed first. This case is shown below.</p>
+	<img src="img/selectedGameContentContextMenu-FilterDeltas.gif" width="380" alt="selected Game Content Context Menu Deltas">	
 </body>
 
 <footer>

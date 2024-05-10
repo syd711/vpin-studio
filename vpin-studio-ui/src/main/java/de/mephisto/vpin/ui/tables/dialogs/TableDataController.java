@@ -442,8 +442,15 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onVersionFix(ActionEvent e) {
     TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
-    td.setGameVersion(game.getExtVersion());
-    gameVersion.setText(game.getExtVersion());
+    String gVersion = game.getExtVersion();
+    if (StringUtils.isEmpty(gVersion)) {
+      VpsTableVersion value = this.tableVersionsCombo.getValue();
+      if (value != null) {
+        gVersion = value.getVersion();
+      }
+    }
+    td.setGameVersion(gVersion);
+    gameVersion.setText(gVersion);
     fixVersionBtn.setDisable(true);
   }
 
@@ -696,7 +703,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.overviewController = overviewController;
     this.initialVpxFileName = game.getGameFileName();
 
-    this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
+    this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(tableDetails.getGameVersion()));
 
     gameName.setText(tableDetails.getGameName());
     gameName.textProperty().addListener((observable, oldValue, newValue) -> {

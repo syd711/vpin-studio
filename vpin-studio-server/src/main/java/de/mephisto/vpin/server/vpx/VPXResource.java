@@ -2,11 +2,14 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -46,6 +49,9 @@ public class VPXResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
     return vpxService.getScript(gameService.getGame(id));
@@ -69,7 +75,8 @@ public class VPXResource {
   @PutMapping("/sources/{id}")
   public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     String source = (String) values.get("source");
-    return vpxService.importVBS(gameService.getGame(id), source);
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    return vpxService.importVBS(gameService.getGame(id), source, serverSettings.isKeepVbsFiles());
   }
 
 
@@ -184,8 +191,8 @@ public class VPXResource {
 
   @PostMapping("/ini/upload")
   public JobExecutionResult initUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                      @RequestParam(value = "uploadType", required = false) String uploadType,
-                                      @RequestParam("objectId") Integer gameId) {
+                                       @RequestParam(value = "uploadType", required = false) String uploadType,
+                                       @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");

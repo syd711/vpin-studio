@@ -17,19 +17,18 @@
 <body>
     <h3><span>&nbsp;&nbsp;Settings Overview</span></h3>
     <p>Settings are used to control finer details of how <span class="vpbm">VPBM</span> will operate. There are multiple ways of modifying settings targeting different experience levels.</p>
-    <p>Most users will be able to do all that they need using the <strong>File</strong>-><strong>Settings</strong> menu. This option is also the only way to add an <strong>Export Host Identifier</strong> to allow backups to be encoded for export to an alternate host. All backups are encoded to be only readable on the machine they were created on - but it is possibly to export these backups to be readable on another machine, using this setting.</p>
+    <p>Most users will be able to do all that they need using the <strong>File</strong>-><strong>Settings</strong> menu which provides an integrated GUI to set the majority of application settings. This option is also the only way to add an <strong>Export Host Identifier</strong> to allow backups to be encoded for export to an alternate host. All backups are encoded to be only readable on the machine they were created on - but it is possibly to export these backups to be readable on another machine, using this setting.</p>
 	<p>More experienced users have the ability to edit the configuration file directly using a text editor, while advanced users are able to configure additional advanced filters to control the files assigned to each game.</p>
     <hr>
 
     <h3><span>&nbsp;&nbsp;Settings Menu</span></h3>
-    <img style="float: right; padding: padding: 6px 0px 0px 0px" src="./img/Settings.jpg" alt="Settings form">
-    <p>The <strong>Settings</strong> menu option found in the <strong>File</strong> menu provides a easy to use method for changing basic application settings. As can be seen in the screenshot, the <strong>Settings</strong> form provides integrated tips and information about the settings that are available for update, these will be discussed in more details below.</p>
-	<p>The <strong>Reset</strong> button can be used to revert available settings back to the default values.</p>
+    <p>The <strong>Settings</strong> menu option found in the <strong>File</strong> menu provides a easy to use method for changing basic application settings.</p>
+    <img src="./img/applicationSettingsForm.jpg" width="775" alt="Application Settings form">
+    <p>The <strong>Restore Defaults</strong> button can be used to restore available settings back to the default values.</p>
 	<p>The <strong>Save</strong> button can be used to save settings changes that have been made. Performing a save will restart the system so that the settings changes can take effect. The <strong>Save</strong> button is only enabled when there are valid changes to save. Values which have changed are shaded with a yellow background to highlight the proposed changes to the user.</p>
-	<p>The following values can be set:</p>
+	<br />
+    <p>The following values can be set:</p>
     <dl>
-        <dt><strong>Visual Pinball Base Path</strong></dt>
-        <dd>This value is stored in the settings file as <strong>VpinballBasePath</strong> and represents the base of the Pinup Popper "Baller Installer" installation. Baller Installer installs all emulators plus the Pinup System software in a common base directory, which by default is <strong>C:\\vPinball</strong>. This value should only need to change if the Baller Installer installation path was altered.</dd>
         <dt><strong>Pinup Popper Install Path</strong></dt>
         <dd>This value is stored in the settings file as <strong>Pinup/PinupDir</strong> and represents the installed location of Pinup Popper. In a normal Baller Installer install, this sits inside <strong>Visual Pinball Base Path</strong>. This value can be relative to <strong>Visual Pinball Base Path</strong> (if it resides inside) or stored as an absolute path. The value will be saved as a relative value if it is inside <strong>Visual Pinball Base Path</strong>.</dd>
         <dt><strong>Backup Path</strong></dt>
@@ -39,10 +38,12 @@
         <dt><strong>Export Host Identifier</strong></dt>
 		<dd>This optional value is not stored in the settings file. Only use this field if <span class="vpbm">VPBM</span> is being used to generate backups for a second 'target' machine. The value used to populate this field is a code representing the host machine for which exported backups will be generated. To obtain the code to use to support exporting of backups to a given host, a copy of <span class="vpbm">VPBM</span> must be installed on the intended target host (which is required to process backups regardless). Open the <span class="vpbm">VPBM</span> instance on the other host and open the corresponding <strong>Settings</strong> dialog (this dialog). Once on the <strong>Settings</strong> dialog, select and copy the (green) <strong>This Host Identifier</strong> text value and copy this text to this machine (via email, USB, or similar means). The value obtained can then be pasted into the <strong>Export Host Identifier</strong> text field to specify this host as the target of export files.<br/>
 		The <strong>Export Host Identifier</strong> will be shown shaded red if the current value is determined to be invalid. To test how this setting works, copy the local host identifier into the export host identifier and confirm that the created file can be opened on this machine.<br/>
-		<span style="color: red";>WARNING: Updating the <strong>Export Host Identifier</strong> value will result in all existing export files being deleted as they will not be valid with a new <strong>Export Host Identifier</strong>.</span>
 		</dd>
 		<dt><strong>This Host Identifier</strong></dt>
 		<dd>This value provides a read only view of the current machines host identifier which can be copied into another <span class="vpbm">VPBM</span> instances <strong>Export Host Identifier</strong> field. All games backed up by <span class="vpbm">VPBM</span> on this machine will use this host identifier to lock the backup files. Any backups imported to this machine from other machines must be encoded with this identifier to allow them to be extracted.
+		</dd>
+		<dt><strong>Force Rescan of All Games at Startup</strong></dt>
+		<dd>By default, at startup, all file content of all games is re-scanned to ensure <span class="vpbm">VPBM</span> provides an up-to-date picture of the system. For large collections this can be time consuming. Disabling this checkbox will result in scans only occurring for games without an existing manifest. This can save time but may result in out of date information being displayed. a <strong>Refresh Selected Rows</strong> button is provided on the <strong>Installed Games</strong> panel to allow these games to be rescanned at any time. This option can be used when it is known that system changes haven't ocurred between runs of <span class="vpbm">VPBM</span>.
 		</dd>
 		<dt><strong>Logging Level</strong></dt>
 		<dd>Provides the ability to alter the level of log detail produced. There are 6 levels available, in order from most granular to least, they are: Verbose, Debug, Information, Warning, Error, Fatal. The default level of Information is generally a suitable level to use, Verbose, or Debug would generally only be used by developers, while setting logging to Warning, Error, Fatal will reduce logging to only log in cases where abnormal events have occurred.
@@ -57,15 +58,13 @@
     <p>
         The process for manually editing settings is simple, open the file <strong>vPinBackupManager.json</strong> located in the <span class="vpbm">VPBM</span> installation directory using your preferred text editor and edit the appropriate files discussed above.
     </p>
-    <img style="float: right; padding: 0px 24px 0px 0px" src="./img/DefaultConfig.jpg" alt="settings JSON">
+    <img src="./img/applicationSettingsDefaultConfig.jpg" width="490" alt="Application Settings Default Config">
     <p style="color: red;">
         WARNING: The <strong>Name</strong> values within the <strong>Emulators</strong> and <strong>Pinup</strong> blocks must not be altered as this is designed to match values stored within Pinup System.
     </p>
 
     <p>The basic content of a <span class="vpbm">VPBM</span> settings file is:</p>
     <dl>
-        <dt><strong>VpinballBasePath</strong></dt>
-        <dd>This value corresponds to the value <strong>Visual Pinball Base Path</strong> described above in the<strong> Settings Menu</strong> section above.</dd>
         <dt><strong>BackupPath</strong></dt>
         <dd>This value corresponds to the value <strong>Backup Path</strong> described in the<strong> Settings Menu</strong> section above.</dd>
         <dt><strong>ExportPath</strong></dt>
@@ -81,6 +80,8 @@
             </br>
             The <strong>PinupDir</strong> value may be absolute or relative (the default), when set to relative, the path is relative to the value of <strong>VpinballBasePath</strong>.
         </dd>
+        <dt><strong>ForceGameRescanAtStartup</strong></dt>
+        <dd>This value corresponds to the value <strong>Force Rescan of All Games at Startup</strong> described in the <strong>Settings Menu</strong> section above.</dd>
         <dt><strong>LogLevel</strong></dt>
         <dd>This value corresponds to the value <strong>Logging Level</strong> described in the <strong>Settings Menu</strong> section above.</dd>
         <dt><strong>LogRotationSizeMb</strong></dt>
@@ -90,14 +91,16 @@
 
     <a class="anchor" id="anchor-advanced-settings"></a>
     <h3>&nbsp;&nbsp;<span>Advanced Settings</span></h3>
-    <img style="float: right; padding: 0px 24px 0px 0px" src="./img/FullConfig.jpg" alt="settings JSON">
 
 	<p>Advanced settings are only intended to be updated by users with an advanced knowledge of <span class="vpbm">VPBM</span> configuration and allow a mechanism to add new global filtering rules for emulators.</p>
-    <p>By default, each emulator configuration in the <strong>Emulators</strong> configuration block contains only a <strong>Name</strong> value, providing a way for <span class="vpbm">VPBM</span> to identify the pinball emulators that it supports, similarly the <strong>Pinup</strong> configuration block contains only a <strong>PinupDir</strong> value indicating the location of the base <strong>Pinup System</strong> directory.</p>
+    <img src="./img/applicationSettingsAdvancedConfig.jpg" width="490" alt="Application Settings Advanced Config">
+	<p>By default, each emulator configuration in the <strong>Emulators</strong> configuration block contains only a <strong>Name</strong> value, providing a way for <span class="vpbm">VPBM</span> to identify the pinball emulators that it supports, similarly the <strong>Pinup</strong> configuration block contains only a <strong>PinupDir</strong> value indicating the location of the base <strong>Pinup System</strong> directory.</p>
     <p>Advanced users can add configuration elements to these configuration blocks to alter the way the <span class="vpbm">VPBM</span> manages the backup/restore process. The core function performed by <span class="vpbm">VPBM</span> is to search for all files associated with an individual game and package these files up into a standalone game backup, this process is driven by a set of <strong>filters</strong> defined for each emulator type and <strong>Pinup System</strong> which are used to identify files that match individual games.</p>
-    <p>Embedded within each emulator configuration is an additional <strong>PathFilters</strong> block, which by default is not used. This block however can be added to allow users to specify additional file filters that should be applied globally for a specific emulator, or <strong>Pinup System</strong>. This functionality should only be used where a new filter is to be applied to all games for a given emulator, in cases where a single game requires additional filters, refer to <a href="./customFileFilters.html">Custom File Filters</a>.</strong></p>
+    <p>Embedded within each emulator configuration is an additional <strong>PathFilters</strong> block, which by default is not used. This block however can be added to allow users to specify additional file filters that should be applied globally for a specific emulator, or <strong>Pinup System</strong>. This functionality should only be used where a new filter is to be applied to all games for a given emulator, in cases where a single game requires additional filters, refer to <a href="./selectedGameCustomFilters.html">Selected Game Custom Filters</a>.</strong></p>
     <p>Filters make use of some <span class="vpbm">VPBM</span> variables, and allow <span class="vpbm">VPBM</span> to calculate their values at runtime, which are:</p>
     <dl>
+        <dt><strong>[GAMEFOLDER]</strong></dt>
+        <dd>The path to the game relative to the base folder of the games emulator, as configured in Pinup System.</dd>
         <dt><strong>[GAMENAME]</strong></dt>
         <dd>The name of the game as found on disk, minus the game extension.</dd>
         <dt><strong>[GAMECODE]</strong></dt>

@@ -32,6 +32,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox serviceStartupCheckbox;
 
   @FXML
+  private CheckBox useOriginalVbsFilesCheckbox;
+
+  @FXML
   private Spinner<Integer> idleSpinner;
 
   @FXML
@@ -143,6 +146,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     launchPopperCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
     launchPopperCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setLaunchPopperOnExit(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
+    useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setKeepVbsFiles(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }

@@ -165,12 +165,12 @@ public class VPXService {
     return null;
   }
 
-  public boolean importVBS(Game game, String vbs) {
+  public boolean importVBS(Game game, String vbs, boolean useTempFile) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
-          VPXUtil.importVBS(gameFile, vbs);
+          VPXUtil.importVBS(gameFile, vbs, useTempFile);
           LOG.info("Written table sources " + gameFile.getAbsolutePath());
           return true;
         } catch (IOException e) {

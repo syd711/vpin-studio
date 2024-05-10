@@ -149,7 +149,7 @@ public class VPXUtil {
     return content;
   }
 
-  public static void importVBS(@NonNull File vpxFile, String vps) throws IOException {
+  public static void importVBS(@NonNull File vpxFile, String vps, boolean keepVbsFile) throws IOException {
     try {
       File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
       if (vbsFile.exists()) {
@@ -163,12 +163,16 @@ public class VPXUtil {
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
+
+      if (!keepVbsFile && !vbsFile.delete()) {
+        LOG.error("Failed to delete VBS import file " + vbsFile.getAbsolutePath());
+      }
     } catch (Exception e) {
       LOG.error("Importing VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
   }
 
-  public static String exportVBS(@NonNull File vpxFile, String vps) throws IOException {
+  public static String exportVBS(@NonNull File vpxFile, String vps, boolean keepVbsFile) throws IOException {
     try {
       File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
       if (vbsFile.exists()) {
@@ -181,7 +185,11 @@ public class VPXUtil {
       executor.setDir(new File("./resources"));
       executor.executeCommand();
 
-      return org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
+      String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
+      if (!keepVbsFile && !vbsFile.delete()) {
+        LOG.error("Failed to delete VBS export file " + vbsFile.getAbsolutePath());
+      }
+      return script;
     } catch (Exception e) {
       LOG.error("Exporting VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }

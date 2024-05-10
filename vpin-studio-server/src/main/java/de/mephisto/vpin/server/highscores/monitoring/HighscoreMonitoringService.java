@@ -48,37 +48,37 @@ public class HighscoreMonitoringService {
 
   private void startMonitor(@NonNull File highscoreFile, @NonNull Game game) {
     this.running.set(true);
-    monitorThread = new Thread(() -> {
-      try {
-        Thread.currentThread().setName("Highscore Monitor Thread (" + highscoreFile.getName() + ")");
-        LOG.info("Launched \"Highscore Monitor Thread (" + highscoreFile.getName() + ")\"");
-
-        final Path path = highscoreFile.getParentFile().toPath();
-        try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-          final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-          while (running.get()) {
-            final WatchKey wk = watchService.take();
-            for (WatchEvent<?> event : wk.pollEvents()) {
-              //we only register "ENTRY_MODIFY" so the context is always a Path.
-              final Path changed = (Path) event.context();
-              if (changed.endsWith(highscoreFile.getName())) {
-//                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
-              }
-            }
-            // reset the key
-            boolean valid = wk.reset();
-            if (!valid) {
-              LOG.info("Key has been unregistered");
-            }
-          }
-          LOG.info("Terminated Monitoring Thread");
-        }
-      } catch (Exception e) {
-        LOG.info("Highscore monitor failed: " + e.getMessage(), e);
-      } finally {
-        LOG.info(Thread.currentThread().getName() + " terminated.");
-      }
-    });
-    monitorThread.start();
+//    monitorThread = new Thread(() -> {
+//      try {
+//        Thread.currentThread().setName("Highscore Monitor Thread (" + highscoreFile.getName() + ")");
+//        LOG.info("Launched \"Highscore Monitor Thread (" + highscoreFile.getName() + ")\"");
+//
+//        final Path path = highscoreFile.getParentFile().toPath();
+//        try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
+//          final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+//          while (running.get()) {
+//            final WatchKey wk = watchService.take();
+//            for (WatchEvent<?> event : wk.pollEvents()) {
+//              //we only register "ENTRY_MODIFY" so the context is always a Path.
+//              final Path changed = (Path) event.context();
+//              if (changed.endsWith(highscoreFile.getName())) {
+////                LOG.info("Highscore monitor: " + highscoreFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
+//              }
+//            }
+//            // reset the key
+//            boolean valid = wk.reset();
+//            if (!valid) {
+//              LOG.info("Key has been unregistered");
+//            }
+//          }
+//          LOG.info("Terminated Monitoring Thread");
+//        }
+//      } catch (Exception e) {
+//        LOG.info("Highscore monitor failed: " + e.getMessage(), e);
+//      } finally {
+//        LOG.info(Thread.currentThread().getName() + " terminated.");
+//      }
+//    });
+//    monitorThread.start();
   }
 }

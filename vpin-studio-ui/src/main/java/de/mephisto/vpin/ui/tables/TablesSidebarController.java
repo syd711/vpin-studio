@@ -343,7 +343,6 @@ public class TablesSidebarController implements Initializable {
   @FXML
   private void onPrefsPopper() {
     PreferencesController.open("validators-screens");
-
   }
 
   @FXML
