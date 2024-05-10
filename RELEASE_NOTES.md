@@ -10,6 +10,7 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/volume-control.png" width="400" />
 
 - **Table Validators**: Added validator for outdated recordings. //TODO check date
+- **Table Management / Backglass Section**: Added "Delete" button for backglasses.
 
 ### Bugfixes
 

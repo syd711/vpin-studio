@@ -1,6 +1,5 @@
-package de.mephisto.vpin.ui.tables;
+package de.mephisto.vpin.restclient.util;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.apache.commons.io.FilenameUtils;
@@ -18,6 +17,12 @@ public class UploaderAnalysis<T> {
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
   private final static List<String> musicSuffixes = Arrays.asList("mp3");
+
+  public final static String PAL_SUFFIX = "pal";
+  public final static String VNI_SUFFIX = "vni";
+  public final static String PAC_SUFFIX = "pac";
+  public final static String SERUM_SUFFIX = "cRZ";
+
 
   private final GameRepresentation game;
   private final File file;

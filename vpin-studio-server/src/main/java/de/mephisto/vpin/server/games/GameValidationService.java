@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -447,7 +448,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         break;
       }
       case serum: {
-        String name = game.getRom() + AltColorArchiveAnalyzer.SERUM_SUFFIX;
+        String name = game.getRom() + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }

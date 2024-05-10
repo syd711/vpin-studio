@@ -3,10 +3,13 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
@@ -25,10 +28,12 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -107,6 +112,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private Button uploadBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private VBox dataBox;
 
   @FXML
@@ -178,6 +186,34 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onBackglassManager() {
     TableDialogs.openDirectB2sManagerDialog(tablesSidebarController);
+  }
+
+
+  @FXML
+  private void onDelete(ActionEvent e) {
+    try {
+      if (this.game.isPresent()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        if (gameRepresentation.isDirectB2SAvailable()) {
+          String name = FilenameUtils.getBaseName(gameRepresentation.getGameFileName());
+          String fileName = name + ".directb2s";
+          GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(gameRepresentation.getEmulatorId());
+          File gameFile = new File(gameEmulator.getTablesDirectory(), gameRepresentation.getGameFileName());
+          File backglassFile = new File(gameFile.getParentFile(), fileName);
+
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + fileName + "\"?", null, "Delete");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            DirectB2S directB2S = new DirectB2S();
+            directB2S.setEmulatorId(gameRepresentation.getEmulatorId());
+            directB2S.setFileName(backglassFile.getAbsolutePath());
+            client.getBackglassServiceClient().deleteBackglass(directB2S);
+            EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+          }
+        }
+      }
+    } catch (Exception ex) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
+    }
   }
 
   @FXML
@@ -339,6 +375,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
+    deleteBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
@@ -436,7 +473,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
-    if(preferenceType.equals(PreferenceType.backglassServer)) {
+    if (preferenceType.equals(PreferenceType.backglassServer)) {
       this.setGame(this.game);
     }
   }

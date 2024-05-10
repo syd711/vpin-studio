@@ -82,7 +82,8 @@ public class TableDialogs {
           tablesSidebarController.getTablesController().onReload();
         }
       }
-    } else {
+    }
+    else {
       boolean uploaded = TableDialogs.openRomUploadDialog(file);
       if (uploaded) {
         tablesSidebarController.getTablesController().onReload();
@@ -107,10 +108,16 @@ public class TableDialogs {
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        String analyze = UploadAnalysisDispatcher.analyzeArchive(file, game, AssetType.DIRECTB2S);
+        String analyze = null;
+        String suffix = FilenameUtils.getExtension(file.getName());
+        if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
+          analyze = UploadAnalysisDispatcher.analyzeArchive(file, game, AssetType.DIRECTB2S);
+        }
+
         if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        } else {
+        }
+        else {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
           ProgressDialog.createProgressDialog(model);
         }
@@ -137,7 +144,8 @@ public class TableDialogs {
 
           if (!StringUtils.isEmpty(analyze)) {
             WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-          } else {
+          }
+          else {
             DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
             ProgressDialog.createProgressDialog(model);
           }
@@ -160,7 +168,8 @@ public class TableDialogs {
         String analyze = IniArchiveAnalyzer.analyze(file);
         if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        } else {
+        }
+        else {
 
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
           ProgressDialog.createProgressDialog(model);

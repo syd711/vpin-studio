@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -20,8 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer.*;
 
 /**
  *
@@ -81,9 +80,9 @@ public class AltColorService implements InitializingBean {
       altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
       AltColorTypes type = AltColorTypes.mame;
-      Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAC_SUFFIX)).findFirst();
-      Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(PAL_SUFFIX)).findFirst();
-      Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(SERUM_SUFFIX)).findFirst();
+      Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.PAC_SUFFIX)).findFirst();
+      Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.PAL_SUFFIX)).findFirst();
+      Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.SERUM_SUFFIX)).findFirst();
 
       if (pacFile.isPresent()) {
         altColor.setModificationDate(new Date(pacFile.get().lastModified()));
@@ -119,7 +118,7 @@ public class AltColorService implements InitializingBean {
       if (name.endsWith(".zip")) {
         AltColorUtil.unzip(out, folder);
       }
-      else if (name.endsWith(PAC_SUFFIX)) {
+      else if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"));
         } catch (IOException e) {
@@ -127,7 +126,7 @@ public class AltColorService implements InitializingBean {
           return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
         }
       }
-      else if (name.endsWith(PAL_SUFFIX)) {
+      else if (name.endsWith(UploaderAnalysis.PAL_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"));
         } catch (IOException e) {
@@ -135,7 +134,7 @@ public class AltColorService implements InitializingBean {
           return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
         }
       }
-      else if (name.endsWith(VNI_SUFFIX)) {
+      else if (name.endsWith(UploaderAnalysis.VNI_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"));
         } catch (IOException e) {
@@ -143,9 +142,9 @@ public class AltColorService implements InitializingBean {
           return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
         }
       }
-      else if (name.endsWith(SERUM_SUFFIX)) {
+      else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + SERUM_SUFFIX));
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX));
         } catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
