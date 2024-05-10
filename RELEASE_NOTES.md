@@ -1,4 +1,32 @@
-## Hotfix 2.18.1
+## 2.18.3
+
+- **Highscore Cards**: Re-enabled the custom color picker for the card designer. I've hidden the link to this picker before because it has some focus issues, but it's better to have a bad solution for custom colors than nothing.
+- **Highscore Cards**: Converted template name in the overview list into buttons so that templates can be edited directly.
+- **Table Management / PinUP Popper Media Section**: Fixed gear icon button so that it navigates to the media settings.
+- **Table Management / Asset Manager**: Changed asset preview so that a regular selection will preview the Popper asset, no double-clicking required anymore.
+- **Table Management / Asset Manager Dialog**: Fixed previous/next buttons and table selection that broke when introducing the asset manager view.
+- **Pause Menu**: Fixed configuration issues and improved error handling.
+- **Asset Management**: Fixed preview for playfield and loading videos when running in portrait mode.
+- **Table Data Manager**: Fixed "Fix Version" button + action.
+- **Table Asset Management**: Forcing audio out to play only one audio file at a time.
+- **Table Asset Management**: Improved text of the validator message that is shown when assets do not match with the screen validator configuration.
+- **Window Positioning**: Fixed wrong window positioning when opened after the Studio has been closed being minimized.
+
+## 2.18.2
+
+- **Server Settings**: Added option to keep the imported/exported .vbs files when script editing is started. The option is enabled by default.
+- **Table Management**: Fixed context menu action "Reset VPS Updates".
+- **Table Management / Popper Media View**: Added delete button to the on-hover actions of the "PinUP Popper Media" section.
+- **Highscore Cards**: Fixed error in card generator that for non-raw highscore cards all scores have been rendered. Usually only 3x scores have been displayed here. I've added a configurable value now so you can select this on your own.
+- **Highscore Cards**: Fixed missing refresh of the "Popper Background" tab panel after applying templates.
+- **Table Management / VPin MAME View**: Fixed possible breaking of settings when double-clicking the reload the button.
+- **Popper Table/Launch Events**: Fixed listening to the table start and exit events so that these are properly triggered for tables that are located in subfolders too. Highscore cards for these tables have not been updated on exit.
+- **VPBM**: Added latest updates (including orphaned content finder) and added entry to context menu in table overview.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/orphaned-children.png" width="500" />
+
+ 
+## 2.18.1
 
 - Fixed critical error caused by the new asset validation and files with unknown mime types. 
 

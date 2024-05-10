@@ -273,15 +273,6 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
-                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                          <Button fx:id="previewBtn" layoutX="398.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPreview" text="Preview" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" iconSize="18" />
-                                             </graphic>
-                                          </Button>
                                       </items>
                                     </ToolBar>
                                  </top>
@@ -295,15 +286,7 @@
                                  <BorderPane.margin>
                                     <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
                                  </BorderPane.margin>
-                                 <HBox>
-                                    <children>
-                                       <Label text="Double-click to preview">
-                                          <HBox.margin>
-                                             <Insets bottom="12.0" left="210.0" />
-                                          </HBox.margin>
-                                       </Label>
-                                    </children>
-                                 </HBox>
+                                 <HBox />
                               </VBox>
                            </bottom>
                         </BorderPane>

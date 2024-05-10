@@ -6,10 +6,19 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
   private boolean vpxKeepDisplayNames;
   private boolean backupTableOnOverwrite = true;
+  private boolean keepVbsFiles = true;
   private boolean launchPopperOnExit = false;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+
+  public boolean isKeepVbsFiles() {
+    return keepVbsFiles;
+  }
+
+  public void setKeepVbsFiles(boolean keepVbsFiles) {
+    this.keepVbsFiles = keepVbsFiles;
+  }
 
   public boolean isBackupTableOnOverwrite() {
     return backupTableOnOverwrite;

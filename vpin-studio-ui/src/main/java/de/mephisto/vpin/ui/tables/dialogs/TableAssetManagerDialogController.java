@@ -35,6 +35,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -44,6 +45,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -79,9 +81,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private BorderPane serverAssetMediaPane;
-
-  @FXML
-  private Button previewBtn;
 
   @FXML
   private Button downloadBtn;
@@ -434,7 +433,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+          Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+          boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
           new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
         }
       } catch (Exception e) {
@@ -543,7 +543,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Wheel, screenWheel, t1, false));
     screenWheel.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Wheel, screenWheel, true, true));
 
-    previewBtn.setDisable(true);
     downloadBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
@@ -557,7 +556,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
       tablesCombo.getItems().addAll(gameRepresentations);
       tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        searchField.setText("");
+        this.setGame(this.overviewController, t1, PopperScreen.Audio);
       });
     }
 
@@ -593,7 +592,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
         disposeServerAssetPreview();
-        previewBtn.setDisable(tableAsset == null);
         downloadBtn.setVisible(false);
 
         Label label = new Label("No asset preview activated.");
@@ -603,16 +601,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
 
     this.serverAssetsList.setOnMouseClicked(click -> {
-      if (click.getClickCount() == 2) {
-        onPreview();
-      }
+      onPreview();
     });
 
 
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
-        boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
 
         if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();

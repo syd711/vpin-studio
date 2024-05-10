@@ -26,6 +26,7 @@ public class CardTemplate extends JsonSettings {
   private String fontColor = "#FFFFFF";
   private boolean grayScale = false;
   private boolean rawScore = true;
+  private int maxScores = 0;
 
   private String scoreFontName = "Monospaced";
   private int scoreFontSize = 90;
@@ -56,6 +57,14 @@ public class CardTemplate extends JsonSettings {
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
+
+  public int getMaxScores() {
+    return maxScores;
+  }
+
+  public void setMaxScores(int maxScores) {
+    this.maxScores = maxScores;
+  }
 
   public int getCanvasBorderRadius() {
     return canvasBorderRadius;

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -44,27 +45,36 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
-    String url = API + "poppermedia/" + id + "/" + screen.name();
-    if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
-      byte[] bytes = getRestClient().readBinary(url);
-      if (bytes == null) {
-        bytes = new byte[]{};
-      }
-      client.getImageCache().put(url, bytes);
-    }
-
-    if (screen.equals(PopperScreen.Wheel)) {
-      byte[] imageBytes = client.getImageCache().get(url);
-      if (imageBytes == null || imageBytes.length == 0) {
+  @Nullable
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
+    try {
+      if (screen == null) {
         return null;
       }
-      return new ByteArrayInputStream(imageBytes);
-    }
 
-    byte[] bytes = getRestClient().readBinary(url);
-    if (bytes != null) {
-      return new ByteArrayInputStream(bytes);
+      String url = API + "poppermedia/" + id + "/" + screen.name();
+      if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
+        byte[] bytes = getRestClient().readBinary(url);
+        if (bytes == null) {
+          bytes = new byte[]{};
+        }
+        client.getImageCache().put(url, bytes);
+      }
+
+      if (screen.equals(PopperScreen.Wheel)) {
+        byte[] imageBytes = client.getImageCache().get(url);
+        if (imageBytes == null || imageBytes.length == 0) {
+          return null;
+        }
+        return new ByteArrayInputStream(imageBytes);
+      }
+
+      byte[] bytes = getRestClient().readBinary(url);
+      if (bytes != null) {
+        return new ByteArrayInputStream(bytes);
+      }
+    } catch (Exception e) {
+      LOG.error("Error reading game media item for " + id + " and " + screen + ": " + e.getMessage(), e);
     }
     return null;
   }

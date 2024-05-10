@@ -185,6 +185,6 @@ public class GameValidationTexts {
   }
 
   private static String invalidAssetMessage(String name) {
-    return "Invalid \"" + name + "\" screen setup.";
+    return "Assets for screen \"" + name + "\" do not match with the configured screen validator configuration.";
   }
 }

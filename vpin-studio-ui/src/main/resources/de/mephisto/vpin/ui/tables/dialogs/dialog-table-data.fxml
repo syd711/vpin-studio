@@ -156,14 +156,29 @@
                                                             <Insets left="3.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
-                                                         </graphic>
-                                                      </Button>
+                                                      <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                         <children>
+                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                                                               </graphic>
+                                                            </Button>
+                                                            <Label>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the PinUP Popper database." wrapText="true" />
+                                                               </tooltip>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
                                                       <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
                                                          <children>
                                                             <Label>

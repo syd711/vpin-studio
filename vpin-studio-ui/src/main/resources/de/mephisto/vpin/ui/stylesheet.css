@@ -1179,9 +1179,12 @@
     -fx-border-radius: 5px; /* Rounded corners */
 }
 
+/**
+ * Color Picker custom color hiding
 .color-palette .hyperlink, .color-palette .separator {
     visibility: hidden;
 }
 .color-palette {
     -fx-padding: 15 15 -30 15;
 }
+ */

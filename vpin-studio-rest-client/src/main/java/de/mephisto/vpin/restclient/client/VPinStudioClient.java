@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -335,7 +336,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
   }
 
