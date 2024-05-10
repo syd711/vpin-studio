@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -93,7 +92,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    String analysis = UploadAnalysisDispatcher.analyzeArchive(this.selection, this.game, AssetType.PUP_PACK);
+    String analysis = UploadAnalysisDispatcher.validateArchive(this.selection, this.game, AssetType.PUP_PACK);
 
     if (analysis != null) {
       result = false;

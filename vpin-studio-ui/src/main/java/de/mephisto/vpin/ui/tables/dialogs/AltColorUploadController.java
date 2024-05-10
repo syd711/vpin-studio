@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -103,18 +104,21 @@ public class AltColorUploadController implements Initializable, DialogController
       this.cancelBtn.setDisable(true);
 
       Platform.runLater(() -> {
-        String analyze = UploadAnalysisDispatcher.analyzeArchive(null, selection, game);
+        String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.ALT_COLOR);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);
         this.cancelBtn.setDisable(false);
 
         if (analyze != null) {
+          this.fileNameField.setText("");
+          this.uploadBtn.setDisable(true);
           result = false;
           WidgetFactory.showAlert(Studio.stage, analyze);
           return;
         }
         this.uploadBtn.setDisable(false);
+
       });
     }
     else {

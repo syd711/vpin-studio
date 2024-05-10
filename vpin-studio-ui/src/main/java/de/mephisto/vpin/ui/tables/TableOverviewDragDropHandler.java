@@ -105,7 +105,7 @@ public class TableOverviewDragDropHandler {
           loaderStack.getChildren().remove(dndLoadingOverlay);
 
           GameRepresentation selection = tableOverviewController.getSelection();
-          UploadAnalysisDispatcher.dispatch(tablesController, files.get(0), selection);
+          UploadAnalysisDispatcher.dispatch(tablesController.getTablesSideBarController(), files.get(0), selection);
         });
       }
     });

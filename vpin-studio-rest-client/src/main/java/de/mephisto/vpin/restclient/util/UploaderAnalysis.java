@@ -80,7 +80,13 @@ public class UploaderAnalysis<T> {
         if (isAltSound()) {
           return null;
         }
-        return "This archive is not a valid altsound package.";
+        return "This archive is not a valid ALT sound package.";
+      }
+      case ALT_COLOR: {
+        if (isAltColor()) {
+          return null;
+        }
+        return "This archive is not a valid ALT color package.";
       }
       case MUSIC: {
         if (isMusic()) {
@@ -101,7 +107,7 @@ public class UploaderAnalysis<T> {
   }
 
   public boolean isMatchingRomFolderRequired(AssetType assetType) {
-    return assetType.equals(AssetType.ALT_SOUND) || assetType.equals(AssetType.PUP_PACK) || assetType.equals(AssetType.VNI) || assetType.equals(AssetType.CRZ) || assetType.equals(AssetType.PAL) || assetType.equals(AssetType.PAC);
+    return assetType.equals(AssetType.ALT_SOUND) || assetType.equals(AssetType.PUP_PACK);
   }
 
   public boolean isMatchingRomFolderAvailable() {

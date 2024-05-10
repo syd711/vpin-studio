@@ -45,6 +45,11 @@ public class AltColorResource {
     return new AltColor();
   }
 
+  @DeleteMapping("{id}")
+  public boolean delete(@PathVariable("id") int id) {
+    return altColorService.delete(gameService.getGame(id));
+  }
+
   @PostMapping("/upload")
   public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam(value = "uploadType", required = false) String uploadType,

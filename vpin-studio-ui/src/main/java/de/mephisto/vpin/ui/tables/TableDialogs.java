@@ -111,7 +111,7 @@ public class TableDialogs {
         String analyze = null;
         String suffix = FilenameUtils.getExtension(file.getName());
         if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
-          analyze = UploadAnalysisDispatcher.analyzeArchive(file, game, AssetType.DIRECTB2S);
+          analyze = UploadAnalysisDispatcher.validateArchive(file, game, AssetType.DIRECTB2S);
         }
 
         if (!StringUtils.isEmpty(analyze)) {
@@ -139,7 +139,7 @@ public class TableDialogs {
           String suffix = FilenameUtils.getExtension(file.getName());
           String analyze = null;
           if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
-            analyze = UploadAnalysisDispatcher.analyzeArchive(null, file, game);
+            analyze = UploadAnalysisDispatcher.validateArchive(null, file, game);
           }
 
           if (!StringUtils.isEmpty(analyze)) {
@@ -294,11 +294,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+  public static boolean openAltColorUploadDialog(TablesSidebarController tablesController, GameRepresentation game, File file) {
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
+    controller.setTableSidebarController(tablesController);
     controller.setFile(file);
     stage.showAndWait();
 

@@ -275,7 +275,6 @@ public class GameService implements InitializingBean {
         }
       }
 
-
       if (descriptor.isDeleteAltColor()) {
         if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
           success = false;

@@ -18,7 +18,7 @@ import java.io.File;
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
 
-  public static void dispatch(@NonNull TablesController tablesController, @NonNull File file, @Nullable GameRepresentation game) {
+  public static void dispatch(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game) {
     String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
     AssetType assetType = AssetType.valueOf(extension.toUpperCase());
     if (assetType == null) {
@@ -27,16 +27,16 @@ public class UploadAnalysisDispatcher {
     }
 
     if (extension.equals("zip")) {
-      analyzeArchive(tablesController, file, game);
+      validateArchive(tablesController, file, game);
     } else {
       dispatchBySuffix(tablesController, file, game, assetType);
     }
   }
 
-  private static void dispatchBySuffix(@Nullable TablesController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+  private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(tablesController.getTablesSideBarController(), file);
+        TableDialogs.onRomUploads(tablesController, file);
         return;
       }
       case VPX: {
@@ -52,7 +52,7 @@ public class UploadAnalysisDispatcher {
 
     switch (assetType) {
       case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openAltSoundUploadDialog(tablesController, game, file);
         return;
       }
       case DIRECTB2S: {
@@ -68,19 +68,19 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case PAL: {
-        TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
         break;
       }
       case VNI: {
-        TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
         break;
       }
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
         break;
       }
       case PAC: {
-        TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
         break;
       }
       case MUSIC: {
@@ -88,7 +88,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case PUP_PACK: {
-        TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), game, file);
+        TableDialogs.openPupPackUploadDialog(tablesController, game, file);
         break;
       }
       default: {
@@ -111,7 +111,7 @@ public class UploadAnalysisDispatcher {
     return extension.equalsIgnoreCase("zip") || extension.equalsIgnoreCase("7z");
   }
 
-  public static String analyzeArchive(File file, GameRepresentation game, AssetType assetType) {
+  public static String validateArchive(File file, GameRepresentation game, AssetType assetType) {
     try {
       UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
       ProgressDialog.createProgressDialog(model);
@@ -123,7 +123,7 @@ public class UploadAnalysisDispatcher {
     return null;
   }
 
-  public static String analyzeArchive(@Nullable TablesController tablesController, File file, GameRepresentation game) {
+  public static String validateArchive(@Nullable TablesSidebarController tablesSidebarController, File file, GameRepresentation game) {
     try {
       UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
       ProgressDialog.createProgressDialog(model);
@@ -132,7 +132,7 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          dispatchBySuffix(tablesController, file, game, singleAssetType);
+          dispatchBySuffix(tablesSidebarController, file, game, singleAssetType);
         } else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
         }

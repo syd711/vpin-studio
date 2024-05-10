@@ -27,6 +27,10 @@ public class AltColorServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "altcolor/" + gameId, AltColor.class);
   }
 
+  public boolean delete(int gameId) {
+    return getRestClient().delete(API + "altcolor/" + gameId);
+  }
+
   public JobExecutionResult uploadAltColor(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altcolor/upload";

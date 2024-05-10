@@ -11,6 +11,7 @@ public enum AssetType {
   PAC,
   CRZ,
   VNI,
+  ALT_COLOR,
   ALT_SOUND,
   PUP_PACK,
   DMD_PACK,

@@ -43,6 +43,10 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "altsound/set/" + gameId + "/" + b, Boolean.class);
   }
 
+  public boolean delete(int gameId) {
+    return getRestClient().delete(API + "altsound/" + gameId);
+  }
+
   public JobExecutionResult uploadAltSound(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";

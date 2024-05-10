@@ -43,6 +43,12 @@ public class PupPacksResource {
   @Autowired
   private GameValidationService validationService;
 
+
+  @DeleteMapping("{id}")
+  public boolean delete(@PathVariable("id") int id) {
+    return pupPacksService.delete(gameService.getGame(id));
+  }
+
   @GetMapping("/menu")
   public PupPackRepresentation getPupPack() {
     PupPack pupPack = pupPacksService.getMenuPupPack();

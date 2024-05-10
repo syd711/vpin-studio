@@ -49,6 +49,9 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Button reloadBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private Button openBtn;
 
   @FXML
@@ -132,6 +135,20 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarPUPPackController() {
+  }
+
+  @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete PUP pack for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      deleteBtn.setDisable(true);
+      new Thread(() -> {
+        Studio.client.getPupPackService().delete(this.game.get().getId());
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+        });
+      }).start();
+    }
   }
 
   @FXML
@@ -274,6 +291,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
     openBtn.setDisable(true);
 
     txtsCombo.getItems().clear();
@@ -314,6 +332,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       emptyDataBox.setVisible(!pupPackAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      deleteBtn.setDisable(!pupPackAvailable);
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {

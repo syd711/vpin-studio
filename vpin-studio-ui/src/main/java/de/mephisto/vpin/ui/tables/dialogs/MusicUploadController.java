@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.MusicArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.ui.Studio;
@@ -74,7 +73,7 @@ public class MusicUploadController implements Initializable, DialogController {
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null && this.selection.exists()) {
-      String analyze = UploadAnalysisDispatcher.analyzeArchive(this.selection, null, AssetType.MUSIC);
+      String analyze = UploadAnalysisDispatcher.validateArchive(this.selection, null, AssetType.MUSIC);
       if (analyze == null) {
         this.fileNameField.setText(this.selection.getAbsolutePath());
       } else {

@@ -44,6 +44,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   private Button restoreBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private Button uploadBtn;
 
   @FXML
@@ -99,6 +102,15 @@ public class TablesSidebarAltSoundController implements Initializable {
   private void onUpload() {
     if (game.isPresent()) {
       TableDialogs.openAltSoundUploadDialog(tablesSidebarController, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALTSound package for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Studio.client.getAltSoundService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
   }
 
@@ -174,6 +186,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
+    deleteBtn.setDisable(true);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -191,6 +204,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
 
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");
@@ -208,6 +222,7 @@ public class TablesSidebarAltSoundController implements Initializable {
       emptyDataBox.setVisible(!altSoundAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      deleteBtn.setDisable(!altSoundAvailable);
       altSoundBtn.setDisable(!altSoundAvailable);
       restoreBtn.setDisable(!altSoundAvailable);
       enabledCheckbox.setDisable(!altSoundAvailable);

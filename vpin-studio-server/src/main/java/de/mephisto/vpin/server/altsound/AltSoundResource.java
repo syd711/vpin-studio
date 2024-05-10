@@ -54,6 +54,12 @@ public class AltSoundResource {
     return new AltSound();
   }
 
+  @DeleteMapping("{id}")
+  public boolean delete(@PathVariable("id") int id) {
+    return altSoundService.delete(gameService.getGame(id));
+  }
+
+
   @PostMapping("/save/{id}")
   public AltSound save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
     Game game = gameService.getGame(id);

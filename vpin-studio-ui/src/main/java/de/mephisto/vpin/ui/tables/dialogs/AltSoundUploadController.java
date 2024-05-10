@@ -99,13 +99,14 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      String analyze = UploadAnalysisDispatcher.analyzeArchive(selection, game, AssetType.ALT_SOUND);
+      String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.ALT_SOUND);
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);
       this.cancelBtn.setDisable(false);
 
       if (analyze != null) {
+        this.uploadBtn.setDisable(true);
         result = false;
         WidgetFactory.showAlert(Studio.stage, analyze);
         return;

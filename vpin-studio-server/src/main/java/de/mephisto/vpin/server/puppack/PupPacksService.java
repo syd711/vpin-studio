@@ -47,6 +47,17 @@ public class PupPacksService implements InitializingBean {
     return loadPupPack(menuPupPackFolder);
   }
 
+  public boolean delete(@NonNull Game game) {
+    PupPack pupPack = getPupPack(game);
+    if (pupPack != null) {
+      if(pupPack.delete()) {
+        LOG.info("Deleting " + pupPack.getPupPackFolder().getAbsolutePath());
+        clearCache();
+      }
+    }
+    return false;
+  }
+
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackFolders.containsKey(game.getPupPackName().toLowerCase())) {
