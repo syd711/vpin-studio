@@ -36,9 +36,9 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
     try {
-      fileInputStream.close();
       zis.closeEntry();
       zis.close();
+      fileInputStream.close();
     } catch (IOException e) {
       LOG.error("Error finalizing zip file: " + e.getMessage());
     }

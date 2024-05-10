@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -10,7 +11,6 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -24,8 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -143,9 +141,11 @@ public class DirectB2SResource {
 
       if (suffix.equalsIgnoreCase("directb2s")) {
         FileUtils.copyFile(tempFile, directB2SFile);
+        LOG.info("Written " + directB2SFile.getAbsolutePath());
       }
       else if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("zip")) {
         PackageUtil.unpackTargetFile(tempFile, directB2SFile, ".directb2s");
+        LOG.info("Written from archive " + directB2SFile.getAbsolutePath());
       }
       else {
         throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");

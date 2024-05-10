@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -17,7 +18,6 @@ import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.FilenameUtils;

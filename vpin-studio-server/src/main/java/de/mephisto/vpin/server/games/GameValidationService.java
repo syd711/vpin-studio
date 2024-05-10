@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
@@ -10,7 +9,6 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;

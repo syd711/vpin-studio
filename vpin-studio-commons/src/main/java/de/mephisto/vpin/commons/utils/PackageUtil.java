@@ -1,14 +1,14 @@
-package de.mephisto.vpin.server.util;
-
-import de.mephisto.vpin.commons.utils.RarUtil;
-import de.mephisto.vpin.commons.utils.ZipUtil;
-import org.springframework.lang.NonNull;
+package de.mephisto.vpin.commons.utils;
 
 import java.io.File;
 
 public class PackageUtil {
+  public static boolean isSupportedArchive(String suffix) {
+    return suffix.equalsIgnoreCase("zip");
+  }
 
-  public static String contains(@NonNull File file, @NonNull String suffix) {
+
+  public static String contains(File file, String suffix) {
     if(file.getName().toLowerCase().endsWith(".zip")) {
       return ZipUtil.contains(file, suffix);
     }

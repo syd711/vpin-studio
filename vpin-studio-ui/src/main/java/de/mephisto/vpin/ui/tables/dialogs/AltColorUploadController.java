@@ -1,11 +1,12 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -17,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,14 +95,15 @@ public class AltColorUploadController implements Initializable, DialogController
   private void refreshSelection() {
     this.uploadBtn.setDisable(selection == null);
 
-    if(selection.getName().toLowerCase().endsWith(".zip")) {
+    String suffix = FilenameUtils.getExtension(selection.getName());
+    if (PackageUtil.isSupportedArchive(suffix)) {
       this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
       this.fileNameField.setDisable(true);
       this.fileBtn.setDisable(true);
       this.cancelBtn.setDisable(true);
 
       Platform.runLater(() -> {
-        String analyze = AltColorArchiveAnalyzer.analyze(selection);
+        String analyze = UploadAnalysisDispatcher.analyzeArchive(null, selection, game);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);
@@ -148,7 +151,7 @@ public class AltColorUploadController implements Initializable, DialogController
 
   public void setFile(File file) {
     this.selection = file;
-    if(selection != null) {
+    if (selection != null) {
       Platform.runLater(() -> {
         refreshSelection();
       });

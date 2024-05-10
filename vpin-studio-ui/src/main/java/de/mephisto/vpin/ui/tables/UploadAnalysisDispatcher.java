@@ -32,7 +32,7 @@ public class UploadAnalysisDispatcher {
     }
   }
 
-  private static void dispatchBySuffix(@NonNull TablesController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+  private static void dispatchBySuffix(@Nullable TablesController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(tablesController.getTablesSideBarController(), file);
@@ -122,7 +122,7 @@ public class UploadAnalysisDispatcher {
     return null;
   }
 
-  public static String analyzeArchive(TablesController tablesController, File file, GameRepresentation game) {
+  public static String analyzeArchive(@Nullable TablesController tablesController, File file, GameRepresentation game) {
     try {
       UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
       ProgressDialog.createProgressDialog(model);
@@ -135,6 +135,8 @@ public class UploadAnalysisDispatcher {
         } else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
         }
+      } else {
+        WidgetFactory.showInformation(Studio.stage, "A matching asset type could not be determined for this file.", null);
       }
     } catch (Exception e) {
       LOG.error("Error creating UploadDispatchAnalysisZipProgressModel: " + e.getMessage(), e);

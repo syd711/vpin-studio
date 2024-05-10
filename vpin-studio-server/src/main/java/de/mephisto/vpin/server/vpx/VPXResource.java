@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -11,7 +12,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
-import de.mephisto.vpin.server.util.PackageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
@@ -290,6 +291,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           client.getBackglassServiceClient().deleteBackglass(selectedItem);
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           onReload();
         }
       }
@@ -331,8 +335,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
             if (backglass == null || empty) {
               setText(null);
               setGraphic(null);
-            }
-            else {
+            } else {
               setText(backglass.getName());
 
               if (!backglass.isVpxAvailable()) {
@@ -528,8 +531,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     if (this.directb2sList.getItems().isEmpty()) {
       this.directb2sList.getSelectionModel().clearSelection();
-    }
-    else {
+    } else {
       this.directb2sList.getSelectionModel().select(0);
     }
   }
@@ -549,8 +551,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (emuIds.size() != client.getPinUPPopperService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
-    }
-    else {
+    } else {
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
     }
 
@@ -621,8 +622,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         gameFilenameLabel.setText(game.getGameFileName());
         dataManagerBtn.setDisable(false);
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
-      }
-      else {
+      } else {
         //VPX is not installed, but available!
         if (newValue.isVpxAvailable()) {
           gameLabel.setText("?");
@@ -653,8 +653,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         thumbnailImage.setImage(image);
         downloadBackglassBtn.setDisable(false);
         resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-      }
-      else {
+      } else {
         thumbnailImage.setImage(null);
         resolutionLabel.setText("Failed to read image data.");
       }
@@ -665,8 +664,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         dmdThumbnailImage.setImage(image);
         downloadDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-      }
-      else {
+      } else {
         dmdResolutionLabel.setText("No DMD background available.");
       }
 
@@ -710,8 +708,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.tableSettings = tmpTableSettings;
 
       setSaveEnabled(true);
-    }
-    else {
+    } else {
       tmpTableSettings = null;
     }
   }
