@@ -107,7 +107,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public JobExecutionResult uploadDirectB2SFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECT_B2S, listener), JobExecutionResult.class);
+      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DIRECTB2S, listener), JobExecutionResult.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);

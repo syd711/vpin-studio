@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.ui.util.DMDBundleAnalyzer;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.PupPackAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

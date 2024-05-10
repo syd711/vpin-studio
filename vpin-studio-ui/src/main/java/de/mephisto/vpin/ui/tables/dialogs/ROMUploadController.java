@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -80,6 +81,10 @@ public class ROMUploadController implements Initializable, DialogController {
         new FileChooser.ExtensionFilter("ROM", "*.zip"));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
+    refreshFileSelection();
+  }
+
+  private void refreshFileSelection() {
     if (this.selection != null && !this.selection.isEmpty()) {
       List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
       this.fileNameField.setText(String.join(", ", collect));
@@ -114,5 +119,12 @@ public class ROMUploadController implements Initializable, DialogController {
 
   public boolean uploadFinished() {
     return result;
+  }
+
+  public void setFile(File file) {
+    if(file != null) {
+      this.selection = Arrays.asList(file);
+      refreshFileSelection();
+    }
   }
 }

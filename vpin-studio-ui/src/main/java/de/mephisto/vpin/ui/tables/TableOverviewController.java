@@ -1077,7 +1077,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       try {
-        if (!value.getVpsUpdates().isEmpty()) {
+        if (!value.getVpsUpdates().isEmpty() && !StringUtils.isEmpty(value.getExtTableId())) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
 
           Label label = new Label();
@@ -1100,7 +1100,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           return new SimpleObjectProperty(label);
         }
       } catch (Exception e) {
-        LOG.error("Failed to render VPS update: " + e.getMessage());
+        LOG.error("Failed to render VPS update: " + e.getMessage(), e);
       }
       return new SimpleStringProperty("");
     });

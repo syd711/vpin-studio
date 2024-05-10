@@ -13,25 +13,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-abstract public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEntry> {
+public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEntry> {
   private final static Logger LOG = LoggerFactory.getLogger(UploadDispatchAnalysisZipProgressModel.class);
-  private final GameRepresentation game;
-  private final File file;
   private ZipEntry zipEntry;
   private final ZipInputStream zis;
   private final FileInputStream fileInputStream;
   private int size = 0;
 
+  private UploaderAnalysis<ZipEntry> uploaderAnalysis;
+
   public UploadDispatchAnalysisZipProgressModel(GameRepresentation game, File file) throws IOException {
     super("Analyzing Archive");
-    this.game = game;
-    this.file = file;
     ZipFile zipFile = new ZipFile(file);
     size = zipFile.size();
 
     fileInputStream = new FileInputStream(file);
     zis = new ZipInputStream(fileInputStream);
-    zipEntry = zis.getNextEntry();
+
+    uploaderAnalysis = new UploaderAnalysis<>(game, file, size);
   }
 
   @Override
@@ -59,11 +58,10 @@ abstract public class UploadDispatchAnalysisZipProgressModel extends ProgressMod
   public boolean hasNext() {
     try {
       zipEntry = zis.getNextEntry();
-      return zipEntry != null;
     } catch (IOException e) {
-      LOG.error("Error reading zip file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
-      return false;
+      throw new RuntimeException(e);
     }
+    return zipEntry != null;
   }
 
   @Override
@@ -79,11 +77,13 @@ abstract public class UploadDispatchAnalysisZipProgressModel extends ProgressMod
   @Override
   public void processNext(ProgressResultModel progressResultModel, ZipEntry next) {
     try {
-
+      uploaderAnalysis.analyze(next, next.getName(), next.isDirectory());
     } catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);
     }
   }
 
-  abstract protected void analyze(ZipEntry entry);
+  public UploaderAnalysis getAnalysis() {
+    return uploaderAnalysis;
+  }
 }

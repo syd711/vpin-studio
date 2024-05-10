@@ -48,6 +48,7 @@ public class DnDOverlayController implements Initializable {
 
   public void setGame(@Nullable GameRepresentation game) {
     if (game != null) {
+      tableTitleLabel.setVisible(true);
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {

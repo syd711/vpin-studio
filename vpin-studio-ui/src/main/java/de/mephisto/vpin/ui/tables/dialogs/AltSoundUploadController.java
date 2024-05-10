@@ -1,11 +1,13 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.AltSoundArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.tables.UploaderAnalysis;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -83,8 +85,7 @@ public class AltSoundUploadController implements Initializable, DialogController
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
       refreshSelection();
-    }
-    else {
+    } else {
       this.fileNameField.setText("");
     }
   }
@@ -99,7 +100,7 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      String analyze = AltSoundArchiveAnalyzer.analyze(selection);
+      String analyze = UploadAnalysisDispatcher.analyzeArchive(selection, game, AssetType.ALT_SOUND);
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);
@@ -140,11 +141,10 @@ public class AltSoundUploadController implements Initializable, DialogController
   }
 
   public void setFile(File file) {
-    this.selection = file;
-    if(selection != null) {
-      Platform.runLater(() -> {
-        refreshSelection();
-      });
+    if (file != null) {
+      this.selection = file;
+      this.fileNameField.setText(file.getAbsolutePath());
+      this.uploadBtn.setDisable(false);
     }
   }
 }

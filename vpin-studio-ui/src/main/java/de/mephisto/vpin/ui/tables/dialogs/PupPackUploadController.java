@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -76,7 +78,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select PUP Pack");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("PUP Pack", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("PUP Pack", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
@@ -91,17 +93,16 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getPupPackName(), "PUP Pack Analysis", this.selection));
+    String analysis = UploadAnalysisDispatcher.analyzeArchive(this.selection, this.game, AssetType.PUP_PACK);
 
-    if (!resultModel.getResults().isEmpty()) {
+    if (analysis != null) {
       result = false;
-      WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
+      WidgetFactory.showAlert(stage, "Invalid Pup Pack", analysis);
       this.fileNameField.setText("");
       this.fileBtn.setDisable(false);
       this.fileNameField.setDisable(false);
       this.cancelBtn.setDisable(false);
-    }
-    else {
+    } else {
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);
@@ -139,9 +140,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   public void setFile(File file, Stage stage) {
     this.selection = file;
     if (selection != null) {
-      Platform.runLater(() -> {
-        refreshSelection(stage);
-      });
+      this.uploadBtn.setDisable(false);
     }
   }
 }

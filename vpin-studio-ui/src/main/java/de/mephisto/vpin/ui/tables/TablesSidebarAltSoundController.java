@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.AltSoundFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
@@ -245,8 +244,5 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-
-    altSoundRoot.setOnDragOver(new FileDragEventHandler(altSoundRoot, true, "zip"));
-    altSoundRoot.setOnDragDropped(new AltSoundFileDropEventHandler(tablesSidebarController));
   }
 }

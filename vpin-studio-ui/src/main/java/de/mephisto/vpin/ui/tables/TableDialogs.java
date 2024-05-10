@@ -69,16 +69,20 @@ public class TableDialogs {
   }
 
   public static void onRomUploads(TablesSidebarController tablesSidebarController) {
+    onRomUploads(tablesSidebarController, null);
+  }
+
+  public static void onRomUploads(TablesSidebarController tablesSidebarController, File file) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        boolean uploaded = TableDialogs.openRomUploadDialog();
+        boolean uploaded = TableDialogs.openRomUploadDialog(file);
         if (uploaded) {
           tablesSidebarController.getTablesController().onReload();
         }
       }
     }
     else {
-      boolean uploaded = TableDialogs.openRomUploadDialog();
+      boolean uploaded = TableDialogs.openRomUploadDialog(file);
       if (uploaded) {
         tablesSidebarController.getTablesController().onReload();
       }
@@ -493,17 +497,23 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openRomUploadDialog() {
+  public static boolean openRomUploadDialog(File file) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
   public static boolean openMusicUploadDialog() {
+    return openMusicUploadDialog(null);
+  }
+
+  public static boolean openMusicUploadDialog(File file) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();

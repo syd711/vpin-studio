@@ -285,15 +285,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-//    List<ValidationState> validationStates = validateRecordings(game);
-//    if (!validationStates.isEmpty()) {
-//      result.add(validationStates.get(0));
-//      if (findFirst) {
-//        return result;
-//      }
-//    }
-
     List<ValidationState> validationStates = validateAltSound(game);
+    if (!validationStates.isEmpty()) {
+      result.add(validationStates.get(0));
+      if (findFirst) {
+        return result;
+      }
+    }
+
+    validationStates = validateRecordings(game);
     if (!validationStates.isEmpty()) {
       result.add(validationStates.get(0));
       if (findFirst) {
@@ -393,9 +393,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
               result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
             }
-            if (game.getGameFile().exists() && new Date(game.getGameFile().lastModified()).after(modified)) {
-              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
-            }
+//            if (game.getGameFile().exists() && new Date(game.getModified()).after(modified)) {
+//              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
+//            }
           }
         }
       }
