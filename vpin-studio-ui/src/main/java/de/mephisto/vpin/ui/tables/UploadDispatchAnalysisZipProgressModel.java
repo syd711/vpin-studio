@@ -40,7 +40,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
       zis.closeEntry();
       zis.close();
     } catch (IOException e) {
-      LOG.error("Error finalizing zip file: " + e.getMessage(), e);
+      LOG.error("Error finalizing zip file: " + e.getMessage());
     }
   }
 

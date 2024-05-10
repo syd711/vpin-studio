@@ -113,10 +113,10 @@ public class PupPacksResource {
       }
 
       String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-      File pupArchive = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
-      LOG.info("Uploading " + pupArchive.getAbsolutePath());
-      UploadUtil.upload(file, pupArchive);
-      JobExecutionResult jobExecutionResult = pupPacksService.installPupPack(game, pupArchive);
+      File pupTempArchive = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
+      LOG.info("Uploading " + pupTempArchive.getAbsolutePath());
+      UploadUtil.upload(file, pupTempArchive);
+      JobExecutionResult jobExecutionResult = pupPacksService.installPupPack(game, pupTempArchive);
       gameService.resetUpdate(gameId, VpsDiffTypes.pupPack);
       return jobExecutionResult;
     } catch (Exception e) {

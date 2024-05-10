@@ -50,14 +50,6 @@ public class UploaderAnalysis<T> {
       String fileName = name;
       if (fileName.contains("/")) {
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-
-        String path = fileName.substring(0, fileName.lastIndexOf("/"));
-        String[] split = path.split("/");
-        for (String s : split) {
-          if (!StringUtils.isEmpty(s) && !directories.contains(s)) {
-            directories.add(s);
-          }
-        }
       }
       fileNames.add(fileName);
     }
