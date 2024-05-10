@@ -140,6 +140,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   public void setFile(File file, Stage stage) {
     this.selection = file;
     if (selection != null) {
+      this.fileNameField.setText(file.getAbsolutePath());
       this.uploadBtn.setDisable(false);
     }
   }

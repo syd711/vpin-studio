@@ -42,15 +42,24 @@ public class UploaderAnalysis<T> {
     if (directory) {
       String[] split = name.split("/");
       for (String s : split) {
-        if (!StringUtils.isEmpty(s) && directories.contains(s)) {
+        if (!StringUtils.isEmpty(s) && !directories.contains(s)) {
           directories.add(s);
         }
       }
     } else {
-      if (name.contains("/")) {
-        name = name.substring(name.lastIndexOf("/") + 1);
+      String fileName = name;
+      if (fileName.contains("/")) {
+        fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+
+        String path = fileName.substring(0, fileName.lastIndexOf("/"));
+        String[] split = path.split("/");
+        for (String s : split) {
+          if (!StringUtils.isEmpty(s) && !directories.contains(s)) {
+            directories.add(s);
+          }
+        }
       }
-      fileNames.add(name);
+      fileNames.add(fileName);
     }
   }
 
@@ -82,6 +91,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive is not a valid music files.";
       }
+      case PUP_PACK: {
+        if (isPUPPack()) {
+          return null;
+        }
+        return "This archive is not a valid PUP pack.";
+      }
       default: {
         return null;
       }
@@ -89,7 +104,7 @@ public class UploaderAnalysis<T> {
   }
 
   public boolean isMatchingRomFolderRequired(AssetType assetType) {
-    return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.ALT_SOUND) || assetType.equals(AssetType.VNI) || assetType.equals(AssetType.CRZ) || assetType.equals(AssetType.PAL) || assetType.equals(AssetType.PAC);
+    return assetType.equals(AssetType.ALT_SOUND) || assetType.equals(AssetType.PUP_PACK) || assetType.equals(AssetType.VNI) || assetType.equals(AssetType.CRZ) || assetType.equals(AssetType.PAL) || assetType.equals(AssetType.PAC);
   }
 
   public boolean isMatchingRomFolderAvailable() {
@@ -153,17 +168,12 @@ public class UploaderAnalysis<T> {
       if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
         audioCount++;
       }
-
       if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
         return true;
       }
     }
 
-    if (audioCount > 0) {
-      return true;
-    }
-
-    return false;
+    return audioCount > 0;
   }
 
   private boolean isAltColor() {
