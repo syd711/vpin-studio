@@ -82,7 +82,6 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void handle(int keyCode, int rawCode) {
-    System.out.println(keyCode + ":" + rawCode);
     if (LEFT.contains(keyCode) || isVPXMapped(keyCode, rawCode, leftFlip)) {
       if (menuController.isAtStart()) {
         return;
