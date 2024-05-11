@@ -481,8 +481,6 @@ public class WidgetFactory {
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
-    boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
-
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
@@ -519,7 +517,7 @@ public class WidgetFactory {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
+      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, false);
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
