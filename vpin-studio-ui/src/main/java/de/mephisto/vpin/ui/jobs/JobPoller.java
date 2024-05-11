@@ -121,10 +121,15 @@ public class JobPoller {
       jobProgress.setVisible(!disable);
 
       if (jobMenu.isDisabled()) {
+        jobMenu.getStyleClass().remove("action-selected");
         jobMenu.setText("No active jobs");
+        jobMenu.setDisable(true);
       }
       else {
-        if(updatedJobList.size() == 1) {
+        if (!jobMenu.getStyleClass().contains("action-selected")) {
+          jobMenu.getStyleClass().add("action-selected");
+        }
+        if (updatedJobList.size() == 1) {
           jobMenu.setText(updatedJobList.size() + " active job");
         }
         else {

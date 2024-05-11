@@ -42,7 +42,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open PinUP Popper setup" />
@@ -113,7 +113,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open backglass server settings" />
@@ -279,7 +279,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open highscore settings" />
@@ -305,7 +305,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open VPin MAME settings" />

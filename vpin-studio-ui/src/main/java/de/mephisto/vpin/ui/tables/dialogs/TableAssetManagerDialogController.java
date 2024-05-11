@@ -433,8 +433,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-          boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
+          boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
           new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
         }
       } catch (Exception e) {

@@ -27,7 +27,7 @@
                   <Insets right="6.0" top="6.0" />
                </padding>
                <right>
-                  <HBox fx:id="toolbarHBox" alignment="BASELINE_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+                  <HBox fx:id="toolbarHBox" alignment="CENTER_LEFT" prefHeight="33.0" spacing="6.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="6.0" right="6.0" />
                      </BorderPane.margin>
@@ -102,7 +102,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="sil-settings" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Open Settings" />

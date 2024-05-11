@@ -20,6 +20,11 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class StateMananger implements NativeKeyListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
@@ -32,10 +37,10 @@ public class StateMananger implements NativeKeyListener {
 
   private final static StateMananger INSTANCE = new StateMananger();
 
-  private int LEFT;
-  private int RIGHT;
-  private int ENTER;
-  private int BACK;
+  private List<Integer> LEFT = new ArrayList<>();
+  private List<Integer> RIGHT = new ArrayList<>();
+  private List<Integer> ENTER = new ArrayList<>();
+  private List<Integer> BACK = new ArrayList<>();
 
   private MenuController menuController;
   private boolean running = false;
@@ -73,28 +78,25 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void handle(int keyCode) {
-    if (keyCode == LEFT) {
+    if (LEFT.contains(keyCode)) {
       if (menuController.isAtStart()) {
         return;
       }
 
       this.activeState = activeState.left();
       navPlayer.play();
-    }
-    else if (keyCode == RIGHT) {
+    } else if (RIGHT.contains(keyCode)) {
       if (menuController.isAtEnd()) {
         return;
       }
 
       this.activeState = activeState.right();
       navPlayer.play();
-    }
-    else if (keyCode == ENTER) {
+    } else if (ENTER.contains(keyCode)) {
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
-    }
-    else if (keyCode == BACK) {
+    } else if (BACK.contains(keyCode)) {
       PauseMenu.exitPauseMenu();
     }
   }
@@ -106,7 +108,7 @@ public class StateMananger implements NativeKeyListener {
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());
-    if(!running) {
+    if (!running) {
       return;
     }
 
@@ -129,10 +131,10 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void setControls(PinUPControls pinUPControls) {
-    LEFT = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR);
-    RIGHT = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT);
-    ENTER = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START);
-    BACK = pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT);
+    LEFT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
+    RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
+    ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
+    BACK.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT), KeyEvent.VK_ESCAPE));
   }
 
   public void setGame(GameRepresentation game, GameStatus status, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
@@ -143,7 +145,7 @@ public class StateMananger implements NativeKeyListener {
 
   public void exit() {
     running = false;
-    Platform.runLater(()-> {
+    Platform.runLater(() -> {
       menuController.reset();
     });
     GlobalScreen.removeNativeKeyListener(StateMananger.getInstance());

@@ -141,7 +141,7 @@
                                     </TextField>
                                     <Button fx:id="iscoredReloadBtn" mnemonicParsing="false" onAction="#loadIScoredTables">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />

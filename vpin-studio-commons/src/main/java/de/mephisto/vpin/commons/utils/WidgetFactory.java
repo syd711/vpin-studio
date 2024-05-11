@@ -33,7 +33,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -478,8 +481,7 @@ public class WidgetFactory {
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
+    boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
 
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
