@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
@@ -37,13 +38,16 @@ public class StateMananger implements NativeKeyListener {
 
   private final static StateMananger INSTANCE = new StateMananger();
 
-  private List<Integer> LEFT = new ArrayList<>();
-  private List<Integer> RIGHT = new ArrayList<>();
-  private List<Integer> ENTER = new ArrayList<>();
-  private List<Integer> BACK = new ArrayList<>();
+  private final List<Integer> LEFT = new ArrayList<>();
+  private final List<Integer> RIGHT = new ArrayList<>();
+  private final List<Integer> ENTER = new ArrayList<>();
+  private final List<Integer> BACK = new ArrayList<>();
 
   private MenuController menuController;
   private boolean running = false;
+  private int leftFlip;
+  private int rightFlip;
+  private int start;
 
   public static StateMananger getInstance() {
     return INSTANCE;
@@ -77,28 +81,44 @@ public class StateMananger implements NativeKeyListener {
     this.activeState = new MenuItemSelectionState(controller);
   }
 
-  public void handle(int keyCode) {
-    if (LEFT.contains(keyCode)) {
+  public void handle(int keyCode, int rawCode) {
+    System.out.println(keyCode + ":" + rawCode);
+    if (LEFT.contains(keyCode) || isVPXMapped(keyCode, rawCode, leftFlip)) {
       if (menuController.isAtStart()) {
         return;
       }
 
       this.activeState = activeState.left();
       navPlayer.play();
-    } else if (RIGHT.contains(keyCode)) {
+    }
+    else if (RIGHT.contains(keyCode) || isVPXMapped(keyCode, rawCode, rightFlip)) {
       if (menuController.isAtEnd()) {
         return;
       }
 
       this.activeState = activeState.right();
       navPlayer.play();
-    } else if (ENTER.contains(keyCode)) {
+    }
+    else if (ENTER.contains(keyCode) || isVPXMapped(keyCode, rawCode, start)) {
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
-    } else if (BACK.contains(keyCode)) {
+    }
+    else if (BACK.contains(keyCode)) {
       PauseMenu.exitPauseMenu();
     }
+  }
+
+  private boolean isVPXMapped(int keyCode, int rawCode, int vpxDirectXKey) {
+    if (keyCode == vpxDirectXKey) {
+      return true;
+    }
+
+    if (keyCode == 29 || keyCode == 42 || keyCode == 3638) { //Ctrl + shift
+      return rawCode == vpxDirectXKey;
+    }
+
+    return false;
   }
 
   @Override
@@ -113,7 +133,7 @@ public class StateMananger implements NativeKeyListener {
     }
 
     Platform.runLater(() -> {
-      handle(nativeKeyEvent.getRawCode());
+      handle(nativeKeyEvent.getKeyCode(), nativeKeyEvent.getRawCode());
       new Thread(() -> {
         try {
           Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION);
@@ -131,10 +151,21 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void setControls(PinUPControls pinUPControls) {
+    VPXKeyManager.getInstance().reloadKeyBinding();
+
+    LEFT.clear();
+    RIGHT.clear();
+    ENTER.clear();
+    BACK.clear();
+
     LEFT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
     RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
     ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
     BACK.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT), KeyEvent.VK_ESCAPE));
+
+    leftFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.LFlipKey);
+    rightFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.RFlipKey);
+    start = VPXKeyManager.getInstance().getBinding(VPXKeyManager.StartGameKey);
   }
 
   public void setGame(GameRepresentation game, GameStatus status, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
