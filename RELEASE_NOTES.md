@@ -1,6 +1,6 @@
 ## 2.18.4
 
-- **Pause Menu**: Added alternative key bindings: arrow keys, enter and "1" for are also useable when navigating the menu. Using also the VPX key binding is yet to follow.
+- **Pause Menu**: Added alternative key bindings: arrow keys, enter and "1" for are also useable when navigating the menu. Using the actual VPX key binding is yet to follow.
 - **Video Player**: The actual media size is used to determine the orientation of the video now. I hope this will fix the orientation problem for portrait users.
 - **Main Toolbar**: Fixed styling issues of "Jobs" button.
 - **Icons**: Replaced some of the remaining non-material UI icons (e.g. the preferences icon).
