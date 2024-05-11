@@ -159,10 +159,6 @@ public class GamesUploadResource {
 
       if (uploadFile.exists()) {
         switch (mode) {
-          case upload: {
-            //nothing, we are done here
-            return returningGameId;
-          }
           case uploadAndImport: {
             returningGameId = popperService.importVPXGame(uploadFile, true, -1, gameEmulator.getId());
             if (returningGameId >= 0) {

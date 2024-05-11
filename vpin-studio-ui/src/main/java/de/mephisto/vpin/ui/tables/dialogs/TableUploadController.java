@@ -44,9 +44,6 @@ public class TableUploadController implements Initializable, DialogController {
   private TextField fileNameField;
 
   @FXML
-  private RadioButton uploadRadio;
-
-  @FXML
   private RadioButton uploadAndImportRadio;
 
   @FXML
@@ -94,7 +91,7 @@ public class TableUploadController implements Initializable, DialogController {
     if (selection != null) {
       uploadBtn.setDisable(true);
       try {
-        TableUploadDescriptor descriptor = TableUploadDescriptor.upload;
+        TableUploadDescriptor descriptor = TableUploadDescriptor.uploadAndImport;
         if (uploadAndImportRadio.isSelected()) {
           descriptor = TableUploadDescriptor.uploadAndImport;
         }
@@ -194,7 +191,6 @@ public class TableUploadController implements Initializable, DialogController {
     });
 
     ToggleGroup toggleGroup = new ToggleGroup();
-    uploadRadio.setToggleGroup(toggleGroup);
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
