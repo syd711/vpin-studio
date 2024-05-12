@@ -33,7 +33,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -478,9 +481,6 @@ public class WidgetFactory {
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
-
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
@@ -517,7 +517,7 @@ public class WidgetFactory {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
+      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, false);
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());

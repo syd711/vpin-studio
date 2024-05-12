@@ -75,10 +75,10 @@ public class ToolbarController implements Initializable, StudioEventListener {
   public void maintenanceEnabled(boolean b) {
     if (maintenanceBtn.isVisible()) {
       if (b) {
-        maintenanceBtn.getStyleClass().add("maintenance-selected");
+        maintenanceBtn.getStyleClass().add("action-selected");
       }
       else {
-        maintenanceBtn.getStyleClass().remove("maintenance-selected");
+        maintenanceBtn.getStyleClass().remove("action-selected");
       }
     }
   }
