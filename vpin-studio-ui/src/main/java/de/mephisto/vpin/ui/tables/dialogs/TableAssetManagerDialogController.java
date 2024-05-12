@@ -433,9 +433,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-          boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
-          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, portraitMode);
+          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType);
         }
       } catch (Exception e) {
         LOG.error("Preview failed for " + tableAsset);
@@ -609,8 +607,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        boolean portraitMode = screenBounds.getWidth() < screenBounds.getHeight();
-
         if (screen.equals(PopperScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
@@ -650,7 +646,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(mediaPane, mediaItem, url);
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, portraitMode, true);
+          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, true);
         }
       }
     });

@@ -95,3 +95,8 @@ https://7-zip.org/
 Sound Effect by <a href="https://pixabay.com/users/edr-1177074/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">EdR</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">Pixabay</a>
 
 Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=92097">Pixabay</a>
+
+### JavaFX Icon Sets
+https://kordamp.org/ikonli/cheat-sheet-materialdesign2.html#_s_materialdesigns
+https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
+https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html

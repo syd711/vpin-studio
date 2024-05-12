@@ -279,7 +279,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox prefWidth="300.0" spacing="3.0" styleClass="accordion-container">
+                              <VBox prefWidth="350.0" spacing="3.0" styleClass="accordion-container">
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
