@@ -55,13 +55,14 @@
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.199951171875" minWidth="10.0" prefWidth="136.599951171875" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" prefWidth="657.399951171875" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" prefWidth="427.00004882812505" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" prefWidth="552.7999511718751" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" prefWidth="534.000048828125" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label fx:id="titleLabel" text="VPX File/Archive:*" textFill="WHITE" GridPane.rowIndex="1">
@@ -114,6 +115,55 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="Target Folder:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets top="4.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <VBox prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="Upload to separate subfolder" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label prefHeight="40.0" prefWidth="18.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="This will upload the VPX into a subfolder of the emulators &quot;tables&quot; folder if you prefer to organize your tables this way." wrapText="true" />
+                                       </tooltip>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </HBox>
+                              <TextField fx:id="subfolderText" disable="true">
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="-8.0" />
+                           </GridPane.margin>
+                           <padding>
+                              <Insets right="102.0" />
+                           </padding>
+                        </VBox>
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" />
@@ -129,41 +179,6 @@
                                  </font>
                               </RadioButton>
                               <Label styleClass="checkbox-description" text="The uploaded table will be visible as new game in the &quot;Games Manager&quot; of PinUP Popper." textFill="WHITE" wrapText="true" />
-                              <VBox>
-                                 <VBox.margin>
-                                    <Insets left="26.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="Upload to separate subfolder" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label prefHeight="40.0" prefWidth="18.0">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="This will upload the VPX into a subfolder of the emulators &quot;tables&quot; folder if you prefer to organize your tables this way." wrapText="true" />
-                                             </tooltip>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <TextField fx:id="subfolderText" disable="true">
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                 </children>
-                              </VBox>
                               <Label layoutX="10.0" layoutY="30.0" styleClass="default-headline" text="Import Additional Assets" textFill="WHITE" wrapText="true">
                                  <VBox.margin>
                                     <Insets left="26.0" top="12.0" />
@@ -229,13 +244,13 @@
                               <Label styleClass="checkbox-description" text="The uploaded table will replace the selected table. Popper assets will be kept." textFill="WHITE" wrapText="true" />
                               <VBox>
                                  <children>
-                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filenames when replacing tables." textFill="WHITE">
+                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filename when replacing table." textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <Label styleClass="checkbox-description" text="If enabled, the existing VPX filename is kept instead of using uploads file name." textFill="WHITE" wrapText="true" />
-                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="Keep existing display names when replacing tables." textFill="WHITE">
+                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="Keep existing display name when replacing table." textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

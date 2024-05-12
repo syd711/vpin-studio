@@ -159,6 +159,17 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove" iconSize="18" />
                                                    </graphic>
                                                 </Hyperlink>
+                                                <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="ghost-button-tiny">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open PinUP Popper setup" />
+                                                   </tooltip>
+                                                </Button>
                                              </children>
                                              <BorderPane.margin>
                                                 <Insets right="6.0" />

@@ -140,12 +140,13 @@ public class TableUploadController implements Initializable, DialogController {
         boolean useSubFolder = this.subfolderCheckbox.isSelected();
         boolean autoFill = this.autofillCheckbox.isSelected();
 
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
+
         Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
         ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
 
         List<Object> results = progressDialog.getResults();
@@ -297,6 +298,12 @@ public class TableUploadController implements Initializable, DialogController {
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
+    subfolderCheckbox.setSelected(serverSettings.isUseSubfolders());
+    subfolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setUseSubfolders(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
     uploadAndCloneRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -380,6 +387,7 @@ public class TableUploadController implements Initializable, DialogController {
     tableUploadDescriptor.setEmulatorId(this.emulatorCombo.getValue().getId());
     tableUploadDescriptor.setAutoFill(this.autofillCheckbox.isSelected());
     this.tableUploadDescriptor.setUploadType(uploadType);
+
 
     this.game = game;
 

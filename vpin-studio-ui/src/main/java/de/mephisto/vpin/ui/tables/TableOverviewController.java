@@ -663,6 +663,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
+  private void onValidationSettings() {
+    PreferencesController.open("validators_vpx");
+  }
+
+  @FXML
   private void onDismissAll() {
     List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
     if (selectedItems.size() == 1) {

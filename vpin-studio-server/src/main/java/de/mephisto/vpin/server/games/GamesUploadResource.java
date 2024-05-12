@@ -138,11 +138,10 @@ public class GamesUploadResource {
 
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
-    String oldName = tableDetails.getGameFileName();
     String popperFileName = target.getName();
-    if (oldName.contains("\\")) {
-      String folderName = FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadedVPXFileName());
-      File targetFolder = new File(existingVPXFile.getParentFile(), folderName);
+    if (uploadDescriptor.isFolderBasedImport()) {
+      //use the parents parent so that we are back inside the tables folder
+      File targetFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
       targetFolder = FileUtils.uniqueFolder(targetFolder);
       targetFolder.mkdirs();
       target = new File(targetFolder, target.getName());
@@ -156,7 +155,7 @@ public class GamesUploadResource {
 
     //copy file
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
-    LOG.info("Moved temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
+    LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
 
 
     int returningGameId = popperService.importVPXGame(target, true, -1, gameEmulator.getId());

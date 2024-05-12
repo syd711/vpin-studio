@@ -30,7 +30,7 @@
                                     <Font size="48.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Assets will be added for table" textFill="WHITE">
+                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Selected Table:" textFill="WHITE">
                                  <font>
                                     <Font size="18.0" />
                                  </font>

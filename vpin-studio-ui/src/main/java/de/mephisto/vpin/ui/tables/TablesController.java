@@ -207,6 +207,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return vpsTablesSidebarController;
   }
 
+
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();

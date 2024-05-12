@@ -198,7 +198,7 @@ public class TableDialogs {
         if (game.isPovAvailable()) {
           help2 = "The existing .pov file of this table will be overwritten.";
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
           ProgressDialog.createProgressDialog(model);
@@ -319,6 +319,11 @@ public class TableDialogs {
   }
 
   public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+    if (StringUtils.isEmpty(game.getRom())) {
+      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      return false;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
     controller.setGame(game);

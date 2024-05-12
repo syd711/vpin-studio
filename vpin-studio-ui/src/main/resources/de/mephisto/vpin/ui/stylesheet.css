@@ -239,6 +239,23 @@
     -fx-cursor: hand;
 }
 
+.ghost-button-tiny {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-tiny:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 .table-media-button {
     -fx-font-color: #FFFFFF;
     -fx-background-color: transparent;

@@ -77,13 +77,13 @@ public class UploaderAnalysis<T> {
   public String validateAssetType(AssetType assetType) {
     switch (assetType) {
       case VPX: {
-        if (isVPX()) {
+        if (hasFileWithSuffix("vpx")) {
           return null;
         }
         return "This archive does not not contain a .vpx file.";
       }
       case DIRECTB2S: {
-        if (isDirectB2S()) {
+        if (hasFileWithSuffix("directb2s")) {
           return null;
         }
         return "This archive does not not contain a .directb2s file.";
@@ -134,6 +134,18 @@ public class UploaderAnalysis<T> {
         }
         return "This archive is not a valid PUP pack.";
       }
+      case POV: {
+        if (hasFileWithSuffix("pov")) {
+          return null;
+        }
+        return "This archive does not not contain a .pov file.";
+      }
+      case INI: {
+        if (hasFileWithSuffix("ini")) {
+          return null;
+        }
+        return "This archive does not not contain a .ini file.";
+      }
       default: {
         throw new UnsupportedOperationException("Unmapped asset type: " + assetType);
       }
@@ -154,11 +166,11 @@ public class UploaderAnalysis<T> {
   }
 
   public AssetType getSingleAssetType() {
-    if (isVPX()) {
+    if (hasFileWithSuffix("vpx")) {
       return AssetType.VPX;
     }
 
-    if (isDirectB2S()) {
+    if (hasFileWithSuffix("directb2s")) {
       return AssetType.DIRECTB2S;
     }
 
@@ -184,6 +196,14 @@ public class UploaderAnalysis<T> {
 
     if (isRom()) {
       return AssetType.ROM;
+    }
+
+    if (hasFileWithSuffix("pov")) {
+      return AssetType.POV;
+    }
+
+    if (hasFileWithSuffix("ini")) {
+      return AssetType.INI;
     }
     return null;
   }
@@ -251,17 +271,6 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-
-  private boolean isVPX() {
-    for (String fileName : fileNames) {
-      String suffix = FilenameUtils.getExtension(fileName);
-      if (suffix.equalsIgnoreCase("vpx")) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   private boolean isDMD() {
     for (String fileName : directories) {
       if (fileName.endsWith("DMD")) {
@@ -272,10 +281,10 @@ public class UploaderAnalysis<T> {
   }
 
 
-  private boolean isDirectB2S() {
+  private boolean hasFileWithSuffix(String s) {
     for (String fileName : fileNames) {
       String suffix = FilenameUtils.getExtension(fileName);
-      if (suffix.equalsIgnoreCase("directb2s")) {
+      if (suffix.equalsIgnoreCase(s)) {
         return true;
       }
     }

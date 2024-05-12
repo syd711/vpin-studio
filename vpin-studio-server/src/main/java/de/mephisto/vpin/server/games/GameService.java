@@ -179,11 +179,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-      .stream()
-      .filter(g ->
-        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(g ->
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+        .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -344,6 +344,16 @@ public class GameService implements InitializingBean {
       Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
       byId.ifPresent(asset -> assetRepository.delete(asset));
 
+      File gameFolder = game.getGameFile().getParentFile();
+      if (gameFolder.exists()) {
+        String[] list = gameFolder.list();
+        if (list == null || list.length == 0) {
+          if (gameFolder.delete()) {
+            LOG.info("Deleted table folder " + gameFolder.getAbsolutePath());
+          }
+        }
+      }
+
       LOG.info("Deleted \"" + game.getGameDisplayName() + "\"");
     }
     return success;
@@ -443,7 +453,8 @@ public class GameService implements InitializingBean {
       else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
       }
@@ -652,14 +663,15 @@ public class GameService implements InitializingBean {
         gameDetailsRepository.saveAndFlush(gameDetails);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
     }
   }
 
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
-    if(game.isVpxGame()) {
+    if (game.isVpxGame()) {
       return highscoreService.getHighscoreFiles(game);
     }
     return new HighscoreFiles();

@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.TableView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -67,7 +68,9 @@ public class TableOverviewDragDropHandler {
           dndLoadingOverlay.setTranslateX(tableView.getTranslateX());
           dndLoadingOverlay.setTranslateY(tableView.getTranslateY());
 
-          controller.setViewParams(tableView.getWidth(), tableView.getHeight());
+          double width = ((Pane)tableView.getParent()).getWidth();
+          double height = tableView.getHeight();
+          controller.setViewParams(width, height);
           controller.setGame(tablesController.getTableOverviewController().getSelection());
           loaderStack.getChildren().add(dndLoadingOverlay);
         }

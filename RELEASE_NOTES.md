@@ -14,6 +14,7 @@
 - **Table Management / ALT Sound**: Added "Delete" button.
 - **Table Management / ALT Color**: Added "Delete" button.
 - **Table Management / PUP Packs**: Added "Delete" button.
+- **Table Management / Validations**: Added preferences button to the validator message section to provide a quick-access for enabling/disabling them.
 
 ### Bugfixes
 
