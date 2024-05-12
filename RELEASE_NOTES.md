@@ -1,3 +1,7 @@
+## 2.18.5
+
+- **Logging**: Improved very chatty pinemhi error handling.
+
 ## 2.18.4
 
 - **Pause Menu**: In addition to the Popper navigation keys, the VPX key settings are loaded and used as an alternative binding. Note that some key combinations still might not work because I had to map some DirectX key mapping of VPX to Java key events. Also, I added another alternative key binding: arrow keys, enter and "1" for are also useable when navigating the menu.
