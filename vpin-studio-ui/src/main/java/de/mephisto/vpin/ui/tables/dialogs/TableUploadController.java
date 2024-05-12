@@ -1,17 +1,23 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.VpxArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -59,10 +66,19 @@ public class TableUploadController implements Initializable, DialogController {
   private CheckBox keepDisplayNamesCheckbox;
 
   @FXML
+  private CheckBox autofillCheckbox;
+
+  @FXML
+  private CheckBox subfolderCheckbox;
+
+  @FXML
   private CheckBox backupTableOnOverwriteCheckbox;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  @FXML
+  private TextField subfolderText;
 
   @FXML
   private Button uploadBtn;
@@ -73,12 +89,41 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private Button cancelBtn;
 
+  @FXML
+  private VBox uploadImportBox;
+  @FXML
+  private VBox uploadReplaceBox;
+  @FXML
+  private VBox uploadCloneBox;
+
+  @FXML
+  private Label noAssetsLabel;
+
+  @FXML
+  private CheckBox assetPupPackCheckbox;
+  @FXML
+  private CheckBox assetAltSoundCheckbox;
+  @FXML
+  private CheckBox assetMediaCheckbox;
+  @FXML
+  private CheckBox assetBackglassCheckbox;
+  @FXML
+  private CheckBox assetRomCheckbox;
+  @FXML
+  private CheckBox assetDmdCheckbox;
+
+  @FXML
+  private VBox assetsBox;
+
   private File selection;
-  private Optional<TableUploadResult> result = Optional.empty();
+  private Optional<TableUploadDescriptor> result = Optional.empty();
 
   private GameRepresentation game;
-  private int gameId;
   private GameEmulatorRepresentation emulatorRepresentation;
+
+  private TableUploadDescriptor tableUploadDescriptor = new TableUploadDescriptor();
+  private TableOverviewController tableOverviewController;
+  private UploaderAnalysis uploaderAnalysis;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -91,30 +136,36 @@ public class TableUploadController implements Initializable, DialogController {
     if (selection != null) {
       uploadBtn.setDisable(true);
       try {
-        TableUploadDescriptor descriptor = TableUploadDescriptor.uploadAndImport;
-        if (uploadAndImportRadio.isSelected()) {
-          descriptor = TableUploadDescriptor.uploadAndImport;
-        }
-        else if (uploadAndReplaceRadio.isSelected()) {
-          descriptor = TableUploadDescriptor.uploadAndReplace;
-        }
-        else if (uploadAndCloneRadio.isSelected()) {
-          descriptor = TableUploadDescriptor.uploadAndClone;
-        }
+        String subFolder= this.subfolderText.getText();
+        boolean useSubFolder = this.subfolderCheckbox.isSelected();
+        boolean autoFill = this.autofillCheckbox.isSelected();
 
         Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, gameId, descriptor, emulatorRepresentation.getId());
+        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
         ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
 
         List<Object> results = progressDialog.getResults();
         if (!results.isEmpty()) {
-          result = Optional.of((TableUploadResult) results.get(0));
+          TableUploadDescriptor uploadDescriptor = (TableUploadDescriptor) results.get(0);
+
+          uploadDescriptor.setSubfolderName(subFolder);
+          uploadDescriptor.setFolderBasedImport(useSubFolder);
+          uploadDescriptor.setAutoFill(autoFill);
+
+          TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
+          ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
+          if (!progressDialogResult.getResults().isEmpty()) {
+            uploadDescriptor = (TableUploadDescriptor) progressDialogResult.getResults().get(0);
+            result = Optional.of(uploadDescriptor);
+            tableOverviewController.refreshUploadResult(result);
+          }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         stage.close();
         WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
@@ -129,9 +180,13 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
+    setSelection(true);
+  }
+
+  private void setSelection(boolean rescan) {
     uploadBtn.setDisable(true);
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
@@ -141,8 +196,13 @@ public class TableUploadController implements Initializable, DialogController {
         this.cancelBtn.setDisable(true);
 
         Platform.runLater(() -> {
-          String analyze = VpxArchiveAnalyzer.analyze(selection);
+          if(rescan) {
+            uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection, game);
+          }
+          String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
+
           this.fileNameField.setText(this.selection.getAbsolutePath());
+          this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName()));
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
           this.cancelBtn.setDisable(false);
@@ -150,6 +210,10 @@ public class TableUploadController implements Initializable, DialogController {
           if (analyze != null) {
             WidgetFactory.showAlert(Studio.stage, analyze);
             this.fileNameField.setText("");
+            this.subfolderText.setText("");
+          }
+          else {
+            updateAnalysis();
           }
           this.uploadBtn.setDisable(analyze != null);
         });
@@ -157,6 +221,7 @@ public class TableUploadController implements Initializable, DialogController {
       else {
         this.uploadBtn.setDisable(false);
         this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
       }
     }
     else {
@@ -164,13 +229,32 @@ public class TableUploadController implements Initializable, DialogController {
     }
   }
 
+  private void updateAnalysis() {
+    assetPupPackCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null);
+    assetPupPackCheckbox.setVisible(assetPupPackCheckbox.isSelected());
+
+    assetAltSoundCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
+    assetAltSoundCheckbox.setVisible(assetAltSoundCheckbox.isSelected());
+
+    assetMediaCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POPPER_MEDIA) == null);
+    assetMediaCheckbox.setVisible(assetMediaCheckbox.isSelected());
+
+    assetBackglassCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
+    assetBackglassCheckbox.setVisible(assetBackglassCheckbox.isSelected());
+
+    assetDmdCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
+    assetDmdCheckbox.setVisible(assetDmdCheckbox.isSelected());
+
+    assetRomCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
+    assetRomCheckbox.setVisible(assetRomCheckbox.isSelected());
+
+    assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected() || assetMediaCheckbox.isSelected() || assetBackglassCheckbox.isSelected() || assetRomCheckbox.isSelected());
+    noAssetsLabel.setVisible(!assetsBox.isVisible());
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-
-    keepDisplayNamesCheckbox.setDisable(true);
-    keepNamesCheckbox.setDisable(true);
-    backupTableOnOverwriteCheckbox.setDisable(true);
 
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -195,16 +279,6 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
 
-    toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-      @Override
-      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-        keepDisplayNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
-        keepNamesCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
-        backupTableOnOverwriteCheckbox.setDisable(!newValue.equals(uploadAndReplaceRadio));
-      }
-    });
-
-
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setVpxKeepFileNames(t1);
@@ -222,16 +296,97 @@ public class TableUploadController implements Initializable, DialogController {
       serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
+
+    uploadAndCloneRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          uploadCloneBox.getStyleClass().add("selection-panel-selected");
+          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndClone);
+        }
+        else {
+          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    uploadAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndReplace);
+        }
+        else {
+          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    uploadAndImportRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          uploadImportBox.getStyleClass().add("selection-panel-selected");
+          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndImport);
+        }
+        else {
+          uploadImportBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    autofillCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        tableUploadDescriptor.setAutoFill(newValue);
+      }
+    });
+
+    subfolderCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        subfolderText.setDisable(!newValue);
+      }
+    });
+
+    uploadImportBox.getStyleClass().add("selection-panel-selected");
+
+    noAssetsLabel.setVisible(true);
+    noAssetsLabel.managedProperty().bindBidirectional(noAssetsLabel.visibleProperty());
+    assetsBox.setVisible(false);
+    assetsBox.managedProperty().bindBidirectional(assetsBox.visibleProperty());
+
+    assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
+    assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
+    assetAltSoundCheckbox.managedProperty().bindBidirectional(assetAltSoundCheckbox.visibleProperty());
+    assetBackglassCheckbox.managedProperty().bindBidirectional(assetBackglassCheckbox.visibleProperty());
+    assetRomCheckbox.managedProperty().bindBidirectional(assetRomCheckbox.visibleProperty());
+    assetDmdCheckbox.managedProperty().bindBidirectional(assetDmdCheckbox.visibleProperty());
+
+    assetPupPackCheckbox.setVisible(false);
+    assetMediaCheckbox.setVisible(false);
+    assetAltSoundCheckbox.setVisible(false);
+    assetBackglassCheckbox.setVisible(false);
+    assetRomCheckbox.setVisible(false);
+    assetDmdCheckbox.setVisible(false);
   }
 
-  public void setGame(GameRepresentation game, TableUploadDescriptor descriptor) {
+  public void setGame(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {
+    this.tableOverviewController = tableOverviewController;
+    this.uploaderAnalysis = analysis;
+
+    tableUploadDescriptor.setUploadType(uploadType);
+    tableUploadDescriptor.setEmulatorId(this.emulatorCombo.getValue().getId());
+    tableUploadDescriptor.setAutoFill(this.autofillCheckbox.isSelected());
+    this.tableUploadDescriptor.setUploadType(uploadType);
+
     this.game = game;
 
     if (game != null) {
-      this.gameId = game.getId();
+      tableUploadDescriptor.setGameId(game.getId());
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
-      this.uploadAndCloneRadio.setDisable(game.getGameFileName().contains("\\"));
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);
@@ -242,10 +397,9 @@ public class TableUploadController implements Initializable, DialogController {
       this.backupTableOnOverwriteCheckbox.setDisable(true);
       this.keepNamesCheckbox.setDisable(true);
       this.uploadAndCloneRadio.setDisable(true);
-      this.gameId = -1;
     }
 
-    switch (descriptor) {
+    switch (uploadType) {
       case uploadAndClone: {
         this.uploadAndCloneRadio.setSelected(true);
         break;
@@ -259,6 +413,11 @@ public class TableUploadController implements Initializable, DialogController {
         break;
       }
     }
+
+    if(this.uploaderAnalysis != null) {
+      this.selection = uploaderAnalysis.getFile();
+      setSelection(false);
+    }
   }
 
   @Override
@@ -266,7 +425,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   }
 
-  public Optional<TableUploadResult> uploadFinished() {
+  public Optional<TableUploadDescriptor> uploadFinished() {
     return result;
   }
 }

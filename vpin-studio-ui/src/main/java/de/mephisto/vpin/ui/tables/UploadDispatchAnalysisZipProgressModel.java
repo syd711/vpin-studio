@@ -27,11 +27,12 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
     super("Analyzing Archive");
     ZipFile zipFile = new ZipFile(file);
     size = zipFile.size();
+    zipFile.close();
 
     fileInputStream = new FileInputStream(file);
     zis = new ZipInputStream(fileInputStream);
 
-    uploaderAnalysis = new UploaderAnalysis<>(game, file, size);
+    uploaderAnalysis = new UploaderAnalysis<>(game, file);
   }
 
   @Override

@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -28,19 +28,21 @@ public class UploadAnalysisDispatcher {
 
     if (extension.equals("zip")) {
       validateArchive(tablesController, file, game);
-    } else {
-      dispatchBySuffix(tablesController, file, game, assetType);
+    }
+    else {
+      UploaderAnalysis analysis = new UploaderAnalysis(game, file);
+      dispatchBySuffix(tablesController, file, game, assetType, analysis);
     }
   }
 
-  private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+  private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(tablesController, file);
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, TableUploadDescriptor.uploadAndImport);
+        TableDialogs.openTableUploadDialog(tablesController.getTablesController(), game, TableUploadType.uploadAndImport, analysis);
         return;
       }
     }
@@ -67,19 +69,11 @@ public class UploadAnalysisDispatcher {
         TableDialogs.directPovUpload(Studio.stage, game, file);
         break;
       }
-      case PAL: {
-        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
-        break;
-      }
-      case VNI: {
-        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
-        break;
-      }
+      case ALT_COLOR:
+      case PAC:
+      case PAL:
+      case VNI:
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
-        break;
-      }
-      case PAC: {
         TableDialogs.openAltColorUploadDialog(tablesController, game, file);
         break;
       }
@@ -101,7 +95,8 @@ public class UploadAnalysisDispatcher {
   private static void showDefault(@NonNull File file) {
     if (isArchive(file)) {
       WidgetFactory.showInformation(Studio.stage, "No matching files found in this archive.", "Extract the archive and upload the files separately.");
-    } else {
+    }
+    else {
       WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
     }
   }
@@ -111,12 +106,27 @@ public class UploadAnalysisDispatcher {
     return extension.equalsIgnoreCase("zip") || extension.equalsIgnoreCase("7z");
   }
 
+  public static UploaderAnalysis analyzeArchive(File file, GameRepresentation game) {
+    try {
+      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
+      ProgressDialog.createProgressDialog(model);
+      return model.getAnalysis();
+    }
+    catch (Exception e) {
+      LOG.error("Error opening archive: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
+    }
+    return null;
+  }
+
+
   public static String validateArchive(File file, GameRepresentation game, AssetType assetType) {
     try {
       UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
       ProgressDialog.createProgressDialog(model);
       return model.getAnalysis().validateAssetType(assetType);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error opening archive: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
     }
@@ -132,14 +142,17 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          dispatchBySuffix(tablesSidebarController, file, game, singleAssetType);
-        } else {
+          dispatchBySuffix(tablesSidebarController, file, game, singleAssetType, analysis);
+        }
+        else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
         }
-      } else {
+      }
+      else {
         WidgetFactory.showInformation(Studio.stage, "A matching asset type could not be determined for this file.", null);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error creating UploadDispatchAnalysisZipProgressModel: " + e.getMessage(), e);
     }
     return null;

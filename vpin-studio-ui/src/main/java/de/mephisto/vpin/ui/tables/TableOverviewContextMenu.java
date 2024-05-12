@@ -3,9 +3,8 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -127,18 +126,18 @@ public class TableOverviewContextMenu {
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
       uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndImportTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
+      uploadAndImportTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndImport));
       ctxMenu.getItems().add(uploadAndImportTableItem);
 
       MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
       uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
+      uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndReplace));
       ctxMenu.getItems().add(uploadAndReplaceTableItem);
 
       MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
       uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       uploadAndCloneTableItem.setDisable(game.getGameFileName().contains("\\"));
-      uploadAndCloneTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
+      uploadAndCloneTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndClone));
       ctxMenu.getItems().add(uploadAndCloneTableItem);
 
       Menu uploadMenu = new Menu("Upload...");

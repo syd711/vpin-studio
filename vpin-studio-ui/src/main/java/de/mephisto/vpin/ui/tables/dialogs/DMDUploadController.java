@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -76,7 +78,7 @@ public class DMDUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMD Bundle");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("DMD Bundle", "*.zip"));
+        new FileChooser.ExtensionFilter("DMD Bundle", "*.zip"));
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       refreshSelection(stage);
@@ -90,11 +92,11 @@ public class DMDUploadController implements Initializable, DialogController {
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new DMDAnalyzeProgressModel("DMD Bundle Analysis", this.selection));
+    String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.DMD_PACK);
 
-    if (!resultModel.getResults().isEmpty()) {
+    if (analyze != null) {
       result = false;
-      WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
+      WidgetFactory.showAlert(stage, analyze);
       this.fileNameField.setText("");
       this.fileBtn.setDisable(false);
       this.fileNameField.setDisable(false);

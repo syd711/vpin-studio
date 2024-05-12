@@ -137,6 +137,15 @@ public class FileUtils {
     return target;
   }
 
+  public static File uniqueFolder(File target) {
+    int index = 1;
+    while (target.exists() && target.isDirectory()) {
+      target = new File(target.getParentFile(), target.getName() + " (" + index + ")");
+      index++;
+    }
+    return target;
+  }
+
   public static File uniquePopperAsset(File target) {
     int index = 1;
     String segment = String.format("%02d", index);

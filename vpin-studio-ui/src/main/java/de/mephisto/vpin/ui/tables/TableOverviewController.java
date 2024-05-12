@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -22,7 +23,6 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.dialogs.TableUploadResult;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
@@ -450,7 +450,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -527,10 +528,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTableUpload() {
-    openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport);
+    openUploadDialogWithCheck(TableUploadType.uploadAndImport);
   }
 
-  public void openUploadDialogWithCheck(TableUploadDescriptor uploadDescriptor) {
+  public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
@@ -541,23 +542,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     openUploadDialog(uploadDescriptor);
   }
 
-  private void openUploadDialog(TableUploadDescriptor uploadDescriptor) {
+  private void openUploadDialog(TableUploadType uploadDescriptor) {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<TableUploadResult> uploadResult = TableDialogs.openTableUploadDialog(game, uploadDescriptor);
+    TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
+  }
+
+  public void refreshUploadResult(Optional<TableUploadDescriptor> uploadResult) {
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
       Consumer<GameRepresentation> c = gameRepresentation -> {
-        TableUploadResult tableUploadResult = uploadResult.get();
+        TableUploadDescriptor tableUploadResult = uploadResult.get();
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           tableView.getSelectionModel().clearSelection();
           tableView.getSelectionModel().select(match.get());
           tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
-
-          TableUploadDescriptor uploadMode = tableUploadResult.getUploadMode();
           if (uiSettings.isAutoEditTableData()) {
-            if (!uploadMode.equals(TableUploadDescriptor.upload)) {
-              TableDialogs.openTableDataDialog(this, match.get());
-            }
+            TableDialogs.openTableDataDialog(this, match.get());
           }
         }
       };
@@ -584,7 +584,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       for (GameRepresentation game : selectedGames) {
         if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
           WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-            + "\" is used by at least one competition.", "Delete all competitions for this table first.");
+              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
           return;
         }
       }
@@ -771,7 +771,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
         editorController.setGame(game, source);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
       }
     }
@@ -796,7 +797,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSoundEditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
       }
     }
@@ -820,7 +822,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSound2EditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
@@ -856,7 +859,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           tableView.refresh();
           setBusy(false);
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
@@ -1021,7 +1025,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (showVersionUpdates && value.isUpdateAvailable()) {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
-          "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
+            "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
@@ -1099,7 +1103,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
           return new SimpleObjectProperty(label);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to render VPS update: " + e.getMessage(), e);
       }
       return new SimpleStringProperty("");
@@ -1279,27 +1284,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
 
     tableView.setRowFactory(
-      tableView -> {
-        final TableRow<GameRepresentation> row = new TableRow<>();
-        final ContextMenu menu = new ContextMenu();
+        tableView -> {
+          final TableRow<GameRepresentation> row = new TableRow<>();
+          final ContextMenu menu = new ContextMenu();
 
-        ListChangeListener<GameRepresentation> changeListener = (ListChangeListener.Change<? extends GameRepresentation> c) ->
-          contextMenuController.refreshContextMenu(tableView, menu, this.tableView.getSelectionModel().getSelectedItem());
+          ListChangeListener<GameRepresentation> changeListener = (ListChangeListener.Change<? extends GameRepresentation> c) ->
+              contextMenuController.refreshContextMenu(tableView, menu, this.tableView.getSelectionModel().getSelectedItem());
 
-        row.itemProperty().addListener((obs, oldItem, newItem) -> {
-          if (newItem == null) {
-            menu.getItems().clear();
-          }
-          else {
-            contextMenuController.refreshContextMenu(tableView, menu, newItem);
-          }
+          row.itemProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem == null) {
+              menu.getItems().clear();
+            }
+            else {
+              contextMenuController.refreshContextMenu(tableView, menu, newItem);
+            }
+          });
+
+          row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) ->
+              row.setContextMenu(isNowEmpty ? null : menu));
+
+          return row;
         });
-
-        row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) ->
-          row.setContextMenu(isNowEmpty ? null : menu));
-
-        return row;
-      });
 
 
     tableView.setOnKeyPressed(event -> {
@@ -1648,7 +1653,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     new Thread(() -> {
       try {
         VPS.getInstance().update();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("VPS update failed: " + e.getMessage(), e);
       }
     }).start();
@@ -1659,7 +1665,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -1668,7 +1675,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       loader.load();
       tableFilterController = loader.getController();
       tableFilterController.setTableController(this);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 

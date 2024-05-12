@@ -1,9 +1,12 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +21,11 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   private final Iterator<File> iterator;
   private final List<File> files;
   private final int gameId;
-  private final TableUploadDescriptor tableUploadDescriptor;
+  private final TableUploadType tableUploadDescriptor;
   private final int emuId;
   private double percentage = 0;
 
-  public TableUploadProgressModel(String title, File file, int gameId, TableUploadDescriptor tableUploadDescriptor, int emuId) {
+  public TableUploadProgressModel(String title, File file, int gameId, TableUploadType tableUploadDescriptor, int emuId) {
     super(title);
     this.files = Collections.singletonList(file);
     this.gameId = gameId;
@@ -54,20 +57,18 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      int updatedGameId = Studio.client.getGameService().uploadTable(next, tableUploadDescriptor, gameId, emuId, percent -> {
+      TableUploadDescriptor uploadDescriptor = Studio.client.getGameService().uploadTable(next, tableUploadDescriptor, gameId, emuId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
       progressResultModel.addProcessed();
-
-      TableUploadResult r = new TableUploadResult();
-      r.setUploadMode(tableUploadDescriptor);
-      r.setGameId(updatedGameId);
-      progressResultModel.getResults().add(r);
+      progressResultModel.getResults().add(uploadDescriptor);
       percentage++;
     } catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
-      throw e;
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Table upload failed: " + e.getMessage());
+      });
     }
   }
 

@@ -16,8 +16,10 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -28,6 +30,8 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -136,19 +140,8 @@ public class TableDialogs {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
-          String suffix = FilenameUtils.getExtension(file.getName());
-          String analyze = null;
-          if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
-            analyze = UploadAnalysisDispatcher.validateArchive(null, file, game);
-          }
-
-          if (!StringUtils.isEmpty(analyze)) {
-            WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-          }
-          else {
-            DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
-            ProgressDialog.createProgressDialog(model);
-          }
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+          ProgressDialog.createProgressDialog(model);
         });
         return true;
       }
@@ -268,6 +261,11 @@ public class TableDialogs {
   }
 
   public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+    if (StringUtils.isEmpty(game.getRom())) {
+      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      return false;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setGame(game);
@@ -295,6 +293,11 @@ public class TableDialogs {
   }
 
   public static boolean openAltColorUploadDialog(TablesSidebarController tablesController, GameRepresentation game, File file) {
+    if (StringUtils.isEmpty(game.getRom())) {
+      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      return false;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
@@ -337,10 +340,10 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<TableUploadResult> openTableUploadDialog(GameRepresentation game, TableUploadDescriptor descriptor) {
+  public static Optional<TableUploadDescriptor> openTableUploadDialog(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(game, descriptor);
+    controller.setGame(tableOverviewController, game, descriptor, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -575,7 +578,8 @@ public class TableDialogs {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
 

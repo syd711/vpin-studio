@@ -16,6 +16,7 @@ public class UploaderAnalysis<T> {
   private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
+  private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
   private final static List<String> musicSuffixes = Arrays.asList("mp3");
 
   public final static String PAL_SUFFIX = "pal";
@@ -26,21 +27,33 @@ public class UploaderAnalysis<T> {
 
   private final GameRepresentation game;
   private final File file;
-  private final int total;
 
   private final List<String> fileNames = new ArrayList<>();
   private final List<String> directories = new ArrayList<>();
 
   private String error;
 
-  public UploaderAnalysis(GameRepresentation game, File file, int total) {
+  public UploaderAnalysis(GameRepresentation game, File file) {
     this.game = game;
     this.file = file;
-    this.total = total;
+  }
+
+  public File getFile() {
+    return file;
   }
 
   public String getError() {
     return error;
+  }
+
+  public String getVpxFileName() {
+    for (String fileName : fileNames) {
+      String suffix = FilenameUtils.getExtension(fileName);
+      if (suffix.equalsIgnoreCase("vpx")) {
+        return fileName;
+      }
+    }
+    return null;
   }
 
   public void analyze(T archiveEntry, String name, boolean directory) {
@@ -51,7 +64,8 @@ public class UploaderAnalysis<T> {
           directories.add(s);
         }
       }
-    } else {
+    }
+    else {
       String fileName = name;
       if (fileName.contains("/")) {
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
@@ -61,28 +75,42 @@ public class UploaderAnalysis<T> {
   }
 
   public String validateAssetType(AssetType assetType) {
-    if (isMatchingRomFolderRequired(assetType)) {
-      if (game == null) {
-        return "A table must be selected for this upload.";
-      }
-
-      if (StringUtils.isEmpty(game.getRom())) {
-        return "The table \"" + game.getGameDisplayName() + "\" has no ROM name set, but it is required for this upload type.";
-      }
-
-      if (!isMatchingRomFolderAvailable()) {
-        return "The ROM name \"" + game.getRom() + "\" of table \"" + game.getGameDisplayName() + "\" was not found in this archive.";
-      }
-    }
-
     switch (assetType) {
+      case VPX: {
+        if (isVPX()) {
+          return null;
+        }
+        return "This archive does not not contain a .vpx file.";
+      }
+      case DIRECTB2S: {
+        if (isDirectB2S()) {
+          return null;
+        }
+        return "This archive does not not contain a .directb2s file.";
+      }
+      case ROM: {
+        if (isRom()) {
+          return null;
+        }
+        return "This archive does not not contain a ROM file.";
+      }
+      case DMD_PACK: {
+        if (isDMD()) {
+          return null;
+        }
+        return "This archive does not not contain a DMD bundle.";
+      }
       case ALT_SOUND: {
         if (isAltSound()) {
           return null;
         }
         return "This archive is not a valid ALT sound package.";
       }
-      case ALT_COLOR: {
+      case ALT_COLOR:
+      case PAC:
+      case VNI:
+      case CRZ:
+      case PAL: {
         if (isAltColor()) {
           return null;
         }
@@ -100,8 +128,14 @@ public class UploaderAnalysis<T> {
         }
         return "This archive is not a valid PUP pack.";
       }
+      case POPPER_MEDIA: {
+        if (isPopperMedia()) {
+          return null;
+        }
+        return "This archive is not a valid PUP pack.";
+      }
       default: {
-        return null;
+        throw new UnsupportedOperationException("Unmapped asset type: " + assetType);
       }
     }
   }
@@ -124,12 +158,20 @@ public class UploaderAnalysis<T> {
       return AssetType.VPX;
     }
 
+    if (isDirectB2S()) {
+      return AssetType.DIRECTB2S;
+    }
+
     if (isAltSound()) {
       return AssetType.ALT_SOUND;
     }
 
     if (isPUPPack()) {
       return AssetType.PUP_PACK;
+    }
+
+    if (isDMD()) {
+      return AssetType.DMD_PACK;
     }
 
     if (isMusic()) {
@@ -149,6 +191,16 @@ public class UploaderAnalysis<T> {
   private boolean isPUPPack() {
     for (String name : fileNames) {
       if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean isPopperMedia() {
+    for (String name : fileNames) {
+      String suffix = FilenameUtils.getExtension(name);
+      if (mediaSuffixes.contains(suffix)) {
         return true;
       }
     }
@@ -210,6 +262,26 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
+  private boolean isDMD() {
+    for (String fileName : directories) {
+      if (fileName.endsWith("DMD")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  private boolean isDirectB2S() {
+    for (String fileName : fileNames) {
+      String suffix = FilenameUtils.getExtension(fileName);
+      if (suffix.equalsIgnoreCase("directb2s")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private boolean isRom() {
     if (directories.isEmpty()) {
       for (String fileName : fileNames) {
@@ -225,7 +297,8 @@ public class UploaderAnalysis<T> {
         try {
           Integer.parseInt(suffix);
           return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           //
         }
       }
