@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.highscores;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 
 import java.util.Date;
 
@@ -69,12 +71,22 @@ public class ScoreRepresentation {
     this.score = score;
   }
 
+  @JsonIgnore
+  public String getFormattedScore() {
+    String scoreString = this.getScore();
+    String formattedScore = ScoreFormatUtil.formatScore(scoreString);
+    if (!formattedScore.equals("0")) {
+      scoreString = formattedScore;
+    }
+    return scoreString;
+  }
+
   @Override
   public String toString() {
     String name = this.getPlayerInitials();
     if (this.player != null) {
       name = this.player.getName();
     }
-    return "#" + this.getPosition() + " " + name + "   " + this.getScore();
+    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore();
   }
 }

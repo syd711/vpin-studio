@@ -27,13 +27,10 @@ class HighscoreResolver {
 
   private final SystemService systemService;
   private final ScoringDB scoringDB;
-  @NonNull
-  private final PlayerService playerService;
 
-  public HighscoreResolver(@NonNull SystemService systemService, @NonNull PlayerService playerService) {
+  public HighscoreResolver(@NonNull SystemService systemService) {
     this.systemService = systemService;
     this.scoringDB = systemService.getScoringDatabase();
-    this.playerService = playerService;
   }
 
   /**

@@ -1,6 +1,8 @@
 ## 2.18.5
 
 - **Logging**: Improved very chatty pinemhi error handling.
+- **Table Management / Dismiss All**: Fixed performance issue when dismissing validation errors of multiple tables.
+- **Discord Messages**: Added proper number formatting to all Discord score messages, including images. (Let me know when I've missed some, this was a quick shot.).
 
 ## 2.18.4
 

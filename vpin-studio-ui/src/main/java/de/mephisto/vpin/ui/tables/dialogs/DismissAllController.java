@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -51,6 +52,7 @@ public class DismissAllController implements Initializable, DialogController {
       }
     }
     DismissalUtil.dismissSelection(game, dismissals);
+    EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     stage.close();
   }
 

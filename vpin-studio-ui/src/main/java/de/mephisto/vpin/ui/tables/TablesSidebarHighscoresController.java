@@ -329,7 +329,7 @@ public class TablesSidebarHighscoresController implements Initializable {
             builder.append(" ");
             builder.append(score.getPlayerInitials());
             builder.append("   ");
-            builder.append(score.getScore());
+            builder.append(score.getFormattedScore());
             builder.append("\n");
           }
 

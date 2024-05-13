@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.OverlayWindowFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -292,6 +293,7 @@ public class AssetFactory {
       font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
       String score = summary.getScores().get(0).getScore();
+      score = ScoreFormatUtil.formatScore(score);
       textWidth = graphics.getFontMetrics().stringWidth(score);
       while (textWidth > 500) {
         font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);
