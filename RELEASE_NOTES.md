@@ -1,8 +1,12 @@
 ## 2.18.5
 
-- **Logging**: Improved very chatty pinemhi error handling.
 - **Table Management / Dismiss All**: Fixed performance issue when dismissing validation errors of multiple tables.
 - **Discord Messages**: Added proper number formatting to all Discord score messages, including images. (Let me know when I've missed some, this was a quick shot.).
+- **System Manager/ Backglass Server**: Fixed usage of the actual backglass server installation folder for the system actions (green buttons).
+- **System Manager/ Backglass Server**: Fixed preferences page when no emulator with a **B2STableSettings.xml** could be resolved.
+- **System Manager/ Backglass Server**: Fixed resolving of the **B2STableSettings.xml** that is not necessarily located in the **Tables** folder anymore.
+- **Highscore Cards**: Addd proper number formatting for formatted score list so that all values are right-aligned.
+- **Logging**: Improved very chatty pinemhi error handling.
 
 ## 2.18.4
 

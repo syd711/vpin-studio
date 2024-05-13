@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -205,6 +204,14 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getB2STableSettingsXml() {
+    if (this.backglassServerDirectory != null) {
+      File xml = new File(this.backglassServerDirectory, "B2STableSettings.xml");
+      if (xml.exists()) {
+        return xml;
+      }
+    }
+
+    //simply assume the legacy default
     return new File(this.tablesFolder, "B2STableSettings.xml");
   }
 

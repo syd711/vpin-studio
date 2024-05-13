@@ -92,7 +92,7 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
@@ -209,6 +209,15 @@ public class CardGraphics {
     int scoreY = currentY;
 
     int count = 0;
+
+    int scoreLength = 0;
+    List<Score> scores = summary.getScores();
+    for (Score score : scores) {
+      if (score.getFormattedScore().length() > scoreLength) {
+        scoreLength = score.getFormattedScore().length();
+      }
+    }
+
     for (Score score : summary.getScores()) {
       int initialX = scoreX;
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
@@ -221,7 +230,11 @@ public class CardGraphics {
       g.drawString(renderString, initialX, scoreY);
 
       initialX = initialX + singleScoreWidth + template.getPadding();
-      g.drawString(score.getScore(), initialX, scoreY);
+      String scoreText = score.getFormattedScore();
+      while (scoreText.length() < scoreLength) {
+        scoreText = " " + scoreText;
+      }
+      g.drawString(scoreText, initialX, scoreY);
 
       count++;
 
