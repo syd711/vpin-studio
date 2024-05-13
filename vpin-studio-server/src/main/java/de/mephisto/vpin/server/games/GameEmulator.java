@@ -44,6 +44,7 @@ public class GameEmulator {
   private final String vpxExeName;
   private final String gameExt;
 
+  private String backglassServerFolder;
   private boolean vpxEmulator;
 
   public GameEmulator(@NonNull Emulator emulator) {
@@ -182,6 +183,14 @@ public class GameEmulator {
     return Collections.emptyList();
   }
 
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
+  }
+
   @NonNull
   @JsonIgnore
   public File getBackglassServerDirectory() {
@@ -190,6 +199,7 @@ public class GameEmulator {
 
   public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
     this.backglassServerDirectory = backglassServerDirectory;
+    this.backglassServerFolder = backglassServerDirectory.getAbsolutePath();
   }
 
   @NonNull

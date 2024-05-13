@@ -35,7 +35,7 @@ public class BackglassPreferencesController implements Initializable {
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
-  private DirectB2ServerSettings serverSettings;
+  private DirectB2ServerSettings backglassServerSettings;
 
   private GameEmulatorRepresentation emulatorRepresentation;
 
@@ -44,62 +44,67 @@ public class BackglassPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
-    emulatorRepresentation = gameEmulators.get(0);
-    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-    emulatorCombo.setItems(emulators);
-    emulatorCombo.setValue(emulatorRepresentation);
-    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-      emulatorRepresentation = t1;
-      refresh();
-    });
+    try {
+      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
+      emulatorRepresentation = gameEmulators.get(0);
+      ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+      emulatorCombo.setItems(emulators);
+      emulatorCombo.setValue(emulatorRepresentation);
+      emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+        emulatorRepresentation = t1;
+        refresh();
+      });
 
-    serverSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
+      backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
 
-    pluginsCheckbox.setSelected(serverSettings.isPluginsOn());
-    pluginsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      serverSettings.setPluginsOn(newValue);
-      saveSettings();
-    });
+      pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
+      pluginsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        backglassServerSettings.setPluginsOn(newValue);
+        saveSettings();
+      });
 
-    backglassMissingCheckbox.setSelected(serverSettings.isShowStartupError());
-    backglassMissingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      serverSettings.setShowStartupError(newValue);
-      saveSettings();
-    });
+      backglassMissingCheckbox.setSelected(backglassServerSettings.isShowStartupError());
+      backglassMissingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        backglassServerSettings.setShowStartupError(newValue);
+        saveSettings();
+      });
 
-    fuzzyMatchingCheckbox.setSelected(serverSettings.isDisableFuzzyMatching());
-    fuzzyMatchingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      serverSettings.setDisableFuzzyMatching(newValue);
-      saveSettings();
-    });
+      fuzzyMatchingCheckbox.setSelected(backglassServerSettings.isDisableFuzzyMatching());
+      fuzzyMatchingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        backglassServerSettings.setDisableFuzzyMatching(newValue);
+        saveSettings();
+      });
 
-    startModeCheckbox.setSelected(serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE);
-    startModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      int mode = DirectB2ServerSettings.EXE_START_MODE;
-      if (!newValue) {
-        mode = DirectB2ServerSettings.STANDARD_START_MODE;
-      }
-      serverSettings.setDefaultStartMode(mode);
-      saveSettings();
-    });
+      startModeCheckbox.setSelected(backglassServerSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE);
+      startModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        int mode = DirectB2ServerSettings.EXE_START_MODE;
+        if (!newValue) {
+          mode = DirectB2ServerSettings.STANDARD_START_MODE;
+        }
+        backglassServerSettings.setDefaultStartMode(mode);
+        saveSettings();
+      });
 
-    saveEnabled = true;
+      saveEnabled = true;
+    } catch (Exception e) {
+      LOG.info("Failed to initialize backglass setting preferences: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize backglass setting preferences: " + e.getMessage());
+    }
   }
 
   private void refresh() {
     saveEnabled = false;
-    serverSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
-    backglassMissingCheckbox.setSelected(serverSettings.isShowStartupError());
-    pluginsCheckbox.setSelected(serverSettings.isPluginsOn());
-    fuzzyMatchingCheckbox.setSelected(serverSettings.isDisableFuzzyMatching());
+    backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
+    backglassMissingCheckbox.setSelected(backglassServerSettings.isShowStartupError());
+    pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
+    fuzzyMatchingCheckbox.setSelected(backglassServerSettings.isDisableFuzzyMatching());
     saveEnabled = true;
   }
 
   private void saveSettings() {
     try {
       if (saveEnabled) {
-        Studio.client.getBackglassServiceClient().saveServerSettings(emulatorRepresentation.getId(), serverSettings);
+        Studio.client.getBackglassServiceClient().saveServerSettings(emulatorRepresentation.getId(), backglassServerSettings);
       }
     } catch (Exception e) {
       LOG.error("Failed to save backglass server settings: " + e.getMessage(), e);
