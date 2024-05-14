@@ -1,16 +1,20 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class UploaderAnalysis<T> {
   private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
@@ -24,8 +28,6 @@ public class UploaderAnalysis<T> {
   public final static String PAC_SUFFIX = "pac";
   public final static String SERUM_SUFFIX = "cRZ";
 
-
-  private final GameRepresentation game;
   private final File file;
 
   private final List<String> fileNames = new ArrayList<>();
@@ -33,8 +35,7 @@ public class UploaderAnalysis<T> {
 
   private String error;
 
-  public UploaderAnalysis(GameRepresentation game, File file) {
-    this.game = game;
+  public UploaderAnalysis(File file) {
     this.file = file;
   }
 
@@ -54,6 +55,31 @@ public class UploaderAnalysis<T> {
       }
     }
     return null;
+  }
+
+  public void analyze() throws IOException {
+    FileInputStream fileInputStream = null;
+    ZipInputStream zis = null;
+    try {
+      fileInputStream = new FileInputStream(file);
+      zis = new ZipInputStream(fileInputStream);
+      ZipEntry nextEntry = zis.getNextEntry();
+      while (nextEntry != null) {
+        analyze((T) nextEntry, nextEntry.getName(), nextEntry.isDirectory());
+        zis.closeEntry();
+        nextEntry = zis.getNextEntry();
+      }
+      zis.close();
+      fileInputStream.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open " + file.getAbsolutePath());
+      throw e;
+    } finally {
+      if (fileInputStream != null) {
+        fileInputStream.close();
+      }
+    }
   }
 
   public void analyze(T archiveEntry, String name, boolean directory) {
@@ -150,19 +176,6 @@ public class UploaderAnalysis<T> {
         throw new UnsupportedOperationException("Unmapped asset type: " + assetType);
       }
     }
-  }
-
-  public boolean isMatchingRomFolderRequired(AssetType assetType) {
-    return assetType.equals(AssetType.ALT_SOUND) || assetType.equals(AssetType.PUP_PACK);
-  }
-
-  public boolean isMatchingRomFolderAvailable() {
-    for (String directory : this.directories) {
-      if (directory.equalsIgnoreCase(game.getRom())) {
-        return true;
-      }
-    }
-    return false;
   }
 
   public AssetType getSingleAssetType() {

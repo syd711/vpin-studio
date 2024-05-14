@@ -136,9 +136,16 @@ public class TableUploadController implements Initializable, DialogController {
     if (selection != null) {
       uploadBtn.setDisable(true);
       try {
-        String subFolder= this.subfolderText.getText();
+        String subFolder = this.subfolderText.getText();
         boolean useSubFolder = this.subfolderCheckbox.isSelected();
         boolean autoFill = this.autofillCheckbox.isSelected();
+
+        boolean assetPupPack = assetPupPackCheckbox.isSelected();
+        boolean assetAltSound = assetAltSoundCheckbox.isSelected();
+        boolean assetMedia = assetMediaCheckbox.isSelected();
+        boolean assetBackglass = assetBackglassCheckbox.isSelected();
+        boolean assetRom = assetRomCheckbox.isSelected();
+        boolean assetDmd = assetDmdCheckbox.isSelected();
 
         TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
 
@@ -156,6 +163,13 @@ public class TableUploadController implements Initializable, DialogController {
           uploadDescriptor.setSubfolderName(subFolder);
           uploadDescriptor.setFolderBasedImport(useSubFolder);
           uploadDescriptor.setAutoFill(autoFill);
+
+          uploadDescriptor.setImportAltSound(assetAltSound);
+          uploadDescriptor.setImportBackglass(assetBackglass);
+          uploadDescriptor.setImportDMD(assetDmd);
+          uploadDescriptor.setImportMediaAssets(assetMedia);
+          uploadDescriptor.setImportPupPack(assetPupPack);
+          uploadDescriptor.setImportRom(assetRom);
 
           TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
           ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
@@ -197,7 +211,7 @@ public class TableUploadController implements Initializable, DialogController {
         this.cancelBtn.setDisable(true);
 
         Platform.runLater(() -> {
-          if(rescan) {
+          if (rescan) {
             uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection, game);
           }
           String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
@@ -299,8 +313,10 @@ public class TableUploadController implements Initializable, DialogController {
     });
 
     subfolderCheckbox.setSelected(serverSettings.isUseSubfolders());
+    subfolderText.setDisable(!subfolderCheckbox.isSelected());
     subfolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setUseSubfolders(t1);
+      subfolderText.setDisable(!t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
@@ -347,13 +363,6 @@ public class TableUploadController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         tableUploadDescriptor.setAutoFill(newValue);
-      }
-    });
-
-    subfolderCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        subfolderText.setDisable(!newValue);
       }
     });
 
@@ -422,7 +431,7 @@ public class TableUploadController implements Initializable, DialogController {
       }
     }
 
-    if(this.uploaderAnalysis != null) {
+    if (this.uploaderAnalysis != null) {
       this.selection = uploaderAnalysis.getFile();
       setSelection(false);
     }

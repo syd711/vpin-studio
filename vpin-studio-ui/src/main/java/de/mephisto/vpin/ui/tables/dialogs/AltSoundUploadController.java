@@ -99,7 +99,7 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.ALT_SOUND);
+      String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.ALT_SOUND);
       this.fileNameField.setText(this.selection.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);

@@ -12,6 +12,61 @@ public class TableUploadDescriptor {
   private boolean autoFill;
   private String subfolderName;
 
+  private boolean importAltSound;
+  private boolean importBackglass;
+  private boolean importPupPack;
+  private boolean importDMD;
+  private boolean importMediaAssets;
+  private boolean importRom;
+
+  public boolean isImportAltSound() {
+    return importAltSound;
+  }
+
+  public void setImportAltSound(boolean importAltSound) {
+    this.importAltSound = importAltSound;
+  }
+
+  public boolean isImportBackglass() {
+    return importBackglass;
+  }
+
+  public void setImportBackglass(boolean importBackglass) {
+    this.importBackglass = importBackglass;
+  }
+
+  public boolean isImportPupPack() {
+    return importPupPack;
+  }
+
+  public void setImportPupPack(boolean importPupPack) {
+    this.importPupPack = importPupPack;
+  }
+
+  public boolean isImportDMD() {
+    return importDMD;
+  }
+
+  public void setImportDMD(boolean importDMD) {
+    this.importDMD = importDMD;
+  }
+
+  public boolean isImportMediaAssets() {
+    return importMediaAssets;
+  }
+
+  public void setImportMediaAssets(boolean importMediaAssets) {
+    this.importMediaAssets = importMediaAssets;
+  }
+
+  public boolean isImportRom() {
+    return importRom;
+  }
+
+  public void setImportRom(boolean importRom) {
+    this.importRom = importRom;
+  }
+
   public String getSubfolderName() {
     return subfolderName;
   }

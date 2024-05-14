@@ -37,6 +37,7 @@ public class Game {
   private boolean disabled;
   private boolean updateAvailable;
   private Date dateAdded;
+  private Date dateUpdated;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -76,6 +77,14 @@ public class Game {
       return this.pupPack.getName();
     }
     return pupPackName;
+  }
+
+  public Date getDateUpdated() {
+    return dateUpdated;
+  }
+
+  public void setDateUpdated(Date dateUpdated) {
+    this.dateUpdated = dateUpdated;
   }
 
   public String getNotes() {

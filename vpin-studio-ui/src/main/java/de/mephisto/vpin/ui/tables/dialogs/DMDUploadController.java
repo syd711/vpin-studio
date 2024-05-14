@@ -92,7 +92,7 @@ public class DMDUploadController implements Initializable, DialogController {
     this.cancelBtn.setDisable(true);
 
 
-    String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.DMD_PACK);
+    String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.DMD_PACK);
 
     if (analyze != null) {
       result = false;

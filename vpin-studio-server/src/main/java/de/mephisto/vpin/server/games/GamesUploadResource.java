@@ -4,10 +4,12 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -85,9 +87,9 @@ public class GamesUploadResource {
   public TableUploadDescriptor processUploadedTable(@RequestBody TableUploadDescriptor uploadDescriptor) {
     LOG.info("*********** Importing " + uploadDescriptor.getOriginalUploadedVPXFileName() + " ************************");
     try {
-      File temporaryVPXFile = resolveVPXFile(uploadDescriptor);
+      File temporaryVPXFile = GameUploadHelper.resolveTableFilenameBasedEntry(uploadDescriptor, ".vpx");
       importVPXFile(temporaryVPXFile, uploadDescriptor);
-      //TODO process media
+      importAdditionalAssets(uploadDescriptor);
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage(), e);
@@ -104,6 +106,26 @@ public class GamesUploadResource {
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;
   }
+
+  private void importAdditionalAssets(TableUploadDescriptor uploadDescriptor) throws Exception {
+    File temporaryUploadFile = new File(uploadDescriptor.getTempFilename());
+    if (!PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadFile.getName()))) {
+      return;
+    }
+
+    Game game = gameService.getGame(uploadDescriptor.getGameId());
+    if (game == null) {
+      LOG.warn("No game found for id " + uploadDescriptor.getGameId() + " to process assets for.");
+    }
+
+    LOG.info("Analyzing temporary upload file " + temporaryUploadFile.getAbsolutePath());
+    UploaderAnalysis analysis = new UploaderAnalysis(temporaryUploadFile);
+    analysis.analyze();
+    LOG.info("Analysis ready, checking imports.");
+
+    GameUploadHelper.importBackglass(analysis, temporaryUploadFile, uploadDescriptor, game);
+  }
+
 
   private void importVPXFile(File temporaryVPXFile, TableUploadDescriptor uploadDescriptor) throws Exception {
     TableUploadType uploadType = uploadDescriptor.getUploadType();
@@ -131,6 +153,8 @@ public class GamesUploadResource {
     TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 
+    boolean autoFill = uploadDescriptor.isAutoFill();
+
     File existingVPXFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
     if (!existingVPXFile.exists()) {
       throw new UnsupportedOperationException("The VPX file to clone \"" + tableDetails.getGameFileName() + "\" does not exist.");
@@ -151,6 +175,7 @@ public class GamesUploadResource {
     }
     else {
       target = FileUtils.uniqueFile(target);
+      popperFileName = target.getName();
     }
 
     //copy file
@@ -183,6 +208,12 @@ public class GamesUploadResource {
       FileUtils.cloneFile(original.getPOVFile(), target.getName());
       FileUtils.cloneFile(original.getIniFile(), target.getName());
       FileUtils.cloneFile(original.getResFile(), target.getName());
+
+      tableDetails = vpsService.autoMatch(importedGame, true);
+      if (tableDetails != null && autoFill) {
+        popperService.autoFill(importedGame, tableDetails, true, false);
+      }
+      LOG.info("Cloning of \"" + importedGame.getGameDisplayName() + "\" successful.");
     }
 
     //update the game id to the new table
@@ -288,14 +319,4 @@ public class GamesUploadResource {
     }
   }
 
-  private File resolveVPXFile(TableUploadDescriptor tableUploadDescriptor) throws IOException {
-    File tempFile = new File(tableUploadDescriptor.getTempFilename());
-    if (PackageUtil.isSupportedArchive(tempFile.getName())) {
-      String vpxFile = PackageUtil.contains(tempFile, ".vpx");
-      File tempVXPFile = File.createTempFile(FilenameUtils.getBaseName(tableUploadDescriptor.getOriginalUploadedVPXFileName()), ".vpx");
-      PackageUtil.unpackTargetFile(tempVXPFile, tempVXPFile, vpxFile);
-      return tempVXPFile;
-    }
-    return tempFile;
-  }
 }

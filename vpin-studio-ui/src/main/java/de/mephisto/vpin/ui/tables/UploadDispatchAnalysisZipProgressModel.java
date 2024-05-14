@@ -23,7 +23,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
 
   private UploaderAnalysis<ZipEntry> uploaderAnalysis;
 
-  public UploadDispatchAnalysisZipProgressModel(GameRepresentation game, File file) throws IOException {
+  public UploadDispatchAnalysisZipProgressModel(File file) throws IOException {
     super("Analyzing Archive");
     ZipFile zipFile = new ZipFile(file);
     size = zipFile.size();
@@ -32,7 +32,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
     fileInputStream = new FileInputStream(file);
     zis = new ZipInputStream(fileInputStream);
 
-    uploaderAnalysis = new UploaderAnalysis<>(game, file);
+    uploaderAnalysis = new UploaderAnalysis<>(file);
   }
 
   @Override

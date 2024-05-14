@@ -71,6 +71,5 @@ public class DismissalUtil {
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
-    EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
   }
 }

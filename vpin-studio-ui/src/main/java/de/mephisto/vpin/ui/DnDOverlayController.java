@@ -47,8 +47,15 @@ public class DnDOverlayController implements Initializable {
   }
 
   public void setGame(@Nullable GameRepresentation game) {
+    tableTitleLabel.setVisible(false);
+    tableLabel.setVisible(false);
+    tableWheelImage.setVisible(false);
+
     if (game != null) {
       tableTitleLabel.setVisible(true);
+      tableLabel.setVisible(true);
+      tableWheelImage.setVisible(true);
+
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {
@@ -59,9 +66,6 @@ public class DnDOverlayController implements Initializable {
         tableWheelImage.setImage(new Image(Studio.class.getResourceAsStream("avatar-blank.png")));
       }
       tableLabel.setText("\"" + game.getGameDisplayName() + "\"");
-    }
-    else {
-      tableTitleLabel.setVisible(false);
     }
   }
 }

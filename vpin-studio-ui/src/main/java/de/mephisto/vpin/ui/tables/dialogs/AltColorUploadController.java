@@ -104,7 +104,7 @@ public class AltColorUploadController implements Initializable, DialogController
       this.cancelBtn.setDisable(true);
 
       Platform.runLater(() -> {
-        String analyze = UploadAnalysisDispatcher.validateArchive(selection, game, AssetType.ALT_COLOR);
+        String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.ALT_COLOR);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);

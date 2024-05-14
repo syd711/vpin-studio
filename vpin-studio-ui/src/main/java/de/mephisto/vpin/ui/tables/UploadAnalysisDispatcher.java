@@ -30,7 +30,7 @@ public class UploadAnalysisDispatcher {
       validateArchive(tablesController, file, game);
     }
     else {
-      UploaderAnalysis analysis = new UploaderAnalysis(game, file);
+      UploaderAnalysis analysis = new UploaderAnalysis(file);
       dispatchBySuffix(tablesController, file, game, assetType, analysis);
     }
   }
@@ -108,7 +108,7 @@ public class UploadAnalysisDispatcher {
 
   public static UploaderAnalysis analyzeArchive(File file, GameRepresentation game) {
     try {
-      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
+      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(file);
       ProgressDialog.createProgressDialog(model);
       return model.getAnalysis();
     }
@@ -120,9 +120,9 @@ public class UploadAnalysisDispatcher {
   }
 
 
-  public static String validateArchive(File file, GameRepresentation game, AssetType assetType) {
+  public static String validateArchive(File file, AssetType assetType) {
     try {
-      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
+      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(file);
       ProgressDialog.createProgressDialog(model);
       return model.getAnalysis().validateAssetType(assetType);
     }
@@ -135,7 +135,7 @@ public class UploadAnalysisDispatcher {
 
   public static String validateArchive(@Nullable TablesSidebarController tablesSidebarController, File file, GameRepresentation game) {
     try {
-      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(game, file);
+      UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(file);
       ProgressDialog.createProgressDialog(model);
       UploaderAnalysis analysis = model.getAnalysis();
       AssetType singleAssetType = analysis.getSingleAssetType();

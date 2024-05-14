@@ -375,10 +375,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   public List<ValidationState> validateRecordings(Game game) {
+    if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
+      return Collections.emptyList();
+    }
     Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
     PopperScreen[] values = PopperScreen.values();
     List<ValidationState> result = new ArrayList<>();
     for (PopperScreen screen : values) {
+      //only validate playfield and backglass
       if (!(PopperScreen.BackGlass.equals(screen) || PopperScreen.PlayField.equals(screen))) {
         continue;
       }
@@ -392,9 +396,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
               result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
             }
-//            if (game.getGameFile().exists() && new Date(game.getModified()).after(modified)) {
-//              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
-//            }
+            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
+            }
           }
         }
       }

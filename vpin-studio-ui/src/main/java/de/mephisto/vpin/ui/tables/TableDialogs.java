@@ -115,7 +115,7 @@ public class TableDialogs {
         String analyze = null;
         String suffix = FilenameUtils.getExtension(file.getName());
         if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
-          analyze = UploadAnalysisDispatcher.validateArchive(file, game, AssetType.DIRECTB2S);
+          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.DIRECTB2S);
         }
 
         if (!StringUtils.isEmpty(analyze)) {

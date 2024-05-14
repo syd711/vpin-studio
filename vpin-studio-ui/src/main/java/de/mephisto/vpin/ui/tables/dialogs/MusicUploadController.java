@@ -73,7 +73,7 @@ public class MusicUploadController implements Initializable, DialogController {
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null && this.selection.exists()) {
-      String analyze = UploadAnalysisDispatcher.validateArchive(this.selection, null, AssetType.MUSIC);
+      String analyze = UploadAnalysisDispatcher.validateArchive(this.selection, AssetType.MUSIC);
       if (analyze == null) {
         this.fileNameField.setText(this.selection.getAbsolutePath());
       } else {

@@ -92,7 +92,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.cancelBtn.setDisable(true);
 
 
-    String analysis = UploadAnalysisDispatcher.validateArchive(this.selection, this.game, AssetType.PUP_PACK);
+    String analysis = UploadAnalysisDispatcher.validateArchive(this.selection, AssetType.PUP_PACK);
 
     if (analysis != null) {
       result = false;

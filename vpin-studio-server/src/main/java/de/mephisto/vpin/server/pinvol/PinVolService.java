@@ -72,13 +72,12 @@ public class PinVolService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    setSystemVolume();
     this.enabled = getPinVolAutoStart();
     if (enabled) {
       startPinVol();
       LOG.info("Auto-started PinVol");
     }
-
-    setSystemVolume();
   }
 
   public boolean setSystemVolume() {
