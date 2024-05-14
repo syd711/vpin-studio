@@ -41,7 +41,6 @@ public class StateMananger implements NativeKeyListener {
   private final List<Integer> LEFT = new ArrayList<>();
   private final List<Integer> RIGHT = new ArrayList<>();
   private final List<Integer> ENTER = new ArrayList<>();
-  private final List<Integer> BACK = new ArrayList<>();
 
   private MenuController menuController;
   private boolean running = false;
@@ -103,9 +102,6 @@ public class StateMananger implements NativeKeyListener {
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
     }
-    else if (BACK.contains(keyCode)) {
-      PauseMenu.exitPauseMenu();
-    }
   }
 
   private boolean isVPXMapped(int keyCode, int rawCode, int vpxDirectXKey) {
@@ -149,18 +145,26 @@ public class StateMananger implements NativeKeyListener {
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
   }
 
-  public void setControls(PinUPControls pinUPControls) {
+  public void setControls(PinUPControls pinUPControls, PauseMenuSettings pauseMenuSettings) {
     VPXKeyManager.getInstance().reloadKeyBinding();
 
     LEFT.clear();
     RIGHT.clear();
     ENTER.clear();
-    BACK.clear();
 
     LEFT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
     RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
     ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
-    BACK.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT), KeyEvent.VK_ESCAPE));
+
+    if(pauseMenuSettings.getCustomStartKey() > 0) {
+      ENTER.add(pauseMenuSettings.getCustomStartKey());
+    }
+    if(pauseMenuSettings.getCustomStartKey() > 0) {
+      LEFT.add(pauseMenuSettings.getCustomLeftKey());
+    }
+    if(pauseMenuSettings.getCustomStartKey() > 0) {
+      RIGHT.add(pauseMenuSettings.getCustomRightKey());
+    }
 
     leftFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.LFlipKey);
     rightFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.RFlipKey);

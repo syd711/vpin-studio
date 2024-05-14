@@ -10,6 +10,43 @@ public class PauseMenuSettings extends JsonSettings {
   private int inputDebounceMs = 0;
   private PopperScreen videoScreen = PopperScreen.Topper;
 
+  private int customLaunchKey;
+  private int customStartKey;
+  private int customLeftKey;
+  private int customRightKey;
+
+  public int getCustomLaunchKey() {
+    return customLaunchKey;
+  }
+
+  public void setCustomLaunchKey(int customLaunchKey) {
+    this.customLaunchKey = customLaunchKey;
+  }
+
+  public int getCustomStartKey() {
+    return customStartKey;
+  }
+
+  public void setCustomStartKey(int customStartKey) {
+    this.customStartKey = customStartKey;
+  }
+
+  public int getCustomLeftKey() {
+    return customLeftKey;
+  }
+
+  public void setCustomLeftKey(int customLeftKey) {
+    this.customLeftKey = customLeftKey;
+  }
+
+  public int getCustomRightKey() {
+    return customRightKey;
+  }
+
+  public void setCustomRightKey(int customRightKey) {
+    this.customRightKey = customRightKey;
+  }
+
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   public PauseMenuStyle getStyle() {

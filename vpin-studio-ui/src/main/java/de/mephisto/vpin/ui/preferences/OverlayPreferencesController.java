@@ -33,6 +33,9 @@ public class OverlayPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayPreferencesController.class);
 
   @FXML
+  private Button recordBtn;
+
+  @FXML
   private ComboBox<String> overlayKeyCombo;
 
   @FXML
@@ -90,6 +93,11 @@ public class OverlayPreferencesController implements Initializable {
     }
   }
 
+  @FXML
+  private void onButtonRecord() {
+    PreferencesDialogs.openButtonRecorder();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     List<String> keyNames = Keys.getKeyNames();
@@ -98,7 +106,7 @@ public class OverlayPreferencesController implements Initializable {
     pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
     pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
-
+    recordBtn.setDisable(!client.getSystemService().isLocal());
 
     PreferenceBindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
     PreferenceBindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
