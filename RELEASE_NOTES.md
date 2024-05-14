@@ -6,6 +6,7 @@
 - **System Manager/ Backglass Server**: Fixed preferences page when no emulator with a **B2STableSettings.xml** could be resolved.
 - **System Manager/ Backglass Server**: Fixed resolving of the **B2STableSettings.xml** that is not necessarily located in the **Tables** folder anymore.
 - **Highscore Cards**: Added proper number formatting for formatted score list so that all values are right-aligned.
+- **Pause Menu Preferences**: Added cabinet **button recorder** for those who are having troubles opening or navigating the pause menu. Note that this is kind of a blind fix, since I'm currently not able to test this with a real controller board.
 - **Logging**: Improved very chatty pinemhi error handling.
 
 ## 2.18.4
