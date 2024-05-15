@@ -554,7 +554,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
       tablesCombo.getItems().addAll(gameRepresentations);
       tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, PopperScreen.Audio);
+        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
       });
     }
 
