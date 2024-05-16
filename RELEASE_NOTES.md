@@ -1,5 +1,6 @@
 ## 2.18.5
 
+- **Pause Menu Preferences**: Added cabinet **button recorder** for those who are having troubles opening or navigating the pause menu. Note that this is kind of a blind fix, since I'm currently not able to test this with a real controller board.
 - **Table Management / Dismiss All**: Fixed critical performance issue when dismissing validation errors of multiple tables.
 - **System Manager/ Backglass Server**: Fixed usage of the actual backglass server installation folder for the system actions (green buttons).
 - **System Manager/ Backglass Server**: Fixed preferences page when no emulator with a **B2STableSettings.xml** could be resolved.
