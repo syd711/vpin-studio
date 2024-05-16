@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -63,26 +62,42 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       String mappingVpsTableId = serverSettings.getMappingVpsTableId();
       String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
 
-      String term = game.getGameDisplayName();
-      List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
-      if (!vpsTables.isEmpty()) {
-        VpsTable vpsTable = vpsTables.get(0);
+      TableMatcher matcher = TableMatcher.getInstance();
 
+      VpsTable vpsTable = null;
+
+      // first check already mapped table and confirm mapping
+      if (StringUtils.isNotEmpty(game.getExtTableId())) {
+        VpsTable vpsTableById = VPS.getInstance().getTableById(game.getExtTableId());
+        if (matcher.isClose(game.getGameDisplayName(), game.getRom(), vpsTableById)) {
+          vpsTable = vpsTableById;
+        }
+      }
+      // if not found, find closest
+      if (vpsTable == null) {
+        VpsTable vpsCloseTable = matcher.findClosest(game.getGameDisplayName(), game.getRom(), VPS.getInstance().getTables());
+        if (vpsCloseTable != null) {
+          vpsTable = vpsCloseTable;
+        }
+      }
+
+      if (vpsTable != null) {
+        // table found => update the TableId
         if (StringUtils.isEmpty(game.getExtTableId()) || overwrite) {
           tableDetails.setMappedValue(mappingVpsTableId, vpsTable.getId());
         }
 
-        TableInfo tableInfo = vpxService.getTableInfo(game);
-        String tableVersion = null;
-        if (tableInfo != null) {
-          tableVersion = tableInfo.getTableVersion();
-        }
-
         if (StringUtils.isEmpty(game.getExtTableVersionId()) || overwrite) {
-          VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
+
+          TableInfo tableInfo = vpxService.getTableInfo(game);
+
+          VpsTableVersion version = matcher.findVersion(vpsTable, game, tableInfo);
           if (version != null) {
             LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
             tableDetails.setMappedValue(mappingVpsTableVersionId, version.getId());
+          } else {
+            LOG.info(game.getGameDisplayName() + ": Emptied table version");
+            tableDetails.setMappedValue(mappingVpsTableVersionId, null);
           }
         }
       }

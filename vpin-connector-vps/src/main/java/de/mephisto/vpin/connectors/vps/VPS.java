@@ -87,10 +87,16 @@ public class VPS {
     return this.tables.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
   }
 
+  public VpsTableVersion getTableVersionById(VpsTable table, String id) {
+    List<VpsTableVersion> tableFiles = table.getTableFiles();
+    return tableFiles.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
+  }
+
   public List<VpsTable> getTables() {
     return tables;
   }
 
+  /* moved to TableMatcher
   public VpsTableVersion findVersion(VpsTable table, String tableFileName, String tableName, String version) {
     List<VpsTableVersion> tableFiles = table.getTableFiles();
     if (tableFiles.size() == 1) {
@@ -134,6 +140,7 @@ public class VPS {
     }
     return false;
   }
+  */
 
   public List<VpsTable> find(String searchTerm) {
     return find(searchTerm, null);
