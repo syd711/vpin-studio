@@ -21,6 +21,8 @@ public class VPS {
 
   private static final ObjectMapper objectMapper;
 
+  private final static boolean skipUpdates = false;
+
   static {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -233,6 +235,11 @@ public class VPS {
 
   public List<VpsDiffer> update() {
     try {
+      if(skipUpdates) {
+        LOG.warn("VPS updates are skipped.");
+        return Collections.emptyList();
+      }
+
       LOG.info("Downloading " + VPS.URL);
       java.net.URL url = new URL(VPS.URL);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
