@@ -88,7 +88,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
     if (!StringUtils.isEmpty(overlayKey)) {
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
+      if (keyChecker.matches(nativeKeyEvent) || (showPauseInsteadOfOverlay && nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey())) {
         List<ProcessHandle> processes = systemService.getProcesses();
         boolean vpxRunning = systemService.isVPXRunning(processes);
         if (showPauseInsteadOfOverlay && vpxRunning) {
@@ -111,7 +111,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     String pauseKey = pauseMenuSettings.getKey();
     if ((!StringUtils.isEmpty(pauseKey) || pauseMenuSettings.getCustomLaunchKey() > 0) && !showPauseInsteadOfOverlay) {
       KeyChecker keyChecker = new KeyChecker(pauseKey);
-      if (keyChecker.matches(nativeKeyEvent) || nativeKeyEvent.getKeyCode() == pauseMenuSettings.getCustomLaunchKey()) {
+      if (keyChecker.matches(nativeKeyEvent) || nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey()) {
         boolean vpxRunning = systemService.isVPXRunning();
         if (vpxRunning) {
           OverlayWindowFX.getInstance().togglePauseMenu();

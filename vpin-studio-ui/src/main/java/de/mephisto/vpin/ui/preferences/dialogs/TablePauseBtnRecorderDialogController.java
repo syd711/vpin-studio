@@ -154,30 +154,31 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     Platform.runLater(() -> {
-      int keyCode = nativeKeyEvent.getKeyCode();
-      String value = String.valueOf(keyCode);
+      int code = nativeKeyEvent.getRawCode();
+      String value = String.valueOf(code);
+      LOG.info("Recorded " + code + "/" + nativeKeyEvent.getKeyCode());
       if (bindLaunchBtn.isDisabled()) {
         bindLaunchBtn.setDisable(false);
         keyCodeLaunch.setText(value);
-        pauseMenuSettings.setCustomLaunchKey(keyCode);
+        pauseMenuSettings.setCustomLaunchKey(code);
         LOG.info("Registered " + value + " for launch.");
       }
       else if (bindStartBtn.isDisabled()) {
         bindStartBtn.setDisable(false);
         keyCodeStart.setText(value);
-        pauseMenuSettings.setCustomStartKey(keyCode);
+        pauseMenuSettings.setCustomStartKey(code);
         LOG.info("Registered " + value + " for start.");
       }
       else if (bindLeftBtn.isDisabled()) {
         bindLeftBtn.setDisable(false);
         keyCodeLeft.setText(value);
-        pauseMenuSettings.setCustomLeftKey(keyCode);
+        pauseMenuSettings.setCustomLeftKey(code);
         LOG.info("Registered " + value + " for left.");
       }
       else if (bindRightBtn.isDisabled()) {
         bindRightBtn.setDisable(false);
         keyCodeRight.setText(value);
-        pauseMenuSettings.setCustomRightKey(keyCode);
+        pauseMenuSettings.setCustomRightKey(code);
         LOG.info("Registered " + value + " for right.");
       }
 

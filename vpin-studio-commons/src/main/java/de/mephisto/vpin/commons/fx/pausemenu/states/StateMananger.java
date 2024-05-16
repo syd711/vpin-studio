@@ -25,6 +25,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class StateMananger implements NativeKeyListener {
@@ -42,11 +43,16 @@ public class StateMananger implements NativeKeyListener {
   private final List<Integer> RIGHT = new ArrayList<>();
   private final List<Integer> ENTER = new ArrayList<>();
 
+  private int RECORDED_LEFT = 0;
+  private int RECORDED_RIGHT = 0;
+  private int RECORDED_START = 0;
+
   private MenuController menuController;
   private boolean running = false;
   private int leftFlip;
   private int rightFlip;
   private int start;
+
 
   public static StateMananger getInstance() {
     return INSTANCE;
@@ -81,7 +87,8 @@ public class StateMananger implements NativeKeyListener {
   }
 
   public void handle(int keyCode, int rawCode) {
-    if (LEFT.contains(keyCode) || isVPXMapped(keyCode, rawCode, leftFlip)) {
+    LOG.info("Pause Menu Key Event [keyCode/keyCodeRaw]: " + keyCode + "/" + rawCode);
+    if (LEFT.contains(rawCode) || isVPXMapped(keyCode, rawCode, leftFlip) || isRecordedMapped(rawCode, RECORDED_LEFT)) {
       if (menuController.isAtStart()) {
         return;
       }
@@ -89,7 +96,7 @@ public class StateMananger implements NativeKeyListener {
       this.activeState = activeState.left();
       navPlayer.play();
     }
-    else if (RIGHT.contains(keyCode) || isVPXMapped(keyCode, rawCode, rightFlip)) {
+    else if (RIGHT.contains(rawCode) || isVPXMapped(keyCode, rawCode, rightFlip) || isRecordedMapped(rawCode, RECORDED_RIGHT)) {
       if (menuController.isAtEnd()) {
         return;
       }
@@ -97,11 +104,15 @@ public class StateMananger implements NativeKeyListener {
       this.activeState = activeState.right();
       navPlayer.play();
     }
-    else if (ENTER.contains(keyCode) || isVPXMapped(keyCode, rawCode, start)) {
+    else if (ENTER.contains(rawCode) || isVPXMapped(keyCode, rawCode, start) || isRecordedMapped(rawCode, RECORDED_START)) {
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
     }
+  }
+
+  private boolean isRecordedMapped(int rawCode, int recorded) {
+    return rawCode == recorded;
   }
 
   private boolean isVPXMapped(int keyCode, int rawCode, int vpxDirectXKey) {
@@ -153,17 +164,28 @@ public class StateMananger implements NativeKeyListener {
     ENTER.clear();
 
     LEFT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
-    RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
-    ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
+    LOG.info("LEFT codes: " + String.join(", ", LEFT.stream().map(String::valueOf).collect(Collectors.toList())));
 
-    if(pauseMenuSettings.getCustomStartKey() > 0) {
-      ENTER.add(pauseMenuSettings.getCustomStartKey());
+    RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
+    LOG.info("RIGHT codes: " + String.join(", ", RIGHT.stream().map(String::valueOf).collect(Collectors.toList())));
+
+    ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
+    LOG.info("LEFT codes: " + String.join(", ", ENTER.stream().map(String::valueOf).collect(Collectors.toList())));
+
+    RECORDED_START = 0;
+    RECORDED_LEFT = 0;
+    RECORDED_RIGHT = 0;
+    if (pauseMenuSettings.getCustomStartKey() > 0) {
+      LOG.info("Added custom pause menu key: START [" + pauseMenuSettings.getCustomStartKey() + "]");
+      RECORDED_START = pauseMenuSettings.getCustomStartKey();
     }
-    if(pauseMenuSettings.getCustomStartKey() > 0) {
-      LEFT.add(pauseMenuSettings.getCustomLeftKey());
+    if (pauseMenuSettings.getCustomStartKey() > 0) {
+      LOG.info("Added custom pause menu key: LEFT [" + pauseMenuSettings.getCustomLeftKey() + "]");
+      RECORDED_LEFT = pauseMenuSettings.getCustomLeftKey();
     }
-    if(pauseMenuSettings.getCustomStartKey() > 0) {
-      RIGHT.add(pauseMenuSettings.getCustomRightKey());
+    if (pauseMenuSettings.getCustomStartKey() > 0) {
+      LOG.info("Added custom pause menu key: RIGHT [" + pauseMenuSettings.getCustomRightKey() + "]");
+      RECORDED_RIGHT = pauseMenuSettings.getCustomRightKey();
     }
 
     leftFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.LFlipKey);
