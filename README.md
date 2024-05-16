@@ -43,6 +43,13 @@ A full documentation is available in the wiki of this repository:
 
 https://github.com/syd711/vpin-studio/wiki
 
+## Donate 
+
+Creating and maintaing the VPin Studio takes a lot of time and resources. Please consider donating through ko-fi.com to support the development.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O4O1XEB5F)
+
+
 ## Third Party Integrations
 
 ### PinUP Virtual Pinball System

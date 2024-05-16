@@ -286,7 +286,7 @@ public class Game {
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseFilename = getGameName();
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
+    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
     if (mediaFiles != null) {
       Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
       Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");

@@ -1,13 +1,15 @@
 ## 2.18.5
 
 - **Table Management / Dismiss All**: Fixed critical performance issue when dismissing validation errors of multiple tables.
-- **Discord Messages**: Added proper number formatting to all Discord score messages, including images. (Let me know when I've missed some, this was a quick shot.).
 - **System Manager/ Backglass Server**: Fixed usage of the actual backglass server installation folder for the system actions (green buttons).
 - **System Manager/ Backglass Server**: Fixed preferences page when no emulator with a **B2STableSettings.xml** could be resolved.
 - **System Manager/ Backglass Server**: Fixed resolving of the **B2STableSettings.xml** that is not necessarily located in the **Tables** folder anymore.
+- **Discord Messages**: Added proper number formatting to all Discord score messages, including images. (Let me know when I've missed some, this was a quick shot.).
 - **Highscore Cards**: Added proper number formatting for formatted score list so that all values are right-aligned.
-- **Pause Menu Preferences**: Added cabinet **button recorder** for those who are having troubles opening or navigating the pause menu. Note that this is kind of a blind fix, since I'm currently not able to test this with a real controller board.
+- **Table Management / Table Asset Manager**: Fixed initial selection when opened from sidebar media button.
+- **Table Management / Asset Management**: Fixed detection of media files, caused by a superflous camel case check.
 - **Logging**: Improved very chatty pinemhi error handling.
+- **Window Manager**: Fixed saving the position when positioned left to the main screen.
 
 ## 2.18.4
 
@@ -15,6 +17,7 @@
 - **Video Player**: The actual media size is used to determine the orientation of the video now. I hope this will fix the orientation problem for portrait users.
 - **Main Toolbar**: Fixed styling issues of "Jobs" button.
 - **Icons**: Replaced some of the remaining non-material UI icons (e.g. the preferences icon).
+
 ## 2.18.3
 
 - **Highscore Cards**: Re-enabled the custom color picker for the card designer. I've hidden the link to this picker before because it has some focus issues, but it's better to have a bad solution for custom colors than nothing.
