@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
@@ -50,14 +50,14 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
-  public TableUploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/table";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("mode", tableUploadDescriptor.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
-      ResponseEntity<TableUploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), TableUploadDescriptor.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -66,9 +66,9 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableUploadDescriptor proccessTableUpload(TableUploadDescriptor uploadDescriptor) throws Exception {
+  public UploadDescriptor proccessTableUpload(UploadDescriptor uploadDescriptor) throws Exception {
     try {
-      return getRestClient().post(API + "games/process/table", uploadDescriptor, TableUploadDescriptor.class);
+      return getRestClient().post(API + "games/process/table", uploadDescriptor, UploadDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed to process table: " + e.getMessage(), e);

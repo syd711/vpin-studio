@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.vpx;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -136,10 +137,10 @@ public class VpxServiceClient extends VPinStudioClientService {
     }
   }
 
-  public JobExecutionResult uploadPov(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadPov(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POV, listener), JobExecutionResult.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.POV, listener), UploadDescriptor.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
@@ -147,10 +148,10 @@ public class VpxServiceClient extends VPinStudioClientService {
     }
   }
 
-  public JobExecutionResult uploadIniFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadIniFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/ini/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.INI, listener), JobExecutionResult.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.INI, listener), UploadDescriptor.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Ini upload failed: " + e.getMessage(), e);

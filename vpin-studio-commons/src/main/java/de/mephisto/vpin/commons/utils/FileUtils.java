@@ -24,6 +24,13 @@ public class FileUtils {
     return name;
   }
 
+  public static File createMatchingTempFile(File file) throws IOException {
+    String name = FilenameUtils.getBaseName(file.getName());
+    String suffix = FilenameUtils.getExtension(file.getName());
+    File tempFile = File.createTempFile(name, "." + suffix);
+    return tempFile;
+  }
+
   public static void cloneFile(File original, String updatedName) throws IOException {
     if (original.exists()) {
       String suffix = FilenameUtils.getExtension(original.getName());

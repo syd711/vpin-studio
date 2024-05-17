@@ -12,8 +12,8 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -50,7 +50,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -418,7 +421,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onDMDUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openDMDUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      boolean b = TableDialogs.openDMDUploadDialog(selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
       }
@@ -547,10 +550,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
   }
 
-  public void refreshUploadResult(Optional<TableUploadDescriptor> uploadResult) {
+  public void refreshUploadResult(Optional<UploadDescriptor> uploadResult) {
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
       Consumer<GameRepresentation> c = gameRepresentation -> {
-        TableUploadDescriptor tableUploadResult = uploadResult.get();
+        UploadDescriptor tableUploadResult = uploadResult.get();
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           tableView.getSelectionModel().clearSelection();

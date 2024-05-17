@@ -62,7 +62,7 @@ public class PupPackUploadController implements Initializable, DialogController 
       stage.close();
 
       Platform.runLater(() -> {
-        PupPackUploadProgressModel model = new PupPackUploadProgressModel(tablesSidebarController, this.game.getId(), "PUP Pack Upload", selection, "puppack");
+        PupPackUploadProgressModel model = new PupPackUploadProgressModel(tablesSidebarController, this.game.getId(), "PUP Pack Upload", selection);
         ProgressDialog.createProgressDialog(model);
       });
     }

@@ -100,6 +100,10 @@ public class UploaderAnalysis<T> {
     }
   }
 
+  public boolean containsAssetType(AssetType assetType) {
+    return validateAssetType(assetType) == null;
+  }
+
   public String validateAssetType(AssetType assetType) {
     switch (assetType) {
       case VPX: {
@@ -260,8 +264,7 @@ public class UploaderAnalysis<T> {
         return true;
       }
     }
-
-    return audioCount > 0;
+    return false;
   }
 
   private boolean isAltColor() {
@@ -284,7 +287,7 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  private boolean isDMD() {
+  public boolean isDMD() {
     for (String fileName : directories) {
       if (fileName.endsWith("DMD")) {
         return true;
@@ -293,6 +296,10 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
+
+  public boolean isBackglass() {
+    return hasFileWithSuffix("directb2s");
+  }
 
   private boolean hasFileWithSuffix(String s) {
     for (String fileName : fileNames) {

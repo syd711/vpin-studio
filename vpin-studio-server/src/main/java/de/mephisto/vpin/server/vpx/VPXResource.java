@@ -4,12 +4,16 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -51,6 +55,9 @@ public class VPXResource {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
@@ -102,7 +109,8 @@ public class VPXResource {
         return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
       }
       return ResponseEntity.notFound().build();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Screenshot extraction failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Screenshot extraction failed: " + e.getMessage());
     }
@@ -146,96 +154,43 @@ public class VPXResource {
       out.deleteOnExit();
 
       LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
+//      UploadUtil.upload(file, out);
       return vpxService.installMusic(out);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
     }
   }
 
   @PostMapping("/pov/upload")
-  public JobExecutionResult povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                      @RequestParam(value = "uploadType", required = false) String uploadType,
-                                      @RequestParam("objectId") Integer gameId) {
+  public UploadDescriptor povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                    @RequestParam("objectId") Integer gameId) {
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found POV upload.");
-        return JobExecutionResultFactory.error("No game found for POV upload.");
-      }
-
-      String name = FilenameUtils.getBaseName(game.getGameFileName());
-      File out = File.createTempFile(name, ".pov");
-      LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
-
-      if (game.getPOVFile().exists() && !game.getPOVFile().delete()) {
-        return JobExecutionResultFactory.error("Failed to delete " + game.getPOVFile().getAbsolutePath());
-      }
-
-      FileUtils.copyFile(out, game.getPOVFile());
-      out.deleteOnExit();
-      out.delete();
-
-      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
-      return JobExecutionResultFactory.empty();
-    } catch (Exception e) {
+      UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+      descriptor.getAssetsToImport().add(AssetType.POV);
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
     }
   }
 
   @PostMapping("/ini/upload")
-  public JobExecutionResult initUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                       @RequestParam(value = "uploadType", required = false) String uploadType,
-                                       @RequestParam("objectId") Integer gameId) {
+  public UploadDescriptor iniUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                     @RequestParam("objectId") Integer gameId) {
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found for upload.");
-        return JobExecutionResultFactory.error("No game found for upload.");
-      }
-      File iniFile = game.getIniFile();
-      if (iniFile.exists() && !iniFile.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete " + iniFile.getAbsolutePath());
-      }
-
-      String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
-      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      if (StringUtils.isEmpty(suffix)) {
-        throw new UnsupportedOperationException("The uploaded file has no valid suffix \"" + suffix + "\"");
-      }
-
-      File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
-      LOG.info("Uploading " + tempFile.getAbsolutePath());
-
-      boolean upload = UploadUtil.upload(file, tempFile);
-      if (!upload) {
-        return JobExecutionResultFactory.error("Upload failed, check logs for details.");
-      }
-
-      if (suffix.equalsIgnoreCase("ini")) {
-        FileUtils.copyFile(tempFile, iniFile);
-      }
-      else if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("zip")) {
-        PackageUtil.unpackTargetFile(tempFile, iniFile, ".ini");
-      }
-      else {
-        throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");
-      }
-    } catch (Exception e) {
-      LOG.error("Ini upload failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Ini upload failed: " + e.getMessage());
+      UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+      descriptor.getAssetsToImport().add(AssetType.INI);
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
+      return descriptor;
     }
-    return JobExecutionResultFactory.empty();
+    catch (Exception e) {
+      LOG.error("INI upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
+    }
   }
 }

@@ -4,10 +4,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -47,7 +45,6 @@ public class DMDUploadController implements Initializable, DialogController {
 
   private boolean result = false;
   private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -63,7 +60,7 @@ public class DMDUploadController implements Initializable, DialogController {
       stage.close();
 
       Platform.runLater(() -> {
-        DMDUploadProgressModel model = new DMDUploadProgressModel(tablesSidebarController, this.game.getId(), "DMD Bundle Upload", selection, "dmd");
+        DMDUploadProgressModel model = new DMDUploadProgressModel(this.game.getId(), "DMD Bundle Upload", selection);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -131,10 +128,6 @@ public class DMDUploadController implements Initializable, DialogController {
   public void setGame(GameRepresentation game) {
     this.game = game;
     this.titleLabel.setText("Select DMD Bundle for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   public void setFile(File file, Stage stage) {

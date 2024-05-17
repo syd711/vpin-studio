@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
@@ -54,14 +55,14 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "puppacks/option/" + gameId, o, JobExecutionResult.class);
   }
 
-  public JobExecutionResult uploadPupPack(File file, String uploadType, int gameId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadPupPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.PUP_PACK, listener), JobExecutionResult.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.PUP_PACK, listener), UploadDescriptor.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("ALT sound upload failed: " + e.getMessage());
+      throw e;
     }
   }
 }

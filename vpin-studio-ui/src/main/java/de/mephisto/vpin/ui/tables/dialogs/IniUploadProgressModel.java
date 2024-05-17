@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -52,7 +53,7 @@ public class IniUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getVpxService().uploadIniFile(next, "ini", gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getVpxService().uploadIniFile(next, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {

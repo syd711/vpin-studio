@@ -150,7 +150,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openDMDUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openDMDUploadDialog(game.get(), null);
     }
   }
 

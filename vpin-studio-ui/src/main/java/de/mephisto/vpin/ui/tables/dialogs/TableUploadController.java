@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -116,12 +116,12 @@ public class TableUploadController implements Initializable, DialogController {
   private VBox assetsBox;
 
   private File selection;
-  private Optional<TableUploadDescriptor> result = Optional.empty();
+  private Optional<UploadDescriptor> result = Optional.empty();
 
   private GameRepresentation game;
   private GameEmulatorRepresentation emulatorRepresentation;
 
-  private TableUploadDescriptor tableUploadDescriptor = new TableUploadDescriptor();
+  private UploadDescriptor tableUploadDescriptor = new UploadDescriptor();
   private TableOverviewController tableOverviewController;
   private UploaderAnalysis uploaderAnalysis;
 
@@ -158,23 +158,38 @@ public class TableUploadController implements Initializable, DialogController {
 
         List<Object> results = progressDialog.getResults();
         if (!results.isEmpty()) {
-          TableUploadDescriptor uploadDescriptor = (TableUploadDescriptor) results.get(0);
+          UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
 
           uploadDescriptor.setSubfolderName(subFolder);
           uploadDescriptor.setFolderBasedImport(useSubFolder);
           uploadDescriptor.setAutoFill(autoFill);
 
-          uploadDescriptor.setImportAltSound(assetAltSound);
-          uploadDescriptor.setImportBackglass(assetBackglass);
-          uploadDescriptor.setImportDMD(assetDmd);
-          uploadDescriptor.setImportMediaAssets(assetMedia);
-          uploadDescriptor.setImportPupPack(assetPupPack);
-          uploadDescriptor.setImportRom(assetRom);
+          if (assetAltSound) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
+          }
+          if (assetAltSound) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
+          }
+          if (assetBackglass) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
+          }
+          if (assetDmd) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.DMD_PACK);
+          }
+          if (assetMedia) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
+          }
+          if (assetPupPack) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.PUP_PACK);
+          }
+          if (assetRom) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ROM);
+          }
 
           TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
           ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
           if (!progressDialogResult.getResults().isEmpty()) {
-            uploadDescriptor = (TableUploadDescriptor) progressDialogResult.getResults().get(0);
+            uploadDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
             result = Optional.of(uploadDescriptor);
             tableOverviewController.refreshUploadResult(result);
           }
@@ -442,7 +457,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   }
 
-  public Optional<TableUploadDescriptor> uploadFinished() {
+  public Optional<UploadDescriptor> uploadFinished() {
     return result;
   }
 }

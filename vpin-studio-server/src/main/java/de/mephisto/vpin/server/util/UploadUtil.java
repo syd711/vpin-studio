@@ -15,6 +15,7 @@ import java.io.IOException;
 public class UploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UploadUtil.class);
 
+  @Deprecated //"Use universal uploader"
   public static Boolean upload(MultipartFile file, File target) throws Exception {
     try {
       if (target.exists() && !target.delete()) {

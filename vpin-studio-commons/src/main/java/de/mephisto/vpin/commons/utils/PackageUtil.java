@@ -7,7 +7,6 @@ public class PackageUtil {
     return suffix.equalsIgnoreCase("zip");
   }
 
-
   public static String contains(File file, String suffix) {
     if(file.getName().toLowerCase().endsWith(".zip")) {
       return ZipUtil.contains(file, suffix);

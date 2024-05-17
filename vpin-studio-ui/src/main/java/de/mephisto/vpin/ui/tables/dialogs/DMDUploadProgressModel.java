@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -21,17 +20,13 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final TablesSidebarController tablesSidebarController;
   private final int gameId;
   private final File file;
-  private final String uploadType;
 
-  public DMDUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String uploadType) {
+  public DMDUploadProgressModel(int gameId, String title, File file) {
     super(title);
-    this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;
     this.file = file;
-    this.uploadType = uploadType;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -58,11 +53,11 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getDmdService().uploadDMDPackage(next, uploadType, gameId, percent ->
+      UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, gameId, percent ->
           Platform.runLater(() -> {
             progressResultModel.setProgress(percent);
           }));
-      if(!StringUtils.isEmpty(result.getError())) {
+      if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
@@ -74,7 +69,8 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
       }
       progressResultModel.addProcessed();
       EventManager.getInstance().notifyTableChange(gameId, null);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("DMD bundle upload failed: " + e.getMessage(), e);
     }
   }
