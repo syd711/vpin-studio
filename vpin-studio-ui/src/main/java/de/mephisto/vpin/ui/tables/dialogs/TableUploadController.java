@@ -227,7 +227,7 @@ public class TableUploadController implements Initializable, DialogController {
 
         Platform.runLater(() -> {
           if (rescan) {
-            uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection, game);
+            uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
           String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
 
@@ -411,7 +411,6 @@ public class TableUploadController implements Initializable, DialogController {
     tableUploadDescriptor.setEmulatorId(this.emulatorCombo.getValue().getId());
     tableUploadDescriptor.setAutoFill(this.autofillCheckbox.isSelected());
     this.tableUploadDescriptor.setUploadType(uploadType);
-
 
     this.game = game;
 

@@ -3,12 +3,14 @@ package de.mephisto.vpin.server.puppack;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
@@ -17,6 +19,7 @@ import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -110,14 +114,21 @@ public class PupPacksResource {
   }
 
   @PostMapping("/upload")
-  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
       descriptor.getAssetsToImport().add(AssetType.PUP_PACK);
       descriptor.upload();
+      UploaderAnalysis analysis = new UploaderAnalysis(new File(descriptor.getTempFilename()));
+      analysis.analyze();
       universalUploadService.importArchiveBasedAssets(descriptor, AssetType.PUP_PACK);
-      gameService.resetUpdate(gameId, VpsDiffTypes.pupPack);
+
+      List<Game> gamesByRom = gameService.getKnownGames();
+      for (Game gameByRom : gamesByRom) {
+        if (!StringUtils.isEmpty(gameByRom.getRom()) && analysis.containsRom(gameByRom.getRom())) {
+          gameService.resetUpdate(gameByRom.getId(), VpsDiffTypes.pupPack);
+        }
+      }
       return descriptor;
     }
     catch (Exception e) {

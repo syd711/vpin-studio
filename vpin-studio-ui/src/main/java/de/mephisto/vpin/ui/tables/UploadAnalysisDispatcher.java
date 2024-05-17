@@ -82,7 +82,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case PUP_PACK: {
-        TableDialogs.openPupPackUploadDialog(tablesController, game, file);
+        TableDialogs.openPupPackUploadDialog(tablesController, game, file, analysis);
         break;
       }
       case DMD_PACK: {
@@ -110,7 +110,7 @@ public class UploadAnalysisDispatcher {
     return extension.equalsIgnoreCase("zip") || extension.equalsIgnoreCase("7z");
   }
 
-  public static UploaderAnalysis analyzeArchive(File file, GameRepresentation game) {
+  public static UploaderAnalysis analyzeArchive(File file) {
     try {
       UploadDispatchAnalysisZipProgressModel model = new UploadDispatchAnalysisZipProgressModel(file);
       ProgressDialog.createProgressDialog(model);

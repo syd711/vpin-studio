@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -161,30 +163,31 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public JobExecutionResult installPupPack(Game game, File pupTmpArchive) {
+  public void installPupPack(UploadDescriptor uploadDescriptor) {
+    File tempFile = new File(uploadDescriptor.getTempFilename());
     File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
-      return JobExecutionResultFactory.error("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
+      uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
+      return;
     }
 
     LOG.info("Extracting PUP pack to " + pupVideosFolder.getAbsolutePath());
     if (!pupVideosFolder.exists()) {
       if (!pupVideosFolder.mkdirs()) {
-        return JobExecutionResultFactory.error("Failed to create PUP pack directory " + pupVideosFolder.getAbsolutePath());
+        uploadDescriptor.setError("Failed to create PUP pack directory " + pupVideosFolder.getAbsolutePath());
+        return;
       }
     }
 
-    PupPackInstallerJob job = new PupPackInstallerJob(this, pupTmpArchive, pupVideosFolder, game);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
-    jobDescriptor.setTitle("Installing PUP pack for \"" + game.getGameDisplayName() + "\"");
-    jobDescriptor.setDescription("Unzipping " + pupTmpArchive.getName());
+    jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
+    jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
     jobDescriptor.setJob(job);
     jobDescriptor.setStatus(job.getStatus());
 
     jobQueue.offer(jobDescriptor);
-
-    return JobExecutionResultFactory.empty();
   }
 
   public void exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {

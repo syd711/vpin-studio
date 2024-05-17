@@ -316,7 +316,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file, UploaderAnalysis analysis) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -324,9 +324,8 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
-    controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
-    controller.setFile(file, stage);
+    controller.setFile(file, analysis, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();

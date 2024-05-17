@@ -167,11 +167,11 @@ public class TablesSidebarPUPPackController implements Initializable {
           if (!StringUtils.isEmpty(jobExecutionResult.getMessage())) {
             WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getMessage());
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
-        }
-        finally {
+        } finally {
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         }
       }
@@ -227,7 +227,8 @@ public class TablesSidebarPUPPackController implements Initializable {
         else {
           desktop.open(file);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open PinUpPackEditor: " + e.getMessage(), e);
       }
     }
@@ -248,7 +249,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      TableDialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null, null);
     }
   }
 

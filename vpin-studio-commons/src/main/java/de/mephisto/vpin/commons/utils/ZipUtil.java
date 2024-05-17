@@ -259,6 +259,16 @@ public class ZipUtil {
   }
 
   public static String contains(@NonNull File file, @NonNull String suffix) {
+    String contains = containsWithPath(file, suffix);
+    if(contains != null) {
+      while (contains.contains("/")) {
+        contains = contains.substring(contains.indexOf("/") + 1);
+      }
+    }
+    return contains;
+  }
+
+  public static String containsWithPath(@NonNull File file, @NonNull String suffix) {
     String fileFound = null;
     try {
       byte[] buffer = new byte[1024];
@@ -274,9 +284,6 @@ public class ZipUtil {
           String name = zipEntry.getName();
           if (name.toLowerCase().endsWith(suffix.toLowerCase())) {
             fileFound = name;
-            while (fileFound.contains("/")) {
-              fileFound = fileFound.substring(fileFound.indexOf("/") + 1);
-            }
           }
         }
         zis.closeEntry();

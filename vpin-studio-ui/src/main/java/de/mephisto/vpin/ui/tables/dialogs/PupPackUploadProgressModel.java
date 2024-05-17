@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -21,12 +23,12 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final int gameId;
+  private final String rom;
   private final File file;
 
-  public PupPackUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file) {
+  public PupPackUploadProgressModel(String rom, String title, File file) {
     super(title);
-    this.gameId = gameId;
+    this.rom = rom;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
@@ -54,7 +56,7 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getPupPackService().uploadPupPack(next, gameId, percent ->
+      UploadDescriptor result = Studio.client.getPupPackService().uploadPupPack(next, percent ->
           Platform.runLater(() -> {
             progressResultModel.setProgress(percent);
           }));
@@ -69,7 +71,7 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
         });
       }
       progressResultModel.addProcessed();
-      EventManager.getInstance().notifyTableChange(gameId, null);
+      EventManager.getInstance().notifyTableChange(-1, rom);
     }
     catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);

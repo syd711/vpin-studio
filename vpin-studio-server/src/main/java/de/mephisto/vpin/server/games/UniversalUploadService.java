@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -27,6 +28,9 @@ public class UniversalUploadService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private PupPacksService pupPacksService;
 
   public File resolveTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
@@ -53,6 +57,10 @@ public class UniversalUploadService {
       }
       case DMD_PACK: {
         dmdService.installDMDPackage(game, tempFile);
+        break;
+      }
+      case PUP_PACK: {
+        pupPacksService.installPupPack(uploadDescriptor);
         break;
       }
       case MUSIC: {

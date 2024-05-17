@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +44,16 @@ public class UploaderAnalysis<T> {
 
   public String getError() {
     return error;
+  }
+
+  public boolean containsRom(String rom) {
+    for (String fileName : directories) {
+      String[] split = fileName.split("/");
+      if (Arrays.asList(split).contains(rom)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public String getVpxFileName() {
@@ -84,7 +93,7 @@ public class UploaderAnalysis<T> {
 
   public void analyze(T archiveEntry, String name, boolean directory) {
     if (directory) {
-      String[] split = name.split("/");
+      String[] split = name.replaceAll("\\\\", "/").split("/");
       for (String s : split) {
         if (!StringUtils.isEmpty(s) && !directories.contains(s)) {
           directories.add(s);
@@ -92,8 +101,10 @@ public class UploaderAnalysis<T> {
       }
     }
     else {
-      String fileName = name;
+      String fileName = name.replaceAll("\\\\", "/");
       if (fileName.contains("/")) {
+        String dir = name.substring(0, fileName.lastIndexOf("/"));
+        directories.add(dir);
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
       }
       fileNames.add(fileName);

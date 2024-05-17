@@ -391,7 +391,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onPupPackUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
@@ -1585,7 +1585,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
     altColorUploadItem.setDisable(disable);
     altSoundUploadItem.setDisable(disable);
-    pupPackUploadItem.setDisable(disable);
     dmdUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);

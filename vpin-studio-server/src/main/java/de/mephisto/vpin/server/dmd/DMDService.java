@@ -106,9 +106,8 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public JobExecutionResult installDMDPackage(Game game, File archive) {
+  public void installDMDPackage(Game game, File archive) {
     DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
-    return JobExecutionResultFactory.empty();
   }
 
   public ComponentSummary getFreezySummary(int emulatorId) {

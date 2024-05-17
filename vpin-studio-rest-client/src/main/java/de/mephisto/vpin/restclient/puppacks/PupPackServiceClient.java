@@ -55,10 +55,10 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "puppacks/option/" + gameId, o, JobExecutionResult.class);
   }
 
-  public UploadDescriptor uploadPupPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadPupPack(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.PUP_PACK, listener), UploadDescriptor.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.PUP_PACK, listener), UploadDescriptor.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);
