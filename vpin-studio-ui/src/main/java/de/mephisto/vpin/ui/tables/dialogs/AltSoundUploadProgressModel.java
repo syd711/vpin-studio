@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -22,17 +23,12 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final TablesSidebarController tablesSidebarController;
   private final int gameId;
   private final File file;
-  private final String altSoundType;
-
-  public AltSoundUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String altSoundType) {
+  public AltSoundUploadProgressModel(int gameId, String title, File file, String altSoundType) {
     super(title);
-    this.tablesSidebarController = tablesSidebarController;
     this.gameId = gameId;
     this.file = file;
-    this.altSoundType = altSoundType;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -59,7 +55,7 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getAltSoundService().uploadAltSound(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, gameId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

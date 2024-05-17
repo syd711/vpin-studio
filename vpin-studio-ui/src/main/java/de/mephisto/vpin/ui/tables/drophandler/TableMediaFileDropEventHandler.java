@@ -55,7 +55,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         return suffixes.contains(suffix);
       }).collect(Collectors.toList());
 
-      if (filtered.isEmpty()) {
+        if (filtered.isEmpty()) {
         WidgetFactory.showAlert(Studio.stage, "Error", "None of the selected is valid for this upload.",
           "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }

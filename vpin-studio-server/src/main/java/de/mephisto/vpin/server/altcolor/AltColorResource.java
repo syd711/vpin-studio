@@ -2,22 +2,20 @@ package de.mephisto.vpin.server.altcolor;
 
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
-import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.File;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -36,6 +34,9 @@ public class AltColorResource {
   @Autowired
   private GameValidationService validationService;
 
+  @Autowired
+  private UniversalUploadService universalUploadService;
+
   @GetMapping("{id}")
   public AltColor get(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -51,31 +52,22 @@ public class AltColorResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam(value = "uploadType", required = false) String uploadType,
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found for alt color upload.");
-        return JobExecutionResultFactory.error("No game found for alt color upload.");
-      }
-
-      String name = FilenameUtils.getBaseName(file.getOriginalFilename());
-      String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = File.createTempFile(name, "." + ext);
-      LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
-      JobExecutionResult jobExecutionResult = altColorService.installAltColor(game, out);
+      descriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.ALT_COLOR);
       gameService.resetUpdate(gameId, VpsDiffTypes.altColor);
-      return jobExecutionResult;
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT color upload failed: " + e.getMessage());
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error(AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
     }
   }
 

@@ -102,6 +102,7 @@ public class MusicUploadController implements Initializable, DialogController {
 
   public void setFile(File file) {
     if (file != null) {
+      this.selection = file;
       this.fileNameField.setText(file.getAbsolutePath());
       this.uploadBtn.setDisable(false);
     }

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.vpx.VPXService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,9 @@ public class UniversalUploadService {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private VPXService vpxService;
+
   public File resolveTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -33,6 +37,22 @@ public class UniversalUploadService {
     return tempFile;
   }
 
+
+  public void importArchiveBasedAssets(UploadDescriptor uploadDescriptor, AssetType assetType) throws Exception {
+    File tempFile = new File(uploadDescriptor.getTempFilename());
+    switch (assetType) {
+      case ALT_SOUND: {
+        break;
+      }
+      case ALT_COLOR: {
+        break;
+      }
+      case MUSIC: {
+        vpxService.installMusic(tempFile);
+        break;
+      }
+    }
+  }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, AssetType assetType) throws Exception {
     File temporaryAssetFile = new File(uploadDescriptor.getTempFilename());

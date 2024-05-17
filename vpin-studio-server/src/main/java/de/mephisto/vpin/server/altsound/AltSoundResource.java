@@ -2,14 +2,14 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
-import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +44,9 @@ public class AltSoundResource {
 
   @Autowired
   private GameValidationService validationService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   @GetMapping("{id}")
   public AltSound getAltSound(@PathVariable("id") int id) {
@@ -96,30 +99,23 @@ public class AltSoundResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam(value = "uploadType", required = false) String uploadType,
                                    @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found for alt sound upload.");
-        return JobExecutionResultFactory.error("No game found for alt sound upload.");
-      }
-
-      String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
-      LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
-      JobExecutionResult jobExecutionResult = altSoundService.installAltSound(game, out);
+      descriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.ALT_SOUND);
       gameService.resetUpdate(gameId, VpsDiffTypes.altSound);
-      return jobExecutionResult;
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error(AssetType.ALT_SOUND.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_SOUND + " upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
     }
   }
 

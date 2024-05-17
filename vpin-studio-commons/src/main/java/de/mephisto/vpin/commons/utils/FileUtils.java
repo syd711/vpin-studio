@@ -17,7 +17,7 @@ public class FileUtils {
 
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
-      if(name.contains(String.valueOf(invalidWindowsSpecificChar))) {
+      if (name.contains(String.valueOf(invalidWindowsSpecificChar))) {
         name = name.replaceAll(String.valueOf(invalidWindowsSpecificChar), "-");
       }
     }
@@ -25,9 +25,11 @@ public class FileUtils {
   }
 
   public static File createMatchingTempFile(File file) throws IOException {
-    String name = FilenameUtils.getBaseName(file.getName());
-    String suffix = FilenameUtils.getExtension(file.getName());
-    File tempFile = File.createTempFile(name, "." + suffix);
+    File tmpFolder = new File(System.getProperty("java.io.tmpdir"));
+    File tempFile = new File(tmpFolder, file.getName());
+    if (tempFile.exists() && !tempFile.delete()) {
+      throw new IOException("Could not delete existing temp file \"" + tempFile.getAbsolutePath() + "\"");
+    }
     return tempFile;
   }
 
@@ -126,7 +128,8 @@ public class FileUtils {
     }
     try {
       org.apache.commons.io.FileUtils.deleteDirectory(folder);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       return false;
     }
     return true;

@@ -47,7 +47,6 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   private boolean result = false;
   private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -63,7 +62,7 @@ public class AltSoundUploadController implements Initializable, DialogController
       stage.close();
 
       Platform.runLater(() -> {
-        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(tablesSidebarController, this.game.getId(), "ALT Sound Upload", selection, "altsound");
+        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(this.game.getId(), "ALT Sound Upload", selection, "altsound");
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -134,10 +133,6 @@ public class AltSoundUploadController implements Initializable, DialogController
   public void setGame(GameRepresentation game) {
     this.game = game;
     this.titleLabel.setText("Select ALT sound package for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   public void setFile(File file) {

@@ -98,7 +98,7 @@ public class MusicInstallationUtil {
         if (zipEntry.isDirectory()) {
           String name = zipEntry.getName();
           File newFolder = new File(musicFolder, name);
-          if (!newFolder.mkdirs()) {
+          if (!newFolder.exists() && !newFolder.mkdirs()) {
             fileInputStream.close();
             zis.closeEntry();
             zis.close();

@@ -142,55 +142,60 @@ public class VPXResource {
   }
 
   @PostMapping("/music/upload")
-  public Boolean uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
-      if (file == null) {
-        LOG.error("Music upload request did not contain a file object.");
-        return false;
-      }
-
-      String name = file.getName();
-      File out = File.createTempFile(name, ".zip");
-      out.deleteOnExit();
-
-      LOG.info("Uploading " + out.getAbsolutePath());
-//      UploadUtil.upload(file, out);
-      return vpxService.installMusic(out);
+      descriptor.getAssetsToImport().add(AssetType.MUSIC);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.MUSIC);
+      return descriptor;
     }
     catch (Exception e) {
+      LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
     }
   }
 
   @PostMapping("/pov/upload")
   public UploadDescriptor povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
                                     @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
       descriptor.getAssetsToImport().add(AssetType.POV);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
+      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
       return descriptor;
     }
     catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
     }
+    finally {
+      descriptor.finalizeUpload();
+    }
   }
 
   @PostMapping("/ini/upload")
   public UploadDescriptor iniUpload(@RequestParam(value = "file", required = false) MultipartFile file,
                                      @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
       descriptor.getAssetsToImport().add(AssetType.INI);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
+      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
       return descriptor;
     }
     catch (Exception e) {
       LOG.error("INI upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
     }
   }
 }

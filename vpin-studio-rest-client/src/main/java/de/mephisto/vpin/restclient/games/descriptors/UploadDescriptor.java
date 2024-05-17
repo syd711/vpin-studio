@@ -58,6 +58,13 @@ public class UploadDescriptor {
     return uploadTempFile;
   }
 
+  public void finalizeUpload() {
+    File tempFile = new File(getTempFilename());
+    if (tempFile.exists()) {
+      tempFile.delete();
+    }
+  }
+
   @JsonIgnore
   public boolean isImporting(AssetType assetType) {
     return assetsToImport.contains(assetType);

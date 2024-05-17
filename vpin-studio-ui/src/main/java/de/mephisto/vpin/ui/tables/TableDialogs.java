@@ -269,7 +269,6 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
     controller.setFile(file);
     stage.showAndWait();
 
@@ -301,7 +300,6 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setTableSidebarController(tablesController);
     controller.setFile(file);
     stage.showAndWait();
 

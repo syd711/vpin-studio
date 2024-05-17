@@ -115,8 +115,8 @@ public class DirectB2SResource {
   @PostMapping("/upload")
   public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
                                           @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
       descriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
@@ -125,6 +125,9 @@ public class DirectB2SResource {
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
     }
   }
 }

@@ -16,6 +16,14 @@
 - **Table Management / PUP Packs**: Added "Delete" button.
 - **Table Management / Validations**: Added preferences button to the validator message section to provide a quick-access for enabling/disabling them.
 
+- **Universal Uploader**: All upload and file drag/drop operations have been re-implemented. The overall goal is to be able to upload everything everywhere. This includes:
+  - Dropping/Uploading files out of archives (e.g. 7z windows) to the table overview or to table asset screen.
+  - Dropping/Uploading complete bundles of files for existing tables or...
+  - Dropping/Uploading complete table bundles which include not only the VPX file, but also backglass files, PUP packs and Popper media files.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/universal-upload.png" width="900" />
+
+
 ### Bugfixes
 
 - **Table Overview**: Fixed suppressed errors in the VPS updates column.

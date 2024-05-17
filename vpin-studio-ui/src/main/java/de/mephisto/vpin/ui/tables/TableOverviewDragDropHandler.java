@@ -119,8 +119,8 @@ public class TableOverviewDragDropHandler {
         File file = files.get(0);
         LOG.info("Dropped file " + file.getAbsolutePath());
 
-        String path = file.getAbsolutePath().toLowerCase();
-        if (path.contains("user") && path.contains("temp")) {
+        File tmpFolder= new File(System.getProperty("java.io.tmpdir"));
+        if (file.getAbsolutePath().startsWith(tmpFolder.getAbsolutePath())) {
           try {
             File tempFile = de.mephisto.vpin.commons.utils.FileUtils.createMatchingTempFile(file);
             tempFile.deleteOnExit();
@@ -135,7 +135,13 @@ public class TableOverviewDragDropHandler {
             });
           }
         }
-        dispatchDroppedFile(file);
+
+        if(file.length() > 0) {
+          dispatchDroppedFile(file);
+        }
+        else {
+          LOG.info("Skipped drop of " + file.getAbsolutePath() + ", because the file is empty.");
+        }
       }
     });
   }

@@ -49,7 +49,6 @@ public class AltColorUploadController implements Initializable, DialogController
 
   private boolean result = false;
   private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -65,7 +64,7 @@ public class AltColorUploadController implements Initializable, DialogController
       stage.close();
 
       Platform.runLater(() -> {
-        AltColorUploadProgressModel model = new AltColorUploadProgressModel(tablesSidebarController, this.game.getId(), "ALT Color Upload", selection, "altcolor");
+        AltColorUploadProgressModel model = new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", selection, "altcolor");
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -147,10 +146,6 @@ public class AltColorUploadController implements Initializable, DialogController
   public void setGame(GameRepresentation game) {
     this.game = game;
     this.titleLabel.setText("Select ALT color file or package for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   public void setFile(File file) {
