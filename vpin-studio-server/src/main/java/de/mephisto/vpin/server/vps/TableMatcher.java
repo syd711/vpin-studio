@@ -1,18 +1,17 @@
 package de.mephisto.vpin.server.vps;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TableMatcher {
 
@@ -203,7 +202,7 @@ public class TableMatcher {
 	/**
 	 * Take a rom and compare it with the one of the table
 	 * If rom is empty, verify the table does not use a rom
-	 * @return true if this is same rom 
+	 * @return true if this is same rom
 	 */
 	public boolean checkRom(String rom, VpsTable table) {
 		List<VpsAuthoredUrls> romFiles = table.getRomFiles();
@@ -253,7 +252,7 @@ public class TableMatcher {
 
 		filename = filename.replaceAll("the ", "");
 		filename = filename.replaceAll(", the", "");
-	
+
 		// remove exluded words
 		for (String w : exludedWords) {
 			filename = filename.replace(w, "");
