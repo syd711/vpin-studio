@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.vps;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -159,8 +158,6 @@ public class TableMatcher {
 
 	VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
 
-		long lastmodif = game.getGameFile().lastModified();
-
 		double distance = 10000;
 		VpsTableVersion foundVersion = null;
 
@@ -170,34 +167,45 @@ public class TableMatcher {
 				continue;
 			}
 
-			// The version cannot have a greater date than the last modification of the game file
-			if (lastmodif < tableVersion.getUpdatedAt()) {
-				continue;
-			}
+			String v = tableVersion.getVersion();
+			String tableInfoVersion = tableInfo.getTableVersion();
+			double dVersion = TableVersionMatcher.versionDistance(v, tableInfoVersion);
 
+			// The version cannot have a greater date than the last modification of the game file
+			// controversial, could be used as a criteria to bifurcate between to possible solutions
+			//long lastmodif = game.getGameFile().lastModified();
+			//if (lastmodif < tableVersion.getUpdatedAt()) {
+			//	continue;
+			//}
+
+			/* Not really useful as it compares releaseDate with last update date
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(tableVersion.getUpdatedAt());
 			int year = c.get(Calendar.YEAR);
-
 			double dYear = tableInfo != null && StringUtils.isNotEmpty(tableInfo.getReleaseDate())
 					? (tableInfo.getReleaseDate().contains(Integer.toString(year)) ? 1 : 2)
-					: 1.2;
+					: 1.2;*/
 
-			double dAuthor = 1;
-			if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getAuthorName()) && tableVersion.getAuthors() != null) {
+			String tableInfoAuthor = tableInfo.getAuthorName();
+			double dAuthor = 0.0d;
+			if (tableInfo != null && !StringUtils.isEmpty(tableInfoAuthor) && tableVersion.getAuthors() != null) {
+				double nbAuthorsMatched = 0.0;
 				for (String author : tableVersion.getAuthors()) {
-					dAuthor *= StringUtils.containsIgnoreCase(tableInfo.getAuthorName(), author) ? 1 : 1.2;
+					if (StringUtils.containsIgnoreCase(tableInfoAuthor, author)) {
+						nbAuthorsMatched++;
+					}
 				}
+				dAuthor = 1.0 - (nbAuthorsMatched / tableVersion.getAuthors().size());
 			}
 
-			double d = dYear * dAuthor;
+			double d = (1 + dVersion) * (1 + dAuthor / 2);
 			if (d < distance) {
 				distance = d;
 				foundVersion = tableVersion;
 			}
 		}
 
-		return distance < 1.5 ? foundVersion : null;
+		return distance < 1.6 ? foundVersion : null;
 	}
 
 	/**
@@ -212,14 +220,14 @@ public class TableMatcher {
 			return romFiles == null || romFiles.size() == 0;
 		}
 		// else rom should be within the romFiles of the table if present
-		if (romFiles != null) {
+		if (romFiles != null &&  romFiles.size()>0) {
 			boolean found = false;
 			for (VpsAuthoredUrls romFile : romFiles) {
 				found |= romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom);
 			}
 			return found;
 		}
-		// else
+		// else, conservative approach, check on name
 		return true;
 	}
 
