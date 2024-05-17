@@ -15,8 +15,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -332,11 +332,10 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openDMDUploadDialog(GameRepresentation game, File file) {
+  public static boolean openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
-    controller.setGame(game);
-    controller.setFile(file, stage);
+    controller.setData(game,  analysis, file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -125,17 +126,22 @@ public class DMDUploadController implements Initializable, DialogController {
     return result;
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
     this.game = game;
     this.titleLabel.setText("Select DMD Bundle for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setFile(File file, Stage stage) {
     this.selection = file;
     if (selection != null) {
-      Platform.runLater(() -> {
+      if (analysis != null) {
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+        this.uploadBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+      }
+      else {
         refreshSelection(stage);
-      });
+      }
     }
   }
 }

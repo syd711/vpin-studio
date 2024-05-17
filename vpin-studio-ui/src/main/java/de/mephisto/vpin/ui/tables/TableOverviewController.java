@@ -421,7 +421,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onDMDUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openDMDUploadDialog(selectedItems.get(0), null);
+      boolean b = TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
       }

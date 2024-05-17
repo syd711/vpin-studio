@@ -86,7 +86,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case DMD_PACK: {
-        TableDialogs.openDMDUploadDialog(game, file);
+        TableDialogs.openDMDUploadDialog(game, file, analysis);
         break;
       }
       default: {

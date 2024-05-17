@@ -21,6 +21,8 @@ public class DMDInstallationUtil {
 
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
+          zis.closeEntry();
+          zipEntry = zis.getNextEntry();
           continue;
         }
 
