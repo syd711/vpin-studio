@@ -85,6 +85,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openPupPackUploadDialog(tablesController, game, file);
         break;
       }
+      case DMD_PACK: {
+        TableDialogs.openDMDUploadDialog(game, file);
+        break;
+      }
       default: {
         showDefault(file);
       }

@@ -1,10 +1,14 @@
 package de.mephisto.vpin.commons.utils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -48,7 +52,8 @@ public class ZipUtil {
 
       LOG.info("Successfully extracted " + archiveFile.getAbsolutePath());
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return false;
     }
@@ -93,11 +98,12 @@ public class ZipUtil {
         }
       }
       fileInputStream.close();
-      if(!written) {
+      if (!written) {
         zis.closeEntry();
       }
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unzipping of " + targetFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
     return written;
@@ -141,6 +147,27 @@ public class ZipUtil {
     fis.close();
   }
 
+  public static void zipFolder(File sourceDirPath, File targetZip) throws IOException {
+    Path p = targetZip.toPath();
+    try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
+      Path pp =  sourceDirPath.toPath();
+      Files.walk(pp)
+          .filter(path -> !Files.isDirectory(path))
+          .forEach(path -> {
+            String zipEntryPath = pp.relativize(path).toString();
+            ZipEntry zipEntry = new ZipEntry(zipEntryPath);
+            try {
+              zs.putNextEntry(zipEntry);
+              Files.copy(path, zs);
+              zs.closeEntry();
+            }
+            catch (IOException e) {
+              LOG.error("Zip failed: " + e.getMessage(), e);
+            }
+          });
+    }
+  }
+
 
   public static String readZipFile(@NonNull File file, @NonNull String filename) {
     boolean descriptorFound = false;
@@ -175,7 +202,8 @@ public class ZipUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
 
@@ -219,7 +247,8 @@ public class ZipUtil {
       zis.close();
 
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
 
@@ -261,7 +290,8 @@ public class ZipUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
     }
@@ -279,7 +309,7 @@ public class ZipUtil {
 
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
-          if(zipEntry.getName().equals(name)) {
+          if (zipEntry.getName().equals(name)) {
             fileFound = zipEntry.getName();
           }
         }
@@ -300,7 +330,8 @@ public class ZipUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
     }

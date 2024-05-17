@@ -293,7 +293,14 @@ public class UploaderAnalysis<T> {
         return true;
       }
     }
-    return false;
+
+    int count = 0;
+    for (String fileName : fileNames) {
+      if (fileName.contains("DMD/") || fileName.contains("DMD\\")) {
+        count++;
+      }
+    }
+    return count > 1; //TODO dunno
   }
 
 
