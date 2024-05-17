@@ -89,13 +89,14 @@ public class PupPackUtil {
         return JobExecutionResultFactory.error("Unable to determine root folder.");
       }
 
-      String rom = contains;
+      String rom = contains.replaceAll("\\\\", "/");
       if (rom.contains("/")) {
         rom = rom.substring(0, rom.lastIndexOf("/"));
         if (rom.contains("/")) {
           rom = rom.substring(rom.lastIndexOf("/"));
         }
       }
+      LOG.info("Resolved PUP pack ROM: " + rom);
 
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);

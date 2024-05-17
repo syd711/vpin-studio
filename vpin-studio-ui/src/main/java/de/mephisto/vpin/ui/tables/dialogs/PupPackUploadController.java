@@ -46,6 +46,9 @@ public class PupPackUploadController implements Initializable, DialogController 
   @FXML
   private Label tableLabel;
 
+  @FXML
+  private Label romLabel;
+
   private File selection;
 
   private boolean result = false;
@@ -152,6 +155,7 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
     tableLabel.setText("-");
+    romLabel.setText("-");
     if (uploaderAnalysis == null) {
       return;
     }
