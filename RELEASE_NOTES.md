@@ -1,6 +1,8 @@
 ## 2.18.6
 - **VPS Table Matching**: Introduced new VPS table matching. Thanks to @leprinco the VPS table matching has been improved and is using a real matching library now.
-- **Table Filters** Splitted missing VPS matching filter option into "Missing Table" and "Missing Table Version" options. 
+- **VPS Table Mappings**: VPS tables without a link are valid now. These entries have been filtered before, but it makes sense to keep them for the auto-matching and showing them as installed versions.
+- **Table Filters**: Splitted missing VPS matching filter option into "Missing Table" and "Missing Table Version" options. 
+- **Highscore**: Unfortunately the formatting of the last patch broke some scores. This issue has been fixed.
 
 ## 2.18.5
 

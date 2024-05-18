@@ -148,7 +148,7 @@ public class VpsTable implements VPSEntity {
     if (t.getTableFormat() == null) {
       return true;
     }
-    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty());
+    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat);
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
