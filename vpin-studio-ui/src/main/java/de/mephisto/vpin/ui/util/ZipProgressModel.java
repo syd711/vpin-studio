@@ -53,7 +53,7 @@ public class ZipProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File f) {
-    return "Preparing Uploading Bundle";
+    return "Preparing Upload Bundle";
   }
 
   @Override

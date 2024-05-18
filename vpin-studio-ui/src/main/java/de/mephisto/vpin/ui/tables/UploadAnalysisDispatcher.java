@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,18 @@ public class UploadAnalysisDispatcher {
 
   public static void dispatch(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game) {
     String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
-    AssetType assetType = AssetType.valueOf(extension.toUpperCase());
-    if (assetType == null) {
-      WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
+    AssetType assetType = null;
+    try {
+      assetType = AssetType.valueOf(extension.toUpperCase());
+    }
+    catch (IllegalArgumentException e) {
+      LOG.error("Unsupported upload type: " + assetType);
+      Platform.runLater(() -> {
+        WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
+      });
       return;
     }
+
 
     if (extension.equals("zip")) {
       validateArchive(tablesController, file, game);
