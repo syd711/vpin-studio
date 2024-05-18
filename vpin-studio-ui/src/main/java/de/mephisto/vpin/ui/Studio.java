@@ -32,10 +32,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -122,6 +125,20 @@ public class Studio extends Application {
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     try {
+
+
+
+      try {
+//        SevenZip.initSevenZipFromPlatformJAR( new File(System.getProperty("java.io.tmpdir")));
+        SevenZip.initSevenZipFromPlatformJAR();
+      }
+      catch (SevenZipNativeInitializationException e) {
+        LOG.error("Failed to initialize SevenZip: " + e.getMessage(), e);
+        System.exit(0);
+      }
+
+
+
       SystemSummary systemSummary = client.getSystemService().getSystemSummary();
       if (!systemSummary.isPopper15()) {
         WidgetFactory.showAlert(new Stage(), "Invalid PinUP Popper version.", "Please install version 1.5 or higher to use VPin Studio.");
