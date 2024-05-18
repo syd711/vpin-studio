@@ -1,12 +1,18 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.popper.PopperMediaResource;
+import de.mephisto.vpin.server.popper.PopperMediaService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +36,9 @@ public class UniversalUploadService {
   private DMDService dmdService;
 
   @Autowired
+  private PopperMediaService popperMediaService;
+
+  @Autowired
   private PupPacksService pupPacksService;
 
   public File resolveTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
@@ -44,31 +53,6 @@ public class UniversalUploadService {
     return tempFile;
   }
 
-
-  public void importArchiveBasedAssets(UploadDescriptor uploadDescriptor, AssetType assetType) {
-    File tempFile = new File(uploadDescriptor.getTempFilename());
-    Game game = gameService.getGame(uploadDescriptor.getGameId());
-    switch (assetType) {
-      case ALT_SOUND: {
-        break;
-      }
-      case ALT_COLOR: {
-        break;
-      }
-      case DMD_PACK: {
-        dmdService.installDMDPackage(game, tempFile);
-        break;
-      }
-      case PUP_PACK: {
-        pupPacksService.installPupPack(uploadDescriptor);
-        break;
-      }
-      case MUSIC: {
-        vpxService.installMusic(tempFile);
-        break;
-      }
-    }
-  }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, AssetType assetType) throws Exception {
     File temporaryAssetFile = new File(uploadDescriptor.getTempFilename());
@@ -101,6 +85,39 @@ public class UniversalUploadService {
     } finally {
       if (temporaryAssetFile != null && temporaryAssetFile.exists() && temporaryAssetFile.delete()) {
         LOG.info("Deleted " + temporaryAssetFile.getAbsolutePath());
+      }
+    }
+  }
+
+  public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
+    if (!uploadDescriptor.isImporting(assetType)) {
+      LOG.info("Skipped bundle import of type " + assetType.name() + ", because it is not marked for import.");
+      return;
+    }
+
+    File tempFile = new File(uploadDescriptor.getTempFilename());
+    switch (assetType) {
+      case ALT_SOUND: {
+        break;
+      }
+      case ALT_COLOR: {
+        break;
+      }
+      case DMD_PACK: {
+        dmdService.installDMDPackage(tempFile);
+        break;
+      }
+      case PUP_PACK: {
+        pupPacksService.installPupPack(uploadDescriptor);
+        break;
+      }
+      case POPPER_MEDIA: {
+        popperMediaService.installMediaPack(uploadDescriptor, analysis);
+        break;
+      }
+      case MUSIC: {
+        vpxService.installMusic(tempFile);
+        break;
       }
     }
   }

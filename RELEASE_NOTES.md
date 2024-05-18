@@ -16,6 +16,10 @@
 - **Table Management / PUP Packs**: Added "Delete" button.
 - **Table Management / Validations**: Added preferences button to the validator message section to provide a quick-access for enabling/disabling them.
 
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validator-buttons.png" width="400" />
+
+- **Table Management / Upload Menus:** Added new entry **Media Pack Upload** which allows to upload archives that contain media files for Popper screens. The content of the files are dispatched to the PinUP Popper screens based on their name and path inside the archive.
+
 - **Universal Uploader**: All upload and file drag/drop operations have been re-implemented. The overall goal is to be able to upload everything everywhere. This includes:
   - Dropping/Uploading files out of archives (e.g. 7z windows) to the table overview or to table asset screen.
   - Dropping/Uploading complete bundles of files for existing tables or...

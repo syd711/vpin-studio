@@ -52,13 +52,12 @@ public class DMDResource {
   }
 
   @PostMapping("/upload")
-  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
       descriptor.getAssetsToImport().add(AssetType.DMD_PACK);
       descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.DMD_PACK);
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.DMD_PACK);
       return descriptor;
     }
     catch (Exception e) {

@@ -77,7 +77,8 @@ public class ZipUtil {
             throw new IOException("Failed to create directory " + parent);
           }
 
-          if (zipEntry.getName().endsWith(name)) {
+          String entryName = zipEntry.getName().toLowerCase().replaceAll("\\\\", "/");
+          if (zipEntry.getName().endsWith(name) || entryName.equalsIgnoreCase(name)) {
             FileOutputStream fos = new FileOutputStream(targetFile);
             int len;
             while ((len = zis.read(buffer)) > 0) {

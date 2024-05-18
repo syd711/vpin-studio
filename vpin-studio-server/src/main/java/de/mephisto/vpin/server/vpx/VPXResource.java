@@ -147,7 +147,7 @@ public class VPXResource {
     try {
       descriptor.getAssetsToImport().add(AssetType.MUSIC);
       descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.MUSIC);
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
       return descriptor;
     }
     catch (Exception e) {

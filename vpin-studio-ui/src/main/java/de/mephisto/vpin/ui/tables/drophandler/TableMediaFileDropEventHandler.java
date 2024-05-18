@@ -55,13 +55,13 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         return suffixes.contains(suffix);
       }).collect(Collectors.toList());
 
-        if (filtered.isEmpty()) {
+      if (filtered.isEmpty()) {
         WidgetFactory.showAlert(Studio.stage, "Error", "None of the selected is valid for this upload.",
-          "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
+            "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
       }
       else {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-          "Popper Media Upload", filtered, "popperMedia", screen);
+            "Popper Media Upload", filtered, screen);
         ProgressDialog.createProgressDialog(model);
 
         if (dialogController != null) {

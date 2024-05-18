@@ -68,7 +68,7 @@ public class TableDialogs {
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-            "Popper Media Upload", files, "popperMedia", screen);
+            "Popper Media Upload", files, screen);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -334,6 +334,15 @@ public class TableDialogs {
   public static boolean openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
+    controller.setData(game,  analysis, file, stage);
+    stage.showAndWait();
+
+    return controller.uploadFinished();
+  }
+
+  public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload");
+    MediaUploadController controller = (MediaUploadController) stage.getUserData();
     controller.setData(game,  analysis, file, stage);
     stage.showAndWait();
 

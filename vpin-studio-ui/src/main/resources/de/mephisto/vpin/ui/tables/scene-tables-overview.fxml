@@ -303,6 +303,11 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload Media Pack">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="Upload Music Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

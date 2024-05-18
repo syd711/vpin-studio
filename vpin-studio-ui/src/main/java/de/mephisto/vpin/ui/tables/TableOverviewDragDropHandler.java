@@ -180,12 +180,16 @@ public class TableOverviewDragDropHandler {
 
     File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
     if (tempFile.exists() && !tempFile.delete()) {
+      LOG.error("Failed to delete existing temp file " + tempFile.getAbsolutePath());
+//      tempFile = de.mephisto.vpin.commons.utils.FileUtils.uniqueFile(tempFile);
       throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
     }
 
+    File temporaryUploadFile = tempFile;
+
     LOG.info("Zipping " + tempFolder.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), tempFolder, tempFile));
+      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), zipTempFolder, temporaryUploadFile));
       LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
       try {
         if (file.getAbsolutePath().startsWith(systemTmpFolder.getAbsolutePath())) {
@@ -197,7 +201,7 @@ public class TableOverviewDragDropHandler {
         LOG.error("Failed to delete temp folder " + file.getAbsolutePath(), e);
       }
 
-      dispatchDroppedFile(tempFile);
+      dispatchDroppedFile(temporaryUploadFile);
     });
   }
 

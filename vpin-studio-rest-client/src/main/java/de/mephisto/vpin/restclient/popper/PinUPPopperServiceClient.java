@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
@@ -194,10 +195,22 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   }
 
 
-  public JobExecutionResult uploadMedia(File file, String uploadType, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadMedia(File file, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "poppermedia/upload/" + screen.name();
-      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POPPER_MEDIA, listener), JobExecutionResult.class);
+      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener), JobExecutionResult.class);
+      return exchange.getBody();
+    } catch (Exception e) {
+      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+
+  public UploadDescriptor uploadPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "poppermedia/packupload";
+      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener), UploadDescriptor.class);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Popper media upload failed: " + e.getMessage(), e);

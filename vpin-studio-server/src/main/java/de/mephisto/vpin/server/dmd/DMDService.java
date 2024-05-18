@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +45,8 @@ public class DMDService implements InitializingBean {
           return true;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete DMD directory for " + game + ": " + e.getMessage(), e);
     }
     return false;
@@ -56,9 +58,9 @@ public class DMDService implements InitializingBean {
     String tableName = String.valueOf(game.getTableName());
 
     List<String> folderNames = Arrays.asList(rom.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-      rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
-      tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-      tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
+        rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
+        tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
+        tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
 
     File dmdFolder = null;
     File[] subFolders = game.getEmulator().getTablesFolder().listFiles(File::isDirectory);
@@ -106,8 +108,9 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public void installDMDPackage(Game game, File archive) {
-    DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
+  public void installDMDPackage(File archive) {
+    File tablesFolder = pinUPConnector.getDefaultGameEmulator().getTablesFolder();
+    DMDInstallationUtil.unzip(archive, tablesFolder);
   }
 
   public ComponentSummary getFreezySummary(int emulatorId) {

@@ -107,7 +107,7 @@ public class MameService implements InitializingBean {
 
   public boolean deleteOptions(String rom) {
     WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + rom);
-    this.clearCache();
+    mameCache.remove(rom.toLowerCase());
     return true;
   }
 

@@ -122,12 +122,13 @@ public class PupPacksResource {
       UploaderAnalysis analysis = new UploaderAnalysis(new File(descriptor.getTempFilename()));
       analysis.analyze();
 
-      descriptor.setRom(analysis.getRom());
-      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.PUP_PACK);
+      String bundleRom = analysis.getRom();
+      descriptor.setRom(bundleRom);
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.PUP_PACK);
 
       List<Game> gamesByRom = gameService.getKnownGames();
       for (Game gameByRom : gamesByRom) {
-        if (!StringUtils.isEmpty(gameByRom.getRom()) && gameByRom.getRom().equalsIgnoreCase(analysis.getRom())) {
+        if (!StringUtils.isEmpty(gameByRom.getRom()) && gameByRom.getRom().equalsIgnoreCase(bundleRom)) {
           gameService.resetUpdate(gameByRom.getId(), VpsDiffTypes.pupPack);
         }
       }

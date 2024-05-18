@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -96,6 +97,16 @@ public class UniversalUploadResource {
       universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.PAL);
       universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.CRZ);
       universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.PAC);
+
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis<>(tempFile);
+      analysis.analyze();
+
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.POPPER_MEDIA);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR);
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage(), e);

@@ -53,7 +53,7 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, gameId, percent ->
+      UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, percent ->
           Platform.runLater(() -> {
             progressResultModel.setProgress(percent);
           }));

@@ -89,6 +89,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis);
         break;
       }
+      case POPPER_MEDIA: {
+        TableDialogs.openMediaUploadDialog(game, file, analysis);
+        break;
+      }
       default: {
         showDefault(file);
       }

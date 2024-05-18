@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -14,25 +13,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
-import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
-
-public class TableMediaUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableMediaUploadProgressModel.class);
+public class MediaPackUploadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(MediaPackUploadProgressModel.class);
 
   private final Iterator<File> iterator;
   private final int gameId;
-  private final PopperScreen screen;
-  private final List<File> files;
+  private final File file;
 
-  public TableMediaUploadProgressModel(int gameId, String title, List<File> files, PopperScreen screen) {
+  public MediaPackUploadProgressModel(int gameId, String title, File file) {
     super(title);
     this.gameId = gameId;
-    this.files = files;
-    this.screen = screen;
-    this.iterator = files.iterator();
+    this.file = file;
+    this.iterator = Collections.singletonList(this.file).iterator();
   }
 
   @Override
@@ -42,7 +37,7 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public int getMax() {
-    return files.size();
+    return 1;
   }
 
   @Override
@@ -58,20 +53,25 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getPinUPPopperService().uploadMedia(next, gameId, screen, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getPinUPPopperService().uploadPack(next, gameId, percent ->
+          Platform.runLater(() -> {
+            progressResultModel.setProgress(percent);
+          }));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
-      else if (!iterator.hasNext()) {
+      else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, gameId);
+          JobPoller.getInstance().setPolling();
         });
       }
       progressResultModel.addProcessed();
-    } catch (Exception e) {
-      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      EventManager.getInstance().notifyTableChange(gameId, null);
+    }
+    catch (Exception e) {
+      LOG.error("Media pack upload failed: " + e.getMessage(), e);
     }
   }
 

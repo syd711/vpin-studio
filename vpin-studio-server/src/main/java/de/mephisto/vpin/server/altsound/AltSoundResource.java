@@ -100,21 +100,20 @@ public class AltSoundResource {
 
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam(value = "uploadType", required = false) String uploadType,
-                                   @RequestParam("objectId") Integer gameId) {
+                                 @RequestParam(value = "uploadType", required = false) String uploadType,
+                                 @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
       descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, AssetType.ALT_SOUND);
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ALT_SOUND);
       gameService.resetUpdate(gameId, VpsDiffTypes.altSound);
       return descriptor;
     }
     catch (Exception e) {
       LOG.error(AssetType.ALT_SOUND.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_SOUND + " upload failed: " + e.getMessage());
-    }
-    finally {
+    } finally {
       descriptor.finalizeUpload();
     }
   }
