@@ -186,11 +186,11 @@ public class PauseMenu extends Application {
 
         //re-assign key, because they might have been changed
         PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
-        StateMananger.getInstance().setControls(pinUPControls);
-
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+        StateMananger.getInstance().setControls(pinUPControls, pauseMenuSettings);
 
         PopperScreen cardScreen = null;
         if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {

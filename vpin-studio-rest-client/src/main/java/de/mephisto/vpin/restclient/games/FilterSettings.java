@@ -5,7 +5,8 @@ public class FilterSettings {
   private boolean missingAssets;
   private boolean otherIssues;
   private boolean vpsUpdates;
-  private boolean noVpsMapping;
+  private boolean noVpsTableMapping;
+  private boolean noVpsVersionMapping;
   private boolean versionUpdates;
   private boolean notPlayed;
   private boolean noHighscoreSettings;
@@ -26,6 +27,14 @@ public class FilterSettings {
 
   public void setNoteType(NoteType noteType) {
     this.noteType = noteType;
+  }
+
+  public boolean isNoVpsVersionMapping() {
+    return noVpsVersionMapping;
+  }
+
+  public void setNoVpsVersionMapping(boolean noVpsVersionMapping) {
+    this.noVpsVersionMapping = noVpsVersionMapping;
   }
 
   public boolean isWithNVOffset() {
@@ -52,12 +61,12 @@ public class FilterSettings {
     this.otherIssues = otherIssues;
   }
 
-  public boolean isNoVpsMapping() {
-    return noVpsMapping;
+  public boolean isNoVpsTableMapping() {
+    return noVpsTableMapping;
   }
 
-  public void setNoVpsMapping(boolean noVpsMapping) {
-    this.noVpsMapping = noVpsMapping;
+  public void setNoVpsTableMapping(boolean noVpsTableMapping) {
+    this.noVpsTableMapping = noVpsTableMapping;
   }
 
   public int getEmulatorId() {
@@ -171,7 +180,8 @@ public class FilterSettings {
         && !this.noHighscoreSettings
         && !this.noHighscoreSupport
         && !this.notPlayed
-        && !this.noVpsMapping
+        && !this.noVpsTableMapping
+        && !this.noVpsVersionMapping
         && !this.vpsUpdates
         && !this.versionUpdates
         && !this.withAltColor

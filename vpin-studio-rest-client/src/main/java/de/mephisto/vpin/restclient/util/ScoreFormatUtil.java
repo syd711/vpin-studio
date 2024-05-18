@@ -10,6 +10,7 @@ public class ScoreFormatUtil {
 
   public static String formatScore(String score) {
     try {
+      score = score.replaceAll("\\.", "").replaceAll(",", "");
       DecimalFormat decimalFormat = new DecimalFormat("#.##");
       decimalFormat.setGroupingUsed(true);
       decimalFormat.setGroupingSize(3);

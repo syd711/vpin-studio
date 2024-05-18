@@ -38,6 +38,8 @@ module de.mephisto.vpin.ui {
   requires commons.beanutils;
   requires ant;
   requires net.dv8tion.jda;
+  requires jnativehook;
+  requires java.logging;
 //  requires sevenzipjbinding;
 
   opens de.mephisto.vpin.ui to javafx.fxml;

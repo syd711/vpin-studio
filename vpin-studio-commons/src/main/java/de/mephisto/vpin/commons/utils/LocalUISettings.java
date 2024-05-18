@@ -52,7 +52,7 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(int x, int y, int width, int height) {
-    if(x >= 0 && y >= 0) {
+    if(y >= 0) {
       store.set("x", x);
       store.set("y", y);
       store.set("width", width);
@@ -62,7 +62,7 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(String id, int x, int y, int width, int height) {
-    if(x >= 0 && y >= 0) {
+    if(y >= 0) {
       store.set("x", x);
       store.set("y", y);
       store.set(id + ".x", x);

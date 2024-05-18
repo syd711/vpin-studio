@@ -86,7 +86,10 @@ public class GameFilterService {
       if (filterSettings.isOtherIssues() && !gameValidator.hasOtherIssues(states)) {
         continue;
       }
-      if (filterSettings.isNoVpsMapping() && !gameValidator.hasNoVpsMapping(states)) {
+      if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
+        continue;
+      }
+      if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtVersion())) {
         continue;
       }
 

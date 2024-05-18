@@ -17,7 +17,17 @@ public class GameEmulatorRepresentation {
   private String mameDirectory;
   private String nvramDirectory;
 
+
+  private String backglassServerFolder;
   public boolean vpxEmulator;
+
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
+  }
 
   public boolean isVpxEmulator() {
     return vpxEmulator;

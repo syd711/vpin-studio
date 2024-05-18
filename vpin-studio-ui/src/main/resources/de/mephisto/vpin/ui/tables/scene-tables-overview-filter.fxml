@@ -105,7 +105,8 @@
                            </VBox.margin>
                         </Label>
                         <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Highscore Settings" />
-                        <CheckBox fx:id="noVpsMappingCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Mapping" />
+                        <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Table Entry" />
+                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Table Version Entry" />
                         <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="NVOffset Set" />
                         <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ROM Alias Set" />
                         <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />

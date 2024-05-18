@@ -534,7 +534,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return true;
   }
 
-  public boolean hasNoVpsMapping(List<ValidationState> states) {
+  public boolean hasNoVpsTableMapping(List<ValidationState> states) {
     List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
     if (codes.contains(CODE_VPS_MAPPING_MISSING)) {
       return true;

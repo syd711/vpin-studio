@@ -650,7 +650,7 @@ public class HighscoreService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    this.highscoreResolver = new HighscoreResolver(systemService, playerService);
+    this.highscoreResolver = new HighscoreResolver(systemService);
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
   }
