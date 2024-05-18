@@ -309,26 +309,29 @@ public class TableDataController implements Initializable, DialogController, Aut
       rom = gameDetails.getRomName();
     }
 
-    List<VpsTable> vpsTables = VPS.getInstance().find(game.getGameDisplayName(), rom);
-    if (!vpsTables.isEmpty()) {
-      VpsTable vpsTable = vpsTables.get(0);
-      setMappedFieldValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
-      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
+    boolean autofill = this.autoFillCheckbox.isSelected();
+    TableDetails updatedTableDetails = client.getVpsService().autoMatch(game.getId(), autofill);
+    if (updatedTableDetails != null) {
+
+      String vpsTableMappingField = serverSettings.getMappingVpsTableId();
+      String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
+
+      String mappedTableId = updatedTableDetails.getMappedValue(vpsTableMappingField);
+      String mappedVersion = updatedTableDetails.getMappedValue(vpsTableVersionMappingField);
+
+      setMappedFieldValue(vpsTableMappingField, mappedTableId);
+      tableDetails.setMappedValue(vpsTableMappingField, mappedTableId);
 
       openVpsTableBtn.setDisable(false);
       copyTableBtn.setDisable(false);
+
+      VpsTable vpsTable = VPS.getInstance().getTableById(mappedTableId);
       propperRenamingController.setVpsTable(vpsTable);
 
-      TableInfo tableInfo = client.getVpxService().getTableInfo(game);
-      String tableVersion = null;
-      if (tableInfo != null) {
-        tableVersion = tableInfo.getTableVersion();
-      }
-
-      VpsTableVersion version = VPS.getInstance().findVersion(vpsTable, game.getGameFileName(), game.getGameDisplayName(), tableVersion);
+      VpsTableVersion version = mappedVersion!=null? VPS.getInstance().getTableVersionById(vpsTable, mappedVersion): null;
       if (version != null) {
-        setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
-        tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), version.getId());
+        setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
+        tableDetails.setMappedValue(vpsTableVersionMappingField, mappedVersion);
 
         propperRenamingController.setVpsTableVersion(version);
       }

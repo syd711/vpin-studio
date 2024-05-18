@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +43,7 @@ public class GameEmulator {
   private final String vpxExeName;
   private final String gameExt;
 
+  private String backglassServerFolder;
   private boolean vpxEmulator;
 
   public GameEmulator(@NonNull Emulator emulator) {
@@ -182,6 +182,14 @@ public class GameEmulator {
     return Collections.emptyList();
   }
 
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
+  }
+
   @NonNull
   @JsonIgnore
   public File getBackglassServerDirectory() {
@@ -190,11 +198,20 @@ public class GameEmulator {
 
   public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
     this.backglassServerDirectory = backglassServerDirectory;
+    this.backglassServerFolder = backglassServerDirectory.getAbsolutePath();
   }
 
   @NonNull
   @JsonIgnore
   public File getB2STableSettingsXml() {
+    if (this.backglassServerDirectory != null) {
+      File xml = new File(this.backglassServerDirectory, "B2STableSettings.xml");
+      if (xml.exists()) {
+        return xml;
+      }
+    }
+
+    //simply assume the legacy default
     return new File(this.tablesFolder, "B2STableSettings.xml");
   }
 

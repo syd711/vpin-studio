@@ -101,11 +101,15 @@ vpin-studio-logs.zip
 /resources/PinVolVol.ini
 /PinVolTables.ini
 
+/resources/pinemhi/pinemhi.ini
 
 /testsystem/vPinball/**/*.png
 /testsystem/vPinball/**/*.mp3
 /testsystem/vPinball/**/*.mp4
 /testsystem/vPinball/**/*.zip
+
+/testsystem/**/*.db
+
 /resources/backglassdesigner/Projects/**
 /config/settings.properties
 /resources/menu-profile/
@@ -113,3 +117,6 @@ vpin-studio-logs.zip
 /resources/vpsdb.json.tmp
 /server-restart.bat
 /resources/vpbm/.screens.json
+
+/vpin-studio-server/*.bak
+/.vscode/launch.json

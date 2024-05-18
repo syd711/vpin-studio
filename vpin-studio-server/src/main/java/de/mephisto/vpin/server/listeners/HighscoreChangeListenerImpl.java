@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,9 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
 
   @Autowired
   private DiscordCompetitionService discordCompetitionService;
+
+  @Autowired
+  private HighscoreParsingService highscoreParsingService;
 
   @Override
   public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
@@ -82,7 +86,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         long discordChannelId = competition.getDiscordChannelId();
 
         if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(competition, event, raw));
+          discordService.sendMessage(discordServerId, discordChannelId, DiscordOfflineChannelMessageFactory.createCompetitionHighscoreCreatedMessage(highscoreParsingService, competition, event, raw));
         }
         else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
           if (discordService.isCompetitionActive(discordServerId, discordChannelId, competition.getUuid())) {
@@ -101,7 +105,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     if (!event.isInitialScore() && !event.isEventReplay()) {
       LOG.info("Sending default notification for: " + game.getGameDisplayName());
       if (!StringUtils.isEmpty(raw)) {
-        discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(event, raw));
+        discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(highscoreParsingService, event, raw));
       }
     }
   }

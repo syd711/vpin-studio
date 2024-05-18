@@ -54,12 +54,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private ShutdownThread shutdownThread;
   private boolean launchOverlayOnStartup = false;
   private String overlayKey;
-  private boolean showPauseInsteadOfOverlay = false;
-  private String pauseKey;
   private String resetKey;
-  private long inputDeboundeMs;
 
   private Map<String, Long> timingMap = new ConcurrentHashMap<>();
+  private PauseMenuSettings pauseMenuSettings;
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
@@ -87,9 +85,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       return;
     }
 
+    boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
     if (!StringUtils.isEmpty(overlayKey)) {
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
+      if (keyChecker.matches(nativeKeyEvent) || (showPauseInsteadOfOverlay && nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey())) {
         List<ProcessHandle> processes = systemService.getProcesses();
         boolean vpxRunning = systemService.isVPXRunning(processes);
         if (showPauseInsteadOfOverlay && vpxRunning) {
@@ -109,9 +108,10 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       }
     }
 
-    if (!StringUtils.isEmpty(pauseKey) && !showPauseInsteadOfOverlay) {
+    String pauseKey = pauseMenuSettings.getKey();
+    if ((!StringUtils.isEmpty(pauseKey) || pauseMenuSettings.getCustomLaunchKey() > 0) && !showPauseInsteadOfOverlay) {
       KeyChecker keyChecker = new KeyChecker(pauseKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
+      if (keyChecker.matches(nativeKeyEvent) || nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey()) {
         boolean vpxRunning = systemService.isVPXRunning();
         if (vpxRunning) {
           OverlayWindowFX.getInstance().togglePauseMenu();
@@ -135,6 +135,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   }
 
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
+    long inputDeboundeMs = pauseMenuSettings.getInputDebounceMs();
+    String pauseKey = pauseMenuSettings.getKey();
+
     if (inputDeboundeMs > 0) {
       if (!StringUtils.isEmpty(overlayKey)) {
         KeyChecker keyChecker = new KeyChecker(overlayKey);
@@ -276,11 +279,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
           break;
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
-          PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-          showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
-          inputDeboundeMs = pauseMenuSettings.getInputDebounceMs();
-          pauseKey = pauseMenuSettings.getKey();
-          LOG.info("Pause key has been updated to: " + pauseKey);
+          pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+          LOG.info("Pause key has been updated.");
           break;
         }
       }

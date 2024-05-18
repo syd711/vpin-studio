@@ -146,7 +146,7 @@ public class DiscordChannelMessageFactory {
       builder.append("  ");
       builder.append(String.format("%4.4s", score.getPlayerInitials()));
       builder.append("    ");
-      builder.append(String.format("%17.17s", score.getScore()));
+      builder.append(String.format("%17.17s", score.getFormattedScore()));
       builder.append("\n");
 
       count++;

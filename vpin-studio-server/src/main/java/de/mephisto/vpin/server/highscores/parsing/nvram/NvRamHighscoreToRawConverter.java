@@ -66,7 +66,8 @@ public class NvRamHighscoreToRawConverter {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed: " + standardErrorFromCommand;
+//        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed: " + standardErrorFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed (details skipped).";
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();

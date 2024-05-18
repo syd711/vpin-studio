@@ -91,57 +91,67 @@ public class VpsTableEntry extends HBox {
     authorBox.getChildren().add(authorLabel);
     this.getChildren().add(authorBox);
 
-    String abb = VpsUtil.abbreviate(link);
-    String color = VpsUtil.getColor(abb);
-    Button button = new Button(abb);
-    button.getStyleClass().add("vps-button");
-    button.setStyle("-fx-background-color: " + color + ";");
-    button.setPrefWidth(70);
-    button.setTooltip(new Tooltip(link));
-    button.setOnAction(event -> {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(link));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
+    if(link != null) {
+      String abb = VpsUtil.abbreviate(link);
+      String color = VpsUtil.getColor(abb);
+      Button button = new Button(abb);
+      button.getStyleClass().add("vps-button");
+      button.setStyle("-fx-background-color: " + color + ";");
+      button.setPrefWidth(70);
+      button.setTooltip(new Tooltip(link));
+      button.setOnAction(event -> {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(link));
+          } catch (Exception e) {
+            LOG.error("Failed to open link: " + e.getMessage());
+          }
         }
+      });
+
+      FontIcon fontIcon = new FontIcon();
+      fontIcon.setIconSize(14);
+      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
+      button.setGraphic(fontIcon);
+
+
+
+
+      Label label = new Label();
+      label.setPrefWidth(20);
+      List<Node> children = new ArrayList<>();
+      if (update != null) {
+        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+        label.setGraphic(updateIcon);
+        label.setTooltip(new Tooltip("Update Available\n\n" + update));
       }
-    });
+      children.add(label);
 
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(14);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
-    button.setGraphic(fontIcon);
+      if (abb.equals("Dropbox")) {
+        children.add(button);
+      }
+      else if (abb.equals("Mega")) {
+        children.add(spacer(5));
+        button.setPrefWidth(60);
+        children.add(button);
+        children.add(spacer(5));
+      }
+      else {
+        children.add(spacer(10));
+        button.setPrefWidth(50);
+        children.add(button);
+        children.add(spacer(10));
+      }
 
-    Label label = new Label();
-    label.setPrefWidth(20);
-    List<Node> children = new ArrayList<>();
-    if (update != null) {
-      FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-      label.setGraphic(updateIcon);
-      label.setTooltip(new Tooltip("Update Available\n\n" + update));
-    }
-    children.add(label);
-
-    if (abb.equals("Dropbox")) {
-      children.add(button);
-    }
-    else if (abb.equals("Mega")) {
-      children.add(spacer(5));
-      button.setPrefWidth(60);
-      children.add(button);
-      children.add(spacer(5));
+      this.getChildren().addAll(children);
     }
     else {
-      children.add(spacer(10));
-      button.setPrefWidth(50);
-      children.add(button);
-      children.add(spacer(10));
+      Label spacer = new Label();
+      spacer.setPrefWidth(90);
+      this.getChildren().add(spacer);
     }
-
-    this.getChildren().addAll(children);
 
 
     Label changedLabel = WidgetFactory.createDefaultLabel(DateFormat.getDateInstance().format(new Date(changeDate)));

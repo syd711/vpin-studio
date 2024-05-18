@@ -32,6 +32,11 @@ public class TableDismissAllProgressModel extends ProgressModel<GameRepresentati
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    EventManager.getInstance().notifyTablesChanged();
+  }
+
+  @Override
   public int getMax() {
     return games.size();
   }
@@ -56,8 +61,8 @@ public class TableDismissAllProgressModel extends ProgressModel<GameRepresentati
     try {
       List<ValidationState> validations = Studio.client.getGameService().getValidations(game.getId());
       DismissalUtil.dismissSelection(game, validations.stream().map(v -> v.getCode()).collect(Collectors.toList()));
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during dismissal: " + e.getMessage(), e);
     }
   }

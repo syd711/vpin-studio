@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
+import org.jnativehook.GlobalScreen;
 
 public class PreferencesDialogs {
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
@@ -21,6 +22,13 @@ public class PreferencesDialogs {
   public static void openBotTokenTutorial() {
     Stage stage = Dialogs.createStudioDialogStage("dialog-bot-token-tutorial.fxml", "Bot Token Instructions");
     stage.showAndWait();
+  }
+
+  public static void openButtonRecorder() {
+    Stage stage = Dialogs.createStudioDialogStage(TablePauseBtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", "Button Recorder");
+    TablePauseBtnRecorderDialogController controller = (TablePauseBtnRecorderDialogController) stage.getUserData();
+    stage.showAndWait();
+    GlobalScreen.removeNativeKeyListener(controller);
   }
 
   public static void openBotTutorial() {

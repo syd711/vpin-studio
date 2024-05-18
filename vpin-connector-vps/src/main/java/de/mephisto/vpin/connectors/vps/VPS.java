@@ -21,6 +21,8 @@ public class VPS {
 
   private static final ObjectMapper objectMapper;
 
+  private final static boolean skipUpdates = false;
+
   static {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -87,10 +89,16 @@ public class VPS {
     return this.tables.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
   }
 
+  public VpsTableVersion getTableVersionById(VpsTable table, String id) {
+    List<VpsTableVersion> tableFiles = table.getTableFiles();
+    return tableFiles.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
+  }
+
   public List<VpsTable> getTables() {
     return tables;
   }
 
+  /* moved to TableMatcher
   public VpsTableVersion findVersion(VpsTable table, String tableFileName, String tableName, String version) {
     List<VpsTableVersion> tableFiles = table.getTableFiles();
     if (tableFiles.size() == 1) {
@@ -134,6 +142,7 @@ public class VPS {
     }
     return false;
   }
+  */
 
   public List<VpsTable> find(String searchTerm) {
     return find(searchTerm, null);
@@ -226,6 +235,11 @@ public class VPS {
 
   public List<VpsDiffer> update() {
     try {
+      if(skipUpdates) {
+        LOG.warn("VPS updates are skipped.");
+        return Collections.emptyList();
+      }
+
       LOG.info("Downloading " + VPS.URL);
       java.net.URL url = new URL(VPS.URL);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();

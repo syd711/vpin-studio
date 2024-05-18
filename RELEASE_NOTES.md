@@ -1,9 +1,30 @@
+## 2.18.6
+- **VPS Table Matching**: Introduced new VPS table matching. Thanks to @leprinco the VPS table matching has been improved and is using a real matching library now.
+- **VPS Table Mappings**: VPS tables without a link are valid now. These entries have been filtered before, but it makes sense to keep them for the auto-matching and showing them as installed versions.
+- **Table Filters**: Splitted missing VPS matching filter option into "Missing Table" and "Missing Table Version" options. 
+- **Highscore**: Unfortunately the formatting of the last patch broke some scores. This issue has been fixed.
+
+## 2.18.5
+
+- **Pause Menu / Pause Menu Preferences**: Added cabinet **button recorder** for those who are having troubles opening or navigating the pause menu. Note that this is kind of a blind fix, since I'm currently not able to test this with a real controller board.
+- **Table Management / Dismiss All**: Fixed critical performance issue when dismissing validation errors of multiple tables.
+- **System Manager / Backglass Server**: Fixed usage of the actual backglass server installation folder for the system actions (green buttons).
+- **System Manager / Backglass Server**: Fixed preferences page when no emulator with a **B2STableSettings.xml** could be resolved.
+- **System Manager / Backglass Server**: Fixed resolving of the **B2STableSettings.xml** that is not necessarily located in the **Tables** folder anymore.
+- **Discord Messages**: Added proper number formatting to all Discord score messages, including images. (Let me know when I've missed some, this was a quick shot.).
+- **Highscore Cards**: Added proper number formatting for formatted score list so that all values are right-aligned.
+- **Table Management / Table Asset Manager**: Fixed initial selection when opened from sidebar media button.
+- **Table Management / Asset Management**: Fixed detection of media files, caused by a superflous camel case check.
+- **Logging**: Improved very chatty pinemhi error handling.
+- **Window Manager**: Fixed saving the position when positioned left to the main screen.
+
 ## 2.18.4
 
 - **Pause Menu**: In addition to the Popper navigation keys, the VPX key settings are loaded and used as an alternative binding. Note that some key combinations still might not work because I had to map some DirectX key mapping of VPX to Java key events. Also, I added another alternative key binding: arrow keys, enter and "1" for are also useable when navigating the menu.
 - **Video Player**: The actual media size is used to determine the orientation of the video now. I hope this will fix the orientation problem for portrait users.
 - **Main Toolbar**: Fixed styling issues of "Jobs" button.
 - **Icons**: Replaced some of the remaining non-material UI icons (e.g. the preferences icon).
+
 ## 2.18.3
 
 - **Highscore Cards**: Re-enabled the custom color picker for the card designer. I've hidden the link to this picker before because it has some focus issues, but it's better to have a bad solution for custom colors than nothing.
