@@ -37,6 +37,7 @@ module de.mephisto.vpin.ui {
   requires de.mephisto.vpin.connectors.iscored;
   requires commons.beanutils;
   requires ant;
+  requires net.dv8tion.jda;
 //  requires sevenzipjbinding;
 
   opens de.mephisto.vpin.ui to javafx.fxml;

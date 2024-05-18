@@ -1,8 +1,12 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
+import net.dv8tion.jda.api.utils.WidgetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +52,22 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getGameService().uploadRom(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getGameService().uploadRom(emuId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
       progressResultModel.addProcessed();
       percentage++;
-    } catch (Exception e) {
+
+      if (descriptor.getError() != null) {
+        throw new Exception(descriptor.getError());
+      }
+    }
+    catch (Exception e) {
       LOG.error("ROM upload failed: " + e.getMessage(), e);
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Error", "ROM upload failed: " + e.getMessage());
+      });
     }
   }
 

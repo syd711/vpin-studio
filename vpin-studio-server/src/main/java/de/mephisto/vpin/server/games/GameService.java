@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -690,10 +692,24 @@ public class GameService implements InitializingBean {
     return gameValidator.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 
-  public void installRom(UploadDescriptor uploadDescriptor, File tempFile) throws IOException {
+  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getRom());
-    org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+    File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getOriginalUploadFileName());
+    String contains = ZipUtil.contains(tempFile, ".zip");
+    if(contains != null) {
+      out = new File(gameEmulator.getRomFolder(), contains);
+      if(out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
+      }
+      ZipUtil.unzipTargetFile(tempFile, out, contains);
+    }
+    else {
+      if(out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
+      }
+      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+      LOG.info("Installed ROM: " + out.getAbsolutePath());
+    }
   }
 
   @Override

@@ -70,6 +70,7 @@ public class UploaderAnalysis<T> {
       LOG.info("Resolved archive ROM: " + rom);
       return rom;
     }
+
     return contains;
   }
 
@@ -401,6 +402,15 @@ public class UploaderAnalysis<T> {
         }
       }
     }
+    else {
+      for (String fileNameWithPath : fileNamesWithPath) {
+        if (fileNameWithPath.toLowerCase().contains("rom") && fileNameWithPath.endsWith(".zip")) {
+          return true;
+        }
+      }
+
+    }
+
     return false;
   }
 }

@@ -131,7 +131,7 @@ public class UniversalUploadService {
         break;
       }
       case ROM: {
-        gameService.installRom(uploadDescriptor, tempFile);
+        gameService.installRom(uploadDescriptor, tempFile, analysis);
         break;
       }
       default: {

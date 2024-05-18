@@ -76,10 +76,13 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;
-      return Boolean.TRUE.equals(createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM, listener), Boolean.class).getBody());
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      map.add("emuId", emuId);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
+      return exchange.getBody();
     }
     catch (Exception e) {
       LOG.error("Rom upload failed: " + e.getMessage(), e);

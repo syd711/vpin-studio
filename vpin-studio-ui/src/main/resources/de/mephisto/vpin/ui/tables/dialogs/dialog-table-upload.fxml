@@ -193,6 +193,11 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="assetAltColorCheckbox" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                     <CheckBox fx:id="assetBackglassCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Backglass" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -203,7 +208,12 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="assetMediaCheckbox" mnemonicParsing="false" text="Media for Popper Screens" textFill="WHITE">
+                                    <CheckBox fx:id="assetMusicCheckbox" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="Music Pack" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetMediaCheckbox" mnemonicParsing="false" text="Media Pack for Popper Screens" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

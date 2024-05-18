@@ -104,7 +104,11 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private CheckBox assetAltSoundCheckbox;
   @FXML
+  private CheckBox assetAltColorCheckbox;
+  @FXML
   private CheckBox assetMediaCheckbox;
+  @FXML
+  private CheckBox assetMusicCheckbox;
   @FXML
   private CheckBox assetBackglassCheckbox;
   @FXML
@@ -142,6 +146,8 @@ public class TableUploadController implements Initializable, DialogController {
 
         boolean assetPupPack = assetPupPackCheckbox.isSelected();
         boolean assetAltSound = assetAltSoundCheckbox.isSelected();
+        boolean assetAltColor = assetAltColorCheckbox.isSelected();
+        boolean assetMusic = assetMusicCheckbox.isSelected();
         boolean assetMedia = assetMediaCheckbox.isSelected();
         boolean assetBackglass = assetBackglassCheckbox.isSelected();
         boolean assetRom = assetRomCheckbox.isSelected();
@@ -170,11 +176,17 @@ public class TableUploadController implements Initializable, DialogController {
           if (assetAltSound) {
             uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
           }
+          if (assetAltColor) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
+          }
           if (assetBackglass) {
             uploadDescriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
           }
           if (assetDmd) {
             uploadDescriptor.getAssetsToImport().add(AssetType.DMD_PACK);
+          }
+          if (assetMusic) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.MUSIC);
           }
           if (assetMedia) {
             uploadDescriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
@@ -266,8 +278,15 @@ public class TableUploadController implements Initializable, DialogController {
     assetAltSoundCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
     assetAltSoundCheckbox.setVisible(assetAltSoundCheckbox.isSelected());
 
+    assetAltColorCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null);
+    assetAltColorCheckbox.setVisible(assetAltColorCheckbox.isSelected());
+
     assetMediaCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POPPER_MEDIA) == null);
     assetMediaCheckbox.setVisible(assetMediaCheckbox.isSelected());
+
+
+    assetMusicCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
+    assetMusicCheckbox.setVisible(assetMusicCheckbox.isSelected());
 
     assetBackglassCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
     assetBackglassCheckbox.setVisible(assetBackglassCheckbox.isSelected());
@@ -389,7 +408,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetsBox.managedProperty().bindBidirectional(assetsBox.visibleProperty());
 
     assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
+    assetMusicCheckbox.managedProperty().bindBidirectional(assetMusicCheckbox.visibleProperty());
     assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
+    assetAltColorCheckbox.managedProperty().bindBidirectional(assetAltColorCheckbox.visibleProperty());
     assetAltSoundCheckbox.managedProperty().bindBidirectional(assetAltSoundCheckbox.visibleProperty());
     assetBackglassCheckbox.managedProperty().bindBidirectional(assetBackglassCheckbox.visibleProperty());
     assetRomCheckbox.managedProperty().bindBidirectional(assetRomCheckbox.visibleProperty());
@@ -397,7 +418,9 @@ public class TableUploadController implements Initializable, DialogController {
 
     assetPupPackCheckbox.setVisible(false);
     assetMediaCheckbox.setVisible(false);
+    assetMusicCheckbox.setVisible(false);
     assetAltSoundCheckbox.setVisible(false);
+    assetAltColorCheckbox.setVisible(false);
     assetBackglassCheckbox.setVisible(false);
     assetRomCheckbox.setVisible(false);
     assetDmdCheckbox.setVisible(false);
