@@ -1,3 +1,7 @@
+## 2.18.6
+- **VPS Table Matching**: Introduced new VPS table matching. Thanks to @leprinco the VPS table matching has been improved and is using a real matching library now.
+- **Table Filters** Splitted missing VPS matching filter option into "Missing Table" and "Missing Table Version" options. 
+
 ## 2.18.5
 
 - **Pause Menu / Pause Menu Preferences**: Added cabinet **button recorder** for those who are having troubles opening or navigating the pause menu. Note that this is kind of a blind fix, since I'm currently not able to test this with a real controller board.

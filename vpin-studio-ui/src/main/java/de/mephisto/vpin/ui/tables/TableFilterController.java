@@ -61,7 +61,10 @@ public class TableFilterController implements Initializable {
   private CheckBox noHighscoreSupportCheckBox;
 
   @FXML
-  private CheckBox noVpsMappingCheckBox;
+  private CheckBox noVpsMappingTableCheckBox;
+
+  @FXML
+  private CheckBox noVpsMappingVersionCheckBox;
 
   @FXML
   private CheckBox withBackglassCheckBox;
@@ -192,7 +195,8 @@ public class TableFilterController implements Initializable {
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
     noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
     noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
-    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
+    noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
+    noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
     withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
     withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
@@ -277,9 +281,14 @@ public class TableFilterController implements Initializable {
       filterSettings.setNoHighscoreSupport(newValue);
       applyFilter();
     });
-    noVpsMappingCheckBox.setSelected(filterSettings.isNoVpsMapping());
-    noVpsMappingCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setNoVpsMapping(newValue);
+    noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
+    noVpsMappingTableCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNoVpsTableMapping(newValue);
+      applyFilter();
+    });
+    noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
+    noVpsMappingVersionCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNoVpsVersionMapping(newValue);
       applyFilter();
     });
     withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
