@@ -446,14 +446,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          if (StringUtils.isEmpty(url)) {
-            continue;
-          }
-
-          if (vpsUrl.isBroken()) {
-            continue;
-          }
-
           String updateText = null;
           if (game != null && showUpdates) {
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
@@ -498,14 +490,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          if (StringUtils.isEmpty(url)) {
-            continue;
-          }
-
-          if (vpsUrl.isBroken()) {
-            continue;
-          }
-
           String updateText = null;
           if (game != null && showUpdates) {
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
