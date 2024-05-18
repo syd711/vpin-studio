@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.altcolor.AltColorService;
+import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.popper.PopperMediaResource;
 import de.mephisto.vpin.server.popper.PopperMediaService;
@@ -34,6 +36,12 @@ public class UniversalUploadService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private AltColorService altColorService;
+
+  @Autowired
+  private AltSoundService altSoundService;
 
   @Autowired
   private PopperMediaService popperMediaService;
@@ -96,11 +104,14 @@ public class UniversalUploadService {
     }
 
     File tempFile = new File(uploadDescriptor.getTempFilename());
+    Game game = gameService.getGame(uploadDescriptor.getGameId());
     switch (assetType) {
       case ALT_SOUND: {
+        altSoundService.installAltSound(game, tempFile);
         break;
       }
       case ALT_COLOR: {
+        altColorService.installAltColor(game, tempFile);
         break;
       }
       case DMD_PACK: {
@@ -118,6 +129,13 @@ public class UniversalUploadService {
       case MUSIC: {
         vpxService.installMusic(tempFile);
         break;
+      }
+      case ROM: {
+        gameService.installRom(uploadDescriptor, tempFile);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
     }
   }

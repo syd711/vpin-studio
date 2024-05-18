@@ -31,3 +31,4 @@
 ### Bugfixes
 
 - **Table Overview**: Fixed suppressed errors in the VPS updates column.
+- **ALt Color Validator**: .vni files are not mandatory when a .pal is present.

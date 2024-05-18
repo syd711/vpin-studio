@@ -442,10 +442,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     switch (altColorType) {
       case pal: {
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING)) {
-          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
-            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
-          }
-          else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
+//          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
+//            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
+//          }
+          if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
             result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
           }
         }

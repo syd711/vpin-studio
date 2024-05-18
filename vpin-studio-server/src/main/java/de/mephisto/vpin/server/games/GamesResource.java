@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -37,10 +41,10 @@ public class GamesResource {
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private GameFilterService gameFilterService;
 
   @Autowired
-  private GameFilterService gameFilterService;
+  private UniversalUploadService universalUploadService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -152,17 +156,21 @@ public class GamesResource {
   }
 
   @PostMapping("/upload/rom/{emuId}")
-  public Boolean uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    descriptor.setEmulatorId(emuId);
+
     try {
-      if (file == null) {
-        LOG.error("Rom upload request did not contain a file object.");
-        return false;
-      }
-      GameEmulator gameEmulator = popperService.getGameEmulator(emuId);
-      File out = new File(gameEmulator.getRomFolder(), file.getOriginalFilename());
-      return UploadUtil.upload(file, out);
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ROM upload failed: " + e.getMessage());
+      descriptor.getAssetsToImport().add(AssetType.ROM);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ROM);
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error(AssetType.ROM.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ROM + " upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
     }
   }
 }

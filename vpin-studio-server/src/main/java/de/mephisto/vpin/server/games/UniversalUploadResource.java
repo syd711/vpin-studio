@@ -107,6 +107,8 @@ public class UniversalUploadResource {
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.POPPER_MEDIA);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage(), e);

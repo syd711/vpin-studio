@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -25,6 +26,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -43,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,6 +103,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private PopperService popperService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -682,6 +688,12 @@ public class GameService implements InitializingBean {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     TableDetails tableDetails = pinUPConnector.getTableDetails(id);
     return gameValidator.validateHighscoreStatus(game, gameDetails, tableDetails);
+  }
+
+  public void installRom(UploadDescriptor uploadDescriptor, File tempFile) throws IOException {
+    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getRom());
+    org.apache.commons.io.FileUtils.copyFile(tempFile, out);
   }
 
   @Override
