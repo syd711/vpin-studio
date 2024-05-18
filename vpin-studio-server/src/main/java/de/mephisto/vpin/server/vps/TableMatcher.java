@@ -145,9 +145,16 @@ public class TableMatcher {
 		return dist;
 	}
 
-	public double distance(String cleanName, String refName) {
+	public double distance(String str1, String str2) {
 
-		int ratio = FuzzySearch.weightedRatio(cleanName, refName);
+		if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
+			return 0;
+		} 		
+		else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
+			return 5;
+		}
+
+		int ratio = FuzzySearch.weightedRatio(str1, str2);
 		return ratio > 0 ? 10 * (100.0 / ratio - 1) : 10000;
 
 		// Score 100 => distance = 0
@@ -167,9 +174,14 @@ public class TableMatcher {
 				continue;
 			}
 
+			String name = tableVersion.getComment();
+			String tableInfoName = tableInfo.getTableName();
 			String v = tableVersion.getVersion();
 			String tableInfoVersion = tableInfo.getTableVersion();
-			double dVersion = TableVersionMatcher.versionDistance(v, tableInfoVersion);
+
+			// if match via name, disconnect version match 
+			double dName = distance(name, tableInfoName);
+			double dVersion = dName<2 ? 0: TableVersionMatcher.versionDistance(v, tableInfoVersion);
 
 			// The version cannot have a greater date than the last modification of the game file
 			// controversial, could be used as a criteria to bifurcate between to possible solutions

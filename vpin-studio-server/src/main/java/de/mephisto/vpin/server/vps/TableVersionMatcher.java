@@ -6,6 +6,13 @@ public class TableVersionMatcher {
 
     public static double versionDistance(String version1, String version2) {
 
+        if (StringUtils.isEmpty(version1) && StringUtils.isEmpty(version2)) {
+            return 0;
+        }
+        if (StringUtils.isEmpty(version1) || StringUtils.isEmpty(version2)) {   
+            return 0.5;
+        }
+
         VersionTokenizer tokenizer1 = new VersionTokenizer(cleanVersion(version1));
         VersionTokenizer tokenizer2 = new VersionTokenizer(cleanVersion(version2));
 
