@@ -307,20 +307,6 @@ public class Game {
     return new File(emulatorMediaFolder, screen.name());
   }
 
-  @JsonIgnore
-  @NonNull
-  public File getUltraDMDFolder() {
-    String folderName = this.getRom() + ".UltraDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
-  }
-
-  @JsonIgnore
-  @NonNull
-  public File getFlexDMDFolder() {
-    String folderName = getRom() + ".FlexDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
-  }
-
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseFilename = getGameName();

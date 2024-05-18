@@ -284,7 +284,6 @@ public class TableUploadController implements Initializable, DialogController {
     assetMediaCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POPPER_MEDIA) == null);
     assetMediaCheckbox.setVisible(assetMediaCheckbox.isSelected());
 
-
     assetMusicCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
     assetMusicCheckbox.setVisible(assetMusicCheckbox.isSelected());
 
@@ -296,6 +295,17 @@ public class TableUploadController implements Initializable, DialogController {
 
     assetRomCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
     assetRomCheckbox.setVisible(assetRomCheckbox.isSelected());
+
+
+    assetRomCheckbox.setText("ROM");
+    if (assetRomCheckbox.isSelected()) {
+      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromZip() + ")");
+    }
+
+    assetPupPackCheckbox.setText("PUP Pack");
+    if (assetPupPackCheckbox.isSelected()) {
+      assetPupPackCheckbox.setText("PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
+    }
 
     assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected() || assetMediaCheckbox.isSelected() || assetBackglassCheckbox.isSelected() || assetRomCheckbox.isSelected());
     noAssetsLabel.setVisible(!assetsBox.isVisible());

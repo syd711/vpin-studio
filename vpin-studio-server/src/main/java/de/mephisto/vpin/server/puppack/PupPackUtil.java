@@ -1,20 +1,22 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static JobExecutionResult unpack(File archiveFile, File destinationDir, String rom) {
+  public static JobExecutionResult unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String rom) {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
       return unzip(archiveFile, destinationDir, rom);
     }
@@ -67,7 +69,7 @@ public class PupPackUtil {
 //    return JobExecutionResultFactory.empty();
 //  }
 
-  public static JobExecutionResult unzip(File archiveFile, File destinationDir, String rom) {
+  public static JobExecutionResult unzip(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String rom) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -108,7 +110,7 @@ public class PupPackUtil {
   }
 
   @Nullable
-  private static File toTargetFile(File packPackDir, String rom, String name) {
+  private static File toTargetFile(@NonNull File packPackDir, @NonNull String rom, @NonNull String name) {
     File folder = new File(packPackDir, rom);
 
     if (name.contains(rom)) {

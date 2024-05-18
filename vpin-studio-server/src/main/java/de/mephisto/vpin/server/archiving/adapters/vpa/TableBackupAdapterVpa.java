@@ -175,15 +175,15 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
 
       // DMDs
-      if (game.getUltraDMDFolder().exists()) {
-        packageInfo.setUltraDMD(true);
-        zipFile(game.getUltraDMDFolder(), gameFolderName + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
-      }
-
-      if (game.getFlexDMDFolder().exists()) {
-        packageInfo.setFlexDMD(true);
-        zipFile(game.getFlexDMDFolder(), gameFolderName + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
-      }
+//      if (game.getUltraDMDFolder().exists()) {
+//        packageInfo.setUltraDMD(true);
+//        zipFile(game.getUltraDMDFolder(), gameFolderName + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
+//      }
+//
+//      if (game.getFlexDMDFolder().exists()) {
+//        packageInfo.setFlexDMD(true);
+//        zipFile(game.getFlexDMDFolder(), gameFolderName + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
+//      }
 
       // Music and sounds
       if (game.isAltSoundAvailable()) {

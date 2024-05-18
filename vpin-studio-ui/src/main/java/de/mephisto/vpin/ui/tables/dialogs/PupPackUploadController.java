@@ -161,7 +161,7 @@ public class PupPackUploadController implements Initializable, DialogController 
       return;
     }
 
-    String rom = uploaderAnalysis.getRom();
+    String rom = uploaderAnalysis.getRomFromPupPack();
     if (rom == null) {
       return;
     }

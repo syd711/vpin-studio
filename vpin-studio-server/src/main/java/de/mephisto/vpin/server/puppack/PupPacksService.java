@@ -3,10 +3,9 @@ package de.mephisto.vpin.server.puppack;
 import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -52,7 +51,7 @@ public class PupPacksService implements InitializingBean {
   public boolean delete(@NonNull Game game) {
     PupPack pupPack = getPupPack(game);
     if (pupPack != null) {
-      if(pupPack.delete()) {
+      if (pupPack.delete()) {
         LOG.info("Deleting " + pupPack.getPupPackFolder().getAbsolutePath());
         clearCache();
       }
@@ -158,13 +157,19 @@ public class PupPacksService implements InitializingBean {
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to create PUPHideNext.txt for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
     }
   }
 
-  public void installPupPack(UploadDescriptor uploadDescriptor) {
+  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
+    if (analysis == null) {
+      analysis = new UploaderAnalysis(tempFile);
+      analysis.analyze();
+    }
+
     File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
@@ -179,7 +184,14 @@ public class PupPacksService implements InitializingBean {
       }
     }
 
-    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, uploadDescriptor.getRom());
+    String rom = analysis.getRomFromPupPack();
+    if (StringUtils.isEmpty(rom)) {
+      LOG.error("PUP pack extraction has been cancelled, no ROM could be resolved");
+      return;
+    }
+
+    LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
+    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, rom);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
     jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
@@ -210,7 +222,8 @@ public class PupPacksService implements InitializingBean {
       if (defaultVideo.getName().endsWith(".png") || defaultVideo.getName().endsWith(".jpg") || defaultVideo.getName().endsWith(".jpeg")) {
         try {
           FileUtils.copyFile(defaultVideo, defaultPicture);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("failed to copy: " + e.getMessage());
         }
       }
@@ -233,7 +246,8 @@ public class PupPacksService implements InitializingBean {
       try {
         Thread.currentThread().setName("PUP Pack Scanner");
         refresh();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error in PUP Pack Scanner thread: " + e.getMessage(), e);
       }
     }).start();

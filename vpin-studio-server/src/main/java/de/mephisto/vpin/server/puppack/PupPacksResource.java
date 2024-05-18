@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.puppack;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -15,10 +14,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
-import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,22 +116,29 @@ public class PupPacksResource {
     try {
       descriptor.getAssetsToImport().add(AssetType.PUP_PACK);
       descriptor.upload();
-      UploaderAnalysis analysis = new UploaderAnalysis(new File(descriptor.getTempFilename()));
+
+      File tempFile = new File(descriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis(tempFile);
       analysis.analyze();
 
-      String bundleRom = analysis.getRom();
-      descriptor.setRom(bundleRom);
-      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.PUP_PACK);
+      universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.PUP_PACK);
 
+      //these ROM names can differ, see PinBlob which uses a different ROM than PUP Pack
       List<Game> gamesByRom = gameService.getKnownGames();
+      String romFromPupPack = analysis.getRomFromPupPack();
+      String romFromZip = analysis.getRomFromZip();
       for (Game gameByRom : gamesByRom) {
-        if (!StringUtils.isEmpty(gameByRom.getRom()) && gameByRom.getRom().equalsIgnoreCase(bundleRom)) {
-          gameService.resetUpdate(gameByRom.getId(), VpsDiffTypes.pupPack);
+        if (!StringUtils.isEmpty(gameByRom.getRom())) {
+          String gameRom = gameByRom.getRom();
+          if (gameRom.equalsIgnoreCase(String.valueOf(romFromPupPack)) || gameRom.equalsIgnoreCase(String.valueOf(romFromZip))) {
+            gameService.resetUpdate(gameByRom.getId(), VpsDiffTypes.pupPack);
+          }
         }
       }
       return descriptor;
     }
-    catch (Exception e) {
+    catch (
+        Exception e) {
       LOG.error(AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage());
     } finally {

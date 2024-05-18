@@ -51,7 +51,7 @@ public class UploaderAnalysis<T> {
     return error;
   }
 
-  public String getRom() {
+  public String getRomFromPupPack() {
     String contains = containsWithPath(".pup");
     if (contains == null) {
       contains = containsWithPath(".bat");
@@ -67,6 +67,21 @@ public class UploaderAnalysis<T> {
           rom = rom.substring(rom.lastIndexOf("/") + 1);
         }
       }
+      LOG.info("Resolved archive ROM: " + rom);
+      return rom;
+    }
+
+    return contains;
+  }
+
+  public String getRomFromZip() {
+    String contains = containsWithPath(".zip");
+    if (contains != null) {
+      String rom = contains;
+      if (rom.contains("/")) {
+        rom = rom.substring(rom.lastIndexOf("/") + 1);
+      }
+      rom = FilenameUtils.getBaseName(rom);
       LOG.info("Resolved archive ROM: " + rom);
       return rom;
     }

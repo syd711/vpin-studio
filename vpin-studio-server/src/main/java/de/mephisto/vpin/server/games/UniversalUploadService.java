@@ -90,10 +90,6 @@ public class UniversalUploadService {
     catch (Exception e) {
       LOG.error("Failed to import " + assetType.name() + " file:" + e.getMessage(), e);
       throw e;
-    } finally {
-      if (temporaryAssetFile != null && temporaryAssetFile.exists() && temporaryAssetFile.delete()) {
-        LOG.info("Deleted " + temporaryAssetFile.getAbsolutePath());
-      }
     }
   }
 
@@ -119,7 +115,7 @@ public class UniversalUploadService {
         break;
       }
       case PUP_PACK: {
-        pupPacksService.installPupPack(uploadDescriptor);
+        pupPacksService.installPupPack(uploadDescriptor, analysis);
         break;
       }
       case POPPER_MEDIA: {

@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -114,13 +114,7 @@ public class UniversalUploadResource {
       LOG.error("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage(), e);
       uploadDescriptor.setError("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage());
     } finally {
-      File tempFile = new File(uploadDescriptor.getTempFilename());
-      if (!tempFile.delete()) {
-        LOG.error("Failed to delete temporary upload table file \"" + tempFile.getAbsolutePath() + "\"");
-      }
-      else {
-        LOG.info("Deleted temporary upload table file \"" + tempFile.getAbsolutePath() + "\"");
-      }
+      uploadDescriptor.finalizeUpload();
     }
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;

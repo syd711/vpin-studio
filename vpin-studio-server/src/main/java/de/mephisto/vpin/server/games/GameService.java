@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
@@ -21,6 +22,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -108,6 +110,9 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private PopperService popperService;
+
+  @Autowired
+  private DMDService dmdService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -268,12 +273,11 @@ public class GameService implements InitializingBean {
       }
 
       if (descriptor.isDeleteDMDs()) {
-        if (!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
-          success = false;
-        }
-
-        if (!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
-          success = false;
+        DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+        if (dmdPackage != null) {
+          if (!dmdService.delete(game)) {
+            success = false;
+          }
         }
       }
 
@@ -696,15 +700,15 @@ public class GameService implements InitializingBean {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
     File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getOriginalUploadFileName());
     String contains = ZipUtil.contains(tempFile, ".zip");
-    if(contains != null) {
+    if (contains != null) {
       out = new File(gameEmulator.getRomFolder(), contains);
-      if(out.exists() && !out.delete()) {
+      if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
       }
       ZipUtil.unzipTargetFile(tempFile, out, contains);
     }
     else {
-      if(out.exists() && !out.delete()) {
+      if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
       }
       org.apache.commons.io.FileUtils.copyFile(tempFile, out);

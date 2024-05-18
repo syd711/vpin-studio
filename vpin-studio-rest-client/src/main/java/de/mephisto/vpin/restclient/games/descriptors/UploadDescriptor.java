@@ -62,7 +62,12 @@ public class UploadDescriptor {
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
     if (tempFile.exists()) {
-      tempFile.delete();
+      if(tempFile.delete()) {
+        LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
+      }
+      else {
+        LOG.error("Finalizing upload failed, could not delete \"" + tempFile.getAbsolutePath() + "\"");
+      }
     }
   }
 
