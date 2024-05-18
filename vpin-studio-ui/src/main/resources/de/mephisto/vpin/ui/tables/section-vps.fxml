@@ -18,7 +18,7 @@
       </Label>
       <HBox style="-fx-border-color: transparent transparent #C7C3C3 transparent;">
          <children>
-            <Label prefWidth="80.0" text="Version" textFill="#b0abab">
+            <Label prefWidth="102.0" text="Version" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -26,7 +26,7 @@
                   <Insets left="3.0" />
                </padding>
             </Label>
-            <Label layoutX="10.0" layoutY="10.0" prefWidth="326.0" text="Authors" textFill="#b0abab">
+            <Label layoutX="10.0" layoutY="10.0" prefWidth="316.0" text="Authors" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
