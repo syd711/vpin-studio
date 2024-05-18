@@ -156,14 +156,22 @@ public class PupPackUploadController implements Initializable, DialogController 
   private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
     tableLabel.setText("-");
     romLabel.setText("-");
+    this.uploadBtn.setDisable(true);
     if (uploaderAnalysis == null) {
       return;
     }
 
+    String rom = uploaderAnalysis.getRom();
+    if (rom == null) {
+      return;
+    }
+    romLabel.setText(rom);
+    this.uploadBtn.setDisable(false);
+
     List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached();
     for (GameRepresentation gameRepresentation : gamesCached) {
-      String rom = gameRepresentation.getRom();
-      if (!StringUtils.isEmpty(rom) && uploaderAnalysis.containsRom(rom)) {
+      String gameRom = gameRepresentation.getRom();
+      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
         tableLabel.setText(gameRepresentation.getGameDisplayName());
         break;
       }

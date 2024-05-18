@@ -145,17 +145,18 @@ public class ZipUtil {
     fis.close();
   }
 
-  public static void zipFolder(File sourceDirPath, File targetZip) throws IOException {
+  public static void zipFolder(File sourceDirPath, File targetZip, ZipProgressable progressable) throws IOException {
     Path p = targetZip.toPath();
     try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
       Path pp =  sourceDirPath.toPath();
       Files.walk(pp)
           .filter(path -> !Files.isDirectory(path))
           .forEach(path -> {
-            String zipEntryPath = pp.relativize(path).toString();
+            String zipEntryPath = sourceDirPath.getName() + "/" + pp.relativize(path);
             ZipEntry zipEntry = new ZipEntry(zipEntryPath);
             try {
               zs.putNextEntry(zipEntry);
+              progressable.zipping(path.toFile(), zipEntryPath);
               Files.copy(path, zs);
               zs.closeEntry();
             }

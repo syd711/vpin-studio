@@ -14,16 +14,18 @@ public class PupPackInstallerJob implements Job {
   private final PupPacksService pupPacksService;
   private final File pupTmpArchive;
   private final File pupVideosFolder;
+  private final String rom;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder) {
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String rom) {
     this.pupPacksService = pupPacksService;
     this.pupTmpArchive = pupTmpArchive;
     this.pupVideosFolder = pupVideosFolder;
+    this.rom = rom;
   }
 
   @Override
   public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder);
+    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, rom);
     if (!pupTmpArchive.delete()) {
       return JobExecutionResultFactory.error("Failed to delete temporary file.");
     }

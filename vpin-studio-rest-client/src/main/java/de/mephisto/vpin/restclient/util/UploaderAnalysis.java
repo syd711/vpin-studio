@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class UploaderAnalysis<T> {
   private final File file;
 
   private final List<String> fileNames = new ArrayList<>();
+  private final List<String> fileNamesWithPath = new ArrayList<>();
   private final List<String> directories = new ArrayList<>();
 
   private String error;
@@ -46,14 +48,35 @@ public class UploaderAnalysis<T> {
     return error;
   }
 
-  public boolean containsRom(String rom) {
-    for (String fileName : directories) {
-      String[] split = fileName.split("/");
-      if (Arrays.asList(split).contains(rom)) {
-        return true;
+  public String getRom() {
+    String contains = containsWithPath(".pup");
+    if (contains == null) {
+      contains = containsWithPath(".bat");
+    }
+    if (contains == null) {
+      contains = containsWithPath(".txt");
+    }
+    if (contains != null) {
+      String rom = contains;
+      if (rom.contains("/")) {
+        rom = rom.substring(0, rom.lastIndexOf("/"));
+        if (rom.contains("/")) {
+          rom = rom.substring(rom.lastIndexOf("/")+1);
+        }
+      }
+      LOG.info("Resolved archive ROM: " + rom);
+      return rom;
+    }
+    return contains;
+  }
+
+  private String containsWithPath(String s) {
+    for (String fileName : fileNamesWithPath) {
+      if (fileName.endsWith(s)) {
+        return fileName;
       }
     }
-    return false;
+    return null;
   }
 
   public String getVpxFileName() {
@@ -102,6 +125,7 @@ public class UploaderAnalysis<T> {
     }
     else {
       String fileName = name.replaceAll("\\\\", "/");
+      fileNamesWithPath.add(fileName);
       if (fileName.contains("/")) {
         String dir = name.substring(0, fileName.lastIndexOf("/"));
         directories.add(dir);

@@ -29,6 +29,7 @@ public class UploadDescriptor {
   private boolean autoFill;
   private String subfolderName;
   private MultipartFile file;
+  private String rom;
 
   private List<AssetType> assetsToImport = new ArrayList<>();
 
@@ -91,6 +92,14 @@ public class UploadDescriptor {
   public void setFile(MultipartFile file) {
     this.file = file;
     this.originalUploadedFileName = file.getOriginalFilename();
+  }
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
   }
 
   public String getSubfolderName() {

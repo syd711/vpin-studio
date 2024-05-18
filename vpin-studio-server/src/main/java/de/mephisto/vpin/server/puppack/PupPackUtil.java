@@ -3,15 +3,7 @@ package de.mephisto.vpin.server.puppack;
 import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import net.sf.sevenzipjbinding.ExtractOperationResult;
-import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
-import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +14,9 @@ import java.util.zip.ZipInputStream;
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static JobExecutionResult unpack(File archiveFile, File destinationDir) {
+  public static JobExecutionResult unpack(File archiveFile, File destinationDir, String rom) {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
-      return unzip(archiveFile, destinationDir);
+      return unzip(archiveFile, destinationDir, rom);
     }
     else if (archiveFile.getName().toLowerCase().endsWith(".rar")) {
 //      return unrar(archiveFile, destinationDir);
@@ -75,29 +67,8 @@ public class PupPackUtil {
 //    return JobExecutionResultFactory.empty();
 //  }
 
-  public static JobExecutionResult unzip(File archiveFile, File destinationDir) {
+  public static JobExecutionResult unzip(File archiveFile, File destinationDir, String rom) {
     try {
-      String contains = ZipUtil.containsWithPath(archiveFile, ".pup");
-      if (contains == null) {
-        contains = ZipUtil.containsWithPath(archiveFile, ".bat");
-      }
-      if (contains == null) {
-        contains = ZipUtil.containsWithPath(archiveFile, ".txt");
-      }
-
-      if (contains == null) {
-        return JobExecutionResultFactory.error("Unable to determine root folder.");
-      }
-
-      String rom = contains.replaceAll("\\\\", "/");
-      if (rom.contains("/")) {
-        rom = rom.substring(0, rom.lastIndexOf("/"));
-        if (rom.contains("/")) {
-          rom = rom.substring(rom.lastIndexOf("/"));
-        }
-      }
-      LOG.info("Resolved PUP pack ROM: " + rom);
-
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);

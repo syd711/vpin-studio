@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.DnDOverlayController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ZipProgressModel;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -67,9 +69,12 @@ public class TableOverviewDragDropHandler {
           if (file.length() == 0) {
             continue;
           }
-          String extension = FilenameUtils.getExtension(file.getName());
-          if (!suffixes.contains(extension.toLowerCase())) {
-            return;
+
+          if (file.isFile()) {
+            String extension = FilenameUtils.getExtension(file.getName());
+            if (!suffixes.contains(extension.toLowerCase())) {
+              return;
+            }
           }
         }
 
@@ -119,56 +124,94 @@ public class TableOverviewDragDropHandler {
       public void handle(DragEvent event) {
         event.consume();
         List<File> files = new ArrayList<>(event.getDragboard().getFiles());
-        File file = files.get(0);
+        final File file = files.get(0);
         LOG.info("Dropped file " + file.getAbsolutePath());
 
-        File systemTmpFolder = new File(System.getProperty("java.io.tmpdir"));
-        if (file.getAbsolutePath().startsWith(systemTmpFolder.getAbsolutePath())) {
-          try {
+        try {
+          File systemTmpFolder = new File(System.getProperty("java.io.tmpdir"));
+          if (file.getAbsolutePath().startsWith(systemTmpFolder.getAbsolutePath())) {
             if (file.isFile()) {
-              File tempFile = de.mephisto.vpin.commons.utils.FileUtils.createMatchingTempFile(file);
-              tempFile.deleteOnExit();
-              FileUtils.copyFile(file, tempFile);
-              file = tempFile;
-              LOG.info("Created separate temp file for dropped archive file: " + tempFile.getAbsolutePath());
+              dispatchTemporaryFile(file);
             }
             else if (file.isDirectory()) {
-              File tempFolder = new File(systemTmpFolder, file.getName());
-              File zipTempFolder = new File(tempFolder, file.getName());
-              zipTempFolder.mkdirs();
-              zipTempFolder.deleteOnExit();
-              FileUtils.copyDirectory(file, zipTempFolder);
-
-              File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
-              if (tempFile.exists() && !tempFile.delete()) {
-                throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
-              }
-
-              ZipUtil.zipFolder(tempFolder, tempFile);
-              LOG.info("Created separate temp zip file for dropped folder: " + tempFile.getAbsolutePath());
-
-              FileUtils.deleteDirectory(tempFolder);
-              LOG.info("Delete temp folder " + tempFolder.getAbsolutePath());
-
-              file = tempFile;
+              dispatchTemporaryFolder(systemTmpFolder, file);
             }
           }
-          catch (Exception e) {
-            LOG.info("Failed to create temporary drop file: " + e.getMessage(), e);
-            Platform.runLater(() -> {
-              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary drop file: " + e.getMessage());
-            });
+          else if (file.isFile()) {
+            dispatchDroppedFile(file);
+          }
+          else if (file.isDirectory()) {
+            dispatchDroppedFolder(file);
           }
         }
-
-        if (file.length() > 0) {
-          dispatchDroppedFile(file);
-        }
-        else {
-          LOG.info("Skipped drop of " + file.getAbsolutePath() + ", because the file is empty.");
+        catch (Exception e) {
+          LOG.info("Failed to dispatch dropped file: " + e.getMessage(), e);
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to drop file: " + e.getMessage());
+          });
         }
       }
     });
+  }
+
+  private void dispatchDroppedFolder(File file) throws Exception {
+    File systemTmpFolder = new File(System.getProperty("java.io.tmpdir"));
+    File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
+
+    if (tempFile.exists() && !tempFile.delete()) {
+      throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
+    }
+
+    LOG.info("Zipping " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), file, tempFile));
+      LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
+      dispatchDroppedFile(tempFile);
+    });
+  }
+
+  private void dispatchTemporaryFolder(File systemTmpFolder, File file) throws Exception {
+    //immediately create a copy of the dropped folder, otherwise the OS will clean these
+    File tempFolder = new File(systemTmpFolder, file.getName());
+    File zipTempFolder = new File(tempFolder, file.getName());
+    zipTempFolder.mkdirs();
+    zipTempFolder.deleteOnExit();
+    FileUtils.copyDirectory(file, zipTempFolder);
+
+    File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
+    if (tempFile.exists() && !tempFile.delete()) {
+      throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
+    }
+
+    LOG.info("Zipping " + tempFolder.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), tempFolder, tempFile));
+      LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
+      try {
+        if (file.getAbsolutePath().startsWith(systemTmpFolder.getAbsolutePath())) {
+          FileUtils.deleteDirectory(file);
+          LOG.info("Delete temp folder " + file.getAbsolutePath());
+        }
+      }
+      catch (IOException e) {
+        LOG.error("Failed to delete temp folder " + file.getAbsolutePath(), e);
+      }
+
+      dispatchDroppedFile(tempFile);
+    });
+  }
+
+  private void dispatchTemporaryFile(File file) throws IOException {
+    File tempFile = de.mephisto.vpin.commons.utils.FileUtils.createMatchingTempFile(file);
+    tempFile.deleteOnExit();
+    FileUtils.copyFile(file, tempFile);
+    LOG.info("Created separate temp file for dropped archive file: " + tempFile.getAbsolutePath());
+    if (tempFile.length() > 0) {
+      dispatchDroppedFile(tempFile);
+    }
+    else {
+      LOG.info("Skipped drop of " + tempFile.getAbsolutePath() + ", because the file is empty.");
+    }
   }
 
 

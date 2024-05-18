@@ -179,7 +179,7 @@ public class PupPacksService implements InitializingBean {
       }
     }
 
-    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, uploadDescriptor.getRom());
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
     jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");

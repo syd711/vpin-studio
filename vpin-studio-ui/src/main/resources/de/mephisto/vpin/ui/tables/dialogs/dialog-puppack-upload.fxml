@@ -65,7 +65,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="tableLabel1" layoutX="121.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="romLabel" layoutX="121.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </center>
