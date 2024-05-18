@@ -147,6 +147,11 @@ public class VpsTableEntry extends HBox {
 
       this.getChildren().addAll(children);
     }
+    else {
+      Label spacer = new Label();
+      spacer.setPrefWidth(90);
+      this.getChildren().add(spacer);
+    }
 
 
     Label changedLabel = WidgetFactory.createDefaultLabel(DateFormat.getDateInstance().format(new Date(changeDate)));
