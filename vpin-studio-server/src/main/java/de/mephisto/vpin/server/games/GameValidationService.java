@@ -124,15 +124,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (Game rawGame : otherGamesWithSameRom) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
-          if (byPupId.getNvOffset() == 0) {
-            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
-            if (findFirst) {
-              return result;
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails gameDetails : otherGameDetailsWithSameRom) {
+          if (gameDetails.getNvOffset() == 0 || gameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(gameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName()));
+              if (findFirst) {
+                return result;
+              }
             }
           }
         }
@@ -321,7 +323,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
       for (File file : screenAssets) {
         String mimeType = MimeTypeUtil.determineMimeType(file);
-        if(mimeType != null) {
+        if (mimeType != null) {
           if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
             return false;
           }
@@ -493,14 +495,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return true;
   }
 
-  public boolean hasNoVpsTableMapping(List<ValidationState> states) {
-    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
-    if (codes.contains(CODE_VPS_MAPPING_MISSING)) {
-      return true;
-    }
-    return false;
-  }
-
   public boolean hasMissingAssets(List<ValidationState> states) {
     List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
     if (codes.isEmpty()) {
@@ -508,17 +502,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_AUDIO)
-      || codes.contains(CODE_NO_AUDIO_LAUNCH)
-      || codes.contains(CODE_NO_APRON)
-      || codes.contains(CODE_NO_INFO)
-      || codes.contains(CODE_NO_HELP)
-      || codes.contains(CODE_NO_TOPPER)
-      || codes.contains(CODE_NO_BACKGLASS)
-      || codes.contains(CODE_NO_DMD)
-      || codes.contains(CODE_NO_PLAYFIELD)
-      || codes.contains(CODE_NO_LOADING)
-      || codes.contains(CODE_NO_OTHER2)
-      || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+        || codes.contains(CODE_NO_AUDIO_LAUNCH)
+        || codes.contains(CODE_NO_APRON)
+        || codes.contains(CODE_NO_INFO)
+        || codes.contains(CODE_NO_HELP)
+        || codes.contains(CODE_NO_TOPPER)
+        || codes.contains(CODE_NO_BACKGLASS)
+        || codes.contains(CODE_NO_DMD)
+        || codes.contains(CODE_NO_PLAYFIELD)
+        || codes.contains(CODE_NO_LOADING)
+        || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
     return false;
@@ -531,18 +525,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-      || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-      || codes.contains(CODE_NO_ROM)
-      || codes.contains(CODE_ROM_NOT_EXISTS)
-      || codes.contains(CODE_VPX_NOT_EXISTS)
-      || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-      || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-      || codes.contains(CODE_FORCE_STEREO)
-      || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-      || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-      || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-      || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-      || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_NO_ROM)
+        || codes.contains(CODE_ROM_NOT_EXISTS)
+        || codes.contains(CODE_VPX_NOT_EXISTS)
+        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+        || codes.contains(CODE_FORCE_STEREO)
+        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
     ) {
       return true;
     }

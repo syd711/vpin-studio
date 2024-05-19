@@ -10,4 +10,6 @@ public interface GameDetailsRepository extends JpaRepository<GameDetails, Long> 
 
   GameDetails findByPupId(int pupId);
 
+  List<GameDetails> findByRomName(String rom);
+
 }

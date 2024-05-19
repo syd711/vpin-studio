@@ -60,7 +60,7 @@ public class GameService implements InitializingBean {
   private GameDetailsRepository gameDetailsRepository;
 
   @Autowired
-  private GameValidationService gameValidator;
+  private GameValidationService gameValidationService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -179,11 +179,11 @@ public class GameService implements InitializingBean {
 
   public List<Game> getGamesByRom(@NonNull String rom) {
     List<Game> games = this.getGames()
-      .stream()
-      .filter(g ->
-        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-      .collect(Collectors.toList());
+        .stream()
+        .filter(g ->
+            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+        .collect(Collectors.toList());
     for (Game game : games) {
       applyGameDetails(game, null, false);
     }
@@ -436,6 +436,7 @@ public class GameService implements InitializingBean {
       game = pinUPConnector.getGame(gameId);
       if (game != null) {
         applyGameDetails(game, null, true);
+        mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game);
         }
@@ -514,7 +515,7 @@ public class GameService implements InitializingBean {
       }
 
       game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
-      List<ValidationState> validate = gameValidator.validate(game, true);
+      List<ValidationState> validate = gameValidationService.validate(game, true);
       if (validate.isEmpty()) {
         validate.add(GameValidationStateFactory.empty());
       }
@@ -613,7 +614,7 @@ public class GameService implements InitializingBean {
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
-    List<ValidationState> validate = gameValidator.validate(game, true);
+    List<ValidationState> validate = gameValidationService.validate(game, true);
     if (validate.isEmpty()) {
       validate.add(GameValidationStateFactory.empty());
     }
@@ -621,7 +622,7 @@ public class GameService implements InitializingBean {
   }
 
   public List<ValidationState> validate(Game game) {
-    return gameValidator.validate(game, false);
+    return gameValidationService.validate(game, false);
   }
 
   public synchronized Game save(Game game) throws Exception {
@@ -657,7 +658,7 @@ public class GameService implements InitializingBean {
 
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
-    if(game.isVpxGame()) {
+    if (game.isVpxGame()) {
       return highscoreService.getHighscoreFiles(game);
     }
     return new HighscoreFiles();
@@ -667,7 +668,7 @@ public class GameService implements InitializingBean {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     TableDetails tableDetails = pinUPConnector.getTableDetails(id);
-    return gameValidator.validateHighscoreStatus(game, gameDetails, tableDetails);
+    return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 
   @Override

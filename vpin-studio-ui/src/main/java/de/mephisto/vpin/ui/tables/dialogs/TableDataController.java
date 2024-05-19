@@ -296,6 +296,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
 
+    String vpsTableMappingField = serverSettings.getMappingVpsTableId();
+    String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
+
+    setMappedFieldValue(vpsTableMappingField, "");
+    setMappedFieldValue(vpsTableVersionMappingField, "");
+
     autoCompleteNameField.setText("");
     refreshVersionsCombo(null);
     propperRenamingController.setVpsTable(null);
@@ -328,7 +334,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       VpsTable vpsTable = VPS.getInstance().getTableById(mappedTableId);
       propperRenamingController.setVpsTable(vpsTable);
 
-      VpsTableVersion version = mappedVersion!=null? VPS.getInstance().getTableVersionById(vpsTable, mappedVersion): null;
+      VpsTableVersion version = mappedVersion != null ? VPS.getInstance().getTableVersionById(vpsTable, mappedVersion) : null;
       if (version != null) {
         setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
         tableDetails.setMappedValue(vpsTableVersionMappingField, mappedVersion);
@@ -336,7 +342,10 @@ public class TableDataController implements Initializable, DialogController, Aut
         propperRenamingController.setVpsTableVersion(version);
       }
 
-      autoCompleteNameField.setText(vpsTable.getDisplayName());
+      if (vpsTable != null) {
+        autoCompleteNameField.setText(vpsTable.getDisplayName());
+      }
+
       refreshVersionsCombo(vpsTable);
       tableVersionsCombo.setValue(version);
 

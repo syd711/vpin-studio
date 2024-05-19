@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.mame;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -107,7 +109,7 @@ public class MameService implements InitializingBean {
 
   public boolean deleteOptions(String rom) {
     WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + rom);
-    this.clearCache();
+    mameCache.remove(rom);
     return true;
   }
 
@@ -120,5 +122,14 @@ public class MameService implements InitializingBean {
     new Thread(() -> {
       clearCache();
     }).start();
+  }
+
+  public boolean clearCacheFor(@Nullable String rom) {
+    if (!StringUtils.isEmpty(rom)) {
+      mameCache.remove(rom);
+      getOptions(rom);
+      return true;
+    }
+    return false;
   }
 }

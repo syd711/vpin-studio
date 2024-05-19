@@ -71,6 +71,7 @@ public class NvRamHighscoreToRawConverter {
         throw new Exception(error);
       }
       String stdOut = standardOutputFromCommand.toString();
+      stdOut = stdOut.replaceAll("\u00ff", ".");
       return convertOutputToRaw(nvRamFileName, stdOut);
     } catch (Exception e) {
       LOG.error(e.getMessage(), e);
