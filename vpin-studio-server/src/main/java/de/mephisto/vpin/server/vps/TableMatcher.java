@@ -164,6 +164,10 @@ public class TableMatcher {
 
 	VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
 
+		if (tableInfo==null) {
+			return null;
+		}
+
 		String tableInfoName = tableInfo.getTableName();
 		String tableInfoVersion = tableInfo.getTableVersion();
 		String tableInfoAuthor = tableInfo.getAuthorName();
@@ -171,6 +175,12 @@ public class TableMatcher {
 		if (StringUtils.isEmpty(tableInfoVersion) && StringUtils.isEmpty(tableInfoAuthor)) {
 			return null;
 		}
+		// clean tableInfo author field and parse it
+		String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
+		for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
+			tableInfoAuthors[i] = tableInfoAuthors[i].trim();
+		}
+		tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
 
 		double distance = 10000;
 		VpsTableVersion foundVersion = null;
@@ -184,7 +194,6 @@ public class TableMatcher {
 			String name = tableVersion.getComment();
 			String v = tableVersion.getVersion();
 			String authors = null;
-
 
 			// if match via name, rare but happens.., disconnect version match 
 			double dName = (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName))
@@ -206,19 +215,17 @@ public class TableMatcher {
 					? (tableInfo.getReleaseDate().contains(Integer.toString(year)) ? 1 : 2)
 					: 1.2;*/
 
+			List<String> tableVersionAuthors = tableVersion.getAuthors();
 			int nbFirstAuthorsFoundInFirst = 0;
 			double dAuthor = 0.0d;
-			if (tableInfo != null && !StringUtils.isEmpty(tableInfoAuthor) 
-				&& tableVersion.getAuthors() != null && tableVersion.getAuthors().size()>0) {
+			if (StringUtils.isNotEmpty(tableInfoAuthor) && tableVersionAuthors!=null && tableVersionAuthors.size()>0) {
 
-				authors = StringUtils.join(tableVersion.getAuthors(), " ").toLowerCase();
-				String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
+				authors = StringUtils.join(tableVersionAuthors, " ").toLowerCase();
 
 				// check if first authors of the table are also the first authors of the version
 				for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
-					tableInfoAuthors[i] = tableInfoAuthors[i].trim();
-					for (int j = 0, n = tableVersion.getAuthors().size(); j<n && j<m; j++) {
-						int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersion.getAuthors().get(j).toLowerCase());
+					for (int j = 0, n = tableVersionAuthors.size(); j<n && j<m; j++) {
+						int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersionAuthors.get(j).toLowerCase());
 						if (r>90) {
 							nbFirstAuthorsFoundInFirst++;
 							break;
@@ -232,7 +239,6 @@ public class TableMatcher {
 				
 				} else {
 
-					tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
 					int r = FuzzySearch.weightedRatio(authors, tableInfoAuthor);
 					dAuthor = r>0? 100.0 / r - 1: 100;
 				}
