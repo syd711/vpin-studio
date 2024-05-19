@@ -8,7 +8,6 @@ import de.mephisto.vpin.server.games.Game;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -165,6 +164,14 @@ public class TableMatcher {
 
 	VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
 
+		String tableInfoName = tableInfo.getTableName();
+		String tableInfoVersion = tableInfo.getTableVersion();
+		String tableInfoAuthor = tableInfo.getAuthorName();
+
+		if (StringUtils.isEmpty(tableInfoVersion) && StringUtils.isEmpty(tableInfoAuthor)) {
+			return null;
+		}
+
 		double distance = 10000;
 		VpsTableVersion foundVersion = null;
 
@@ -175,13 +182,14 @@ public class TableMatcher {
 			}
 
 			String name = tableVersion.getComment();
-			String tableInfoName = tableInfo.getTableName();
 			String v = tableVersion.getVersion();
-			String tableInfoVersion = tableInfo.getTableVersion();
+			String authors = null;
 
-			// if match via name, disconnect version match 
-			double dName = distance(name, tableInfoName);
-			double dVersion = dName<2 ? 0: TableVersionMatcher.versionDistance(v, tableInfoVersion);
+
+			// if match via name, rare but happens.., disconnect version match 
+			double dName = (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName))
+				? distance(name, tableInfoName): 5;
+			double dVersion = dName<0.5 ? 0: TableVersionMatcher.versionDistance(v, tableInfoVersion);
 
 			// The version cannot have a greater date than the last modification of the game file
 			// controversial, could be used as a criteria to bifurcate between to possible solutions
@@ -198,26 +206,46 @@ public class TableMatcher {
 					? (tableInfo.getReleaseDate().contains(Integer.toString(year)) ? 1 : 2)
 					: 1.2;*/
 
-			String tableInfoAuthor = tableInfo.getAuthorName();
+			int nbFirstAuthorsFoundInFirst = 0;
 			double dAuthor = 0.0d;
-			if (tableInfo != null && !StringUtils.isEmpty(tableInfoAuthor) && tableVersion.getAuthors() != null) {
-				double nbAuthorsMatched = 0.0;
-				for (String author : tableVersion.getAuthors()) {
-					if (StringUtils.containsIgnoreCase(tableInfoAuthor, author)) {
-						nbAuthorsMatched++;
+			if (tableInfo != null && !StringUtils.isEmpty(tableInfoAuthor) 
+				&& tableVersion.getAuthors() != null && tableVersion.getAuthors().size()>0) {
+
+				authors = StringUtils.join(tableVersion.getAuthors(), " ").toLowerCase();
+				String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
+
+				// check if first authors of the table are also the first authors of the version
+				for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
+					tableInfoAuthors[i] = tableInfoAuthors[i].trim();
+					for (int j = 0, n = tableVersion.getAuthors().size(); j<n && j<m; j++) {
+						int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersion.getAuthors().get(j).toLowerCase());
+						if (r>90) {
+							nbFirstAuthorsFoundInFirst++;
+							break;
+						}
 					}
 				}
-				dAuthor = 1.0 - (nbAuthorsMatched / tableVersion.getAuthors().size());
+			
+				if (nbFirstAuthorsFoundInFirst==tableInfoAuthors.length) {
+					// reduce weight of version when all authors of the tables are also the first authors of the version
+					dVersion /= 3;
+				
+				} else {
+
+					tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
+					int r = FuzzySearch.weightedRatio(authors, tableInfoAuthor);
+					dAuthor = r>0? 100.0 / r - 1: 100;
+				}
 			}
 
-			double d = (1 + dVersion) * (1 + dAuthor / 2);
+			double d = (1 + dVersion / 2) * (1 + dAuthor);
 			if (d < distance) {
 				distance = d;
 				foundVersion = tableVersion;
 			}
 		}
 
-		return distance < 1.6 ? foundVersion : null;
+		return distance <= 1.5 ? foundVersion : null;
 	}
 
 	/**
@@ -235,7 +263,10 @@ public class TableMatcher {
 		if (romFiles != null &&  romFiles.size()>0) {
 			boolean found = false;
 			for (VpsAuthoredUrls romFile : romFiles) {
-				found |= romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom);
+				found |= romFile.getVersion() != null 
+					// do not check equals, cf afm_113 && afm_113b 
+					&& (StringUtils.startsWithIgnoreCase(romFile.getVersion(), rom)
+						|| StringUtils.startsWithIgnoreCase(rom, romFile.getVersion()));
 			}
 			return found;
 		}

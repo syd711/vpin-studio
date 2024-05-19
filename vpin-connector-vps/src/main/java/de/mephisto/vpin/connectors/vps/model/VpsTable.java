@@ -145,10 +145,10 @@ public class VpsTable implements VPSEntity {
   }
 
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if (t.getTableFormat() == null) {
+    if (t.getTableFormat() == null || t.getTableFormat().length()==0)  {
       return true;
     }
-    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat);
+    return t.getTableFormat().equals(tableFormat);
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {

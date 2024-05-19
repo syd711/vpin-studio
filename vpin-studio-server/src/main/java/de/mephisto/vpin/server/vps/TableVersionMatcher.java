@@ -9,9 +9,6 @@ public class TableVersionMatcher {
         if (StringUtils.isEmpty(version1) && StringUtils.isEmpty(version2)) {
             return 0;
         }
-        if (StringUtils.isEmpty(version1) || StringUtils.isEmpty(version2)) {   
-            return 0.5;
-        }
 
         VersionTokenizer tokenizer1 = new VersionTokenizer(cleanVersion(version1));
         VersionTokenizer tokenizer2 = new VersionTokenizer(cleanVersion(version2));
@@ -28,7 +25,7 @@ public class TableVersionMatcher {
             number2 = tokenizer2.getNumber();
 
             if (number1 != number2) {
-                return Math.abs(number1 - number2);
+                return Math.min(Math.abs(number1 - number2) / 2.0, 3.0);
             }
         }
         if (tokenizer2.MoveNext()) {
@@ -42,6 +39,9 @@ public class TableVersionMatcher {
     }
 
     private static String cleanVersion(String version) {
+        if (version==null) {
+            return "";
+        }
         if (StringUtils.startsWithIgnoreCase(version, "VP")) {
             int c, p = 2, l = version.length();
             while (p<l && StringUtils.indexOf("XS 0123456789.", c=version.charAt(p))>=0) {
