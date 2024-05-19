@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- **Highscore**: Fixed parsing issue. Unfortunately the formatting of the last patch broke some score parsing for some score that already have been formatted.
+- **Highscore Parsing**: Fixed parsing issue caused by the new formatting. Unfortunately the formatting of the last patch broke some score parsing for some score that already have been formatted.
 - **Highscore Parsing**: Fixed special character issue that happened for some users in combination with different locale settings and pinemhi. @leprinco found a nice fix there so that hopefully other users won't be bothered with this issue anymore.
 - **MAME Settings**: Skipped some of the superflous MAME reload calls since these very expensive. The MAME cache isn't cleared on table reload anymore, but only when the **Reload** button in the MAME section is pressed or for single tables.
 - **VPS Reset**: Fixed broken "VPS Reset" button when used in the **Table Data Manager**. Since the fields have no been cleared on reset, the old value was still persisted.
