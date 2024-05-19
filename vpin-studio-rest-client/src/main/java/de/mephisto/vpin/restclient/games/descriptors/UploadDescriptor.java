@@ -33,6 +33,13 @@ public class UploadDescriptor {
 
   private List<AssetType> assetsToImport = new ArrayList<>();
 
+  private List<File> tempFiles = new ArrayList<>();
+
+  @JsonIgnore
+  public List<File> getTempFiles() {
+    return tempFiles;
+  }
+
   public File upload() throws Exception {
     String name = FilenameUtils.getBaseName(getOriginalUploadFileName());
     String suffix = FilenameUtils.getExtension(getOriginalUploadFileName());
@@ -62,7 +69,16 @@ public class UploadDescriptor {
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
     if (tempFile.exists()) {
-      if(tempFile.delete()) {
+      if (tempFile.delete()) {
+        LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
+      }
+      else {
+        LOG.error("Finalizing upload failed, could not delete \"" + tempFile.getAbsolutePath() + "\"");
+      }
+    }
+
+    for (File temp : getTempFiles()) {
+      if (temp.delete()) {
         LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
       }
       else {

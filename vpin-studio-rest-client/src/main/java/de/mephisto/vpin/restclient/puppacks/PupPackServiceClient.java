@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -58,9 +59,12 @@ public class PupPackServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadPupPack(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "puppacks/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.PUP_PACK, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, -1, null, AssetType.PUP_PACK, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("PUP pack upload failed: " + e.getMessage(), e);
       throw e;
     }

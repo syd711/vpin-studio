@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -35,7 +36,9 @@ public class AltColorServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadAltColor(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altcolor/upload";
-      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.ALT_SOUND, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.ALT_SOUND, listener);
+      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload , UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("ALT color upload failed: " + e.getMessage(), e);

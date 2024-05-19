@@ -1,15 +1,12 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
-import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
-import de.mephisto.vpin.server.popper.PopperMediaResource;
 import de.mephisto.vpin.server.popper.PopperMediaService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -49,13 +46,14 @@ public class UniversalUploadService {
   @Autowired
   private PupPacksService pupPacksService;
 
-  public File resolveTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
+  public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
     if (PackageUtil.isSupportedArchive(archiveSuffix)) {
       String archiveMatch = PackageUtil.contains(tempFile, suffix);
       File unpackedTempFile = File.createTempFile(FilenameUtils.getBaseName(archiveMatch), suffix);
       PackageUtil.unpackTargetFile(tempFile, unpackedTempFile, archiveMatch);
+      descriptor.getTempFiles().add(unpackedTempFile);
       return unpackedTempFile;
     }
     return tempFile;
@@ -78,7 +76,8 @@ public class UniversalUploadService {
           analysis.analyze();
 
           if (analysis.containsAssetType(assetType)) {
-            temporaryAssetFile = resolveTableFilenameBasedEntry(uploadDescriptor, "." + assetType.name());
+            File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, "." + assetType.name());
+            uploadDescriptor.getTempFiles().add(temporaryAssetArchiveFile);
             copyGameFileAsset(temporaryAssetFile, game, assetType);
           }
         }

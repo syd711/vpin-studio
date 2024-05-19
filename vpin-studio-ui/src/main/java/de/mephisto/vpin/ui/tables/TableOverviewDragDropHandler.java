@@ -102,7 +102,7 @@ public class TableOverviewDragDropHandler {
     dndLoadingOverlay.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        if (event.getDragboard().hasFiles()) {
+        if (event.getDragboard().hasFiles() && event.getDragboard().getFiles().size() == 1) {
           event.acceptTransferModes(TransferMode.COPY);
         }
         else {
@@ -157,6 +157,7 @@ public class TableOverviewDragDropHandler {
   private void dispatchDroppedFolder(File file) throws Exception {
     File systemTmpFolder = new File(System.getProperty("java.io.tmpdir"));
     File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
+    tempFile.deleteOnExit();
 
     if (tempFile.exists() && !tempFile.delete()) {
       throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
@@ -165,7 +166,7 @@ public class TableOverviewDragDropHandler {
     LOG.info("Zipping " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
       ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), file, tempFile));
-      LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
+      LOG.info("Created separate temp zip file \"" + tempFile.getAbsolutePath() + "\" for dropped folder \"" + file.getAbsolutePath() + "\"");
       dispatchDroppedFile(tempFile);
     });
   }

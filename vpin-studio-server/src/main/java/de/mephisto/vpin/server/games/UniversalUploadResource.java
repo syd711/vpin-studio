@@ -87,7 +87,7 @@ public class UniversalUploadResource {
   public UploadDescriptor processUploadedTable(@RequestBody UploadDescriptor uploadDescriptor) {
     LOG.info("*********** Importing " + uploadDescriptor.getOriginalUploadedVPXFileName() + " ************************");
     try {
-      File temporaryVPXFile = universalUploadService.resolveTableFilenameBasedEntry(uploadDescriptor, ".vpx");
+      File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, ".vpx");
       importVPXFile(temporaryVPXFile, uploadDescriptor);
 
       universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.DIRECTB2S);

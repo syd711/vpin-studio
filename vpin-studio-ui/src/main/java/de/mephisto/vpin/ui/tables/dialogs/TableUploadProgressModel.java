@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -20,6 +21,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
 
   private final Iterator<File> iterator;
   private final List<File> files;
+  private final File file;
   private final int gameId;
   private final TableUploadType tableUploadDescriptor;
   private final int emuId;
@@ -28,6 +30,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   public TableUploadProgressModel(String title, File file, int gameId, TableUploadType tableUploadDescriptor, int emuId) {
     super(title);
     this.files = Collections.singletonList(file);
+    this.file = file;
     this.gameId = gameId;
     this.emuId = emuId;
     this.tableUploadDescriptor = tableUploadDescriptor;
@@ -52,6 +55,12 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   @Override
   public String nextToString(File file) {
     return file.getName();
+  }
+
+  @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    FileUtils.deleteIfTempFile(file);
+    super.finalizeModel(progressResultModel);
   }
 
   @Override

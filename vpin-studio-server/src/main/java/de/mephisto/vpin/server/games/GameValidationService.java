@@ -130,7 +130,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (Game rawGame : otherGamesWithSameRom) {
           GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
-          if (byPupId.getNvOffset() == 0) {
+          if (byPupId.getNvOffset() == 0 || byPupId.getNvOffset() == game.getNvOffset()) {
             result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
             if (findFirst) {
               return result;

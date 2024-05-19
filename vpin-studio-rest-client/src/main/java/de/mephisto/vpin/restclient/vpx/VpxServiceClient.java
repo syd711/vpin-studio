@@ -3,14 +3,14 @@ package de.mephisto.vpin.restclient.vpx;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -37,7 +37,8 @@ public class VpxServiceClient extends VPinStudioClientService {
   public void playGame(int id) {
     try {
       getRestClient().put(API + "vpx/play/" + id, new HashMap<>());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
     }
   }
@@ -63,7 +64,8 @@ public class VpxServiceClient extends VPinStudioClientService {
         return getRestClient().put(API + "vpx/pov/" + gameId, values);
       }
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }
     return false;
@@ -73,7 +75,8 @@ public class VpxServiceClient extends VPinStudioClientService {
   public POVRepresentation createPOV(int gameId) throws Exception {
     try {
       return getRestClient().post(API + "vpx/pov/" + gameId, new HashMap<>(), POVRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to create POV representation: " + e.getMessage(), e);
       throw e;
     }
@@ -102,7 +105,8 @@ public class VpxServiceClient extends VPinStudioClientService {
       Map<String, Object> data = new HashMap<>();
       data.put("source", Base64.getEncoder().encodeToString(sources.getBytes()));
       getRestClient().put(API + "vpx/sources/" + game.getId(), data);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save script data: " + e.getMessage(), e);
     }
   }
@@ -120,7 +124,8 @@ public class VpxServiceClient extends VPinStudioClientService {
         Files.write(path, strToBytes);
 
         return tmp;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to create temp file for script: " + e.getMessage(), e);
       }
     }
@@ -130,9 +135,12 @@ public class VpxServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadMusic(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/music/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.MUSIC, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, -1, null, AssetType.MUSIC, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Music upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -141,9 +149,12 @@ public class VpxServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadPov(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.POV, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.POV, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -152,9 +163,12 @@ public class VpxServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadIniFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/ini/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.INI, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.INI, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Ini upload failed: " + e.getMessage(), e);
       throw e;
     }
