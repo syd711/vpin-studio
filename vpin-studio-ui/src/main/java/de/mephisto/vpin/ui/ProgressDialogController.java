@@ -52,7 +52,7 @@ public class ProgressDialogController implements Initializable, DialogController
       progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
     }
 
-    progressResultModel = new ProgressResultModel(progressBar);
+    progressResultModel = new ProgressResultModel(progressBar, progressBarLabel);
     progressBarLabel.setText("");
     service = new Service() {
       @Override

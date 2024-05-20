@@ -6,12 +6,12 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -130,7 +130,7 @@ public class TableUploadController implements Initializable, DialogController {
   private GameRepresentation game;
   private GameEmulatorRepresentation emulatorRepresentation;
 
-  private UploadDescriptor tableUploadDescriptor = new UploadDescriptor();
+  private UploadDescriptor tableUploadDescriptor = UploadDescriptorFactory.create();
   private TableOverviewController tableOverviewController;
   private UploaderAnalysis uploaderAnalysis;
 

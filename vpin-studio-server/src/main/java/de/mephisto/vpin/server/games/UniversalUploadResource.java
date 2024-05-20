@@ -85,6 +85,7 @@ public class UniversalUploadResource {
 
   @PostMapping("/process/table")
   public UploadDescriptor processUploadedTable(@RequestBody UploadDescriptor uploadDescriptor) {
+    Thread.currentThread().setName("Universal Upload Thread");
     LOG.info("*********** Importing " + uploadDescriptor.getOriginalUploadedVPXFileName() + " ************************");
     try {
       File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, ".vpx");
