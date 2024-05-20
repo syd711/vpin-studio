@@ -5,7 +5,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
@@ -39,7 +40,14 @@
                         <Insets />
                      </BorderPane.margin>
                      <center>
-                        <ListView fx:id="directb2sList" prefWidth="300.0" styleClass="pretty-list-view" />
+                        <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                           <columns>
+                                 <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
+                                 <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                 <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
+                                 <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
+                           </columns>
+                        </TableView>
                      </center>
                      <top>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -389,6 +397,17 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
+                                                <Label text="DirectB2S File Metadata" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+
+                                                <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
                                                 <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
@@ -409,26 +428,38 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                <Label layoutX="10.0" text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="8">
+                                                <Label layoutX="10.0" layoutY="150.0" text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="9">
+                                                <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="10">
+
+                                                <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="9">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
+                                                <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="10">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="11">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+
                                                 <Label fx:id="nameLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
@@ -454,42 +485,32 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                <Label fx:id="fullDmdLabel" layoutX="150.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                                <Label fx:id="b2sElementsLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                                <Label fx:id="bulbsLabel" layoutX="180.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="150.0" text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="b2sElementsLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label text="DirectB2S File Metadata" textFill="WHITE">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="7">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label fx:id="bulbsLabel" layoutX="180.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="11">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
