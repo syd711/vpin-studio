@@ -143,6 +143,14 @@ public class VpsUtil {
       return "#e53e3e";
     }
 
+    if (abb.equals("FP")) {
+      return "#718096";
+    }
+
+    if (abb.equals("VPX")) {
+      return "#718096";
+    }
+
     if (abb.equals("YT")) {
       return "#ff4e45";
     }

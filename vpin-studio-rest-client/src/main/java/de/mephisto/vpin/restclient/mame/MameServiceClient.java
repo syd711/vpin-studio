@@ -2,9 +2,10 @@ package de.mephisto.vpin.restclient.mame;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 /*********************************************************************************************************************
@@ -24,6 +25,14 @@ public class MameServiceClient extends VPinStudioClientService {
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "mame/clearcache", Boolean.class);
+  }
+
+  public boolean clearCacheFor(@Nullable String rom) {
+    if (!StringUtils.isEmpty(rom)) {
+      final RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "mame/clearcachefor/" + rom, Boolean.class);
+    }
+    return false;
   }
 
   public MameOptions saveOptions(MameOptions options) throws Exception {

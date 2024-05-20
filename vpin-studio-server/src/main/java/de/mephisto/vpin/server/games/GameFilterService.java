@@ -75,7 +75,7 @@ public class GameFilterService {
       if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
         continue;
       }
-      if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtVersion())) {
+      if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtTableVersionId())) {
         continue;
       }
 

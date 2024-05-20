@@ -4,7 +4,7 @@ public interface GameValidationCode {
   int CODE_NO_ROM = 1;
   int CODE_ROM_NOT_EXISTS = 3;
   int CODE_VPX_NOT_EXISTS = 4;
-  int CODE_NOT_ALL_WITH_NVOFFSET = 5;
+  int CODE_NVOFFSET_MISMATCH = 5;
 
   int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
   int CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED = 21;

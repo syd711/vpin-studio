@@ -20,8 +20,6 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
     super(title);
     iterator = gameRepresentations.iterator();
     this.gameRepresentations = gameRepresentations;
-
-    Studio.client.getMameService().clearCache();
     Studio.client.getDmdService().clearCache();
   }
 
