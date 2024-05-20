@@ -279,7 +279,6 @@ public class ZipUtil {
   public static String containsWithPath(@NonNull File file, @NonNull String suffix) {
     String fileFound = null;
     try {
-      byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
