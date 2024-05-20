@@ -526,7 +526,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.usedLEDType.setDisable(newValue == null);
 
       Platform.runLater(() -> {
-        refresh(newValue.backglass);
+        if(newValue != null) {
+          refresh(newValue.backglass);
+        }
       });
     });
 
