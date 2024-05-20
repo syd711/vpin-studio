@@ -120,7 +120,7 @@ public class TablesSidebarAltSoundController implements Initializable {
         tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
       }
       else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
-        if(altSound.getFilesize() == -1) {
+        if (altSound.getFilesize() == -1) {
           WidgetFactory.showAlert(Studio.stage, "Invalid Configuration", "The table must be played once, so that the necessary configuration files are generated.");
           return;
         }
@@ -155,8 +155,10 @@ public class TablesSidebarAltSoundController implements Initializable {
 
     Platform.runLater(() -> {
       new Thread(() -> {
-        Studio.client.getMameService().clearCache();
-        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+        this.game.ifPresent(gameRepresentation -> {
+          Studio.client.getMameService().clearCacheFor(gameRepresentation.getRom());
+          EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
+        });
 
         Platform.runLater(() -> {
           this.reloadBtn.setDisable(false);

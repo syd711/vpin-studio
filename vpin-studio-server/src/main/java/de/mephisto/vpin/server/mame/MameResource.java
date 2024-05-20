@@ -31,4 +31,10 @@ public class MameResource {
     mameRomAliasService.clearCache();
     return mameService.clearCache();
   }
+
+  @GetMapping("/clearcachefor/{rom}")
+  public boolean clearCacheFor(@PathVariable("rom") String rom) {
+    mameRomAliasService.clearCache();
+    return mameService.clearCacheFor(rom);
+  }
 }

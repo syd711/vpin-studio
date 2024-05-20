@@ -125,15 +125,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (Game rawGame : otherGamesWithSameRom) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
-          if (byPupId.getNvOffset() == 0 || byPupId.getNvOffset() == game.getNvOffset()) {
-            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
-            if (findFirst) {
-              return result;
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails gameDetails : otherGameDetailsWithSameRom) {
+          if (gameDetails.getNvOffset() == 0 || gameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(gameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName()));
+              if (findFirst) {
+                return result;
+              }
             }
           }
         }
@@ -532,14 +534,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     return true;
-  }
-
-  public boolean hasNoVpsTableMapping(List<ValidationState> states) {
-    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
-    if (codes.contains(CODE_VPS_MAPPING_MISSING)) {
-      return true;
-    }
-    return false;
   }
 
   public boolean hasMissingAssets(List<ValidationState> states) {

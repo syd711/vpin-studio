@@ -296,6 +296,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
     tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
 
+    String vpsTableMappingField = serverSettings.getMappingVpsTableId();
+    String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
+
+    setMappedFieldValue(vpsTableMappingField, "");
+    setMappedFieldValue(vpsTableVersionMappingField, "");
+
     autoCompleteNameField.setText("");
     refreshVersionsCombo(null);
     propperRenamingController.setVpsTable(null);

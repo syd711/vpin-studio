@@ -129,7 +129,7 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
-                  <CheckBox fx:id="uiShowVPSUpdates" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Show VPS table updates in table overview." textFill="WHITE">
+                  <CheckBox fx:id="uiShowVPSUpdates" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -137,7 +137,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="Toggles the visibility of the VPS update indicators and related actions in the table overview and VPS section." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="640.0" text="Show update indicators for the following update types:" textFill="WHITE">
                      <styleClass>
                         <String fx:value="checkbox-description" />

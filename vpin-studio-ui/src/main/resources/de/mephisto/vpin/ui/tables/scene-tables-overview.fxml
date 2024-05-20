@@ -38,7 +38,7 @@
                                               <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                               <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                     <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
-                                    <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="VPS Updates" />
+                                    <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="VPS Status" />
                                     <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                               <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
                                               <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
