@@ -30,10 +30,19 @@ public class UploadDescriptor {
   private String subfolderName;
   private MultipartFile file;
   private String rom;
+  private boolean async;
 
   private List<AssetType> assetsToImport = new ArrayList<>();
 
   private List<File> tempFiles = new ArrayList<>();
+
+  public boolean isAsync() {
+    return async;
+  }
+
+  public void setAsync(boolean async) {
+    this.async = async;
+  }
 
   @JsonIgnore
   public List<File> getTempFiles() {
@@ -79,10 +88,10 @@ public class UploadDescriptor {
 
     for (File temp : getTempFiles()) {
       if (temp.delete()) {
-        LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
+        LOG.info("Finalized upload, deleted \"" + temp.getAbsolutePath() + "\"");
       }
       else {
-        LOG.error("Finalizing upload failed, could not delete \"" + tempFile.getAbsolutePath() + "\"");
+        LOG.error("Finalizing upload failed, could not delete \"" + temp.getAbsolutePath() + "\"");
       }
     }
   }

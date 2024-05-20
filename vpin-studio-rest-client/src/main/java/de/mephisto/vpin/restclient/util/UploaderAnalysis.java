@@ -186,7 +186,7 @@ public class UploaderAnalysis<T> {
         return "This archive does not not contain a .directb2s file.";
       }
       case ROM: {
-        if (isRom()) {
+        if (isRom() || hasFileWithSuffix("zip")) {
           return null;
         }
         return "This archive does not not contain a ROM file.";

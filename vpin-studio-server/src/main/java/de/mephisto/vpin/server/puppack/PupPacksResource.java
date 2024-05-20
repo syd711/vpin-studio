@@ -121,6 +121,7 @@ public class PupPacksResource {
       UploaderAnalysis analysis = new UploaderAnalysis(tempFile);
       analysis.analyze();
 
+      descriptor.setAsync(true);
       universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.PUP_PACK);
 
       //these ROM names can differ, see PinBlob which uses a different ROM than PUP Pack

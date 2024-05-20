@@ -46,7 +46,7 @@ public class TableUploadProcessingProgressModel extends ProgressModel<UploadDesc
 
   @Override
   public String nextToString(UploadDescriptor descriptor) {
-    return "Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\"";
+    return "Unpacking \"" + uploadDescriptor.getOriginalUploadFileName() + "\", please wait...";
   }
 
   @Override

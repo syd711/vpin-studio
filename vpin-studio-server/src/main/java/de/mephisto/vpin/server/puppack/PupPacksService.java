@@ -163,7 +163,7 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws IOException {
+  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, boolean doWait) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
       analysis = new UploaderAnalysis(tempFile);
@@ -192,14 +192,19 @@ public class PupPacksService implements InitializingBean {
 
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, rom);
-    JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
+    if(doWait) {
+      job.execute();
+    }
+    else {
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
-    jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
-    jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
-    jobDescriptor.setJob(job);
-    jobDescriptor.setStatus(job.getStatus());
+      jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
+      jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
+      jobDescriptor.setJob(job);
+      jobDescriptor.setStatus(job.getStatus());
 
-    jobQueue.offer(jobDescriptor);
+      jobQueue.offer(jobDescriptor);
+    }
   }
 
   public void exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {

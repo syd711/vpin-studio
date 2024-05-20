@@ -26,11 +26,8 @@ public class PupPackInstallerJob implements Job {
   @Override
   public JobExecutionResult execute() {
     JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, rom);
-    if (!pupTmpArchive.delete()) {
-      return JobExecutionResultFactory.error("Failed to delete temporary file.");
-    }
     pupPacksService.clearCache();
-    return JobExecutionResultFactory.empty();
+    return unzip;
   }
 
   @Override

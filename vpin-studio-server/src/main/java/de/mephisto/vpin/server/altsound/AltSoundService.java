@@ -107,9 +107,6 @@ public class AltSoundService implements InitializingBean {
       }
 
       AltSoundUtil.unpack(archive, altSoundFolder);
-      if (!archive.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete temporary file.");
-      }
       setAltSoundEnabled(game, true);
     }
     return JobExecutionResultFactory.empty();

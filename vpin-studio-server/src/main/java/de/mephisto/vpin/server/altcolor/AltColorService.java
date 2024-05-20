@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.altcolor;
 
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -31,7 +33,7 @@ public class AltColorService implements InitializingBean {
 
   public AltColorTypes getAltColorType(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
-    if(altColor != null) {
+    if (altColor != null) {
       return altColor.getAltColorType();
     }
     return null;
@@ -47,7 +49,8 @@ public class AltColorService implements InitializingBean {
           return true;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete altcolor directory for " + game + ": " + e.getMessage(), e);
     }
     return false;
@@ -104,24 +107,34 @@ public class AltColorService implements InitializingBean {
     return null;
   }
 
+  public void installAltColorFromArchive(Game game, File out) {
+    String contains = PackageUtil.contains(out, UploaderAnalysis.PAC_SUFFIX);
+    if (contains != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), contains);
+    }
+    contains = PackageUtil.contains(out, UploaderAnalysis.PAL_SUFFIX);
+    if (contains != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"), contains);
+    }
+    contains = PackageUtil.contains(out, UploaderAnalysis.VNI_SUFFIX);
+    if (contains != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"), contains);
+    }
+    contains = PackageUtil.contains(out, UploaderAnalysis.SERUM_SUFFIX);
+    if (contains != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX), contains);
+    }
+  }
+
   public JobExecutionResult installAltColor(Game game, File out) {
     File folder = game.getAltColorFolder();
     if (folder != null) {
-      LOG.info("Extracting archive to " + folder.getAbsolutePath());
-      if (!folder.exists()) {
-        if (!folder.mkdirs()) {
-          return JobExecutionResultFactory.error("Failed to create ALT color directory " + folder.getAbsolutePath());
-        }
-      }
-
       String name = out.getName();
-      if (name.endsWith(".zip")) {
-        AltColorUtil.unzip(out, folder);
-      }
-      else if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
+      if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy pac file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
         }
@@ -129,7 +142,8 @@ public class AltColorService implements InitializingBean {
       else if (name.endsWith(UploaderAnalysis.PAL_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy pal file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
         }
@@ -137,7 +151,8 @@ public class AltColorService implements InitializingBean {
       else if (name.endsWith(UploaderAnalysis.VNI_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy vni file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
         }
@@ -145,16 +160,14 @@ public class AltColorService implements InitializingBean {
       else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
         try {
           FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
         }
       }
-
-      if (!out.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete temporary file.");
-      }
     }
+    LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
     return JobExecutionResultFactory.empty();
   }
 

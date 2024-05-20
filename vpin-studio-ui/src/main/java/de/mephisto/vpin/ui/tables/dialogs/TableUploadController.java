@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -114,6 +115,10 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private CheckBox assetRomCheckbox;
   @FXML
+  private CheckBox assetPovCheckbox;
+  @FXML
+  private CheckBox assetIniCheckbox;
+  @FXML
   private CheckBox assetDmdCheckbox;
 
   @FXML
@@ -152,8 +157,10 @@ public class TableUploadController implements Initializable, DialogController {
         boolean assetBackglass = assetBackglassCheckbox.isSelected();
         boolean assetRom = assetRomCheckbox.isSelected();
         boolean assetDmd = assetDmdCheckbox.isSelected();
+        boolean assetIni = assetIniCheckbox.isSelected();
+        boolean assetPov = assetPovCheckbox.isSelected();
 
-        TableUploadProgressModel model = new TableUploadProgressModel("VPX Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
+        TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
 
         Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
@@ -196,6 +203,12 @@ public class TableUploadController implements Initializable, DialogController {
           }
           if (assetRom) {
             uploadDescriptor.getAssetsToImport().add(AssetType.ROM);
+          }
+          if (assetIni) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.INI);
+          }
+          if (assetPov) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.POV);
           }
 
           TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
@@ -290,6 +303,12 @@ public class TableUploadController implements Initializable, DialogController {
     assetBackglassCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
     assetBackglassCheckbox.setVisible(assetBackglassCheckbox.isSelected());
 
+    assetIniCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.INI) == null);
+    assetIniCheckbox.setVisible(assetIniCheckbox.isSelected());
+
+    assetPovCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
+    assetPovCheckbox.setVisible(assetPovCheckbox.isSelected());
+
     assetDmdCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
     assetDmdCheckbox.setVisible(assetDmdCheckbox.isSelected());
 
@@ -307,7 +326,9 @@ public class TableUploadController implements Initializable, DialogController {
       assetPupPackCheckbox.setText("PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
     }
 
-    assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected() || assetMediaCheckbox.isSelected() || assetBackglassCheckbox.isSelected() || assetRomCheckbox.isSelected());
+    assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected()
+        || assetPovCheckbox.isSelected() || assetIniCheckbox.isSelected()
+        || assetMediaCheckbox.isSelected() || assetBackglassCheckbox.isSelected() || assetRomCheckbox.isSelected());
     noAssetsLabel.setVisible(!assetsBox.isVisible());
   }
 
@@ -425,6 +446,8 @@ public class TableUploadController implements Initializable, DialogController {
     assetBackglassCheckbox.managedProperty().bindBidirectional(assetBackglassCheckbox.visibleProperty());
     assetRomCheckbox.managedProperty().bindBidirectional(assetRomCheckbox.visibleProperty());
     assetDmdCheckbox.managedProperty().bindBidirectional(assetDmdCheckbox.visibleProperty());
+    assetPovCheckbox.managedProperty().bindBidirectional(assetPovCheckbox.visibleProperty());
+    assetIniCheckbox.managedProperty().bindBidirectional(assetIniCheckbox.visibleProperty());
 
     assetPupPackCheckbox.setVisible(false);
     assetMediaCheckbox.setVisible(false);
@@ -434,6 +457,8 @@ public class TableUploadController implements Initializable, DialogController {
     assetBackglassCheckbox.setVisible(false);
     assetRomCheckbox.setVisible(false);
     assetDmdCheckbox.setVisible(false);
+    assetIniCheckbox.setVisible(false);
+    assetPovCheckbox.setVisible(false);
   }
 
   public void setGame(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {

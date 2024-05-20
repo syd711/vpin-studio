@@ -339,11 +339,9 @@ public class GameService implements InitializingBean {
                 augmenter.deAugment();
               }
 
-              if (!mediaFile.delete()) {
+              if (mediaFile.exists() && !mediaFile.delete()) {
                 success = false;
-              }
-              else {
-                LOG.warn("Failed to delete \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
               }
             }
           }
