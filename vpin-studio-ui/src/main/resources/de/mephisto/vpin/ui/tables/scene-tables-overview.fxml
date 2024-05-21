@@ -293,12 +293,17 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload INI File">
+                              <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload .ini File">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
@@ -313,7 +318,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload POV File">
+                              <MenuItem mnemonicParsing="false" onAction="#onNvRamUpload" text="Upload .nv File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload .pov File">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>

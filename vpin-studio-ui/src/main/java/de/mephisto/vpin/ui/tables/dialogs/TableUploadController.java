@@ -12,7 +12,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.PupPackRefreshProgressModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -120,6 +119,10 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private CheckBox assetIniCheckbox;
   @FXML
+  private CheckBox assetCfgCheckbox;
+  @FXML
+  private CheckBox assetNvRamCheckbox;
+  @FXML
   private CheckBox assetDmdCheckbox;
 
   @FXML
@@ -160,6 +163,8 @@ public class TableUploadController implements Initializable, DialogController {
         boolean assetDmd = assetDmdCheckbox.isSelected();
         boolean assetIni = assetIniCheckbox.isSelected();
         boolean assetPov = assetPovCheckbox.isSelected();
+        boolean assetNvRam = assetNvRamCheckbox.isSelected();
+        boolean assetCfg = assetCfgCheckbox.isSelected();
 
         TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
 
@@ -218,6 +223,12 @@ public class TableUploadController implements Initializable, DialogController {
           if (assetPov) {
             uploadDescriptor.getAssetsToImport().add(AssetType.POV);
           }
+          if (assetCfg) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.CFG);
+          }
+          if (assetNvRam) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.NV);
+          }
 
           TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
           ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
@@ -249,7 +260,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     setSelection(true);
@@ -329,10 +340,26 @@ public class TableUploadController implements Initializable, DialogController {
     assetRomCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
     assetRomCheckbox.setVisible(assetRomCheckbox.isSelected());
 
+    assetCfgCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.CFG) == null);
+    assetCfgCheckbox.setVisible(assetCfgCheckbox.isSelected());
+
+    assetNvRamCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.NV) == null);
+    assetNvRamCheckbox.setVisible(assetNvRamCheckbox.isSelected());
+
 
     assetRomCheckbox.setText("ROM");
     if (assetRomCheckbox.isSelected()) {
       assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromZip() + ")");
+    }
+
+    assetNvRamCheckbox.setText(".nv File");
+    if (assetNvRamCheckbox.isSelected()) {
+      assetNvRamCheckbox.setText(".nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
+    }
+
+    assetCfgCheckbox.setText(".cfg File");
+    if (assetCfgCheckbox.isSelected()) {
+      assetCfgCheckbox.setText(".cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
     }
 
     assetPupPackCheckbox.setText("PUP Pack");
@@ -342,6 +369,7 @@ public class TableUploadController implements Initializable, DialogController {
 
     assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected()
         || assetPovCheckbox.isSelected() || assetIniCheckbox.isSelected()
+        || assetCfgCheckbox.isSelected() || assetNvRamCheckbox.isSelected()
         || assetMediaCheckbox.isSelected() || assetBackglassCheckbox.isSelected() || assetRomCheckbox.isSelected());
     noAssetsLabel.setVisible(!assetsBox.isVisible());
   }
@@ -462,6 +490,8 @@ public class TableUploadController implements Initializable, DialogController {
     assetDmdCheckbox.managedProperty().bindBidirectional(assetDmdCheckbox.visibleProperty());
     assetPovCheckbox.managedProperty().bindBidirectional(assetPovCheckbox.visibleProperty());
     assetIniCheckbox.managedProperty().bindBidirectional(assetIniCheckbox.visibleProperty());
+    assetCfgCheckbox.managedProperty().bindBidirectional(assetCfgCheckbox.visibleProperty());
+    assetNvRamCheckbox.managedProperty().bindBidirectional(assetNvRamCheckbox.visibleProperty());
 
     assetPupPackCheckbox.setVisible(false);
     assetMediaCheckbox.setVisible(false);
@@ -473,6 +503,8 @@ public class TableUploadController implements Initializable, DialogController {
     assetDmdCheckbox.setVisible(false);
     assetIniCheckbox.setVisible(false);
     assetPovCheckbox.setVisible(false);
+    assetNvRamCheckbox.setVisible(false);
+    assetCfgCheckbox.setVisible(false);
   }
 
   public void setGame(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {

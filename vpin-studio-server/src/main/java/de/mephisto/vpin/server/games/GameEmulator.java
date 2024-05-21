@@ -24,6 +24,7 @@ public class GameEmulator {
   private final File altColorFolder;
   private final File musicFolder;
   private final File nvramFolder;
+  private final File cfgFolder;
 
   private File romFolder;
 
@@ -79,6 +80,8 @@ public class GameEmulator {
 
     this.nvramFolder = new File(mameFolder, "nvram");
     this.nvramDirectory = this.nvramFolder.getAbsolutePath();
+
+    this.cfgFolder = new File(mameFolder, "cfg");
 
     this.altSoundFolder = new File(mameFolder, "altsound");
     this.altSoundDirectory = this.altSoundFolder.getAbsolutePath();
@@ -219,6 +222,12 @@ public class GameEmulator {
   @JsonIgnore
   public File getNvramFolder() {
     return nvramFolder;
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getCfgFolder() {
+    return cfgFolder;
   }
 
   @NonNull

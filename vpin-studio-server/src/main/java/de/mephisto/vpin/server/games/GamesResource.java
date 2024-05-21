@@ -43,9 +43,6 @@ public class GamesResource {
   @Autowired
   private GameFilterService gameFilterService;
 
-  @Autowired
-  private UniversalUploadService universalUploadService;
-
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -153,24 +150,5 @@ public class GamesResource {
   @PostMapping("/save")
   public Game save(@RequestBody Game game) throws Exception {
     return gameService.save(game);
-  }
-
-  @PostMapping("/upload/rom/{emuId}")
-  public UploadDescriptor uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
-    descriptor.setEmulatorId(emuId);
-
-    try {
-      descriptor.getAssetsToImport().add(AssetType.ROM);
-      descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ROM);
-      return descriptor;
-    }
-    catch (Exception e) {
-      LOG.error(AssetType.ROM.name() + " upload failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ROM + " upload failed: " + e.getMessage());
-    } finally {
-      descriptor.finalizeUpload();
-    }
   }
 }

@@ -696,26 +696,6 @@ public class GameService implements InitializingBean {
     return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 
-  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getOriginalUploadFileName());
-    String fileNameForAssetType = analysis.getFileNameForAssetType(AssetType.ZIP);
-    if (fileNameForAssetType != null) {
-      out = new File(gameEmulator.getRomFolder(), fileNameForAssetType);
-      if (out.exists() && !out.delete()) {
-        throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
-      }
-      ZipUtil.unzipTargetFile(tempFile, out, fileNameForAssetType);
-    }
-    else {
-      if (out.exists() && !out.delete()) {
-        throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
-      }
-      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
-      LOG.info("Installed ROM: " + out.getAbsolutePath());
-    }
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
 

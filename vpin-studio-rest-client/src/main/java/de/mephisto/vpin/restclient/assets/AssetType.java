@@ -5,6 +5,8 @@ public enum AssetType {
   COMPETITION,
   VPIN_AVATAR,
   TABLE,
+  CFG,
+  NV,
   DIRECTB2S,
   INI,
   PAL,

@@ -30,6 +30,8 @@ public class UploaderAnalysis<T> {
   public final static String VNI_SUFFIX = "vni";
   public final static String PAC_SUFFIX = "pac";
   public final static String SERUM_SUFFIX = "cRZ";
+  public final static String NVRAM_SUFFIX = "nv";
+  public final static String CFG_SUFFIX = "cfg";
 
   private final File file;
 
@@ -204,6 +206,18 @@ public class UploaderAnalysis<T> {
         }
         return "This archive is not a valid ALT sound package.";
       }
+      case NV: {
+        if (hasFileWithSuffix(NVRAM_SUFFIX)) {
+          return null;
+        }
+        return "This archive does not have a .nv file.";
+      }
+      case CFG: {
+        if (hasFileWithSuffix(CFG_SUFFIX)) {
+          return null;
+        }
+        return "This archive does not have a .cfg file.";
+      }
       case ALT_COLOR:
       case PAC:
       case VNI:
@@ -289,6 +303,14 @@ public class UploaderAnalysis<T> {
 
     if (hasFileWithSuffix("pov")) {
       return AssetType.POV;
+    }
+
+    if (hasFileWithSuffix(NVRAM_SUFFIX)) {
+      return AssetType.NV;
+    }
+
+    if (hasFileWithSuffix(CFG_SUFFIX)) {
+      return AssetType.CFG;
     }
 
     if (hasFileWithSuffix("ini")) {

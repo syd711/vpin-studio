@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.PopperMediaService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -36,6 +37,9 @@ public class UniversalUploadService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private AltColorService altColorService;
@@ -141,7 +145,15 @@ public class UniversalUploadService {
         break;
       }
       case ROM: {
-        gameService.installRom(uploadDescriptor, tempFile, analysis);
+        mameService.installRom(uploadDescriptor, tempFile, analysis);
+        break;
+      }
+      case NV: {
+        mameService.installNvRam(uploadDescriptor, tempFile, analysis);
+        break;
+      }
+      case CFG: {
+        mameService.installCfg(uploadDescriptor, tempFile, analysis);
         break;
       }
       default: {

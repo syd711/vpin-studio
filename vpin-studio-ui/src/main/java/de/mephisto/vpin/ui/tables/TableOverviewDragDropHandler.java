@@ -40,7 +40,7 @@ public class TableOverviewDragDropHandler {
 
   private Parent dndLoadingOverlay;
 
-  private final List<String> suffixes = Arrays.asList("vpx", "zip", "rar", "7z", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz");
+  private final List<String> suffixes = Arrays.asList("vpx", "zip", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz", "cfg", "nv");
 
   public TableOverviewDragDropHandler(TablesController tablesController) {
     this.tablesController = tablesController;

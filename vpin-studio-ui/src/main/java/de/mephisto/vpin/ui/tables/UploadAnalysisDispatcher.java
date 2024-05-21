@@ -50,7 +50,15 @@ public class UploadAnalysisDispatcher {
   private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(tablesController, file);
+        TableDialogs.onRomUploads(file);
+        return;
+      }
+      case NV: {
+        TableDialogs.openNvRamUploads(file);
+        return;
+      }
+      case CFG: {
+        TableDialogs.openCfgUploads(file);
         return;
       }
       case VPX: {

@@ -203,6 +203,11 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="assetCfgCheckbox" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text=".cfg File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                     <CheckBox fx:id="assetDmdCheckbox" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -219,6 +224,11 @@
                                        </font>
                                     </CheckBox>
                                     <CheckBox fx:id="assetMediaCheckbox" mnemonicParsing="false" text="Media Pack for Popper Screens" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetNvRamCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="NV RAM" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

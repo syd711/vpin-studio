@@ -74,23 +74,34 @@ public class TableDialogs {
     }
   }
 
-  public static void onRomUploads(TablesSidebarController tablesSidebarController) {
-    onRomUploads(tablesSidebarController, null);
+  public static void openCfgUploads(File file) {
+    Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
+    CfgUploadController controller = (CfgUploadController) stage.getUserData();
+    controller.setFile(file);
+    stage.showAndWait();
   }
 
-  public static void onRomUploads(TablesSidebarController tablesSidebarController, File file) {
+
+  public static void openNvRamUploads(File file) {
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
+    NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
+    controller.setFile(file);
+    stage.showAndWait();
+  }
+
+  public static void onRomUploads(File file) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         boolean uploaded = TableDialogs.openRomUploadDialog(file);
         if (uploaded) {
-          tablesSidebarController.getTablesController().onReload();
+          EventManager.getInstance().notifyTablesChanged();
         }
       }
     }
     else {
       boolean uploaded = TableDialogs.openRomUploadDialog(file);
       if (uploaded) {
-        tablesSidebarController.getTablesController().onReload();
+        EventManager.getInstance().notifyTablesChanged();
       }
     }
   }
@@ -334,7 +345,7 @@ public class TableDialogs {
   public static boolean openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
-    controller.setData(game,  analysis, file, stage);
+    controller.setData(game, analysis, file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -343,7 +354,7 @@ public class TableDialogs {
   public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload");
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
-    controller.setData(game,  analysis, file, stage);
+    controller.setData(game, analysis, file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();

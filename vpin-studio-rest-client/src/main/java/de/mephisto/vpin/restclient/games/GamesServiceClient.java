@@ -76,20 +76,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;
-      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
-      return exchange.getBody();
-    }
-    catch (Exception e) {
-      LOG.error("Rom upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public void deleteGame(@NonNull DeleteDescriptor descriptor) {
     try {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);

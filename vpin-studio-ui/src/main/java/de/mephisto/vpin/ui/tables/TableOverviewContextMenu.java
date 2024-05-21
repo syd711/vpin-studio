@@ -157,12 +157,17 @@ public class TableOverviewContextMenu {
       uploadB2SItem.setOnAction(actionEvent -> tableOverviewController.onBackglassUpload());
       uploadMenu.getItems().add(uploadB2SItem);
 
+      MenuItem uploadCfgItem = new MenuItem("Upload .cfg File");
+      uploadCfgItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadCfgItem.setOnAction(actionEvent -> tableOverviewController.onCfgUpload());
+      uploadMenu.getItems().add(uploadCfgItem);
+
       MenuItem dmdItem = new MenuItem("Upload DMD Pack");
       dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       dmdItem.setOnAction(actionEvent -> tableOverviewController.onDMDUpload());
       uploadMenu.getItems().add(dmdItem);
 
-      MenuItem iniItem = new MenuItem("Upload INI File");
+      MenuItem iniItem = new MenuItem("Upload .ini File");
       iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       iniItem.setOnAction(actionEvent -> tableOverviewController.onIniUpload());
       uploadMenu.getItems().add(iniItem);
@@ -177,7 +182,13 @@ public class TableOverviewContextMenu {
       musicItem.setOnAction(actionEvent -> tableOverviewController.onMusicUpload());
       uploadMenu.getItems().add(musicItem);
 
-      MenuItem povItem = new MenuItem("Upload POV File");
+
+      MenuItem uploadNvItem = new MenuItem("Upload .nv File");
+      uploadNvItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadNvItem.setOnAction(actionEvent -> tableOverviewController.onNvRamUpload());
+      uploadMenu.getItems().add(uploadNvItem);
+
+      MenuItem povItem = new MenuItem("Upload .pov File");
       povItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       povItem.setDisable(tableView.getSelectionModel().isEmpty());
       povItem.setOnAction(actionEvent -> tableOverviewController.onPOVUpload());
