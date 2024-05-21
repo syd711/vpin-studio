@@ -605,10 +605,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      boolean b = TableDialogs.openTableDeleteDialog(selectedGames, this.games);
-      if (b) {
-        this.onReload();
-      }
+      TableDialogs.openTableDeleteDialog(selectedGames, this.games);
     }
   }
 
@@ -1111,7 +1108,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         VpsTable vpsTable = null;
 
         label = new Label();
-        if(!StringUtils.isEmpty(value.getExtTableId()) && VPS.getInstance().getTableById(value.getExtTableId()) != null) {
+        if (!StringUtils.isEmpty(value.getExtTableId()) && VPS.getInstance().getTableById(value.getExtTableId()) != null) {
           vpsTable = VPS.getInstance().getTableById(value.getExtTableId());
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
@@ -1131,7 +1128,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if(!StringUtils.isEmpty(value.getExtTableVersionId()) && vpsTable != null && VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()) != null) {
+        if (!StringUtils.isEmpty(value.getExtTableVersionId()) && vpsTable != null && VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()) != null) {
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
           label.setGraphic(checkboxIcon);
@@ -1153,7 +1150,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         label = new Label();
         if (!value.getVpsUpdates().isEmpty() && !StringUtils.isEmpty(value.getExtTableId())) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-          updateIcon.setIconSize(iconSize +4);
+          updateIcon.setIconSize(iconSize + 4);
           label.setGraphic(updateIcon);
 
           StringBuilder builder = new StringBuilder();

@@ -19,7 +19,6 @@ public class UploadDescriptor {
 
   private TableUploadType uploadType;
   private String tempFilename;
-  private String originalUploadedVPXFileName;
   private String originalUploadedFileName;
   private String error;
   private int gameId;
@@ -48,7 +47,7 @@ public class UploadDescriptor {
     return tempFiles;
   }
 
-  public File upload() throws Exception {
+  public void upload() throws Exception {
     String name = FilenameUtils.getBaseName(getOriginalUploadFileName());
     String suffix = FilenameUtils.getExtension(getOriginalUploadFileName());
     File uploadTempFile = File.createTempFile(name, "." + suffix);
@@ -71,7 +70,6 @@ public class UploadDescriptor {
       LOG.error("Failed to store asset: " + e.getMessage(), e);
       throw e;
     }
-    return uploadTempFile;
   }
 
   public void finalizeUpload() {
@@ -86,11 +84,13 @@ public class UploadDescriptor {
     }
 
     for (File temp : getTempFiles()) {
-      if (temp.delete()) {
-        LOG.info("Finalized upload, deleted \"" + temp.getAbsolutePath() + "\"");
-      }
-      else {
-        LOG.error("Finalizing upload failed, could not delete \"" + temp.getAbsolutePath() + "\"");
+      if (temp.exists()) {
+        if (temp.delete()) {
+          LOG.info("Finalized upload, deleted \"" + temp.getAbsolutePath() + "\"");
+        }
+        else {
+          LOG.error("Finalizing upload failed, could not delete \"" + temp.getAbsolutePath() + "\"");
+        }
       }
     }
   }
@@ -153,14 +153,6 @@ public class UploadDescriptor {
 
   public void setFolderBasedImport(boolean folderBasedImport) {
     this.folderBasedImport = folderBasedImport;
-  }
-
-  public String getOriginalUploadedVPXFileName() {
-    return originalUploadedVPXFileName;
-  }
-
-  public void setOriginalUploadedVPXFileName(String originalUploadedVPXFileName) {
-    this.originalUploadedVPXFileName = originalUploadedVPXFileName;
   }
 
   public int getGameId() {

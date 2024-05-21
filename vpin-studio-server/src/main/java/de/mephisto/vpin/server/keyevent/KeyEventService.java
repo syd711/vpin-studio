@@ -212,12 +212,6 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void afterPropertiesSet() throws NativeHookException {
-    GlobalScreen.registerNativeHook();
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-    logger.setLevel(Level.OFF);
-    logger.setUseParentHandlers(false);
-    GlobalScreen.addNativeKeyListener(this);
-
     new Thread(() -> {
       ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");
@@ -255,6 +249,13 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       LOG.info("Added VPin service popper status listener.");
       popperService.addPopperStatusChangeListener(this);
     }
+
+    GlobalScreen.registerNativeHook();
+    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+    logger.setLevel(Level.OFF);
+    logger.setUseParentHandlers(false);
+    GlobalScreen.addNativeKeyListener(this);
+
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
   }
 

@@ -358,13 +358,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+  public static void openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
     controller.setGames(selectedGames, allGames);
     stage.showAndWait();
-
-    return controller.tableDeleted();
   }
 
   public static void openAutoFillAll() {

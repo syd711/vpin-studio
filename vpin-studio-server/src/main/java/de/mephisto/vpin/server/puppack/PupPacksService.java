@@ -163,7 +163,7 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, boolean doWait) throws IOException {
+  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
       analysis = new UploaderAnalysis(tempFile);
@@ -192,7 +192,7 @@ public class PupPacksService implements InitializingBean {
 
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, rom);
-    if(doWait) {
+    if (!async) {
       job.execute();
     }
     else {

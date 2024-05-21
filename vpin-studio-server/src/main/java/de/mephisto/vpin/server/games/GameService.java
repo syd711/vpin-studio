@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -698,13 +699,13 @@ public class GameService implements InitializingBean {
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
     File out = new File(gameEmulator.getRomFolder(), uploadDescriptor.getOriginalUploadFileName());
-    String contains = ZipUtil.contains(tempFile, ".zip");
-    if (contains != null) {
-      out = new File(gameEmulator.getRomFolder(), contains);
+    String fileNameForAssetType = analysis.getFileNameForAssetType(AssetType.ZIP);
+    if (fileNameForAssetType != null) {
+      out = new File(gameEmulator.getRomFolder(), fileNameForAssetType);
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing ROM file " + out.getAbsolutePath());
       }
-      ZipUtil.unzipTargetFile(tempFile, out, contains);
+      ZipUtil.unzipTargetFile(tempFile, out, fileNameForAssetType);
     }
     else {
       if (out.exists() && !out.delete()) {

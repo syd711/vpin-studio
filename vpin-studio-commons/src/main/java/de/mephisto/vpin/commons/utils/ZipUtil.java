@@ -277,6 +277,7 @@ public class ZipUtil {
   }
 
   public static String containsWithPath(@NonNull File file, @NonNull String suffix) {
+    long start = System.currentTimeMillis();
     String fileFound = null;
     try {
       FileInputStream fileInputStream = new FileInputStream(file);
@@ -308,6 +309,8 @@ public class ZipUtil {
     catch (Exception e) {
       LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
+    } finally {
+      LOG.info("Contains check for \"" + file.getAbsolutePath() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     return fileFound;

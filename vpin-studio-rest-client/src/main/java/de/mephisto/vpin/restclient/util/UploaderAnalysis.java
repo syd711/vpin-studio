@@ -99,13 +99,7 @@ public class UploaderAnalysis<T> {
   }
 
   public String getVpxFileName() {
-    for (String fileName : fileNames) {
-      String suffix = FilenameUtils.getExtension(fileName);
-      if (suffix.equalsIgnoreCase("vpx")) {
-        return fileName;
-      }
-    }
-    return null;
+    return getFileNameForAssetType(AssetType.VPX);
   }
 
   public List<String> getPopperMediaFiles(PopperScreen screen) {
@@ -122,6 +116,7 @@ public class UploaderAnalysis<T> {
   }
 
   public void analyze() throws IOException {
+    long analysisStart = System.currentTimeMillis();
     FileInputStream fileInputStream = null;
     ZipInputStream zis = null;
     try {
@@ -143,6 +138,7 @@ public class UploaderAnalysis<T> {
       if (fileInputStream != null) {
         fileInputStream.close();
       }
+      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
     }
   }
 
@@ -167,8 +163,13 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public boolean containsAssetType(AssetType assetType) {
-    return validateAssetType(assetType) == null;
+  public String getFileNameForAssetType(AssetType assetType) {
+    for (String fileName : fileNames) {
+      if (fileName.toLowerCase().endsWith("." + assetType.name().toLowerCase())) {
+        return fileName;
+      }
+    }
+    return null;
   }
 
   public String validateAssetType(AssetType assetType) {

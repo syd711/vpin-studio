@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.altcolor;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -107,22 +107,30 @@ public class AltColorService implements InitializingBean {
     return null;
   }
 
-  public void installAltColorFromArchive(Game game, File out) {
-    String contains = PackageUtil.contains(out, UploaderAnalysis.PAC_SUFFIX);
-    if (contains != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), contains);
+  public void installAltColorFromArchive(UploaderAnalysis analysis, Game game, File out) throws IOException {
+    if (analysis == null) {
+      analysis = new UploaderAnalysis(out);
+      analysis.analyze();
     }
-    contains = PackageUtil.contains(out, UploaderAnalysis.PAL_SUFFIX);
-    if (contains != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"), contains);
+
+    String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), assetFileName);
     }
-    contains = PackageUtil.contains(out, UploaderAnalysis.VNI_SUFFIX);
-    if (contains != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"), contains);
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.PAL);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"), assetFileName);
     }
-    contains = PackageUtil.contains(out, UploaderAnalysis.SERUM_SUFFIX);
-    if (contains != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX), contains);
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.VNI);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"), assetFileName);
+    }
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
   }
 

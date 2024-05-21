@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.PupPackRefreshProgressModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -167,11 +168,18 @@ public class TableUploadController implements Initializable, DialogController {
           stage.close();
         });
 
-        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
+        ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
-        List<Object> results = progressDialog.getResults();
+        List<Object> results = uploadResultModel.getResults();
         if (!results.isEmpty()) {
-          UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
+          final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
+          if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
+            Platform.runLater(() -> {
+              WidgetFactory.showAlert(stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
+            });
+            return;
+          }
+
 
           uploadDescriptor.setSubfolderName(subFolder);
           uploadDescriptor.setFolderBasedImport(useSubFolder);
@@ -214,8 +222,14 @@ public class TableUploadController implements Initializable, DialogController {
           TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
           ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
           if (!progressDialogResult.getResults().isEmpty()) {
-            uploadDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
-            result = Optional.of(uploadDescriptor);
+            UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
+            if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
+              });
+            }
+
+            result = Optional.of(uploadedAndImportedDescriptor);
             tableOverviewController.refreshUploadResult(result);
           }
         }

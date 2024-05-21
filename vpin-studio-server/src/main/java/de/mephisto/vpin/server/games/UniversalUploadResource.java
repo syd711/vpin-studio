@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -53,55 +52,39 @@ public class UniversalUploadResource {
                                       @RequestParam(value = "emuId") int emuId,
                                       @RequestParam(value = "mode") TableUploadType mode) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
-    File uploadTempFile = null;
     try {
       descriptor.setFile(file);
       descriptor.setUploadType(mode);
       descriptor.setGameId(gameId);
       descriptor.setEmulatorId(emuId);
 
-      uploadTempFile = descriptor.upload();
-
-      if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(file.getOriginalFilename()))) {
-        String vpxName = PackageUtil.contains(uploadTempFile, ".vpx");
-        descriptor.setOriginalUploadedVPXFileName(vpxName);
-      }
-      else {
-        descriptor.setOriginalUploadedVPXFileName(file.getOriginalFilename());
-      }
+      descriptor.upload();
     }
     catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
       descriptor.setError("Table upload failed: " + e.getMessage());
-      if (uploadTempFile != null) {
-        if (uploadTempFile.delete()) {
-          LOG.info("Deleted " + uploadTempFile.getAbsolutePath());
-        }
-      }
+      descriptor.finalizeUpload();
     }
-
     return descriptor;
   }
 
   @PostMapping("/process/table")
   public UploadDescriptor processUploadedTable(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
-    LOG.info("*********** Importing " + uploadDescriptor.getOriginalUploadedVPXFileName() + " ************************");
+    long start = System.currentTimeMillis();
+    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
     try {
-      File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, ".vpx");
-      importVPXFile(temporaryVPXFile, uploadDescriptor);
-
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.DIRECTB2S);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.POV);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.INI);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.VNI);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.PAL);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.CRZ);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, AssetType.PAC);
-
       File tempFile = new File(uploadDescriptor.getTempFilename());
       UploaderAnalysis analysis = new UploaderAnalysis<>(tempFile);
       analysis.analyze();
+
+      String vpxFileName = analysis.getVpxFileName();
+      File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, vpxFileName);
+      importVPXFile(temporaryVPXFile, uploadDescriptor, analysis);
+
+      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
+      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
+      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
 
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);
@@ -112,29 +95,30 @@ public class UniversalUploadResource {
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
     }
     catch (Exception e) {
-      LOG.error("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage(), e);
-      uploadDescriptor.setError("Processing \"" + uploadDescriptor.getOriginalUploadedVPXFileName() + "\" failed: " + e.getMessage());
+      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      uploadDescriptor.setError("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage());
     } finally {
       uploadDescriptor.finalizeUpload();
+      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
     }
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;
   }
 
 
-  private void importVPXFile(File temporaryVPXFile, UploadDescriptor uploadDescriptor) throws Exception {
+  private void importVPXFile(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     TableUploadType uploadType = uploadDescriptor.getUploadType();
     switch (uploadType) {
       case uploadAndImport: {
-        uploadAndImport(temporaryVPXFile, uploadDescriptor);
+        uploadAndImport(temporaryVPXFile, uploadDescriptor, analysis);
         break;
       }
       case uploadAndReplace: {
-        uploadAndReplace(temporaryVPXFile, uploadDescriptor);
+        uploadAndReplace(temporaryVPXFile, uploadDescriptor, analysis);
         break;
       }
       case uploadAndClone: {
-        uploadAndClone(temporaryVPXFile, uploadDescriptor);
+        uploadAndClone(temporaryVPXFile, uploadDescriptor, analysis);
         break;
       }
       default: {
@@ -143,7 +127,7 @@ public class UniversalUploadResource {
     }
   }
 
-  private void uploadAndClone(File temporaryVPXFile, UploadDescriptor uploadDescriptor) throws Exception {
+  private void uploadAndClone(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
@@ -186,7 +170,7 @@ public class UniversalUploadResource {
       TableDetails tableDetailsClone = popperService.getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
       tableDetailsClone.setGameFileName(popperFileName);
-      tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadedVPXFileName()));
+      tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName()));
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
 
       popperService.saveTableDetails(tableDetailsClone, returningGameId, false);
@@ -215,7 +199,7 @@ public class UniversalUploadResource {
     uploadDescriptor.setGameId(returningGameId);
   }
 
-  private void uploadAndReplace(File temporaryVPXFile, UploadDescriptor uploadDescriptor) throws Exception {
+  private void uploadAndReplace(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
@@ -249,7 +233,7 @@ public class UniversalUploadResource {
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     if (!keepExistingFilename) {
-      target = new File(existingVPXFile.getParentFile(), uploadDescriptor.getOriginalUploadedVPXFileName());
+      target = new File(existingVPXFile.getParentFile(), analysis.getVpxFileName());
     }
 
     //copy file
@@ -267,7 +251,7 @@ public class UniversalUploadResource {
     LOG.info("Updated database filename to \"" + name + "\"");
     tableDetails.setGameFileName(name);
     if (!keepExistingDisplayName) {
-      tableDetails.setGameDisplayName(FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadedVPXFileName()));
+      tableDetails.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName()));
     }
 
     popperService.saveTableDetails(tableDetails, uploadDescriptor.getGameId(), !keepExistingFilename);
@@ -286,14 +270,14 @@ public class UniversalUploadResource {
     }
   }
 
-  private void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor) throws Exception {
+  private void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
     File tablesFolder = gameEmulator.getTablesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName());
     }
-    File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadedVPXFileName());
+    File targetVPXFile = new File(tablesFolder, analysis.getVpxFileName());
     targetVPXFile = FileUtils.uniqueFile(targetVPXFile);
 
     LOG.info("Resolve target VPX: " + targetVPXFile.getAbsolutePath());

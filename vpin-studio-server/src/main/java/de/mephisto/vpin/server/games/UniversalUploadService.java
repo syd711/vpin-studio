@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UniversalUploadService {
@@ -47,26 +49,26 @@ public class UniversalUploadService {
   @Autowired
   private PupPacksService pupPacksService;
 
-  public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String suffix) throws IOException {
+  public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
     if (PackageUtil.isSupportedArchive(archiveSuffix)) {
-      String archiveMatch = PackageUtil.contains(tempFile, suffix);
-      File unpackedTempFile = File.createTempFile(FilenameUtils.getBaseName(archiveMatch), suffix);
-      PackageUtil.unpackTargetFile(tempFile, unpackedTempFile, archiveMatch);
+      File file = new File(archiveFile);
+      String baseName = FilenameUtils.getBaseName(file.getName());
+      String suffix = "." + FilenameUtils.getExtension(file.getName());
+      File unpackedTempFile = File.createTempFile(baseName, suffix);
+      PackageUtil.unpackTargetFile(tempFile, unpackedTempFile, archiveFile);
       descriptor.getTempFiles().add(unpackedTempFile);
       return unpackedTempFile;
     }
     return tempFile;
   }
 
-
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, AssetType assetType) throws Exception {
-    if (!uploadDescriptor.isImporting(assetType)) {
-      LOG.info("Skipped bundle import of type " + assetType.name() + ", because it is not marked for import.");
-      return;
-    }
+    importFileBasedAssets(uploadDescriptor, null, assetType);
+  }
 
+  public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     try {
@@ -75,17 +77,17 @@ public class UniversalUploadService {
         throw new Exception("No game found for id " + uploadDescriptor.getGameId());
       }
 
-
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
-        File temporaryUploadFile = new File(uploadDescriptor.getTempFilename());
-        LOG.info("Analyzing temporary upload file " + temporaryUploadFile.getAbsolutePath());
-        UploaderAnalysis analysis = new UploaderAnalysis(temporaryUploadFile);
-        analysis.analyze();
+        if (analysis == null) {
+          analysis = new UploaderAnalysis<>(temporaryUploadDescriptorBundleFile);
+          analysis.analyze();
+        }
 
-        if (analysis.containsAssetType(assetType)) {
-          File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, "." + assetType.name());
+        String fileNameForAssetType = analysis.getFileNameForAssetType(assetType);
+        if (fileNameForAssetType != null) {
+          File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, fileNameForAssetType);
           uploadDescriptor.getTempFiles().add(temporaryAssetArchiveFile);
-          copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType);
+          copyGameFileAsset(temporaryAssetArchiveFile, game, assetType);
         }
       }
       else if (uploadDescriptor.isFileAsset(assetType)) {
@@ -115,7 +117,7 @@ public class UniversalUploadService {
       case ALT_COLOR: {
         String suffix = FilenameUtils.getExtension(tempFile.getName());
         if (PackageUtil.isArchive(suffix)) {
-          altColorService.installAltColorFromArchive(game, tempFile);
+          altColorService.installAltColorFromArchive(analysis, game, tempFile);
           break;
         }
         JobExecutionResult jobExecutionResult = altColorService.installAltColor(game, tempFile);
