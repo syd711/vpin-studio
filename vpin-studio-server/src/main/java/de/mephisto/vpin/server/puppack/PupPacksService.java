@@ -240,6 +240,16 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
+  public void loadPupPack(String rom) {
+    if (!StringUtils.isEmpty(rom)) {
+      File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+      if (pupVideosFolder.exists()) {
+        File pupPackFolder = new File(pupVideosFolder, rom);
+        loadPupPack(pupPackFolder);
+      }
+    }
+  }
+
   public boolean clearCache() {
     refresh();
     return true;

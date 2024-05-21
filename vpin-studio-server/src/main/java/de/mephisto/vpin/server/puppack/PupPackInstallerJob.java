@@ -26,7 +26,7 @@ public class PupPackInstallerJob implements Job {
   @Override
   public JobExecutionResult execute() {
     JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, rom);
-    pupPacksService.clearCache();
+    pupPacksService.loadPupPack(rom);
     return unzip;
   }
 
