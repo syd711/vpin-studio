@@ -37,10 +37,14 @@ public class PopperMediaService {
       List<String> filesForScreen = analysis.getPopperMediaFiles(value);
 
       for (String popperMediaFile : filesForScreen) {
+        if (popperMediaFile.toLowerCase().contains("macosx")) {
+          continue;
+        }
+
         String suffix = FilenameUtils.getExtension(popperMediaFile);
         File out = uniquePopperAsset(game, value, suffix);
         ZipUtil.unzipTargetFile(tempFile, out, popperMediaFile);
-        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name()+ "\"");
+        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\"");
       }
     }
   }
