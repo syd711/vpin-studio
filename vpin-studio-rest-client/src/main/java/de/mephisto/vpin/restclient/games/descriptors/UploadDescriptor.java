@@ -101,7 +101,7 @@ public class UploadDescriptor {
   }
 
   public boolean isFileAsset(AssetType assetType) {
-    String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+    String suffix = FilenameUtils.getExtension(originalUploadedFileName);
     return suffix.equalsIgnoreCase(assetType.name().toLowerCase());
   }
 

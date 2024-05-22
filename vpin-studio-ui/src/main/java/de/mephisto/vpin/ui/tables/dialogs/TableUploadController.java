@@ -128,6 +128,12 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private VBox assetsBox;
 
+  @FXML
+  private Label tableNameLabel;
+
+  @FXML
+  private Label tableTitleLabel;
+
   private File selection;
   private Optional<UploadDescriptor> result = Optional.empty();
 
@@ -267,6 +273,9 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private void setSelection(boolean rescan) {
+    tableNameLabel.setVisible(false);
+    tableTitleLabel.setVisible(false);
+
     uploadBtn.setDisable(true);
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
@@ -280,6 +289,10 @@ public class TableUploadController implements Initializable, DialogController {
             uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
           String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
+
+          tableTitleLabel.setVisible(true);
+          tableNameLabel.setVisible(true);
+          tableNameLabel.setText(uploaderAnalysis.getVpxFileName());
 
           this.fileNameField.setText(this.selection.getAbsolutePath());
           this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName()));
@@ -377,6 +390,9 @@ public class TableUploadController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
+    tableNameLabel.setVisible(false);
+    tableTitleLabel.setVisible(false);
 
     this.selection = null;
     this.uploadBtn.setDisable(true);

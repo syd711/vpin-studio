@@ -53,9 +53,7 @@ public class UniversalUploadResource {
                                       @RequestParam(value = "mode") TableUploadType mode) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.setFile(file);
       descriptor.setUploadType(mode);
-      descriptor.setGameId(gameId);
       descriptor.setEmulatorId(emuId);
 
       descriptor.upload();
@@ -277,7 +275,11 @@ public class UniversalUploadResource {
     if (uploadDescriptor.isFolderBasedImport()) {
       tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName());
     }
-    File targetVPXFile = new File(tablesFolder, analysis.getVpxFileName());
+    File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadedFileName());
+    if(FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(AssetType.ZIP.name())) {
+      targetVPXFile = new File(tablesFolder, analysis.getVpxFileName());
+    }
+
     targetVPXFile = FileUtils.uniqueFile(targetVPXFile);
 
     LOG.info("Resolve target VPX: " + targetVPXFile.getAbsolutePath());

@@ -63,6 +63,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label fx:id="titleLabel" text="VPX File/Archive:*" textFill="WHITE" GridPane.rowIndex="1">
@@ -164,6 +165,16 @@
                               <Insets right="102.0" />
                            </padding>
                         </VBox>
+                        <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="115.0" text="Resolved VPX File:" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" />
