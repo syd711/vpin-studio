@@ -48,6 +48,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
 
+  private static TableUploadController instance = null;
+
   @FXML
   private TextField fileNameField;
 
@@ -143,9 +145,11 @@ public class TableUploadController implements Initializable, DialogController {
   private UploadDescriptor tableUploadDescriptor = UploadDescriptorFactory.create();
   private TableOverviewController tableOverviewController;
   private UploaderAnalysis uploaderAnalysis;
+  private Stage stage;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    instance = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -172,11 +176,14 @@ public class TableUploadController implements Initializable, DialogController {
         boolean assetNvRam = assetNvRamCheckbox.isSelected();
         boolean assetCfg = assetCfgCheckbox.isSelected();
 
-        TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, game.getId(), tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
+        int gameId = -1;
+        if (game != null) {
+          gameId = game.getId();
+        }
+        TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
 
         Platform.runLater(() -> {
-          Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-          stage.close();
+          onCancelClick(event);
         });
 
         ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
@@ -523,7 +530,8 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgCheckbox.setVisible(false);
   }
 
-  public void setGame(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {
+    this.stage = stage;
     this.tableOverviewController = tableOverviewController;
     this.uploaderAnalysis = analysis;
 
@@ -573,7 +581,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void onDialogCancel() {
-
+    instance = null;
   }
 
   public Optional<UploadDescriptor> uploadFinished() {

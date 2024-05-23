@@ -363,7 +363,7 @@ public class TableDialogs {
   public static Optional<UploadDescriptor> openTableUploadDialog(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(tableOverviewController, game, descriptor, analysis);
+    controller.setGame(stage, tableOverviewController, game, descriptor, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();

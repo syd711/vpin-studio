@@ -1,4 +1,4 @@
-## Release Notes 2.19.0
+## Release Notes 2.20.0
 
 - **Table Management**: Added **Notes** editor which is available when **clicking on the status icon**. You can use some keywords to force the notes icon in different colors.
 
@@ -14,6 +14,7 @@
 - **Table Management / ALT Sound**: Added "Delete" button.
 - **Table Management / ALT Color**: Added "Delete" button.
 - **Table Management / PUP Packs**: Added "Delete" button.
+- **Table Management / Uploads**: Added upload options for .cfg and .nv files.
 - **Table Management / Validations**: Added preferences button to the validator message section to provide a quick-access for enabling/disabling them.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validator-buttons.png" width="400" />
@@ -23,7 +24,7 @@
 - **Universal Uploader**: All upload and file drag/drop operations have been re-implemented. The overall goal is to be able to upload everything everywhere. This includes:
   - Dropping/Uploading files out of archives (e.g. 7z windows) to the table overview or to table asset screen.
   - Dropping/Uploading complete bundles of files for existing tables or...
-  - Dropping/Uploading complete table bundles which include not only the VPX file, but also backglass files, PUP packs and Popper media files.
+  - Dropping/Uploading complete table bundles which include not only the VPX file, but also backglass files, PUP packs and Popper media, etc.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/universal-upload.png" width="900" />
 
