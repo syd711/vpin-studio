@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -29,7 +29,7 @@ public class ScoreItem extends BorderPane {
   }
 
   private void initComponent() {
-    ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(this.game.getId(), PopperScreen.Wheel);
+    ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(this.game.getId(), PopperScreen.Wheel);
     Image image = new Image(gameMediaItem);
 
     ImageView wheelIcon = new ImageView(image);

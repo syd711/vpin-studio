@@ -239,6 +239,23 @@
     -fx-cursor: hand;
 }
 
+.ghost-button-tiny {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-tiny:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
 .table-media-button {
     -fx-font-color: #FFFFFF;
     -fx-background-color: transparent;
@@ -248,7 +265,7 @@
 
 .table-media-button:hover {
     -fx-font-color: #fff8f8;
-    -fx-background-color: #283335;
+    -fx-background-color: #28333566;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
@@ -1176,6 +1193,33 @@
     -fx-border-color: #333366; /* Border color when selected */
     -fx-border-radius: 5px; /* Rounded corners */
 }
+
+.dnd-dashed-border {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-style: segments(15, 15, 15, 15);
+}
+
+
+.selection-panel {
+    -fx-background-color: #272b2f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #272b2f;
+}
+
+.selection-panel:hover {
+    -fx-background-color: #272b3f;
+}
+.selection-panel-selected {
+    -fx-background-color: #272b3f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+}
+
 
 /**
  * Color Picker custom color hiding

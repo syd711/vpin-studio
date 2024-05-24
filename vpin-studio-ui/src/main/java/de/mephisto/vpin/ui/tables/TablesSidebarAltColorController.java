@@ -1,20 +1,20 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.AltColorFileDropEventHandler;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -36,6 +36,9 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private Button reloadBtn;
+
+  @FXML
+  private Button deleteBtn;
 
   @FXML
   private Label lastModifiedLabel;
@@ -83,6 +86,15 @@ public class TablesSidebarAltColorController implements Initializable {
   }
 
   @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALT Color files for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Studio.client.getAltColorService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
 
@@ -114,6 +126,7 @@ public class TablesSidebarAltColorController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -129,6 +142,7 @@ public class TablesSidebarAltColorController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
 
     lastModifiedLabel.setText("-");
     typeLabel.setText("-");
@@ -144,6 +158,7 @@ public class TablesSidebarAltColorController implements Initializable {
       emptyDataBox.setVisible(!altColorAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      deleteBtn.setDisable(!altColorAvailable);
 
       if (altColorAvailable) {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
@@ -168,8 +183,5 @@ public class TablesSidebarAltColorController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-
-    altColorRoot.setOnDragOver(new FileDragEventHandler(altColorRoot, true, "zip", "pac", "vni", "pal", "cRZ"));
-    altColorRoot.setOnDragDropped(new AltColorFileDropEventHandler(tablesSidebarController));
   }
 }

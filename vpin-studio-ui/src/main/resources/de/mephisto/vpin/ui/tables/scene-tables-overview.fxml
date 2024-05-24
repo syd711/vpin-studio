@@ -159,6 +159,17 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove" iconSize="18" />
                                                    </graphic>
                                                 </Hyperlink>
+                                                <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="ghost-button-tiny">
+                                                   <font>
+                                                      <Font size="10.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open PinUP Popper setup" />
+                                                   </tooltip>
+                                                </Button>
                                              </children>
                                              <BorderPane.margin>
                                                 <Insets right="6.0" />
@@ -282,12 +293,22 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload INI File">
+                              <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload .ini File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload Media Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
@@ -297,7 +318,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload POV File">
+                              <MenuItem mnemonicParsing="false" onAction="#onNvRamUpload" text="Upload .nv File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload .pov File">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
@@ -339,7 +365,7 @@
                           <items>
                             <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify" iconSize="18" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                           </items>
@@ -347,7 +373,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />

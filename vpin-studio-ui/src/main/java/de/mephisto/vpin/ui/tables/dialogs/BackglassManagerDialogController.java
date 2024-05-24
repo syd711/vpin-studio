@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
@@ -168,6 +169,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private Button reloadBtn;
 
   @FXML
+  private Button reloadBackglassBtn;
+
+  @FXML
   private TextField searchField;
 
   @FXML
@@ -210,6 +214,20 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       TableDialogs.directBackglassUpload(stage, game);
+    }
+  }
+
+  @FXML
+  private void onBackglassReload(ActionEvent e) {
+    try {
+      DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        selectedItem.load();
+        refresh(selectedItem.backglass);
+      }
+    } catch (Exception ex) {
+      LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
+      WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
     }
   }
 
@@ -309,6 +327,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           client.getBackglassServiceClient().deleteBackglass(selectedItem.backglass);
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           onReload();
         }
       }
@@ -347,6 +368,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
+    this.reloadBackglassBtn.setDisable(true);
 
     bindTable();
 
@@ -509,6 +531,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       setSaveEnabled(false);
       this.deleteBtn.setDisable(newValue == null);
+      this.reloadBackglassBtn.setDisable(newValue == null);
       this.glowing.setDisable(newValue == null);
       this.startAsExe.setDisable(newValue == null);
       this.dataManagerBtn.setDisable(newValue == null);
@@ -534,14 +557,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     if (this.directb2sList.getItems().isEmpty()) {
       this.directb2sList.getSelectionModel().clearSelection();
-    }
-    else {
+    } else {
       this.directb2sList.getSelectionModel().select(0);
     }
   }
 
   private void bindTable() {
-  
     statusColumn.setCellValueFactory(cellData -> {
       DirectB2SEntryModel backglass = cellData.getValue();
       if (!backglass.isVpxAvailable()) {
@@ -623,8 +644,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (emuIds.size() != client.getPinUPPopperService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
-    }
-    else {
+    } else {
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
     }
 
@@ -655,6 +675,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.renameBtn.setDisable(newValue == null);
     this.duplicateBtn.setDisable(newValue == null);
     this.deleteBtn.setDisable(newValue == null);
+    this.reloadBackglassBtn.setDisable(newValue == null);
 
     this.tableSettings = null;
 
@@ -695,8 +716,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         gameFilenameLabel.setText(game.getGameFileName());
         dataManagerBtn.setDisable(false);
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
-      }
-      else {
+      } else {
         //VPX is not installed, but available!
         if (newValue.isVpxAvailable()) {
           gameLabel.setText("?");
@@ -727,8 +747,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         thumbnailImage.setImage(image);
         downloadBackglassBtn.setDisable(false);
         resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-      }
-      else {
+      } else {
         thumbnailImage.setImage(null);
         resolutionLabel.setText("Failed to read image data.");
       }
@@ -740,8 +759,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         downloadDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         fullDmdLabel.setText(isFullDmd(image.getWidth(), image.getHeight()) ? "Yes": "No");
-      }
-      else {
+      } else {
         dmdResolutionLabel.setText("No DMD background available.");
         fullDmdLabel.setText("No");
       }
@@ -786,8 +804,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.tableSettings = tmpTableSettings;
 
       setSaveEnabled(true);
-    }
-    else {
+    } else {
       tmpTableSettings = null;
     }
   }
@@ -852,13 +869,13 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     private DirectB2SEntryModel(DirectB2S backglass) {
       this.backglass = backglass;
-      // 
+      //
       set(this);
     }
 
     public void load() throws Exception {
       DirectB2SData backglassData = client.getBackglassServiceClient().getDirectB2SData(backglass);
-  
+
       this.grillHeight = backglassData.getGrillHeight();
 
       if (StringUtils.isNotEmpty(backglassData.getDmdBase64())) {
@@ -877,7 +894,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     }
 
     /**
-     * Whether or not the value has been loaded. 
+     * Whether or not the value has been loaded.
      */
     public final boolean isLoaded() {
       if (!loadRequested) {
@@ -932,7 +949,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           setText("");
           setTooltip(null);
           setGraphic(null);
-      } 
+      }
       else if (model.isLoaded()) {
         if (isChecked(model)) {
           setText(null);

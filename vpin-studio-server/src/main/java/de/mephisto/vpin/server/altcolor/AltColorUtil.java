@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altcolor;
 
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,19 +11,18 @@ import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer.*;
 
 public class AltColorUtil {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorUtil.class);
 
   public static String unzip(File archiveFile, File destinationDir) {
-    boolean unpacked = unzip(archiveFile, destinationDir, SERUM_SUFFIX);
+    boolean unpacked = unzip(archiveFile, destinationDir, UploaderAnalysis.SERUM_SUFFIX);
     String result = null;
     if (!unpacked) {
-      unpacked = unzip(archiveFile, destinationDir, PAC_SUFFIX);
+      unpacked = unzip(archiveFile, destinationDir, UploaderAnalysis.PAC_SUFFIX);
     }
     if (!unpacked) {
-      unpacked = unzip(archiveFile, destinationDir, PAL_SUFFIX, ".vni");
+      unpacked = unzip(archiveFile, destinationDir, UploaderAnalysis.PAL_SUFFIX, ".vni");
     }
 
     if (!unpacked) {
@@ -54,7 +54,7 @@ public class AltColorUtil {
               }
 
               String baseName = FilenameUtils.getBaseName(name);
-              if (!baseName.equals("pin2dmd") && !suffix.equals(SERUM_SUFFIX)) {
+              if (!baseName.equals("pin2dmd") && !suffix.equals(UploaderAnalysis.SERUM_SUFFIX)) {
                 name = "pin2dmd" + suffix;
               }
 

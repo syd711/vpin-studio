@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.listeners;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -74,7 +74,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     }
 
     try {
-      PreferenceEntryRepresentation preference = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+      PreferenceEntryRepresentation preference = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
       String value = preference.getValue();
       CardSettings cardSettings = JsonSettings.fromJson(CardSettings.class, value);
 
@@ -88,7 +88,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
             if (cardSettings.isNotificationOnPopperScreen()) {
               pupPlayerDisplay = popperService.getPupPlayerDisplay(screen);
             }
-            OverlayWindowFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
+            ServerFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
           });
         }
       }

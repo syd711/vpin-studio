@@ -136,25 +136,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       if (gameVersion.equalsIgnoreCase(vpsVersion)) {
         return;
       }
-
-      if ((gameVersion + ".0").equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase(vpsVersion + ".0")) {
-        return;
-      }
-      if ((gameVersion + ".0.0").equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase(vpsVersion + ".0.0")) {
-        return;
-      }
-
-      if (("v" + gameVersion).equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase("v" + vpsVersion)) {
-        return;
-      }
-
-      if (game.getGameFileName().contains(vpsVersion) || game.getGameDisplayName().contains(vpsVersion)) {
-        return;
-      }
-
-      if (game.getGameFileName().contains("v" + vpsVersion) || game.getGameDisplayName().contains("v" + vpsVersion)) {
-        return;
-      }
     }
 
     game.setUpdateAvailable(true);

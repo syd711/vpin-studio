@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class IScored {
@@ -91,7 +93,7 @@ public class IScored {
         Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
 
         for (GameModel gameModel : games) {
-          Game game = new Game();
+          IScoredGame game = new IScoredGame();
           game.setId(gameModel.getGameID());
           game.setName(gameModel.getGameName());
           game.setTags(gameModel.getTags());
@@ -146,13 +148,33 @@ public class IScored {
     return query_pairs;
   }
 
-  public static boolean submitScore(GameRoom gameRoom, Game game, String playerName, String playerInitials, long highscore) {
+  public static boolean submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
+    List<Score> scores = game.getScores();
+    for (Score score : scores) {
+      if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
+        try {
+          long l = Long.parseLong(score.getScore());
+          if (l > highscore) {
+            LOG.info("Found existing score: " + score + " and skipped submission of new score value of " + highscore);
+            return false;
+          }
+        } catch (NumberFormatException e) {
+          LOG.error("Failed to parse " + score);
+          return false;
+        }
+      }
+    }
+
+
+    LOG.info("Submitting score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
     BufferedInputStream in = null;
     try {
       String name = playerName;
       if (!gameRoom.getSettings().isLongNameInputEnabled()) {
         name = playerInitials;
       }
+
+      name = URLEncoder.encode(name, StandardCharsets.UTF_8);
 
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       URL url = new URL(BASE_URL + "/publicCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());

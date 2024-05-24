@@ -1394,6 +1394,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
     game.setDateAdded(rs.getDate("DateAdded"));
+    game.setDateUpdated(rs.getDate("DateUpdated"));
 
     game.setVersion(rs.getString("GAMEVER"));
 

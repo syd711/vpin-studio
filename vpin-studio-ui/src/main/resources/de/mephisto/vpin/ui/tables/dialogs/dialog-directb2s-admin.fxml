@@ -5,11 +5,11 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -395,6 +395,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints />
                                              </rowConstraints>
                                              <children>
                                                 <Label text="DirectB2S File Metadata" textFill="WHITE">
@@ -551,6 +552,17 @@
                                  </font>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit Popper Table Data" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="reloadBackglassBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassReload" text="Reload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Edit Popper Table Data" />

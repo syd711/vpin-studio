@@ -5,12 +5,17 @@ import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableAssetSearch;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.UniversalUploadResource;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -54,6 +59,12 @@ public class PopperMediaResource implements InitializingBean {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private PopperMediaService popperMediaService;
+
   private TableAssetsService tableAssetsService;
 
   @GetMapping("/{id}")
@@ -70,7 +81,8 @@ public class PopperMediaResource implements InitializingBean {
     try {
       List<TableAsset> results = tableAssetsService.search(EncryptDecrypt.KEY, search.getScreen().getSegment(), search.getTerm());
       search.setResult(results);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Asset search failed: " + e.getMessage(), e);
     }
     return search;
@@ -135,7 +147,6 @@ public class PopperMediaResource implements InitializingBean {
   @PostMapping("/upload/{screen}")
   public JobExecutionResult upload(@PathVariable("screen") PopperScreen popperScreen,
                                    @RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam(value = "uploadType", required = false) String uploadType,
                                    @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
@@ -150,13 +161,32 @@ public class PopperMediaResource implements InitializingBean {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = uniquePopperAsset(game, popperScreen, suffix);
+      File out = popperMediaService.uniquePopperAsset(game, popperScreen, suffix);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
       return JobExecutionResultFactory.empty();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+    }
+  }
+
+  @PostMapping("/packupload")
+  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
+                                     @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+    try {
+      descriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.POPPER_MEDIA);
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error(AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
     }
   }
 
@@ -184,7 +214,8 @@ public class PopperMediaResource implements InitializingBean {
         return renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
       }
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to execute media change request: " + e.getMessage(), e);
     }
     return false;
@@ -237,7 +268,7 @@ public class PopperMediaResource implements InitializingBean {
 
   private boolean addBlank(int gameId, PopperScreen screen) throws IOException {
     Game game = gameService.getGame(gameId);
-    File target = uniquePopperAsset(game, screen);
+    File target = popperMediaService.uniquePopperAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
     //copy base64 asset
     if (screen.equals(PopperScreen.AudioLaunch) || screen.equals(PopperScreen.Audio)) {
@@ -251,30 +282,6 @@ public class PopperMediaResource implements InitializingBean {
     return true;
   }
 
-  private File uniquePopperAsset(Game game, PopperScreen screen) {
-    String suffix = "mp4";
-    if (screen.equals(PopperScreen.AudioLaunch) || screen.equals(PopperScreen.Audio)) {
-      suffix = "mp3";
-    }
-    return uniquePopperAsset(game, screen, suffix);
-  }
-
-  private File uniquePopperAsset(Game game, PopperScreen screen, String suffix) {
-    File out = new File(game.getPinUPMediaFolder(screen), game.getGameName() + "." + suffix);
-    if (out.exists()) {
-      String nameIndex = "01";
-      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
-    }
-
-    int index = 1;
-    while (out.exists()) {
-      index++;
-      String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
-    }
-    return out;
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
     tableAssetsService = new TableAssetsService();
@@ -283,7 +290,8 @@ public class PopperMediaResource implements InitializingBean {
       Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
       TableAssetsAdapter adapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
       tableAssetsService.registerAdapter(adapter);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
     }
   }

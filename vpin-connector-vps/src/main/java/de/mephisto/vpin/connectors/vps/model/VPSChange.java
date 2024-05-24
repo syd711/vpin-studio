@@ -28,19 +28,31 @@ public class VPSChange {
     if (diffType.equals(VpsDiffTypes.tableNewVPX)) {
       return diffType.toString();
     }
+    if (tableId == null) {
+      return null;
+    }
+
     VpsTable tableById = VPS.getInstance().getTableById(tableId);
+    if (tableById == null) {
+      return "No matching table found for id \"" + tableId + "\"";
+    }
+
     switch (diffType) {
       case altColor: {
-        Optional<VpsAuthoredUrls> first = tableById.getAltColorFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.altColor + ":\n" + first.get();
+        if (tableById.getAltColorFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getAltColorFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.altColor + ":\n" + first.get();
+          }
         }
         break;
       }
       case altSound: {
-        Optional<VpsAuthoredUrls> first = tableById.getAltSoundFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.altSound + ":\n" + first.get();
+        if (tableById.getAltSoundFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getAltSoundFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.altSound + ":\n" + first.get();
+          }
         }
         break;
       }
@@ -100,7 +112,7 @@ public class VPSChange {
         VpsTable table = VPS.getInstance().getTableById(tableId);
         if (table != null) {
           VpsTableVersion version = table.getVersion(this.getId());
-          if(version != null) {
+          if (version != null) {
             return VpsDiffTypes.tableNewVersionVPX + ":\n- " + version;
           }
         }
@@ -146,8 +158,8 @@ public class VPSChange {
   @Override
   public String toString() {
     return "VPSChange{" +
-      "changedEntity=" + changedEntity +
-      ", diffType=" + diffType +
-      '}';
+        "changedEntity=" + changedEntity +
+        ", diffType=" + diffType +
+        '}';
   }
 }

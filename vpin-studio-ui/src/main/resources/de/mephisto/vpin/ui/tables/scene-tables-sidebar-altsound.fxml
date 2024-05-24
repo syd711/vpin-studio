@@ -159,6 +159,15 @@
                </graphic>
             </Button>
             <Separator layoutX="96.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+               </graphic>
+            </Button>
+            <Separator layoutX="204.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
           <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="Edit" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -176,7 +185,7 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onAltSoundEnable" text="ALT Sound Enabled" textFill="WHITE">
+            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onAltSoundEnable" text="Enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

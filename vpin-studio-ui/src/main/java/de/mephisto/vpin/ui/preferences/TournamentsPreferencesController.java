@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -51,6 +53,9 @@ public class TournamentsPreferencesController implements Initializable, Preferen
   private CheckBox registrationCheckbox;
 
   @FXML
+  private CheckBox submitAllCheckbox;
+
+  @FXML
   private TextField dashboardUrl;
 
   @FXML
@@ -73,7 +78,7 @@ public class TournamentsPreferencesController implements Initializable, Preferen
 
       List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
       for (PlayerRepresentation player : players) {
-        if(player.getTournamentUserUuid() != null) {
+        if (player.getTournamentUserUuid() != null) {
           player.setTournamentUserUuid(null);
           try {
             client.getPlayerService().savePlayer(player);
@@ -160,6 +165,19 @@ public class TournamentsPreferencesController implements Initializable, Preferen
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       }
     }, 300));
+
+    submitAllCheckbox.setSelected(settings.isSubmitAllScores());
+    submitAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          settings.setSubmitAllScores(newValue);
+          settings = client.getTournamentsService().saveSettings(settings);
+        } catch (Exception e) {
+          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        }
+      }
+    });
 
     discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
       try {

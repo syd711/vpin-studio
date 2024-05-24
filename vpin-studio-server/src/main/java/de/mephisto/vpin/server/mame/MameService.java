@@ -1,6 +1,12 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -8,8 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +47,9 @@ public class MameService implements InitializingBean {
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
   private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
+
+  @Autowired
+  private PopperService popperService;
 
   public boolean clearCache() {
     long l = System.currentTimeMillis();
@@ -109,12 +121,51 @@ public class MameService implements InitializingBean {
 
   public boolean deleteOptions(String rom) {
     WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + rom);
-    mameCache.remove(rom);
+    mameCache.remove(rom.toLowerCase());
     return true;
   }
 
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
+  }
+
+  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
+  }
+
+  public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
+  }
+
+  public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
+  }
+
+  public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
+    if(analysis == null) {
+      analysis = new UploaderAnalysis(tempFile);
+      analysis.analyze();
+    }
+
+    File out = new File(folder, uploadDescriptor.getOriginalUploadFileName());
+    String nvFileName = analysis.getFileNameForAssetType(assetType);
+    if (nvFileName != null) {
+      out = new File(folder, nvFileName);
+      if (out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
+      }
+      ZipUtil.unzipTargetFile(tempFile, out, nvFileName);
+    }
+    else {
+      if (out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
+      }
+      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+    }
   }
 
   @Override

@@ -97,6 +97,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     prefWidth = prefWidth - 12;
     prefHeight = prefHeight - 12;
 
+    if (!dialogRendering) {
+      prefHeight = prefHeight - 32;
+    }
+
     if (PopperScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
@@ -106,7 +110,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         if (!dialogRendering) {
           mediaView.setX(0);
           mediaView.setY(0);
-          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 86);
+          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
         }
       }
       else {

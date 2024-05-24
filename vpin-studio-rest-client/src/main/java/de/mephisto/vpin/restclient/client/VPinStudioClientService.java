@@ -12,6 +12,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 public class VPinStudioClientService {
   public final static String API = VPinStudioClient.API;
@@ -49,5 +51,13 @@ public class VPinStudioClientService {
     SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
     rf.setBufferRequestBody(false);
     return new RestTemplate(rf);
+  }
+
+
+  public static void finalizeUpload(HttpEntity upload) {
+    Map<String, Object> data = (Map<String, Object>) upload.getBody();
+    List fields = (List) data.get("file");
+    ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.get(0);
+    resource.close();
   }
 }

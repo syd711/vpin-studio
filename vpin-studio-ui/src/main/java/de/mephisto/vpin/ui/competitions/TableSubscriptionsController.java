@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -331,7 +331,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
       if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }

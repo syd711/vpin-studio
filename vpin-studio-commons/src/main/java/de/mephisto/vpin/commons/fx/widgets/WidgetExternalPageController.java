@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,9 +29,9 @@ public class WidgetExternalPageController extends WidgetController implements In
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     webView.setZoom(0.5);
-    webView.getEngine().setUserStyleSheetLocation(OverlayWindowFX.class.getResource("web-style.css").toString());
+    webView.getEngine().setUserStyleSheetLocation(ServerFX.class.getResource("web-style.css").toString());
 
-    String pageUrl = OverlayWindowFX.client.getPreference(PreferenceNames.OVERLAY_PAGE_URL).getValue();
+    String pageUrl = ServerFX.client.getPreference(PreferenceNames.OVERLAY_PAGE_URL).getValue();
     if (!StringUtils.isEmpty(pageUrl)) {
       webView.getEngine().load(pageUrl);
     }

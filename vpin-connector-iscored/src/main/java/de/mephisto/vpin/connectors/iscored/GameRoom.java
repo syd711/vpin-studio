@@ -9,7 +9,7 @@ public class GameRoom {
   private String name;
   private String url;
 
-  private List<Game> games = new ArrayList<>();
+  private List<IScoredGame> games = new ArrayList<>();
 
   private Settings settings;
 
@@ -45,12 +45,12 @@ public class GameRoom {
     this.name = name;
   }
 
-  public List<Game> getGames() {
+  public List<IScoredGame> getGames() {
     return games;
   }
 
-  public Game getGameByVps(String vpsTableId, String vpsVersionId) {
-    for (Game game : this.games) {
+  public IScoredGame getGameByVps(String vpsTableId, String vpsVersionId) {
+    for (IScoredGame game : this.games) {
       List<String> tags = game.getTags();
       for (String tag : tags) {
         if(tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
@@ -61,7 +61,7 @@ public class GameRoom {
     return null;
   }
 
-  public void setGames(List<Game> games) {
+  public void setGames(List<IScoredGame> games) {
     this.games = games;
   }
 }

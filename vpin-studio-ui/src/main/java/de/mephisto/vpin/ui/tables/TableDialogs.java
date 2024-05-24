@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.utils.DirectB2SArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.IniArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -11,12 +11,15 @@ import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -27,6 +30,8 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +44,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -56,31 +62,46 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
+        new FileChooser.ExtensionFilter("Files", PopperMediaTypesSelector.getFileSelection(screen)));
 
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-          "Popper Media Upload", files, "popperMedia", screen);
+            "Popper Media Upload", files, screen);
         ProgressDialog.createProgressDialog(model);
       });
     }
   }
 
-  public static void onRomUploads(TablesSidebarController tablesSidebarController) {
+  public static void openCfgUploads(File file) {
+    Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
+    CfgUploadController controller = (CfgUploadController) stage.getUserData();
+    controller.setFile(file);
+    stage.showAndWait();
+  }
+
+
+  public static void openNvRamUploads(File file) {
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
+    NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
+    controller.setFile(file);
+    stage.showAndWait();
+  }
+
+  public static void onRomUploads(File file) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        boolean uploaded = TableDialogs.openRomUploadDialog();
+        boolean uploaded = TableDialogs.openRomUploadDialog(file);
         if (uploaded) {
-          tablesSidebarController.getTablesController().onReload();
+          EventManager.getInstance().notifyTablesChanged();
         }
       }
     }
     else {
-      boolean uploaded = TableDialogs.openRomUploadDialog();
+      boolean uploaded = TableDialogs.openRomUploadDialog(file);
       if (uploaded) {
-        tablesSidebarController.getTablesController().onReload();
+        EventManager.getInstance().notifyTablesChanged();
       }
     }
   }
@@ -97,17 +118,22 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        String analyze = DirectB2SArchiveAnalyzer.analyze(file);
+        String analyze = null;
+        String suffix = FilenameUtils.getExtension(file.getName());
+        if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
+          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.DIRECTB2S);
+        }
+
         if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
         }
         else {
-          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, "table");
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
       });
@@ -116,11 +142,29 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean iniUpload(Stage stage, GameRepresentation game) {
+  public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      String help2 = null;
+      if (game.isDirectB2SAvailable()) {
+        help2 = "The existing directb2 file of this table will be overwritten.";
+      }
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
+      if (result.get().equals(ButtonType.OK)) {
+        Platform.runLater(() -> {
+          DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static boolean directIniUpload(Stage stage, GameRepresentation game) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .ini File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
@@ -130,7 +174,44 @@ public class TableDialogs {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
         }
         else {
+
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directIniUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        if (game.isIniAvailable()) {
+          help2 = "The existing .ini file of this table will be overwritten.";
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directPovUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        if (game.isPovAvailable()) {
+          help2 = "The existing .pov file of this table will be overwritten.";
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
       });
@@ -181,15 +262,20 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
-    Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
-    AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
+  public static boolean openNotesDialog(GameRepresentation game) {
+    Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
+    TableNotesController controller = (TableNotesController) stage.getUserData();
     controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
-    controller.setFile(file);
     stage.showAndWait();
 
-    return controller.uploadFinished();
+    return true;
+  }
+
+  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis) {
+    Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
+    AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
+    controller.setFile(stage, file, analysis);
+    stage.showAndWait();
   }
 
   public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound altSound, AltSound2DuckingProfile profile) {
@@ -208,11 +294,15 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+  public static boolean openAltColorUploadDialog(TablesSidebarController tablesController, GameRepresentation game, File file) {
+    if (StringUtils.isEmpty(game.getRom())) {
+      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      return false;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
     controller.setFile(file);
     stage.showAndWait();
 
@@ -229,50 +319,57 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file, UploaderAnalysis analysis) {
+    if (StringUtils.isEmpty(game.getRom())) {
+      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      return false;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
-    controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
-    controller.setFile(file, stage);
+    controller.setFile(file, analysis, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static boolean openDMDUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
+  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
-    controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
-    controller.setFile(file, stage);
+    controller.setData(game, analysis, file, stage);
+    stage.showAndWait();
+  }
+
+  public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload");
+    MediaUploadController controller = (MediaUploadController) stage.getUserData();
+    controller.setData(game, analysis, file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static Optional<TableUploadResult> openTableUploadDialog(GameRepresentation game, TableUploadDescriptor descriptor) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(game, descriptor);
+    controller.setGame(stage, tableOverviewController, game, descriptor, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static boolean openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+  public static void openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
     controller.setGames(selectedGames, allGames);
     stage.showAndWait();
-
-    return controller.tableDeleted();
   }
 
   public static void openAutoFillAll() {
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
-      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
-      "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
+        "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
+        "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
       ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
       EventManager.getInstance().notifyTablesChanged();
@@ -281,8 +378,8 @@ public class TableDialogs {
 
   public static TableDetails openAutoFill(GameRepresentation game) {
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
-      "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
-      "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
+        "Cancel", "Continue", "The VPX script meta data and VPS table information will be used to fill Popper the popper database fields.",
+        "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked()));
       if (!progressDialog.getResults().isEmpty()) {
@@ -294,7 +391,7 @@ public class TableDialogs {
 
   public static void openAutoMatchAll() {
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
-      "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+        "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
     if (!result.isApplyClicked()) {
       ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
       EventManager.getInstance().notifyTablesChanged();
@@ -313,7 +410,7 @@ public class TableDialogs {
 
   private static void onOpenAutoMatch(GameRepresentation game) {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
-      "This will overwrite the existing mapping.", "This action will overwrite the Popper fields configured for the VPS table and version IDs.", "Auto-Match");
+        "This will overwrite the existing mapping.", "This action will overwrite the Popper fields configured for the VPS table and version IDs.", "Auto-Match");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true));
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -323,7 +420,7 @@ public class TableDialogs {
   public static boolean openScanAllDialog(List<GameRepresentation> games) {
     String title = "Re-scan all " + games.size() + " tables?";
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-      "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
+        "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.clearCache();
       ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", games));
@@ -423,17 +520,23 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openRomUploadDialog() {
+  public static boolean openRomUploadDialog(File file) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
   public static boolean openMusicUploadDialog() {
+    return openMusicUploadDialog(null);
+  }
+
+  public static boolean openMusicUploadDialog(File file) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -449,7 +552,7 @@ public class TableDialogs {
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-      "This will reset the dismissed validations for this table too.", null);
+        "This will reset the dismissed validations for this table too.", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       title = "Re-validating " + selectedItems.size() + " tables";
       if (selectedItems.size() == 1) {
@@ -483,7 +586,8 @@ public class TableDialogs {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
 

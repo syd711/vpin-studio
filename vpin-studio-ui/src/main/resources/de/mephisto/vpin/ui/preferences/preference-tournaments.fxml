@@ -55,6 +55,27 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
+                  <Label styleClass="preference-subtitle" text="Privacy Settings">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="submitAllCheckbox" mnemonicParsing="false" text="Submit All Highscores">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="The highscore submission to vpin-mania.net is mandatory for tournaments." textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="But you can submit all your highscores and achieve eternal glory for all supported VPin tables." textFill="WHITE" />
+                  <CheckBox fx:id="registrationCheckbox11" disable="true" mnemonicParsing="false" selected="true" text="Synchronize Cabinet Name &amp; Avatar">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Your vpin-mania.net account is bound to your cabinet, including the cabinet name and avatar." textFill="WHITE" />
                   <Label layoutX="10.0" layoutY="102.0" styleClass="preference-subtitle" text="Tournament Settings">
                      <VBox.margin>
                         <Insets top="12.0" />

@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
@@ -20,10 +20,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
-import de.mephisto.vpin.ui.tournaments.TournamentHelper;
-import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
-import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -82,6 +79,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private ComboBox<String> tournamentBadgeCombo;
+
+  @FXML
+  private CheckBox highscoreReset;
 
   @FXML
   private ComboBox<String> startTime;
@@ -438,8 +438,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-        List<Game> games = gameRoom.getGames();
-        for (Game game : games) {
+        List<IScoredGame> games = gameRoom.getGames();
+        for (IScoredGame game : games) {
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
           if (first.isPresent()) {
@@ -617,12 +617,12 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     tableColumn.setCellValueFactory(cellData -> {
       GameRepresentation game = cellData.getValue().getGame();
-      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, cellData.getValue().getTournamentTable()));
+      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, tournament, cellData.getValue().getTournamentTable()));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
       VpsTable vpsTable = cellData.getValue().getVpsTable();
-      String customStyle = TournamentHelper.getLabelCss(cellData.getValue().getTournamentTable());
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
       return new SimpleObjectProperty(new VpsTableContainer(vpsTable, customStyle));
     });
 
@@ -631,7 +631,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
-      String customStyle = TournamentHelper.getLabelCss(cellData.getValue().getTournamentTable());
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
     });
 
@@ -653,8 +653,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
   }
 
-  public TreeItem<TournamentTreeModel> getTournament() {
-    return result;
+  public TournamentCreationModel getTournamentData() {
+    if (result != null) {
+      TournamentCreationModel model = new TournamentCreationModel();
+      model.setNewTournamentModel(this.result);
+      model.setResetHighscore(highscoreReset.isSelected());
+      model.setBadge(tournamentBadgeCombo.getValue());
+      return model;
+    }
+    return null;
   }
 
   static class TournamentImageCell extends ListCell<String> {

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
@@ -55,16 +55,16 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    InputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     if(gameMediaItem == null) {
-      gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+      gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(gameMediaItem);
 
     GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
     if (wheelMedia == null) {
-      image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
     }
 
     wheelImageView.setImage(image);
@@ -85,7 +85,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
+    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
     BackgroundImage myBI = new BackgroundImage(backgroundImage,
         BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         BackgroundSize.DEFAULT);

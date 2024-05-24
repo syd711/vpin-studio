@@ -33,12 +33,21 @@ public class TournamentsServiceClient extends VPinStudioClientService {
       preferencesServiceClient.notifyPreferenceChange(PreferenceNames.TOURNAMENTS_SETTINGS, post);
       return post;
     } catch (Exception e) {
-      LOG.error("Failed to save dof settings: " + e.getMessage(), e);
+      LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       throw e;
     }
   }
 
   public boolean synchronize() {
     return getRestClient().get(API + "tournaments/synchronize", Boolean.class);
+  }
+
+  public boolean synchronize(TournamentMetaData tournamentMetaData) throws Exception {
+    try {
+      return getRestClient().post(API + "tournaments/synchronize", tournamentMetaData, Boolean.class);
+    } catch (Exception e) {
+      LOG.error("Failed to save tournament meta data: " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

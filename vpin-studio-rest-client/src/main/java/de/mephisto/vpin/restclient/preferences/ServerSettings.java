@@ -7,10 +7,28 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepDisplayNames;
   private boolean backupTableOnOverwrite = true;
   private boolean keepVbsFiles = true;
+  private boolean useSubfolders = false;
   private boolean launchPopperOnExit = false;
+  private int volume = 0;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+
+  public boolean isUseSubfolders() {
+    return useSubfolders;
+  }
+
+  public void setUseSubfolders(boolean useSubfolders) {
+    this.useSubfolders = useSubfolders;
+  }
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
 
   public boolean isKeepVbsFiles() {
     return keepVbsFiles;

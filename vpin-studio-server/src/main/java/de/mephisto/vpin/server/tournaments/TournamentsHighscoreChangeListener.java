@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.tournaments;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -43,6 +42,9 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private TournamentSynchronizer tournamentSynchronizer;
+
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     if (cabinet != null) {
@@ -55,25 +57,41 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
         try {
           TableScore newTableScore = createTableScore(game, newScore);
           if (newTableScore != null) {
-            // General score submission!
-            TableScore createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
-            LOG.info("Submitted VPinMania score " + createdTableScore);
+
+            // General lazy! score submission!
+            TableScore createdTableScore = null;
+            if (tournamentSettings.isSubmitAllScores()) {
+              createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
+              LOG.info("Submitted VPinMania score " + createdTableScore);
+            }
+
+            //sync info before submitting to reset tables
+            tournamentSynchronizer.synchronize();
 
             List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
             for (Tournament tournament : tournaments) {
-              TournamentTable tournamentTable = findTournamentTable(tournament, createdTableScore);
-              if (tournamentTable != null) {
-                if (tournament.isActive()) {
-                  maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
-                  LOG.info("Linked " + createdTableScore + " to " + tournament);
+              try {
+                TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
+                if (tournamentTable != null) {
+                  if (tournament.isActive() && tournamentTable.isActive()) {
+                    if (createdTableScore == null) {
+                      createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
+                      LOG.info("Submitted VPinMania score " + createdTableScore + " for " + tournament);
+                    }
 
-                  if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                    iScoredService.submitTableScore(tournament, tournamentTable, createdTableScore);
+                    maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
+                    LOG.info("Linked " + createdTableScore + " to " + tournament);
+
+                    if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                      iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore);
+                    }
+                  }
+                  else {
+                    LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
                   }
                 }
-                else {
-                  LOG.info("Found " + tournamentTable + ", but it is not active.");
-                }
+              } catch (Exception e) {
+                LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
               }
             }
           }
@@ -87,18 +105,18 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     }
   }
 
-  private TournamentTable findTournamentTable(Tournament tournament, TableScore tableScore) {
+  private TournamentTable findTournamentTable(Tournament tournament, String vpsTableId, String vpsTableVersionId) {
     List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-    return getApplicableTable(tournament, tournamentTables, tableScore);
+    return getApplicableTable(tournament, tournamentTables, vpsTableId, vpsTableVersionId);
   }
 
-  private TournamentTable getApplicableTable(Tournament tournament, List<TournamentTable> tables, TableScore score) {
+  private TournamentTable getApplicableTable(Tournament tournament, List<TournamentTable> tables, String vpsTableId, String vpsTableVersionId) {
     if (tournament.isActive()) {
       for (TournamentTable table : tables) {
-        if (!String.valueOf(table.getVpsTableId()).equals(score.getVpsTableId())) {
+        if (!String.valueOf(table.getVpsTableId()).equals(vpsTableId)) {
           continue;
         }
-        if (!String.valueOf(table.getVpsVersionId()).equals(score.getVpsVersionId())) {
+        if (!String.valueOf(table.getVpsVersionId()).equals(vpsTableVersionId)) {
           continue;
         }
         return table;

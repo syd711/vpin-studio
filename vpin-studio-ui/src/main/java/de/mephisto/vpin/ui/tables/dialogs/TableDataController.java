@@ -345,7 +345,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (vpsTable != null) {
         autoCompleteNameField.setText(vpsTable.getDisplayName());
       }
-
       refreshVersionsCombo(vpsTable);
       tableVersionsCombo.setValue(version);
 
@@ -387,7 +386,8 @@ public class TableDataController implements Initializable, DialogController, Aut
         gDetails.setText(td.getgDetails());
         gLog.setText(td.getgLog());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
     }
   }
@@ -429,7 +429,8 @@ public class TableDataController implements Initializable, DialogController, Aut
         if (!StringUtils.isEmpty(mappedValue)) {
           desktop.browse(new URI(VPS.getVpsTableUrl(mappedValue)));
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
     }
@@ -445,7 +446,8 @@ public class TableDataController implements Initializable, DialogController, Aut
           VpsUrl vpsUrl = value.getUrls().get(0);
           desktop.browse(new URI(vpsUrl.getUrl()));
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
     }
@@ -506,7 +508,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(text));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -521,7 +524,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(text));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -588,7 +592,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (game.isVpxGame()) {
         tableDataTabScoreDataController.refreshScannedValues();
       }
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
     }
@@ -617,7 +622,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       Parent builtInRoot = loader.load();
       tableStatisticsController = loader.getController();
       statisticsTab.setContent(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-statistics.fxml: " + e.getMessage(), e);
     }
 
@@ -626,7 +632,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       Parent builtInRoot = loader.load();
       tableScreensController = loader.getController();
       screensTab.setContent(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-screens.fxml: " + e.getMessage(), e);
     }
 
@@ -635,7 +642,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       Parent scoreDataRoot = loader.load();
       tableDataTabScoreDataController = loader.getController();
       scoreDataTab.setContent(scoreDataRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-scoredata.fxml: " + e.getMessage(), e);
     }
 
@@ -644,7 +652,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       propertRenamingRoot = loader.load();
       propperRenamingController = loader.getController();
       detailsRoot.getChildren().add(propertRenamingRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load propper-renaming.fxml: " + e.getMessage(), e);
     }
   }
@@ -858,7 +867,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (tableDetails.getVolume() != null) {
       try {
         volumeSlider.setValue(Integer.parseInt(tableDetails.getVolume()));
-      } catch (NumberFormatException e) {
+      }
+      catch (NumberFormatException e) {
         LOG.error("Failed to set valume: " + e.getMessage());
       }
     }

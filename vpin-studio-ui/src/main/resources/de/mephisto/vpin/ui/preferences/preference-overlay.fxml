@@ -25,7 +25,7 @@
          <content>
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
                   <Label styleClass="preference-subtitle" text="Overlay &amp; Pause Menu">
                      <VBox.margin>
                         <Insets />

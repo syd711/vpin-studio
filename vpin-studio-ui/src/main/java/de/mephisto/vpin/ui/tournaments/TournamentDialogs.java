@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentEditDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentTableSelectorDialogController;
@@ -13,13 +14,13 @@ import javafx.stage.Stage;
 
 public class TournamentDialogs {
 
-  public static TreeItem<TournamentTreeModel> openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
+  public static TournamentCreationModel openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentEditDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentEditDialogController controller = (TournamentEditDialogController) stage.getUserData();
     controller.setTournament(stage, tournament);
     stage.showAndWait();
 
-    return controller.getTournament();
+    return controller.getTournamentData();
   }
 
   public static Tournament openTournamentBrowserDialog() {

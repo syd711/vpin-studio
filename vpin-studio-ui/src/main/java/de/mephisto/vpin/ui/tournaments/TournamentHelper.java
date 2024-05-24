@@ -29,9 +29,17 @@ public class TournamentHelper {
     return null;
   }
 
-  public static String getLabelCss(TournamentTable value) {
+  public static String getLabelCss(Tournament tournament, TournamentTable value) {
     String status = "";
-    if (!value.isEnabled()) {
+    if (!value.isEnabled() || tournament.isFinished() || value.isFinished()) {
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
+    }
+    return status;
+  }
+
+  public static String getLabelCss(Tournament tournament) {
+    String status = "";
+    if (tournament.isFinished()) {
       status = WidgetFactory.DISABLED_TEXT_STYLE;
     }
     return status;

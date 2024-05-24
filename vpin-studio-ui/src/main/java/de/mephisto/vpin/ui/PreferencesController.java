@@ -63,6 +63,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private VBox tournamentGroup;
 
+  @FXML
+  private Button notificationsButton;
+
   private static Button lastSelection;
 
   private static Node preferencesRoot;
@@ -222,6 +225,12 @@ public class PreferencesController implements Initializable, StudioEventListener
     load("preference-highscores.fxml", event);
   }
 
+
+  @FXML
+  private void onNotifications(ActionEvent event) throws IOException {
+    load("preference-notifications.fxml", event);
+  }
+
   @FXML
   private void onRankings(ActionEvent event) throws IOException {
     load("preference-player_rankings.fxml", event);
@@ -309,6 +318,9 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
+
+    notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
+    notificationsButton.setVisible(Features.NOTIFICATIONS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

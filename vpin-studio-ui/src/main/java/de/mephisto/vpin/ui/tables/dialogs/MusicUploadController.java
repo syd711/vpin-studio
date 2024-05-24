@@ -1,9 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.MusicArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -72,11 +73,10 @@ public class MusicUploadController implements Initializable, DialogController {
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null && this.selection.exists()) {
-      String analyze = MusicArchiveAnalyzer.analyze(this.selection);
+      String analyze = UploadAnalysisDispatcher.validateArchive(this.selection, AssetType.MUSIC);
       if (analyze == null) {
         this.fileNameField.setText(this.selection.getAbsolutePath());
-      }
-      else {
+      } else {
         WidgetFactory.showAlert(Studio.stage, "Error", analyze);
       }
     }
@@ -98,5 +98,13 @@ public class MusicUploadController implements Initializable, DialogController {
 
   public boolean uploadFinished() {
     return result;
+  }
+
+  public void setFile(File file) {
+    if (file != null) {
+      this.selection = file;
+      this.fileNameField.setText(file.getAbsolutePath());
+      this.uploadBtn.setDisable(false);
+    }
   }
 }

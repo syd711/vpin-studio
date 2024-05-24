@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -92,7 +92,7 @@ public class MenuCustomViewController implements Initializable {
 
     InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     if (imageStream == null) {
-      imageStream = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+      imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(imageStream);
     wheelImage.setImage(image);

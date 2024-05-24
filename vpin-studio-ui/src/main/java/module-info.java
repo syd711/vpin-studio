@@ -36,6 +36,8 @@ module de.mephisto.vpin.ui {
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.iscored;
   requires commons.beanutils;
+  requires ant;
+  requires net.dv8tion.jda;
   requires jnativehook;
   requires java.logging;
 //  requires sevenzipjbinding;

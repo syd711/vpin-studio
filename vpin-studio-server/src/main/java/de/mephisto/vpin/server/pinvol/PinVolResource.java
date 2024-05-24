@@ -43,4 +43,9 @@ public class PinVolResource {
     return pinVolService.killPinVol();
   }
 
+  @GetMapping("/setvolume")
+  public boolean setVolume() {
+    return pinVolService.setSystemVolume();
+  }
+
 }

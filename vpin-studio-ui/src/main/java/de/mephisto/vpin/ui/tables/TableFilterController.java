@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -101,6 +103,9 @@ public class TableFilterController implements Initializable {
 
   @FXML
   private ComboBox<TableStatus> statusCombo;
+
+  @FXML
+  private ComboBox<NoteType> notesCombo;
 
   private boolean visible = false;
   private boolean updatesDisabled = false;
@@ -188,6 +193,7 @@ public class TableFilterController implements Initializable {
   private void updateSettings(FilterSettings filterSettings) {
     updatesDisabled = true;
     statusCombo.setValue(null);
+    notesCombo.setValue(null);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
@@ -336,6 +342,19 @@ public class TableFilterController implements Initializable {
       }
       else {
         filterSettings.setGameStatus(newValue.getValue());
+      }
+      applyFilter();
+    });
+
+    List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
+    noteTypes.add(0, null);
+    notesCombo.setItems(FXCollections.observableList(noteTypes));
+    notesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        filterSettings.setNoteType(null);
+      }
+      else {
+        filterSettings.setNoteType(newValue);
       }
       applyFilter();
     });

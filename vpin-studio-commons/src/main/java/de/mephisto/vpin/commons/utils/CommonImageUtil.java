@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
 import com.jhlabs.image.GaussianFilter;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
@@ -43,7 +43,7 @@ public class CommonImageUtil {
 
   public static Image createAvatar(String initials) {
     try {
-      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      BufferedImage image = ImageIO.read(ServerFX.class.getResourceAsStream("avatar-blank.png"));
       Graphics2D g = (Graphics2D) image.getGraphics();
       setRendingHints(g);
 
@@ -65,7 +65,7 @@ public class CommonImageUtil {
 
   public static Image createAvatarFromBytes(byte[] data) {
     try {
-      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      BufferedImage image = ImageIO.read(ServerFX.class.getResourceAsStream("avatar-blank.png"));
       Graphics2D g = (Graphics2D) image.getGraphics();
       setRendingHints(g);
 
@@ -86,7 +86,7 @@ public class CommonImageUtil {
 
   public static Image createAvatarFromUrl(String url) {
     try {
-      BufferedImage image = ImageIO.read(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      BufferedImage image = ImageIO.read(ServerFX.class.getResourceAsStream("avatar-blank.png"));
       Graphics2D g = (Graphics2D) image.getGraphics();
       setRendingHints(g);
 

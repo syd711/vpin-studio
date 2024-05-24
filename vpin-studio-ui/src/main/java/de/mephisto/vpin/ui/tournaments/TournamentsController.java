@@ -255,22 +255,32 @@ public class TournamentsController implements Initializable, StudioFXController 
         scoreList.getChildren().add(label);
       }
       else {
-        scoreList.getStyleClass().add("media-container");
         Collections.sort(highscores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
         int position = 1;
         for (TableScore highscore : highscores) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
-          try {
-            FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
-            Pane row = loader.load();
-            row.setPrefWidth(600);
-            WidgetPlayerScoreController controller = loader.getController();
-            controller.setData(game, position, highscore);
-            scoreList.getChildren().add(row);
-            position++;
-          } catch (IOException e) {
-            LOG.error("failed to load score component: " + e.getMessage(), e);
+          if(game != null ) {
+            try {
+              FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
+              Pane row = loader.load();
+              row.setPrefWidth(600);
+              WidgetPlayerScoreController controller = loader.getController();
+              controller.setData(game, position, highscore);
+              scoreList.getChildren().add(row);
+              position++;
+            } catch (IOException e) {
+              LOG.error("failed to load score component: " + e.getMessage(), e);
+            }
           }
+        }
+
+        if(position == 1) {
+          Label label = new Label("No scores found.");
+          label.getStyleClass().add("default-text");
+          scoreList.getChildren().add(label);
+        }
+        else {
+          scoreList.getStyleClass().add("media-container");
         }
       }
     }
@@ -316,7 +326,7 @@ public class TournamentsController implements Initializable, StudioFXController 
 
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
-      endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
+      endLabel.setText(tournament.getEndDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()) : "-");
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
       websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");
