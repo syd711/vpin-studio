@@ -36,6 +36,7 @@ public class PopperMediaService {
     for (PopperScreen value : values) {
       List<String> filesForScreen = analysis.getPopperMediaFiles(value);
 
+      int maxAssets = 3;
       for (String popperMediaFile : filesForScreen) {
         if (popperMediaFile.toLowerCase().contains("macosx")) {
           continue;
@@ -45,6 +46,11 @@ public class PopperMediaService {
         File out = uniquePopperAsset(game, value, suffix);
         ZipUtil.unzipTargetFile(tempFile, out, popperMediaFile);
         LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
+
+        maxAssets--;
+        if (maxAssets == 0) {
+          break;
+        }
       }
     }
   }

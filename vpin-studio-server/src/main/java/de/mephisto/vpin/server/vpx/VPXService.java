@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
@@ -220,8 +221,8 @@ public class VPXService {
     return null;
   }
 
-  public Boolean installMusic(File out) {
-    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder());
+  public Boolean installMusic(File out, UploaderAnalysis analysis) {
+    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis);
     return true;
   }
 }

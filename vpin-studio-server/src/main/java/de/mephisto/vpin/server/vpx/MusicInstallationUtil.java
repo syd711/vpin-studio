@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,25 +15,24 @@ import java.util.zip.ZipInputStream;
 public class MusicInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MusicInstallationUtil.class);
 
-  public static boolean unzip(File archiveFile, File musicFolder) {
+  public static boolean unzip(File archiveFile, File musicFolder, UploaderAnalysis analysis) {
     if (musicFolder == null || !musicFolder.exists()) {
       LOG.error("Music upload failed, no music folder found for default emulator.");
     }
 
-    boolean hasMusicFolder = ZipUtil.containsFolder(archiveFile, "Music") != null;
-
+    boolean hasMusicFolder = analysis.containsFolder("Music");
     if (hasMusicFolder) {
-      extractWithMusicFolder(archiveFile, musicFolder);
+      extractWithMusicFolder(archiveFile, musicFolder, analysis);
     }
     else {
-      extractIntoMusicFolder(archiveFile, musicFolder);
+      extractIntoMusicFolder(archiveFile, musicFolder, analysis);
       return true;
     }
 
     return false;
   }
 
-  private static void extractWithMusicFolder(File archiveFile, File musicFolder) {
+  private static void extractWithMusicFolder(File archiveFile, File musicFolder, UploaderAnalysis analysis) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -54,18 +54,21 @@ public class MusicInstallationUtil {
           }
           else {
             String name = zipEntry.getName();
-            File target = new File(musicFolder, formatWithMusicFolder(name));
-            if (target.exists()) {
-              target.delete();
-            }
+            String suffix = FilenameUtils.getExtension(name);
+            if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg")) {
+              File target = new File(musicFolder, formatWithMusicFolder(name));
+              if (target.exists()) {
+                target.delete();
+              }
 
-            FileOutputStream fos = new FileOutputStream(target);
-            int len;
-            while ((len = zis.read(buffer)) > 0) {
-              fos.write(buffer, 0, len);
+              FileOutputStream fos = new FileOutputStream(target);
+              int len;
+              while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+              }
+              fos.close();
+              LOG.info("Written " + target.getAbsolutePath());
             }
-            fos.close();
-            LOG.info("Written " + target.getAbsolutePath());
           }
         }
         zis.closeEntry();
@@ -87,7 +90,7 @@ public class MusicInstallationUtil {
     return targetFolder;
   }
 
-  private static void extractIntoMusicFolder(File archiveFile, File musicFolder) {
+  private static void extractIntoMusicFolder(File archiveFile, File musicFolder, UploaderAnalysis analysis) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -108,18 +111,21 @@ public class MusicInstallationUtil {
         }
         else {
           String name = zipEntry.getName();
-          File target = new File(musicFolder, name);
-          if (target.exists()) {
-            target.delete();
-          }
+          String suffix = FilenameUtils.getExtension(name);
+          if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg")) {
+            File target = new File(musicFolder, name);
+            if (target.exists()) {
+              target.delete();
+            }
 
-          FileOutputStream fos = new FileOutputStream(target);
-          int len;
-          while ((len = zis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len);
+            FileOutputStream fos = new FileOutputStream(target);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fos.write(buffer, 0, len);
+            }
+            fos.close();
+            LOG.info("Written " + target.getAbsolutePath());
           }
-          fos.close();
-          LOG.info("Written " + target.getAbsolutePath());
         }
         zis.closeEntry();
         zipEntry = zis.getNextEntry();

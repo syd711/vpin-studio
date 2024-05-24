@@ -125,6 +125,12 @@ public class UploaderAnalysis<T> {
       String suffix = FilenameUtils.getExtension(fileNameWithPath);
       if (mediaSuffixes.contains(suffix)) {
         if (fileNameWithPath.toLowerCase().contains(screen.name().toLowerCase())) {
+          if (screen.equals(PopperScreen.DMD)) {
+            //ignore DMD files from DMD bundles
+            if (fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
+              break;
+            }
+          }
           result.add(fileNameWithPath);
         }
       }
@@ -147,8 +153,7 @@ public class UploaderAnalysis<T> {
       }
       zis.close();
       fileInputStream.close();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to open " + file.getAbsolutePath());
       throw e;
     } finally {
@@ -344,14 +349,11 @@ public class UploaderAnalysis<T> {
   }
 
   private boolean isMediaPack() {
-    for (String fileNameWithPath : fileNamesWithPath) {
-      String suffix = FilenameUtils.getExtension(fileNameWithPath);
-      if (mediaSuffixes.contains(suffix)) {
-        for (String mediaScreenName : mediaScreenNames) {
-          if (fileNameWithPath.toLowerCase().contains(mediaScreenName)) {
-            return true;
-          }
-        }
+    PopperScreen[] values = PopperScreen.values();
+    for (PopperScreen value : values) {
+      List<String> popperMediaFiles = getPopperMediaFiles(value);
+      if (!popperMediaFiles.isEmpty()) {
+        return true;
       }
     }
     return false;
@@ -449,8 +451,7 @@ public class UploaderAnalysis<T> {
         try {
           Integer.parseInt(suffix);
           return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           //
         }
       }
@@ -464,6 +465,16 @@ public class UploaderAnalysis<T> {
 
     }
 
+    return false;
+  }
+
+  public boolean containsFolder(String name) {
+    for (String fileNameWithPath : fileNamesWithPath) {
+      if (fileNameWithPath.toLowerCase().startsWith(name.toLowerCase() + "/") ||
+          fileNameWithPath.toLowerCase().contains("/" + name.toLowerCase() + "/")) {
+        return true;
+      }
+    }
     return false;
   }
 }

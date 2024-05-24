@@ -25,6 +25,7 @@ public class TextHighscoreToRawConverter {
   static {
     adapters.add(new SpongebobAdapter());
     adapters.add(new SinglePlayerScoreAdapter("JacksOpen.txt", 1));
+    adapters.add(new SinglePlayerScoreAdapter("thunderbirds.txt", 5));
     adapters.add(new TwoPlayersAdapter("Strip_JP_EM_1978.txt", 1, 3));
     adapters.add(new TwoPlayersAdapter("The_Fog_1979.txt", 1, 3));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("CanadaDry_76VPX.txt", 7, 5));

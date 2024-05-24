@@ -147,7 +147,7 @@ public class UniversalUploadService {
         break;
       }
       case MUSIC: {
-        vpxService.installMusic(tempFile);
+        vpxService.installMusic(tempFile, analysis);
         break;
       }
       case ROM: {

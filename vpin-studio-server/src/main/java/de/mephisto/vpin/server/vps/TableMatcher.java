@@ -172,7 +172,7 @@ public class TableMatcher {
 		String tableInfoVersion = tableInfo.getTableVersion();
 		String tableInfoAuthor = tableInfo.getAuthorName();
 
-		if (StringUtils.isEmpty(tableInfoVersion) && StringUtils.isEmpty(tableInfoAuthor)) {
+		if (StringUtils.isEmpty(tableInfoVersion) || StringUtils.isEmpty(tableInfoAuthor)) {
 			return null;
 		}
 		// clean tableInfo author field and parse it

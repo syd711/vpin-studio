@@ -52,3 +52,4 @@
 - **Table Count Label**: Fixed table count label of the table overview so that it always shows the amount of selected tables.
 - **NVOffset Validator**: Improved validator message.
 - **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.
+- **Highscore Parser**: Added support for "Thunderbirds".
