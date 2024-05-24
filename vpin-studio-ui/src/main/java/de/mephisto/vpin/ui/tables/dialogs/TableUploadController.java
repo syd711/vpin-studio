@@ -387,6 +387,11 @@ public class TableUploadController implements Initializable, DialogController {
       assetPupPackCheckbox.setText("PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
     }
 
+    assetAltSoundCheckbox.setText("ALT Sound");
+    if (assetAltSoundCheckbox.isSelected()) {
+      assetAltSoundCheckbox.setText("ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
+    }
+
     assetsBox.setVisible(assetBackglassCheckbox.isSelected() || assetAltSoundCheckbox.isSelected()
         || assetPovCheckbox.isSelected() || assetIniCheckbox.isSelected()
         || assetCfgCheckbox.isSelected() || assetNvRamCheckbox.isSelected()
@@ -426,18 +431,21 @@ public class TableUploadController implements Initializable, DialogController {
 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uploadAndReplaceRadio.setSelected(true);
       serverSettings.setVpxKeepFileNames(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
     keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
     keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uploadAndReplaceRadio.setSelected(true);
       serverSettings.setVpxKeepDisplayNames(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
     backupTableOnOverwriteCheckbox.setSelected(serverSettings.isBackupTableOnOverwrite());
     backupTableOnOverwriteCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uploadAndReplaceRadio.setSelected(true);
       serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });

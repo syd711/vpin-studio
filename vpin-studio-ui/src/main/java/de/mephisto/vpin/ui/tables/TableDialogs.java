@@ -271,19 +271,11 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openAltSoundUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file) {
-    if (StringUtils.isEmpty(game.getRom())) {
-      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
-      return false;
-    }
-
+  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
-    controller.setGame(game);
-    controller.setFile(file);
+    controller.setFile(stage, file, analysis);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
   public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound altSound, AltSound2DuckingProfile profile) {
@@ -342,13 +334,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
     controller.setData(game, analysis, file, stage);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
   public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {

@@ -21,13 +21,15 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final int gameId;
   private final File file;
+  private final int emulatorId;
+  private final String rom;
 
-  public AltSoundUploadProgressModel(int gameId, String title, File file, String altSoundType) {
+  public AltSoundUploadProgressModel(String title, File file, int emulatorId, String rom) {
     super(file, title);
-    this.gameId = gameId;
     this.file = file;
+    this.emulatorId = emulatorId;
+    this.rom = rom;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -54,7 +56,7 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, emulatorId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -62,7 +64,7 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL, gameId);
+          EventManager.getInstance().notifyTableChange(-1, rom);
         });
       }
       progressResultModel.addProcessed();

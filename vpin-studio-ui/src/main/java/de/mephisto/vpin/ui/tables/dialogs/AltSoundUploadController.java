@@ -3,26 +3,32 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AltSoundUploadController implements Initializable, DialogController {
@@ -41,12 +47,18 @@ public class AltSoundUploadController implements Initializable, DialogController
   private Button fileBtn;
 
   @FXML
-  private Label titleLabel;
+  private Label tableLabel;
 
+  @FXML
+  private Label romLabel;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  private Stage stage;
   private File selection;
-
-  private boolean result = false;
-  private GameRepresentation game;
+  private UploaderAnalysis uploaderAnalysis;
+  private GameEmulatorRepresentation emulatorRepresentation;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -58,11 +70,10 @@ public class AltSoundUploadController implements Initializable, DialogController
   private void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
-      result = false;
       stage.close();
 
       Platform.runLater(() -> {
-        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(this.game.getId(), "ALT Sound Upload", selection, "altsound");
+        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel("ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -83,7 +94,8 @@ public class AltSoundUploadController implements Initializable, DialogController
     this.uploadBtn.setDisable(selection == null);
     if (this.selection != null) {
       refreshSelection();
-    } else {
+    }
+    else {
       this.fileNameField.setText("");
     }
   }
@@ -98,48 +110,84 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.ALT_SOUND);
-      this.fileNameField.setText(this.selection.getAbsolutePath());
-      this.fileNameField.setDisable(false);
-      this.fileBtn.setDisable(false);
-      this.cancelBtn.setDisable(false);
+      uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(this.selection);
+      refreshMatchingGame(uploaderAnalysis);
+      String validation = uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND);
 
-      if (analyze != null) {
-        this.uploadBtn.setDisable(true);
-        result = false;
-        WidgetFactory.showAlert(Studio.stage, analyze);
-        return;
+      if (validation != null) {
+        WidgetFactory.showAlert(stage, "Invalid ALT Sound Pack", validation);
+        this.fileNameField.setText("");
+        this.fileBtn.setDisable(false);
+        this.fileNameField.setDisable(false);
+        this.cancelBtn.setDisable(false);
       }
-      this.uploadBtn.setDisable(false);
+      else {
+        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setDisable(false);
+        this.fileBtn.setDisable(false);
+        this.cancelBtn.setDisable(false);
+        this.uploadBtn.setDisable(false);
+      }
     });
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getVpxGameEmulators();
+    emulatorRepresentation = gameEmulators.get(0);
+    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+    emulatorCombo.setItems(emulators);
+    emulatorCombo.setValue(emulatorRepresentation);
+    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+      emulatorRepresentation = t1;
+    });
   }
 
   @Override
   public void onDialogCancel() {
-    result = false;
+
   }
 
-  public boolean uploadFinished() {
-    return result;
-  }
-
-  public void setGame(GameRepresentation game) {
-    this.game = game;
-    this.titleLabel.setText("Select ALT sound package for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setFile(File file) {
-    if (file != null) {
-      this.selection = file;
-      this.fileNameField.setText(file.getAbsolutePath());
+  public void setFile(Stage stage, File file, UploaderAnalysis uploaderAnalysis) {
+    this.stage = stage;
+    this.selection = file;
+    this.uploaderAnalysis = uploaderAnalysis;
+    if (this.selection != null) {
+      refreshMatchingGame(uploaderAnalysis);
+      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileNameField.setDisable(false);
+      this.fileBtn.setDisable(false);
+      this.cancelBtn.setDisable(false);
       this.uploadBtn.setDisable(false);
+    }
+  }
+
+
+  private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
+    tableLabel.setText("-");
+    romLabel.setText("-");
+    this.uploadBtn.setDisable(true);
+    if (uploaderAnalysis == null) {
+      return;
+    }
+
+    String rom = uploaderAnalysis.getRomFromAltSoundPack();
+    if (rom == null) {
+      return;
+    }
+    romLabel.setText(rom);
+    this.uploadBtn.setDisable(false);
+
+    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached();
+    for (GameRepresentation gameRepresentation : gamesCached) {
+      String gameRom = gameRepresentation.getRom();
+      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        tableLabel.setText(gameRepresentation.getGameDisplayName());
+        break;
+      }
     }
   }
 }

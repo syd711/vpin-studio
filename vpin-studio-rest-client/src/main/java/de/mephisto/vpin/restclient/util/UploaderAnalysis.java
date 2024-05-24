@@ -76,6 +76,21 @@ public class UploaderAnalysis<T> {
     return contains;
   }
 
+  public String getRomFromAltSoundPack() {
+    for (String name : fileNamesWithPath) {
+      if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv") || name.contains("altsound.csv") || name.contains("g-sound.csv")) {
+        if (name.contains("/")) {
+          name = name.substring(0, name.lastIndexOf("/"));
+          if (name.contains("/")) {
+            name = name.substring(name.lastIndexOf("/") + 1);
+          }
+          return name;
+        }
+      }
+    }
+    return null;
+  }
+
   public String getRomFromZip() {
     String contains = containsWithPath(".zip");
     if (contains != null) {

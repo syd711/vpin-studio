@@ -53,7 +53,7 @@ public class AltColorResource {
 
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam("objectId") Integer gameId) {
+                                 @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
@@ -65,8 +65,7 @@ public class AltColorResource {
     catch (Exception e) {
       LOG.error(AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage());
-    }
-    finally {
+    } finally {
       descriptor.finalizeUpload();
     }
   }

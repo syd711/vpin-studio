@@ -61,6 +61,14 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file);
         return;
       }
+      case DMD_PACK: {
+        TableDialogs.openDMDUploadDialog(game, file, analysis);
+        return;
+      }
+      case ALT_SOUND: {
+        TableDialogs.openAltSoundUploadDialog(file, analysis);
+        return;
+      }
       case VPX: {
         TableDialogs.openTableUploadDialog(tablesController.getTablesController(), game, TableUploadType.uploadAndImport, analysis);
         return;
@@ -73,10 +81,6 @@ public class UploadAnalysisDispatcher {
     }
 
     switch (assetType) {
-      case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(tablesController, game, file);
-        return;
-      }
       case DIRECTB2S: {
         TableDialogs.directBackglassUpload(Studio.stage, game, file);
         return;
@@ -103,10 +107,6 @@ public class UploadAnalysisDispatcher {
       }
       case PUP_PACK: {
         TableDialogs.openPupPackUploadDialog(tablesController, game, file, analysis);
-        break;
-      }
-      case DMD_PACK: {
-        TableDialogs.openDMDUploadDialog(game, file, analysis);
         break;
       }
       case POPPER_MEDIA: {

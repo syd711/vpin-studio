@@ -109,12 +109,18 @@ public class UniversalUploadService {
       LOG.info("Skipped bundle import of type " + assetType.name() + ", because it is not marked for import.");
       return;
     }
+
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
+    if (analysis == null) {
+      analysis = new UploaderAnalysis(tempFile);
+      analysis.analyze();
+    }
+
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     switch (assetType) {
       case ALT_SOUND: {
-        JobExecutionResult jobExecutionResult = altSoundService.installAltSound(game, tempFile);
+        JobExecutionResult jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
         uploadDescriptor.setError(jobExecutionResult.getError());
         break;
       }
@@ -129,7 +135,7 @@ public class UniversalUploadService {
         break;
       }
       case DMD_PACK: {
-        dmdService.installDMDPackage(tempFile);
+        dmdService.installDMDPackage(tempFile, uploadDescriptor.getEmulatorId());
         break;
       }
       case PUP_PACK: {

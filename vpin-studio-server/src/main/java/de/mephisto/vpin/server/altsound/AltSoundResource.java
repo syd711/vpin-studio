@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
@@ -93,21 +94,25 @@ public class AltSoundResource {
                         @PathVariable("enable") boolean enable) {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return altSoundService.setAltSoundEnabled(game, enable);
+      return altSoundService.setAltSoundEnabled(game.getRom(), enable);
     }
     return false;
   }
 
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                 @RequestParam(value = "uploadType", required = false) String uploadType,
-                                 @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+                                 @RequestParam("objectId") Integer emulatorId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    descriptor.setEmulatorId(emulatorId);
     try {
       descriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
       descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ALT_SOUND);
-      gameService.resetUpdate(gameId, VpsDiffTypes.altSound);
+
+      UploaderAnalysis analysis = new UploaderAnalysis(new File(descriptor.getTempFilename()));
+      analysis.analyze();
+
+      universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.ALT_SOUND);
+      gameService.resetUpdate(analysis.getRomFromAltSoundPack(), VpsDiffTypes.altSound);
       return descriptor;
     }
     catch (Exception e) {

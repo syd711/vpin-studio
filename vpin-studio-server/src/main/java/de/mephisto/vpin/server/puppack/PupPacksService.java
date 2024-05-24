@@ -163,13 +163,8 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, boolean async) throws IOException {
+  public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    if (analysis == null) {
-      analysis = new UploaderAnalysis(tempFile);
-      analysis.analyze();
-    }
-
     File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());

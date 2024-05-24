@@ -211,12 +211,12 @@ public class TableOverviewContextMenu {
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
     MenuItem validateItem = new MenuItem("Validate");
-    validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
+    validateItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
     validateItem.setOnAction(actionEvent -> tableOverviewController.onValidate());
     ctxMenu.getItems().add(validateItem);
 
     MenuItem validateAllItem = new MenuItem("Validate All");
-    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
+    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
     validateAllItem.setOnAction(actionEvent -> tableOverviewController.onValidateAll());
     ctxMenu.getItems().add(validateAllItem);
 

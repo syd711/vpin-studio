@@ -128,11 +128,11 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (GameDetails gameDetails : otherGameDetailsWithSameRom) {
-          if (gameDetails.getNvOffset() == 0 || gameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = pinUPConnector.getGame(gameDetails.getPupId());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(otherGameDetails.getPupId());
             if (otherGame != null) {
-              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName()));
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
               if (findFirst) {
                 return result;
               }

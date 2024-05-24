@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -99,17 +100,14 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onUpload() {
-    if (game.isPresent()) {
-      TableDialogs.openAltSoundUploadDialog(tablesSidebarController, game.get(), null);
-    }
+    TableDialogs.openAltSoundUploadDialog(null, null);
   }
 
   @FXML
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALTSound package for table '" + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Studio.client.getAltSoundService().delete(this.game.get().getId());
-      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+      ProgressDialog.createProgressDialog(new AltSoundDeleteProgressModel(this.game.get()));
     }
   }
 

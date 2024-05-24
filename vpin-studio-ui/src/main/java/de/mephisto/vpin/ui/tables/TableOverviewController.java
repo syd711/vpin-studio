@@ -284,12 +284,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableOverviewColumnSorter tableOverviewColumnSorter;
   private List<String> ignoredValidations;
 
+  private ObservableList<GameRepresentation> data = FXCollections.emptyObservableList();
+  private List<GameRepresentation> games = Collections.emptyList();
+
   // Add a public no-args constructor
   public TableOverviewController() {
   }
-
-  private ObservableList<GameRepresentation> data;
-  private List<GameRepresentation> games;
 
   @FXML
   public void onBackglassManager() {
@@ -359,13 +359,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAltSoundUpload() {
-    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltSoundUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneAltSound().setExpanded(true);
-      }
-    }
+    TableDialogs.openAltSoundUploadDialog(null, null);
   }
 
   @FXML
@@ -443,10 +437,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onDMDUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
-      }
+      TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null);
     }
   }
 
@@ -875,14 +866,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           setFilterIds(integers);
           filterGames(games);
           tableView.setItems(data);
+          labelTableCount.setText(data.size() + " tables");
 
-          GameEmulatorRepresentation emulator = getEmulatorSelection();
-          if (filterSettings.isResetted(emulator == null || emulator.isVpxEmulator())) {
-            labelTableCount.setText(games.size() + " tables");
-          }
-          else {
-            labelTableCount.setText(data.size() + " of " + games.size() + " tables");
-          }
           tableView.refresh();
           setBusy(false);
         });
@@ -932,6 +917,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         filterGames(games);
         tableView.setItems(data);
+        labelTableCount.setText(data.size() + " tables");
 
         tableView.refresh();
 
@@ -1017,6 +1003,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       filterGames(games);
       tableView.setItems(data);
+      labelTableCount.setText(data.size() + " tables");
     });
   }
 
@@ -1364,6 +1351,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
     tableView.setItems(data);
+    labelTableCount.setText(data.size() + " tables");
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
@@ -1775,6 +1763,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView.getSelectionModel().clearSelection();
         filterGames(games);
         tableView.setItems(data);
+        labelTableCount.setText(data.size() + " tables");
 
         if (!data.isEmpty()) {
           if (data.contains(selectedItem)) {

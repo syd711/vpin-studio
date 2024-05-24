@@ -681,6 +681,28 @@ public class GameService implements InitializingBean {
     }
   }
 
+  public void resetUpdate(String rom, VpsDiffTypes diffType) {
+    try {
+      if (!StringUtils.isEmpty(rom)) {
+        List<GameDetails> byRomName = gameDetailsRepository.findByRomName(rom);
+        for (GameDetails gameDetails : byRomName) {
+          String updates = gameDetails.getUpdates();
+          if (updates != null) {
+            List<String> existingUpdates = new ArrayList<>(Arrays.asList(updates.split(",")));
+            existingUpdates.remove(diffType.name());
+            updates = String.join(",", existingUpdates);
+            gameDetails.setUpdates(updates);
+            gameDetailsRepository.saveAndFlush(gameDetails);
+            LOG.info("Resetted updates for " + gameDetails.getPupId() + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to reset update flag for rom '" + rom + "': " + e.getMessage(), e);
+    }
+  }
+
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     if (game.isVpxGame()) {

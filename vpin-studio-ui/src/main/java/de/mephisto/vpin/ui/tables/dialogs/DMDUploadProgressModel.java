@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -20,13 +21,15 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final int gameId;
+  private final int emulatorId;
   private final File file;
+  private final GameRepresentation game;
 
-  public DMDUploadProgressModel(int gameId, String title, File file) {
+  public DMDUploadProgressModel(String title, File file, int emulatorId, GameRepresentation game) {
     super(title);
-    this.gameId = gameId;
+    this.emulatorId = emulatorId;
     this.file = file;
+    this.game = game;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -53,7 +56,7 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, percent ->
+      UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, emulatorId, percent ->
           Platform.runLater(() -> {
             progressResultModel.setProgress(percent);
           }));
@@ -68,7 +71,10 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
         });
       }
       progressResultModel.addProcessed();
-      EventManager.getInstance().notifyTableChange(gameId, null);
+
+      if (game != null) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
     }
     catch (Exception e) {
       LOG.error("DMD bundle upload failed: " + e.getMessage(), e);
