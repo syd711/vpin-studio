@@ -9,7 +9,12 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/universal-upload.png" width="900" />
 
+- **Table Management / Table Uploads**: Re-design of the table upload dialog with additional features.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="900" />
+
 - **Table Management / Uploads**: Added upload options for **.cfg and .nv** files.
+- **Table Management / Uploads**: Re-design of some upload dialogs, to provide more information what files have been found and for what table.
 - **Table Management / Uploads**: Added new entry **Media Pack Upload** which allows to upload archives that contain media files for Popper screens. The content of the files are dispatched to the PinUP Popper screens based on their name and path inside the archive. 
 
 - **Table Management**: Added **Notes** editor which is available when **clicking on the status icon**. You can use some keywords to force the notes icon in different colors.
