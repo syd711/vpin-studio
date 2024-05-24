@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
 import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
@@ -259,10 +260,19 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Exited pause menu");
       stage.hide();
-      screenAssets.stream().forEach(asset -> {
-        asset.getScreenStage().hide();
-        asset.dispose();
+
+      Platform.runLater(()-> {
+        try {
+          Thread.sleep(SELECTION_SCALE_DURATION);
+        } catch (InterruptedException e) {
+          //
+        }
+        screenAssets.stream().forEach(asset -> {
+          asset.getScreenStage().hide();
+          asset.dispose();
+        });
       });
+
 
       try {
         NirCmd.focusWindow("Visual Pinball Player");

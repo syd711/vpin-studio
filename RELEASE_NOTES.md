@@ -50,3 +50,5 @@
 - **Removed fuzzy version matching**: The version set for the POPPER field **GAMEVER** must match with the VPS version exactly now. The previous version comparison allowed some fuzzy matching.
 - **Keep existing VPX filenames**: Fixed issue that for the **Keep Existing VPX filenames** flag was ignored for uploaded zip files.
 - **Table Count Label**: Fixed table count label of the table overview so that it always shows the amount of selected tables.
+- **NVOffset Validator**: Improved validator message.
+- **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.

@@ -199,6 +199,10 @@ public class StateMananger implements NativeKeyListener {
     running = true;
   }
 
+  public boolean isRunning() {
+    return running;
+  }
+
   public void exit() {
     running = false;
     Platform.runLater(() -> {
