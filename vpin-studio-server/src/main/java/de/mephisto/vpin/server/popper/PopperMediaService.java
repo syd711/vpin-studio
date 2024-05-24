@@ -44,7 +44,7 @@ public class PopperMediaService {
         String suffix = FilenameUtils.getExtension(popperMediaFile);
         File out = uniquePopperAsset(game, value, suffix);
         ZipUtil.unzipTargetFile(tempFile, out, popperMediaFile);
-        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\"");
+        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
       }
     }
   }
