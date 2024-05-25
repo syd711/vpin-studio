@@ -73,6 +73,11 @@ public class UniversalUploadService {
   }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
+    if (!uploadDescriptor.isImporting(assetType)) {
+      LOG.info("Skipped file import of type " + assetType.name() + ", because it is not marked for import.");
+      return;
+    }
+
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     try {
@@ -135,7 +140,7 @@ public class UniversalUploadService {
         break;
       }
       case DMD_PACK: {
-        dmdService.installDMDPackage(tempFile, uploadDescriptor.getEmulatorId());
+        dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), uploadDescriptor.getEmulatorId());
         break;
       }
       case PUP_PACK: {
@@ -147,7 +152,11 @@ public class UniversalUploadService {
         break;
       }
       case MUSIC: {
-        vpxService.installMusic(tempFile, analysis);
+        String rom = null;
+        if(game != null) {
+          rom = game.getRom();
+        }
+        vpxService.installMusic(tempFile, analysis, rom);
         break;
       }
       case ROM: {

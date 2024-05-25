@@ -7,13 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -22,9 +19,7 @@ public class UploaderAnalysis<T> {
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
-  private final static List<String> musicSuffixes = Arrays.asList("mp3");
-  private final static List<String> mediaScreenNames = Arrays.stream(PopperScreen.values()).map(s -> s.name().toLowerCase()).collect(Collectors.toList());
-
+  private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg");
 
   public final static String PAL_SUFFIX = "pal";
   public final static String VNI_SUFFIX = "vni";
@@ -40,6 +35,7 @@ public class UploaderAnalysis<T> {
   private final List<String> directories = new ArrayList<>();
 
   private String error;
+  private String readme;
 
   public UploaderAnalysis(File file) {
     this.file = file;
@@ -120,22 +116,19 @@ public class UploaderAnalysis<T> {
   }
 
   public List<String> getPopperMediaFiles(PopperScreen screen) {
+    String pupPackRootDirectory = getPupPackRootDirectory();
     List<String> result = new ArrayList<>();
     for (String fileNameWithPath : fileNamesWithPath) {
-      String suffix = FilenameUtils.getExtension(fileNameWithPath);
-      if (mediaSuffixes.contains(suffix)) {
-        if (fileNameWithPath.toLowerCase().contains(screen.name().toLowerCase())) {
-          if (screen.equals(PopperScreen.DMD)) {
-            //ignore DMD files from DMD bundles
-            if (fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
-              break;
-            }
-          }
-          result.add(fileNameWithPath);
-        }
+      if (isPopperMediaFile(screen, pupPackRootDirectory, fileNameWithPath)) {
+        result.add(fileNameWithPath);
       }
     }
     return result;
+  }
+
+
+  public String getReadMeText() {
+    return readme;
   }
 
   public void analyze() throws IOException {
@@ -147,7 +140,7 @@ public class UploaderAnalysis<T> {
       zis = new ZipInputStream(fileInputStream);
       ZipEntry nextEntry = zis.getNextEntry();
       while (nextEntry != null) {
-        analyze((T) nextEntry, nextEntry.getName(), nextEntry.isDirectory());
+        analyze(zis, (T) nextEntry, nextEntry.getName(), nextEntry.isDirectory());
         zis.closeEntry();
         nextEntry = zis.getNextEntry();
       }
@@ -164,7 +157,7 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public void analyze(T archiveEntry, String name, boolean directory) {
+  public void analyze(InputStream in, T archiveEntry, String name, boolean directory) {
     if (directory) {
       String[] split = name.replaceAll("\\\\", "/").split("/");
       for (String s : split) {
@@ -182,6 +175,24 @@ public class UploaderAnalysis<T> {
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
       }
       fileNames.add(fileName);
+      readReadme(in, fileName);
+    }
+  }
+
+  private void readReadme(InputStream in, String fileName) {
+    try {
+      if (fileName.toLowerCase().endsWith(".txt") && fileName.toLowerCase().contains("read")) {
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream fos = new ByteArrayOutputStream();
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+          fos.write(buffer, 0, len);
+        }
+        fos.close();
+        this.readme = new String(fos.toByteArray());
+      }
+    } catch (IOException e) {
+      LOG.error("Failed to extract README: " + e.getMessage(), e);
     }
   }
 
@@ -273,7 +284,7 @@ public class UploaderAnalysis<T> {
         return "This archive does not not contain a .pov file.";
       }
       case INI: {
-        if (hasFileWithSuffix("ini")) {
+        if (hasFileWithSuffixAndNot("ini", "pinup")) {
           return null;
         }
         return "This archive does not not contain a .ini file.";
@@ -340,12 +351,7 @@ public class UploaderAnalysis<T> {
   }
 
   private boolean isPUPPack() {
-    for (String name : fileNames) {
-      if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
-        return true;
-      }
-    }
-    return false;
+    return getPupPackRootDirectory() != null;
   }
 
   private boolean isMediaPack() {
@@ -393,9 +399,9 @@ public class UploaderAnalysis<T> {
   }
 
   private boolean isMusic() {
-    for (String name : fileNames) {
+    for (String name : fileNamesWithPath) {
       String suffix = FilenameUtils.getExtension(name);
-      if (musicSuffixes.contains(suffix)) {
+      if (musicSuffixes.contains(suffix) && name.toLowerCase().contains("music/")) {
         return true;
       }
     }
@@ -403,24 +409,25 @@ public class UploaderAnalysis<T> {
   }
 
   public boolean isDMD() {
-    for (String fileName : directories) {
-      String[] split = fileName.split("/");
+    return getDMDPath() != null;
+  }
+
+  public String getDMDPath() {
+    String pupPackRoot = getPupPackRootDirectory();
+    for (String directory : fileNamesWithPath) {
+      if (pupPackRoot != null && directory.startsWith(pupPackRoot)) {
+        continue;
+      }
+
+      String[] split = directory.split("/");
       for (String segment : split) {
-        if (segment.endsWith("DMD") && !segment.equalsIgnoreCase("DMD")) {
-          return true;
+        if (segment.endsWith("DMD") && !segment.equalsIgnoreCase("DMD") && !segment.contains(" ")) {
+          return segment;
         }
       }
     }
-
-    int count = 0;
-    for (String fileName : fileNamesWithPath) {
-      if (fileName.contains("DMD/") && !fileName.contains("/DMD/")) {
-        count++;
-      }
-    }
-    return count > 1; //TODO dunno
+    return null;
   }
-
 
   public boolean isBackglass() {
     return hasFileWithSuffix("directb2s");
@@ -430,6 +437,21 @@ public class UploaderAnalysis<T> {
     for (String fileName : fileNames) {
       String suffix = FilenameUtils.getExtension(fileName);
       if (suffix.equalsIgnoreCase(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean hasFileWithSuffixAndNot(String s, String... exlusions) {
+    for (String fileName : fileNames) {
+      String suffix = FilenameUtils.getExtension(fileName);
+      if (suffix.equalsIgnoreCase(s)) {
+        for (String exlusion : exlusions) {
+          if (fileName.toLowerCase().contains(exlusion.toLowerCase())) {
+            return false;
+          }
+        }
         return true;
       }
     }
@@ -468,13 +490,41 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  public boolean containsFolder(String name) {
-    for (String fileNameWithPath : fileNamesWithPath) {
-      if (fileNameWithPath.toLowerCase().startsWith(name.toLowerCase() + "/") ||
-          fileNameWithPath.toLowerCase().contains("/" + name.toLowerCase() + "/")) {
-        return true;
+  private String getPupPackRootDirectory() {
+    String match = null;
+    for (String name : fileNamesWithPath) {
+      if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
+        if (name.contains("/")) {
+          String path = name.substring(0, name.lastIndexOf("/") + 1);
+
+          //always use shortest path to exclude the options folders
+          if (match == null || match.length() > path.length()) {
+            match = path;
+          }
+        }
       }
     }
-    return false;
+    return match;
+  }
+
+  private static boolean isPopperMediaFile(PopperScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
+    if (pupPackRootDirectory != null && fileNameWithPath.startsWith(pupPackRootDirectory)) {
+      return false;
+    }
+
+    String suffix = FilenameUtils.getExtension(fileNameWithPath);
+    if (!mediaSuffixes.contains(suffix)) {
+      return false;
+    }
+
+    if (!fileNameWithPath.toLowerCase().contains(screen.name().toLowerCase())) {
+      return false;
+    }
+
+    //ignore DMD files from DMD bundles
+    if (screen.equals(PopperScreen.DMD) && fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
+      return false;
+    }
+    return true;
   }
 }

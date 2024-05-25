@@ -12,8 +12,17 @@ import java.util.zip.ZipInputStream;
 public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);
 
-  public static void unzip(File archiveFile, File tablesFolder) {
+  public static void unzip(File archiveFile, File tablesFolder, String dmdFolder) {
     try {
+      if (dmdFolder.endsWith("/")) {
+        dmdFolder.substring(0, dmdFolder.length() - 1);
+      }
+
+      String dmdFolderName = dmdFolder;
+      if (dmdFolderName.contains("/")) {
+        dmdFolderName = dmdFolderName.substring(dmdFolderName.lastIndexOf("/") + 1);
+      }
+
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
@@ -27,19 +36,9 @@ public class DMDInstallationUtil {
         }
 
         String name = zipEntry.getName().replaceAll("\\\\", "/");
-        if (name.contains("DMD/")) {
-          String[] split = name.split("/");
-          boolean append = false;
-          File targetFile = tablesFolder;
-          for (String segment : split) {
-            if (segment.endsWith("DMD")) {
-              append = true;
-            }
-
-            if (append) {
-              targetFile = new File(targetFile, segment);
-            }
-          }
+        if (name.startsWith(dmdFolder)) {
+          String subPath = name.substring(name.indexOf(dmdFolderName));
+          File targetFile = new File(tablesFolder, subPath);
           targetFile.getParentFile().mkdirs();
           if (targetFile.exists() && !targetFile.delete()) {
             LOG.error("Failed to delete existing DMD file " + targetFile.getAbsolutePath());
@@ -61,8 +60,7 @@ public class DMDInstallationUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
   }

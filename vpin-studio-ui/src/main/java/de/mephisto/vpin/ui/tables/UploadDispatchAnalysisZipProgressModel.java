@@ -6,6 +6,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
   @Override
   public void processNext(ProgressResultModel progressResultModel, ZipEntry next) {
     try {
-      uploaderAnalysis.analyze(next, next.getName(), next.isDirectory());
+      uploaderAnalysis.analyze(zis, next, next.getName(), next.isDirectory());
     } catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);
     }

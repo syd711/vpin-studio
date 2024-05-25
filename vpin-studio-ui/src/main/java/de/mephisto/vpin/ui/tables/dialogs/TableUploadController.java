@@ -136,6 +136,12 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private Label tableTitleLabel;
 
+  @FXML
+  private TextArea readmeTextField;
+
+  @FXML
+  private VBox readmeBox;
+
   private File selection;
   private Optional<UploadDescriptor> result = Optional.empty();
 
@@ -282,10 +288,12 @@ public class TableUploadController implements Initializable, DialogController {
   private void setSelection(boolean rescan) {
     tableNameLabel.setVisible(false);
     tableTitleLabel.setVisible(false);
+    this.readmeTextField.setText("");
 
     uploadBtn.setDisable(true);
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
+      readmeBox.setVisible(suffix.equalsIgnoreCase("zip"));
 
       if (suffix.equalsIgnoreCase("zip")) {
         this.fileBtn.setDisable(true);
@@ -295,6 +303,9 @@ public class TableUploadController implements Initializable, DialogController {
           if (rescan) {
             uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
+          String readmeText = uploaderAnalysis.getReadMeText();
+          this.readmeTextField.setText(readmeText);
+
           String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
 
           tableTitleLabel.setVisible(true);
@@ -367,9 +378,14 @@ public class TableUploadController implements Initializable, DialogController {
     assetNvRamCheckbox.setVisible(assetNvRamCheckbox.isSelected());
 
 
-    assetRomCheckbox.setText("ROM");
-    if (assetRomCheckbox.isSelected()) {
-      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromZip() + ")");
+    assetCfgCheckbox.setText(".cfg File");
+    if (assetCfgCheckbox.isSelected()) {
+      assetCfgCheckbox.setText(".cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
+    }
+
+    assetDmdCheckbox.setText("DMD Pack");
+    if (assetDmdCheckbox.isSelected()) {
+      assetDmdCheckbox.setText("DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
     }
 
     assetNvRamCheckbox.setText(".nv File");
@@ -377,15 +393,21 @@ public class TableUploadController implements Initializable, DialogController {
       assetNvRamCheckbox.setText(".nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
     }
 
-    assetCfgCheckbox.setText(".cfg File");
-    if (assetCfgCheckbox.isSelected()) {
-      assetCfgCheckbox.setText(".cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
-    }
-
     assetPupPackCheckbox.setText("PUP Pack");
     if (assetPupPackCheckbox.isSelected()) {
       assetPupPackCheckbox.setText("PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
     }
+
+    assetIniCheckbox.setText(".ini File");
+    if (assetIniCheckbox.isSelected()) {
+      assetIniCheckbox.setText(".ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
+    }
+
+    assetRomCheckbox.setText("ROM");
+    if (assetRomCheckbox.isSelected()) {
+      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromZip() + ")");
+    }
+
 
     assetAltSoundCheckbox.setText("ALT Sound");
     if (assetAltSoundCheckbox.isSelected()) {

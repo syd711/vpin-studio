@@ -221,8 +221,8 @@ public class VPXService {
     return null;
   }
 
-  public Boolean installMusic(File out, UploaderAnalysis analysis) {
-    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis);
+  public Boolean installMusic(File out, UploaderAnalysis analysis, String rom) throws IOException {
+    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom);
     return true;
   }
 }
