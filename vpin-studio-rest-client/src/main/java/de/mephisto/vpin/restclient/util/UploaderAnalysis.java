@@ -558,7 +558,23 @@ public class UploaderAnalysis<T> {
       return false;
     }
 
-    if (screen.equals(PopperScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
+    if (screen.equals(PopperScreen.AudioLaunch) && (fileNameWithPath.toLowerCase().contains("launch"))) {
+      return true;
+    }
+
+    if (screen.equals(PopperScreen.Audio) && (fileNameWithPath.toLowerCase().contains("launch"))) {
+      return false;
+    }
+
+    if (screen.equals(PopperScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("help") || fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
+      return true;
+    }
+
+    if (screen.equals(PopperScreen.GameInfo) && (fileNameWithPath.toLowerCase().contains("info"))) {
+      return true;
+    }
+
+    if (screen.equals(PopperScreen.Menu) && (fileNameWithPath.toLowerCase().contains("fulldmd") || fileNameWithPath.toLowerCase().contains("apron"))) {
       return true;
     }
 

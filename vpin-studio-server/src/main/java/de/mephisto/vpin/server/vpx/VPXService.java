@@ -198,11 +198,11 @@ public class VPXService {
     return false;
   }
 
-  public boolean play(Game game) {
+  public boolean play(@Nullable Game game, @Nullable String altExe) {
     systemService.killPopper();
 
     if (game != null) {
-      return vpxCommandLineService.execute(game, "-Play");
+      return vpxCommandLineService.execute(game, "-Play", altExe);
     }
 
     return vpxCommandLineService.launch();

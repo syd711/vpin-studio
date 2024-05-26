@@ -36,7 +36,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onPlay() {
-    client.getVpxService().playGame(-1);
+    client.getVpxService().playGame(-1, null);
   }
 
   @FXML

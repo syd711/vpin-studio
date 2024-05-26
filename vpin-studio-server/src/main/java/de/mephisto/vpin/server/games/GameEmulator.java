@@ -7,6 +7,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +48,7 @@ public class GameEmulator {
 
   private String backglassServerFolder;
   private boolean vpxEmulator;
+  private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
@@ -62,6 +65,18 @@ public class GameEmulator {
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
+      String[] files = this.installationFolder.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          if(name.startsWith("VPinball")) {
+            return false;
+          }
+          return name.endsWith(".exe");
+        }
+      });
+      if (files != null) {
+        this.setAltVPXExeNames(Arrays.asList(files));
+      }
     }
 
     if (emulator.getDirGames() != null) {
@@ -95,6 +110,14 @@ public class GameEmulator {
     }
 
     this.vpxEmulator = emulator.isVisualPinball();
+  }
+
+  public List<String> getAltVPXExeNames() {
+    return altVPXExeNames;
+  }
+
+  public void setAltVPXExeNames(List<String> altVPXExeNames) {
+    this.altVPXExeNames = altVPXExeNames;
   }
 
   public boolean isVpxEmulator() {

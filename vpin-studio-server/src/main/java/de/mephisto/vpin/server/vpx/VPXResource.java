@@ -109,8 +109,7 @@ public class VPXResource {
         return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
       }
       return ResponseEntity.notFound().build();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Screenshot extraction failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Screenshot extraction failed: " + e.getMessage());
     }
@@ -128,7 +127,8 @@ public class VPXResource {
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpxService.play(gameService.getGame(id));
+    String altExe = (String) values.get("altExe");
+    return vpxService.play(gameService.getGame(id), altExe);
   }
 
   @PostMapping("/pov/{id}")
@@ -150,12 +150,10 @@ public class VPXResource {
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
       return descriptor;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
-    }
-    finally {
+    } finally {
       descriptor.finalizeUpload();
     }
   }
@@ -170,19 +168,17 @@ public class VPXResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
       gameService.resetUpdate(gameId, VpsDiffTypes.pov);
       return descriptor;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
-    }
-    finally {
+    } finally {
       descriptor.finalizeUpload();
     }
   }
 
   @PostMapping("/ini/upload")
   public UploadDescriptor iniUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                     @RequestParam("objectId") Integer gameId) {
+                                    @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.getAssetsToImport().add(AssetType.INI);
@@ -190,12 +186,10 @@ public class VPXResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
       gameService.resetUpdate(gameId, VpsDiffTypes.pov);
       return descriptor;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("INI upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
-    }
-    finally {
+    } finally {
       descriptor.finalizeUpload();
     }
   }

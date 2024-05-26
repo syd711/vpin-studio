@@ -44,6 +44,12 @@ public class MusicInstallationUtil {
         }
 
         String name = zipEntry.getName();
+        if (name.toLowerCase().contains("macosx")) {
+          zis.closeEntry();
+          zipEntry = zis.getNextEntry();
+          continue;
+        }
+
         if (relativePath == null && !name.toLowerCase().contains("music/")) {
           zis.closeEntry();
           zipEntry = zis.getNextEntry();

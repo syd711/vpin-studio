@@ -511,7 +511,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {
-        client.getVpxService().playGame(game.getId());
+        client.getVpxService().playGame(game.getId(), null);
         return;
       }
 
@@ -521,7 +521,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }
-        client.getVpxService().playGame(game.getId());
+        client.getVpxService().playGame(game.getId(), null);
       }
     }
   }
@@ -1649,8 +1649,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onChanged(Change<? extends GameRepresentation> c) {
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
     altColorUploadItem.setDisable(disable);
-    altSoundUploadItem.setDisable(disable);
-    dmdUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
