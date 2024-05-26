@@ -1012,6 +1012,10 @@
     -fx-base : #338800;
 }
 
+.split-menu-button .arrow {
+    -fx-background-color: white;
+}
+
 .text-button {
     -fx-font-color: #FFFFFF;
     -fx-text-fill: #FFFFFF;
