@@ -70,6 +70,7 @@
                   <VBox BorderPane.alignment="CENTER">
                      <children>
                         <Label styleClass="preference-description" text="The selected music files will be uploaded into the &quot;Music&quot; folder of the selected emulator." />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Do not select PUP Pack archives here!!!" />
                      </children>
                      <BorderPane.margin>
                         <Insets bottom="6.0" />

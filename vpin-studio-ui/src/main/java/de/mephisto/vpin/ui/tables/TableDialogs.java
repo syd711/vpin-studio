@@ -326,7 +326,7 @@ public class TableDialogs {
       return false;
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
+    Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload for \"" + game.getGameDisplayName() + "\"");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setFile(file);

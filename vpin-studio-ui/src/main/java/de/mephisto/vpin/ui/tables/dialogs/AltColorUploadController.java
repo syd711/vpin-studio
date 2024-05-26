@@ -42,9 +42,6 @@ public class AltColorUploadController implements Initializable, DialogController
   @FXML
   private Button fileBtn;
 
-  @FXML
-  private Label titleLabel;
-
   private File selection;
 
   private boolean result = false;
@@ -145,7 +142,6 @@ public class AltColorUploadController implements Initializable, DialogController
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Select ALT color file or package for \"" + game.getGameDisplayName() + "\":");
   }
 
   public void setFile(File file) {

@@ -5,7 +5,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.AltColorUploadController">
@@ -16,47 +20,50 @@
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <top>
             <BorderPane BorderPane.alignment="CENTER">
-               <center>
-                  <HBox>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <top>
+                  <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="375.0">
-                           <HBox.margin>
-                              <Insets right="12.0" />
-                           </HBox.margin>
+                        <Label styleClass="preference-description" text="The file will be uploaded and installed for the selected table." />
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </top>
+               <left>
+                  <HBox BorderPane.alignment="CENTER" />
+               </left>
+               <center>
+                  <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="10.0" prefWidth="94.4000244140625" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="395.199951171875" minWidth="10.0" prefWidth="393.5999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Button>
+                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></Button>
+                        <Label styleClass="default-text" text="ALT Color File:" />
                      </children>
-                  </HBox>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
+                  </GridPane>
                </center>
-               <top>
-                  <Label fx:id="titleLabel" text="ALT Color File:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <BorderPane.margin>
-                        <Insets bottom="6.0" />
-                     </BorderPane.margin>
-                  </Label>
-               </top>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <bottom>
-                  <Label styleClass="preference-description" text="The file will be uploaded and installed for the selected table." BorderPane.alignment="TOP_LEFT">
-                     <BorderPane.margin>
-                        <Insets top="12.0" />
-                     </BorderPane.margin>
-                  </Label>
-               </bottom>
             </BorderPane>
          </top>
          <bottom>
