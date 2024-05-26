@@ -72,8 +72,6 @@ public class TablesSidebarAltColorController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TablesSidebarController tablesSidebarController;
-
   // Add a public no-args constructor
   public TablesSidebarAltColorController() {
   }
@@ -81,7 +79,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openAltColorUploadDialog(game.get(), null);
     }
   }
 
@@ -179,9 +177,5 @@ public class TablesSidebarAltColorController implements Initializable {
         }
       }
     }
-  }
-
-  public void setSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 }

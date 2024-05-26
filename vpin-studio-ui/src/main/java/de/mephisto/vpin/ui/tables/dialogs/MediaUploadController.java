@@ -39,9 +39,6 @@ public class MediaUploadController implements Initializable, DialogController {
   @FXML
   private Button fileBtn;
 
-  @FXML
-  private Label titleLabel;
-
   private File selection;
 
   private boolean result = false;
@@ -129,7 +126,6 @@ public class MediaUploadController implements Initializable, DialogController {
   public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
     this.game = game;
     this.selection = file;
-    this.titleLabel.setText("Media Pack Upload for \"" + game.getGameDisplayName() + "\"");
     if (selection != null) {
       if (analysis != null) {
         this.fileNameField.setText(this.selection.getAbsolutePath());

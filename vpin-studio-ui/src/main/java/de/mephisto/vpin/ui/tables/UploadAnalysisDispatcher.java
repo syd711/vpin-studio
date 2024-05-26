@@ -98,15 +98,15 @@ public class UploadAnalysisDispatcher {
       case PAL:
       case VNI:
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
+        TableDialogs.openAltColorUploadDialog(game, file);
         break;
       }
       case MUSIC: {
-        TableDialogs.openMusicUploadDialog(file);
+        TableDialogs.openMusicUploadDialog(file, analysis);
         break;
       }
       case PUP_PACK: {
-        TableDialogs.openPupPackUploadDialog(tablesController, game, file, analysis);
+        TableDialogs.openPupPackUploadDialog(game, file, analysis);
         break;
       }
       case POPPER_MEDIA: {

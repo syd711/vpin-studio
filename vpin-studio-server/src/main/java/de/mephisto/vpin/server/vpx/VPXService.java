@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +144,7 @@ public class VPXService {
       if (gameFile.exists()) {
         try {
           Map<String, Object> values = VPXUtil.readTableInfo(gameFile);
-          if(values != null) {
+          if (values != null) {
             return new TableInfo(values);
           }
         } catch (Exception e) {
@@ -221,8 +222,8 @@ public class VPXService {
     return null;
   }
 
-  public Boolean installMusic(File out, UploaderAnalysis analysis, String rom) throws IOException {
-    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom);
+  public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

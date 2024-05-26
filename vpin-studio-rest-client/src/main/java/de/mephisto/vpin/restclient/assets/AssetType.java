@@ -20,6 +20,7 @@ public enum AssetType {
   POPPER_MEDIA,
   ROM,
   MUSIC,
+  MUSIC_BUNDLE,
   POV,
   VPX,
   ZIP,

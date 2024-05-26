@@ -266,7 +266,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="assetNvRamCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="NV RAM" textFill="WHITE">
+                                    <CheckBox fx:id="assetNvRamCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text=".nv File" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

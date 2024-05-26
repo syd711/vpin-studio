@@ -41,14 +41,9 @@
          <top>
             <VBox BorderPane.alignment="TOP_LEFT">
                <BorderPane.margin>
-                  <Insets bottom="12.0" />
+                  <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="NvRAM Upload" textFill="WHITE">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
                   <Label styleClass="preference-description" text="The selected nvram files will be uploaded into the &quot;nvram&quot; folder of VPinMAME." />
                </children>
             </VBox>
@@ -85,7 +80,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="ROM File:" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="NVRam File:" GridPane.rowIndex="1" />
                   <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
                   <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
                </children>

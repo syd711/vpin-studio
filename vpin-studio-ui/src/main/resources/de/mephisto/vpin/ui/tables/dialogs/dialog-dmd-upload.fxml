@@ -74,8 +74,14 @@
                   <VBox BorderPane.alignment="CENTER">
                      <children>
                         <Label styleClass="preference-description" text="Download a DMD pack and upload it here." />
-                        <Label styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder." />
+                        <Label styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder.">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Label>
                      </children>
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" />
+                     </BorderPane.margin>
                   </VBox>
                </top>
             </BorderPane>

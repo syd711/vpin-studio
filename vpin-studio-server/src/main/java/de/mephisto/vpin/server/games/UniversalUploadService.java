@@ -156,7 +156,7 @@ public class UniversalUploadService {
         if(game != null) {
           rom = game.getRom();
         }
-        vpxService.installMusic(tempFile, analysis, rom);
+        vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         break;
       }
       case ROM: {

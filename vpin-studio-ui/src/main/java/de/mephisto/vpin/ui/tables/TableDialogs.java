@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.utils.IniArchiveAnalyzer;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -106,11 +105,8 @@ public class TableDialogs {
     }
   }
 
-  public static void onMusicUploads(TablesSidebarController tablesSidebarController) {
-    boolean uploaded = TableDialogs.openMusicUploadDialog();
-    if (uploaded) {
-      tablesSidebarController.getTablesController().onReload();
-    }
+  public static void onMusicUploads() {
+    TableDialogs.openMusicUploadDialog(null, null);
   }
 
 
@@ -118,14 +114,14 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String analyze = null;
         String suffix = FilenameUtils.getExtension(file.getName());
-        if (!suffix.equalsIgnoreCase("directb2s") && PackageUtil.isSupportedArchive(suffix)) {
+        if (!suffix.equalsIgnoreCase(AssetType.DIRECTB2S.name()) && PackageUtil.isSupportedArchive(suffix)) {
           analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.DIRECTB2S);
         }
 
@@ -164,17 +160,20 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .ini File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        String analyze = IniArchiveAnalyzer.analyze(file);
+        String analyze = null;
+        String suffix = FilenameUtils.getExtension(file.getName());
+        if (!suffix.equalsIgnoreCase(AssetType.INI.name()) && PackageUtil.isSupportedArchive(suffix)) {
+          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.INI);
+        }
         if (!StringUtils.isEmpty(analyze)) {
           WidgetFactory.showAlert(Studio.stage, "Error", analyze);
         }
         else {
-
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
@@ -194,6 +193,33 @@ public class TableDialogs {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directPovUpload(Stage stage, GameRepresentation game) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select .pov File");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter(".pov Files", "*.pov", "*.zip"));
+
+    File file = fileChooser.showOpenDialog(stage);
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String analyze = null;
+        String suffix = FilenameUtils.getExtension(file.getName());
+        if (!suffix.equalsIgnoreCase(AssetType.POV.name()) && PackageUtil.isSupportedArchive(suffix)) {
+          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.POV);
+        }
+        if (!StringUtils.isEmpty(analyze)) {
+          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
+        }
+        else {
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV File Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
       });
@@ -294,7 +320,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(TablesSidebarController tablesController, GameRepresentation game, File file) {
+  public static boolean openAltColorUploadDialog(GameRepresentation game, File file) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -309,17 +335,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openPovUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(PovUploadController.class, "dialog-pov-upload.fxml", "POV File Upload");
-    PovUploadController controller = (PovUploadController) stage.getUserData();
-    controller.setGame(game);
-    controller.setTableSidebarController(tablesSidebarController);
-    stage.showAndWait();
-
-    return controller.uploadFinished();
-  }
-
-  public static boolean openPupPackUploadDialog(TablesSidebarController tablesSidebarController, GameRepresentation game, File file, UploaderAnalysis analysis) {
+  public static boolean openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -327,7 +343,6 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
-    controller.setTableSidebarController(tablesSidebarController);
     controller.setFile(file, analysis, stage);
     stage.showAndWait();
 
@@ -342,7 +357,7 @@ public class TableDialogs {
   }
 
   public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
-    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload");
+    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload for \"" + game.getGameDisplayName() + "\"");
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
     controller.setData(game, analysis, file, stage);
     stage.showAndWait();
@@ -529,17 +544,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static boolean openMusicUploadDialog() {
-    return openMusicUploadDialog(null);
-  }
-
-  public static boolean openMusicUploadDialog(File file) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
-    controller.setFile(file);
+    controller.setFile(stage, file, analysis);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
   public static boolean openValidationDialog(List<GameRepresentation> selectedItems, boolean reload) {
@@ -586,8 +595,7 @@ public class TableDialogs {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 

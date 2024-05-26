@@ -37,18 +37,13 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane prefWidth="520.0" BorderPane.alignment="CENTER">
+      <BorderPane BorderPane.alignment="CENTER">
          <top>
             <VBox BorderPane.alignment="TOP_LEFT">
                <BorderPane.margin>
-                  <Insets bottom="12.0" />
+                  <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="Config File Upload" textFill="WHITE">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
                   <Label styleClass="preference-description" text="The selected .cfg files will be uploaded into the &quot;cfg&quot; folder of VPinMAME." />
                </children>
             </VBox>
@@ -57,10 +52,11 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <GridPane vgap="3.0" BorderPane.alignment="CENTER">
+            <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="255.2000732421875" minWidth="10.0" prefWidth="92.79993438720703" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="427.20006561279297" minWidth="10.0" prefWidth="427.20006561279297" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -70,7 +66,7 @@
                <children>
                   <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="310.0">
+                        <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="400.0">
                            <HBox.margin>
                               <Insets right="12.0" />
                            </HBox.margin>
@@ -78,16 +74,16 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
                      </children>
                   </HBox>
                   <Label styleClass="default-text" text="Config File:" GridPane.rowIndex="1" />
                   <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
                   <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                </children>
             </GridPane>
          </center>

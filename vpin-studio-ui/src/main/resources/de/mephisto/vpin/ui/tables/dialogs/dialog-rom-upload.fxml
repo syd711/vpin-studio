@@ -41,14 +41,9 @@
          <top>
             <VBox BorderPane.alignment="TOP_LEFT">
                <BorderPane.margin>
-                  <Insets bottom="12.0" />
+                  <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="ROM Upload" textFill="WHITE">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
                   <Label styleClass="preference-description" text="The selected zip files will be uploaded into the &quot;roms&quot; folder of VPinMAME." />
                </children>
             </VBox>

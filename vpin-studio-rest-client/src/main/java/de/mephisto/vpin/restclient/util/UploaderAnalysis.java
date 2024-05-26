@@ -260,7 +260,13 @@ public class UploaderAnalysis<T> {
         return "This archive is not a valid ALT color package.";
       }
       case MUSIC: {
-        if (isMusic()) {
+        if (isMusic(true)) {
+          return null;
+        }
+        return "This archive is not a valid music files.";
+      }
+      case MUSIC_BUNDLE: {
+        if (isMusic(false)) {
           return null;
         }
         return "This archive is not a valid music files.";
@@ -275,7 +281,7 @@ public class UploaderAnalysis<T> {
         if (isMediaPack()) {
           return null;
         }
-        return "This archive is not a valid PUP pack.";
+        return "This archive is not a valid media pack.";
       }
       case POV: {
         if (hasFileWithSuffix("pov")) {
@@ -316,7 +322,7 @@ public class UploaderAnalysis<T> {
       return AssetType.DMD_PACK;
     }
 
-    if (isMusic()) {
+    if (isMusic(true)) {
       return AssetType.MUSIC;
     }
 
@@ -398,11 +404,16 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  private boolean isMusic() {
+  private boolean isMusic(boolean forceMusicFolder) {
     for (String name : fileNamesWithPath) {
       String suffix = FilenameUtils.getExtension(name);
-      if (musicSuffixes.contains(suffix) && name.toLowerCase().contains("music/")) {
-        return true;
+      if (musicSuffixes.contains(suffix)) {
+        if (forceMusicFolder && name.toLowerCase().contains("music/")) {
+          return true;
+        }
+        else {
+          return true;
+        }
       }
     }
     return false;
@@ -410,6 +421,36 @@ public class UploaderAnalysis<T> {
 
   public boolean isDMD() {
     return getDMDPath() != null;
+  }
+
+
+  public String getRelativeMusicPath(boolean acceptAllAudio) {
+    String pupPackRootDirectory = getPupPackRootDirectory();
+
+    for (String file : fileNamesWithPath) {
+      if (pupPackRootDirectory != null && file.startsWith(pupPackRootDirectory)) {
+        continue;
+      }
+
+      String suffix = FilenameUtils.getExtension(file);
+      if (acceptAllAudio) {
+        if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
+          if (file.contains("/")) {
+            file = file.substring(0, file.lastIndexOf("/") + 1);
+          }
+          return file;
+        }
+      }
+
+      if (!acceptAllAudio && file.toLowerCase().contains("music/")) {
+        String path = file.substring(file.toLowerCase().indexOf("music/") + "music/".length());
+        if (path.contains("/")) {
+          path = path.substring(0, path.lastIndexOf("/") + 1);
+        }
+        return path;
+      }
+    }
+    return null;
   }
 
   public String getDMDPath() {
@@ -517,6 +558,10 @@ public class UploaderAnalysis<T> {
       return false;
     }
 
+    if (screen.equals(PopperScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
+      return true;
+    }
+
     if (!fileNameWithPath.toLowerCase().contains(screen.name().toLowerCase())) {
       return false;
     }
@@ -525,6 +570,7 @@ public class UploaderAnalysis<T> {
     if (screen.equals(PopperScreen.DMD) && fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
       return false;
     }
+
     return true;
   }
 }

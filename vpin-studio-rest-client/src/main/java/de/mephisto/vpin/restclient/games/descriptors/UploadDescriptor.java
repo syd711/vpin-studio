@@ -29,6 +29,7 @@ public class UploadDescriptor {
   private MultipartFile file;
   private String rom;
   private boolean async;
+  private boolean acceptAllAudioAsMusic;
 
   private List<AssetType> assetsToImport = new ArrayList<>();
 
@@ -40,6 +41,14 @@ public class UploadDescriptor {
 
   public void setAsync(boolean async) {
     this.async = async;
+  }
+
+  public boolean isAcceptAllAudioAsMusic() {
+    return acceptAllAudioAsMusic;
+  }
+
+  public void setAcceptAllAudioAsMusic(boolean acceptAllAudioAsMusic) {
+    this.acceptAllAudioAsMusic = acceptAllAudioAsMusic;
   }
 
   @JsonIgnore

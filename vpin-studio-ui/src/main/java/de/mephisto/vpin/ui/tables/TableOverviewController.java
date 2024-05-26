@@ -366,7 +366,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onAltColorUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
       }
@@ -391,7 +391,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onMusicUpload() {
-    TableDialogs.onMusicUploads(tablesController.getTablesSideBarController());
+    TableDialogs.onMusicUploads();
   }
 
 
@@ -399,7 +399,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onPupPackUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null, null);
+      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
@@ -445,9 +445,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onPOVUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPovUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0));
+      boolean b = TableDialogs.directPovUpload(stage, selectedItems.get(0));
       if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
+        tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
     }
   }

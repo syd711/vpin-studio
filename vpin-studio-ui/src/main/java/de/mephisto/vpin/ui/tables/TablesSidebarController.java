@@ -398,7 +398,6 @@ public class TablesSidebarController implements Initializable {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altcolor.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarAltColorController = loader.getController();
-      tablesSidebarAltColorController.setSidebarController(this);
       titledPaneAltColor.setContent(tablesRoot);
     } catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);

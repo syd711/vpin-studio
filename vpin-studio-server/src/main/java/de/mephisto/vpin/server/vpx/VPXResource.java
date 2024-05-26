@@ -145,6 +145,7 @@ public class VPXResource {
   public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
+      descriptor.setAcceptAllAudioAsMusic(true);
       descriptor.getAssetsToImport().add(AssetType.MUSIC);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);

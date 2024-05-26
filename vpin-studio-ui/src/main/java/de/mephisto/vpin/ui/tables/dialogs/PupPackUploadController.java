@@ -52,8 +52,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   private File selection;
 
   private boolean result = false;
-  private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
+
   private UploaderAnalysis analysis;
 
   @FXML
@@ -135,10 +134,6 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   public boolean uploadFinished() {
     return result;
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   public void setFile(File file, UploaderAnalysis uploaderAnalysis, Stage stage) {
