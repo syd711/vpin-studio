@@ -35,6 +35,11 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validator-buttons.png" width="300" />
 
+- **Table Management **: Replaced magnifying glass icon of validator actions with a "check" icon.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/launcher-menu.png" width="300" />
+  
+
 - **Backglass Manager**: @leprinco hugely improved the **Backglass Manager** by adding additional columns that show the **FullDMD** and **Grill** information. See for yourself:
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager.png" width="900" />
@@ -53,3 +58,4 @@
 - **NVOffset Validator**: Improved validator message.
 - **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.
 - **Highscore Parser**: Added support for "Thunderbirds".
+- **Tooltips**: Increased general duration from 5 seconds to 10 seconds.

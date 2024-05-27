@@ -1234,3 +1234,8 @@
     -fx-padding: 15 15 -30 15;
 }
  */
+
+ .tooltip {
+    -fx-show-delay: 250ms;
+    -fx-show-duration: 10s;
+ }
