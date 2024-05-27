@@ -1,7 +1,7 @@
 ## Release Notes 2.20.0
 
 - **Universal Uploader**: All upload and file drag/drop operations have been re-implemented. The overall goal is to be able to upload everything everywhere. This includes:
-  - Dropping/Uploading files out of archives (e.g. 7z windows) to the table overview or to table asset screen.
+  - Dropping/Uploading **files out of archives (e.g. 7z windows)** to the table overview **or** to the table asset screens.
   - Dropping/Uploading complete bundles of files for existing tables or...
   - Dropping/Uploading complete table bundles which include not only the VPX file, but also backglass files, PUP packs and Popper media, etc.
   - Added Uploading into subfolders.
@@ -14,7 +14,7 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="900" />
 
 - **Table Management / Uploads**: Added upload options for **.cfg and .nv** files.
-- **Table Management / Uploads**: Re-design of some upload dialogs, to provide more information what files have been found and for what table.
+- **Table Management / Uploads**: Re-design of most upload dialogs, to provide more information what files have been found and for what table.
 - **Table Management / Uploads**: Added new entry **Media Pack Upload** which allows to upload archives that contain media files for Popper screens. The content of the files are dispatched to the PinUP Popper screens based on their name and path inside the archive. 
 
 - **Table Management**: Added **Notes** editor which is available when **clicking on the status icon**. You can use some keywords to force the notes icon in different colors.
@@ -35,7 +35,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validator-buttons.png" width="300" />
 
-- **Table Management **: Replaced magnifying glass icon of validator actions with a "check" icon.
+- **Table Management**: Replaced VPX launch button with a drop-down menu. The default button remain the default launch button for the table, but you can immediately launch a table with other VPX.exe files this way.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/launcher-menu.png" width="300" />
   
@@ -50,12 +50,12 @@
 ### Bugfixes
 
 - **Table Overview**: Fixed suppressed errors in the VPS updates column.
-- **ALt Color Validator**: .vni files are not mandatory when a .pal is present.
+- **ALT Color Validator**: .vni files are not mandatory when a .pal is present.
 - **Uploads**: Fixed several issues which provided temp files from being deleted (and polluting the system's temp folder).
 - **Removed fuzzy version matching**: The version set for the POPPER field **GAMEVER** must match with the VPS version exactly now. The previous version comparison allowed some fuzzy matching.
 - **Keep existing VPX filenames**: Fixed issue that for the **Keep Existing VPX filenames** flag was ignored for uploaded zip files.
 - **Table Count Label**: Fixed table count label of the table overview so that it always shows the amount of selected tables.
-- **NVOffset Validator**: Improved validator message.
+- **NVOffset Validator**: Improved validator message by showing the actual offsets.
 - **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.
 - **Highscore Parser**: Added support for "Thunderbirds".
 - **Tooltips**: Increased general duration from 5 seconds to 10 seconds.
