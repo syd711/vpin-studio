@@ -39,7 +39,7 @@ public class GameStatusService implements PopperStatusChangeListener, Initializi
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    status.setGameId(event.getGame().getId());
+    resetStatus();
     highscoreMonitoringService.stopMonitoring();
   }
 
@@ -50,18 +50,22 @@ public class GameStatusService implements PopperStatusChangeListener, Initializi
 
   @Override
   public void popperExited() {
-    status.setGameId(-1);
+    resetStatus();
     highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
   public void popperRestarted() {
-    status.setGameId(-1);
+    resetStatus();
     highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
   public void afterPropertiesSet() {
     popperService.addPopperStatusChangeListener(this);
+  }
+
+  public void resetStatus() {
+    status.setGameId(-1);
   }
 }

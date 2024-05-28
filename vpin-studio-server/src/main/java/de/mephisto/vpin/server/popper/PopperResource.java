@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,20 @@ public class PopperResource {
   @Autowired
   private PopperService popperService;
 
+  @Autowired
+  private GameStatusService gameStatusService;
+
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@RequestParam("table") String table) {
     LOG.info("Received popper game launch event for " + table.trim());
     Game game = resolveGame(table);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
+      return false;
+    }
+
+    if (gameStatusService.getStatus().getGameId() == game.getId()) {
+      LOG.info("Skipped launch event, since the game has been marked as active already.");
       return false;
     }
 
@@ -51,6 +60,11 @@ public class PopperResource {
     Game game = resolveGame(table);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
+      return false;
+    }
+
+    if (!gameStatusService.getStatus().isActive()) {
+      LOG.info("Skipped exit event, since the no game is currently running.");
       return false;
     }
 
