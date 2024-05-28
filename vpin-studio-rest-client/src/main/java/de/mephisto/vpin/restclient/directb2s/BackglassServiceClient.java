@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +42,15 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public DirectB2SData getDirectB2SData(int gameId) {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
+  }
+
+  public InputStream getDirectB2sBackground(int gameId) throws IOException {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/background/" + gameId;
+    return new URL(url).openStream();
+  }
+  public InputStream getDirectB2sDmd(int gameId) throws IOException {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + gameId;
+    return new URL(url).openStream();
   }
 
   public DirectB2SData getDirectB2SData(DirectB2S directB2S) throws Exception {

@@ -18,16 +18,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -48,6 +54,37 @@ public class DirectB2SResource {
   @GetMapping("/{id}")
   public DirectB2SData getData(@PathVariable("id") int id) {
     return backglassService.getDirectB2SData(id);
+  }
+
+  @GetMapping("/background/{id}")
+  public ResponseEntity<Resource> getBackground(@PathVariable("id") int id) {
+    return download(backglassService.getBackgroundBase64(id), "background.png");
+  }
+  @GetMapping("/dmdimage/{id}")
+  public ResponseEntity<Resource> getDmdImage(@PathVariable("id") int id) {
+    return download(backglassService.getDmdBase64(id), "dmd.png");
+  }
+
+  protected ResponseEntity<Resource> download(String base64, String filename) {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.add("Pragma", "no-cache");
+    headers.add("Expires", "0");
+
+    if (base64==null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    byte[] image = DatatypeConverter.parseBase64Binary(base64);
+    ByteArrayResource resource = new ByteArrayResource(image);
+
+    return ResponseEntity.ok()
+            .headers(headers)
+            .contentLength(resource.contentLength())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .body(resource);
   }
 
   @PostMapping("/get")
