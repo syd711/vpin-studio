@@ -219,6 +219,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   Property<Boolean> missingDMDImageFilter = new SimpleBooleanProperty(false);
   Property<Boolean> notFullDMDRatioFilter = new SimpleBooleanProperty(false);
   Property<Boolean> scoresAvailableFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> missingTableFilter = new SimpleBooleanProperty(false);
   
   Property<B2SVisibility> grillVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
   Property<Boolean> b2sdmdVisibilityFilter = new SimpleBooleanProperty(false);
@@ -262,7 +263,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   @FXML
   private void onBackglassDownload() {
     if (tableData.isBackgroundAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData.getGameId())) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         export(in);
       } catch (IOException ioe) {
         LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
@@ -273,7 +274,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   @FXML
   private void onDMDDownload() {
     if (tableData.isDmdImageAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData.getGameId())) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
         export(in);
       } catch (IOException ioe) {
         LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
@@ -319,7 +320,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getName() + ".directb2s\"", null, null, selectedItem.getName());
+      String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getFileName() + "\"", null, null, selectedItem.getName());
       if (newName != null) {
         if (!FileUtils.isValidFilename(newName)) {
           WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
@@ -344,7 +345,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Duplicate");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getFileName() + "\"?", null, "Duplicate");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getBackglassServiceClient().duplicateBackglass(selectedItem.backglass);
@@ -362,7 +363,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
       if (selectedItem != null) {
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getName() + ".directb2s\"?", null, "Delete");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getFileName() + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           client.getBackglassServiceClient().deleteBackglass(selectedItem.backglass);
           if (game != null) {
@@ -798,7 +799,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
       if (tableData.isBackgroundAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData.getGameId())) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
           Image image = new Image(in);
           if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
             PixelReader reader = image.getPixelReader();
@@ -816,7 +817,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
 
       if (tableData.isDmdImageAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData.getGameId())) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
           Image image = new Image(in);
           dmdThumbnailImage.setImage(image);
           downloadDMDBtn.setDisable(false);
@@ -957,7 +958,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         this.grillHeight = backglassData.getGrillHeight();
 
         if (backglassData.isDmdImageAvailable()) {
-          try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(backglassData.getGameId())) {
+          try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(backglassData)) {
             Image image = new Image(in);
             this.hasDmd = true;
             this.dmdWidth = (int) image.getWidth();
@@ -1010,11 +1011,14 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       return loaded;
     }
 
+    public String getName() {
+      return backglass.getName();
+    }
     public int getEmulatorId() {
       return backglass.getEmulatorId();
     }
-    public String getName() {
-      return backglass.getName();
+    public String getFileName() {
+      return backglass.getFileName();
     }
     public boolean isVpxAvailable() {
       return backglass.isVpxAvailable();
@@ -1032,6 +1036,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         return false;
       }
       if (controller.scoresAvailableFilter.getValue() && nbScores<=0) {
+        return false;
+      }
+      if (controller.missingTableFilter.getValue() && backglass.isVpxAvailable()) {
         return false;
       }
       if (equalsVisibility(controller.grillVisibilityFilter.getValue(), this.hideGrill)) {

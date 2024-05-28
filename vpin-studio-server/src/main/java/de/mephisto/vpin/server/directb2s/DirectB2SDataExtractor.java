@@ -12,7 +12,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
@@ -27,9 +26,9 @@ public class DirectB2SDataExtractor extends DefaultHandler {
   public DirectB2SDataExtractor() {
   }
 
-  public DirectB2SData extractData(@NonNull File directB2S, int emulatorId, int gameId) {
+  public DirectB2SData extractData(@NonNull File directB2S, int emulatorId, String filename, int gameId) {
     this.data = new DirectB2SData();
-    this.data.setFilename(directB2S.getName());
+    this.data.setFilename(filename);
     this.data.setFilesize(directB2S.length());
     this.data.setEmulatorId(emulatorId);
     this.data.setGameId(gameId);
