@@ -3,9 +3,8 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -127,18 +126,18 @@ public class TableOverviewContextMenu {
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
       uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndImportTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport));
+      uploadAndImportTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndImport));
       ctxMenu.getItems().add(uploadAndImportTableItem);
 
       MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
       uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndReplace));
+      uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndReplace));
       ctxMenu.getItems().add(uploadAndReplaceTableItem);
 
       MenuItem uploadAndCloneTableItem = new MenuItem("Upload and Clone Table");
       uploadAndCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       uploadAndCloneTableItem.setDisable(game.getGameFileName().contains("\\"));
-      uploadAndCloneTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadDescriptor.uploadAndClone));
+      uploadAndCloneTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndClone));
       ctxMenu.getItems().add(uploadAndCloneTableItem);
 
       Menu uploadMenu = new Menu("Upload...");
@@ -158,22 +157,38 @@ public class TableOverviewContextMenu {
       uploadB2SItem.setOnAction(actionEvent -> tableOverviewController.onBackglassUpload());
       uploadMenu.getItems().add(uploadB2SItem);
 
+      MenuItem uploadCfgItem = new MenuItem("Upload .cfg File");
+      uploadCfgItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadCfgItem.setOnAction(actionEvent -> tableOverviewController.onCfgUpload());
+      uploadMenu.getItems().add(uploadCfgItem);
+
       MenuItem dmdItem = new MenuItem("Upload DMD Pack");
       dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       dmdItem.setOnAction(actionEvent -> tableOverviewController.onDMDUpload());
       uploadMenu.getItems().add(dmdItem);
 
-      MenuItem iniItem = new MenuItem("Upload INI File");
+      MenuItem iniItem = new MenuItem("Upload .ini File");
       iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       iniItem.setOnAction(actionEvent -> tableOverviewController.onIniUpload());
       uploadMenu.getItems().add(iniItem);
+
+      MenuItem mediaItem = new MenuItem("Upload Media Pack");
+      mediaItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      mediaItem.setOnAction(actionEvent -> tableOverviewController.onMediaUpload());
+      uploadMenu.getItems().add(mediaItem);
 
       MenuItem musicItem = new MenuItem("Upload Music Pack");
       musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       musicItem.setOnAction(actionEvent -> tableOverviewController.onMusicUpload());
       uploadMenu.getItems().add(musicItem);
 
-      MenuItem povItem = new MenuItem("Upload POV File");
+
+      MenuItem uploadNvItem = new MenuItem("Upload .nv File");
+      uploadNvItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      uploadNvItem.setOnAction(actionEvent -> tableOverviewController.onNvRamUpload());
+      uploadMenu.getItems().add(uploadNvItem);
+
+      MenuItem povItem = new MenuItem("Upload .pov File");
       povItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       povItem.setDisable(tableView.getSelectionModel().isEmpty());
       povItem.setOnAction(actionEvent -> tableOverviewController.onPOVUpload());
@@ -196,12 +211,12 @@ public class TableOverviewContextMenu {
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
     MenuItem validateItem = new MenuItem("Validate");
-    validateItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
+    validateItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
     validateItem.setOnAction(actionEvent -> tableOverviewController.onValidate());
     ctxMenu.getItems().add(validateItem);
 
     MenuItem validateAllItem = new MenuItem("Validate All");
-    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-magnify"));
+    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
     validateAllItem.setOnAction(actionEvent -> tableOverviewController.onValidateAll());
     ctxMenu.getItems().add(validateAllItem);
 

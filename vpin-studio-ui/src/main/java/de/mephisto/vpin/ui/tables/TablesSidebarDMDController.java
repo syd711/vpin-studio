@@ -10,11 +10,9 @@ import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -152,7 +150,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openDMDUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openDMDUploadDialog(game.get(), null, null);
     }
   }
 
@@ -215,8 +213,5 @@ public class TablesSidebarDMDController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-
-    pupRoot.setOnDragOver(new FileDragEventHandler(pupRoot, true, "zip"));
-    pupRoot.setOnDragDropped(new PupPackFileDropEventHandler(tablesSidebarController));
   }
 }

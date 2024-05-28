@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -245,7 +246,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value, getLabelCss(cellData.getValue())));
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, gameRoom, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -265,10 +267,10 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     gameRoomColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
-      if(gameRoom == null) {
+      if (gameRoom == null) {
         return new SimpleObjectProperty<>("Invalid Game Room URL");
       }
-      return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom,  getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom, getLabelCss(cellData.getValue())));
     });
 
     tableView.setPlaceholder(new Label("                      Try iScored subscriptions!\n" +
@@ -412,6 +414,15 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     String status = "";
     if (value.getValidationState().getCode() > 0) {
       status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+    }
+    else {
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      if (gameRoom != null) {
+        IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
+        if (gameByVps == null) {
+          status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+        }
+      }
     }
     return status;
   }

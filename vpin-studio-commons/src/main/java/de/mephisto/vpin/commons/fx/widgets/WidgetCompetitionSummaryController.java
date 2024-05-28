@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -145,7 +145,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     topBox.setVisible(true);
     emptylabel.setVisible(false);
 
-    GameRepresentation game = OverlayWindowFX.client.getGame(competition.getGameId());
+    GameRepresentation game = ServerFX.client.getGame(competition.getGameId());
     if (game != null) {
       if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
         durationLabel.setText("Table Subscription");
@@ -203,10 +203,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
     }
     else {
-      latestCompetitionScore = OverlayWindowFX.client.getCompetitionScore(competition.getId());
+      latestCompetitionScore = ServerFX.client.getCompetitionScore(competition.getId());
     }
 
-    if (latestCompetitionScore != null) {
+    if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
       List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
 
       int index = 0;
@@ -252,17 +252,17 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
         Image image = new Image(gameMediaItem);
         competitionWheelImage.setImage(image);
       }
       else {
-        Image wheel = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+        Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
         competitionWheelImage.setImage(wheel);
       }
     }
 
-    Image image = new Image(OverlayWindowFX.client.getCompetitionBackground(competition.getGameId()));
+    Image image = new Image(ServerFX.client.getCompetitionBackground(competition.getGameId()));
     BackgroundImage myBI = new BackgroundImage(image,
       BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
       BackgroundSize.DEFAULT);

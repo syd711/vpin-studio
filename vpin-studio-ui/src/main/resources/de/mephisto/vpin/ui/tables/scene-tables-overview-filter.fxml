@@ -127,6 +127,15 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ComboBox>
+                  <Label layoutX="10.0" layoutY="655.0" text="Comments" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ComboBox fx:id="notesCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
                      <children>
                         <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />

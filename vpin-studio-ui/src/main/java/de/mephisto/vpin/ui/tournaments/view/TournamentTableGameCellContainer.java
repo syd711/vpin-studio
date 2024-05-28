@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.TournamentHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +25,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
   public static final int LABEL_WIDTH = 76;
 
-  public TournamentTableGameCellContainer(GameRepresentation game, TournamentTable tournamentTable) {
+  public TournamentTableGameCellContainer(GameRepresentation game, Tournament tournament, TournamentTable tournamentTable) {
     super(3);
 
     String name = tournamentTable.getDisplayName();
@@ -34,7 +33,7 @@ public class TournamentTableGameCellContainer extends HBox {
       name = name.substring(0, 39) + "...";
     }
 
-    InputStream gameMediaItem = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+    InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (game != null) {
       InputStream gameItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
       if (gameItem != null) {
@@ -54,11 +53,17 @@ public class TournamentTableGameCellContainer extends HBox {
 
     Label title = new Label(name);
     title.setTooltip(new Tooltip(tournamentTable.getDisplayName()));
-    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + TournamentHelper.getLabelCss(tournamentTable));
+    title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
     column.getChildren().add(title);
 
     if (game == null) {
       Label label = new Label("Table not installed");
+      label.setStyle("-fx-padding: 3 6 3 6;");
+      label.getStyleClass().add("error-title");
+      column.getChildren().add(label);
+    }
+    else if (!tournamentTable.isEnabled()) {
+      Label label = new Label("Table not enabled right now");
       label.setStyle("-fx-padding: 3 6 3 6;");
       label.getStyleClass().add("error-title");
       column.getChildren().add(label);
@@ -69,10 +74,10 @@ public class TournamentTableGameCellContainer extends HBox {
       row.setAlignment(Pos.BASELINE_LEFT);
       Label startDateLabel = new Label("Start:");
       startDateLabel.setPrefWidth(LABEL_WIDTH);
-      startDateLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      startDateLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       Label startDate = new Label(SimpleDateFormat.getDateTimeInstance().format(tournamentTable.getStartDate()));
-      startDate.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      startDate.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       row.getChildren().add(startDateLabel);
       row.getChildren().add(startDate);
@@ -84,10 +89,10 @@ public class TournamentTableGameCellContainer extends HBox {
       row.setAlignment(Pos.BASELINE_LEFT);
       Label endDateLabel = new Label("End:");
       endDateLabel.setPrefWidth(LABEL_WIDTH);
-      endDateLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      endDateLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       Label endDate = new Label(SimpleDateFormat.getDateTimeInstance().format(tournamentTable.getEndDate()));
-      endDate.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      endDate.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       row.getChildren().add(endDateLabel);
       row.getChildren().add(endDate);
@@ -99,10 +104,10 @@ public class TournamentTableGameCellContainer extends HBox {
       remainingRow.setAlignment(Pos.BASELINE_LEFT);
       Label remainingLabel = new Label("Remaining:");
       remainingLabel.setPrefWidth(LABEL_WIDTH);
-      remainingLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      remainingLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-weight: bold;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       Label remaining = new Label(tournamentTable.remainingDays() + " days");
-      remaining.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournamentTable));
+      remaining.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;" + TournamentHelper.getLabelCss(tournament, tournamentTable));
 
       remainingRow.getChildren().add(remainingLabel);
       remainingRow.getChildren().add(remaining);
@@ -112,8 +117,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
 
     if (game != null) {
-      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
-      if (StringUtils.isEmpty(summary.getRaw())) {
+      if (StringUtils.isEmpty(game.getHighscoreType())) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

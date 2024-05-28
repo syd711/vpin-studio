@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -13,7 +13,7 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
-import de.mephisto.vpin.server.util.ZipUtil;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,7 +38,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
-import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
 
@@ -65,7 +64,7 @@ public class SystemResource {
 
   @GetMapping("/pausemenu/test/{gameId}/{duration}")
   public boolean testPauseMenu(@PathVariable("gameId") int gameId, @PathVariable("duration") int duration) {
-    OverlayWindowFX.getInstance().testPauseMenu(gameId, duration);
+    ServerFX.getInstance().testPauseMenu(gameId, duration);
     return true;
   }
 

@@ -5,6 +5,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -50,7 +52,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                            </graphic>
                         </Button>
                         <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PinVol">
@@ -58,7 +60,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
                            </graphic>
                         </Button>
                         <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop PinVol" textFill="WHITE">
@@ -66,7 +68,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
                            </graphic>
                         </Button>
                      </children>
@@ -76,6 +78,44 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </VBox>
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Volume Settings">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Adjust system volume settings." textFill="WHITE" />
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+               <children>
+                  <Label styleClass="default-text" text="Initial System Volume:" textFill="WHITE" />
+                  <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
+                  <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
+                  <Label>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="Set the value to '0' to disable the volume initialization." wrapText="true" />
+                     </tooltip>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </HBox>
+            <Button mnemonicParsing="false" onAction="#onVolumeApply" text="Apply Now" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </Button>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

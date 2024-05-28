@@ -6,7 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -49,27 +50,28 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
-  public int uploadTable(File file, TableUploadDescriptor tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/table";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("mode", tableUploadDescriptor.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
-      ResponseEntity<Integer> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), Integer.class);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
       throw e;
     }
   }
 
-  public boolean uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor proccessTableUpload(UploadDescriptor uploadDescriptor) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;
-      return Boolean.TRUE.equals(createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.ROM, listener), Boolean.class).getBody());
-    } catch (Exception e) {
-      LOG.error("Rom upload failed: " + e.getMessage(), e);
+      return getRestClient().post(API + "games/process/table", uploadDescriptor, UploadDescriptor.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to process table: " + e.getMessage(), e);
       throw e;
     }
   }
@@ -77,7 +79,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   public void deleteGame(@NonNull DeleteDescriptor descriptor) {
     try {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
     }
   }
@@ -85,7 +88,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
     try {
       return Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to filter games: " + e.getMessage(), e);
     }
     return null;
@@ -96,7 +100,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
-        (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }
@@ -129,7 +133,8 @@ public class GamesServiceClient extends VPinStudioClientService {
         }
       }
       return gameRepresentation;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to retrieve game: " + e.getMessage());
     }
     return null;
@@ -142,7 +147,8 @@ public class GamesServiceClient extends VPinStudioClientService {
         this.allGames.clear();
       }
       return unknowns;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read unknowns game ids: " + e.getMessage(), e);
     }
     return Collections.emptyList();
@@ -152,7 +158,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
       return this.allGames;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read knowns games: " + e.getMessage(), e);
     }
     return Collections.emptyList();
@@ -163,7 +170,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
       return this.allGames;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
       throw e;
     }
@@ -198,7 +206,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       final RestTemplate restTemplate = new RestTemplate();
       return Arrays.asList(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "games/ids", Integer[].class));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read game ids: " + e.getMessage(), e);
     }
     return Collections.emptyList();
@@ -207,7 +216,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   public ScoreSummaryRepresentation getGameScores(int id) {
     try {
       return getRestClient().get(API + "games/scores/" + id, ScoreSummaryRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
     }
     return null;
@@ -220,7 +230,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   public HighscoreMetadataRepresentation scanGameScore(int id) {
     try {
       return getRestClient().get(API + "games/scanscore/" + id, HighscoreMetadataRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read game scores " + id + ": " + e.getMessage(), e);
     }
     return null;
@@ -241,21 +252,11 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation saveGame(GameRepresentation game) throws Exception {
     try {
       return getRestClient().post(API + "games/save", game, GameRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save game: " + e.getMessage(), e);
       throw e;
     }
-  }
-
-  public List<GameRepresentation> getGamesWithScores() {
-    List<GameRepresentation> gameList = this.getGamesCached();
-    List<GameRepresentation> result = new ArrayList<>();
-    for (GameRepresentation gameRepresentation : gameList) {
-      if (!StringUtils.isEmpty(gameRepresentation.getHighscoreType())) {
-        result.add(gameRepresentation);
-      }
-    }
-    return result;
   }
 
   public List<GameRepresentation> getGamesCached() {

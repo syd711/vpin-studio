@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
@@ -11,9 +11,9 @@ public class WidgetController {
   public static Font scoreFontText;
 
   static {
-    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);
-    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("digital_counter_7.ttf"), 22);
-    Font.loadFont(OverlayWindowFX.class.getResourceAsStream("impact.ttf"), 22);
+    Font.loadFont(ServerFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);
+    Font.loadFont(ServerFX.class.getResourceAsStream("digital_counter_7.ttf"), 22);
+    Font.loadFont(ServerFX.class.getResourceAsStream("impact.ttf"), 22);
 
     String SCORE_FONT_NAME = "Digital Counter 7";
     String SCORE_TEXT_FONT_NAME = "Monospace";

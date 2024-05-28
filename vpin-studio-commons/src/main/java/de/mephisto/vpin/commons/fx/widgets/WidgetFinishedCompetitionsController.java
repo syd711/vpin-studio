@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -55,7 +55,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
     competitionsVBox.getChildren().removeAll(competitionsVBox.getChildren());
 
     new Thread(() -> {
-      List<CompetitionRepresentation> competitions = OverlayWindowFX.client.getFinishedCompetitions(3);
+      List<CompetitionRepresentation> competitions = ServerFX.client.getFinishedCompetitions(3);
 
       Platform.runLater(() -> {
         root.setVisible(!competitions.isEmpty());

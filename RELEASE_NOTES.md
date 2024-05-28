@@ -1,15 +1,61 @@
-## 2.19.0
+## Release Notes 2.20.0
 
-- **VPS Table Matching**: Introduced new VPS table matching. Thanks to @leprinco the VPS table matching has been improved and is using a real matching library now.
-- **VPS Table Mappings**: VPS tables without links or broken links are not filtered anymore. These entries have been filtered before, but it makes sense to keep them for the auto-matching and showing them as installed versions.
-- **VPS Table Details Section / VPS Overview**: Added table type (VPX/FP) as badge because FP versions are shown now too. 
-- **Table Filters**: Splitted missing VPS matching filter option into "Missing VPS Table Mapping" and "Missing VPS Table Version Mapping" options.
-- **Table Overview / VPS Status Column**: Reformatted and renamed this column so that users can immediately see if a table is properly mapped and if updates are available.
+- **Universal Uploader**: All upload and file drag/drop operations have been re-implemented. The overall goal is to be able to upload everything everywhere. This includes:
+  - Dropping/Uploading files out of archives (e.g. 7z windows) to the table overview or to table asset screen.
+  - Dropping/Uploading complete bundles of files for existing tables or...
+  - Dropping/Uploading complete table bundles which include not only the VPX file, but also backglass files, PUP packs and Popper media, etc.
+  - Added Uploading into subfolders.
+  - **RAR files are not supported, but you can open and drop contents from the 7z archive window!**
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/universal-upload.png" width="900" />
+
+- **Table Management / Table Uploads**: Re-design of the table upload dialog with additional features.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/uploads.png" width="900" />
+
+- **Table Management / Uploads**: Added upload options for **.cfg and .nv** files.
+- **Table Management / Uploads**: Re-design of some upload dialogs, to provide more information what files have been found and for what table.
+- **Table Management / Uploads**: Added new entry **Media Pack Upload** which allows to upload archives that contain media files for Popper screens. The content of the files are dispatched to the PinUP Popper screens based on their name and path inside the archive. 
+
+- **Table Management**: Added **Notes** editor which is available when **clicking on the status icon**. You can use some keywords to force the notes icon in different colors.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/notes.png" width="700" />
+
+- **Table Management / Filters**: Added filter option to filter for different comment types.
+- **Preferences / PinVol & Volume**: Added option to set the initial system volume when the cabinet/VPin Server is started.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/volume-control.png" width="400" />
+
+- **Table Validators**: Added validator for outdated recordings.
+- **Table Management / Backglasses**: Added "Delete" button.
+- **Table Management / ALT Sound**: Added "Delete" button.
+- **Table Management / ALT Color**: Added "Delete" button.
+- **Table Management / PUP Packs**: Added "Delete" button.
+- **Table Management / Validations**: Added preferences button to the validator message section to provide a quick-access for enabling/disabling them.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/validator-buttons.png" width="300" />
+
+- **Table Management **: Replaced magnifying glass icon of validator actions with a "check" icon.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/launcher-menu.png" width="300" />
+  
+
+- **Backglass Manager**: @leprinco hugely improved the **Backglass Manager** by adding additional columns that show the **FullDMD** and **Grill** information. See for yourself:
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager.png" width="900" />
+
+- **Validation**: Replaced magnifying glass icon of validator actions with a "check" icon.
+
 
 ### Bugfixes
 
-- **Highscore Parsing**: Fixed parsing issue caused by the new formatting. Unfortunately the formatting of the last patch broke some score parsing for some score that already have been formatted.
-- **Highscore Parsing**: Fixed special character issue that happened for some users in combination with different locale settings and pinemhi. @leprinco found a nice fix there so that hopefully other users won't be bothered with this issue anymore.
-- **MAME Settings**: Skipped some of the superflous MAME reload calls since these very expensive. The MAME cache isn't cleared on table reload anymore, but only when the **Reload** button in the MAME section is pressed or for single tables.
-- **VPS Reset**: Fixed broken "VPS Reset" button when used in the **Table Data Manager**. Since the fields have no been cleared on reset, the old value was still persisted.
-- **NVOffset Validator***: Improved this validator so that if a mismatch is detected, the other table is shown in the message too. The validator has also been changed that not only a NVOffset must have been set for the other tables, but these also have to differ.
+- **Table Overview**: Fixed suppressed errors in the VPS updates column.
+- **ALt Color Validator**: .vni files are not mandatory when a .pal is present.
+- **Uploads**: Fixed several issues which provided temp files from being deleted (and polluting the system's temp folder).
+- **Removed fuzzy version matching**: The version set for the POPPER field **GAMEVER** must match with the VPS version exactly now. The previous version comparison allowed some fuzzy matching.
+- **Keep existing VPX filenames**: Fixed issue that for the **Keep Existing VPX filenames** flag was ignored for uploaded zip files.
+- **Table Count Label**: Fixed table count label of the table overview so that it always shows the amount of selected tables.
+- **NVOffset Validator**: Improved validator message.
+- **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.
+- **Highscore Parser**: Added support for "Thunderbirds".
+- **Tooltips**: Increased general duration from 5 seconds to 10 seconds.

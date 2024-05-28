@@ -78,7 +78,11 @@ public class BackglassService {
 
   public boolean deleteBackglass(File b2sFile) {
     cacheDirectB2SData.remove(b2sFile.getPath());
-    return b2sFile.exists() && b2sFile.delete();
+    if (b2sFile.exists() && b2sFile.delete()) {
+      LOG.info("Deleted " + b2sFile.getAbsolutePath());
+      return true;
+    }
+    return false;
   }
 
   public DirectB2SData getDirectB2SData(@NonNull DirectB2S directB2S) {

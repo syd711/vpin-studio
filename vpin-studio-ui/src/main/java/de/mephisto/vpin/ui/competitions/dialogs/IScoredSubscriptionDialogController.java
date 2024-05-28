@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.Game;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -135,8 +135,8 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-        List<Game> games = gameRoom.getGames();
-        for (Game game : games) {
+        List<IScoredGame> games = gameRoom.getGames();
+        for (IScoredGame game : games) {
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
           if (first.isPresent()) {
@@ -237,7 +237,8 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value, getLabelCss(cellData.getValue())));
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, gameRoom, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {

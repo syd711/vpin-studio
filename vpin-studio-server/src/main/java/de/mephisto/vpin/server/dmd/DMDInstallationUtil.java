@@ -1,24 +1,28 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);
 
-  public static boolean unzip(File archiveFile, File tablesFolder) {
-    boolean unpacked = false;
-    File dmdFolder = null;
+  public static void unzip(File archiveFile, File tablesFolder, String dmdFolder) {
     try {
+      if (dmdFolder.endsWith("/")) {
+        dmdFolder.substring(0, dmdFolder.length() - 1);
+      }
+
+      String dmdFolderName = dmdFolder;
+      if (dmdFolderName.contains("/")) {
+        dmdFolderName = dmdFolderName.substring(dmdFolderName.lastIndexOf("/") + 1);
+      }
+
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
@@ -26,45 +30,30 @@ public class DMDInstallationUtil {
 
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
-          String name = zipEntry.getName();
-          String folderName = name.toLowerCase();
-          if (StringUtils.endsWithIgnoreCase(folderName, "dmd/") || folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase()) || folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
-            dmdFolder = new File(tablesFolder, name);
-            dmdFolder.mkdirs();
-            LOG.info("Created/Found DMD folder \"" + dmdFolder.getAbsolutePath() + "\"");
-          }
-          else if (dmdFolder != null && name.contains(dmdFolder.getName())) {
-            File newFolder = new File(dmdFolder, name.substring(name.indexOf(dmdFolder.getName()) + dmdFolder.getName().length() + 1));
-            if (!newFolder.mkdirs()) {
-              fileInputStream.close();
-              zis.closeEntry();
-              zis.close();
-
-              throw new IOException("Failed to create directory " + newFolder.getAbsolutePath());
-            }
-          }
+          zis.closeEntry();
+          zipEntry = zis.getNextEntry();
+          continue;
         }
-        else if (dmdFolder != null && zipEntry.getName().contains(dmdFolder.getName())) {
-          String name = zipEntry.getName();
-          // fix for Windows-created archives
-          if (name.contains("/")) {
-            name = name.substring(name.indexOf(dmdFolder.getName()) + dmdFolder.getName().length() + 1);
+
+        String name = zipEntry.getName().replaceAll("\\\\", "/");
+        if (name.startsWith(dmdFolder)) {
+          String subPath = name.substring(name.indexOf(dmdFolderName));
+          File targetFile = new File(tablesFolder, subPath);
+          targetFile.getParentFile().mkdirs();
+          if (targetFile.exists() && !targetFile.delete()) {
+            LOG.error("Failed to delete existing DMD file " + targetFile.getAbsolutePath());
+            continue;
           }
 
-          File target = new File(dmdFolder, name);
-          if (target.exists()) {
-            target.delete();
-          }
-
-          FileOutputStream fos = new FileOutputStream(target);
+          FileOutputStream fos = new FileOutputStream(targetFile);
           int len;
           while ((len = zis.read(buffer)) > 0) {
             fos.write(buffer, 0, len);
           }
           fos.close();
-          LOG.info("Written " + target.getAbsolutePath());
-          unpacked = true;
+          LOG.info("Written " + targetFile.getAbsolutePath());
         }
+
         zis.closeEntry();
         zipEntry = zis.getNextEntry();
       }
@@ -74,6 +63,5 @@ public class DMDInstallationUtil {
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
-    return unpacked;
   }
 }

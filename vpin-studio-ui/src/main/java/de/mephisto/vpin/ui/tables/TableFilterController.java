@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -92,6 +94,9 @@ public class TableFilterController extends BaseFilterController implements Initi
   @FXML
   private ComboBox<TableStatus> statusCombo;
 
+  @FXML
+  private ComboBox<NoteType> notesCombo;
+
   private boolean updatesDisabled = false;
   private FilterSettings filterSettings;
   private TableOverviewController tableOverviewController;
@@ -121,6 +126,7 @@ public class TableFilterController extends BaseFilterController implements Initi
   private void updateSettings(FilterSettings filterSettings) {
     updatesDisabled = true;
     statusCombo.setValue(null);
+    notesCombo.setValue(null);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
@@ -260,6 +266,19 @@ public class TableFilterController extends BaseFilterController implements Initi
       }
       else {
         filterSettings.setGameStatus(newValue.getValue());
+      }
+      applyFilter();
+    });
+
+    List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
+    noteTypes.add(0, null);
+    notesCombo.setItems(FXCollections.observableList(noteTypes));
+    notesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue == null) {
+        filterSettings.setNoteType(null);
+      }
+      else {
+        filterSettings.setNoteType(newValue);
       }
       applyFilter();
     });

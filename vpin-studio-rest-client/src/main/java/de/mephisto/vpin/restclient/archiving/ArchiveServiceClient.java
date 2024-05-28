@@ -70,7 +70,9 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     try {
       String url = getRestClient().getBaseUrl() + API + "archives/upload/";
       HttpEntity upload = createUpload(file, repositoryId, null, AssetType.ARCHIVE, listener);
-      return createUploadTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class).getBody();
+      JobExecutionResult body = createUploadTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class).getBody();
+      finalizeUpload(upload);
+      return body;
     } catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
       throw e;

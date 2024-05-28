@@ -1,12 +1,13 @@
 package de.mephisto.vpin.restclient.highscores;
 
-import de.mephisto.vpin.connectors.iscored.Game;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.Score;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 
@@ -17,10 +18,11 @@ public class ScoreSummaryRepresentation {
 
   private String raw;
 
+  @NonNull
   public static ScoreSummaryRepresentation forGameRoom(GameRoom gameRoom, String vpsTableId, String vpsVersionId) {
     ScoreSummaryRepresentation summary = new ScoreSummaryRepresentation();
     summary.setScores(new ArrayList<>());
-    Game gameByVps = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
+    IScoredGame gameByVps = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
     if (gameByVps != null) {
       List<Score> gameRoomScores = gameByVps.getScores();
       for (Score gameRoomScore : gameRoomScores) {

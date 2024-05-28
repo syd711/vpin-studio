@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
@@ -17,11 +18,42 @@ public class FileUtils {
 
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
-      if(name.contains(String.valueOf(invalidWindowsSpecificChar))) {
+      if (name.contains(String.valueOf(invalidWindowsSpecificChar))) {
         name = name.replaceAll(String.valueOf(invalidWindowsSpecificChar), "-");
       }
     }
     return name;
+  }
+
+  public static boolean deleteIfTempFile(@Nullable File file) {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    if (file != null && file.exists() && file.getAbsolutePath().startsWith(tempDir)) {
+      if (file.delete()) {
+        LOG.info("Deleted temporary upload file \"" + file.getAbsolutePath() + "\"");
+        return true;
+      }
+      else {
+        LOG.error("Failed to deleted temporary upload file \"" + file.getAbsolutePath() + "\"");
+      }
+    }
+    return false;
+  }
+
+  public static void deleteIfTempFile(@Nullable List<File> files) {
+    if (files != null) {
+      for (File f : files) {
+        deleteIfTempFile(f);
+      }
+    }
+  }
+
+  public static File createMatchingTempFile(File file) throws IOException {
+    File tmpFolder = new File(System.getProperty("java.io.tmpdir"));
+    File tempFile = new File(tmpFolder, file.getName());
+    if (tempFile.exists() && !tempFile.delete()) {
+      throw new IOException("Could not delete existing temp file \"" + tempFile.getAbsolutePath() + "\"");
+    }
+    return tempFile;
   }
 
   public static void cloneFile(File original, String updatedName) throws IOException {
@@ -119,7 +151,8 @@ public class FileUtils {
     }
     try {
       org.apache.commons.io.FileUtils.deleteDirectory(folder);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       return false;
     }
     return true;
@@ -132,6 +165,15 @@ public class FileUtils {
 
     while (target.exists()) {
       target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
+      index++;
+    }
+    return target;
+  }
+
+  public static File uniqueFolder(File target) {
+    int index = 1;
+    while (target.exists() && target.isDirectory()) {
+      target = new File(target.getParentFile(), target.getName() + " (" + index + ")");
       index++;
     }
     return target;

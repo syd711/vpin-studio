@@ -6,11 +6,13 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -45,7 +47,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public JobExecutionResult importTable(GameListItem item) throws Exception {
     try {
       return getRestClient().post(API + "popper/import", item, JobExecutionResult.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed importing tables: " + e.getMessage(), e);
       throw e;
     }
@@ -113,7 +116,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) throws Exception {
     try {
       return getRestClient().post(API + "popper/tabledetails/" + gameId, tableDetails, TableDetails.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed save table details: " + e.getMessage(), e);
       throw e;
     }
@@ -122,7 +126,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public TableDetails autoFillTableDetails(int gameId, boolean overwrite) throws Exception {
     try {
       return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId + "/" + overwrite, Collections.emptyMap(), TableDetails.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed autofilling table details: " + e.getMessage(), e);
       throw e;
     }
@@ -131,7 +136,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails) throws Exception {
     try {
       return getRestClient().post(API + "popper/tabledetails/autofillsimulate/" + gameId, tableDetails, TableDetails.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed simulating autofilling table details: " + e.getMessage(), e);
       throw e;
     }
@@ -140,12 +146,14 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws Exception {
     try {
       return getRestClient().post(API + "popper/custompoptions", options, PopperCustomOptions.class);
-    } catch (HttpClientErrorException e) {
+    }
+    catch (HttpClientErrorException e) {
       if (e.getStatusCode().is4xxClientError()) {
         throw new DatabaseLockException(e);
       }
       throw e;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed save custom options: " + e.getMessage(), e);
       throw e;
     }
@@ -172,7 +180,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       Map<String, Object> values = new HashMap<>();
       values.put("fullscreen", "true");
       return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
       throw e;
     }
@@ -183,7 +192,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
       Map<String, Object> values = new HashMap<>();
       values.put("blank", "true");
       return getRestClient().put(API + "poppermedia/media/" + gameId + "/" + screen.name(), values);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Adding blank asset failed: " + e.getMessage(), e);
       throw e;
     }
@@ -194,12 +204,30 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   }
 
 
-  public JobExecutionResult uploadMedia(File file, String uploadType, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadMedia(File file, int gameId, PopperScreen screen, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "poppermedia/upload/" + screen.name();
-      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POPPER_MEDIA, listener), JobExecutionResult.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
+      ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class);
+      finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
+      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+
+  public UploadDescriptor uploadPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "poppermedia/packupload";
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
+      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
+      return exchange.getBody();
+    }
+    catch (Exception e) {
       LOG.error("Popper media upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -227,9 +255,9 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   }
 
   public synchronized TableAssetSearch searchTableAsset(PopperScreen screen, String term) throws Exception {
-    term =term.replaceAll("/", "");
-    term =term.replaceAll("&", " ");
-    term =term.replaceAll(",", " ");
+    term = term.replaceAll("/", "");
+    term = term.replaceAll("&", " ");
+    term = term.replaceAll(",", " ");
 
     TableAssetSearch cached = getCached(screen, term);
     if (cached != null) {
@@ -256,7 +284,8 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
   public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
       return getRestClient().post(API + "poppermedia/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;
     }

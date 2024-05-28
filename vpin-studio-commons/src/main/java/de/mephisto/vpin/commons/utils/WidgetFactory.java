@@ -55,8 +55,9 @@ public class WidgetFactory {
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DISABLED_COLOR = "#B0ABAB";
   public static final String ERROR_COLOR = "#FF3333";
+  public static final String UPDATE_COLOR = "#CCFF66";
+  public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OK_COLOR = "#66FF66";
-  public static final String UPDATE_COLOR = "#FF9933";
 
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
@@ -237,7 +238,7 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-    stage.getIcons().add(new Image(OverlayWindowFX.class.getResourceAsStream("logo-64.png")));
+    stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
     return stage;
   }
 

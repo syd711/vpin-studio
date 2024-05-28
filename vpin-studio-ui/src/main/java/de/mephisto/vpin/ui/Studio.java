@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
@@ -81,7 +80,7 @@ public class Studio extends Application {
 
     //replace the OverlayFX client with the Studio one
     Studio.client = new VPinStudioClient("localhost");
-    OverlayWindowFX.client = Studio.client;
+    ServerFX.client = Studio.client;
 
     String version = client.getSystemService().getVersion();
     if (!StringUtils.isEmpty(version)) {
@@ -145,7 +144,7 @@ public class Studio extends Application {
         //replace the OverlayFX client with the Studio one
         Studio.client = client;
         createManiaClient();
-        OverlayWindowFX.client = Studio.client;
+        ServerFX.client = Studio.client;
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (!unknownGameIds.isEmpty()) {

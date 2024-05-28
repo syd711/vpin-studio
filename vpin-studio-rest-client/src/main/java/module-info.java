@@ -26,6 +26,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.altcolor;
   exports de.mephisto.vpin.restclient.archiving;
   exports de.mephisto.vpin.restclient.assets;
+  exports de.mephisto.vpin.restclient.notifications;
   exports de.mephisto.vpin.restclient.competitions;
   exports de.mephisto.vpin.restclient.directb2s;
   exports de.mephisto.vpin.restclient.highscores;

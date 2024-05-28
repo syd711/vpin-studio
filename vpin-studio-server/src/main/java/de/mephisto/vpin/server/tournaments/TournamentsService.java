@@ -3,17 +3,16 @@ package de.mephisto.vpin.server.tournaments;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
+import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.iscored.IScoredService;
-import de.mephisto.vpin.server.players.PlayerService;
+import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
+import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
@@ -24,12 +23,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class TournamentsService implements InitializingBean, PreferenceChangedListener {
+public class TournamentsService implements InitializingBean, PreferenceChangedListener, PopperStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
   @Value("${vpinmania.server.host}")
@@ -42,13 +39,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   private HighscoreService highscoreService;
 
   @Autowired
-  private PlayerService playerService;
+  private TournamentSynchronizer tournamentSynchronizer;
 
   @Autowired
-  private IScoredService iScoredService;
-
-  @Autowired
-  private GameService gameService;
+  private PopperService popperService;
 
   @Autowired
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
@@ -76,30 +70,12 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
     return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
   }
 
+  public boolean synchronize(TournamentMetaData metaData) {
+    return tournamentSynchronizer.synchronize(metaData);
+  }
+
   public boolean synchronize() {
-    try {
-      LOG.info("Running Tournament Synchronization");
-      List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-      for (Tournament tournament : tournaments) {
-        if (!tournament.isFinished()) {
-          List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-          for (TournamentTable tournamentTable : tournamentTables) {
-            if (!tournamentTable.isActive()) {
-              LOG.info("Skippd tournament score submission for " + tournamentTable + ", the table is not active.");
-              continue;
-            }
-            Game gameByVpsTable = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
-            if (gameByVpsTable != null) {
-
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to synchronize tournaments: " + e.getMessage(), e);
-    }
-
-    return false;
+    return tournamentSynchronizer.synchronize();
   }
 
   @Override
@@ -107,7 +83,6 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
     if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(propertyName)) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       this.tournamentsHighscoreChangeListener.setCabinet(cabinet);
-
       LOG.info("Registered Tournaments HighscoreChangeListener");
     }
   }
@@ -115,16 +90,39 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.TOURNAMENTS_ENABLED) {
-      TournamentConfig config = getConfig();
-      maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+      try {
+        TournamentConfig config = getConfig();
+        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaClient.getTournamentClient().getTournaments();
 
-      tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
-      highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
+        tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
+        highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
 
-      preferencesService.addChangeListener(this);
-      preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
+        preferencesService.addChangeListener(this);
+        preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
 
-      synchronize();
+        tournamentSynchronizer.setClient(maniaClient);
+        tournamentSynchronizer.synchronize();
+
+        popperService.addPopperStatusChangeListener(this);
+      } catch (Exception e) {
+        Features.TOURNAMENTS_ENABLED = false;
+        LOG.info("Error initializing tournament service: " + e.getMessage(), e);
+      }
     }
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    new Thread(() -> {
+      Game game = event.getGame();
+      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
+      tournamentSynchronizer.synchronize(game);
+    }).start();
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+
   }
 }

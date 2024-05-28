@@ -1,23 +1,29 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -25,6 +31,7 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -43,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,6 +108,12 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private PopperService popperService;
+
+  @Autowired
+  private DMDService dmdService;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -260,12 +274,11 @@ public class GameService implements InitializingBean {
       }
 
       if (descriptor.isDeleteDMDs()) {
-        if (!FileUtils.deleteFolder(game.getFlexDMDFolder())) {
-          success = false;
-        }
-
-        if (!FileUtils.deleteFolder(game.getUltraDMDFolder())) {
-          success = false;
+        DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+        if (dmdPackage != null) {
+          if (!dmdService.delete(game)) {
+            success = false;
+          }
         }
       }
 
@@ -274,7 +287,6 @@ public class GameService implements InitializingBean {
           success = false;
         }
       }
-
 
       if (descriptor.isDeleteAltColor()) {
         if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
@@ -328,11 +340,9 @@ public class GameService implements InitializingBean {
                 augmenter.deAugment();
               }
 
-              if (!mediaFile.delete()) {
+              if (mediaFile.exists() && !mediaFile.delete()) {
                 success = false;
-              }
-              else {
-                LOG.warn("Failed to delete \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
               }
             }
           }
@@ -344,6 +354,16 @@ public class GameService implements InitializingBean {
 
       Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
       byId.ifPresent(asset -> assetRepository.delete(asset));
+
+      File gameFolder = game.getGameFile().getParentFile();
+      if (gameFolder.exists()) {
+        String[] list = gameFolder.list();
+        if (list == null || list.length == 0) {
+          if (gameFolder.delete()) {
+            LOG.info("Deleted table folder " + gameFolder.getAbsolutePath());
+          }
+        }
+      }
 
       LOG.info("Deleted \"" + game.getGameDisplayName() + "\"");
     }
@@ -445,7 +465,8 @@ public class GameService implements InitializingBean {
       else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
       }
@@ -520,6 +541,7 @@ public class GameService implements InitializingBean {
         validate.add(GameValidationStateFactory.empty());
       }
       game.setValidationState(validate.get(0));
+      game.setNotes(gameDetails.getNotes());
       return;
     }
 
@@ -550,7 +572,6 @@ public class GameService implements InitializingBean {
       gameDetails.setPupId(game.getId());
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
-
 
       gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
@@ -593,6 +614,7 @@ public class GameService implements InitializingBean {
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
+    game.setNotes(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
@@ -605,6 +627,7 @@ public class GameService implements InitializingBean {
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
+
 
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
@@ -628,6 +651,7 @@ public class GameService implements InitializingBean {
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
+    gameDetails.setNotes(game.getNotes());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getVpsUpdates() != null) {
       VPSChanges vpsUpdates = game.getVpsUpdates();
@@ -651,8 +675,31 @@ public class GameService implements InitializingBean {
         gameDetailsRepository.saveAndFlush(gameDetails);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
+    }
+  }
+
+  public void resetUpdate(String rom, VpsDiffTypes diffType) {
+    try {
+      if (!StringUtils.isEmpty(rom)) {
+        List<GameDetails> byRomName = gameDetailsRepository.findByRomName(rom);
+        for (GameDetails gameDetails : byRomName) {
+          String updates = gameDetails.getUpdates();
+          if (updates != null) {
+            List<String> existingUpdates = new ArrayList<>(Arrays.asList(updates.split(",")));
+            existingUpdates.remove(diffType.name());
+            updates = String.join(",", existingUpdates);
+            gameDetails.setUpdates(updates);
+            gameDetailsRepository.saveAndFlush(gameDetails);
+            LOG.info("Resetted updates for " + gameDetails.getPupId() + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to reset update flag for rom '" + rom + "': " + e.getMessage(), e);
     }
   }
 

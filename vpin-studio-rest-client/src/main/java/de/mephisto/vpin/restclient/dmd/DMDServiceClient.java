@@ -4,11 +4,13 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -27,14 +29,16 @@ public class DMDServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "dmd/" + gameId, DMDPackage.class);
   }
 
-  public JobExecutionResult uploadDMDPackage(File file, String uploadType, int gameId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadDMDPackage(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "dmd/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.DMD_PACK, listener), JobExecutionResult.class);
+      HttpEntity upload = createUpload(file, emulatorId, null, AssetType.DMD_PACK, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("DMD upload failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("DMD upload failed: " + e.getMessage());
+      throw e;
     }
   }
 

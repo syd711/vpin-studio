@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
@@ -165,7 +166,7 @@ public class MenuController implements Initializable {
   }
 
   private void scroll(boolean left) {
-    if (menuItemsRow.getChildren().isEmpty()) {
+    if (menuItemsRow.getChildren().isEmpty() || pauseMenuItems.size() == 1) {
       return;
     }
 
@@ -199,9 +200,10 @@ public class MenuController implements Initializable {
     Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET);
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
+    parallelTransition.onFinishedProperty().set(event -> {
+      updateSelection(oldSelection, currentSelection);
+    });
     parallelTransition.play();
-
-    updateSelection(oldSelection, currentSelection);
   }
 
   private void updateSelection(Node oldNode, Node node) {
@@ -235,24 +237,18 @@ public class MenuController implements Initializable {
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);
 
-      Media media = new Media(activeSelection.getVideoUrl());
-      MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(true);
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(false);
-      mediaView.setMediaPlayer(mediaPlayer);
+      if (StateMananger.getInstance().isRunning()) {
+        Media media = new Media(activeSelection.getVideoUrl());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setCycleCount(-1);
+        mediaPlayer.setMute(false);
+        mediaView.setMediaPlayer(mediaPlayer);
+      }
     }
     else if (activeSelection.getYouTubeUrl() != null) {
-//      if (!pauseMenuSettings.isUseInternalBrowser()) {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
-//      }
-//      else {
-//        webView.setVisible(true);
-//        WebEngine engine = webView.getEngine();
-//        engine.load(activeSelection.getYouTubeUrl());
-//      }
-
       LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
     }
     else if (activeSelection.getDataImage() != null) {
@@ -262,13 +258,43 @@ public class MenuController implements Initializable {
   }
 
   public void reset() {
+    LOG.info("Resetting pause menu media items.");
     this.resetBrowser();
     this.screenImageView.setImage(null);
-    this.mediaView.setMediaPlayer(null);
-    this.mediaView.setVisible(false);
+
+    try {
+      if (mediaView != null && mediaView.getMediaPlayer() != null) {
+        LOG.info("Stopping active pause menu media player.");
+        mediaView.getMediaPlayer().stop();
+        mediaView.getMediaPlayer().dispose();
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to dispose pause menu media: " + e.getMessage());
+    }
+
+
+    Platform.runLater(() -> {
+      try {
+        Thread.sleep(SELECTION_SCALE_DURATION * 2);
+      } catch (InterruptedException e) {
+        //
+      }
+      try {
+        if (mediaView != null && mediaView.getMediaPlayer() != null) {
+          LOG.info("Stopping active pause menu media player.");
+          mediaView.getMediaPlayer().stop();
+          mediaView.getMediaPlayer().dispose();
+        }
+      } catch (Exception e) {
+        LOG.error("Failed to dispose pause menu media: " + e.getMessage());
+      }
+
+      this.mediaView.setMediaPlayer(null);
+      this.mediaView.setVisible(false);
+    });
+
     this.webView.setVisible(false);
     this.webView.getEngine().load(null);
-    LOG.info("Reset pause menu media items.");
   }
 
   public PauseMenuItem getSelection() {
@@ -363,4 +389,5 @@ public class MenuController implements Initializable {
   public void resetBrowser() {
     ChromeLauncher.exitBrowser();
   }
+
 }

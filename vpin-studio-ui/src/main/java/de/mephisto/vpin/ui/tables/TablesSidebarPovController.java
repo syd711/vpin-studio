@@ -207,7 +207,7 @@ public class TablesSidebarPovController implements Initializable {
   @FXML
   private void onPOVUpload() {
     if (game.isPresent()) {
-      TableDialogs.openPovUploadDialog(tablesSidebarController, game.get());
+      TableDialogs.directPovUpload(Studio.stage, game.get());
     }
   }
 
@@ -237,6 +237,7 @@ public class TablesSidebarPovController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     uploadBtn.setDisable(g.isEmpty());
+    deleteBtn.setDisable(g.isEmpty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     deleteBtn.setDisable(true);

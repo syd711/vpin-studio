@@ -1,8 +1,9 @@
 package de.mephisto.vpin.commons.fx;
 
-public interface Features {
-  boolean TOURNAMENTS_ENABLED = false;
-  boolean ISCORED_ENABLED = false;
-  boolean ASSET_MODE = true;
-  boolean RAR_ENABLED = false;
+public class Features {
+  public static boolean TOURNAMENTS_ENABLED = false;
+  public static boolean ISCORED_ENABLED = false;
+  public static boolean NOTIFICATIONS_ENABLED = false;
+  public static boolean ASSET_MODE = true;
+  public static boolean RAR_ENABLED = false;
 }

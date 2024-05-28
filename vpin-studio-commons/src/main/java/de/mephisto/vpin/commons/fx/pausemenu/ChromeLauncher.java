@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
@@ -64,7 +64,7 @@ public class ChromeLauncher {
       if (useToTop) {
         new Thread(() -> {
           try {
-            Thread.sleep(OverlayWindowFX.TO_FRONT_DELAY - 500);
+            Thread.sleep(ServerFX.TO_FRONT_DELAY - 500);
             NirCmd.setTopMost(title);
           } catch (InterruptedException e) {
             //ignore
@@ -72,7 +72,7 @@ public class ChromeLauncher {
         }).start();
       }
 
-      OverlayWindowFX.toFront(PauseMenu.stage, true);
+      ServerFX.toFront(PauseMenu.stage, true);
     } catch (Exception e) {
       LOG.error("Failed to show YT video: " + e.getMessage(), e);
     }

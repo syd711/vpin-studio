@@ -29,6 +29,7 @@ public interface PreferenceNames {
 
   String UI_SETTINGS = "uiSettings";
   String SERVER_SETTINGS = "serverSettings";
+  String NOTIFICATION_SETTINGS = "notificationSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";

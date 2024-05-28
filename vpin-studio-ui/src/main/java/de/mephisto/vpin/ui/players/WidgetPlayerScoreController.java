@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -57,7 +57,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     GameMediaRepresentation gameMedia = game.getGameMedia();
     GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
     if (item != null) {
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
       Image image = new Image(gameMediaItem);
       wheelImageView.setImage(image);
     }
@@ -77,7 +77,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
+    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
     BackgroundImage myBI = new BackgroundImage(backgroundImage,
       BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
       BackgroundSize.DEFAULT);
@@ -93,7 +93,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       GameMediaRepresentation gameMedia = game.getGameMedia();
       GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
         Image image = new Image(gameMediaItem);
         wheelImageView.setImage(image);
       }
@@ -114,7 +114,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     String date = DateFormat.getDateTimeInstance().format(tableScore.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(game.getId()));
+    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
     BackgroundImage myBI = new BackgroundImage(backgroundImage,
       BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
       BackgroundSize.DEFAULT);

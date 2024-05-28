@@ -10,12 +10,17 @@ import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +37,7 @@ public class Game {
   private boolean disabled;
   private boolean updateAvailable;
   private Date dateAdded;
+  private Date dateUpdated;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -55,6 +61,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
+  private String notes;
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
@@ -70,6 +77,22 @@ public class Game {
       return this.pupPack.getName();
     }
     return pupPackName;
+  }
+
+  public Date getDateUpdated() {
+    return dateUpdated;
+  }
+
+  public void setDateUpdated(Date dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
   }
 
   public boolean isVpxGame() {
@@ -162,6 +185,21 @@ public class Game {
     if (vpsChanges != null) {
       this.vpsChanges = vpsChanges;
     }
+  }
+
+  @JsonIgnore
+  public Image getWheelImage() {
+    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    Image image = null;
+    if (gameMediaItem != null) {
+      try {
+        BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
+        image = SwingFXUtils.toFXImage(bufferedImage, null);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return image;
   }
 
   @JsonIgnore
@@ -267,20 +305,6 @@ public class Game {
   public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
     File emulatorMediaFolder = this.emulator.getGameMediaFolder();
     return new File(emulatorMediaFolder, screen.name());
-  }
-
-  @JsonIgnore
-  @NonNull
-  public File getUltraDMDFolder() {
-    String folderName = this.getRom() + ".UltraDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
-  }
-
-  @JsonIgnore
-  @NonNull
-  public File getFlexDMDFolder() {
-    String folderName = getRom() + ".FlexDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
   }
 
   @NonNull

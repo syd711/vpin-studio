@@ -2,28 +2,27 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.drophandler.PupPackFileDropEventHandler;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +48,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private Button reloadBtn;
+
+  @FXML
+  private Button deleteBtn;
 
   @FXML
   private Button openBtn;
@@ -137,6 +139,20 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete PUP pack for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      deleteBtn.setDisable(true);
+      new Thread(() -> {
+        Studio.client.getPupPackService().delete(this.game.get().getId());
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+        });
+      }).start();
+    }
+  }
+
+  @FXML
   private void onOptionApply() {
     String option = optionsCombo.getValue();
     if (!StringUtils.isEmpty(option)) {
@@ -152,11 +168,11 @@ public class TablesSidebarPUPPackController implements Initializable {
           if (!StringUtils.isEmpty(jobExecutionResult.getMessage())) {
             WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getMessage());
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
-        }
-        finally {
+        } finally {
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         }
       }
@@ -174,20 +190,14 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onReload() {
-    this.reloadBtn.setDisable(true);
-
-    Platform.runLater(() -> {
-      new Thread(() -> {
-        Studio.client.getPupPackService().clearCache();
-
-        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-
-        Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
-          this.refreshView(this.game);
-        });
-      }).start();
-    });
+    if (game.isPresent()) {
+      this.reloadBtn.setDisable(true);
+      Platform.runLater(() -> {
+        ProgressDialog.createProgressDialog(new PupPackRefreshProgressModel(this.game.get()));
+        this.reloadBtn.setDisable(false);
+        this.refreshView(this.game);
+      });
+    }
   }
 
   @FXML
@@ -212,7 +222,8 @@ public class TablesSidebarPUPPackController implements Initializable {
         else {
           desktop.open(file);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open PinUpPackEditor: " + e.getMessage(), e);
       }
     }
@@ -233,7 +244,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      TableDialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openPupPackUploadDialog(game.get(), null, null);
     }
   }
 
@@ -276,6 +287,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
     openBtn.setDisable(true);
 
     txtsCombo.getItems().clear();
@@ -316,6 +328,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       emptyDataBox.setVisible(!pupPackAvailable);
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      deleteBtn.setDisable(!pupPackAvailable);
       enabledCheckbox.setSelected(false);
 
       if (pupPackAvailable) {
@@ -373,8 +386,5 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-
-    pupRoot.setOnDragOver(new FileDragEventHandler(pupRoot, true, "zip"));
-    pupRoot.setOnDragDropped(new PupPackFileDropEventHandler(tablesSidebarController));
   }
 }

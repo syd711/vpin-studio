@@ -1,12 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -18,21 +17,19 @@ import java.util.Iterator;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
 
-public class AltSoundUploadProgressModel extends ProgressModel<File> {
+public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final TablesSidebarController tablesSidebarController;
-  private final int gameId;
   private final File file;
-  private final String altSoundType;
+  private final int emulatorId;
+  private final String rom;
 
-  public AltSoundUploadProgressModel(TablesSidebarController tablesSidebarController, int gameId, String title, File file, String altSoundType) {
-    super(title);
-    this.tablesSidebarController = tablesSidebarController;
-    this.gameId = gameId;
+  public AltSoundUploadProgressModel(String title, File file, int emulatorId, String rom) {
+    super(file, title);
     this.file = file;
-    this.altSoundType = altSoundType;
+    this.emulatorId = emulatorId;
+    this.rom = rom;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -59,7 +56,7 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getAltSoundService().uploadAltSound(next, altSoundType, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, emulatorId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -67,11 +64,12 @@ public class AltSoundUploadProgressModel extends ProgressModel<File> {
       }
       else {
         Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(ALTSOUND_INSTALL, gameId);
+          EventManager.getInstance().notifyTableChange(-1, rom);
         });
       }
       progressResultModel.addProcessed();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Alt sound upload failed: " + e.getMessage(), e);
     }
   }

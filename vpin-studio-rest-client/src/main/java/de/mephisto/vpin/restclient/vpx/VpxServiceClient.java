@@ -3,13 +3,14 @@ package de.mephisto.vpin.restclient.vpx;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -33,9 +34,11 @@ public class VpxServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public void playGame(int id) {
+  public void playGame(int id, String altExe) {
     try {
-      getRestClient().put(API + "vpx/play/" + id, new HashMap<>());
+      Map<String, Object> params = new HashMap<>();
+      params.put("altExe", altExe);
+      getRestClient().put(API + "vpx/play/" + id, params);
     } catch (Exception e) {
       LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
     }
@@ -126,20 +129,25 @@ public class VpxServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public boolean uploadMusic(File file, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadMusic(File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/music/upload";
-      return Boolean.TRUE.equals(createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, AssetType.MUSIC, listener), Boolean.class).getBody());
+      HttpEntity upload = createUpload(file, -1, null, AssetType.MUSIC, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
+      return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Music upload failed: " + e.getMessage(), e);
       throw e;
     }
   }
 
-  public JobExecutionResult uploadPov(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadPov(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/pov/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.POV, listener), JobExecutionResult.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.POV, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("POV upload failed: " + e.getMessage(), e);
@@ -147,10 +155,12 @@ public class VpxServiceClient extends VPinStudioClientService {
     }
   }
 
-  public JobExecutionResult uploadIniFile(File file, String uploadType, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadIniFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "vpx/ini/upload";
-      ResponseEntity<JobExecutionResult> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, uploadType, AssetType.INI, listener), JobExecutionResult.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.INI, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Ini upload failed: " + e.getMessage(), e);

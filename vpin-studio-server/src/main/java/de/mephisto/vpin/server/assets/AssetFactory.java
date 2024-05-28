@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -34,7 +33,7 @@ public class AssetFactory {
   static {
     try {
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, OverlayWindowFX.class.getResourceAsStream("digital_counter_7.ttf")));
+      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, ServerFX.class.getResourceAsStream("digital_counter_7.ttf")));
     } catch (Exception e) {
       LOG.error("Error loading font: " + e.getMessage(), e);
     }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
@@ -296,7 +295,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public File getBagdeFile(String badge) {
+  public File getBadgeFile(String badge) {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
     return new File(folder, badge + ".png");
   }
@@ -485,7 +484,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean setMaintenanceMode(boolean enabled) {
     Platform.runLater(() -> {
-      OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
+      ServerFX.getInstance().setMaintenanceVisible(enabled);
     });
     return enabled;
   }

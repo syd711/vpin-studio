@@ -13,7 +13,8 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -21,12 +22,8 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.dialogs.TableUploadResult;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
@@ -41,6 +38,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -208,7 +206,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem scanAllBtn;
 
   @FXML
-  private Button playBtn;
+  private SplitMenuButton playBtn;
 
   @FXML
   private Button stopBtn;
@@ -245,6 +243,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private MenuItem dmdUploadItem;
+
+  @FXML
+  private MenuItem mediaUploadItem;
 
   @FXML
   private MenuItem pupPackUploadItem;
@@ -284,12 +285,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableOverviewColumnSorter tableOverviewColumnSorter;
   private List<String> ignoredValidations;
 
+  private ObservableList<GameRepresentation> data = FXCollections.emptyObservableList();
+  private List<GameRepresentation> games = Collections.emptyList();
+
   // Add a public no-args constructor
   public TableOverviewController() {
   }
-
-  private ObservableList<GameRepresentation> data;
-  private List<GameRepresentation> games;
 
   @FXML
   public void onBackglassManager() {
@@ -359,20 +360,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAltSoundUpload() {
-    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltSoundUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneAltSound().setExpanded(true);
-      }
-    }
+    TableDialogs.openAltSoundUploadDialog(null, null);
   }
 
   @FXML
   public void onAltColorUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
       }
@@ -381,13 +376,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onRomsUpload() {
-    TableDialogs.onRomUploads(tablesController.getTablesSideBarController());
+    TableDialogs.onRomUploads(null);
+  }
+
+  @FXML
+  public void onCfgUpload() {
+    TableDialogs.openCfgUploads(null);
+  }
+
+  @FXML
+  public void onNvRamUpload() {
+    TableDialogs.openNvRamUploads(null);
   }
 
 
   @FXML
   public void onMusicUpload() {
-    TableDialogs.onMusicUploads(tablesController.getTablesSideBarController());
+    TableDialogs.onMusicUploads();
   }
 
 
@@ -395,7 +400,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onPupPackUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
+      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
@@ -417,7 +422,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onIniUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.iniUpload(stage, selectedItems.get(0));
+      TableDialogs.directIniUpload(stage, selectedItems.get(0));
+    }
+  }
+
+  @FXML
+  public void onMediaUpload() {
+    ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.openMediaUploadDialog(selectedItems.get(0), null, null);
     }
   }
 
@@ -425,10 +438,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onDMDUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openDMDUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0), null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
-      }
+      TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null);
     }
   }
 
@@ -436,9 +446,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onPOVUpload() {
     ObservableList<GameRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPovUploadDialog(tablesController.getTablesSideBarController(), selectedItems.get(0));
+      boolean b = TableDialogs.directPovUpload(stage, selectedItems.get(0));
       if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDMD().setExpanded(true);
+        tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
     }
   }
@@ -497,11 +507,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onPlay() {
+    onPlay(null);
+  }
+
+  public void onPlay(String altExe) {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {
-        client.getVpxService().playGame(game.getId());
+        client.getVpxService().playGame(game.getId(), altExe);
         return;
       }
 
@@ -511,7 +525,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }
-        client.getVpxService().playGame(game.getId());
+        client.getVpxService().playGame(game.getId(), altExe);
       }
     }
   }
@@ -534,10 +548,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTableUpload() {
-    openUploadDialogWithCheck(TableUploadDescriptor.uploadAndImport);
+    openUploadDialogWithCheck(TableUploadType.uploadAndImport);
   }
 
-  public void openUploadDialogWithCheck(TableUploadDescriptor uploadDescriptor) {
+  public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
     if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
@@ -548,23 +562,22 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     openUploadDialog(uploadDescriptor);
   }
 
-  private void openUploadDialog(TableUploadDescriptor uploadDescriptor) {
+  private void openUploadDialog(TableUploadType uploadDescriptor) {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    Optional<TableUploadResult> uploadResult = TableDialogs.openTableUploadDialog(game, uploadDescriptor);
+    TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
+  }
+
+  public void refreshUploadResult(Optional<UploadDescriptor> uploadResult) {
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
       Consumer<GameRepresentation> c = gameRepresentation -> {
-        TableUploadResult tableUploadResult = uploadResult.get();
+        UploadDescriptor tableUploadResult = uploadResult.get();
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           tableView.getSelectionModel().clearSelection();
           tableView.getSelectionModel().select(match.get());
           tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
-
-          TableUploadDescriptor uploadMode = tableUploadResult.getUploadMode();
           if (uiSettings.isAutoEditTableData()) {
-            if (!uploadMode.equals(TableUploadDescriptor.upload)) {
-              TableDialogs.openTableDataDialog(this, match.get());
-            }
+            TableDialogs.openTableDataDialog(this, match.get());
           }
         }
       };
@@ -597,10 +610,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      boolean b = TableDialogs.openTableDeleteDialog(selectedGames, this.games);
-      if (b) {
-        this.onReload();
-      }
+      TableDialogs.openTableDeleteDialog(selectedGames, this.games);
     }
   }
 
@@ -667,6 +677,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       ValidationState validationState = game.getValidationState();
       DismissalUtil.dismissValidation(game, validationState);
     }
+  }
+
+  @FXML
+  private void onValidationSettings() {
+    PreferencesController.open("validators_vpx");
   }
 
   @FXML
@@ -852,14 +867,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           setFilterIds(integers);
           filterGames(games);
           tableView.setItems(data);
+          labelTableCount.setText(data.size() + " tables");
 
-          GameEmulatorRepresentation emulator = getEmulatorSelection();
-          if (filterSettings.isResetted(emulator == null || emulator.isVpxEmulator())) {
-            labelTableCount.setText(games.size() + " tables");
-          }
-          else {
-            labelTableCount.setText(data.size() + " of " + games.size() + " tables");
-          }
           tableView.refresh();
           setBusy(false);
         });
@@ -908,6 +917,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         filterGames(games);
         tableView.setItems(data);
+        labelTableCount.setText(data.size() + " tables");
 
         tableView.refresh();
 
@@ -993,6 +1003,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       filterGames(games);
       tableView.setItems(data);
+      labelTableCount.setText(data.size() + " tables");
     });
   }
 
@@ -1094,7 +1105,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         VpsTable vpsTable = null;
 
         label = new Label();
-        if(!StringUtils.isEmpty(value.getExtTableId()) && VPS.getInstance().getTableById(value.getExtTableId()) != null) {
+        if (!StringUtils.isEmpty(value.getExtTableId()) && VPS.getInstance().getTableById(value.getExtTableId()) != null) {
           vpsTable = VPS.getInstance().getTableById(value.getExtTableId());
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
@@ -1114,7 +1125,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if(!StringUtils.isEmpty(value.getExtTableVersionId()) && vpsTable != null && VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()) != null) {
+        if (!StringUtils.isEmpty(value.getExtTableVersionId()) && vpsTable != null && VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()) != null) {
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
           label.setGraphic(checkboxIcon);
@@ -1134,9 +1145,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if (!value.getVpsUpdates().isEmpty()) {
+        if (!value.getVpsUpdates().isEmpty() && !StringUtils.isEmpty(value.getExtTableId())) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-          updateIcon.setIconSize(iconSize +4);
+          updateIcon.setIconSize(iconSize + 4);
           label.setGraphic(updateIcon);
 
           StringBuilder builder = new StringBuilder();
@@ -1165,7 +1176,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         return new SimpleObjectProperty(row);
       } catch (Exception e) {
-        LOG.error("Failed to render VPS update: " + e.getMessage());
+        LOG.error("Failed to render VPS update: " + e.getMessage(), e);
       }
       return new SimpleStringProperty("");
     });
@@ -1230,13 +1241,48 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnStatus.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       ValidationState validationState = value.getValidationState();
+      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
       if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {
-          return new SimpleObjectProperty(WidgetFactory.createExclamationIcon(getIconColor(value)));
+          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
         }
       }
 
-      return new SimpleObjectProperty(WidgetFactory.createCheckIcon(getIconColor(value)));
+      Button btn = new Button();
+      btn.getStyleClass().add("table-media-button");
+      HBox graphics = new HBox(3);
+      graphics.setAlignment(Pos.CENTER_RIGHT);
+      graphics.setMinWidth(34);
+      graphics.getChildren().add(statusIcon);
+
+      if (!StringUtils.isEmpty(value.getNotes())) {
+        String notes = value.getNotes();
+        Tooltip tooltip = new Tooltip(value.getNotes());
+        tooltip.setWrapText(true);
+        btn.setTooltip(tooltip);
+
+        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+        icon.setIconSize(16);
+        graphics.getChildren().add(0, icon);
+
+        if (notes.contains("//ERROR")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        }
+        else if (notes.contains("//TODO")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+        }
+      }
+
+      btn.setGraphic(graphics);
+      btn.setOnAction(event -> {
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().select(value);
+        Platform.runLater(() -> {
+          TableDialogs.openNotesDialog(value);
+        });
+      });
+
+      return new SimpleObjectProperty(btn);
     });
 
     columnDateAdded.setCellValueFactory(cellData -> {
@@ -1304,6 +1350,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
     tableView.setItems(data);
+    labelTableCount.setText(data.size() + " tables");
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
@@ -1563,6 +1610,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+    new TableOverviewDragDropHandler(tablesController);
     this.onReload();
   }
 
@@ -1600,9 +1648,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onChanged(Change<? extends GameRepresentation> c) {
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
     altColorUploadItem.setDisable(disable);
-    altSoundUploadItem.setDisable(disable);
-    pupPackUploadItem.setDisable(disable);
-    dmdUploadItem.setDisable(disable);
+    mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
@@ -1623,6 +1669,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation gameRepresentation = c.getList().get(0);
       playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
       refreshView(Optional.ofNullable(gameRepresentation));
+
+      if (gameRepresentation.isGameFileAvailable()) {
+        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(gameRepresentation.getEmulatorId());
+        playBtn.getItems().clear();
+
+        List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
+        for (String altVPXExeName : altVPXExeNames) {
+          MenuItem item = new MenuItem(altVPXExeName);
+          item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              onPlay(altVPXExeName);
+            }
+          });
+          playBtn.getItems().add(item);
+        }
+      }
     }
   }
 
@@ -1711,6 +1774,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView.getSelectionModel().clearSelection();
         filterGames(games);
         tableView.setItems(data);
+        labelTableCount.setText(data.size() + " tables");
 
         if (!data.isEmpty()) {
           if (data.contains(selectedItem)) {
@@ -1846,6 +1910,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public StackPane getTableStack() {
     return this.tableStack;
+  }
+
+  public StackPane getLoaderStack() {
+    return loaderStack;
   }
 
   public TableView getTableView() {

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
@@ -11,12 +10,14 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.Preferences;
@@ -127,11 +128,11 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (GameDetails gameDetails : otherGameDetailsWithSameRom) {
-          if (gameDetails.getNvOffset() == 0 || gameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = pinUPConnector.getGame(gameDetails.getPupId());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(otherGameDetails.getPupId());
             if (otherGame != null) {
-              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName()));
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
               if (findFirst) {
                 return result;
               }
@@ -293,6 +294,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    validationStates = validateRecordings(game);
+    if (!validationStates.isEmpty()) {
+      result.add(validationStates.get(0));
+      if (findFirst) {
+        return result;
+      }
+    }
+
     validationStates = validateAltColor(game);
     if (!validationStates.isEmpty()) {
       result.add(validationStates.get(0));
@@ -367,6 +376,38 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return result;
   }
 
+  public List<ValidationState> validateRecordings(Game game) {
+    if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
+      return Collections.emptyList();
+    }
+    Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
+    PopperScreen[] values = PopperScreen.values();
+    List<ValidationState> result = new ArrayList<>();
+    for (PopperScreen screen : values) {
+      //only validate playfield and backglass
+      if (!(PopperScreen.BackGlass.equals(screen) || PopperScreen.PlayField.equals(screen))) {
+        continue;
+      }
+
+      if (media.containsKey(screen.name())) {
+        List<GameMediaItem> gameMediaItems = media.get(screen.name());
+        for (GameMediaItem gameMediaItem : gameMediaItems) {
+          String name = gameMediaItem.getName();
+          Date modified = new Date(gameMediaItem.getFile().lastModified());
+          if (name.endsWith(".mp4")) {
+            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
+            }
+            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public List<ValidationState> validateAltColor(Game game) {
     if (game.getAltColorType() == null || game.getAltColorType().equals(AltColorTypes.mame)) {
       return Collections.emptyList();
@@ -403,17 +444,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     switch (altColorType) {
       case pal: {
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING)) {
-          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
-            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
-          }
-          else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
+//          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
+//            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
+//          }
+          if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
             result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
           }
         }
         break;
       }
       case serum: {
-        String name = game.getRom() + AltColorArchiveAnalyzer.SERUM_SUFFIX;
+        String name = game.getRom() + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
