@@ -32,7 +32,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -227,8 +228,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onOpenDirectB2SBackground() {
     if (game.isPresent() && game.get().isDirectB2SAvailable()) {
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
-      MediaUtil.openMedia(new ByteArrayInputStream(bytesEncoded));
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(game.get().getId())) {
+        MediaUtil.openMedia(in);
+      } catch (IOException ioe) {
+        LOG.error("Cannot open media for game " + game.get().getId(), ioe);
+      }
     }
   }
 
@@ -413,26 +417,33 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
       hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
-      if (bytesEncoded != null) {
-        Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
-          PixelReader reader = image.getPixelReader();
-          image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+
+      if (tableData.isBackgroundAvailable()) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(g.get().getId())) {
+          Image image = new Image(in);
+          if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
+            PixelReader reader = image.getPixelReader();
+            image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+          }
+          thumbnailImage.setImage(image);
+          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        } catch (IOException ioe) {
+          LOG.error("Cannot load background Image for game "+g.get().getId(), ioe);
         }
-        thumbnailImage.setImage(image);
-        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {
         thumbnailImage.setImage(null);
         resolutionLabel.setText("Failed to read image data.");
       }
 
-      byte[] dmdBytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
-      if (dmdBytesEncoded != null) {
-        Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
-        dmdThumbnailImage.setImage(image);
-        dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      if (tableData.isDmdImageAvailable()) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(g.get().getId())) {
+          Image image = new Image(in);
+          dmdThumbnailImage.setImage(image);
+          dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        } catch (IOException ioe) {
+          LOG.error("Cannot load DMD Image for game "+g.get().getId(), ioe);
+        }
       }
       else {
         dmdResolutionLabel.setText("No DMD background available.");

@@ -70,6 +70,7 @@ hs_err_pid*
 /resources/b2s/*.png
 /resources/backgrounds/*.directb2s
 /resources/directb2s/*.directb2s
+/resources/pinemhi/PINemHi LeaderBoard/
 /deployment/
 /releases/
 /doftest/DirectOutputTest/bin/Debug/

@@ -21,6 +21,9 @@ public class DirectB2SDataExtractor extends DefaultHandler {
 
   private DirectB2SData data;
 
+  private String backgroundBase64;
+  private String dmdBase64;
+
   public DirectB2SDataExtractor() {
   }
 
@@ -31,27 +34,28 @@ public class DirectB2SDataExtractor extends DefaultHandler {
     this.data.setEmulatorId(emulatorId);
     this.data.setGameId(gameId);
     this.data.setModificationDate(new Date(directB2S.lastModified()));
-    InputStream in = null;
-    try {
-      if (directB2S.exists()) {
-        in = new FileInputStream(directB2S);
+    if (directB2S.exists()) {
+      try (InputStream in = new FileInputStream(directB2S)) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser = factory.newSAXParser();
         saxParser.parse(in, this);
-      }
-    } catch (Exception e) {
-      String msg = "Failed to parse directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
-      LOG.error(msg);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
-        }
+      } catch (Exception e) {
+        String msg = "Failed to parse directB2S '" + directB2S.getAbsolutePath() + "': " + e.getMessage();
+        LOG.error(msg);
       }
     }
     return data;
+  }
+
+  public String getName() {
+    return data!=null? data.getName(): null;
+  }
+
+  public String getBackgroundBase64() {
+    return backgroundBase64;
+  }
+  public String getDmdBase64() {
+    return dmdBase64;
   }
 
   @Override
@@ -80,6 +84,10 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         if (!StringUtils.isEmpty(value)) {
           data.setGrillHeight(Integer.parseInt(value));
         }
+        /*String smallGrillHeight = attr.getValue("Small");
+        if (!StringUtils.isEmpty(smallGrillHeight)) {
+          data.setSmallGrillHeight(Integer.parseInt(smallGrillHeight));
+        }*/
         break;
       }
       case "Author": {
@@ -97,18 +105,45 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         }
         break;
       }
+      case "Score": {
+        data.setScores(data.getScores()+1);
+        break;
+      }
       case "Bulb": {
         data.setIlluminations(data.getIlluminations() + 1);
         break;
       }
       case "BackglassImage": {
-        data.setBackgroundBase64(attr.getValue("Value"));
+        //data.setBackgroundBase64(attr.getValue("Value"));
+        backgroundBase64 = attr.getValue("Value");
+        data.setBackgroundAvailable(true);
         break;
       }
       case "DMDImage": {
-        data.setDmdBase64(attr.getValue("Value"));
+        //data.setDmdBase64(attr.getValue("Value"));
+        dmdBase64 = attr.getValue("Value");
+        data.setDmdImageAvailable(true);
         break;
       }
+
+/*
+Other elements in XML :  path / from / top (interesting attributes)
+
+      Images / BackglassOffImage (Value)    [alternative to BackglassImage]
+      Images / BackglassOnImage (Value)
+
+      DMDType : B2SData.eDMDType.B2SAlwaysOnSecondMonitor, 
+        B2SData.eDMDType.B2SAlwaysOnThirdMonitor, B2SData.eDMDType.B2SOnSecondOrThirdMonitor
+
+      Reels / Image
+      Reels / Images / Image
+      Reels / IlluminatedImages 
+      Reels / IlluminatedImages/Set
+
+      Sounds / Sound (name, stream)
+
+      Animations/Animation
+*/
     }
   }
 }

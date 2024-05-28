@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="de.mephisto.vpin.ui.tables.dialogs.BackglassManagerFilterController">
+   <children>
+      <VBox>
+         <children>
+            <BorderPane>
+               <left>
+                  <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                     <children>
+                        <Hyperlink onAction="#onReset" text="Reset All">
+                           <HBox.margin>
+                              <Insets left="-5.0" top="-9.0" />
+                           </HBox.margin>
+                        </Hyperlink>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="7.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </left>
+               <right>
+                  <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                     </graphic>
+                  </Button>
+               </right>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children>
+      </VBox>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox fx:id="titlePaneRoot" prefWidth="230.0" spacing="3.0">
+               <children>
+
+                  <Label styleClass="default-title" text="Emulator Filters" >
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="emulatorFilters">
+                     <children>      
+                     </children>
+                  </VBox>
+                  
+                 <Label styleClass="default-title" text="Backglass Filters">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <VBox fx:id="backglassFilters">
+                     <children>
+                        <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing DMD Image" />
+                        <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="DMD Aspect Ratio not full DMD" />
+                        <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Score Element" />
+                     </children>
+                  </VBox>
+
+                  <Label styleClass="default-title" text="Settings Filters">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <VBox fx:id="settingFilters" spacing="3.0">
+                     <children>
+
+                        <Label text="Grill Visibility">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="grillVisibilityComboBox" prefWidth="150.0" />
+
+                        <Label text="B2S DMD Hidden">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" />
+
+                        <Label text="DMD Visibility">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="dmdVisibilityComboBox" prefWidth="150.0" />
+
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="filter-component" />
+   </styleClass>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+</VBox>

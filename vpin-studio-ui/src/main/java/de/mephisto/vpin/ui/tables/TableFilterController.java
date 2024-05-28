@@ -1,30 +1,21 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
-import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
+import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class TableFilterController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableFilterController.class);
+public class TableFilterController extends BaseFilterController implements Initializable {
 
   @FXML
   private VBox filterPanel;
@@ -107,12 +97,9 @@ public class TableFilterController implements Initializable {
   @FXML
   private ComboBox<NoteType> notesCombo;
 
-  private boolean visible = false;
   private boolean updatesDisabled = false;
   private FilterSettings filterSettings;
   private TableOverviewController tableOverviewController;
-  private Button filterButton;
-  private boolean blocked;
 
 
   @FXML
@@ -126,68 +113,14 @@ public class TableFilterController implements Initializable {
 
   public void setTableController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
-    filterButton = tableOverviewController.getFilterButton();
-    this.tableOverviewController.getTableStack().setAlignment(Pos.TOP_LEFT);
-    this.tableOverviewController.getTableStack().getChildren().add(0, filterRoot);
-    filterRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
-//    titlePaneRoot.prefHeightProperty().bind(this.tableOverviewController.getTableStack().heightProperty());
-    tableOverviewController.getTableStack().widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        refreshState();
-      }
-    });
-  }
+    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(), 
+      tableOverviewController.getTableStack(), tableOverviewController.getTableView());
 
-  private void refreshState() {
-    if (visible) {
-      tableOverviewController.getTableView().setMaxWidth(tableOverviewController.getTableStack().getWidth() - 250);
-    }
-    else {
-      tableOverviewController.getTableView().setMaxWidth(tableOverviewController.getTableStack().getWidth());
-    }
   }
 
   @FXML
   public void toggle() {
-    if (blocked) {
-      return;
-    }
-
-    blocked = true;
-
-    if (!visible) {
-      visible = true;
-      filterRoot.setVisible(true);
-      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
-      TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, 250);
-      filterTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-        @Override
-        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-          if (newValue == Animation.Status.STOPPED) {
-            refreshState();
-            blocked = false;
-          }
-        }
-      });
-      filterTransition.play();
-    }
-    else {
-      visible = false;
-      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
-      TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(this.tableOverviewController.getTableView(), 300, -250);
-      translateByXTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-        @Override
-        public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-          if (newValue == Animation.Status.STOPPED) {
-            filterRoot.setVisible(false);
-            blocked = false;
-          }
-        }
-      });
-      translateByXTransition.play();
-      refreshState();
-    }
+    super.toggleDrawer();
   }
 
   private void updateSettings(FilterSettings filterSettings) {
@@ -215,16 +148,7 @@ public class TableFilterController implements Initializable {
 
   public void applyFilter() {
     GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
-    if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      filterButton.getStyleClass().remove("toggle-button-selected");
-      filterRoot.getStyleClass().remove("toggle-selected");
-    }
-    else {
-      filterRoot.getStyleClass().add("toggle-selected");
-      if (!filterButton.getStyleClass().contains("toggle-button-selected")) {
-        filterButton.getStyleClass().add("toggle-button-selected");
-      }
-    }
+    super.toggleFilterButton(!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator()));
 
     if (updatesDisabled) {
       return;
@@ -241,7 +165,7 @@ public class TableFilterController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    filterRoot.setVisible(false);
+
     configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());
     tableAssetFilters.managedProperty().bindBidirectional(tableAssetFilters.visibleProperty());
     vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());

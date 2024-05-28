@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class TableMatcher {
 
-	static double THRESHOLD_NOTFOUND = 2.55;
+	private double THRESHOLD_NOTFOUND = 3;
 
 	/** displayName pattern : Table (Manufacturer Year) */
 	static Pattern filePatter = Pattern.compile("(.*)\\((.*) (\\d\\d\\d\\d)\\).*");
