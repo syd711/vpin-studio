@@ -15,6 +15,7 @@ public class Emulator {
   private String launchScript;
   private String gamesExt;
   private boolean visible;
+  private boolean enabled = true;
   
   public String getVpxExeName() {
     if(launchScript != null) {
@@ -29,6 +30,15 @@ public class Emulator {
       }
     }
     return "VisualPinbalX.exe";
+  }
+
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   public String getLaunchScript() {
