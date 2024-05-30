@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -50,12 +51,12 @@ public class UploaderAnalysis<T> {
   }
 
   public String getRomFromPupPack() {
-    String contains = containsWithPath(".pup");
+    String contains = containsWithPath("scriptonly.txt");
     if (contains == null) {
       contains = containsWithPath(".bat");
     }
     if (contains == null) {
-      contains = containsWithPath(".txt");
+      contains = containsWithPath(".pup");
     }
     if (contains != null) {
       String rom = contains;
@@ -103,8 +104,16 @@ public class UploaderAnalysis<T> {
   }
 
   private String containsWithPath(String s) {
-    for (String fileName : fileNamesWithPath) {
-      if (fileName.endsWith(s)) {
+    List<String> sortedPaths = new ArrayList<>(fileNamesWithPath);
+    sortedPaths.sort(new Comparator<String>() {
+      @Override
+      public int compare(String o1, String o2) {
+        return o1.split("/").length - o2.split("/").length;
+      }
+    });
+
+    for (String fileName : sortedPaths) {
+      if (fileName.toLowerCase().endsWith(s.toLowerCase())) {
         return fileName;
       }
     }

@@ -31,29 +31,34 @@ public class VPXMonitoringService implements InitializingBean {
   }
 
   public void startMonitor() {
-    this.running.set(true);
-    monitorThread = new Thread(() -> {
-      try {
-        Thread.currentThread().setName("VPX Monitor Thread");
-        LOG.info("VPX monitor started.");
-        while (running.get()) {
-          List<ProcessHandle> collect = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
-          for (ProcessHandle p : collect) {
-            String cmdName = p.info().command().get();
-            if (cmdName.toLowerCase().contains("Visual Pinball".toLowerCase()) || cmdName.toLowerCase().contains("VisualPinball".toLowerCase()) || cmdName.toLowerCase().contains("VPinball".toLowerCase())) {
-              GameStatus status = gameStatusService.getStatus();
-
-            }
-          }
-          Thread.sleep(3000);
-        }
-      } catch (Exception e) {
-        LOG.info("VPX monitor failed: " + e.getMessage(), e);
-      } finally {
-        LOG.info(Thread.currentThread().getName() + " terminated.");
-      }
-    });
-    monitorThread.start();
+//    this.running.set(true);
+//    monitorThread = new Thread(() -> {
+//      try {
+//        Thread.currentThread().setName("VPX Monitor Thread");
+//        LOG.info("VPX monitor started.");
+//        while (running.get()) {
+//          List<ProcessHandle> collect = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+//          for (ProcessHandle p : collect) {
+//            System.out.println(p.info().command());
+//            String cmdName = p.info().command().get().replaceAll("\\\\", "/");
+//            if (cmdName.contains("/")) {
+//              cmdName = cmdName.substring(cmdName.lastIndexOf("/") + 1);
+//            }
+//
+//            if (cmdName.toLowerCase().contains("Visual Pinball".toLowerCase())) {
+//              GameStatus status = gameStatusService.getStatus();
+//              System.out.println(cmdName + " " + p.info().arguments());
+//            }
+//          }
+//          Thread.sleep(3000);
+//        }
+//      } catch (Exception e) {
+//        LOG.info("VPX monitor failed: " + e.getMessage(), e);
+//      } finally {
+//        LOG.info(Thread.currentThread().getName() + " terminated.");
+//      }
+//    });
+//    monitorThread.start();
   }
 
   @Override

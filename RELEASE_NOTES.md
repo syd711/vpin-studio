@@ -40,7 +40,7 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/launcher-menu.png" width="300" />
   
 
-- **Backglass Manager**: @leprinco hugely improved the **Backglass Manager** by adding additional columns that show the **FullDMD** and **Grill** information. See for yourself:
+- **Backglass Manager**: @leprinco worked on a bunch of improvements for the **Backglass Manager** and added additional columns that show the **FullDMD**, **Grill** and **Score** information. Also, the backglass overview comes with its own filter options now. See for yourself:
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager.png" width="900" />
 

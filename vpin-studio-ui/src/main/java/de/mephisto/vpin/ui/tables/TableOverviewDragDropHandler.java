@@ -165,7 +165,7 @@ public class TableOverviewDragDropHandler {
 
     LOG.info("Zipping " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), file, tempFile));
+      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling \"" + file.getName() + "\"", file, tempFile));
       LOG.info("Created separate temp zip file \"" + tempFile.getAbsolutePath() + "\" for dropped folder \"" + file.getAbsolutePath() + "\"");
       dispatchDroppedFile(tempFile);
     });
