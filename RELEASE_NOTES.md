@@ -50,7 +50,7 @@
 ### Bugfixes
 
 - **Table Overview**: Fixed suppressed errors in the VPS updates column.
-- **ALt Color Validator**: .vni files are not mandatory when a .pal is present.
+- **ALT Color Validator**: .vni files are not mandatory when a .pal is present.
 - **Uploads**: Fixed several issues which provided temp files from being deleted (and polluting the system's temp folder).
 - **Removed fuzzy version matching**: The version set for the POPPER field **GAMEVER** must match with the VPS version exactly now. The previous version comparison allowed some fuzzy matching.
 - **Keep existing VPX filenames**: Fixed issue that for the **Keep Existing VPX filenames** flag was ignored for uploaded zip files.
