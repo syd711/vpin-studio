@@ -654,7 +654,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated) " +
-        "VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+          "VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
@@ -951,8 +951,15 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         e.setLaunchScript(rs.getString("LaunchScript"));
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
+
+        //TODO fix enablement via settings
+        if (e.getName() != null && (e.getName().toLowerCase().contains("mame") || e.getDisplayName().toLowerCase().contains("mame"))) {
+          e.setEnabled(false);
+        }
+
         result.add(e);
       }
+
       rs.close();
       statement.close();
     } catch (SQLException e) {
@@ -1587,6 +1594,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         }
 
         if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
+          continue;
+        }
+
+        if (!emulator.isEnabled()) {
           continue;
         }
 

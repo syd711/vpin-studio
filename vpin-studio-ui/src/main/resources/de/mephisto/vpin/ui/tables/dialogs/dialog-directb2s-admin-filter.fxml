@@ -75,6 +75,7 @@
                         <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing DMD Image" />
                         <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="DMD Aspect Ratio not full DMD" />
                         <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Score Element" />
+                        <CheckBox fx:id="missingTableCheckBox"    mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass without Table" />
                      </children>
                   </VBox>
 
@@ -84,28 +85,15 @@
                      </VBox.margin>
                   </Label>
 
-                  <VBox fx:id="settingFilters" spacing="3.0">
+                  <VBox fx:id="settingFilters">
                      <children>
 
-                        <Label text="Grill Visibility">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <Label text="Grill Visibility" styleClass="preference-checkbox" />
                         <ComboBox fx:id="grillVisibilityComboBox" prefWidth="150.0" />
 
-                        <Label text="B2S DMD Hidden">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" />
+                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="B2S DMD Hidden" />
 
-                        <Label text="DMD Visibility">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <Label text="DMD Visibility" styleClass="preference-checkbox" />
                         <ComboBox fx:id="dmdVisibilityComboBox" prefWidth="150.0" />
 
                      </children>

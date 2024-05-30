@@ -121,3 +121,4 @@ vpin-studio-logs.zip
 
 /vpin-studio-server/*.bak
 /.vscode/launch.json
+vpin-studio.code-workspace

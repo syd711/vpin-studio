@@ -96,7 +96,11 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onDisconnect() {
-    client.getSystemService().setMaintenanceMode(false);
+    try {
+      client.getSystemService().setMaintenanceMode(false);
+    } catch(Exception e) {
+      LOG.error("Exception ignored, Cannot set maintenance mode, system may be done", e);
+    }
     Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();

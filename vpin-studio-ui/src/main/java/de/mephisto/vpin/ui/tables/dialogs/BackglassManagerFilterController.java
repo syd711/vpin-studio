@@ -40,6 +40,10 @@ public class BackglassManagerFilterController extends BaseFilterController imple
   private CheckBox scoresAvailableCheckBox;
 
   @FXML
+  private CheckBox missingTableCheckBox;
+
+
+  @FXML
   private ComboBox<B2SVisibility> grillVisibilityComboBox;
 
   @FXML
@@ -71,6 +75,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
     missingDMDImageCheckBox.setSelected(false);
     notFullDMDRatioCheckBox.setSelected(false);
     scoresAvailableCheckBox.setSelected(false);
+    missingTableCheckBox.setSelected(false);
 
     grillVisibilityComboBox.getSelectionModel().clearSelection();
     b2sdmdVisibilityCheckBox.setSelected(false);
@@ -94,6 +99,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
     boolean hasFilter = missingDMDImageCheckBox.isSelected()
       || notFullDMDRatioCheckBox.isSelected()
       || scoresAvailableCheckBox.isSelected()
+      || missingTableCheckBox.isSelected()
       || isNotEmpty(grillVisibilityComboBox)
       || b2sdmdVisibilityCheckBox.isSelected()
       || isNotEmpty(dmdVisibilityComboBox);
@@ -144,6 +150,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
     setupCheckbox(missingDMDImageCheckBox, backglassManagerController.missingDMDImageFilter);
     setupCheckbox(notFullDMDRatioCheckBox, backglassManagerController.notFullDMDRatioFilter);
     setupCheckbox(scoresAvailableCheckBox, backglassManagerController.scoresAvailableFilter);
+    setupCheckbox(missingTableCheckBox, backglassManagerController.missingTableFilter);
 
     List<B2SVisibility> visibilities = new ArrayList<>();
     visibilities.add(new B2SVisibility(-1, ""));

@@ -59,3 +59,4 @@
 - **Pause Menu**: Fixed missing reset of media player, causing continuously playing the video sound in the background.
 - **Highscore Parser**: Added support for "Thunderbirds".
 - **Tooltips**: Increased general duration from 5 seconds to 10 seconds.
+- **MAME Emulators**: If the emulator name or description contains "MAME" or "mame", the emulator is ignored from VPin Studio. This is only a quick-fix for the performance problems in combination with hundreds of MAME games. I'll come up with a better solution here.

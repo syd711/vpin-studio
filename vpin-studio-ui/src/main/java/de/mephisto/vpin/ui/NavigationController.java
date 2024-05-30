@@ -181,13 +181,13 @@ public class NavigationController implements Initializable, StudioEventListener,
   public static void refreshAvatar() {
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
+    if (avatarEntry!=null && !StringUtils.isEmpty(avatarEntry.getValue())) {
       image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
     }
 
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
-    if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
+    if (systemNameEntry!=null && !StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
     }
 

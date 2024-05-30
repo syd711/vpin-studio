@@ -195,19 +195,10 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     try {
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
-        if (gameRepresentation.isDirectB2SAvailable()) {
-          String name = FilenameUtils.getBaseName(gameRepresentation.getGameFileName());
-          String fileName = name + ".directb2s";
-          GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(gameRepresentation.getEmulatorId());
-          File gameFile = new File(gameEmulator.getTablesDirectory(), gameRepresentation.getGameFileName());
-          File backglassFile = new File(gameFile.getParentFile(), fileName);
-
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + fileName + "\"?", null, "Delete");
+        if (tableData!=null) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            DirectB2S directB2S = new DirectB2S();
-            directB2S.setEmulatorId(gameRepresentation.getEmulatorId());
-            directB2S.setFileName(backglassFile.getAbsolutePath());
-            client.getBackglassServiceClient().deleteBackglass(directB2S);
+            client.getBackglassServiceClient().deleteBackglass(tableData.toDirectB2S());
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
           }
         }
@@ -227,8 +218,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    if (game.isPresent() && game.get().isDirectB2SAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(game.get().getId())) {
+    if (tableData!=null) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         MediaUtil.openMedia(in);
       } catch (IOException ioe) {
         LOG.error("Cannot open media for game " + game.get().getId(), ioe);
@@ -324,11 +315,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     usedLEDType.setItems(FXCollections.observableList(LED_TYPES));
     usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      tableSettings.setUsedLEDType(t1.getId());
-      glowing.setDisable(t1.getId() == 1);
-      lightBulbOn.setDisable(t1.getId() == 1);
-      lightBulbOn.setSelected(false);
-      save();
+      if (t1!=null) {
+        tableSettings.setUsedLEDType(t1.getId());
+        glowing.setDisable(t1.getId() == 1);
+        lightBulbOn.setDisable(t1.getId() == 1);
+        lightBulbOn.setSelected(false);
+        save();
+      }
     });
 
     startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -417,9 +410,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
       hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
-
       if (tableData.isBackgroundAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(g.get().getId())) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
           Image image = new Image(in);
           if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
             PixelReader reader = image.getPixelReader();
@@ -437,7 +429,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       }
 
       if (tableData.isDmdImageAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(g.get().getId())) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
           Image image = new Image(in);
           dmdThumbnailImage.setImage(image);
           dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
@@ -450,16 +442,16 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       }
 
       if (tableSettings != null) {
-        hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
+        hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
         hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
-        hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
+        hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
         skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
         skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
         skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
         skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
         lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-        glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
-        usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
+        glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().orElse(null));
+        usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
         startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
         bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
         startAsExe.selectedProperty().setValue(tableSettings.isStartAsEXE());

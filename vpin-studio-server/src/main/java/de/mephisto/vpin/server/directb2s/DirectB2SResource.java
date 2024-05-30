@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
@@ -9,15 +8,9 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
-import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +25,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -59,23 +54,29 @@ public class DirectB2SResource {
   private UniversalUploadService universalUploadService;
 
   @GetMapping("/{id}")
-  public DirectB2SData getData(@PathVariable("id") int id) {
-    return backglassService.getDirectB2SData(id);
+  public DirectB2SData getData(@PathVariable("id") int gameId) {
+    return backglassService.getDirectB2SData(gameId);
   }
 
-  @GetMapping("/background/{id}")
-  public ResponseEntity<Resource> getBackground(@PathVariable("id") int id) {
-    return download(backglassService.getBackgroundBase64(id), "background.png");
+  @GetMapping("/background/{emuId}/{filename}")
+  public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+    return download(backglassService.getBackgroundBase64(emuId, filename), filename, ".png");
   }
-  @GetMapping("/dmdimage/{id}")
-  public ResponseEntity<Resource> getDmdImage(@PathVariable("id") int id) {
-    return download(backglassService.getDmdBase64(id), "dmd.png");
+  @GetMapping("/dmdimage/{emuId}/{filename}")
+  public ResponseEntity<Resource> getDmdImage(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+    return download(backglassService.getDmdBase64(emuId, filename), filename, ".dmd.png");
   }
 
-  protected ResponseEntity<Resource> download(String base64, String filename) {
+  protected ResponseEntity<Resource> download(String base64, String filename, String extension) {
+    String name = StringUtils.indexOf(filename, '/')>=0? StringUtils.substringAfterLast(filename, "/"): filename;
+    name = StringUtils.substringBeforeLast(name, ".") + extension;
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
@@ -101,19 +102,20 @@ public class DirectB2SResource {
 
   @PostMapping("/delete")
   public boolean deleteBackglass(@RequestBody DirectB2S directB2S) {
-    return backglassService.deleteBackglass(new File(directB2S.getFileName()));
+    return backglassService.deleteBackglass(directB2S.getEmulatorId(), directB2S.getFileName());
   }
 
   @PutMapping
   public boolean updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+    int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
     if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-      return backglassService.rename(new File(fileName), newName);
+      return backglassService.rename(emulatorId, fileName, newName);
     }
 
     if (values.containsKey("duplicate")) {
-      return backglassService.duplicate(new File(fileName));
+      return backglassService.duplicate(emulatorId, fileName);
     }
     return false;
   }
