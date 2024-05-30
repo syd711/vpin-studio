@@ -151,10 +151,10 @@ public class Emulator {
       return false;
     }
 
-    return name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL_X.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALLX.toLowerCase());
+    return name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL_X.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALLX.toLowerCase());
   }
 
   @Override

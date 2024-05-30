@@ -149,17 +149,17 @@ public class MenuController implements Initializable {
 
     setLoadLabel("Loading...");
 
-    new Thread(() -> {
-      games = Menu.client.getGameService().getKnownGames();
-      activeModels = games; //TODO mpf
-      Platform.runLater(() -> {
-        loadGameItems();
-        initGameBarSelection();
-
-        TransitionUtil.createOutFader(loadMask).play();
-        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
-      });
-    }).start();
+//    new Thread(() -> {
+//      games = Menu.client.getGameService().getKnownGames();
+//      activeModels = games; //TODO mpf
+//      Platform.runLater(() -> {
+//        loadGameItems();
+//        initGameBarSelection();
+//
+//        TransitionUtil.createOutFader(loadMask).play();
+//        StateMananger.getInstance().setInputBlocked(true, TransitionUtil.FADER_DEFAULT + 100);
+//      });
+//    }).start();
   }
 
   private void enterMainWithInstall() {

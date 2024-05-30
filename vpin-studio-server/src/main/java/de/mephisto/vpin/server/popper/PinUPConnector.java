@@ -952,11 +952,6 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
 
-        //TODO fix enablement via settings
-        if (e.getName() != null && (e.getName().toLowerCase().contains("mame") || e.getDisplayName().toLowerCase().contains("mame"))) {
-          e.setEnabled(false);
-        }
-
         result.add(e);
       }
 

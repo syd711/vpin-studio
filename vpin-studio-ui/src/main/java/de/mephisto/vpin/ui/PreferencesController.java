@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.preferences.UISettingsPreferencesController;
+import de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -70,7 +70,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private static Node preferencesRoot;
 
-  private static Button avatarButton;
+  private static Button initialBtn;
 
   private static BorderPane prefsMain;
 
@@ -78,7 +78,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private static PreferenceType dirtyPreferenceType = null;
 
-  private static String lastScreen = "preference-settings-ui.fxml";
+  private static String lastScreen = "preference-settings-cabinet.fxml";
 
   static {
 
@@ -136,8 +136,13 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private void onAvatar(ActionEvent event) throws IOException {
-    load("preference-settings-ui.fxml", event);
+  private void onCabinetSettings(ActionEvent event) throws IOException {
+    load("preference-settings-cabinet.fxml", event);
+  }
+
+  @FXML
+  private void onClientSettings(ActionEvent event) throws IOException {
+    load("preference-settings-client.fxml", event);
   }
 
   @FXML
@@ -279,7 +284,7 @@ public class PreferencesController implements Initializable, StudioEventListener
       lastSelection.getStyleClass().remove("preference-button-selected");
     }
     else {
-      avatarButton.getStyleClass().remove("preference-button-selected");
+      initialBtn.getStyleClass().remove("preference-button-selected");
     }
 
     if (event != null) {
@@ -301,7 +306,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     lastScreen = screen;
 
     try {
-      FXMLLoader loader = new FXMLLoader(UISettingsPreferencesController.class.getResource(screen));
+      FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
       Node node = loader.load();
       prefsMain.setCenter(node);
     } catch (Exception e) {
@@ -312,7 +317,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    avatarButton = avatarBtn;
+    initialBtn = avatarBtn;
     prefsMain = preferencesMain;
     navBox = navigationBox;
 
