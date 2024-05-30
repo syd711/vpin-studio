@@ -950,8 +950,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.scanAllBtn.setDisable(false);
         this.uploadTableBtn.setDisable(false);
 
-        labelTableCount.setText(games.size() + " tables");
-
         setBusy(false);
         Platform.runLater(() -> {
           tableView.requestFocus();
