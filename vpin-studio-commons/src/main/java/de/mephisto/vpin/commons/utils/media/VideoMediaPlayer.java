@@ -110,7 +110,15 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         if (!dialogRendering) {
           mediaView.setX(0);
           mediaView.setY(0);
-          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+          Platform.runLater(() -> {
+            double ratio = (double) media.getWidth() / media.getHeight();
+            if (ratio > 1.5) {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+            }
+            else {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
+            }
+          });
         }
       }
       else {
