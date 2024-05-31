@@ -130,7 +130,7 @@ public class AltColorService implements InitializingBean {
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
     if (assetFileName != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
   }
 
@@ -167,7 +167,7 @@ public class AltColorService implements InitializingBean {
       }
       else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX));
+          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX));
         }
         catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
