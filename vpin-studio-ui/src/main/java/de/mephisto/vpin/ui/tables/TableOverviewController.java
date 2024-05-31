@@ -74,6 +74,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -858,15 +859,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
    * @return true if the filtered list did change and reload is required
    */
   public synchronized boolean onRefresh(FilterSettings filterSettings) {
-    setBusy(true);
+    List<Integer> integers = client.getGameService().filterGames(filterSettings);
+    if (integers == null || (!this.filteredIds.isEmpty() && integers.equals(this.filteredIds))) {
+      return false;
+    }
+
     tableView.setVisible(false);
-    labelTableCount.setText("");
+    setBusy(true);
 
     new Thread(() -> {
-      List<Integer> integers = client.getGameService().filterGames(filterSettings);
-      if (integers == null || (!this.filteredIds.isEmpty() && integers.equals(this.filteredIds))) {
-        return;
-      }
       try {
         Platform.runLater(() -> {
           setFilterIds(integers);
@@ -877,13 +878,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           tableView.refresh();
           setBusy(false);
         });
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
     }).start();
-    return false;
+    return true;
   }
 
   @FXML
@@ -928,6 +928,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         filterGames(games);
         tableView.setItems(data);
+        setFilterIds(data.stream().map(g -> g.getId()).collect(Collectors.toList()));
         labelTableCount.setText(data.size() + " games");
 
         tableView.refresh();
@@ -1950,7 +1951,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
-      filteredIds.clear();
+      tableView.setVisible(false);
+      setBusy(true);
       tableView.getSelectionModel().clearSelection();
       refreshViewForEmulator();
       tableFilterController.applyFilter();
