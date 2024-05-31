@@ -27,6 +27,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -158,7 +160,68 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    //screen assets are validated for all emulators
+    List<ValidationState> screenValidationResult = validateScreenAssets(game, findFirst, result);
+    if (screenValidationResult != null) {
+      return screenValidationResult;
+    }
 
+    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX) {
+      List<ValidationState> validationStates = validateAltSound(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateRecordings(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateAltColor(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateForceStereo(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private @Nullable List<ValidationState> validateScreenAssets(@NotNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (!validScreenAssets(game, PopperScreen.Audio)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
@@ -266,59 +329,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
-
-
-    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
-      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    List<ValidationState> validationStates = validateAltSound(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateRecordings(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateAltColor(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateForceStereo(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    return result;
+    return null;
   }
 
   private boolean validScreenAssets(Game game, PopperScreen popperScreen) {

@@ -172,7 +172,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   public void vpsSheetChanged(List<VpsDiffer> diff) {
     LOG.info("Updating VPS diff messages queue for " + diff.size() + " updates.");
     GameService gameService = applicationContext.getBean(GameService.class);
-    List<Game> knownGames = gameService.getKnownGames();
+    List<Game> knownGames = gameService.getKnownGames(-1);
 
     for (VpsDiffer tableDiff : diff) {
       try {

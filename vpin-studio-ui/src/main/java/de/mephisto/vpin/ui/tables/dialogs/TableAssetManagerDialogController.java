@@ -560,16 +560,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
 
-    if (!isEmbeddedMode()) {
-      List<GameRepresentation> games = client.getGameService().getGamesCached();
-      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-      tablesCombo.getItems().addAll(gameRepresentations);
-      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
-      });
-    }
-
-
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
         onSearch();
@@ -749,6 +739,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+      List<GameRepresentation> games = client.getGameService().getGamesCached(this.game.getEmulatorId());
+      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+      tablesCombo.getItems().addAll(gameRepresentations);
+      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
+      });
     }
 
     if (game == null) {

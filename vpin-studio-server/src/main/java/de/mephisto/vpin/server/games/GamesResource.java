@@ -68,9 +68,9 @@ public class GamesResource {
     return gameService.getUnknownGames();
   }
 
-  @GetMapping("/knowns")
-  public List<Game> getKnownGames() {
-    return gameService.getKnownGames();
+  @GetMapping("/knowns/{emulatorId}")
+  public List<Game> getKnownGames(@PathVariable("emulatorId") int emulatorId) {
+    return gameService.getKnownGames(emulatorId);
   }
 
   @GetMapping("/recent/{count}")

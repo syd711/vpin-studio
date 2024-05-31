@@ -181,7 +181,7 @@ public class AltSoundUploadController implements Initializable, DialogController
     romLabel.setText(rom);
     this.uploadBtn.setDisable(false);
 
-    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached();
+    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
     for (GameRepresentation gameRepresentation : gamesCached) {
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
