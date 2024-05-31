@@ -46,6 +46,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.allGames.clear();
   }
 
+  public void clearCache(int emulatorId) {
+    this.allGames.remove(emulatorId);
+  }
+
   public void reload() {
     getRestClient().get(API + "games/reload", Boolean.class);
   }

@@ -22,6 +22,7 @@ import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperResource;
 import de.mephisto.vpin.server.popper.PopperServiceResource;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;

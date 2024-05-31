@@ -16,3 +16,4 @@
 - **Table Overview / Validation Performance Optimization**: Non-VPX games are only checked for missing assets issues and do not run through the full VPX validation anymore.
 - **Offline Competitions**: Fixed missing highscore reset when no Discord server was selected. This should be independent of each other of course.
 - **Table Overview / Playfield Preview**: Trying to improve the positioning for MAME playfield videos, let's see how this went.
+- **Table Overview / PUP Packs**: Fixed issue that the PUP pack indicator wasn't shown for some tables. I assume this problem was related due to the long loading time of PUP packs.
