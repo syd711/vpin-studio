@@ -465,7 +465,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         break;
       }
       case serum: {
-        String name = game.getRom() + UploaderAnalysis.SERUM_SUFFIX;
+        String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }

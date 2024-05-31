@@ -44,25 +44,24 @@ public class BaseFilterController {
     this.filteredTable = filteredTable;
   
     filterRoot.setVisible(false);
-
     stackPane.setAlignment(Pos.TOP_LEFT);
 
     stackPane.getChildren().add(0, filterRoot);
     filterRoot.prefHeightProperty().bind(stackPane.heightProperty());
     //titlePaneRoot.prefHeightProperty().bind(stackPane.heightProperty());
+    initStackPaneListener(stackPane);
+  }
+
+  protected void initStackPaneListener(StackPane stackPane) {
     stackPane.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (newValue!=null) {
-          stackPane.setMinWidth(newValue.doubleValue());
-          stackPane.setMaxWidth(newValue.doubleValue());
-        }    
         refreshState();
       }
     });
   }
 
-  private void refreshState() {
+  protected void refreshState() {
     if (visible) {
       filteredTable.setMaxWidth(stackPane.getWidth() - 250);
     }

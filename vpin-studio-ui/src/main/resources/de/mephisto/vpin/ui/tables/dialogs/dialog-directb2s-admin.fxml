@@ -5,7 +5,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
@@ -17,9 +16,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -35,65 +34,8 @@
                <BorderPane.margin>
                   <Insets left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
-               <left>
-                  <BorderPane BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <center>
-
-                     <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
-                     <children>
-                        <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
-                           <columns>
-                                 <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                 <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
-                                 <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
-                                 <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
-                                 <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
-                           </columns>
-                        </TableView>
-                     </children>
-                     </StackPane>
-
-                     </center>
-                     <top>
-                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <items>
-                              <Button fx:id="filterButton" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="Toggle Filter View" />
-                                 </tooltip>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-                                 </graphic>
-                              </Button>
-                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Reload all table data" />
-                                 </tooltip>
-                              </Button>
-                           </items>
-                        </ToolBar>
-                     </top>
-                  </BorderPane>
-               </left>
-               <center>
-                  <BorderPane BorderPane.alignment="CENTER" styleClass="subpanel">
+               <right>
+                  <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                      <center>
                         <VBox spacing="24.0" BorderPane.alignment="CENTER">
                            <children>
@@ -404,6 +346,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints />
+                                                <RowConstraints />
                                              </rowConstraints>
                                              <children>
                                                 <Label text="DirectB2S File Metadata" textFill="WHITE">
@@ -412,7 +355,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                            <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -423,7 +366,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
+                                                            <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -434,7 +377,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
+                                                            <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -445,7 +388,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
+                                                            <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -456,7 +399,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
+                                                            <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -467,7 +410,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
+                                                            <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -478,7 +421,7 @@
                                                    </font>
                                                 </Label>
                                                 
-                                                <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
+                                                            <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -489,7 +432,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
+                                                            <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -500,7 +443,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
+                                                            <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -511,7 +454,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                                            <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -522,7 +465,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
+                                                            <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -533,7 +476,7 @@
                                                    </font>
                                                 </Label>
 
-                                                <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
+                                                            <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -544,7 +487,7 @@
                                                    </font>
                                                 </Label>
 
-                                             </children>
+                                                         </children>
                                              <VBox.margin>
                                                 <Insets top="24.0" />
                                              </VBox.margin>
@@ -606,6 +549,67 @@
                                  </graphic>
                               </Button>
                           </items>
+                        </ToolBar>
+                     </top>
+                  </BorderPane>
+               </right>
+               <center>
+                  <BorderPane BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <center>
+                        <StackPane fx:id="loaderStack">
+                           <children>
+      
+                           <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                           <children>
+                              <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
+                                 <columns>
+                                       <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
+                                       <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                       <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
+                                       <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
+                                       <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                           </StackPane>
+                           </children>
+                        </StackPane>
+
+                     </center>
+                     <top>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <items>
+                              <Button fx:id="filterButton" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Toggle Filter View" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Reload all table data" />
+                                 </tooltip>
+                              </Button>
+                           </items>
                         </ToolBar>
                      </top>
                   </BorderPane>

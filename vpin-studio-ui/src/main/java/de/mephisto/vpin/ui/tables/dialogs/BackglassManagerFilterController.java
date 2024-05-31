@@ -85,6 +85,21 @@ public class BackglassManagerFilterController extends BaseFilterController imple
     applyFilter();
   }
 
+  @Override
+  protected void initStackPaneListener(StackPane stackPane) {
+    stackPane.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (newValue!=null) {
+          stackPane.setMinWidth(newValue.doubleValue());
+          stackPane.setMaxWidth(newValue.doubleValue());
+          System.out.println(newValue);
+        }
+        refreshState();
+      }
+    });
+  }
+
   @FXML
   public void toggle() {
     toggleDrawer();

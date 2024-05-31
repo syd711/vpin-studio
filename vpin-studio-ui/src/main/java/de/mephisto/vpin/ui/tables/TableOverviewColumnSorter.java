@@ -34,6 +34,13 @@ public class TableOverviewColumnSorter {
         }
         return true;
       }
+      else if (column.equals(tableOverviewController.columnStatus)) {
+        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getValidationState().getCode())));
+        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+          Collections.reverse(tableView.getItems());
+        }
+        return true;
+      }
       else if (column.equals(tableOverviewController.columnEmulator)) {
         Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getEmulatorId()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
