@@ -12,3 +12,4 @@
 - **Table Overview / Loading Performance Optimization**: Tables/games are not loaded anymore all at once, but only for the selected emulator(s). E.g. all VPX tables are still loaded as bulk request, but not together with MAME or FP tables. 
 - **Table Overview / Filtering Performance Optimization**: Improved filtering for VPX/non-VPX games.
 - **Table Overview / Validation Performance Optimization**: Non-VPX games are only checked for missing assets issues and do not run through the full VPX validation anymore.
+- **Offline Competitions**: Fixed missing highscore reset when no Discord server was selected. This should be independent from each other of course.
