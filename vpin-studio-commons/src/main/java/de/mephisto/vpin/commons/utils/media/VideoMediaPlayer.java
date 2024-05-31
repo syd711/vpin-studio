@@ -59,6 +59,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private void render() {
     String baseType = mimeType.split("/")[0];
+    String mediaType = mimeType.split("/")[1];
+
+    if (mediaType.equalsIgnoreCase("quicktime")) {
+      parent.setCenter(getEncodingNotSupportedLabel(mediaItem));
+      return;
+    }
 
     media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
@@ -157,6 +163,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   @Override
   public void disposeMedia() {
     super.disposeMedia();
-    this.mediaView.setMediaPlayer(null);
+    if (mediaView != null) {
+      this.mediaView.setMediaPlayer(null);
+    }
   }
 }
