@@ -579,7 +579,7 @@ public class UploaderAnalysis<T> {
       return true;
     }
 
-    if (screen.equals(PopperScreen.GameInfo) && (fileNameWithPath.toLowerCase().contains("info"))) {
+    if (screen.equals(PopperScreen.GameInfo)) {
       return true;
     }
 
