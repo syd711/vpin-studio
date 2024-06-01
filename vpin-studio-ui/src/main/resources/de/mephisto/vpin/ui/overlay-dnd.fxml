@@ -22,26 +22,34 @@
                <center>
                   <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
-                        <ImageView fx:id="tableWheelImage" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <VBox alignment="CENTER">
-                           <children>
-                              <Label fx:id="messageLabel" text="Drop files here" textFill="WHITE">
+                        <BorderPane>
+                           <center>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Selected Table:" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </center>
+                           <left>
+                              <ImageView fx:id="tableWheelImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                           </left>
+                           <top>
+                              <Label fx:id="messageLabel" text="Drop Tables and Assets here!" textFill="WHITE" BorderPane.alignment="CENTER">
                                  <font>
                                     <Font size="48.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Selected Table:" textFill="WHITE">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
+                           </top>
+                        </BorderPane>
                      </children>
                   </HBox>
                </center>
