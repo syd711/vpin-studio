@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
@@ -100,7 +102,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableOverviewController.setRootController(this);
       tablesSideBarController.setTablesController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -109,7 +112,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       tablesStatisticsTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -119,7 +123,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       repositoryController = loader.getController();
       repositoryController.setRootController(this);
       tableRepositoryTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -130,7 +135,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -233,10 +239,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
         }
       });
     }
+    else if (jobType.equals(JobType.TABLE_IMPORT)) {
+      Platform.runLater(() -> {
+        tableOverviewController.refreshFilterId();
+        tableOverviewController.onReload();
+      });
+    }
     else if (jobType.equals(JobType.POV_INSTALL)
-      || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-      || jobType.equals(JobType.DIRECTB2S_INSTALL)
-      || jobType.equals(JobType.TABLE_IMPORT)) {
+        || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
+        || jobType.equals(JobType.DIRECTB2S_INSTALL)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);

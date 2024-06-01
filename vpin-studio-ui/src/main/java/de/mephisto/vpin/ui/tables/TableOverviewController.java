@@ -570,9 +570,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
   }
 
+  public void refreshFilterId() {
+    List<Integer> integers = client.getGameService().filterGames(tableFilterController.getFilterSettings());
+    setFilterIds(integers);
+  }
+
   public void refreshUploadResult(Optional<UploadDescriptor> uploadResult) {
+    //required for new table that may or may not be part of the filtered view
+    refreshFilterId();
+
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
-      Consumer<GameRepresentation> c = gameRepresentation -> {
+      Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
         UploadDescriptor tableUploadResult = uploadResult.get();
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
@@ -584,7 +592,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
         }
       };
-      reloadConsumers.add(c);
+      reloadConsumers.add(showTableDialogConsumer);
       onReload();
     }
   }
@@ -878,7 +886,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           tableView.refresh();
           setBusy(false);
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
@@ -897,8 +906,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
-
-    this.filteredIds.clear();
 
     refreshPlaylists();
     refreshEmulators();
@@ -1615,7 +1622,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
       tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
     }
-
   }
 
   @Override
