@@ -1,10 +1,10 @@
 ## Release Notes 2.20.1
-- 
+
 - **Preferences**: Renamed **UI Settings** to **Client Settings**.
 - **Preferences**: Added new initial settings section **Cabinet Settings** where the cabinet and avatar is image is located (which have been part of the **UI Settings** before).
 - **ALTColor**: Added automatic-backups: If you upload a new ALTColor file, the existing ones will be copied into a "backups" subfolder. This way, it is clear which ALTColor file is used.
 - **Competitions**: When a competition is started/created (all modes), the Popper database entry of the table is updated with the competitions id. The id has the format **vps://competition/\<TYPE\>/\<ID\>**. The field is read and written in CSV format so that you can create multiple competitions and all of them are stored in this field. Using this information, you now create **competition playlists**.
- 
+- **Upload Dialogs**: Added file drop support for all upload dialogs. You are not forced anymore to use the selection dialog when uploading assets, but also can simply drop the files on all upload dialogs. The dropped file will be auto-filled into the filename text field.
 
 ### Bugfixes
 

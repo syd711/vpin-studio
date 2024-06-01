@@ -898,6 +898,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
 
+    this.filteredIds.clear();
+
     refreshPlaylists();
     refreshEmulators();
 
