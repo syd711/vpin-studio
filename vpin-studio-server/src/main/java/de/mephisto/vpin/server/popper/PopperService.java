@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -17,6 +16,7 @@ import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -57,6 +57,9 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
   @Autowired
   private HighscoreService highscoreService;
+  
+  @Autowired
+ private VpsService vpsService;
 
   private ServerSettings serverSettings;
 
@@ -151,6 +154,17 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     }
   }
 
+  /** moved from VpsService to break circular dependency. 
+   * The method here get TableDetail from popper and save it after automatching  */
+  public TableDetails autoMatch(Game game, boolean overwrite) {
+    TableDetails tableDetails = getTableDetails(game.getId());
+    if (vpsService.autoMatch(game, tableDetails, overwrite)) {
+      saveTableDetails(tableDetails, game.getId(), false);
+      return tableDetails;
+    }
+    return null;
+  }
+
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
     String vpsTableId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableId());
@@ -158,7 +172,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
     if (!StringUtils.isEmpty(vpsTableId)) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(vpsTableId);
+      VpsTable vpsTable = vpsService.getTableById(vpsTableId);
       if (vpsTable != null) {
         if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && vpsTable.getYear() > 0) {
           tableDetails.setGameYear(vpsTable.getYear());

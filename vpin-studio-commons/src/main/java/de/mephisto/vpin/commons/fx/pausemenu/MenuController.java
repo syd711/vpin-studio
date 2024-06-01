@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
@@ -112,12 +113,13 @@ public class MenuController implements Initializable {
     return pauseMenuSettings;
   }
 
-  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, VpsTable vpsTable,
+      @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
-    this.customViewController.setGame(game, gameStatus);
+    this.customViewController.setGame(game, gameStatus, vpsTable);
     enterMenuItemSelection();
   }
 

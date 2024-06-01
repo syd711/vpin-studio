@@ -1,7 +1,6 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.connectors.vps.VPS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,17 +23,13 @@ public class VPSChange {
     this.id = changedItem.getId();
   }
 
-  public String toString(String tableId) {
-    if (diffType.equals(VpsDiffTypes.tableNewVPX)) {
-      return diffType.toString();
-    }
-    if (tableId == null) {
-      return null;
+  public String toString(VpsTable tableById) {
+    if (tableById == null) {
+      return "Table null";
     }
 
-    VpsTable tableById = VPS.getInstance().getTableById(tableId);
-    if (tableById == null) {
-      return "No matching table found for id \"" + tableId + "\"";
+    if (diffType.equals(VpsDiffTypes.tableNewVPX)) {
+      return diffType.toString();
     }
 
     switch (diffType) {
@@ -106,15 +101,12 @@ public class VPSChange {
         break;
       }
       case tableNewVPX: {
-        return VpsDiffTypes.tableNewVPX + ":\n- " + VPS.getInstance().getTableById(tableId).toString();
+        return VpsDiffTypes.tableNewVPX + ":\n- " + tableById.toString();
       }
       case tableNewVersionVPX: {
-        VpsTable table = VPS.getInstance().getTableById(tableId);
-        if (table != null) {
-          VpsTableVersion version = table.getVersion(this.getId());
-          if (version != null) {
-            return VpsDiffTypes.tableNewVersionVPX + ":\n- " + version;
-          }
+        VpsTableVersion version = tableById.getVersion(this.getId());
+        if (version != null) {
+          return VpsDiffTypes.tableNewVersionVPX + ":\n- " + version;
         }
         return null;
       }

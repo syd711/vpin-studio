@@ -11,9 +11,12 @@ public class VpsUpdateThread extends Thread {
 
   private final PreferencesService preferencesService;
 
-  public VpsUpdateThread(PreferencesService preferencesService) {
+  private VPS vpsDatabase;
+
+  public VpsUpdateThread(PreferencesService preferencesService, VPS vpsDatabase) {
     super("VPS Updater");
     this.preferencesService = preferencesService;
+    this.vpsDatabase = vpsDatabase;
   }
 
   @Override
@@ -24,7 +27,7 @@ public class VpsUpdateThread extends Thread {
         intervalMin = 30;
       }
 
-      VPS.getInstance().update();
+      vpsDatabase.update();
       Thread.sleep((long) intervalMin * 60 * 1000);
     } catch (Exception e) {
       LOG.error("Error in " + this + ": " + e.getMessage(), e);

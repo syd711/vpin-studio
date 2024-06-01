@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

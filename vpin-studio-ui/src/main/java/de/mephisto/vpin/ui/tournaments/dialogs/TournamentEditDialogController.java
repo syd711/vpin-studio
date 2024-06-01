@@ -223,7 +223,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     if (result != null) {
       tournamentTable.setTournamentId(this.tournament.getId());
 
-      VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+      VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       VpsTableVersion vpsTableVersion = null;
       if (vpsTable != null) {
         vpsTableVersion = vpsTable.getVersion(tournamentTable.getVpsVersionId());
@@ -264,7 +264,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       GameRepresentation game = client.getGameService().getGameByVpsTable(selection.getTournamentTable().getVpsTableId(), selection.getTournamentTable().getVpsVersionId());
       selection.setGame(game);
 
-      VpsTable vpsTable = VPS.getInstance().getTableById(selection.getTournamentTable().getVpsTableId());
+      VpsTable vpsTable = client.getVpsService().getTableById(selection.getTournamentTable().getVpsTableId());
       VpsTableVersion vpsTableVersion = null;
       if (vpsTable != null) {
         vpsTableVersion = vpsTable.getVersion(selection.getTournamentTable().getVpsVersionId());
@@ -401,7 +401,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(this.tournament.getId());
     for (TournamentTable tournamentTable : tournamentTables) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+      VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       VpsTableVersion vpsVersion = vpsTable.getVersion(tournamentTable.getVpsVersionId());
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
       this.tableSelection.add(new TournamentTreeModel(tournament, game, tournamentTable, vpsTable, vpsVersion));
@@ -441,7 +441,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         List<IScoredGame> games = gameRoom.getGames();
         for (IScoredGame game : games) {
           List<String> tags = game.getTags();
-          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
+          Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
           if (first.isPresent()) {
             try {
               String vpsUrl = first.get();
@@ -456,7 +456,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
                 tableId = tableId.substring(0, tableId.indexOf("#"));
               }
 
-              VpsTable vpsTable = VPS.getInstance().getTableById(tableId);
+              VpsTable vpsTable = client.getVpsService().getTableById(tableId);
 
               String[] split = vpsUrl.split("#");
               VpsTableVersion vpsVersion = null;

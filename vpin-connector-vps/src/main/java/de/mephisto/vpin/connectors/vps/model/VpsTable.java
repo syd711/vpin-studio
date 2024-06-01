@@ -32,6 +32,19 @@ public class VpsTable implements VPSEntity {
   private int year;
   private long updatedAt;
 
+  //------------------
+
+  public VpsTableVersion getTableVersionById(String id) {
+    if (id!=null) {
+      List<VpsTableVersion> tableFiles = getTableFiles();
+      return tableFiles.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
+    } else {
+      return null;
+    }
+  }
+
+  //------------------
+
   public List<VpsTutorialUrls> getTutorialFiles() {
     return tutorialFiles;
   }

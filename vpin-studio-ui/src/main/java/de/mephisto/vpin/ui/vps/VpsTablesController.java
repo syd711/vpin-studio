@@ -40,7 +40,6 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
 
-import static de.mephisto.vpin.connectors.vps.VPS.getInstance;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTablesController implements Initializable, StudioEventListener {
@@ -152,8 +151,8 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     VpsTable selection = tableView.getSelectionModel().getSelectedItem();
 
     new Thread(() -> {
-      getInstance().reload();
-      vpsTables = getInstance().getTables();
+      client.getVpsService().reload();
+      vpsTables = client.getVpsService().getTables();
       Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
 
       Platform.runLater(() -> {

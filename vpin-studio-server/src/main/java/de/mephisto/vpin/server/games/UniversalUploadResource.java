@@ -38,9 +38,6 @@ public class UniversalUploadResource {
   private PopperService popperService;
 
   @Autowired
-  private VpsService vpsService;
-
-  @Autowired
   private PreferencesService preferenceService;
 
   @Autowired
@@ -186,7 +183,7 @@ public class UniversalUploadResource {
       FileUtils.cloneFile(original.getIniFile(), target.getName());
       FileUtils.cloneFile(original.getResFile(), target.getName());
 
-      tableDetails = vpsService.autoMatch(importedGame, true);
+      tableDetails = popperService.autoMatch(importedGame, true);
       if (tableDetails != null && autoFill) {
         popperService.autoFill(importedGame, tableDetails, true, false);
       }
@@ -260,7 +257,7 @@ public class UniversalUploadResource {
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
 
-      tableDetails = vpsService.autoMatch(game, true);
+      tableDetails = popperService.autoMatch(game, true);
       if (tableDetails != null && autoFill) {
         popperService.autoFill(game, tableDetails, true, false);
       }
@@ -290,7 +287,7 @@ public class UniversalUploadResource {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        TableDetails tableDetails = vpsService.autoMatch(game, true);
+        TableDetails tableDetails = popperService.autoMatch(game, true);
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {
           popperService.autoFill(game, tableDetails, true, false);
         }

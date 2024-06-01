@@ -11,37 +11,59 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VPSTest {
 
-  @Test
-  public void testDiff() {
-    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
-    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
-    assertNotNull(vpsNew);
-    assertNotNull(vpsOld);
-    assertFalse(vpsNew.getTables().isEmpty());
-    assertFalse(vpsOld.getTables().isEmpty());
+  private VPS newInstance(InputStream in) {
+    VPS instance = new VPS();
+    instance.loadTables(in);
+    return instance;
+  }
 
-    List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
-    System.out.println(diff.size());
-    assertFalse(diff.isEmpty());
-    for (VpsDiffer diffEntry : diff) {
-      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+  private VPS newInstance()  {
+    VPS instance = new VPS();
+    try (InputStream in = VPSTest.class.getResourceAsStream("vpsdb.json.1")) {
+      instance.loadTables(in);
+    } catch(IOException ioe) {
+    }
+    return instance;
+  }
+
+
+  @Test
+  public void testDiff() throws IOException {
+    try (InputStream in1 = VPSTest.class.getResourceAsStream("vpsdb.json.1");
+        InputStream in2 = VPSTest.class.getResourceAsStream("vpsdb.json.2")) {
+      VPS vpsOld = newInstance(in1);
+      VPS vpsNew = newInstance(in2);
+      assertNotNull(vpsNew);
+      assertNotNull(vpsOld);
+      assertFalse(vpsNew.getTables().isEmpty());
+      assertFalse(vpsOld.getTables().isEmpty());
+
+      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
+      System.out.println(diff.size());
+      assertFalse(diff.isEmpty());
+      for (VpsDiffer diffEntry : diff) {
+        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+      }
     }
   }
   @Test
-  public void testDiffById() {
-    VPS vpsOld = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.1"));
-    VPS vpsNew = VPS.loadInstance(VPSTest.class.getResourceAsStream("vpsdb.json.2"));
+  public void testDiffById() throws IOException {
+    try (InputStream in1 = VPSTest.class.getResourceAsStream("vpsdb.json.1");
+        InputStream in2 = VPSTest.class.getResourceAsStream("vpsdb.json.2")) {
+      VPS vpsOld = newInstance(in1);
+      VPS vpsNew = newInstance(in2);
 
-    VpsDiffer diff = VPS.getInstance().diffById(vpsOld.getTables(), vpsNew.getTables(), "O8BYvqQw98");
-    VPSChanges changes = diff.getChanges();
-    assertFalse(changes.isEmpty());
+      VpsDiffer diff = vpsNew.diffById(vpsOld.getTables(), vpsNew.getTables(), "O8BYvqQw98");
+      VPSChanges changes = diff.getChanges();
+      assertFalse(changes.isEmpty());
+    }
   }
 
 
 //  @Test
 //  public void testDiff3() throws Exception {
-//    VPS vpsNew = VPS.loadInstance(new FileInputStream(new File("C:\\Users\\matth\\AppData\\Roaming\\JetBrains\\IdeaIC2023.2\\scratches\\vpsdb.json")));
-//    VPS vpsOld = VPS.loadInstance(new FileInputStream(new File("E:\\Development\\workspace\\vpin-studio\\resources/vpsdb.json")));
+//    VPS vpsNew = loadInstance(new FileInputStream(new File("C:\\Users\\matth\\AppData\\Roaming\\JetBrains\\IdeaIC2023.2\\scratches\\vpsdb.json")));
+//    VPS vpsOld = loadInstance(new FileInputStream(new File("E:\\Development\\workspace\\vpin-studio\\resources/vpsdb.json")));
 //
 //    assertNotNull(vpsNew);
 //    assertNotNull(vpsOld);
@@ -62,7 +84,9 @@ public class VPSTest {
 
   @Test
   public void testUpdates() {
-    VPS vps = VPS.getInstance();
+    VPS vps = new VPS();
+    vps.reload();
+
     vps.addChangeListener(new VpsSheetChangedListener() {
       @Override
       public void vpsSheetChanged(List<VpsDiffer> diff) {
@@ -74,18 +98,19 @@ public class VPSTest {
 
   @Test
   public void testTableLoading() {
-    VPS vps = VPS.getInstance();
+    VPS vps = newInstance();
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
       if(table.getFeatures() == null) {
         System.out.println(table.getDisplayName());
       }
     }
+    assertEquals(1909, tables.size());
   }
 
   @Test
   public void testTutorials() {
-    VPS vps = VPS.getInstance();
+    VPS vps = newInstance();
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
 //      List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
@@ -102,7 +127,7 @@ public class VPSTest {
 
   @Test
   public void testSearch() {
-    VPS vps = VPS.getInstance();
+    VPS vps = newInstance();
     List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
     List<VpsTable> vpsTables = vps.find("2 in 1");
@@ -119,7 +144,7 @@ public class VPSTest {
 
   @Test
   public void testSearch2() {
-    VPS vps = VPS.getInstance();
+    VPS vps = newInstance();
     List<VpsTable> tables = vps.getTables();
     assertFalse(tables.isEmpty());
     List<VpsTable> vpsTables = vps.find("Red and");
@@ -140,7 +165,7 @@ public class VPSTest {
     String[] entries = textBuilder.toString().split("\n");
     assertNotEquals(0, entries.length);
 
-    VPS vps = VPS.getInstance();
+    VPS vps = newInstance();
     for (String entry : entries) {
       List<VpsTable> vpsTables = vps.find(entry.trim());
       if (vpsTables.isEmpty()) {

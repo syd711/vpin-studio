@@ -52,7 +52,7 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.getVpsService().autoMatch(game.getId(), overwrite);
+      Studio.client.getPinUPPopperService().autoMatch(game.getId(), overwrite);
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);

@@ -138,7 +138,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         List<IScoredGame> games = gameRoom.getGames();
         for (IScoredGame game : games) {
           List<String> tags = game.getTags();
-          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
+          Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
           if (first.isPresent()) {
             try {
               String vpsUrl = first.get();
@@ -153,14 +153,13 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
                 tableId = tableId.substring(0, tableId.indexOf("#"));
               }
 
-              VpsTable vpsTable = VPS.getInstance().getTableById(tableId);
+              VpsTable vpsTable = client.getVpsService().getTableById(tableId);
 
               String[] split = vpsUrl.split("#");
               VpsTableVersion vpsVersion = null;
               if (vpsTable != null && split.length > 1) {
                 vpsVersion = vpsTable.getVersion(split[1]);
               }
-
 
               CompetitionRepresentation sub = new CompetitionRepresentation();
               sub.setType(CompetitionType.ISCORED.name());
@@ -312,7 +311,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     for (CompetitionRepresentation existing : this.existingCompetitions) {
       if (existing.getUrl() != null && existing.getUrl().equals(c.getUrl())
         && existing.getVpsTableId() != null && existing.getVpsTableId().equals(c.getVpsTableId())
-        && existing.getVpsTableVersion() != null && existing.getVpsTableVersion().equals(c.getVpsTableVersion())) {
+        && existing.getVpsTableVersionId() != null && existing.getVpsTableVersionId().equals(c.getVpsTableVersionId())) {
         return true;
       }
     }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -207,7 +208,11 @@ public class PauseMenu extends Application {
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
-        StateMananger.getInstance().setGame(game, status, cardScreen, tutorialDisplay, pauseMenuSettings);
+
+        String extTableId = game.getExtTableId();
+        VpsTable tableById = client.getVpsService().getTableById(extTableId);
+
+        StateMananger.getInstance().setGame(game, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
         stage.getScene().setCursor(Cursor.NONE);
 
         new Thread(() -> {
