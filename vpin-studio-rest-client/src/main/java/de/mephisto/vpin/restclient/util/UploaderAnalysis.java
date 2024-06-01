@@ -42,6 +42,13 @@ public class UploaderAnalysis<T> {
     this.file = file;
   }
 
+
+  public void reset() {
+    this.fileNames.clear();
+    this.fileNamesWithPath.clear();
+    this.directories.clear();
+  }
+
   public File getFile() {
     return file;
   }
