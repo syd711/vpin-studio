@@ -19,7 +19,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -106,9 +105,9 @@ public class AltColorService implements InitializingBean {
       altColor.setAltColorType(type);
 
       File backupFolder = new File(altColorFolder, "backups/");
-      if(backupFolder.exists()) {
+      if (backupFolder.exists()) {
         String[] list = backupFolder.list();
-        if(list != null) {
+        if (list != null) {
           altColor.setBackedUpFiles(list.length);
         }
       }
@@ -198,29 +197,32 @@ public class AltColorService implements InitializingBean {
     File[] existingFiles = folder.listFiles((dir, name) -> new File(dir, name).isFile());
     File backupsFolder = new File(folder, "backups/");
     backupsFolder.mkdirs();
-    String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-    for (File existingFile : existingFiles) {
-      String existingSuffix = FilenameUtils.getExtension(existingFile.getName());
-      if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX)) {
-        continue;
-      }
-      if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX)) {
-        continue;
-      }
+    if (existingFiles != null) {
+      String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+      for (File existingFile : existingFiles) {
+        String existingSuffix = FilenameUtils.getExtension(existingFile.getName());
+        if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX)) {
+          continue;
+        }
+        if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX)) {
+          continue;
+        }
 
-      try {
-        String name = existingFile.getName();
-        File backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
-        FileUtils.copyFile(existingFile, backup);
-        LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
-        if (!existingFile.delete()) {
-          LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
+        try {
+          String name = existingFile.getName();
+          File backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
+          FileUtils.copyFile(existingFile, backup);
+          LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
+          if (!existingFile.delete()) {
+            LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
+          }
+        }
+        catch (IOException e) {
+          LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
         }
       }
-      catch (IOException e) {
-        LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
-      }
     }
+
   }
 
   @Override

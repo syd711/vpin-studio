@@ -16,10 +16,17 @@ import java.util.Set;
 public class FileSelectorDragEventHandler implements EventHandler<DragEvent> {
 
   private final Node node;
+  private boolean multiSelection;
   private List<String> suffixes;
 
   public FileSelectorDragEventHandler(Node node, String... suffix) {
     this.node = node;
+    this.suffixes = Arrays.asList(suffix);
+  }
+
+  public FileSelectorDragEventHandler(Node node, boolean multiSelection, String... suffix) {
+    this.node = node;
+    this.multiSelection = multiSelection;
     this.suffixes = Arrays.asList(suffix);
   }
 
@@ -33,7 +40,7 @@ public class FileSelectorDragEventHandler implements EventHandler<DragEvent> {
     }
 
     //files may be empty for drag from a zip file
-    if (!files.isEmpty() && files.size() > 1) {
+    if (!multiSelection && !files.isEmpty() && files.size() > 1) {
       return;
     }
 

@@ -8,12 +8,15 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -30,6 +33,9 @@ import java.util.ResourceBundle;
 
 public class PupPackUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -50,6 +56,7 @@ public class PupPackUploadController implements Initializable, DialogController 
   private Label romLabel;
 
   private File selection;
+  private Stage stage;
 
   private boolean result = false;
 
@@ -88,11 +95,11 @@ public class PupPackUploadController implements Initializable, DialogController 
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
-      refreshSelection(stage);
+      refreshSelection();
     }
   }
 
-  private void refreshSelection(Stage stage) {
+  private void refreshSelection() {
     this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);
@@ -125,6 +132,12 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -138,6 +151,7 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   public void setFile(File file, UploaderAnalysis uploaderAnalysis, Stage stage) {
     this.selection = file;
+    this.stage = stage;
     if (selection != null) {
       refreshMatchingGame(uploaderAnalysis);
       this.fileNameField.setText(this.selection.getAbsolutePath());

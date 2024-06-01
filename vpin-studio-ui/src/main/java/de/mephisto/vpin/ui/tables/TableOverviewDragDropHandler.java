@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.DnDOverlayController;
 import de.mephisto.vpin.ui.Studio;
@@ -16,18 +15,19 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipOutputStream;
+import java.util.stream.Collectors;
 
 public class TableOverviewDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewDragDropHandler.class);
@@ -59,6 +59,12 @@ public class TableOverviewDragDropHandler {
     tableView.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
+        List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).collect(Collectors.toList());
+        if (open.size() > 1) {
+          return;
+        }
+
+
         List<File> files = event.getDragboard().getFiles();
         if (files == null || files.size() > 1) {
           return;
