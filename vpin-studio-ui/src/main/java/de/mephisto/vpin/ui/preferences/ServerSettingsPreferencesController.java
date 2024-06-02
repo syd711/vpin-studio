@@ -35,6 +35,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox useOriginalVbsFilesCheckbox;
 
   @FXML
+  private CheckBox vpxMonitoringCheckbox;
+
+  @FXML
   private Spinner<Integer> idleSpinner;
 
   @FXML
@@ -152,6 +155,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
     useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepVbsFiles(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
+    vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setUseVPXTableMonitor(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }

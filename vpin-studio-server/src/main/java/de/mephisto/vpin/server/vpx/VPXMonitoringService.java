@@ -51,7 +51,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     monitorThread = new Thread(() -> {
       try {
         Thread.currentThread().setName("VPX Monitor Thread");
-        LOG.info("VPX monitor started.");
+        LOG.info("VPX Monitor Thread started.");
         while (running.get()) {
           String tableName = getVPXTableName();
           if (tableName != null) {
@@ -64,7 +64,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
         }
       }
       catch (Exception e) {
-        LOG.info("VPX monitor failed: " + e.getMessage(), e);
+        LOG.info("VPX Monitor Thread failed: " + e.getMessage(), e);
       } finally {
         LOG.info(Thread.currentThread().getName() + " terminated.");
       }
