@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- **Virtual Pinball Spreadsheet**: The VPS database has been completely moved to the server. Every client downloaded and kept their own copy of the VPS database before. This lead to inconsistencies when the client was working with a new database copy.
 - **ALTColor**: Fixed wrong filename when importing and validating serum files.
 - **Table Overview**: Fixed broken table layout which remained in a fix size when window was resized.
 - **Table Overview**: Fixed status column sorting.
