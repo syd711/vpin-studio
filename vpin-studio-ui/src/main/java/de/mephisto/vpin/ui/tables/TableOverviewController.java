@@ -1765,15 +1765,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
 
-    new Thread(() -> {
-      try {
-        client.getVpsService().update();
-      }
-      catch (Exception e) {
-        LOG.error("VPS update failed: " + e.getMessage(), e);
-      }
-    }).start();
-
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       tablesLoadingOverlay = loader.load();
