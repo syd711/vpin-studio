@@ -27,8 +27,8 @@ public class VpsUpdateThread extends Thread {
         intervalMin = 30;
       }
 
-      vpsDatabase.update();
       Thread.sleep((long) intervalMin * 60 * 1000);
+      vpsDatabase.update();
     } catch (Exception e) {
       LOG.error("Error in " + this + ": " + e.getMessage(), e);
     }

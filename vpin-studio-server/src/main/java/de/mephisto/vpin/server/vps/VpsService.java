@@ -48,20 +48,16 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
-  /** Internal VPS database */
+  /**
+   * Internal VPS database
+   */
   private VPS vpsDatabase;
 
   private ServerSettings serverSettings;
 
-  public VpsService() {
-    // create and load from file the VPS Database
-    this.vpsDatabase = new VPS();
-    // update database from VPU
-    vpsDatabase.update();
-  }
-
   /**
    * Match game and fill associated TableDetail with VPS Database mapping
+   *
    * @return true if matching was done and TableDetail modified
    */
   public boolean autoMatch(Game game, TableDetails tableDetails, boolean overwrite) {
@@ -102,7 +98,8 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           if (version != null) {
             LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
             tableDetails.setMappedValue(mappingVpsTableVersionId, version.getId());
-          } else {
+          }
+          else {
             LOG.info(game.getGameDisplayName() + ": Emptied table version");
             tableDetails.setMappedValue(mappingVpsTableVersionId, null);
           }
@@ -185,7 +182,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
-            String json  = tableDiff.getChanges().toJson();
+            String json = tableDiff.getChanges().toJson();
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries)");
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
@@ -206,9 +203,18 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    vpsDatabase.addChangeListener(this);
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    try {
+      // create and load from file the VPS Database
+      this.vpsDatabase = new VPS();
+      // update database from VPU
+      vpsDatabase.update();
+
+      vpsDatabase.addChangeListener(this);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    } catch (Exception e) {
+      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+    }
   }
 
   //-------------------------------------
@@ -227,11 +233,13 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   public List<VpsDiffer> update() {
-      return vpsDatabase.update();
+    return vpsDatabase.update();
   }
+
   public boolean reload() {
     return vpsDatabase.reload();
   }
+
   public Date getChangeDate() {
     return vpsDatabase.getChangeDate();
   }

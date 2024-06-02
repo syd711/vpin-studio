@@ -35,7 +35,7 @@ public class VpsResource {
   @GetMapping("/update")
   public boolean update() {
     List<VpsDiffer> diffs = vpsService.update();
-    return diffs.size()>0;
+    return !diffs.isEmpty();
   }
 
   @GetMapping("/reload")

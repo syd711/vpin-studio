@@ -50,7 +50,6 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       Studio.client.getVpsService().update();
-      Studio.client.getVpsService().reload();
     } catch (Exception e) {
       LOG.error("VPS database download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Download Failed", "VPS database download failed: " + e.getMessage());

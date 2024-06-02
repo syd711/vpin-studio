@@ -137,10 +137,10 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @FXML
   public void onReload() {
-    doReload();
+    doReload(true);
   }
 
-  public void doReload() {
+  public void doReload(boolean forceReload) {
     this.searchTextField.setDisable(true);
     tableView.setVisible(false);
 
@@ -151,7 +151,10 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     VpsTable selection = tableView.getSelectionModel().getSelectedItem();
 
     new Thread(() -> {
-      client.getVpsService().reload();
+      if(forceReload) {
+        client.getVpsService().update();
+      }
+
       vpsTables = client.getVpsService().getTables();
       Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
 
@@ -360,7 +363,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     });
 
     EventManager.getInstance().addListener(this);
-    this.doReload();
+    this.doReload(false);
   }
 
   private boolean isDataAvailable(List<? extends VpsAuthoredUrls> entries) {

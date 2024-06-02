@@ -36,10 +36,6 @@ public class VpsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vps/update", Boolean.class);
   }
 
-  public boolean reload() {
-    return getRestClient().get(API + "vps/update", Boolean.class);
-  }
-
   public Date getChangeDate() {
     return getRestClient().get(API + "vps/changeDate", Date.class);
   }
