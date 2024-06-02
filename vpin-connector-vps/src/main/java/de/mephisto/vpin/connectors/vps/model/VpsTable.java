@@ -33,14 +33,15 @@ public class VpsTable implements VPSEntity {
   private long updatedAt;
 
   //------------------
-
-  public VpsTableVersion getTableVersionById(String id) {
-    if (id!=null) {
-      List<VpsTableVersion> tableFiles = getTableFiles();
-      return tableFiles.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
-    } else {
-      return null;
+  public VpsTableVersion getTableVersionById(String extTableVersionId) {
+    if (this.tableFiles != null && extTableVersionId != null) {
+      for (VpsTableVersion tableFile : this.tableFiles) {
+        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
+          return tableFile;
+        }
+      }
     }
+    return null;
   }
 
   //------------------
@@ -261,17 +262,6 @@ public class VpsTable implements VPSEntity {
   @Override
   public String toString() {
     return this.getName();
-  }
-
-  public VpsTableVersion getVersion(String extTableVersionId) {
-    if (this.tableFiles != null) {
-      for (VpsTableVersion tableFile : this.tableFiles) {
-        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
-          return tableFile;
-        }
-      }
-    }
-    return null;
   }
 
   @Override

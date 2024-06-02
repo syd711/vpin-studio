@@ -63,28 +63,6 @@ public class GameRepresentation {
   private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
 
-  //---------------------------------
-  /** The cached table */
-  private boolean vpsTableLoaded = false;
-
-  private VpsTable vpsTable;
-
-  @JsonIgnore
-  public boolean isVpsTableLoaded() {
-    return vpsTableLoaded;
-  }
-
-  @JsonIgnore
-  public VpsTable getVpsTable() {
-    return vpsTable;
-  }
-
-  public void setVpsTable(VpsTable vpsTable) {
-    this.vpsTableLoaded = true;
-    this.vpsTable = vpsTable;
-  }
-  //---------------------------------
-
   public String getNotes() {
     return notes;
   }

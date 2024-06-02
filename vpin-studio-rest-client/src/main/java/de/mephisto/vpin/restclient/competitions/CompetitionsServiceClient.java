@@ -1,13 +1,10 @@
 package de.mephisto.vpin.restclient.competitions;
 
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +38,11 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
   }
 
   public CompetitionRepresentation getCompetitionByUuid(String uuid) {
-    return attachVpsTable(getRestClient().get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class));
+    return getRestClient().get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class);
   }
 
   public List<CompetitionRepresentation> getOfflineCompetitions() {
-    return attachVpsTable(getRestClient().get(API + "competitions/offline", CompetitionRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "competitions/offline", CompetitionRepresentation[].class));
   }
 
   public List<PlayerRepresentation> getDiscordCompetitionPlayers(long competitionId) {
@@ -53,51 +50,32 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
   }
 
   public List<CompetitionRepresentation> getDiscordCompetitions() {
-    return attachVpsTable(getRestClient().get(API + "competitions/discord", CompetitionRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "competitions/discord", CompetitionRepresentation[].class));
   }
 
 
   public List<CompetitionRepresentation> getSubscriptions() {
-    return attachVpsTable(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
   }
 
 
   public List<CompetitionRepresentation> getIScoredSubscriptions() {
-    return attachVpsTable(getRestClient().get(API + "competitions/iscored", CompetitionRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "competitions/iscored", CompetitionRepresentation[].class));
   }
 
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
-    return attachVpsTable(getRestClient().get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "competitions/finished/" + limit, CompetitionRepresentation[].class));
   }
 
 
   public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
     try {
-      return attachVpsTable(getRestClient().get(API + "competitions/" + type.name() + "/active", CompetitionRepresentation.class));
+      return getRestClient().get(API + "competitions/" + type.name() + "/active", CompetitionRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to read active competition: " + e.getMessage(), e);
     }
     return null;
   }
-
-  //----------------------------
-  // enrich the CompetitionRepresentation with VpsTable
-
-  private CompetitionRepresentation attachVpsTable(CompetitionRepresentation competition) {
-    if (StringUtils.isNotEmpty(competition.getVpsTableId())) {
-      VpsTable vpstable = client.getVpsService().getTableById(competition.getVpsTableId());
-      competition.attachVpsTable(vpstable);
-    }
-    return competition;
-  }
-  private List<CompetitionRepresentation> attachVpsTable(CompetitionRepresentation[] competitions) {
-    for (CompetitionRepresentation competition: competitions) {
-      attachVpsTable(competition);
-    }
-    return Arrays.asList(competitions);
-  }
-
-  //----------------------------
 
   public CompetitionRepresentation saveCompetition(CompetitionRepresentation c) throws Exception {
     try {

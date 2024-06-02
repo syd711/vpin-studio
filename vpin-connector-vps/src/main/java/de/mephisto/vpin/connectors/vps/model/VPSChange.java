@@ -104,7 +104,7 @@ public class VPSChange {
         return VpsDiffTypes.tableNewVPX + ":\n- " + tableById.toString();
       }
       case tableNewVersionVPX: {
-        VpsTableVersion version = tableById.getVersion(this.getId());
+        VpsTableVersion version = tableById.getTableVersionById(this.getId());
         if (version != null) {
           return VpsDiffTypes.tableNewVersionVPX + ":\n- " + version;
         }

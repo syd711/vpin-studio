@@ -470,8 +470,7 @@ public class GameService implements InitializingBean {
       else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
       }
@@ -680,8 +679,7 @@ public class GameService implements InitializingBean {
         gameDetailsRepository.saveAndFlush(gameDetails);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
     }
   }
@@ -702,8 +700,7 @@ public class GameService implements InitializingBean {
           }
         }
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to reset update flag for rom '" + rom + "': " + e.getMessage(), e);
     }
   }

@@ -40,7 +40,7 @@ public class TournamentTreeModel {
       VpsTableVersion version = null;
       GameRepresentation game = null;
       if (!StringUtils.isEmpty(tournamentTable.getVpsVersionId())) {
-        version = table.getVersion(tournamentTable.getVpsVersionId());
+        version = table.getTableVersionById(tournamentTable.getVpsVersionId());
         game = client.getGameService().getGameByVpsTable(table, version);
       }
 

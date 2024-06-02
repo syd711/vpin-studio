@@ -152,6 +152,9 @@ public class Studio extends Application {
           ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
         }
 
+        //force pre-caching, this way, the table overview does not need to execute single GET requests
+        Studio.client.getVpsService().invalidateAll();
+
         FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
         Parent root = null;
         try {

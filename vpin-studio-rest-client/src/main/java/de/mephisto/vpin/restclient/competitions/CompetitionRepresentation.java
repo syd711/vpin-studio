@@ -1,12 +1,8 @@
 package de.mephisto.vpin.restclient.competitions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -57,29 +53,6 @@ public class CompetitionRepresentation {
   private boolean highscoreReset;
 
   private String rom;
-
-  //-----------------
-
-  private VpsTable vpsTable;
-
-  public void attachVpsTable(VpsTable vpsTable) {
-    this.vpsTable = vpsTable;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public VpsTable getVpsTable() {
-    return vpsTable;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public VpsTableVersion getVpsTableVersion() {
-    if (vpsTable != null && vpsTableVersionId != null) {
-      return vpsTable.getVersion(vpsTableVersionId);
-    }
-    return null;
-  }
 
   public String getVpsTableId() {
     return vpsTableId;

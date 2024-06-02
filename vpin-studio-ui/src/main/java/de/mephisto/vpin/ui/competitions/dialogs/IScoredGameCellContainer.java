@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -22,12 +23,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredGameCellContainer extends HBox {
 
-  public IScoredGameCellContainer(CompetitionRepresentation subscription, GameRoom gameRoom, String customStyles) {
+  public IScoredGameCellContainer(CompetitionRepresentation subscription, VpsTable vpsTable, GameRoom gameRoom, String customStyles) {
     super(3);
 
     setPadding(new Insets(3, 0, 6, 0));
 
-    String name = subscription.getVpsTable().getName();
+    String name = vpsTable.getName();
     if (name.length() > 40) {
       name = name.substring(0, 39) + "...";
     }

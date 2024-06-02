@@ -995,7 +995,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     refreshVersionsCombo(tableById);
 
     if (tableById != null && !StringUtils.isEmpty(vpsTableVersionId)) {
-      VpsTableVersion tableVersion = tableById.getVersion(vpsTableVersionId);
+      VpsTableVersion tableVersion = tableById.getTableVersionById(vpsTableVersionId);
       if (tableVersion != null) {
         tableVersionsCombo.setValue(tableVersion);
         propperRenamingController.setVpsTableVersion(tableVersion);

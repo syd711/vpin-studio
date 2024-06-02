@@ -213,7 +213,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
         }
 
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
-          VpsTableVersion tableVersion = vpsTable.getVersion(vpsTableVersionId);
+          VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
           if (tableVersion != null) {
             if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableVersion.getVersion())) {
               tableDetails.setGameVersion(tableVersion.getVersion());

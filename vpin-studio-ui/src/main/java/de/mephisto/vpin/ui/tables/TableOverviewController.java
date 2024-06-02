@@ -470,8 +470,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -805,8 +804,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
         editorController.setGame(game, source);
         editorController.setTablesController(tablesController);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
       }
     }
@@ -831,8 +829,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSoundEditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
       }
     }
@@ -856,8 +853,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSound2EditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
@@ -887,8 +883,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           tableView.refresh();
           setBusy(false);
         });
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
@@ -1123,11 +1118,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         Label label = new Label("-");
         label.getStyleClass().add("default-title");
-
-        if (!value.isVpsTableLoaded()) {
-          value.setVpsTable(client.getVpsService().getTableById(value.getExtTableId()));
-        }
-        VpsTable vpsTable = value.getVpsTable();
+        VpsTable vpsTable = client.getVpsService().getTableById(value.getExtTableId());
         VpsTableVersion vpsTableVersion = null;
 
         label = new Label();
@@ -1172,7 +1163,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if (!value.getVpsUpdates().isEmpty() && vpsTable!=null) {
+        if (!value.getVpsUpdates().isEmpty() && vpsTable != null) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
           updateIcon.setIconSize(iconSize + 4);
           label.setGraphic(updateIcon);
@@ -1202,8 +1193,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
         return new SimpleObjectProperty(row);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Failed to render VPS update: " + e.getMessage(), e);
       }
       return new SimpleStringProperty("");
@@ -1771,8 +1761,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -1781,8 +1770,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       loader.load();
       tableFilterController = loader.getController();
       tableFilterController.setTableController(this);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 

@@ -33,9 +33,14 @@ public class GameFilterService {
     long start = System.currentTimeMillis();
     List<Integer> result = new ArrayList<>();
     List<Game> knownGames = gameService.getKnownGames(filterSettings.getEmulatorId());
+    if (filterSettings.getEmulatorId() == -1 && filterSettings.isResetted(true)) {
+      LOG.info("Unfiltered result " + knownGames.size() + " games took " + (System.currentTimeMillis() - start) + "ms");
+      return knownGames.stream().map(g -> g.getId()).collect(Collectors.toList());
+    }
+
     for (Game game : knownGames) {
       boolean vpxGame = game.isVpxGame();
-      if(vpxGame) {
+      if (vpxGame) {
         if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
           continue;
         }
@@ -87,7 +92,7 @@ public class GameFilterService {
         continue;
       }
 
-      if(vpxGame) {
+      if (vpxGame) {
         if (filterSettings.isOtherIssues() && !gameValidator.hasOtherIssues(states)) {
           continue;
         }

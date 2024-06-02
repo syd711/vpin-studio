@@ -340,7 +340,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (tableById != null) {
         refreshTableView(tableById);
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
-          VpsTableVersion version = tableById.getVersion(vpsTableVersionId);
+          VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
           tableVersionsCombo.setValue(version);
         }
       }

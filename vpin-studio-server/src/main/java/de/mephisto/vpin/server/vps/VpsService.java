@@ -153,7 +153,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       return null;
     }
 
-    VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+    VpsTableVersion tableVersion = vpsTable.getTableVersionById(game.getExtTableVersionId());
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
       return null;
     }
@@ -243,4 +243,5 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   public Date getChangeDate() {
     return vpsDatabase.getChangeDate();
   }
+
 }

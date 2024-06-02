@@ -67,7 +67,7 @@ public class MenuCustomViewController implements Initializable {
     // when game is mapped to VPS Table
     if (tableById != null) {
       String extVersion = game.getExtTableVersionId();
-      VpsTableVersion version = tableById.getVersion(extVersion);
+      VpsTableVersion version = tableById.getTableVersionById(extVersion);
       if (version != null) {
         this.versionLabel.setText(version.getComment());
         List<String> authors = version.getAuthors();

@@ -98,25 +98,6 @@ public class PropperRenamingController implements Initializable {
     modBtn.setSelected(uiSettings.isPropperModField());
     vrBtn.setSelected(uiSettings.isPropperVRField());
 
-    if (tableDetails.getGameFileName() != null && (tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"))) {
-      fileNameCheckBox.setSelected(false);
-      fileNameCheckBox.setDisable(true);
-    }
-
-    refreshNames();
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    displayNameCheckBox.setSelected(true);
-    fileNameCheckBox.setSelected(true);
-    gameNameCheckBox.setSelected(true);
-
-    displayNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-    fileNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-    gameNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-
-
     authorBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperAuthorField(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
@@ -137,6 +118,25 @@ public class PropperRenamingController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       refreshNames();
     });
+
+    if (tableDetails.getGameFileName() != null && (tableDetails.getGameFileName().contains("/") || tableDetails.getGameFileName().contains("\\"))) {
+      fileNameCheckBox.setSelected(false);
+      fileNameCheckBox.setDisable(true);
+    }
+
+    refreshNames();
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    displayNameCheckBox.setSelected(true);
+    fileNameCheckBox.setSelected(true);
+    gameNameCheckBox.setSelected(true);
+
+    displayNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+    fileNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+    gameNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+
   }
 
   private void refreshNames() {

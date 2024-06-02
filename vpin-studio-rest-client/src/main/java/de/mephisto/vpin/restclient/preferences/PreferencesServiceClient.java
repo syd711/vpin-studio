@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -20,6 +19,8 @@ import java.util.*;
  ********************************************************************************************************************/
 public class PreferencesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
+  private Map<String, Object> jsonSettingsCache = new HashMap<>();
 
   public PreferencesServiceClient(VPinStudioClient client) {
     super(client);
@@ -36,7 +37,12 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   }
 
   public <T> T getJsonPreference(String key, Class<T> clazz) {
-    return getRestClient().get(API + "preferences/json/" + key, clazz);
+    if (!jsonSettingsCache.containsKey(key)) {
+      T settings = getRestClient().get(API + "preferences/json/" + key, clazz);
+      jsonSettingsCache.put(key, settings);
+    }
+
+    return (T) jsonSettingsCache.get(key);
   }
 
   public boolean setJsonPreference(String key, JsonSettings settings) {
@@ -44,6 +50,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       Map<String, Object> data = new HashMap<>();
       data.put("data", settings.toJson());
       boolean result = getRestClient().put(API + "preferences/json/" + key, data);
+      jsonSettingsCache.remove(key);
       notifyPreferenceChange(key, settings);
       return result;
     } catch (Exception e) {

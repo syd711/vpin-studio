@@ -1,5 +1,6 @@
 ## Release Notes 2.20.1
 
+- **Universal Uploads**: Removed the table selection information from the drop zone, since this led to confusion, that assets may only be uploaded for the selected table. Since the internal structure of an archive mostly determines the target folder and therefore the table, this should be less irritating.
 - **Preferences**: Renamed **UI Settings** to **Client Settings**.
 - **Preferences**: Added new initial settings section **Cabinet Settings** where the cabinet and avatar is image is located (which have been part of the **UI Settings** before).
 - **ALTColor**: Added automatic-backups: If you upload a new ALTColor file, the existing ones will be copied into a "backups" subfolder. This way, it is clear which ALTColor file is used.
@@ -8,7 +9,7 @@
 
 ### Bugfixes
 
-- **Virtual Pinball Spreadsheet**: The VPS database has been completely moved to the server. Every client downloaded and kept their own copy of the VPS database before. This lead to inconsistencies when the client was working with a new database copy.
+- **Virtual Pinball Spreadsheet**: The VPS database has been completely moved to the server. Every client downloaded and kept their own copy of the VPS database before. This led to inconsistencies when the client was working with a newer version of the database.
 - **ALTColor**: Fixed wrong filename when importing and validating serum files.
 - **Table Overview**: Fixed broken table layout which remained in a fix size when window was resized.
 - **Table Overview**: Fixed status column sorting.
@@ -18,3 +19,5 @@
 - **Offline Competitions**: Fixed missing highscore reset when no Discord server was selected. This should be independent of each other of course.
 - **Table Overview / Playfield Preview**: Trying to improve the positioning for MAME playfield videos, let's see how this went.
 - **Table Overview / PUP Packs**: Fixed issue that the PUP pack indicator wasn't shown for some tables. I assume this problem was related due to the long loading time of PUP packs.
+- **Table Overview / MAME**: Added progress dialog for the MAME reload since this one can take quite some time.
+- **Preferences / Performance Optimization**: Preferences are only re-fetched if they have been written before. This should save some requests.

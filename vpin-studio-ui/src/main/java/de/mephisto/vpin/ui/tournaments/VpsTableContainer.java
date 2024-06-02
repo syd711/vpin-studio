@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -16,7 +18,7 @@ public class VpsTableContainer extends VBox {
     this(item, "");
   }
 
-  public VpsTableContainer(VpsTable item, String customStyle) {
+  public VpsTableContainer(@NonNull VpsTable item, String customStyle) {
     super(3);
 
     String name = item.getName();

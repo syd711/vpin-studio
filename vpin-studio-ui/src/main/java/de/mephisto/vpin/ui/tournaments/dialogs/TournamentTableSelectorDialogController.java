@@ -198,7 +198,7 @@ public class TournamentTableSelectorDialogController implements DialogController
       tableFiles.add(0, null);
       versionsCombo.setItems(FXCollections.observableList(tableFiles));
 
-      VpsTableVersion vpsTableVersion = vpsTable.getVersion(tournamentTable.getVpsVersionId());
+      VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(tournamentTable.getVpsVersionId());
       if (vpsTableVersion != null) {
         versionsCombo.setValue(vpsTableVersion);
       }
