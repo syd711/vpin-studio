@@ -23,6 +23,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -57,9 +58,9 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
   @Autowired
   private HighscoreService highscoreService;
-  
+
   @Autowired
- private VpsService vpsService;
+  private VpsService vpsService;
 
   private ServerSettings serverSettings;
 
@@ -110,8 +111,20 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     return -1;
   }
 
-  public void notifyTableStatusChange(final Game game, final boolean started) {
-    TableStatusChangedEvent event = () -> game;
+  public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
+    TableStatusChangedEvent event = new TableStatusChangedEvent() {
+      @NotNull
+      @Override
+      public Game getGame() {
+        return game;
+      }
+
+      @Override
+      public TableStatusChangedOrigin getOrigin() {
+        return origin;
+      }
+    };
+
     for (PopperStatusChangeListener listener : this.listeners) {
       if (started) {
         listener.tableLaunched(event);
@@ -154,8 +167,10 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     }
   }
 
-  /** moved from VpsService to break circular dependency. 
-   * The method here get TableDetail from popper and save it after automatching  */
+  /**
+   * moved from VpsService to break circular dependency.
+   * The method here get TableDetail from popper and save it after automatching
+   */
   public TableDetails autoMatch(Game game, boolean overwrite) {
     TableDetails tableDetails = getTableDetails(game.getId());
     if (vpsService.autoMatch(game, tableDetails, overwrite)) {
@@ -207,7 +222,8 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
           try {
             GameType gameType = GameType.valueOf(vpsTable.getType());
             tableDetails.setGameType(gameType);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             //ignore
           }
         }
@@ -449,7 +465,8 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
             LOG.info("Cloned PinUP Popper media: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.info("Failed to clone popper media: " + e.getMessage(), e);
       }
     }

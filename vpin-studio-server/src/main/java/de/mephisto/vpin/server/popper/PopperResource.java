@@ -49,7 +49,7 @@ public class PopperResource {
 
     new Thread(() -> {
       Thread.currentThread().setName("Popper Game Launch Thread");
-      popperService.notifyTableStatusChange(game, true);
+      popperService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
   }
@@ -70,7 +70,7 @@ public class PopperResource {
 
     new Thread(() -> {
       Thread.currentThread().setName("Popper Game Exit Thread");
-      popperService.notifyTableStatusChange(game, false);
+      popperService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
   }
