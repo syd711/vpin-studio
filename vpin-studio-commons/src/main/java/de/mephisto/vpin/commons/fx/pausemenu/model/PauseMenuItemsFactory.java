@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -81,7 +80,7 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = VPS.getInstance().getTableById(extTableId);
+      VpsTable tableById = PauseMenu.client.getVpsService().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {

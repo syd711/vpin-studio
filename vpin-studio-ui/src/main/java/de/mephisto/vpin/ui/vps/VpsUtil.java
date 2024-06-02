@@ -1,4 +1,4 @@
-package de.mephisto.vpin.connectors.vps.model;
+package de.mephisto.vpin.ui.vps;
 
 public class VpsUtil {
 

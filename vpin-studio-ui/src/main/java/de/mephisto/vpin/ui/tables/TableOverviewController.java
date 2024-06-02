@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -1100,11 +1101,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Label label = new Label("-");
         label.getStyleClass().add("default-title");
 
-        VpsTable vpsTable = null;
+        if (!value.isVpsTableLoaded()) {
+          value.setVpsTable(client.getVpsService().getTableById(value.getExtTableId()));
+        }
+        VpsTable vpsTable = value.getVpsTable();
+        VpsTableVersion vpsTableVersion = null;
 
         label = new Label();
-        if (!StringUtils.isEmpty(value.getExtTableId()) && VPS.getInstance().getTableById(value.getExtTableId()) != null) {
-          vpsTable = VPS.getInstance().getTableById(value.getExtTableId());
+        if (vpsTable != null) {
+          vpsTableVersion = vpsTable.getTableVersionById(value.getExtTableVersionId());
+
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
           label.setGraphic(checkboxIcon);
@@ -1123,11 +1129,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if (!StringUtils.isEmpty(value.getExtTableVersionId()) && vpsTable != null && VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()) != null) {
+        if (vpsTableVersion != null) {
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
           checkboxIcon.setIconSize(iconSize);
           label.setGraphic(checkboxIcon);
-          label.setTooltip(new Tooltip("VPS Table Version:\n" + VPS.getInstance().getTableVersionById(vpsTable, value.getExtTableVersionId()).toString()));
+          label.setTooltip(new Tooltip("VPS Table Version:\n" + vpsTableVersion.toString()));
           row.getChildren().add(label);
         }
         else {
@@ -1143,7 +1149,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         row.getChildren().add(label);
 
         label = new Label();
-        if (!value.getVpsUpdates().isEmpty() && !StringUtils.isEmpty(value.getExtTableId())) {
+        if (!value.getVpsUpdates().isEmpty() && vpsTable!=null) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
           updateIcon.setIconSize(iconSize + 4);
           label.setGraphic(updateIcon);
@@ -1151,7 +1157,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           StringBuilder builder = new StringBuilder();
           List<VPSChange> changes = value.getVpsUpdates().getChanges();
           for (VPSChange change : changes) {
-            builder.append(change.toString(value.getExtTableId()));
+            builder.append(change.toString(vpsTable));
             builder.append("\n");
           }
 
@@ -1737,7 +1743,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     new Thread(() -> {
       try {
-        VPS.getInstance().update();
+        client.getVpsService().update();
       } catch (Exception e) {
         LOG.error("VPS update failed: " + e.getMessage(), e);
       }

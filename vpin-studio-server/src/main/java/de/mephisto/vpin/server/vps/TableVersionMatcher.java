@@ -43,8 +43,8 @@ public class TableVersionMatcher {
             return "";
         }
         if (StringUtils.startsWithIgnoreCase(version, "VP")) {
-            int c, p = 2, l = version.length();
-            while (p<l && StringUtils.indexOf("XS 0123456789.", c=version.charAt(p))>=0) {
+            int p = 2, l = version.length();
+            while (p<l && StringUtils.indexOf("XS 0123456789.", version.charAt(p))>=0) {
                 p++;
             }
             version = version.substring(p);

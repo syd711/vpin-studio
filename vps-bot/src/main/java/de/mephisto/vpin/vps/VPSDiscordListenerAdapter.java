@@ -1,6 +1,5 @@
 package de.mephisto.vpin.vps;
 
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -38,7 +37,7 @@ public class VPSDiscordListenerAdapter extends ListenerAdapter {
     Message message = event.getMessage();
     String content = message.getContentRaw();
     if (content.trim().equals("/reload")) {
-      List<VpsDiffer> diffs = VPS.getInstance().update();
+      List<VpsDiffer> diffs = bot.update();
       MessageChannel channel = event.getChannel();
       if (diffs != null) {
         channel.sendMessage("Synchronization successful, found " + diffs.size() + " update(s).").complete();

@@ -143,6 +143,12 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
+  public TableDetails autoMatch(int gameId, boolean overwrite) {
+    return getRestClient().get(API + "popper/tabledetails/automatch/" + gameId + "/" + overwrite, TableDetails.class);
+  }
+
+  //-----------------------------
+
   public PopperCustomOptions saveCustomOptions(PopperCustomOptions options) throws Exception {
     try {
       return getRestClient().post(API + "popper/custompoptions", options, PopperCustomOptions.class);

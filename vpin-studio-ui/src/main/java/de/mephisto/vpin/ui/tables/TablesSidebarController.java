@@ -23,8 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,7 +173,7 @@ public class TablesSidebarController implements Initializable {
   private void onVpsBtn() {
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
-        String url = VPS.BASE_URL;
+        String url = VPS.getVpsBaseUrl();
         GameRepresentation selection = this.tablesController.getSelection();
         if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
           url = VPS.getVpsTableUrl(selection.getExtTableId());

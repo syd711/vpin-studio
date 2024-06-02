@@ -316,7 +316,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     boolean autofill = this.autoFillCheckbox.isSelected();
-    TableDetails updatedTableDetails = client.getVpsService().autoMatch(game.getId(), autofill);
+    TableDetails updatedTableDetails = client.getPinUPPopperService().autoMatch(game.getId(), autofill);
     if (updatedTableDetails != null) {
 
       String vpsTableMappingField = serverSettings.getMappingVpsTableId();
@@ -331,18 +331,16 @@ public class TableDataController implements Initializable, DialogController, Aut
       openVpsTableBtn.setDisable(false);
       copyTableBtn.setDisable(false);
 
-      VpsTable vpsTable = VPS.getInstance().getTableById(mappedTableId);
-      propperRenamingController.setVpsTable(vpsTable);
-
-      VpsTableVersion version = mappedVersion != null ? VPS.getInstance().getTableVersionById(vpsTable, mappedVersion) : null;
-      if (version != null) {
-        setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
-        tableDetails.setMappedValue(vpsTableVersionMappingField, mappedVersion);
-
-        propperRenamingController.setVpsTableVersion(version);
-      }
-
+      VpsTable vpsTable = client.getVpsService().getTableById(mappedTableId);
+      VpsTableVersion version = vpsTable.getTableVersionById(mappedVersion);
       if (vpsTable != null) {
+        propperRenamingController.setVpsTable(vpsTable);
+
+        if (version != null) {
+          setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
+          tableDetails.setMappedValue(vpsTableVersionMappingField, mappedVersion);
+          propperRenamingController.setVpsTableVersion(version);
+        }
         autoCompleteNameField.setText(vpsTable.getDisplayName());
       }
       refreshVersionsCombo(vpsTable);
@@ -965,7 +963,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     openVpsTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
     copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
@@ -987,7 +985,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     VpsTable tableById = null;
     if (!StringUtils.isEmpty(vpsTableId)) {
-      tableById = VPS.getInstance().getTableById(vpsTableId);
+      tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
         autoCompleteNameField.setText(tableById.getDisplayName());
         propperRenamingController.setVpsTable(tableById);
@@ -1056,7 +1054,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   @Override
   public void onChange(String value) {
     this.tableVersionsCombo.valueProperty().removeListener(this);
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();

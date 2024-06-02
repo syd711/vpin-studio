@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.vps;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import de.mephisto.vpin.ui.vps.VpsUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

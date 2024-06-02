@@ -1,11 +1,14 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {
@@ -59,6 +62,28 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
+
+  //---------------------------------
+  /** The cached table */
+  private boolean vpsTableLoaded = false;
+
+  private VpsTable vpsTable;
+
+  @JsonIgnore
+  public boolean isVpsTableLoaded() {
+    return vpsTableLoaded;
+  }
+
+  @JsonIgnore
+  public VpsTable getVpsTable() {
+    return vpsTable;
+  }
+
+  public void setVpsTable(VpsTable vpsTable) {
+    this.vpsTableLoaded = true;
+    this.vpsTable = vpsTable;
+  }
+  //---------------------------------
 
   public String getNotes() {
     return notes;
