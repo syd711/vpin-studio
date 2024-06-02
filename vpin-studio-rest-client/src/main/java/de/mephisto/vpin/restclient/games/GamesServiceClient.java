@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private List<GameRepresentation> allGames = new ArrayList<>();
+  private Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
@@ -43,7 +43,11 @@ public class GamesServiceClient extends VPinStudioClientService {
 
 
   public void clearCache() {
-    this.allGames = new ArrayList<>();
+    this.allGames.clear();
+  }
+
+  public void clearCache(int emulatorId) {
+    this.allGames.remove(emulatorId);
   }
 
   public void reload() {
@@ -87,7 +91,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
     try {
-      return Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class));
+      return new ArrayList<>(Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class)));
     }
     catch (Exception e) {
       LOG.error("Failed to filter games: " + e.getMessage(), e);
@@ -108,7 +112,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesByGameName(String gameName) {
-    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> gameList = this.getGamesCached(-1);
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if (gameRepresentation.getGameName().equalsIgnoreCase(gameName)) {
@@ -126,10 +130,15 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
       if (gameRepresentation != null && !this.allGames.isEmpty()) {
-        int index = this.allGames.indexOf(gameRepresentation);
+        int emulatorId = gameRepresentation.getEmulatorId();
+        if (!this.allGames.containsKey(emulatorId)) {
+          this.getKnownGames(emulatorId);
+        }
+        List<GameRepresentation> games = this.allGames.get(emulatorId);
+        int index = games.indexOf(gameRepresentation);
         if (index != -1) {
-          this.allGames.remove(index);
-          this.allGames.add(index, gameRepresentation);
+          games.remove(index);
+          games.add(index, gameRepresentation);
         }
       }
       return gameRepresentation;
@@ -154,27 +163,16 @@ public class GamesServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
-  public List<GameRepresentation> getKnownGames() {
+  public List<GameRepresentation> getKnownGames(int emulatorId) {
     try {
-      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
-      return this.allGames;
+      List<GameRepresentation> emulatorGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns/" + emulatorId, GameRepresentation[].class)));
+      this.allGames.put(emulatorId, emulatorGames);
+      return emulatorGames;
     }
     catch (Exception e) {
-      LOG.error("Failed to read knowns games: " + e.getMessage(), e);
+      LOG.error("Failed to read known games: " + e.getMessage(), e);
     }
     return Collections.emptyList();
-  }
-
-  @Deprecated
-  public List<GameRepresentation> getAllGames() {
-    try {
-      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
-      return this.allGames;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to get games: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   @Nullable
@@ -184,7 +182,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
-    List<GameRepresentation> gamesCached = getGamesCached();
+    List<GameRepresentation> gamesCached = getGamesCached(-1);
     GameRepresentation hit = null;
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
@@ -259,27 +257,21 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<GameRepresentation> getGamesCached() {
-    if (this.allGames == null || this.allGames.isEmpty()) {
-      this.allGames = this.getKnownGames();
+  public List<GameRepresentation> getGamesCached(int emulatorId) {
+    if (!allGames.containsKey(emulatorId)) {
+      this.getKnownGames(emulatorId);
     }
-    return this.allGames;
+    return this.allGames.get(emulatorId);
   }
 
   public List<GameRepresentation> getVpxGamesCached() {
-    return getGamesCached().stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
+    return getGamesCached(-1).stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
   }
 
   public GameRepresentation getGameCached(int gameId) {
-    if (this.allGames == null || this.allGames.isEmpty()) {
-      this.allGames = this.getKnownGames();
-    }
-
-    Optional<GameRepresentation> first = this.allGames.stream().filter(g -> g.getId() == gameId).findFirst();
-    if (first.isPresent()) {
-      return first.get();
-    }
-    return null;
+    List<GameRepresentation> games = this.getGamesCached(-1);
+    Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    return first.orElse(null);
   }
 
   public ScoreSummaryRepresentation getRecentScores(int count) {

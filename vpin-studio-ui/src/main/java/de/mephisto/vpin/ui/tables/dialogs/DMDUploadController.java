@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -16,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -33,6 +36,9 @@ public class DMDUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadController.class);
 
   @FXML
+  private Node root;
+
+  @FXML
   private TextField fileNameField;
 
   @FXML
@@ -48,6 +54,7 @@ public class DMDUploadController implements Initializable, DialogController {
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private File selection;
+  private Stage stage;
 
   private GameEmulatorRepresentation emulatorRepresentation;
 
@@ -116,6 +123,12 @@ public class DMDUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection(stage);
+    }));
+
     this.selection = null;
     this.uploadBtn.setDisable(true);
 
@@ -137,6 +150,7 @@ public class DMDUploadController implements Initializable, DialogController {
   public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
     this.game = game;
     this.selection = file;
+    this.stage = stage;
     if (selection != null) {
       if (analysis != null) {
         this.fileNameField.setText(this.selection.getAbsolutePath());

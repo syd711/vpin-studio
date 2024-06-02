@@ -1,22 +1,18 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -50,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -130,7 +125,7 @@ public class GameService implements InitializingBean {
   }
 
   public Game getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
-    List<Game> knownGames = getKnownGames();
+    List<Game> knownGames = getKnownGames(-1);
     Game hit = null;
     for (Game game : knownGames) {
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
@@ -172,8 +167,17 @@ public class GameService implements InitializingBean {
   }
 
   @SuppressWarnings("unused")
-  public List<Game> getKnownGames() {
-    List<Game> games = new ArrayList<>(pinUPConnector.getGames());
+  public List<Game> getKnownGames(int emulatorId) {
+    List<Game> games = new ArrayList<>();
+    if (emulatorId == -1) {
+      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      for (GameEmulator gameEmulator : gameEmulators) {
+        games.addAll(pinUPConnector.getGamesByEmulator(gameEmulator.getId()));
+      }
+    }
+    else {
+      games.addAll(pinUPConnector.getGamesByEmulator(emulatorId));
+    }
     boolean killedPopper = false;
     for (Game game : games) {
       GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
@@ -188,6 +192,7 @@ public class GameService implements InitializingBean {
         }
       }
     }
+    games.sort(Comparator.comparing(Game::getGameDisplayName));
     return games;
   }
 

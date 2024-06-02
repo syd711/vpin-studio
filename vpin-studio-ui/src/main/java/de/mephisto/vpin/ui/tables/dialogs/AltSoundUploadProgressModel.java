@@ -7,6 +7,8 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

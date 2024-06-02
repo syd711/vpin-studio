@@ -7,12 +7,15 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -29,6 +32,9 @@ import java.util.ResourceBundle;
 
 public class MediaUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MediaUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -76,6 +82,7 @@ public class MediaUploadController implements Initializable, DialogController {
   private Label wheelLabel;
 
   private File selection;
+  private Stage stage;
 
   private boolean result = false;
   private GameRepresentation game;
@@ -182,6 +189,12 @@ public class MediaUploadController implements Initializable, DialogController {
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection(stage);
+    }));
   }
 
   @Override
@@ -196,6 +209,7 @@ public class MediaUploadController implements Initializable, DialogController {
   public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
     this.game = game;
     this.selection = file;
+    this.stage = stage;
     if (selection != null) {
       refreshSelection(stage);
     }

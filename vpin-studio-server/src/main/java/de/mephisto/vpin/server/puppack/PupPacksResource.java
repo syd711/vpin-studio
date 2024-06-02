@@ -125,7 +125,7 @@ public class PupPacksResource {
       universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.PUP_PACK);
 
       //these ROM names can differ, see PinBlob which uses a different ROM than PUP Pack
-      List<Game> gamesByRom = gameService.getKnownGames();
+      List<Game> gamesByRom = gameService.getKnownGames(-1);
       String romFromPupPack = analysis.getRomFromPupPack();
       String romFromZip = analysis.getRomFromZip();
       for (Game gameByRom : gamesByRom) {

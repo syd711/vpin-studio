@@ -75,6 +75,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -288,6 +289,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private ObservableList<GameRepresentation> data = FXCollections.emptyObservableList();
   private List<GameRepresentation> games = Collections.emptyList();
+  private GameEmulatorChangeListener gameEmulatorChangeListener;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -468,7 +470,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -568,9 +571,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
   }
 
+  public void refreshFilterId() {
+    List<Integer> integers = client.getGameService().filterGames(tableFilterController.getFilterSettings());
+    setFilterIds(integers);
+  }
+
   public void refreshUploadResult(Optional<UploadDescriptor> uploadResult) {
+    //required for new table that may or may not be part of the filtered view
+    refreshFilterId();
+
     if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
-      Consumer<GameRepresentation> c = gameRepresentation -> {
+      Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
         UploadDescriptor tableUploadResult = uploadResult.get();
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
@@ -582,7 +593,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
         }
       };
-      reloadConsumers.add(c);
+      reloadConsumers.add(showTableDialogConsumer);
       onReload();
     }
   }
@@ -794,7 +805,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
         editorController.setGame(game, source);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
       }
     }
@@ -819,7 +831,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSoundEditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
       }
     }
@@ -843,7 +856,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSound2EditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
@@ -868,12 +882,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           setFilterIds(integers);
           filterGames(games);
           tableView.setItems(data);
-          labelTableCount.setText(data.size() + " tables");
+          labelTableCount.setText(data.size() + " games");
 
           tableView.refresh();
           setBusy(false);
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error filtering tables: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Error filtering tables: " + e.getMessage());
       }
@@ -914,11 +929,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       Platform.runLater(() -> {
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-        games = client.getGameService().getKnownGames();
+        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        int id = -1;
+        if (value != null) {
+          id = value.getId();
+        }
+        games = client.getGameService().getKnownGames(id);
 
         filterGames(games);
         tableView.setItems(data);
-        labelTableCount.setText(data.size() + " tables");
+        setFilterIds(data.stream().map(g -> g.getId()).collect(Collectors.toList()));
+        labelTableCount.setText(data.size() + " games");
 
         tableView.refresh();
 
@@ -988,11 +1009,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
   private void refreshEmulators() {
+    this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulatorsUncached());
     emulators.add(0, null);
     this.emulatorCombo.setItems(FXCollections.observableList(emulators));
     this.emulatorCombo.setDisable(false);
+    this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 
   private void bindSearchField() {
@@ -1002,13 +1025,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       filterGames(games);
       tableView.setItems(data);
-      labelTableCount.setText(data.size() + " tables");
+      labelTableCount.setText(data.size() + " games");
     });
   }
 
   private void bindTable() {
     data = FXCollections.observableArrayList(Collections.emptyList());
-    labelTableCount.setText(data.size() + " tables");
+    labelTableCount.setText(data.size() + " games");
     tableView.setPlaceholder(new Label("No matching tables found."));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -1179,7 +1202,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
         return new SimpleObjectProperty(row);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to render VPS update: " + e.getMessage(), e);
       }
       return new SimpleStringProperty("");
@@ -1354,7 +1378,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
 
     tableView.setItems(data);
-    labelTableCount.setText(data.size() + " tables");
+    labelTableCount.setText(data.size() + " games");
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
@@ -1604,7 +1628,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
       tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
     }
-
   }
 
   @Override
@@ -1729,6 +1752,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    gameEmulatorChangeListener = new GameEmulatorChangeListener();
     contextMenuController = new TableOverviewContextMenu(this);
     tableOverviewColumnSorter = new TableOverviewColumnSorter(this);
 
@@ -1744,7 +1768,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     new Thread(() -> {
       try {
         client.getVpsService().update();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("VPS update failed: " + e.getMessage(), e);
       }
     }).start();
@@ -1755,7 +1780,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -1764,7 +1790,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       loader.load();
       tableFilterController = loader.getController();
       tableFilterController.setTableController(this);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 
@@ -1778,7 +1805,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         tableView.getSelectionModel().clearSelection();
         filterGames(games);
         tableView.setItems(data);
-        labelTableCount.setText(data.size() + " tables");
+        labelTableCount.setText(data.size() + " games");
 
         if (!data.isEmpty()) {
           if (data.contains(selectedItem)) {
@@ -1788,15 +1815,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             tableView.getSelectionModel().select(0);
           }
         }
-      }
-    });
-
-    emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
-      @Override
-      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
-        tableView.getSelectionModel().clearSelection();
-        refreshViewForEmulator();
-        tableFilterController.applyFilter();
       }
     });
 
@@ -1942,5 +1960,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public GameEmulatorRepresentation getEmulatorSelection() {
     return this.emulatorCombo.getSelectionModel().getSelectedItem();
+  }
+
+  class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
+    @Override
+    public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      tableView.setVisible(false);
+      setBusy(true);
+      tableView.getSelectionModel().clearSelection();
+      refreshViewForEmulator();
+      tableFilterController.applyFilter();
+      Platform.runLater(() -> {
+        onReload();
+      });
+    }
   }
 }

@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -15,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -31,10 +34,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.stage;
-
 public class MusicUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MusicUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -51,6 +55,7 @@ public class MusicUploadController implements Initializable, DialogController {
   private GameEmulatorRepresentation emulatorRepresentation;
 
   private File selection;
+  private Stage stage;
   private UploaderAnalysis analysis;
 
   @FXML
@@ -71,7 +76,7 @@ public class MusicUploadController implements Initializable, DialogController {
         ProgressDialog.createProgressDialog(model);
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading Music Failed", "Please check the log file for details", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Uploading Music Failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
     }
   }
@@ -85,23 +90,9 @@ public class MusicUploadController implements Initializable, DialogController {
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Music Bundle", "*.zip"));
 
-    this.targetFolderLabel.setText("-");
     this.selection = fileChooser.showOpenDialog(stage);
-    if (this.selection != null && this.selection.exists()) {
-      try {
-        analysis = UploadAnalysisDispatcher.analyzeArchive(this.selection);
-        String analyze = analysis.validateAssetType(AssetType.MUSIC_BUNDLE);
-        if (analyze == null) {
-          this.refreshSelection(this.selection);
-        } else {
-          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        }
 
-      } catch (Exception e) {
-        LOG.error("Music bundle analysis failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Music bundle analysis failed: " + e.getMessage());
-      }
-    }
+    this.refreshSelection();
   }
 
   @Override
@@ -118,8 +109,14 @@ public class MusicUploadController implements Initializable, DialogController {
     emulatorCombo.setValue(emulatorRepresentation);
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulatorRepresentation = t1;
-      refreshSelection(this.selection);
+      refreshSelection();
     });
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -128,6 +125,7 @@ public class MusicUploadController implements Initializable, DialogController {
   }
 
   public void setFile(Stage stage, File file, UploaderAnalysis analysis) {
+    this.stage = stage;
     this.analysis = analysis;
     if (file != null) {
       if(analysis == null) {
@@ -141,18 +139,30 @@ public class MusicUploadController implements Initializable, DialogController {
         }
       }
 
-      refreshSelection(file);
+      refreshSelection();
     }
   }
 
-  private void refreshSelection(File file) {
-    this.selection = file;
-
-    String relativeMusicPath = analysis.getRelativeMusicPath(true);
-    File musicFolder= new File(emulatorRepresentation.getTablesDirectory(), "Music");
-    File targetFolder = new File(musicFolder, relativeMusicPath);
-    this.targetFolderLabel.setText(targetFolder.getAbsolutePath());
-    this.fileNameField.setText(file.getAbsolutePath());
-    this.uploadBtn.setDisable(false);
+  private void refreshSelection() {
+    this.targetFolderLabel.setText("-");
+    if (this.selection != null && this.selection.exists()) {
+      try {
+        analysis = UploadAnalysisDispatcher.analyzeArchive(this.selection);
+        String analyze = analysis.validateAssetType(AssetType.MUSIC_BUNDLE);
+        if (analyze == null) {
+          String relativeMusicPath = analysis.getRelativeMusicPath(true);
+          File musicFolder= new File(emulatorRepresentation.getTablesDirectory(), "Music");
+          File targetFolder = new File(musicFolder, relativeMusicPath);
+          this.targetFolderLabel.setText(targetFolder.getAbsolutePath());
+          this.fileNameField.setText(selection.getAbsolutePath());
+          this.uploadBtn.setDisable(false);
+        } else {
+          WidgetFactory.showAlert(stage, "Error", analyze);
+        }
+      } catch (Exception e) {
+        LOG.error("Music bundle analysis failed: " + e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Music bundle analysis failed: " + e.getMessage());
+      }
+    }
   }
 }

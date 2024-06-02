@@ -42,6 +42,13 @@ public class UploaderAnalysis<T> {
     this.file = file;
   }
 
+
+  public void reset() {
+    this.fileNames.clear();
+    this.fileNamesWithPath.clear();
+    this.directories.clear();
+  }
+
   public File getFile() {
     return file;
   }
@@ -579,7 +586,7 @@ public class UploaderAnalysis<T> {
       return true;
     }
 
-    if (screen.equals(PopperScreen.GameInfo) && (fileNameWithPath.toLowerCase().contains("info"))) {
+    if (screen.equals(PopperScreen.GameInfo)) {
       return true;
     }
 

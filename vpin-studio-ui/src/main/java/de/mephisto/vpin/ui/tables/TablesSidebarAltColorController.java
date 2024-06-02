@@ -44,6 +44,9 @@ public class TablesSidebarAltColorController implements Initializable {
   private Label lastModifiedLabel;
 
   @FXML
+  private Label backupsLabel;
+
+  @FXML
   private Label typeLabel;
 
   @FXML
@@ -143,6 +146,7 @@ public class TablesSidebarAltColorController implements Initializable {
     deleteBtn.setDisable(true);
 
     lastModifiedLabel.setText("-");
+    backupsLabel.setText("-");
     typeLabel.setText("-");
     filesLabel.setText("-");
 
@@ -162,6 +166,7 @@ public class TablesSidebarAltColorController implements Initializable {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
+        backupsLabel.setText(String.valueOf(altColor.getBackedUpFiles()));
 
         List<String> files = altColor.getFiles();
         filesLabel.setText(String.join(", ", files));

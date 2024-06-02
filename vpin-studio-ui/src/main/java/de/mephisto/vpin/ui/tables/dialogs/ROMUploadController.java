@@ -4,14 +4,14 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -32,6 +32,9 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ROMUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ROMUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -81,10 +84,10 @@ public class ROMUploadController implements Initializable, DialogController {
         new FileChooser.ExtensionFilter("ROM", "*.zip"));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
-    refreshFileSelection();
+    refreshSelection();
   }
 
-  private void refreshFileSelection() {
+  private void refreshSelection() {
     if (this.selection != null && !this.selection.isEmpty()) {
       List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
       this.fileNameField.setText(String.join(", ", collect));
@@ -110,6 +113,12 @@ public class ROMUploadController implements Initializable, DialogController {
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulatorRepresentation = t1;
     });
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, true, "zip"));
+    root.setOnDragDropped(new FilesSelectorDropEventHandler(fileNameField, files -> {
+      selection = files;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -124,7 +133,7 @@ public class ROMUploadController implements Initializable, DialogController {
   public void setFile(File file) {
     if(file != null) {
       this.selection = Arrays.asList(file);
-      refreshFileSelection();
+      refreshSelection();
     }
   }
 }

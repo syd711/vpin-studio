@@ -48,7 +48,7 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
    */
   protected void runCheckedDeAugmentation(CompetitionService competitionService, GameService gameService, PopperService popperService) {
     List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
-    List<Game> games = gameService.getKnownGames();
+    List<Game> games = gameService.getKnownGames(-1);
     for (Game game : games) {
       if (!competedGameIds.contains(game.getId())) {
         popperService.deAugmentWheel(game);

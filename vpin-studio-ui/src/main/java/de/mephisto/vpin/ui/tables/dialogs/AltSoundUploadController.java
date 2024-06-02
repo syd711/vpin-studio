@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -16,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,6 +36,9 @@ import java.util.ResourceBundle;
 
 public class AltSoundUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -144,6 +150,12 @@ public class AltSoundUploadController implements Initializable, DialogController
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulatorRepresentation = t1;
     });
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -181,7 +193,7 @@ public class AltSoundUploadController implements Initializable, DialogController
     romLabel.setText(rom);
     this.uploadBtn.setDisable(false);
 
-    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached();
+    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
     for (GameRepresentation gameRepresentation : gamesCached) {
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {

@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.archiving;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.popper.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorNames;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -107,13 +107,13 @@ public class ArchiveUtil {
   public static String getEmulatorType(File gameFile) {
     String extension = FilenameUtils.getExtension(gameFile.getName());
     if (extension.equals("vpx")) {
-      return EmulatorType.VISUAL_PINBALL_X;
+      return EmulatorNames.VISUAL_PINBALL_X;
     }
 
     if (extension.equals("fp")) {
-      return EmulatorType.FUTURE_PINBALL;
+      return EmulatorNames.FUTURE_PINBALL;
     }
 
-    return EmulatorType.VISUAL_PINBALL_X;
+    return EmulatorNames.VISUAL_PINBALL_X;
   }
 }

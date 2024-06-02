@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.MediaUploadController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.MediaUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -101,7 +101,7 @@
                         <Label fx:id="loadingLabel" layoutX="124.0" layoutY="318.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                         <Label fx:id="playfieldLabel" layoutX="124.0" layoutY="352.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                         <Label fx:id="topperLabel" layoutX="124.0" layoutY="385.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                        <Label fx:id="wheelLabel" layoutX="124.0" layoutY="419.0" maxWidth="450.0"  styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                        <Label fx:id="wheelLabel" layoutX="124.0" layoutY="419.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                      </children>
                      <BorderPane.margin>
                         <Insets top="6.0" />

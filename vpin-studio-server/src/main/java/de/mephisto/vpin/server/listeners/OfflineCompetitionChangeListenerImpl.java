@@ -96,11 +96,11 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
               }
               discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);
             }
+          }
 
-            if (competition.isHighscoreReset()) {
-              if (highscoreBackupService.backup(game)) {
-                highscoreService.resetHighscore(game);
-              }
+          if (competition.isHighscoreReset()) {
+            if (highscoreBackupService.backup(game)) {
+              highscoreService.resetHighscore(game);
             }
           }
         }

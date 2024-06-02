@@ -26,7 +26,8 @@
                                     <Font size="13.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="UI Settings">
+                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="Cabinet Settings" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onClientSettings" styleClass="preference-button" text="Client Settings">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
@@ -173,7 +174,7 @@
                         <Insets bottom="12.0" left="12.0" top="24.0" />
                      </BorderPane.margin>
                      <center>
-                       <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-ui.fxml" BorderPane.alignment="TOP_LEFT" />
+                       <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-cabinet.fxml" BorderPane.alignment="TOP_LEFT" />
                      </center>
                   </BorderPane>
                </left>

@@ -14,9 +14,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -27,6 +25,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -41,14 +40,17 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
 
   private static TableUploadController instance = null;
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -322,10 +324,9 @@ public class TableUploadController implements Initializable, DialogController {
             WidgetFactory.showAlert(Studio.stage, analyze);
             this.fileNameField.setText("");
             this.subfolderText.setText("");
+            this.uploaderAnalysis.reset();
           }
-          else {
-            updateAnalysis();
-          }
+          updateAnalysis();
           this.uploadBtn.setDisable(analyze != null);
         });
       }
@@ -423,6 +424,12 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      setSelection(true);
+    }));
+
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     tableNameLabel.setVisible(false);
