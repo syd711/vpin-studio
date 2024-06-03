@@ -38,7 +38,7 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean regenerateGameAssets(int gameId) {
+  public boolean deleteGameAssets(int gameId) {
     try {
       getRestClient().delete(API + "assets/background/" + gameId);
       return true;
