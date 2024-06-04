@@ -1917,11 +1917,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {      
       // callback to filter tables, once the data has been reloaded
-      reloadConsumers.add(selection -> {
-        refreshViewForEmulator();
-        tableFilterController.applyFilter();  
+      Platform.runLater(() -> {
+        reloadConsumers.add(selection -> {
+          refreshViewForEmulator();
+          tableFilterController.applyFilter();
+        });
+        onReload();
       });
-      onReload();
     }
   }
 
