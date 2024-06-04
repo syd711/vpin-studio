@@ -126,7 +126,7 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
   }
 
-  public synchronized PupPack loadPupPack(File packFolder) {
+  public PupPack loadPupPack(File packFolder) {
     PupPack pupPack = new PupPack(packFolder);
     if (new File(packFolder, "scriptonly.txt").exists()) {
       pupPack.setScriptOnly(true);
