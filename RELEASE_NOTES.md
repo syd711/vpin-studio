@@ -7,3 +7,5 @@
 ### Bugfixes
 
 - **VPin MAME Service**: Optimized pre-caching when reading MAME settings from the Windows registry.
+- **PUP Pack Service**: Optimized loading of PUP pack information. The performance was so bad before that some PUP pack indicators were not shown in the table overview.
+- **ROM Uploads**: Fixed error that ROMs have been uploaded to the MAME "cfg" folder and not to the "roms" folder. 

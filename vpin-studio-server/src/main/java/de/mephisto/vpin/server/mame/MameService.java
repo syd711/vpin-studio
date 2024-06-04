@@ -186,6 +186,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
+      Thread.currentThread().setName("MAME Initializer");
       clearCache();
     }).start();
   }
