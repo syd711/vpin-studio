@@ -86,7 +86,9 @@ public class NvRamHighscoreToRawConverter {
   @NotNull
   private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
     // replace french space character, displayed ÿ with "."
-    stdOut = stdOut.replaceAll("\u00ff", ".");
+    stdOut = stdOut
+      .replaceAll("\u00ff", ".")
+      .replaceAll("\ufffd", ".");
 
     //check for pre-formatting
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));
