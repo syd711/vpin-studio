@@ -36,6 +36,8 @@ public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
   private Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
+  /**  a status map to avoid multiple loads in parallel, check getGamesCached() */
+  private Map<Integer, Boolean> loadingFlags = new HashMap<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
@@ -44,10 +46,12 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public void clearCache() {
     this.allGames.clear();
+    this.loadingFlags.clear();
   }
 
   public void clearCache(int emulatorId) {
     this.allGames.remove(emulatorId);
+    this.loadingFlags.remove(emulatorId);
   }
 
   public void reload() {
@@ -131,10 +135,8 @@ public class GamesServiceClient extends VPinStudioClientService {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
       if (gameRepresentation != null && !this.allGames.isEmpty()) {
         int emulatorId = gameRepresentation.getEmulatorId();
-        if (!this.allGames.containsKey(emulatorId)) {
-          this.getKnownGames(emulatorId);
-        }
-        List<GameRepresentation> games = this.allGames.get(emulatorId);
+        // get and from cache and possibly uodate the cache 
+        List<GameRepresentation> games = this.getGamesCached(emulatorId);
         int index = games.indexOf(gameRepresentation);
         if (index != -1) {
           games.remove(index);
@@ -153,7 +155,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       List<Integer> unknowns = Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
       if (!unknowns.isEmpty()) {
-        this.allGames.clear();
+        this.clearCache();
       }
       return unknowns;
     }
@@ -163,10 +165,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
-  public List<GameRepresentation> getKnownGames(int emulatorId) {
+  // private as getGamesCached() should be called instead
+  private List<GameRepresentation> getKnownGames(int emulatorId) {
     try {
       List<GameRepresentation> emulatorGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns/" + emulatorId, GameRepresentation[].class)));
-      this.allGames.put(emulatorId, emulatorGames);
       return emulatorGames;
     }
     catch (Exception e) {
@@ -257,9 +259,49 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
+  //--------------- avoid multiple loading in //
+  /** one blocking thread by emulatorId */
+  private Map<Integer, Object> locks = new HashMap<>();
+
+  private Object getLock(int emulatorId) {
+    Object lock = null;
+    synchronized(locks) {
+      lock = locks.get(emulatorId);
+      if (lock==null) {
+        lock = new Object();
+        locks.put(emulatorId, lock);
+      }
+    }
+    return lock;
+  }
+
   public List<GameRepresentation> getGamesCached(int emulatorId) {
     if (!allGames.containsKey(emulatorId)) {
-      this.getKnownGames(emulatorId);
+      Object lock = getLock(emulatorId);
+      synchronized(lock) {
+        // If a thread is already fetching data, do not start again, just wait for it
+        if (loadingFlags.get(emulatorId)==null) {
+          loadingFlags.put(emulatorId, Boolean.TRUE);
+            // load games in a separate thread not to block the UI
+            new Thread(() -> {
+              LOG.info("Start the loading of known games for emulator " + emulatorId);
+              List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
+              Object lockInThread = getLock(emulatorId);
+              synchronized(lockInThread) {
+                // add games in cache and notify waiting thread 
+                this.allGames.put(emulatorId, emulatorGames);
+                this.loadingFlags.remove(emulatorId);
+                lockInThread.notifyAll();
+              }
+            }, "LoadingThreadFor_"+emulatorId).start();
+        }
+        try {
+          lock.wait();
+        } catch (InterruptedException ie) {
+          LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
+            + "games may be in an inconsistant state, consider reloading the games", ie);
+        }
+      }
     }
     return this.allGames.get(emulatorId);
   }

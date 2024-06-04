@@ -266,10 +266,20 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     if (!StringUtils.isEmpty(rom)) {
-      this.tableOverviewController.reloadByRom(rom);
-    }
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
+    }  
     if (!StringUtils.isEmpty(gameName)) {
-      this.tableOverviewController.reloadByGameName(rom);
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
     }
   }
 

@@ -40,8 +40,16 @@ public class VpsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "vps/find/" + rom + "/" + term, VpsTable[].class));
   }
 
+  /** Redownload the database online and load it in the database */
   public boolean update() {
     getRestClient().get(API + "vps/update", Boolean.class);
+    invalidateAll();
+    return true;
+  }
+
+  /** Reload the database from the local file */
+  public boolean reload() {
+    getRestClient().get(API + "vps/reload", Boolean.class);
     invalidateAll();
     return true;
   }
@@ -53,7 +61,7 @@ public class VpsServiceClient extends VPinStudioClientService {
     }
     LOG.info("Loaded " + cache.size() + " mapped VPS tables.");
   }
-
+ 
   public Date getChangeDate() {
     return getRestClient().get(API + "vps/changeDate", Date.class);
   }
