@@ -36,7 +36,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
   private Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
-  /**  a status map to avoid multiple loads in parallel, check getGamesCached() */
+  /**
+   * a status map to avoid multiple loads in parallel, check getGamesCached()
+   */
   private Map<Integer, Boolean> loadingFlags = new HashMap<>();
 
   public GamesServiceClient(VPinStudioClient client) {
@@ -260,14 +262,16 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   //--------------- avoid multiple loading in //
-  /** one blocking thread by emulatorId */
+  /**
+   * one blocking thread by emulatorId
+   */
   private Map<Integer, Object> locks = new HashMap<>();
 
   private Object getLock(int emulatorId) {
     Object lock = null;
-    synchronized(locks) {
+    synchronized (locks) {
       lock = locks.get(emulatorId);
-      if (lock==null) {
+      if (lock == null) {
         lock = new Object();
         locks.put(emulatorId, lock);
       }
@@ -278,28 +282,29 @@ public class GamesServiceClient extends VPinStudioClientService {
   public List<GameRepresentation> getGamesCached(int emulatorId) {
     if (!allGames.containsKey(emulatorId)) {
       Object lock = getLock(emulatorId);
-      synchronized(lock) {
+      synchronized (lock) {
         // If a thread is already fetching data, do not start again, just wait for it
-        if (loadingFlags.get(emulatorId)==null) {
+        if (loadingFlags.get(emulatorId) == null) {
           loadingFlags.put(emulatorId, Boolean.TRUE);
-            // load games in a separate thread not to block the UI
-            new Thread(() -> {
-              LOG.info("Start the loading of known games for emulator " + emulatorId);
-              List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
-              Object lockInThread = getLock(emulatorId);
-              synchronized(lockInThread) {
-                // add games in cache and notify waiting thread 
-                this.allGames.put(emulatorId, emulatorGames);
-                this.loadingFlags.remove(emulatorId);
-                lockInThread.notifyAll();
-              }
-            }, "LoadingThreadFor_"+emulatorId).start();
+          // load games in a separate thread not to block the UI
+          new Thread(() -> {
+            LOG.info("Start the loading of known games for emulator " + emulatorId);
+            List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
+            Object lockInThread = getLock(emulatorId);
+            synchronized (lockInThread) {
+              // add games in cache and notify waiting thread
+              this.allGames.put(emulatorId, emulatorGames);
+              this.loadingFlags.remove(emulatorId);
+              lockInThread.notifyAll();
+            }
+          }, "LoadingThreadFor_" + emulatorId).start();
         }
         try {
           lock.wait();
-        } catch (InterruptedException ie) {
+        }
+        catch (InterruptedException ie) {
           LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
-            + "games may be in an inconsistant state, consider reloading the games", ie);
+              + "games may be in an inconsistant state, consider reloading the games", ie);
         }
       }
     }
