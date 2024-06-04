@@ -1,5 +1,5 @@
 module de.mephisto.vpin.ui {
-  requires javafx.controls;
+  requires transitive javafx.controls;
   requires javafx.fxml;
   requires javafx.web;
 
@@ -23,15 +23,16 @@ module de.mephisto.vpin.ui {
   requires org.kordamp.ikonli.materialdesign2;
   requires org.kordamp.ikonli.simplelineicons;
   requires filters;
+  requires transitive javafx.graphics;
   requires javafx.media;
   requires javafx.swing;
 
   requires javafx.base;
 
-  requires de.mephisto.vpin.connectors.discord;
-  requires de.mephisto.vpin.connectors.vps;
-  requires de.mephisto.vpin.connectors.mania;
-  requires de.mephisto.vpin.restclient;
+  requires transitive de.mephisto.vpin.connectors.discord;
+  requires transitive de.mephisto.vpin.connectors.vps;
+  requires transitive de.mephisto.vpin.connectors.mania;
+  requires transitive de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.iscored;

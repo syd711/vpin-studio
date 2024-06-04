@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -17,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -82,7 +84,11 @@ public class DiscordPlayersController implements Initializable {
         return new SimpleObjectProperty("");
       }
 
-      Image image = new Image(client.getCachedUrlImage(value.getAvatarUrl()));
+      InputStream cachedUrlImage = client.getCachedUrlImage(value.getAvatarUrl());
+      if(cachedUrlImage == null) {
+        cachedUrlImage = Studio.class.getResourceAsStream("avatar-blank.png");
+      }
+      Image image = new Image(cachedUrlImage);
       ImageView view = new ImageView(image);
       view.setPreserveRatio(true);
       view.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);

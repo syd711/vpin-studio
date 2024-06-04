@@ -9,7 +9,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" style="-fx-background-color: transparent;" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.WaitOverlayController">
    <center>
-      <VBox alignment="CENTER" style="-fx-background-color: #605E5ECC; -fx-border-radius: 12 12 12 12;" styleClass="base-component" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" style="-fx-background-color: #00000000; -fx-border-radius: 12 12 12 12;" styleClass="base-component" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>

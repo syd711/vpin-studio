@@ -17,16 +17,16 @@ import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,8 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -914,16 +912,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   //------------------------------------------------
 
-  /**
-   * Background loader
-   */
-  private static final Executor Executor = Executors.newFixedThreadPool(10, runnable -> {
-      Thread t = new Thread(runnable);
-      t.setDaemon(true);
-      return t ;
-  });
+  
 
-  private static class DirectB2SEntryModel extends ObjectPropertyBase<DirectB2SEntryModel> {
+  private static class DirectB2SEntryModel extends BaseLoadingModel<DirectB2SEntryModel> {
 
     private BackglassManagerDialogController controller;
 
@@ -931,9 +922,6 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     // not null when loaded
     DirectB2SData backglassData; 
 
-    private boolean loadRequested;
-    private boolean loaded;
-    
     private boolean hasDmd;
 
     private int dmdWidth;
@@ -948,10 +936,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     private DirectB2SEntryModel(BackglassManagerDialogController controller, DirectB2S backglass) {
       this.controller = controller;
       this.backglass = backglass;
-      set(this);
     }
 
-    public void load() throws Exception {
+    public void load() {
       this.backglassData = client.getBackglassServiceClient().getDirectB2SData(backglass);
       if (backglassData!=null) {
   
@@ -980,35 +967,13 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           }
         }
       }
+    }
 
-      // update the table
-      loaded = true;
-      fireValueChangedEvent();
+    public void loaded() {
       if (!match()) {
         // self removal on load in case item is filtered
         controller.directb2sList.getItems().remove(this);
       }
-    }
-
-    public void loadFailed() {
-      loaded = true;
-      fireValueChangedEvent();
-    }
-
-    @Override
-    public DirectB2SEntryModel getBean() {
-      return null;
-    }
-
-    /**
-     * Whether or not the value has been loaded.
-     */
-    public final boolean isLoaded() {
-      if (!loadRequested) {
-        loadRequested = true ;
-        Executor.execute(new LoadingTask(this));
-      }
-      return loaded;
     }
 
     public String getName() {
@@ -1060,29 +1025,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   }
 
-  private static class LoadingTask extends Task<Boolean> {
-
-    private DirectB2SEntryModel model;
-
-    LoadingTask(DirectB2SEntryModel model) {
-      this.model = model;
-    }
-
-    @Override
-    protected Boolean call() throws Exception {
-      model.load();
-      return true;
-    }
-    @Override
-    protected void failed() {
-      model.loadFailed();
-    }
-
-  }
-
-  private static abstract class LoadingCheckTableCell extends TableCell<DirectB2SEntryModel, DirectB2SEntryModel> {
-
-    protected abstract String getLoading(DirectB2SEntryModel model);
+  private static abstract class LoadingCheckTableCell extends BaseLoadingTableCell<DirectB2SEntryModel> {
 
     /** should return true if the checked mark is visible. Model is never null */
     protected abstract int isChecked(DirectB2SEntryModel model);
@@ -1091,33 +1034,20 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     protected abstract String getTooltip(DirectB2SEntryModel model);
 
     @Override
-    protected void updateItem(DirectB2SEntryModel model, boolean empty) {
-      super.updateItem(model, empty);
-      if (empty || model==null) {
-          setText("");
-          setTooltip(null);
-          setGraphic(null);
+    protected void renderItem(DirectB2SEntryModel model) {
+      int check = isChecked(model);
+      if (check==1) {
+        setText(null);
+        setTooltip(new Tooltip(getTooltip(model)));
+        setGraphic(WidgetFactory.createCheckboxIcon());
       }
-      else if (model.isLoaded()) {
-        int check = isChecked(model);
-        if (check==1) {
-          setText(null);
-          setTooltip(new Tooltip(getTooltip(model)));
-          setGraphic(WidgetFactory.createCheckboxIcon());
-        }
-        else if (check==2) {
-          setText(null);
-          setTooltip(new Tooltip(getTooltip(model)));
-          setGraphic(WidgetFactory.createExclamationIcon());
-        }
-        else {
-          setText("");
-          setTooltip(null);
-          setGraphic(null);
-        }
+      else if (check==2) {
+        setText(null);
+        setTooltip(new Tooltip(getTooltip(model)));
+        setGraphic(WidgetFactory.createExclamationIcon());
       }
       else {
-        setText(getLoading(model));
+        setText("");
         setTooltip(null);
         setGraphic(null);
       }
