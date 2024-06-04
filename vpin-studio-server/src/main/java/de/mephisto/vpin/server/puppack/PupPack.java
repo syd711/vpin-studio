@@ -16,8 +16,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PupPack {
   private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
@@ -33,8 +33,9 @@ public class PupPack {
 
   private boolean scriptOnly = false;
 
-
   private final File packFolder;
+
+  private List<File> files = new ArrayList<>();
   private List<String> options = new ArrayList<>();
   private List<String> txtFiles = new ArrayList<>();
   private String selectedOption = null;
@@ -125,7 +126,8 @@ public class PupPack {
 
       setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
 
-      Collection<File> txtFiles = org.apache.commons.io.FileUtils.listFiles(packFolder, new String[]{"txt"}, true);
+      files = new ArrayList<>(org.apache.commons.io.FileUtils.listFiles(packFolder, null, true));
+      List<File> txtFiles = files.stream().filter(f -> FilenameUtils.getExtension(f.getName()).equalsIgnoreCase("txt")).collect(Collectors.toList());
       for (File txtFile : txtFiles) {
         if (txtFile.length() > 0) {
           String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
@@ -237,6 +239,18 @@ public class PupPack {
 
   public File getOptionFile(String option) {
     return new File(packFolder, option + ".bat");
+  }
+
+  public boolean containsFileWithSuffixes(String ...suffixes) {
+    for (File file : files) {
+      String ending = FilenameUtils.getExtension(file.getName());
+      for (String suffix : suffixes) {
+        if(suffix.equalsIgnoreCase(ending)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Override
