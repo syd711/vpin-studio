@@ -1065,7 +1065,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return label;
     });
 
-    configureColumn(columnRom, (value, model) -> {
+    configureColumn(columnHSType, (value, model) -> {
       String hsType = value.getHighscoreType();
       if (!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
         hsType = "Text";
@@ -1204,7 +1204,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return null;
     });
 
-    configureColumn(columnAltColor, (value, model) -> {
+    configureColumn(columnPUPPack, (value, model) -> {
       if (value.isPupPackAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
@@ -1754,23 +1754,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playlistCombo.valueProperty().addListener(new ChangeListener<Playlist>() {
       @Override
       public void changed(ObservableValue<? extends Playlist> observableValue, Playlist Playlist, Playlist t1) {
-        //GameRepresentation selectedItem = getSelection();
-        //tableView.getSelectionModel().clearSelection();
-        //filterGames(games);
-        //tableView.setItems(data);
-
         predicateFactory.setFilterPlaylist(t1);
         data.setPredicate(predicateFactory.buildPredicate());
-
-      /* Not needed as the list model is not impacted
-        if (!data.isEmpty()) {
-          if (data.contains(selectedItem)) {
-            tableView.getSelectionModel().select(selectedItem);
-          }
-          else {
-            tableView.getSelectionModel().select(0);
-          }
-        }*/
       }
     });
 
