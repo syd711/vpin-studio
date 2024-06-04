@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class TableOverviewDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewDragDropHandler.class);
   private final TableOverviewController tableOverviewController;
-  private final TableView tableView;
+  private final TableView<?> tableView;
   private final StackPane loaderStack;
   private final TablesController tablesController;
 

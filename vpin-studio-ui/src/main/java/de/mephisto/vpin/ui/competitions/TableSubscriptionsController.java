@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -164,7 +165,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
@@ -181,7 +183,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
         onReload();
         tableView.getSelectionModel().select(newCmp);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
     }
@@ -214,7 +217,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Subscription '" + selection.getName() + "'?",
-        help, help2, "Delete Subscription");
+          help, help2, "Delete Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -303,7 +306,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -383,8 +387,12 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       hBox.setAlignment(Pos.CENTER_LEFT);
       PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
       if (discordPlayer != null) {
-        Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-        ImageView view = new ImageView(image);
+        InputStream cachedUrlImage = client.getCachedUrlImage(discordPlayer.getAvatarUrl());
+        if (cachedUrlImage == null) {
+          cachedUrlImage = Studio.class.getResourceAsStream("avatar-blank.png");
+        }
+        Image image = new Image(cachedUrlImage);
+        ImageView view = new ImageView();
         view.setPreserveRatio(true);
         view.setFitWidth(50);
         view.setFitHeight(50);
@@ -400,7 +408,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     });
 
     tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
-      "Create a new subscription by pressing the '+' button."));
+        "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
@@ -412,7 +420,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
 
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 

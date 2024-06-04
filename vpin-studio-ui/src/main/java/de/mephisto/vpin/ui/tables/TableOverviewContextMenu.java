@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +26,7 @@ public class TableOverviewContextMenu {
     this.tableOverviewController = tableOverviewController;
   }
 
-  public void refreshContextMenu(TableView<GameRepresentation> tableView, ContextMenu ctxMenu, GameRepresentation game) {
+  public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, GameRepresentation game) {
     ctxMenu.getItems().clear();
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
