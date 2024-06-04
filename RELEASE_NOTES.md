@@ -5,3 +5,5 @@
 
 
 ### Bugfixes
+
+- **VPin MAME Service**: Optimized pre-caching when reading MAME settings from the Windows registry.

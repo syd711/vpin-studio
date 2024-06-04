@@ -533,6 +533,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
     List<Integer> ignoredValidations = game.getIgnoredValidations();
+    if (ignoredValidations == null) {
+      return false;
+    }
+
     if (ignoredValidations.contains(code)) {
       return false;
     }
