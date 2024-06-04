@@ -1,10 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -16,111 +15,101 @@ public class TableOverviewColumnSorter {
     this.tableOverviewController = tableOverviewController;
   }
 
-  public Boolean sort(TableView<GameRepresentation> tableView) {
-    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+  public Comparator<GameRepresentationModel> buildComparator(TableView<GameRepresentationModel> tableView) {
+
+    Comparator<GameRepresentationModel> comp = null;
+
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<GameRepresentation, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().get(0);
+
       if (column.equals(tableOverviewController.columnDisplayName)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
+        comp = Comparator.comparing(o -> o.getGame().getGameDisplayName());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnVersion)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getVersion())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getVersion()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnStatus)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getValidationState().getCode())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getValidationState().getCode()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnEmulator)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getEmulatorId()));
+        comp = Comparator.comparing(o -> o.getGame().getEmulatorId());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnDateAdded)) {
-        Collections.sort(tableView.getItems(), (o1, o2) -> {
-          Date date1 = o1.getDateAdded() == null ? new Date() : o1.getDateAdded();
-          Date date2 = o2.getDateAdded() == null ? new Date() : o2.getDateAdded();
+        comp = (o1, o2) -> {
+          Date date1 = o1.getGame().getDateAdded() == null ? new Date() : o1.getGame().getDateAdded();
+          Date date2 = o2.getGame().getDateAdded() == null ? new Date() : o2.getGame().getDateAdded();
           return date1.compareTo(date2);
-        });
+        };
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnB2S)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isDirectB2SAvailable));
+        comp = Comparator.comparing(o -> o.getGame().isDirectB2SAvailable());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnVPS)) {
-        Collections.sort(tableView.getItems(), (o1, o2) -> {
-          if (o1.getVpsUpdates().isEmpty()) {
+        comp = (o1, o2) -> {
+          if (o1.getGame().getVpsUpdates().isEmpty()) {
             return -1;
           }
           return 1;
-        });
+        };
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnPUPPack)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getPupPackName())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getPupPackName()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnAltColor)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getAltColorType())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getAltColorType()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnAltSound)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isAltSoundAvailable));
+        comp = Comparator.comparing(o -> o.getGame().isAltSoundAvailable());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnRom)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getRom())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getRom()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnPOV)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(GameRepresentation::isPovAvailable));
+        comp = Comparator.comparing(o -> o.getGame().isPovAvailable() || o.getGame().isIniAvailable());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
       else if (column.equals(tableOverviewController.columnHSType)) {
-        Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getHighscoreType())));
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getHighscoreType()));
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          Collections.reverse(tableView.getItems());
+          comp = comp.reversed();
         }
-        return true;
       }
     }
-    return true;
+    return comp;
   }
 }

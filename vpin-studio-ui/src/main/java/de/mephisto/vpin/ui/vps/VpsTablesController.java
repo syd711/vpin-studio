@@ -106,6 +106,10 @@ public class VpsTablesController implements Initializable, StudioEventListener {
   private List<VpsTable> vpsTables;
   private TablesController tablesController;
 
+  // calculated KPIs on vpsTables
+  private int installed = 0;
+  private int unmapped = 0;
+
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
 
@@ -152,11 +156,31 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     new Thread(() -> {
       if(forceReload) {
-        client.getVpsService().update();
+        client.getVpsService().reload();
       }
 
+      // get all tables
       vpsTables = client.getVpsService().getTables();
       Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
+
+      // and calculate installed and unmapped in the non blocking thread
+      this.installed = 0;
+      this.unmapped = 0;
+      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+        for (VpsTable vpsTable : vpsTables) {
+          GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
+          if (gameByVpsTable != null) {
+            installed++;
+          }
+        }
+      }
+
+      List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
+      for (GameRepresentation gameRepresentation : gamesCached) {
+        if (StringUtils.isEmpty(gameRepresentation.getExtTableId())) {
+          unmapped++;
+        }
+      }
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterTables(vpsTables));
@@ -172,25 +196,6 @@ public class VpsTablesController implements Initializable, StudioEventListener {
         this.searchTextField.setDisable(false);
         tableStack.getChildren().remove(loadingOverlay);
         tableView.setVisible(true);
-
-        int installed = 0;
-        int unmapped = 0;
-        if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
-          for (VpsTable vpsTable : vpsTables) {
-            GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
-            if (gameByVpsTable != null) {
-              installed++;
-            }
-          }
-        }
-
-
-        List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
-        for (GameRepresentation gameRepresentation : gamesCached) {
-          if (StringUtils.isEmpty(gameRepresentation.getExtTableId())) {
-            unmapped++;
-          }
-        }
 
         countLabel.setText(vpsTables.size() + " tables / " + installed + " installed / " + unmapped + " not mapped");
 
@@ -390,11 +395,19 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     editBtn.setDisable(true);
     openBtn.setDisable(newSelection.isEmpty());
 
-    if (newSelection.isPresent() && !client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
-      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
-      editBtn.setDisable(gameByVpsTable == null);
-    }
-    tablesController.getVpsTablesSidebarController().setTable(newSelection);
+    // run in a dedicated thread as getGameByVpsTable() can block UI
+    new Thread(() -> {
+      final GameRepresentation gameByVpsTable;
+      if (newSelection.isPresent() && !client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+        gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
+      } else {
+        gameByVpsTable = null;
+      }
+      Platform.runLater(() -> {
+        editBtn.setDisable(gameByVpsTable == null);
+        tablesController.getVpsTablesSidebarController().setTable(newSelection);
+      });
+    }).start();
   }
 
   private List<VpsTable> filterTables(List<VpsTable> tables) {
