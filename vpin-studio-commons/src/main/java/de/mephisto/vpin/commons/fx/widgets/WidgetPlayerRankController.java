@@ -127,8 +127,12 @@ public class WidgetPlayerRankController extends WidgetController implements Init
           in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
         }
 
+        if (in == null) {
+          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
+        }
+
         final InputStream data = in;
-        if(data != null) {
+        if (data != null) {
           Platform.runLater(() -> {
             Image i = new Image(data);
             view.setImage(i);
@@ -184,7 +188,8 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }
