@@ -61,6 +61,7 @@ public class PupPacksResource {
   public PupPackRepresentation getPupPack() {
     PupPack pupPack = pupPacksService.getMenuPupPack();
     if (pupPack != null) {
+      pupPack.load();
       return toPupPackRepresentation(null, pupPack);
     }
     return null;
@@ -72,6 +73,7 @@ public class PupPacksResource {
     if (game != null) {
       PupPack pupPack = pupPacksService.getPupPack(game);
       if (pupPack != null) {
+        pupPack.load();
         return toPupPackRepresentation(game, pupPack);
       }
     }
