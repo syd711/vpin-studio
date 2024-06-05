@@ -1565,8 +1565,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      validationError.setVisible(game.getValidationState().getCode() > 0 && !game.getIgnoredValidations().contains(-1));
-      if (game.getValidationState().getCode() > 0) {
+      boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;
+      validationError.setVisible(errorneous && !game.getIgnoredValidations().contains(-1));
+      if (errorneous) {
         LocalizedValidation validationMessage = GameValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());

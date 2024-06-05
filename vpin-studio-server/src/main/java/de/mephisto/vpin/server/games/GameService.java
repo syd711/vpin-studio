@@ -241,22 +241,6 @@ public class GameService implements InitializingBean {
         if (!FileUtils.delete(game.getGameFile())) {
           success = false;
         }
-
-        if (!FileUtils.delete(game.getPOVFile())) {
-          success = false;
-        }
-
-        if (!FileUtils.delete(game.getResFile())) {
-          success = false;
-        }
-
-        if (!FileUtils.delete(game.getIniFile())) {
-          success = false;
-        }
-
-        if (!FileUtils.delete(game.getVBSFile())) {
-          success = false;
-        }
       }
 
       if (descriptor.isDeleteDirectB2s()) {
@@ -267,6 +251,30 @@ public class GameService implements InitializingBean {
           success = false;
         }
         if (!FileUtils.delete(game.getDirectB2SFile())) {
+          success = false;
+        }
+      }
+
+      if(descriptor.isDeleteIni()) {
+        if (!FileUtils.delete(game.getIniFile())) {
+          success = false;
+        }
+      }
+
+      if(descriptor.isDeleteRes()) {
+        if (!FileUtils.delete(game.getResFile())) {
+          success = false;
+        }
+      }
+
+      if(descriptor.isDeleteVbs()) {
+        if (!FileUtils.delete(game.getVBSFile())) {
+          success = false;
+        }
+      }
+
+      if(descriptor.isDeletePov()) {
+        if (!FileUtils.delete(game.getPOVFile())) {
           success = false;
         }
       }
@@ -319,12 +327,15 @@ public class GameService implements InitializingBean {
         }
       }
 
-      GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
-      if (byPupId != null) {
-        gameDetailsRepository.delete(byPupId);
-      }
-
       if (descriptor.isDeleteFromPopper()) {
+        GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+        if (byPupId != null) {
+          gameDetailsRepository.delete(byPupId);
+        }
+
+        Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
+        byId.ifPresent(asset -> assetRepository.delete(asset));
+
         if (!pinUPConnector.deleteGame(gameId)) {
           success = false;
         }
@@ -355,11 +366,11 @@ public class GameService implements InitializingBean {
         else {
           LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
         }
+
+        LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from PinUP Popper.");
       }
 
-      Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
-      byId.ifPresent(asset -> assetRepository.delete(asset));
-
+      //delete the game folder if it is empty
       File gameFolder = game.getGameFile().getParentFile();
       if (gameFolder.exists()) {
         String[] list = gameFolder.list();
@@ -369,8 +380,6 @@ public class GameService implements InitializingBean {
           }
         }
       }
-
-      LOG.info("Deleted \"" + game.getGameDisplayName() + "\"");
     }
     return success;
   }
