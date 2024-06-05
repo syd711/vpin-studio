@@ -29,9 +29,6 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Label versionLabel;
 
   @FXML
-  private CheckBox serviceStartupCheckbox;
-
-  @FXML
   private CheckBox useOriginalVbsFilesCheckbox;
 
   @FXML
@@ -96,16 +93,6 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
-
-    serviceStartupCheckbox.setSelected(client.getSystemService().autostartInstalled());
-    serviceStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        client.getSystemService().autostartInstall();
-      }
-      else {
-        client.getSystemService().autostartUninstall();
-      }
-    });
 
     PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.IDLE_TIMEOUT);
     int timeout = idle.getIntValue();
