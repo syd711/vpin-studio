@@ -98,7 +98,13 @@ public class TableOverviewColumnSorter {
         }
       }
       else if (column.equals(tableOverviewController.columnPOV)) {
-        comp = Comparator.comparing(o -> o.getGame().isPovAvailable() || o.getGame().isIniAvailable());
+        comp = Comparator.comparing(o -> o.getGame().isPovAvailable());
+        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+          comp = comp.reversed();
+        }
+      }
+      else if (column.equals(tableOverviewController.columnINI)) {
+        comp = Comparator.comparing(o -> o.getGame().isIniAvailable());
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
           comp = comp.reversed();
         }

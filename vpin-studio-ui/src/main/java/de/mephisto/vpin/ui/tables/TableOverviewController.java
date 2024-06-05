@@ -125,6 +125,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPOV;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnINI;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnHSType;
 
   @FXML
@@ -343,6 +346,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setVisible(!assetManagerMode && vpxMode);
     columnAltColor.setVisible(!assetManagerMode && vpxMode);
     columnPOV.setVisible(!assetManagerMode && vpxMode);
+    columnINI.setVisible(!assetManagerMode && vpxMode);
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode);
     columnDateAdded.setVisible(!assetManagerMode);
@@ -478,7 +482,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -726,26 +731,26 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }*/
 
     //Platform.runLater(() -> {
-      tableView.getSelectionModel().getSelectedItems().removeListener(this);
+    tableView.getSelectionModel().getSelectedItems().removeListener(this);
 
-      tableView.getSelectionModel().clearSelection();
+    tableView.getSelectionModel().clearSelection();
 
-      GameRepresentationModel model = null;
-      int index = games.indexOf(refreshedGame);
-      if (index != -1) {
-        games.remove(index);
-        games.add(index, refreshedGame);
-        // also change the model that triggers a screen refresh
-        model = new GameRepresentationModel(refreshedGame);
-        models.remove(index);
-        models.add(index, model);
-      }
-      
-      tableView.getSelectionModel().getSelectedItems().addListener(this);
-      // select the reloaded game
-      tableView.getSelectionModel().select(model);
+    GameRepresentationModel model = null;
+    int index = games.indexOf(refreshedGame);
+    if (index != -1) {
+      games.remove(index);
+      games.add(index, refreshedGame);
+      // also change the model that triggers a screen refresh
+      model = new GameRepresentationModel(refreshedGame);
+      models.remove(index);
+      models.add(index, model);
+    }
 
-      //tableView.refresh();
+    tableView.getSelectionModel().getSelectedItems().addListener(this);
+    // select the reloaded game
+    tableView.getSelectionModel().select(model);
+
+    //tableView.refresh();
     //});
   }
 
@@ -769,7 +774,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         String source = new String(Base64.getDecoder().decode(tableSource), Charset.forName("utf8"));
         editorController.setGame(game, source);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load VPX Editor: " + e.getMessage(), e);
       }
     }
@@ -794,7 +800,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSoundEditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound editor: " + e.getMessage(), e);
       }
     }
@@ -818,7 +825,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         AltSound2EditorController editorController = loader.getController();
         editorController.setAltSound(game, altSound);
         editorController.setTablesController(tablesController);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load alt sound2 editor: " + e.getMessage(), e);
       }
     }
@@ -885,7 +893,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value != null) {
         id = value.getId();
       }
-  
+
       client.getGameService().clearCache(id);
       List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
       Platform.runLater(() -> {
@@ -938,7 +946,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     this.games = _games;
     this.models = FXCollections.observableArrayList();
-    for (GameRepresentation g: _games) {
+    for (GameRepresentation g : _games) {
       models.add(new GameRepresentationModel(g));
     }
 
@@ -951,9 +959,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     // Wrap the FilteredList in a SortedList
     SortedList<GameRepresentationModel> sortedData = new SortedList<>(this.data);
-		// Bind the SortedList comparator to the TableView comparator.
+    // Bind the SortedList comparator to the TableView comparator.
     sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
-        () -> tableOverviewColumnSorter.buildComparator(tableView), 
+        () -> tableOverviewColumnSorter.buildComparator(tableView),
         tableView.comparatorProperty()));
     // Set a dummy SortPolicy to tell the TableView data is successfully sorted
     tableView.setSortPolicy(tableView -> true);
@@ -1058,7 +1066,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = "#FF3333";
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
-      } else {
+      }
+      else {
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
       }
@@ -1080,7 +1089,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.isDirectB2SAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
           return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
-        } else {
+        }
+        else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
@@ -1095,13 +1105,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       Label label = new Label();
       label.getStyleClass().add("default-title");
-      VpsTable vpsTable = model.getVpsTable(); 
+      VpsTable vpsTable = model.getVpsTable();
       VpsTableVersion vpsTableVersion = null;
 
       if (vpsTable != null) {
         vpsTableVersion = vpsTable.getTableVersionById(value.getExtTableVersionId());
 
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(); 
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
         checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
         label.setTooltip(new Tooltip("VPS Table:\n" + vpsTable.getDisplayName()));
@@ -1119,8 +1129,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       label = new Label();
       if (vpsTableVersion != null) {
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(); 
-        checkboxIcon.setIconSize(iconSize);  
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
+        checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
         label.setTooltip(new Tooltip("VPS Table Version:\n" + vpsTableVersion.toString()));
       }
@@ -1144,8 +1154,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         StringBuilder builder = new StringBuilder();
         List<VPSChange> changes = value.getVpsUpdates().getChanges();
         for (VPSChange change : changes) {
-            builder.append(change.toString(vpsTable));
-            builder.append("\n");
+          builder.append(change.toString(vpsTable));
+          builder.append("\n");
         }
 
         String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
@@ -1164,20 +1174,26 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       return row;
     });
-    
+
     configureColumn(columnPOV, (value, model) -> {
-      if (value.isPovAvailable() || value.isIniAvailable()) {
+      if (value.isPovAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
           return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
-        } else {
+        }
+        else {
           FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
-          if (value.isPovAvailable()) {
-            Tooltip.install(checkboxIcon, new Tooltip("POV file available"));
-          } else {
-            Tooltip.install(checkboxIcon, new Tooltip("INI file available"));
-          }
+          Tooltip.install(checkboxIcon, new Tooltip("POV file available"));
           return checkboxIcon;
         }
+      }
+      return null;
+    });
+
+    configureColumn(columnINI, (value, model) -> {
+      if (value.isIniAvailable()) {
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
+        Tooltip.install(checkboxIcon, new Tooltip("INI file available"));
+        return checkboxIcon;
       }
       return null;
     });
@@ -1186,7 +1202,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.isAltSoundAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
-        } else {
+        }
+        else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
@@ -1197,7 +1214,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.getAltColorType() != null) {
         if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
-        } else {
+        }
+        else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
@@ -1208,7 +1226,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.isPupPackAvailable()) {
         if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
-        } else {
+        }
+        else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
@@ -1264,7 +1283,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     configureColumn(columnDateAdded, (value, model) -> {
       if (value.getDateAdded() != null) {
         return new Label(dateAddedDateFormat.format(value.getDateAdded()));
-      } else {
+      }
+      else {
         return new Label("-");
       }
     });
@@ -1311,17 +1331,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
 
     configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, PopperScreen.PlayField));
-    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value,  PopperScreen.BackGlass));
-    configureColumn(columnLoading, (value, model) -> createAssetStatus(value,  PopperScreen.Loading));
-    configureColumn(columnWheel, (value, model) -> createAssetStatus(value,  PopperScreen.Wheel));
-    configureColumn(columnDMD, (value, model) -> createAssetStatus(value,  PopperScreen.DMD));
-    configureColumn(columnTopper, (value, model) -> createAssetStatus(value,  PopperScreen.Topper));
-    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value,  PopperScreen.Menu));
-    configureColumn(columnAudio, (value, model) -> createAssetStatus(value,  PopperScreen.Audio));
-    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value,  PopperScreen.AudioLaunch));
-    configureColumn(columnInfo, (value, model) -> createAssetStatus(value,  PopperScreen.GameInfo));
-    configureColumn(columnHelp, (value, model) -> createAssetStatus(value,  PopperScreen.GameHelp));
-    configureColumn(columnOther2, (value, model) -> createAssetStatus(value,  PopperScreen.Other2));
+    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, PopperScreen.BackGlass));
+    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, PopperScreen.Loading));
+    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, PopperScreen.Wheel));
+    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, PopperScreen.DMD));
+    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, PopperScreen.Topper));
+    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, PopperScreen.Menu));
+    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, PopperScreen.Audio));
+    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, PopperScreen.AudioLaunch));
+    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, PopperScreen.GameInfo));
+    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, PopperScreen.GameHelp));
+    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, PopperScreen.Other2));
 
     setItems(new ArrayList<>());
 
@@ -1396,16 +1416,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       TableCell<GameRepresentationModel, GameRepresentationModel> cell = new TableCell<>();
       cell.itemProperty().addListener((obs, old, model) -> {
         if (model != null) {
-            Node node = renderer.render(model.getGame(), model);
-            cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(node));
+          Node node = renderer.render(model.getGame(), model);
+          cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(node));
         }
       });
       return cell;
     });
   }
 
-  private void configureLoadingColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, 
-        String loading, ColumnRenderer renderer) {
+  private void configureLoadingColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column,
+                                      String loading, ColumnRenderer renderer) {
 
     //if (true) { configureColumn(column, renderer); return; }
 
@@ -1416,6 +1436,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       protected String getLoading(GameRepresentationModel model) {
         return loading;
       }
+
       @Override
       protected void renderItem(GameRepresentationModel model) {
         Node node = renderer.render(model.getGame(), model);
@@ -1590,7 +1611,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     new TableOverviewDragDropHandler(tablesController);
 
     // start the relod process when the stage is on
-    Studio.stage.setOnShown( e -> this.onReload() );
+    Studio.stage.setOnShown(e -> this.onReload());
   }
 
   public List<GameRepresentation> getGames() {
@@ -1606,8 +1627,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public GameRepresentation getSelection() {
     GameRepresentationModel selection = tableView.getSelectionModel().getSelectedItem();
-    return selection!=null? selection.getGame(): null;
+    return selection != null ? selection.getGame() : null;
   }
+
   public List<GameRepresentation> getSelections() {
     List<GameRepresentationModel> models = tableView.getSelectionModel().getSelectedItems();
     return models.stream().map(model -> model.getGame()).collect(Collectors.toList());
@@ -1744,7 +1766,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       loader.load();
       tableFilterController = loader.getController();
       tableFilterController.setTableController(this);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 
@@ -1830,6 +1853,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltSound.setVisible(vpxMode && !assetManagerMode);
     columnAltColor.setVisible(vpxMode && !assetManagerMode);
     columnPOV.setVisible(vpxMode && !assetManagerMode);
+    columnINI.setVisible(vpxMode && !assetManagerMode);
     columnHSType.setVisible(vpxMode && !assetManagerMode);
 
     tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
@@ -1900,7 +1924,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
-    public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {      
+    public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {
         reloadConsumers.add(selection -> {
@@ -1928,6 +1952,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     public GameRepresentation getGame() {
       return game;
     }
+
     public void setGame(GameRepresentation game) {
       this.game = game;
       fireValueChangedEvent();
@@ -1936,9 +1961,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     public VpsTable getVpsTable() {
       return vpsTable;
     }
+
     public GameEmulatorRepresentation getGameEmulator() {
       return gameEmulator;
     }
+
     @Override
     public String getName() {
       return game.getGameDisplayName();
