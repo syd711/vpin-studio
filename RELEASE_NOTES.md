@@ -4,9 +4,11 @@
 - **Highscore Card Resolutions**: Added option to change the resolution of the highscore cards. Note that changing the highscore card size will re-crop every the default background of every table so that the best possible image quality is achieved. This option has been introduced for users showing their highscore cards on a FullDMD screen (which often use HD resolutions).
 - **Table Overview / POV/INI Column**: Splitted this column into two different ones.
 - **Table Overview**: @leprinco did an amazing job re-implementing the table overview table. As a result, the table loading feels noticable(!) faster and smoother.
+- **Table Overview / Table Deletion**: Added options for the (separate) deletion of .ini, .vbs, .pov and .res files.
 
 ### Bugfixes
 
 - **VPin MAME Service**: Optimized pre-caching when reading MAME settings from the Windows registry.
 - **PUP Pack Service**: Optimized loading of PUP pack information. The performance was so bad before that some PUP pack indicators were not shown in the table overview.
 - **ROM Uploads**: Fixed error that ROMs have been uploaded to the MAME "cfg" folder and not to the "roms" folder. 
+- **Table Deletion**: Fixed critical error during the table deletion which caused that the VPin Studio database entry for a table was always deleted. This led to inconsistencies after a refresh.
