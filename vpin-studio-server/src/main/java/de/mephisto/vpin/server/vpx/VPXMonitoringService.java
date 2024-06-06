@@ -19,14 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class VPXMonitoringService implements InitializingBean, PreferenceChangedListener {
+public class VPXMonitoringService implements InitializingBean, PreferenceChangedListener, Runnable {
   private final static Logger LOG = LoggerFactory.getLogger(VPXMonitoringService.class);
   private final AtomicBoolean running = new AtomicBoolean(false);
-
-  private Thread monitorThread;
 
   @Autowired
   private GameStatusService gameStatusService;
@@ -40,36 +41,26 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   @Autowired
   private PreferencesService preferencesService;
 
-  public void stopMonitoring() {
-    if (monitorThread != null) {
-      this.running.set(false);
-    }
-  }
+  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-  public void startMonitor() {
-    this.running.set(true);
-    monitorThread = new Thread(() -> {
-      try {
-        Thread.currentThread().setName("VPX Monitor Thread");
-        LOG.info("VPX Monitor Thread started.");
-        while (running.get()) {
-          String tableName = getVPXTableName();
-          if (tableName != null) {
-            notifyTableStart(tableName);
-          }
-          else {
-            notifyTableEnd();
-          }
-          Thread.sleep(3000);
-        }
+  @Override
+  public void run() {
+    try {
+      if (!running.get()) {
+        return;
       }
-      catch (Exception e) {
-        LOG.info("VPX Monitor Thread failed: " + e.getMessage(), e);
-      } finally {
-        LOG.info(Thread.currentThread().getName() + " terminated.");
+      Thread.currentThread().setName("VPX Monitor Thread");
+      String tableName = getVPXTableName();
+      if (tableName != null) {
+        notifyTableStart(tableName);
       }
-    });
-    monitorThread.start();
+      else {
+        notifyTableEnd();
+      }
+    }
+    catch (Exception e) {
+      LOG.info("VPX Monitor Thread failed: " + e.getMessage(), e);
+    }
   }
 
   private void notifyTableEnd() {
@@ -97,8 +88,9 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
   private String getVPXTableName() {
     List<String> allWindowNames = SystemUtil.getAllWindowNames();
+    boolean playerRunning = allWindowNames.stream().anyMatch(name -> name.contains("Visual Pinball Player"));
     for (String name : allWindowNames) {
-      if (name.toLowerCase().contains("Pinball".toLowerCase())) {
+      if (playerRunning && name.toLowerCase().contains("Pinball".toLowerCase())) {
         if (name.contains("[") && name.contains("]")) {
           return name.substring(name.indexOf("[") + 1, name.length() - 1);
         }
@@ -110,6 +102,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.VPX_MONITORING) {
+      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     }
@@ -117,14 +110,19 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (PreferenceNames.SERVER_SETTINGS.equalsIgnoreCase(propertyName)) {
-      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      if(serverSettings.isUseVPXTableMonitor()) {
-        startMonitor();
+    try {
+      if (PreferenceNames.SERVER_SETTINGS.equalsIgnoreCase(propertyName)) {
+        ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+        if (serverSettings.isUseVPXTableMonitor()) {
+          running.set(true);
+        }
+        else {
+          running.set(false);
+        }
       }
-      else {
-        stopMonitoring();
-      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update VPX monitoring: " + e.getMessage(), e);
     }
   }
 }
