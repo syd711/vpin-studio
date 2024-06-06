@@ -48,14 +48,6 @@ public class Preferences {
 
   private String discordBotAllowList;
 
-  private String discordVpsChannelId;
-
-  @Column(name = "discordVpsTableFilterEnabled", nullable = false, columnDefinition = "boolean default true")
-  private boolean discordVpsTableFilterEnabled;
-
-  @Column(name = "discordVpsRefreshIntervalMin", nullable = false, columnDefinition = "int default 60")
-  private int discordVpsRefreshIntervalMin;
-
   private String vpbmInternalHostId;
 
   private String vpbmExternalHostId;
@@ -156,30 +148,6 @@ public class Preferences {
 
   public void setTournamentSettings(String tournamentSettings) {
     this.tournamentSettings = tournamentSettings;
-  }
-
-  public String getDiscordVpsChannelId() {
-    return discordVpsChannelId;
-  }
-
-  public void setDiscordVpsChannelId(String discordVpsChannelId) {
-    this.discordVpsChannelId = discordVpsChannelId;
-  }
-
-  public boolean getDiscordVpsTableFilterEnabled() {
-    return discordVpsTableFilterEnabled;
-  }
-
-  public void setDiscordVpsTableFilterEnabled(boolean discordVpsTableFilterEnabled) {
-    this.discordVpsTableFilterEnabled = discordVpsTableFilterEnabled;
-  }
-
-  public int getDiscordVpsRefreshIntervalMin() {
-    return discordVpsRefreshIntervalMin;
-  }
-
-  public void setDiscordVpsRefreshIntervalMin(int discordVpsRefreshIntervalMin) {
-    this.discordVpsRefreshIntervalMin = discordVpsRefreshIntervalMin;
   }
 
   public String getHighscoreCardSettings() {
