@@ -201,7 +201,11 @@ public class PINemHiService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    checkForUpdates();
+    new Thread(() -> {
+      Thread.currentThread().setName("PinemHi Updater");
+      checkForUpdates();
+    }).start();
+
     loadSettings();
     this.enabled = getAutoStart();
     if (enabled) {

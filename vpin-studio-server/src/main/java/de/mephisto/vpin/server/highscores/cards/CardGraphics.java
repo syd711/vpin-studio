@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -23,19 +25,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_HEIGHT;
-import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_SIZE;
-
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
   private final DefaultPictureService directB2SService;
+  private final HighscoreCardResolution highscoreCardResolution;
   private final ScoreSummary summary;
   private final CardTemplate template;
   private final Game game;
 
-  public CardGraphics(DefaultPictureService directB2SService, CardTemplate template, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, HighscoreCardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
+    this.highscoreCardResolution = highscoreCardResolution;
     this.template = template;
     this.game = game;
     this.summary = summary;
@@ -67,7 +68,7 @@ public class CardGraphics {
 
   private BufferedImage getBackgroundImage() throws IOException {
     if (template.isTransparentBackground()) {
-      BufferedImage bufferedImage = new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+      BufferedImage bufferedImage = new BufferedImage(highscoreCardResolution.toWidth(), highscoreCardResolution.toHeight(), BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
 
@@ -150,7 +151,7 @@ public class CardGraphics {
 
       String tableName = game.getGameDisplayName();
       int width = g.getFontMetrics().stringWidth(tableName);
-      while (width > DEFAULT_MEDIA_SIZE - template.getMarginLeft() - template.getMarginRight()) {
+      while (width > highscoreCardResolution.toWidth() - template.getMarginLeft() - template.getMarginRight()) {
         tableFontSize = tableFontSize - 1;
         g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
         width = g.getFontMetrics().stringWidth(tableName);

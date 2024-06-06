@@ -565,6 +565,10 @@ public class UploaderAnalysis<T> {
   }
 
   private static boolean isPopperMediaFile(PopperScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
+    if (screen.equals(PopperScreen.GameInfo)) {
+      return false;
+    }
+
     if (pupPackRootDirectory != null && fileNameWithPath.startsWith(pupPackRootDirectory)) {
       return false;
     }
@@ -583,10 +587,6 @@ public class UploaderAnalysis<T> {
     }
 
     if (screen.equals(PopperScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("help") || fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
-      return true;
-    }
-
-    if (screen.equals(PopperScreen.GameInfo)) {
       return true;
     }
 

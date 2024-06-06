@@ -11,10 +11,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
-import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.popper.*;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import javafx.application.Platform;
@@ -52,7 +49,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
     Game game = event.getGame();
 
     boolean pupPackDisabled = pupPacksService.isPupPackDisabled(game);
-    if (pupPackDisabled) {
+    if (pupPackDisabled && event.getOrigin().equals(TableStatusChangedOrigin.ORIGIN_POPPER)) {
       pupPacksService.writePUPHideNext(game);
     }
 
@@ -69,10 +66,18 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
         }
         preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Failed to refresh game: " + e.getMessage(), e);
     }
 
+    //this only works for Popper since for other methods VPX is already running
+    if (event.getOrigin().equals(TableStatusChangedOrigin.ORIGIN_POPPER)) {
+      showTableStartupScreens(game);
+    }
+  }
+
+  private void showTableStartupScreens(Game game) {
     try {
       PreferenceEntryRepresentation preference = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
       String value = preference.getValue();
@@ -92,7 +97,8 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
           });
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Error showing highscore card: " + e.getMessage(), e);
     }
   }
@@ -106,7 +112,8 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
       try {
         Thread.sleep(EXIT_DELAY);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");

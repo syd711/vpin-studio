@@ -58,7 +58,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new URL(url).openStream();
   }
 
-  public DirectB2SData getDirectB2SData(DirectB2S directB2S) throws Exception {
+  public DirectB2SData getDirectB2SData(DirectB2S directB2S) {
     return getRestClient().post(API + "directb2s/get", directB2S, DirectB2SData.class);
   }
 

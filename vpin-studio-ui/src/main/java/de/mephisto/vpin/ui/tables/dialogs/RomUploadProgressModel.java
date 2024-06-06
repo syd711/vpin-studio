@@ -53,7 +53,7 @@ public class RomUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getMameService().uploadCfg(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getMameService().uploadRom(emuId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

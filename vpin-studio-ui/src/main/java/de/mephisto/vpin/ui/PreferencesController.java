@@ -17,6 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -41,6 +43,9 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private Hyperlink versionLink;
+
+  @FXML
+  private Hyperlink kofiLink;
 
   @FXML
   private Label hostLabel;
@@ -275,6 +280,18 @@ public class PreferencesController implements Initializable, StudioEventListener
     }
   }
 
+  @FXML
+  private void onKofiLink() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("https://ko-fi.com/syd711"));
+      } catch (Exception e) {
+        LOG.error("Failed to open kofi link: " + e.getMessage(), e);
+      }
+    }
+  }
+
   private void load(String screen, ActionEvent event) throws IOException {
     load(screen, event, null);
   }
@@ -331,6 +348,12 @@ public class PreferencesController implements Initializable, StudioEventListener
     versionLink.setText("VPin Studio Version " + Studio.getVersion());
     versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
     hostLabel.setText(System.getProperty("os.name"));
+
+    Image image6 = new Image(Studio.class.getResourceAsStream("ko-fi.png"));
+    ImageView view6 = new ImageView(image6);
+    view6.setPreserveRatio(true);
+    view6.setFitHeight(32);
+    kofiLink.setGraphic(view6);
 
     EventManager.getInstance().addListener(this);
   }

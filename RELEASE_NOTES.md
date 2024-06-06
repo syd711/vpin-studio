@@ -1,22 +1,15 @@
-## Release Notes 2.20.1
+## Release Notes 2.20.2
 
-- **Universal Uploads**: Removed the table selection information from the drop zone, since this led to confusion, that assets may only be uploaded for the selected table. Since the internal structure of an archive mostly determines the target folder, this should be less irritating.
-- **Preferences**: Renamed **UI Settings** to **Client Settings**.
-- **Preferences**: Added new initial settings section **Cabinet Settings** where the cabinet and avatar is image is located (which have been part of the **UI Settings** before).
-- **ALTColor**: Added automatic-backups: If you upload a new ALTColor file, the existing ones will be copied into a "backups" subfolder. This way, it is clear which ALTColor file is used.
-- **Competitions**: When a competition is started/created (all modes), the Popper database entry of the table is updated with the competitions id. The id has the format **vps://competition/\<TYPE\>/\<ID\>**. The field is read and written in CSV format so that tables can be part of multiple competitions and all of them are stored in this field. Using this information, you can now create **competition playlists**.
-- **Upload Dialogs**: Added file drop support for all upload dialogs. You are not forced anymore to use the selection dialog when uploading assets, but also can simply drop the files on all upload dialogs. The dropped file will be validated and its name auto-filled into the filename text field.
+- **Added VPX Monitor**: The server contains a new service called "VPX Table Monitor", which checks if VPX is started and with which table. **Why is this important?** This monitor also emits the table launch and exit events which cause e.g. the Discord BOT status update and the updates of highscore cards on table exit. So you can simply launch a table without using Popper (e.g. if you are a **VR player or using PinballX**) and the automatic highscore update will now work too. The service is **disabled by default** and can be enabled in the **Server Preferences**. 
+- **Highscore Card Resolutions**: Added option to change the resolution of the highscore cards. Note that changing the highscore card size will re-crop every the default background of every table so that the best possible image quality is achieved. This option has been introduced for users showing their highscore cards on a FullDMD screen (and this usually has HD resolution).
+- **Table Overview / POV/INI Column**: Splitted this column into two different ones.
+- **Table Overview**: @leprinco did an amazing job re-implementing the table overview table. As a result, the table loading feels noticable(!) faster and smoother.
+- **Table Overview / Table Deletion**: Added options for the (separate) deletion of .ini, .vbs, .pov and .res files.
 
 ### Bugfixes
 
-- **Virtual Pinball Spreadsheet**: The VPS database has been completely moved to the server. Every client downloaded and kept their own copy of the VPS database before. This led to inconsistencies when the client was working with a newer version of the database.
-- **ALTColor**: Fixed wrong filename when importing and validating serum files.
-- **Table Overview**: Fixed broken table layout which remained in a fix size when window was resized.
-- **Table Overview**: Fixed status column sorting.
-- **Table Overview / Loading Performance Optimization**: Tables/games are not loaded anymore all at once, but only for the selected emulator(s). E.g. all VPX tables are still loaded as bulk request, but not together with MAME or FP tables. 
-- **Table Overview / Filtering Performance Optimization**: Improved filtering for VPX/non-VPX games.
-- **Table Overview / Validation Performance Optimization**: Non-VPX games are only checked for missing assets issues and do not run through the full VPX validation anymore.
-- **Offline Competitions**: Fixed missing highscore reset when no Discord server was selected. This should be independent of each other of course.
-- **Table Overview / Playfield Preview**: Trying to improve the positioning for MAME playfield videos, let's see how this went.
-- **Table Overview / MAME**: Added progress dialog for the MAME reload since this one can take quite some time.
-- **Preferences / Performance Optimization**: Preferences are only re-fetched if they have been written before. This should save some requests.
+- **VPin MAME Service**: Optimized pre-caching when reading MAME settings from the Windows registry.
+- **PUP Pack Service**: Optimized loading of PUP pack information. The performance was so bad before that some PUP pack indicators were not shown in the table overview, because they have not been loaded yet.
+- **ROM Uploads**: Fixed error that ROMs have been uploaded to the MAME "cfg" folder and not to the "roms" folder. 
+- **Table Deletion**: Fixed critical error during the table deletion which caused that the VPin Studio database entry for a table was always deleted. This led to inconsistencies after a refresh.
+- **Media Uploads**: Fixed issue that too many assets have been uploaded for the Popper screen **GameInfo**.

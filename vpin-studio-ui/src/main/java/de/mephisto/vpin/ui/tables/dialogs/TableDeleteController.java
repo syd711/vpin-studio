@@ -43,6 +43,18 @@ public class TableDeleteController implements Initializable, DialogController {
   private CheckBox directb2sCheckbox;
 
   @FXML
+  private CheckBox vbsCheckbox;
+
+  @FXML
+  private CheckBox iniCheckbox;
+
+  @FXML
+  private CheckBox resCheckbox;
+
+  @FXML
+  private CheckBox povCheckbox;
+
+  @FXML
   private CheckBox popperCheckbox;
 
   @FXML
@@ -95,6 +107,10 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteAltSound(altSoundCheckbox.isSelected());
     descriptor.setDeleteAltColor(altColorCheckbox.isSelected());
     descriptor.setDeleteCfg(mameConfigCheckbox.isSelected());
+    descriptor.setDeletePov(povCheckbox.isSelected());
+    descriptor.setDeleteIni(iniCheckbox.isSelected());
+    descriptor.setDeleteRes(resCheckbox.isSelected());
+    descriptor.setDeleteVbs(vbsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
     Platform.runLater(() -> {
@@ -126,6 +142,10 @@ public class TableDeleteController implements Initializable, DialogController {
       highscoreCheckbox.setSelected(newValue);
       altSoundCheckbox.setSelected(newValue);
       altColorCheckbox.setSelected(newValue);
+      vbsCheckbox.setSelected(newValue);
+      iniCheckbox.setSelected(newValue);
+      resCheckbox.setSelected(newValue);
+      povCheckbox.setSelected(newValue);
     });
   }
 
@@ -191,5 +211,9 @@ public class TableDeleteController implements Initializable, DialogController {
     highscoreCheckbox.setDisable(hasNonSelectedVariant);
     altSoundCheckbox.setDisable(hasNonSelectedVariant);
     altColorCheckbox.setDisable(hasNonSelectedVariant);
+    vbsCheckbox.setDisable(hasNonSelectedVariant);
+    iniCheckbox.setDisable(hasNonSelectedVariant);
+    resCheckbox.setDisable(hasNonSelectedVariant);
+    povCheckbox.setDisable(hasNonSelectedVariant);
   }
 }

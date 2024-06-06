@@ -46,7 +46,7 @@ public class Game {
   private File gameFile;
 
   private ValidationState validationState;
-  private List<Integer> ignoredValidations;
+  private List<Integer> ignoredValidations = new ArrayList<>();
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
