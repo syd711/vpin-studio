@@ -8,3 +8,4 @@
 
 ### Bugfixes
 
+- **VPX Monitor**: Fixed wrong table resolving for the VPX monitor, was a bit hasty there.
