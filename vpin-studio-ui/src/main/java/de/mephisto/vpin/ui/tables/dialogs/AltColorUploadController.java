@@ -82,7 +82,7 @@ public class AltColorUploadController implements Initializable, DialogController
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select ALT Color");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.pac", "*.vni", "*.pal", "*.cRZ"));
+        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.rar", "*.pac", "*.vni", "*.pal", "*.cRZ"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);

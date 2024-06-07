@@ -66,10 +66,6 @@ public class RarUtil {
         }
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
-          if (entryName.contains("/")) {
-            entryName = entryName.substring(entryName.lastIndexOf("/") + 1);
-          }
-
           File newFile = new File(destinationDir, entryName);
           File parent = newFile.getParentFile();
           if (!parent.isDirectory() && !parent.mkdirs()) {

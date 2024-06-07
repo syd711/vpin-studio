@@ -117,7 +117,7 @@ public class MediaUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media Pack");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Media Pack", "*.zip"));
+        new FileChooser.ExtensionFilter("Media Pack", "*.zip", "*.rar"));
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       refreshSelection(stage);

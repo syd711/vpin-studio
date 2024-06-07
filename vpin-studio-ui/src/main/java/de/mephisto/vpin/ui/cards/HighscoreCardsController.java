@@ -522,6 +522,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
     refreshPreviewSize();
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
 

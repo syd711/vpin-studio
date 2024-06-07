@@ -6,6 +6,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -219,7 +220,7 @@ public class UploaderAnalysis<T> {
     String formattedName = name.replaceAll("\\\\", "/");
     boolean checkReadme = analyze(archiveEntry, formattedName, directory);
     if (checkReadme) {
-      //readReadme(in, formattedName);
+      readReadme((ISimpleInArchiveItem) archiveEntry, formattedName);
     }
   }
 
@@ -265,6 +266,20 @@ public class UploaderAnalysis<T> {
         }
         fos.close();
         this.readme = new String(fos.toByteArray());
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Failed to extract README: " + e.getMessage(), e);
+    }
+  }
+
+  private void readReadme(ISimpleInArchiveItem item, String fileName) {
+    try {
+      if (fileName.toLowerCase().endsWith(".txt") && fileName.toLowerCase().contains("read")) {
+        ByteArrayStream fos = new ByteArrayStream(Integer.MAX_VALUE);
+        item.extractSlow(fos);
+        fos.close();
+        this.readme = new String(fos.getBytes());
       }
     }
     catch (IOException e) {

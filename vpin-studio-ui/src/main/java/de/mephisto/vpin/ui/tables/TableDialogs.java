@@ -114,7 +114,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DirectB2S File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip"));
+        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
@@ -160,7 +160,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .ini File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip"));
+        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
@@ -205,7 +205,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .pov File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".pov Files", "*.pov", "*.zip"));
+        new FileChooser.ExtensionFilter(".pov Files", "*.pov", "*.zip", "*.rar"));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {

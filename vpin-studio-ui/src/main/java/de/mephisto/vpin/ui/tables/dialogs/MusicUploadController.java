@@ -89,7 +89,7 @@ public class MusicUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Music Archive");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Music Bundle", "*.zip"));
+        new FileChooser.ExtensionFilter("Music Bundle", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
 
@@ -128,6 +128,7 @@ public class MusicUploadController implements Initializable, DialogController {
   public void setFile(Stage stage, File file, UploaderAnalysis analysis) {
     this.stage = stage;
     this.analysis = analysis;
+    this.selection = file;
     if (file != null) {
       if(analysis == null) {
         analysis = UploadAnalysisDispatcher.analyzeArchive(file);
