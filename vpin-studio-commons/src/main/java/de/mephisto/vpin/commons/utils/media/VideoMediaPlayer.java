@@ -26,6 +26,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private MediaView mediaView;
   private Media media;
 
+  private double fitWidth = -1;
+  private double fitHeight = -1;
+
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType) {
     super(parent, url);
     this.mimeType = mimeType;
@@ -92,6 +95,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private void scaleMediaView() {
+    if (fitWidth > 0 || fitHeight > 0) {
+      mediaView.setFitWidth(fitWidth);
+      mediaView.setFitHeight(fitWidth);
+      return;
+    }
+
     double prefWidth = parent.getPrefWidth();
     if (prefWidth <= 0) {
       prefWidth = ((Pane) parent.getParent()).getWidth();
@@ -158,6 +167,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setFitWidth(parent.getPrefWidth() - 12);
       mediaView.setFitHeight(parent.getPrefHeight() - 50);
     }
+  }
+
+  @Override
+  public void setSize(double fitWidth, double fitHeight) {
+    this.fitHeight = fitHeight;
+    this.fitWidth = fitWidth;
   }
 
   @Override

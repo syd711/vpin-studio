@@ -10,7 +10,7 @@ public class CardsDialogs {
     Stage stage = Dialogs.createStudioDialogStage(TemplateManagerDialogController.class, "dialog-template-admin.fxml", "Template Editor", TemplateManagerDialogController.class.getSimpleName());
 
     TemplateManagerDialogController controller = (TemplateManagerDialogController) stage.getUserData();
-    controller.setHighscoreCardsController(highscoreCardsController);
+    controller.setData(stage, highscoreCardsController);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);

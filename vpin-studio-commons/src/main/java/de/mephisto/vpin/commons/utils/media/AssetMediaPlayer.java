@@ -76,4 +76,8 @@ abstract public class AssetMediaPlayer extends BorderPane {
       LOG.warn("No mediaplayer found for " + url);
     }
   }
+
+  public void setSize(double fitWidth, double fitHeight) {
+
+  }
 }

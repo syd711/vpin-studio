@@ -32,9 +32,9 @@
          <center>
             <BorderPane styleClass="subpanel">
                <center>
-                  <SplitPane dividerPositions="0.23" onDragDetected="#onResize" onDragDropped="#onResizeEnd" BorderPane.alignment="CENTER">
+                  <SplitPane fx:id="splitPane" dividerPositions="0.23" BorderPane.alignment="CENTER">
                     <items>
-                        <BorderPane prefWidth="350.0">
+                        <BorderPane maxWidth="440.0" minWidth="440.0" prefWidth="440.0">
                            <center>
                               <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
                                  <children>
@@ -134,49 +134,6 @@
                                           </BorderPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Popper Background">
-                                       <content>
-                                          <BorderPane styleClass="media-parent">
-                                             <center>
-                                                <VBox>
-                                                   <children>
-                                                      <BorderPane fx:id="popperPreviewPanel">
-                                                         <top>
-                                                            <ToolBar BorderPane.alignment="CENTER">
-                                                               <items>
-                                                                  <Label text="Screen:" textFill="WHITE">
-                                                                     <font>
-                                                                        <Font name="System Bold" size="14.0" />
-                                                                     </font>
-                                                                     <padding>
-                                                                        <Insets left="3.0" right="3.0" />
-                                                                     </padding>
-                                                                  </Label>
-                                                                  <ComboBox fx:id="screensComboBox" prefWidth="150.0" />
-                                                                  <Label>
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                     <graphic>
-                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
-                                                                     </graphic>
-                                                                     <tooltip>
-                                                                        <Tooltip prefWidth="300.0" text="Previews Popper assets if you your transparent highscore cards are shown above a Popper screen." wrapText="true" />
-                                                                     </tooltip>
-                                                                  </Label>
-                                                               </items>
-                                                            </ToolBar>
-                                                         </top>
-                                                      </BorderPane>
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="1.0" right="1.0" />
-                                                   </padding>
-                                                </VBox>
-                                             </center>
-                                          </BorderPane>
-                                       </content>
-                                    </Tab>
                                  </tabs>
                               </TabPane>
                            </bottom>
@@ -185,11 +142,12 @@
                            <center>
                               <StackPane fx:id="previewStack" prefWidth="400.0" styleClass="media-container" BorderPane.alignment="CENTER">
                                  <children>
-                                    <BorderPane fx:id="previewPanel">
-                                       <center>
+                                    <BorderPane fx:id="previewOverlayPanel" prefHeight="200.0" prefWidth="200.0" />
+                                    <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                       <children>
                                           <ImageView fx:id="cardPreview" fitHeight="416.0" fitWidth="746.0" pickOnBounds="true" preserveRatio="true" />
-                                       </center>
-                                    </BorderPane>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </StackPane>
                            </center>

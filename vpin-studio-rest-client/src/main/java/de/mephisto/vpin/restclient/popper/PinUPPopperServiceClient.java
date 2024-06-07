@@ -274,17 +274,19 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     search.setTerm(term);
     search.setScreen(screen);
     TableAssetSearch result = getRestClient().post(API + "poppermedia/assets/search", search, TableAssetSearch.class);
+    if (result != null) {
+      if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
+        String[] split = term.trim().split(" ");
+        return searchTableAsset(screen, split[0]);
+      }
 
-    if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
-      String[] split = term.trim().split(" ");
-      return searchTableAsset(screen, split[0]);
+      cache.add(result);
+      if (cache.size() > CACHE_SIZE) {
+        cache.remove(0);
+      }
+      return result;
     }
-
-    cache.add(result);
-    if (cache.size() > CACHE_SIZE) {
-      cache.remove(0);
-    }
-    return result;
+    return search;
   }
 
   public boolean downloadTableAsset(TableAsset tableAsset, PopperScreen screen, GameRepresentation game, boolean append) throws Exception {
