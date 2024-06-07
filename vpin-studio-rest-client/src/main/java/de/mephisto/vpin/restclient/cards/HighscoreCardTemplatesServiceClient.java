@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,17 +19,23 @@ import java.util.List;
 public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
+  private List<CardTemplate> cachedTemplates = new ArrayList<>();
+
   public HighscoreCardTemplatesServiceClient(VPinStudioClient client) {
     super(client);
   }
 
   public List<CardTemplate> getTemplates() {
+    if(!cachedTemplates.isEmpty()) {
+      return cachedTemplates;
+    }
     return Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class));
   }
 
   public void deleteTemplate(Long id) {
     try {
       getRestClient().delete(API + "cardtemplates/delete/" + id);
+      cachedTemplates.clear();
     } catch (Exception e) {
       LOG.error("Failed to delete template: " + e.getMessage(), e);
     }
@@ -40,6 +47,9 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     } catch (Exception e) {
       LOG.error("Failed to save template: " + e.getMessage(), e);
       throw e;
+    }
+    finally {
+      cachedTemplates.clear();
     }
   }
 }

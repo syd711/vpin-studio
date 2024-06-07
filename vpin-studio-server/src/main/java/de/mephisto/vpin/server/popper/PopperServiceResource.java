@@ -140,4 +140,10 @@ public class PopperServiceResource {
   public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails tableDetails) {
     return popperService.saveTableDetails(tableDetails, gameId, true);
   }
+
+  @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
+  public TableDetails autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+    return popperService.autoMatch(gameService.getGame(gameId), overwrite);
+  }
+
 }

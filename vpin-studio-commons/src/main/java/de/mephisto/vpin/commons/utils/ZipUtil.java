@@ -148,8 +148,11 @@ public class ZipUtil {
 
   public static void zipFolder(File sourceDirPath, File targetZip, ZipProgressable progressable) throws IOException {
     Path p = targetZip.toPath();
-    try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
-      Path pp =  sourceDirPath.toPath();
+    OutputStream outputStream = null;
+    try {
+      outputStream = Files.newOutputStream(p);
+      ZipOutputStream zs = new ZipOutputStream(outputStream);
+      Path pp = sourceDirPath.toPath();
       Files.walk(pp)
           .filter(path -> !Files.isDirectory(path))
           .forEach(path -> {
@@ -165,6 +168,11 @@ public class ZipUtil {
               LOG.error("Zip failed: " + e.getMessage(), e);
             }
           });
+      zs.close();
+    } finally {
+      if (outputStream != null) {
+        outputStream.close();
+      }
     }
   }
 
@@ -260,7 +268,7 @@ public class ZipUtil {
 
   public static String contains(@NonNull File file, @NonNull String suffix) {
     String contains = containsWithPath(file, suffix);
-    if(contains != null) {
+    if (contains != null) {
       while (contains.contains("/")) {
         contains = contains.substring(contains.indexOf("/") + 1);
       }
@@ -269,9 +277,9 @@ public class ZipUtil {
   }
 
   public static String containsWithPath(@NonNull File file, @NonNull String suffix) {
+    long start = System.currentTimeMillis();
     String fileFound = null;
     try {
-      byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(file);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
@@ -301,6 +309,8 @@ public class ZipUtil {
     catch (Exception e) {
       LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
+    } finally {
+      LOG.info("Contains check for \"" + file.getAbsolutePath() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
     }
 
     return fileFound;

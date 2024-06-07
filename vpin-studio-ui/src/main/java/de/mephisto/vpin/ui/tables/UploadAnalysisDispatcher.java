@@ -50,7 +50,23 @@ public class UploadAnalysisDispatcher {
   private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(tablesController, file);
+        TableDialogs.onRomUploads(file);
+        return;
+      }
+      case NV: {
+        TableDialogs.openNvRamUploads(file);
+        return;
+      }
+      case CFG: {
+        TableDialogs.openCfgUploads(file);
+        return;
+      }
+      case DMD_PACK: {
+        TableDialogs.openDMDUploadDialog(game, file, analysis);
+        return;
+      }
+      case ALT_SOUND: {
+        TableDialogs.openAltSoundUploadDialog(file, analysis);
         return;
       }
       case VPX: {
@@ -65,10 +81,6 @@ public class UploadAnalysisDispatcher {
     }
 
     switch (assetType) {
-      case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(tablesController, game, file);
-        return;
-      }
       case DIRECTB2S: {
         TableDialogs.directBackglassUpload(Studio.stage, game, file);
         return;
@@ -86,19 +98,15 @@ public class UploadAnalysisDispatcher {
       case PAL:
       case VNI:
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(tablesController, game, file);
+        TableDialogs.openAltColorUploadDialog(game, file);
         break;
       }
       case MUSIC: {
-        TableDialogs.openMusicUploadDialog(file);
+        TableDialogs.openMusicUploadDialog(file, analysis);
         break;
       }
       case PUP_PACK: {
-        TableDialogs.openPupPackUploadDialog(tablesController, game, file, analysis);
-        break;
-      }
-      case DMD_PACK: {
-        TableDialogs.openDMDUploadDialog(game, file, analysis);
+        TableDialogs.openPupPackUploadDialog(game, file, analysis);
         break;
       }
       case POPPER_MEDIA: {
@@ -113,22 +121,24 @@ public class UploadAnalysisDispatcher {
   }
 
   private static void showDefault(@NonNull File file) {
-    if (isArchive(file)) {
-      WidgetFactory.showInformation(Studio.stage, "No matching files found in this archive.", "Extract the archive and upload the files separately.");
-    }
-    else {
-      WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
-    }
+    Platform.runLater(() -> {
+      if (isArchive(file)) {
+        WidgetFactory.showInformation(Studio.stage, "No matching files found in this archive.", "Extract the archive and upload the files separately.");
+      }
+      else {
+        WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
+      }
+    });
   }
 
   private static boolean isArchive(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
-    return extension.equalsIgnoreCase("zip") || extension.equalsIgnoreCase("7z") || extension.equalsIgnoreCase("rar");
+    return PackageUtil.isArchive(extension) || extension.equalsIgnoreCase("rar");
   }
 
   public static UploaderAnalysis analyzeArchive(File file) {
     try {
-      UploadDispatchAnalysisRarProgressModel model = new UploadDispatchAnalysisRarProgressModel(file);
+      ProgressModel model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
       return (UploaderAnalysis) progressDialog.getResults().get(0);
     }

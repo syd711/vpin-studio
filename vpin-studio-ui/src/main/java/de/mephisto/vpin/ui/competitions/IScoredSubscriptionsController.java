@@ -26,6 +26,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -141,7 +142,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored Subscription '" + selection.getName() + "'?",
-        help, null, "Delete iScored Subscription");
+          help, null, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -247,19 +248,32 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value, gameRoom, getLabelCss(cellData.getValue())));
+      VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
+      if(table == null) {
+        return new SimpleStringProperty("No matching VPS table found.");
+      }
+
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, table, gameRoom, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      VpsTable vpsTable = value.getVpsTable();
-      return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
+      VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
+      if (vpsTable != null) {
+        return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
+      }
+      return new SimpleStringProperty("No matching VPS Table found.");
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
-      VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
+      CompetitionRepresentation value = cellData.getValue();
+      VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
+      if (vpsTable == null) {
+        return new SimpleStringProperty("No matching VPS Table found.");
+      }
+      VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
-        return new SimpleObjectProperty<>("All versions allowed.");
+        return new SimpleStringProperty("All versions allowed.");
       }
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
     });
@@ -274,7 +288,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     });
 
     tableView.setPlaceholder(new Label("                      Try iScored subscriptions!\n" +
-      "Create a new subscription by pressing the '+' button."));
+        "Create a new subscription by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
@@ -314,7 +328,13 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
             return true;
           }
           else if (column.equals(vpsTableColumn)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getVpsTable().getDisplayName()));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> {
+              VpsTable tableById = client.getVpsService().getTableById(o.getVpsTableId());
+              if (tableById != null) {
+                return tableById.getDisplayName();
+              }
+              return "";
+            }));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }

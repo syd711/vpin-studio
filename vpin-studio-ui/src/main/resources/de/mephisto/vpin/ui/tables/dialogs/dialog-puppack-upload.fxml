@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.PupPackUploadController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.PupPackUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -26,8 +26,8 @@
                <center>
                   <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.4000244140625" minWidth="10.0" prefWidth="110.4000244140625" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="395.199951171875" minWidth="10.0" prefWidth="389.5999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.39994354248046" minWidth="10.0" prefWidth="154.39994354248046" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                     </columnConstraints>
                     <rowConstraints>
@@ -60,13 +60,16 @@
                            </font>
                         </Label>
                         <Label fx:id="tableLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="Resolved ROM:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="Resolved ROM Name:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label fx:id="romLabel" layoutX="121.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
                   </GridPane>
                </center>
                <top>

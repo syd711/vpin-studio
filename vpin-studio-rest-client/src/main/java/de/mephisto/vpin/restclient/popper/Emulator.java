@@ -15,6 +15,7 @@ public class Emulator {
   private String launchScript;
   private String gamesExt;
   private boolean visible;
+  private boolean enabled = true;
   
   public String getVpxExeName() {
     if(launchScript != null) {
@@ -29,6 +30,15 @@ public class Emulator {
       }
     }
     return "VisualPinbalX.exe";
+  }
+
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   public String getLaunchScript() {
@@ -141,10 +151,10 @@ public class Emulator {
       return false;
     }
 
-    return name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL_X.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUAL_PINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorType.VISUALPINBALLX.toLowerCase());
+    return name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL_X.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALL.toLowerCase())
+      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALLX.toLowerCase());
   }
 
   @Override

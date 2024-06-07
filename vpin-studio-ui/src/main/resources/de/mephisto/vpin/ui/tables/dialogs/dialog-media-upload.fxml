@@ -5,11 +5,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.MediaUploadController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.MediaUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -17,37 +20,6 @@
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <top>
             <BorderPane BorderPane.alignment="CENTER">
-               <center>
-                  <HBox>
-                     <children>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="375.0">
-                           <HBox.margin>
-                              <Insets right="12.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </TextField>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></Button>
-                     </children>
-                  </HBox>
-               </center>
-               <top>
-                  <Label fx:id="titleLabel" text="Popper Media Bundle File:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <BorderPane.margin>
-                        <Insets bottom="6.0" />
-                     </BorderPane.margin>
-                  </Label>
-               </top>
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
@@ -56,15 +28,86 @@
                      <BorderPane.margin>
                         <Insets top="12.0" />
                      </BorderPane.margin>
-                     <children>
-                        <Label styleClass="preference-description" text="You can upload an archive here that contains media for the PinUP Popper screens." />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The file names or path in this archive must match the corresponding PinUP Popper screens." wrapText="true">
-                           <VBox.margin>
-                              <Insets top="6.0" />
-                           </VBox.margin></Label>
-                     </children>
                   </VBox>
                </bottom>
+               <top>
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+                        <Label styleClass="preference-description" text="You can upload an archive here that contains media for the PinUP Popper screens." />
+                        <Label styleClass="preference-description" text="The file name or path in this archive must match the corresponding PinUP Popper screen." wrapText="true">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Label>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="6.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </top>
+               <center>
+                  <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="109.6000244140625" minWidth="10.0" prefWidth="109.6000244140625" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Button>
+                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="450.0" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Label styleClass="default-text" text="Media Pack File:" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Screen Assets" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Audio Launch:" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Audio:" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="150.0" styleClass="default-text" text="Topper:" GridPane.rowIndex="12" />
+                        <Label layoutX="10.0" layoutY="184.0" styleClass="default-text" text="Backglass:" GridPane.rowIndex="5" />
+                        <Label layoutX="10.0" layoutY="217.0" styleClass="default-text" text="Apron/Full DMD:" GridPane.rowIndex="6" />
+                        <Label layoutX="10.0" layoutY="251.0" styleClass="default-text" text="Info/Flyer:" GridPane.rowIndex="9" />
+                        <Label layoutX="10.0" layoutY="284.0" styleClass="default-text" text="Help:" GridPane.rowIndex="8" />
+                        <Label layoutX="10.0" layoutY="318.0" styleClass="default-text" text="DMD:" GridPane.rowIndex="7" />
+                        <Label layoutX="10.0" layoutY="352.0" styleClass="default-text" text="Wheel:" GridPane.rowIndex="13" />
+                        <Label layoutX="10.0" layoutY="385.0" styleClass="default-text" text="Loading:" GridPane.rowIndex="10" />
+                        <Label layoutX="10.0" layoutY="352.0" styleClass="default-text" text="Playfield:" GridPane.rowIndex="11" />
+                        <Label fx:id="audioLaunchLabel" layoutX="10.0" layoutY="116.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="audioLabel" layoutX="124.0" layoutY="116.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="backglassLabel" layoutX="124.0" layoutY="150.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="apronLabel" layoutX="124.0" layoutY="184.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label fx:id="dmdLabel" layoutX="124.0" layoutY="217.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Label fx:id="helpLabel" layoutX="124.0" layoutY="251.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label fx:id="infoLabel" layoutX="124.0" layoutY="284.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label fx:id="loadingLabel" layoutX="124.0" layoutY="318.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label fx:id="playfieldLabel" layoutX="124.0" layoutY="352.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label fx:id="topperLabel" layoutX="124.0" layoutY="385.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Label fx:id="wheelLabel" layoutX="124.0" layoutY="419.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
+                  </GridPane>
+               </center>
             </BorderPane>
          </top>
          <bottom>

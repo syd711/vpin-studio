@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.DnDOverlayController;
 import de.mephisto.vpin.ui.Studio;
@@ -16,23 +15,24 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipOutputStream;
+import java.util.stream.Collectors;
 
 public class TableOverviewDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewDragDropHandler.class);
   private final TableOverviewController tableOverviewController;
-  private final TableView tableView;
+  private final TableView<?> tableView;
   private final StackPane loaderStack;
   private final TablesController tablesController;
 
@@ -40,7 +40,7 @@ public class TableOverviewDragDropHandler {
 
   private Parent dndLoadingOverlay;
 
-  private final List<String> suffixes = Arrays.asList("vpx", "zip", "rar", "7z", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz");
+  private final List<String> suffixes = Arrays.asList("vpx", "zip", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz", "cfg", "nv");
 
   public TableOverviewDragDropHandler(TablesController tablesController) {
     this.tablesController = tablesController;
@@ -59,6 +59,12 @@ public class TableOverviewDragDropHandler {
     tableView.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
+        List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).collect(Collectors.toList());
+        if (open.size() > 1) {
+          return;
+        }
+
+
         List<File> files = event.getDragboard().getFiles();
         if (files == null || files.size() > 1) {
           return;
@@ -102,7 +108,7 @@ public class TableOverviewDragDropHandler {
     dndLoadingOverlay.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        if (event.getDragboard().hasFiles()) {
+        if (event.getDragboard().hasFiles() && event.getDragboard().getFiles().size() == 1) {
           event.acceptTransferModes(TransferMode.COPY);
         }
         else {
@@ -157,6 +163,7 @@ public class TableOverviewDragDropHandler {
   private void dispatchDroppedFolder(File file) throws Exception {
     File systemTmpFolder = new File(System.getProperty("java.io.tmpdir"));
     File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
+    tempFile.deleteOnExit();
 
     if (tempFile.exists() && !tempFile.delete()) {
       throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
@@ -164,8 +171,8 @@ public class TableOverviewDragDropHandler {
 
     LOG.info("Zipping " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), file, tempFile));
-      LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
+      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling \"" + file.getName() + "\"", file, tempFile));
+      LOG.info("Created separate temp zip file \"" + tempFile.getAbsolutePath() + "\" for dropped folder \"" + file.getAbsolutePath() + "\"");
       dispatchDroppedFile(tempFile);
     });
   }

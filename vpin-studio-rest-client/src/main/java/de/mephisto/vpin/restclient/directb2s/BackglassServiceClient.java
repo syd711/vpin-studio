@@ -5,15 +5,20 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -42,19 +47,32 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
   }
 
-  public DirectB2SData getDirectB2SData(DirectB2S directB2S) throws Exception {
+  public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/background/" + directB2S.getEmulatorId() + "/" 
+      + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    return new URL(url).openStream();
+  }
+  public InputStream getDirectB2sDmd(DirectB2SData directB2S) throws IOException {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + directB2S.getEmulatorId() + "/" 
+    + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    return new URL(url).openStream();
+  }
+
+  public DirectB2SData getDirectB2SData(DirectB2S directB2S) {
     return getRestClient().post(API + "directb2s/get", directB2S, DirectB2SData.class);
   }
 
   public boolean deleteBackglass(DirectB2S directB2S) throws Exception {
     Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", directB2S.getEmulatorId());
     params.put("fileName", directB2S.getFileName());
     return getRestClient().post(API + "directb2s/delete", directB2S, Boolean.class);
   }
-
+ 
   public boolean renameBackglass(DirectB2S directB2S, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("newName", newName);
+    params.put("emulatorId", directB2S.getEmulatorId());
     params.put("fileName", directB2S.getFileName());
     return getRestClient().put(API + "directb2s", params, Boolean.class);
   }
@@ -62,6 +80,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public boolean duplicateBackglass(DirectB2S directB2S) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("duplicate", true);
+    params.put("emulatorId", directB2S.getEmulatorId());
     params.put("fileName", directB2S.getFileName());
     return getRestClient().put(API + "directb2s", params, Boolean.class);
   }
@@ -108,7 +127,9 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadDirectB2SFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.DIRECTB2S, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.DIRECTB2S, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);

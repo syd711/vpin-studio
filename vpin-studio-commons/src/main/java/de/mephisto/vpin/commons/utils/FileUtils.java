@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
@@ -22,6 +23,28 @@ public class FileUtils {
       }
     }
     return name;
+  }
+
+  public static boolean deleteIfTempFile(@Nullable File file) {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    if (file != null && file.exists() && file.getAbsolutePath().startsWith(tempDir)) {
+      if (file.delete()) {
+        LOG.info("Deleted temporary upload file \"" + file.getAbsolutePath() + "\"");
+        return true;
+      }
+      else {
+        LOG.error("Failed to deleted temporary upload file \"" + file.getAbsolutePath() + "\"");
+      }
+    }
+    return false;
+  }
+
+  public static void deleteIfTempFile(@Nullable List<File> files) {
+    if (files != null) {
+      for (File f : files) {
+        deleteIfTempFile(f);
+      }
+    }
   }
 
   public static File createMatchingTempFile(File file) throws IOException {

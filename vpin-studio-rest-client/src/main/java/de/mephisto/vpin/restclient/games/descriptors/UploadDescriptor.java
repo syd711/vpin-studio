@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class UploadDescriptor {
 
   private TableUploadType uploadType;
   private String tempFilename;
-  private String originalUploadedVPXFileName;
   private String originalUploadedFileName;
   private String error;
   private int gameId;
@@ -30,10 +28,35 @@ public class UploadDescriptor {
   private String subfolderName;
   private MultipartFile file;
   private String rom;
+  private boolean async;
+  private boolean acceptAllAudioAsMusic;
 
   private List<AssetType> assetsToImport = new ArrayList<>();
 
-  public File upload() throws Exception {
+  private List<File> tempFiles = new ArrayList<>();
+
+  public boolean isAsync() {
+    return async;
+  }
+
+  public void setAsync(boolean async) {
+    this.async = async;
+  }
+
+  public boolean isAcceptAllAudioAsMusic() {
+    return acceptAllAudioAsMusic;
+  }
+
+  public void setAcceptAllAudioAsMusic(boolean acceptAllAudioAsMusic) {
+    this.acceptAllAudioAsMusic = acceptAllAudioAsMusic;
+  }
+
+  @JsonIgnore
+  public List<File> getTempFiles() {
+    return tempFiles;
+  }
+
+  public void upload() throws Exception {
     String name = FilenameUtils.getBaseName(getOriginalUploadFileName());
     String suffix = FilenameUtils.getExtension(getOriginalUploadFileName());
     File uploadTempFile = File.createTempFile(name, "." + suffix);
@@ -56,17 +79,27 @@ public class UploadDescriptor {
       LOG.error("Failed to store asset: " + e.getMessage(), e);
       throw e;
     }
-    return uploadTempFile;
   }
 
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
     if (tempFile.exists()) {
-      if(tempFile.delete()) {
+      if (tempFile.delete()) {
         LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
       }
       else {
         LOG.error("Finalizing upload failed, could not delete \"" + tempFile.getAbsolutePath() + "\"");
+      }
+    }
+
+    for (File temp : getTempFiles()) {
+      if (temp.exists()) {
+        if (temp.delete()) {
+          LOG.info("Finalized upload, deleted \"" + temp.getAbsolutePath() + "\"");
+        }
+        else {
+          LOG.error("Finalizing upload failed, could not delete \"" + temp.getAbsolutePath() + "\"");
+        }
       }
     }
   }
@@ -77,7 +110,7 @@ public class UploadDescriptor {
   }
 
   public boolean isFileAsset(AssetType assetType) {
-    String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+    String suffix = FilenameUtils.getExtension(originalUploadedFileName);
     return suffix.equalsIgnoreCase(assetType.name().toLowerCase());
   }
 
@@ -129,14 +162,6 @@ public class UploadDescriptor {
 
   public void setFolderBasedImport(boolean folderBasedImport) {
     this.folderBasedImport = folderBasedImport;
-  }
-
-  public String getOriginalUploadedVPXFileName() {
-    return originalUploadedVPXFileName;
-  }
-
-  public void setOriginalUploadedVPXFileName(String originalUploadedVPXFileName) {
-    this.originalUploadedVPXFileName = originalUploadedVPXFileName;
   }
 
   public int getGameId() {

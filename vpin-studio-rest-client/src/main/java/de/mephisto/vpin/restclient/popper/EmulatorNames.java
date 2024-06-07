@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.popper;
 
-public interface EmulatorType {
+public interface EmulatorNames {
   String VISUAL_PINBALL = "Visual Pinball";
   String VISUALPINBALL = "VisualPinball";
   String VISUALPINBALLX = "VisualPinballX";

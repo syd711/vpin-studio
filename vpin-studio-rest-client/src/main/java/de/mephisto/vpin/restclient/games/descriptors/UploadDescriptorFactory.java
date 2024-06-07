@@ -4,14 +4,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UploadDescriptorFactory {
 
+  public static UploadDescriptor create() {
+    UploadDescriptor uploadDescriptor = new UploadDescriptor();
+    return uploadDescriptor;
+  }
+
   public static UploadDescriptor error(String message) {
-    UploadDescriptor descriptor = new UploadDescriptor();
+    UploadDescriptor descriptor = create();
     descriptor.setError(message);
     return descriptor;
   }
 
   public static UploadDescriptor create(MultipartFile file, int gameId) {
-    UploadDescriptor descriptor = new UploadDescriptor();
+    UploadDescriptor descriptor = create();
     descriptor.setGameId(gameId);
     descriptor.setFile(file);
     descriptor.setOriginalUploadedFileName(file.getOriginalFilename());

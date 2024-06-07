@@ -1,54 +1,40 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.FileChooser;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.*;
+import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
-public class UISettingsPreferencesController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(UISettingsPreferencesController.class);
-
-  @FXML
-  private BorderPane avatarBorderPane;
+public class ClientSettingsPreferencesController implements Initializable, ChangeListener<Boolean> {
+  private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
 
   @FXML
-  private TextField vpinNameText;
+  private VBox emulatorList;
 
   @FXML
   private TextField winNetworkShare;
@@ -89,24 +75,10 @@ public class UISettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox vpsWheel;
 
-  private Tile avatar;
   public static Debouncer debouncer = new Debouncer();
-  private Cabinet cabinet;
   private String networkShareTestPath;
+  private UISettings uiSettings;
 
-  @FXML
-  private void onFileSelect(ActionEvent e) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
-    fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
-
-    File selection = fileChooser.showOpenDialog(stage);
-    if (selection != null) {
-      ProgressDialog.createProgressDialog(new AvatarUploadProgressModel(selection));
-      refreshAvatar();
-    }
-  }
 
   @FXML
   private void onWinShareTest() {
@@ -133,29 +105,7 @@ public class UISettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     networkShareTestPath = client.getPinUPPopperService().getDefaultGameEmulator().getInstallationDirectory();
 
-    if (Features.TOURNAMENTS_ENABLED) {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
-      if (cabinet != null) {
-        vpinNameText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("cabinetName", () -> {
-          if (StringUtils.isEmpty(t1)) {
-            cabinet.setDisplayName(UIDefaults.VPIN_NAME);
-          }
-          else {
-            cabinet.setDisplayName(t1);
-          }
-
-          try {
-            maniaClient.getCabinetClient().update(cabinet);
-          } catch (Exception e) {
-            LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
-            WidgetFactory.showAlert(stage, "Error", "Failed to update cabinet name for VPin Mania: " + e.getMessage());
-          }
-        }, 500));
-      }
-    }
-
-    PreferenceBindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     uiShowVersion.setSelected(!uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -282,7 +232,32 @@ public class UISettingsPreferencesController implements Initializable {
     winNetworkShareTestBtn.setDisable(!SystemUtil.isWindows());
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
-    refreshAvatar();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getGameEmulators();
+    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      CheckBox checkBox = new CheckBox(gameEmulator.getName());
+      checkBox.setUserData(gameEmulator);
+      checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
+      checkBox.setSelected(checkBox.isDisabled() || !uiSettings.getIgnoredEmulatorIds().contains(gameEmulator.getId()));
+      checkBox.getStyleClass().add("preference-checkbox");
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (newValue) {
+            uiSettings.getIgnoredEmulatorIds().remove(Integer.valueOf(gameEmulator.getId()));
+          }
+          else {
+            if (!uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(gameEmulator.getId()))) {
+              uiSettings.getIgnoredEmulatorIds().add(Integer.valueOf(gameEmulator.getId()));
+            }
+          }
+          PreferencesController.markDirty(PreferenceType.serverSettings);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        }
+      });
+
+      emulatorList.getChildren().add(checkBox);
+    }
   }
 
   private void refreshNetworkStatusLabel(String newValue) {
@@ -307,24 +282,18 @@ public class UISettingsPreferencesController implements Initializable {
     });
   }
 
-  private void refreshAvatar() {
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-    }
+  @Override
+  public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//    Node checkBox = (Node) observable;
+//    GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) checkBox.getUserData();
 
-    avatarBorderPane.setCenter(null);
-    avatar = TileBuilder.create()
-      .skinType(Tile.SkinType.IMAGE)
-      .prefSize(300, 300)
-      .backgroundColor(Color.TRANSPARENT)
-      .image(image)
-      .imageMask(Tile.ImageMask.ROUND)
-      .textSize(Tile.TextSize.BIGGER)
-      .textAlignment(TextAlignment.CENTER)
-      .build();
-    avatarBorderPane.setCenter(avatar);
-    avatar.setImage(image);
+//    if (newValue) {
+//      uiSettings.getIgnoredEmulatorIds().remove(emulatorRepresentation.getId());
+//    }
+//    else {
+//      uiSettings.getIgnoredEmulatorIds().add(emulatorRepresentation.getId());
+//    }
+//    PreferencesController.markDirty(PreferenceType.serverSettings);
+//    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
   }
 }

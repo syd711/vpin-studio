@@ -32,6 +32,20 @@ public class VpsTable implements VPSEntity {
   private int year;
   private long updatedAt;
 
+  //------------------
+  public VpsTableVersion getTableVersionById(String extTableVersionId) {
+    if (this.tableFiles != null && extTableVersionId != null) {
+      for (VpsTableVersion tableFile : this.tableFiles) {
+        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
+          return tableFile;
+        }
+      }
+    }
+    return null;
+  }
+
+  //------------------
+
   public List<VpsTutorialUrls> getTutorialFiles() {
     return tutorialFiles;
   }
@@ -145,10 +159,10 @@ public class VpsTable implements VPSEntity {
   }
 
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if (t.getTableFormat() == null) {
+    if (t.getTableFormat() == null || t.getTableFormat().length()==0)  {
       return true;
     }
-    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat);
+    return t.getTableFormat().equals(tableFormat);
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
@@ -248,17 +262,6 @@ public class VpsTable implements VPSEntity {
   @Override
   public String toString() {
     return this.getName();
-  }
-
-  public VpsTableVersion getVersion(String extTableVersionId) {
-    if (this.tableFiles != null) {
-      for (VpsTableVersion tableFile : this.tableFiles) {
-        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
-          return tableFile;
-        }
-      }
-    }
-    return null;
   }
 
   @Override

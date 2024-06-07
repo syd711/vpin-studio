@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -29,7 +28,7 @@ public class SplashScreenController implements Initializable {
       int i = ThreadLocalRandom.current().nextInt(0, facts.size() - 1);
       String fact = facts.get(i);
       factLabel.setText("\"" + fact + "\"");
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
 import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
@@ -206,7 +208,11 @@ public class PauseMenu extends Application {
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
-        StateMananger.getInstance().setGame(game, status, cardScreen, tutorialDisplay, pauseMenuSettings);
+
+        String extTableId = game.getExtTableId();
+        VpsTable tableById = client.getVpsService().getTableById(extTableId);
+
+        StateMananger.getInstance().setGame(game, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
         stage.getScene().setCursor(Cursor.NONE);
 
         new Thread(() -> {
@@ -259,10 +265,19 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Exited pause menu");
       stage.hide();
-      screenAssets.stream().forEach(asset -> {
-        asset.getScreenStage().hide();
-        asset.dispose();
+
+      Platform.runLater(()-> {
+        try {
+          Thread.sleep(SELECTION_SCALE_DURATION);
+        } catch (InterruptedException e) {
+          //
+        }
+        screenAssets.stream().forEach(asset -> {
+          asset.getScreenStage().hide();
+          asset.dispose();
+        });
       });
+
 
       try {
         NirCmd.focusWindow("Visual Pinball Player");

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 
@@ -13,15 +14,21 @@ public class ProgressResultModel {
 
   public List<Object> results = new ArrayList<>();
   private ProgressBar progressBar;
+  private final Label statusLabel;
 
-  public ProgressResultModel(ProgressBar progressBar) {
+  public ProgressResultModel(ProgressBar progressBar, Label statusLabel) {
     this.progressBar = progressBar;
+    this.statusLabel = statusLabel;
   }
 
   public void setProgress(double progress) {
     if (this.progressBar.isVisible()) {
       this.progressBar.setProgress(progress);
     }
+  }
+
+  public void setStatusMessage(String msg) {
+    this.statusLabel.setText(msg);
   }
 
   public void setIndeterminate() {

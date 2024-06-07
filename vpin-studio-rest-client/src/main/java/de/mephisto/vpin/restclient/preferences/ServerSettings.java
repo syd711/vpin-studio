@@ -9,10 +9,19 @@ public class ServerSettings extends JsonSettings {
   private boolean keepVbsFiles = true;
   private boolean useSubfolders = false;
   private boolean launchPopperOnExit = false;
+  private boolean useVPXTableMonitor = false;
   private int volume = 0;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+
+  public boolean isUseVPXTableMonitor() {
+    return useVPXTableMonitor;
+  }
+
+  public void setUseVPXTableMonitor(boolean useVPXTableMonitor) {
+    this.useVPXTableMonitor = useVPXTableMonitor;
+  }
 
   public boolean isUseSubfolders() {
     return useSubfolders;

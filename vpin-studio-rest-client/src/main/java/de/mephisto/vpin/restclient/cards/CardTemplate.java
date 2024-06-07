@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 
 import java.util.Objects;
 
@@ -57,6 +58,25 @@ public class CardTemplate extends JsonSettings {
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
+
+  private boolean overlayMode = false;
+  private String overlayScreen = null;
+
+  public boolean isOverlayMode() {
+    return overlayMode;
+  }
+
+  public void setOverlayMode(boolean overlayMode) {
+    this.overlayMode = overlayMode;
+  }
+
+  public String getOverlayScreen() {
+    return overlayScreen;
+  }
+
+  public void setOverlayScreen(String overlayScreen) {
+    this.overlayScreen = overlayScreen;
+  }
 
   public int getMaxScores() {
     return maxScores;

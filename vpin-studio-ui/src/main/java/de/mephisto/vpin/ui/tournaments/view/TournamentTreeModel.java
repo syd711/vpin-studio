@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -37,11 +36,11 @@ public class TournamentTreeModel {
   public static TreeItem<TournamentTreeModel> create(Tournament tournament, List<TournamentTable> tournamentTables) {
     TreeItem<TournamentTreeModel> tournamentNode = new TreeItem<>(new TournamentTreeModel(tournament, null, null, null, null));
     for (TournamentTable tournamentTable : tournamentTables) {
-      VpsTable table = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+      VpsTable table = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       VpsTableVersion version = null;
       GameRepresentation game = null;
       if (!StringUtils.isEmpty(tournamentTable.getVpsVersionId())) {
-        version = table.getVersion(tournamentTable.getVpsVersionId());
+        version = table.getTableVersionById(tournamentTable.getVpsVersionId());
         game = client.getGameService().getGameByVpsTable(table, version);
       }
 

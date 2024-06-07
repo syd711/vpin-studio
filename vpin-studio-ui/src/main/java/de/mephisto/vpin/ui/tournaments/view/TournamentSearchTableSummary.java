@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -10,6 +9,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentSearchTableSummary extends VBox {
@@ -23,7 +23,7 @@ public class TournamentSearchTableSummary extends VBox {
     StringBuilder b = new StringBuilder();
 
     for (TournamentTable tournamentTable : tournamentTables) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+      VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       if(vpsTable != null) {
         b.append("- ");
         b.append(vpsTable.getDisplayName());

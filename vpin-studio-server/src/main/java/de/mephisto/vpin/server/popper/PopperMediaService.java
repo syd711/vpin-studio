@@ -36,11 +36,22 @@ public class PopperMediaService {
     for (PopperScreen value : values) {
       List<String> filesForScreen = analysis.getPopperMediaFiles(value);
 
+      boolean limit = false;
+      int maxAssets = 3;
       for (String popperMediaFile : filesForScreen) {
+        if (popperMediaFile.toLowerCase().contains("macosx")) {
+          continue;
+        }
+
         String suffix = FilenameUtils.getExtension(popperMediaFile);
         File out = uniquePopperAsset(game, value, suffix);
         ZipUtil.unzipTargetFile(tempFile, out, popperMediaFile);
-        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name()+ "\"");
+        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
+
+        maxAssets--;
+        if (maxAssets == 0 && limit) {
+          break;
+        }
       }
     }
   }

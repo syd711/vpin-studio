@@ -26,7 +26,8 @@
                                     <Font size="13.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAvatar" styleClass="preference-button" text="UI Settings">
+                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="Cabinet Settings" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onClientSettings" styleClass="preference-button" text="Client Settings">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
@@ -148,13 +149,15 @@
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                      </BorderPane.margin>
                      <children>
-                        <Hyperlink onAction="#onDiscordLink">
+                        <Hyperlink fx:id="kofiLink" onAction="#onKofiLink">
                            <graphic>
                               <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
                            </graphic>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
+                        </Hyperlink>
+                        <Hyperlink onAction="#onDiscordLink" text="Join Discord">
+                           <graphic>
+                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
+                           </graphic>
                         </Hyperlink>
                         <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
                         <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">
@@ -173,7 +176,7 @@
                         <Insets bottom="12.0" left="12.0" top="24.0" />
                      </BorderPane.margin>
                      <center>
-                       <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-ui.fxml" BorderPane.alignment="TOP_LEFT" />
+                       <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-cabinet.fxml" BorderPane.alignment="TOP_LEFT" />
                      </center>
                   </BorderPane>
                </left>

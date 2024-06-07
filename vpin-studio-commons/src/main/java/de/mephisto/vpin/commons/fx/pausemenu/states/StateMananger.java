@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -193,10 +194,14 @@ public class StateMananger implements NativeKeyListener {
     start = VPXKeyManager.getInstance().getBinding(VPXKeyManager.StartGameKey);
   }
 
-  public void setGame(GameRepresentation game, GameStatus status, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(GameRepresentation game, GameStatus status, VpsTable table, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-    menuController.setGame(game, status, cardScreen, tutorialDisplay, pauseMenuSettings);
+    menuController.setGame(game, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
     running = true;
+  }
+
+  public boolean isRunning() {
+    return running;
   }
 
   public void exit() {

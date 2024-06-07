@@ -26,6 +26,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private MediaView mediaView;
   private Media media;
 
+  private double fitWidth = -1;
+  private double fitHeight = -1;
+
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType) {
     super(parent, url);
     this.mimeType = mimeType;
@@ -59,6 +62,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private void render() {
     String baseType = mimeType.split("/")[0];
+    String mediaType = mimeType.split("/")[1];
+
+    if (mediaType.equalsIgnoreCase("quicktime")) {
+      parent.setCenter(getEncodingNotSupportedLabel(mediaItem));
+      return;
+    }
 
     media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
@@ -86,6 +95,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private void scaleMediaView() {
+    if (fitWidth > 0 || fitHeight > 0) {
+      mediaView.setFitWidth(fitWidth);
+      mediaView.setFitHeight(fitWidth);
+      return;
+    }
+
     double prefWidth = parent.getPrefWidth();
     if (prefWidth <= 0) {
       prefWidth = ((Pane) parent.getParent()).getWidth();
@@ -110,7 +125,15 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         if (!dialogRendering) {
           mediaView.setX(0);
           mediaView.setY(0);
-          mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+          Platform.runLater(() -> {
+            double ratio = (double) media.getWidth() / media.getHeight();
+            if (ratio > 1.5) {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+            }
+            else {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
+            }
+          });
         }
       }
       else {
@@ -147,8 +170,16 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   @Override
+  public void setSize(double fitWidth, double fitHeight) {
+    this.fitHeight = fitHeight;
+    this.fitWidth = fitWidth;
+  }
+
+  @Override
   public void disposeMedia() {
     super.disposeMedia();
-    this.mediaView.setMediaPlayer(null);
+    if (mediaView != null) {
+      this.mediaView.setMediaPlayer(null);
+    }
   }
 }

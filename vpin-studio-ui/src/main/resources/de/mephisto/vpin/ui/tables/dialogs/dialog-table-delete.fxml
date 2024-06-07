@@ -63,12 +63,32 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game Files (.vpx, .pov, .res, .ini)">
+                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File (.vpx)">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete directb2s File">
+                        <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete .directb2s File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="povCheckbox" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" text="Delete .pov File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="iniCheckbox" layoutX="10.0" layoutY="192.0" mnemonicParsing="false" text="Delete .ini File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="resCheckbox" layoutX="10.0" layoutY="224.0" mnemonicParsing="false" text="Delete .res File">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="vbsCheckbox" layoutX="10.0" layoutY="256.0" mnemonicParsing="false" text="Delete .vbs File">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -110,7 +130,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="Only subfolders of VPX's &quot;music&quot; folder will be deleted." />
+                              <Label styleClass="checkbox-description" text="Only subfolders of Visual Pinball's &quot;Music&quot; folder will be deleted." />
                            </children>
                         </VBox>
                      </children>

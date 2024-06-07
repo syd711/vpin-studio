@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tournaments.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -29,6 +28,8 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TournamentTableSelectorDialogController implements DialogController, AutoCompleteTextFieldChangeListener, Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentTableSelectorDialogController.class);
@@ -94,7 +95,7 @@ public class TournamentTableSelectorDialogController implements DialogController
 
   @Override
   public void onChange(String value) {
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     Optional<VpsTable> first = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     okButton.setDisable(!first.isPresent());
 
@@ -119,7 +120,7 @@ public class TournamentTableSelectorDialogController implements DialogController
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
@@ -189,7 +190,7 @@ public class TournamentTableSelectorDialogController implements DialogController
     this.statusCheckbox.setSelected(tournamentTable.isEnabled());
 
 
-    VpsTable vpsTable = VPS.getInstance().getTableById(tournamentTable.getVpsTableId());
+    VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
     if (vpsTable != null) {
       this.nameField.setText(vpsTable.getName());
       this.autoCompleteNameField.setText(vpsTable.getName());
@@ -197,7 +198,7 @@ public class TournamentTableSelectorDialogController implements DialogController
       tableFiles.add(0, null);
       versionsCombo.setItems(FXCollections.observableList(tableFiles));
 
-      VpsTableVersion vpsTableVersion = vpsTable.getVersion(tournamentTable.getVpsVersionId());
+      VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(tournamentTable.getVpsVersionId());
       if (vpsTableVersion != null) {
         versionsCombo.setValue(vpsTableVersion);
       }

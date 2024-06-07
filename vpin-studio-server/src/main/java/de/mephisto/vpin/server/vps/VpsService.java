@@ -13,7 +13,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -26,15 +25,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VpsService implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, VpsSheetChangedListener, PreferenceChangedListener {
+public class VpsService implements ApplicationContextAware, InitializingBean, VpsSheetChangedListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
 
   private ApplicationContext applicationContext;
@@ -48,17 +46,20 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
-  @Autowired
-  private PopperService popperService;
+  /**
+   * Internal VPS database
+   */
+  private VPS vpsDatabase;
 
   private ServerSettings serverSettings;
 
-  public VpsService() {
-  }
-
-  public TableDetails autoMatch(Game game, boolean overwrite) {
+  /**
+   * Match game and fill associated TableDetail with VPS Database mapping
+   *
+   * @return true if matching was done and TableDetail modified
+   */
+  public boolean autoMatch(Game game, TableDetails tableDetails, boolean overwrite) {
     try {
-      TableDetails tableDetails = popperService.getTableDetails(game.getId());
       String mappingVpsTableId = serverSettings.getMappingVpsTableId();
       String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
 
@@ -68,14 +69,14 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
       // first check already mapped table and confirm mapping
       if (StringUtils.isNotEmpty(game.getExtTableId())) {
-        VpsTable vpsTableById = VPS.getInstance().getTableById(game.getExtTableId());
+        VpsTable vpsTableById = vpsDatabase.getTableById(game.getExtTableId());
         if (matcher.isClose(game.getGameDisplayName(), game.getRom(), vpsTableById)) {
           vpsTable = vpsTableById;
         }
       }
       // if not found, find closest
       if (vpsTable == null) {
-        VpsTable vpsCloseTable = matcher.findClosest(game.getGameDisplayName(), game.getRom(), VPS.getInstance().getTables());
+        VpsTable vpsCloseTable = matcher.findClosest(game.getGameDisplayName(), game.getRom(), vpsDatabase.getTables());
         if (vpsCloseTable != null) {
           vpsTable = vpsCloseTable;
         }
@@ -95,20 +96,19 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
           if (version != null) {
             LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
             tableDetails.setMappedValue(mappingVpsTableVersionId, version.getId());
-          } else {
+          }
+          else {
             LOG.info(game.getGameDisplayName() + ": Emptied table version");
             tableDetails.setMappedValue(mappingVpsTableVersionId, null);
           }
         }
       }
-
-      popperService.saveTableDetails(tableDetails, game.getId(), false);
       LOG.info("Finished auto-match for \"" + game.getGameDisplayName() + "\"");
-      return tableDetails;
+      return true;
     } catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);
     }
-    return null;
+    return false;
   }
 
   /**
@@ -136,25 +136,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       if (gameVersion.equalsIgnoreCase(vpsVersion)) {
         return;
       }
-
-      if ((gameVersion + ".0").equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase(vpsVersion + ".0")) {
-        return;
-      }
-      if ((gameVersion + ".0.0").equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase(vpsVersion + ".0.0")) {
-        return;
-      }
-
-      if (("v" + gameVersion).equalsIgnoreCase(vpsVersion) || gameVersion.equalsIgnoreCase("v" + vpsVersion)) {
-        return;
-      }
-
-      if (game.getGameFileName().contains(vpsVersion) || game.getGameDisplayName().contains(vpsVersion)) {
-        return;
-      }
-
-      if (game.getGameFileName().contains("v" + vpsVersion) || game.getGameDisplayName().contains("v" + vpsVersion)) {
-        return;
-      }
     }
 
     game.setUpdateAvailable(true);
@@ -165,12 +146,12 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
       return null;
     }
 
-    VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+    VpsTable vpsTable = vpsDatabase.getTableById(game.getExtTableId());
     if (vpsTable == null) {
       return null;
     }
 
-    VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+    VpsTableVersion tableVersion = vpsTable.getTableVersionById(game.getExtTableVersionId());
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
       return null;
     }
@@ -183,15 +164,10 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   }
 
   @Override
-  public void onApplicationEvent(ContextRefreshedEvent event) {
-    new VpsUpdateThread(preferencesService).start();
-  }
-
-  @Override
   public void vpsSheetChanged(List<VpsDiffer> diff) {
     LOG.info("Updating VPS diff messages queue for " + diff.size() + " updates.");
     GameService gameService = applicationContext.getBean(GameService.class);
-    List<Game> knownGames = gameService.getKnownGames();
+    List<Game> knownGames = gameService.getKnownGames(-1);
 
     for (VpsDiffer tableDiff : diff) {
       try {
@@ -199,7 +175,7 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
-            String json  = tableDiff.getChanges().toJson();
+            String json = tableDiff.getChanges().toJson();
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries)");
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
@@ -220,8 +196,45 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    VPS.getInstance().addChangeListener(this);
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    try {
+      // create and load from file the VPS Database
+      this.vpsDatabase = new VPS();
+      // update database from VPU
+      vpsDatabase.update();
+
+      vpsDatabase.addChangeListener(this);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    } catch (Exception e) {
+      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+    }
   }
+
+  //-------------------------------------
+  // Expose VPS Database method
+
+  public List<VpsTable> getTables() {
+    return vpsDatabase.getTables();
+  }
+
+  public VpsTable getTableById(String extTableId) {
+    return vpsDatabase.getTableById(extTableId);
+  }
+
+  public List<VpsTable> find(String term, String rom) {
+    return vpsDatabase.find(term, rom);
+  }
+
+  public List<VpsDiffer> update() {
+    return vpsDatabase.update();
+  }
+
+  public boolean reload() {
+    return vpsDatabase.reload();
+  }
+
+  public Date getChangeDate() {
+    return vpsDatabase.getChangeDate();
+  }
+
 }

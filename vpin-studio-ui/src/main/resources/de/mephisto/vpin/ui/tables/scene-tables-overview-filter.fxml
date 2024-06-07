@@ -127,7 +127,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ComboBox>
-                  <Label layoutX="10.0" layoutY="655.0" text="Notes" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="655.0" text="Comments" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

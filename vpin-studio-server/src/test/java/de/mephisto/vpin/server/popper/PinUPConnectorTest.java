@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.restclient.popper.EmulatorType;
+import de.mephisto.vpin.restclient.popper.EmulatorNames;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
@@ -64,10 +64,10 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
     assertNotEquals(connector.getGameCount(), 0);
 
     assertNotNull(connector.getStartupScript());
-    assertNotNull(connector.getEmulatorExitScript(EmulatorType.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorExitScript(EmulatorType.FUTURE_PINBALL));
-    assertNotNull(connector.getEmulatorStartupScript(EmulatorType.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorStartupScript(EmulatorType.FUTURE_PINBALL));
+    assertNotNull(connector.getEmulatorExitScript(EmulatorNames.VISUAL_PINBALL_X));
+    assertNotNull(connector.getEmulatorExitScript(EmulatorNames.FUTURE_PINBALL));
+    assertNotNull(connector.getEmulatorStartupScript(EmulatorNames.VISUAL_PINBALL_X));
+    assertNotNull(connector.getEmulatorStartupScript(EmulatorNames.FUTURE_PINBALL));
   }
 
 }

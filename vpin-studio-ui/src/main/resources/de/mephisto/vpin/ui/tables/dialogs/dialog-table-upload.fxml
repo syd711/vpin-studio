@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableUploadController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -52,123 +53,160 @@
          <center>
             <VBox>
                <children>
-                  <GridPane vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.199951171875" minWidth="10.0" prefWidth="136.599951171875" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" prefWidth="552.7999511718751" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" prefWidth="534.000048828125" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="titleLabel" text="VPX File/Archive:*" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="450.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="Upload To Emulator:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
-                        <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Popper Database" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label prefHeight="40.0" prefWidth="18.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The matching entry of the Virtual Pinball Spreadsheet will be resolved automatically, the matching entries data will be used to fill the database entry of the table." wrapText="true" />
-                                 </tooltip>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label fx:id="titleLabel2" layoutX="10.0" layoutY="49.0" text="Auto-Fill:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="Target Folder:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets top="4.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <VBox prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <children>
-                                    <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="Upload to separate subfolder" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label prefHeight="40.0" prefWidth="18.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="This will upload the VPX into a subfolder of the emulators &quot;tables&quot; folder if you prefer to organize your tables this way." wrapText="true" />
-                                       </tooltip>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                    </Label>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </HBox>
-                              <TextField fx:id="subfolderText" disable="true">
-                                 <VBox.margin>
-                                    <Insets left="26.0" />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                           </children>
-                           <GridPane.margin>
-                              <Insets top="-8.0" />
-                           </GridPane.margin>
-                           <padding>
-                              <Insets right="102.0" />
-                           </padding>
-                        </VBox>
-                     </children>
+                  <HBox spacing="12.0">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>
-                  </GridPane>
+                     <children>
+                        <VBox>
+                           <children>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.199951171875" minWidth="10.0" prefWidth="164.8" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" prefWidth="432.000048828125" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label fx:id="titleLabel" text="VPX File/Archive:*" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="450.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="Upload To Emulator:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
+                                    <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <children>
+                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Popper Database" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label prefHeight="40.0" prefWidth="18.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The matching entry of the Virtual Pinball Spreadsheet will be resolved automatically, the matching entries data will be used to fill the database entry of the table." wrapText="true" />
+                                             </tooltip>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="titleLabel2" layoutX="10.0" layoutY="49.0" text="Auto-Fill:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="Target Folder:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets top="4.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <VBox prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                             <children>
+                                                <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="Upload to separate subfolder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <Label prefHeight="40.0" prefWidth="18.0">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="This will upload the VPX into a subfolder of the emulators &quot;tables&quot; folder if you prefer to organize your tables this way." wrapText="true" />
+                                                   </tooltip>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Label>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <TextField fx:id="subfolderText" disable="true" prefWidth="326.0">
+                                             <VBox.margin>
+                                                <Insets left="26.0" />
+                                             </VBox.margin>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                       <GridPane.margin>
+                                          <Insets top="-8.0" />
+                                       </GridPane.margin>
+                                       <padding>
+                                          <Insets right="102.0" />
+                                       </padding>
+                                    </VBox>
+                                    <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="115.0" text="Resolved VPX File:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="readmeBox">
+                           <children>
+                              <Label fx:id="titleLabel11" text="README.txt" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextArea fx:id="readmeTextField" prefHeight="162.0" prefWidth="500.0" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                   <HBox prefHeight="420.0" spacing="12.0">
                      <children>
                         <VBox fx:id="uploadImportBox" prefWidth="400.0" styleClass="selection-panel">
@@ -203,7 +241,17 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="assetCfgCheckbox" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text=".cfg File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                     <CheckBox fx:id="assetDmdCheckbox" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetIniCheckbox" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text=".ini File" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -218,12 +266,22 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="assetNvRamCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text=".nv File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                     <CheckBox fx:id="assetPupPackCheckbox" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="assetRomCheckbox" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                    <CheckBox fx:id="assetPovCheckbox" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text=".pov File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetRomCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="ROM" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

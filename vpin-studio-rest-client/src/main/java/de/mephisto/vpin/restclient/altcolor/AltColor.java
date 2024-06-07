@@ -12,6 +12,15 @@ public class AltColor {
   private Date modificationDate;
   private List<ValidationState> validationStates;
   private List<String> files = new ArrayList<>();
+  private int backedUpFiles = 0;
+
+  public int getBackedUpFiles() {
+    return backedUpFiles;
+  }
+
+  public void setBackedUpFiles(int backedUpFiles) {
+    this.backedUpFiles = backedUpFiles;
+  }
 
   public List<String> getFiles() {
     return files;

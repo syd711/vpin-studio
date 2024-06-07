@@ -1,9 +1,8 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -13,14 +12,14 @@ public class CardSettings extends JsonSettings {
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
-  private PopperScreen previewPopperScreen = PopperScreen.Other2;
+  private HighscoreCardResolution cardResolution = HighscoreCardResolution.HDReady;
 
-  public PopperScreen getPreviewPopperScreen() {
-    return previewPopperScreen;
+  public HighscoreCardResolution getCardResolution() {
+    return cardResolution;
   }
 
-  public void setPreviewPopperScreen(PopperScreen previewPopperScreen) {
-    this.previewPopperScreen = previewPopperScreen;
+  public void setCardResolution(HighscoreCardResolution cardResolution) {
+    this.cardResolution = cardResolution;
   }
 
   public String getPopperScreen() {

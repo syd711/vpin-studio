@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -138,7 +139,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         List<IScoredGame> games = gameRoom.getGames();
         for (IScoredGame game : games) {
           List<String> tags = game.getTags();
-          Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
+          Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
           if (first.isPresent()) {
             try {
               String vpsUrl = first.get();
@@ -153,19 +154,18 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
                 tableId = tableId.substring(0, tableId.indexOf("#"));
               }
 
-              VpsTable vpsTable = VPS.getInstance().getTableById(tableId);
+              VpsTable vpsTable = client.getVpsService().getTableById(tableId);
 
               String[] split = vpsUrl.split("#");
               VpsTableVersion vpsVersion = null;
               if (vpsTable != null && split.length > 1) {
-                vpsVersion = vpsTable.getVersion(split[1]);
+                vpsVersion = vpsTable.getTableVersionById(split[1]);
               }
-
 
               CompetitionRepresentation sub = new CompetitionRepresentation();
               sub.setType(CompetitionType.ISCORED.name());
               sub.setUrl(dashboardUrl);
-              sub.setName("iScord Subscription for '" + vpsTable.getName() + "'");
+              sub.setName("iScored Subscription for '" + vpsTable.getName() + "'");
               sub.setBadge(badgeCombo.getValue());
               GameRepresentation gameRep = null;
               if (vpsTable != null) {
@@ -237,18 +237,30 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
+      VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
+      if(table == null) {
+        return new SimpleStringProperty("No matching VPS table found.");
+      }
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value, gameRoom, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value, table, gameRoom, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      VpsTable vpsTable = value.getVpsTable();
-      return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(cellData.getValue())));
+      VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
+      if(table == null) {
+        return new SimpleStringProperty("No matching VPS table found.");
+      }
+      return new SimpleObjectProperty(new VpsTableContainer(table, getLabelCss(cellData.getValue())));
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
-      VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
+      CompetitionRepresentation value = cellData.getValue();
+      VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
+      if(table == null) {
+        return new SimpleStringProperty("No matching VPS table found.");
+      }
+      VpsTableVersion vpsTableVersion = table.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
@@ -312,7 +324,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     for (CompetitionRepresentation existing : this.existingCompetitions) {
       if (existing.getUrl() != null && existing.getUrl().equals(c.getUrl())
         && existing.getVpsTableId() != null && existing.getVpsTableId().equals(c.getVpsTableId())
-        && existing.getVpsTableVersion() != null && existing.getVpsTableVersion().equals(c.getVpsTableVersion())) {
+        && existing.getVpsTableVersionId() != null && existing.getVpsTableVersionId().equals(c.getVpsTableVersionId())) {
         return true;
       }
     }

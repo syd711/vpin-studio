@@ -20,9 +20,12 @@ public class DirectB2SData {
   private long filesize;
   private Date modificationDate;
 
-  private String backgroundBase64;
-  private String dmdBase64;
+  private boolean backgroundAvailable;
+  private boolean dmdImageAvailable;
+
   private int illuminations;
+
+  private int scores;
 
   public static String getTableType(int type) {
     switch (type) {
@@ -76,16 +79,18 @@ public class DirectB2SData {
     this.illuminations = illuminations;
   }
 
-  public String getDmdBase64() {
-    return dmdBase64;
+  public boolean isBackgroundAvailable() {
+    return backgroundAvailable;
+  }
+  public void setBackgroundAvailable(boolean hasBackgroundImage) {
+    this.backgroundAvailable = hasBackgroundImage;
   }
 
-  public void setDmdBase64(String dmdBase64) {
-    this.dmdBase64 = dmdBase64;
+  public boolean isDmdImageAvailable() {
+    return dmdImageAvailable;
   }
-
-  public String getBackgroundBase64() {
-    return backgroundBase64;
+  public void setDmdImageAvailable(boolean hasDmdImage) {
+    this.dmdImageAvailable = hasDmdImage;
   }
 
   public int getB2sElements() {
@@ -94,10 +99,6 @@ public class DirectB2SData {
 
   public void setB2sElements(int b2sElements) {
     this.b2sElements = b2sElements;
-  }
-
-  public void setBackgroundBase64(String backgroundBase64) {
-    this.backgroundBase64 = backgroundBase64;
   }
 
   public String getName() {
@@ -126,6 +127,13 @@ public class DirectB2SData {
 
   public String getArtwork() {
     return artwork;
+  }
+  
+  public int getScores() {
+    return scores;
+  }
+  public void setScores(int scores) {
+    this.scores = scores;
   }
 
   public void setArtwork(String artwork) {
@@ -163,4 +171,14 @@ public class DirectB2SData {
   public void setModificationDate(Date modificationDate) {
     this.modificationDate = modificationDate;
   }
+
+  public DirectB2S toDirectB2S() {
+    DirectB2S b2s = new DirectB2S();
+    b2s.setName(this.getName());
+    b2s.setFileName(this.getFilename());
+    b2s.setEmulatorId(this.getEmulatorId());
+    //b2s.setVpxAvailable(unknown but not needed);
+    return b2s;
+  }
+
 }

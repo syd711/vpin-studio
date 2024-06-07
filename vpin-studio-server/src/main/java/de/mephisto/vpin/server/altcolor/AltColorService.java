@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.altcolor;
 
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -9,6 +11,7 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -31,7 +35,7 @@ public class AltColorService implements InitializingBean {
 
   public AltColorTypes getAltColorType(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
-    if(altColor != null) {
+    if (altColor != null) {
       return altColor.getAltColorType();
     }
     return null;
@@ -47,7 +51,8 @@ public class AltColorService implements InitializingBean {
           return true;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete altcolor directory for " + game + ": " + e.getMessage(), e);
     }
     return false;
@@ -98,64 +103,126 @@ public class AltColorService implements InitializingBean {
       }
 
       altColor.setAltColorType(type);
+
+      File backupFolder = new File(altColorFolder, "backups/");
+      if (backupFolder.exists()) {
+        String[] list = backupFolder.list();
+        if (list != null) {
+          altColor.setBackedUpFiles(list.length);
+        }
+      }
       return altColor;
     }
 
     return null;
   }
 
+  public void installAltColorFromArchive(UploaderAnalysis analysis, Game game, File out) throws IOException {
+    if (analysis == null) {
+      analysis = new UploaderAnalysis(out);
+      analysis.analyze();
+    }
+
+    String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), assetFileName);
+    }
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.PAL);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"), assetFileName);
+    }
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.VNI);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"), assetFileName);
+    }
+
+    assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
+    if (assetFileName != null) {
+      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
+    }
+  }
+
   public JobExecutionResult installAltColor(Game game, File out) {
     File folder = game.getAltColorFolder();
     if (folder != null) {
-      LOG.info("Extracting archive to " + folder.getAbsolutePath());
-      if (!folder.exists()) {
-        if (!folder.mkdirs()) {
-          return JobExecutionResultFactory.error("Failed to create ALT color directory " + folder.getAbsolutePath());
-        }
-      }
-
       String name = out.getName();
-      if (name.endsWith(".zip")) {
-        AltColorUtil.unzip(out, folder);
-      }
-      else if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
+      if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"));
-        } catch (IOException e) {
+          backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
+          FileUtils.copyFile(out, new File(folder, "pin2dmd.pac"));
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy pac file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.PAL_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"));
-        } catch (IOException e) {
+          backupFolder(folder, UploaderAnalysis.PAL_SUFFIX);
+          FileUtils.copyFile(out, new File(folder, "pin2dmd.pal"));
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy pal file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.VNI_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"));
-        } catch (IOException e) {
+          backupFolder(folder, UploaderAnalysis.VNI_SUFFIX);
+          FileUtils.copyFile(out, new File(folder, "pin2dmd.vni"));
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy vni file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
         try {
-          FileUtils.copyFile(out, new File(game.getAltColorFolder(), game.getRom() + UploaderAnalysis.SERUM_SUFFIX));
-        } catch (IOException e) {
+          backupFolder(folder, UploaderAnalysis.SERUM_SUFFIX);
+          FileUtils.copyFile(out, new File(folder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX));
+        }
+        catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
           return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
         }
       }
+    }
+    LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
+    return JobExecutionResultFactory.empty();
+  }
 
-      if (!out.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete temporary file.");
+  private void backupFolder(File folder, String targetSuffix) {
+    File[] existingFiles = folder.listFiles((dir, name) -> new File(dir, name).isFile());
+    File backupsFolder = new File(folder, "backups/");
+    backupsFolder.mkdirs();
+    if (existingFiles != null) {
+      String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+      for (File existingFile : existingFiles) {
+        String existingSuffix = FilenameUtils.getExtension(existingFile.getName());
+        if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX)) {
+          continue;
+        }
+        if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX)) {
+          continue;
+        }
+
+        try {
+          String name = existingFile.getName();
+          File backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
+          FileUtils.copyFile(existingFile, backup);
+          LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
+          if (!existingFile.delete()) {
+            LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
+          }
+        }
+        catch (IOException e) {
+          LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
+        }
       }
     }
-    return JobExecutionResultFactory.empty();
+
   }
 
   @Override

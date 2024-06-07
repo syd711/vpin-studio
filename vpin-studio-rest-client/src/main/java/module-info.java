@@ -10,6 +10,7 @@ open module de.mephisto.vpin.restclient {
   requires de.mephisto.vpin.connectors.mania;
   requires de.mephisto.vpin.connectors.vps;
   requires de.mephisto.vpin.connectors.iscored;
+  requires spring.boot;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;

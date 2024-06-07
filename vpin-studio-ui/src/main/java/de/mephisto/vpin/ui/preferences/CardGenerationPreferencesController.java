@@ -1,19 +1,23 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +27,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -36,6 +41,9 @@ public class CardGenerationPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<String> rotationCombo;
+
+  @FXML
+  private ComboBox<String> cardSizeCombo;
 
   @FXML
   private Label validationError;
@@ -52,6 +60,8 @@ public class CardGenerationPreferencesController implements Initializable {
   @FXML
   private VBox transparencyHelp;
   private PupPackRepresentation menuPupPack;
+  private CardSettings cardSettings;
+  private ResolutionChangeListener resolutionChangeListener;
 
   @FXML
   private void onScreenHelp() {
@@ -59,7 +69,8 @@ public class CardGenerationPreferencesController implements Initializable {
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI("https://github.com/syd711/vpin-studio/wiki/Troubleshooting#why-do-my-transparent-highscore-cards-have-a-black-background"));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open discord link: " + e.getMessage(), e);
       }
     }
@@ -71,7 +82,7 @@ public class CardGenerationPreferencesController implements Initializable {
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     transparencyHelp.setVisible(false);
 
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
     popperScreenCombo.setValue(cardSettings.getPopperScreen() != null ? cardSettings.getPopperScreen() : "");
@@ -80,6 +91,11 @@ public class CardGenerationPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
       onScreenChange();
     });
+
+    resolutionChangeListener = new ResolutionChangeListener();
+    cardSizeCombo.setItems(FXCollections.observableList(Arrays.asList(HighscoreCardResolution.qHD.toString(), HighscoreCardResolution.HDReady.toString(), HighscoreCardResolution.HD.toString())));
+    cardSizeCombo.setValue(cardSettings.getCardResolution() != null ? cardSettings.getCardResolution().toString() : HighscoreCardResolution.HDReady.toString());
+    cardSizeCombo.valueProperty().addListener(resolutionChangeListener);
 
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
     rotationCombo.setValue(cardSettings.getNotificationRotation());
@@ -148,12 +164,33 @@ public class CardGenerationPreferencesController implements Initializable {
     transparencyHelp.setVisible(false);
     if (menuPupPack != null && popperScreenCombo.getValue() != null) {
       String value = popperScreenCombo.getValue();
-      if(!StringUtils.isEmpty(value)) {PopperScreen screen = PopperScreen.valueOf(value);
-      transparencyHelp.setVisible(
-          (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
-              (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
-              (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
-      );}
+      if (!StringUtils.isEmpty(value)) {
+        PopperScreen screen = PopperScreen.valueOf(value);
+        transparencyHelp.setVisible(
+            (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
+                (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
+                (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
+        );
+      }
+    }
+  }
+
+  class ResolutionChangeListener implements ChangeListener<String> {
+    @Override
+    public void changed(ObservableValue observable, String oldValue, String newValue) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Change Highscore Card Size?", "Change the default highscore card size to " + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        cardSettings.setCardResolution(HighscoreCardResolution.valueOfString(newValue));
+        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        Platform.runLater(() -> {
+          ProgressDialog.createProgressDialog(new GenerateAllBackgroundsProgressModel(client.getGameService().getVpxGamesCached()));
+        });
+      }
+      else {
+        cardSizeCombo.valueProperty().removeListener(resolutionChangeListener);
+        cardSizeCombo.setValue(oldValue);
+        cardSizeCombo.valueProperty().addListener(resolutionChangeListener);
+      }
     }
   }
 }

@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -35,7 +35,11 @@ import java.util.stream.Collectors;
 public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private List<GameRepresentation> allGames = new ArrayList<>();
+  private Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
+  /**
+   * a status map to avoid multiple loads in parallel, check getGamesCached()
+   */
+  private Map<Integer, Boolean> loadingFlags = new HashMap<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
@@ -43,7 +47,13 @@ public class GamesServiceClient extends VPinStudioClientService {
 
 
   public void clearCache() {
-    this.allGames = new ArrayList<>();
+    this.allGames.clear();
+    this.loadingFlags.clear();
+  }
+
+  public void clearCache(int emulatorId) {
+    this.allGames.remove(emulatorId);
+    this.loadingFlags.remove(emulatorId);
   }
 
   public void reload() {
@@ -76,20 +86,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/rom/" + emuId;
-      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
-      return exchange.getBody();
-    }
-    catch (Exception e) {
-      LOG.error("Rom upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public void deleteGame(@NonNull DeleteDescriptor descriptor) {
     try {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);
@@ -101,7 +97,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
     try {
-      return Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class));
+      return new ArrayList<>(Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class)));
     }
     catch (Exception e) {
       LOG.error("Failed to filter games: " + e.getMessage(), e);
@@ -122,7 +118,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesByGameName(String gameName) {
-    List<GameRepresentation> gameList = this.getGamesCached();
+    List<GameRepresentation> gameList = this.getGamesCached(-1);
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
       if (gameRepresentation.getGameName().equalsIgnoreCase(gameName)) {
@@ -140,10 +136,13 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
       if (gameRepresentation != null && !this.allGames.isEmpty()) {
-        int index = this.allGames.indexOf(gameRepresentation);
+        int emulatorId = gameRepresentation.getEmulatorId();
+        // get and from cache and possibly uodate the cache 
+        List<GameRepresentation> games = this.getGamesCached(emulatorId);
+        int index = games.indexOf(gameRepresentation);
         if (index != -1) {
-          this.allGames.remove(index);
-          this.allGames.add(index, gameRepresentation);
+          games.remove(index);
+          games.add(index, gameRepresentation);
         }
       }
       return gameRepresentation;
@@ -158,7 +157,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     try {
       List<Integer> unknowns = Arrays.asList(getRestClient().get(API + "games/unknowns", Integer[].class));
       if (!unknowns.isEmpty()) {
-        this.allGames.clear();
+        this.clearCache();
       }
       return unknowns;
     }
@@ -168,27 +167,16 @@ public class GamesServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
-  public List<GameRepresentation> getKnownGames() {
+  // private as getGamesCached() should be called instead
+  private List<GameRepresentation> getKnownGames(int emulatorId) {
     try {
-      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns", GameRepresentation[].class)));
-      return this.allGames;
+      List<GameRepresentation> emulatorGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games/knowns/" + emulatorId, GameRepresentation[].class)));
+      return emulatorGames;
     }
     catch (Exception e) {
-      LOG.error("Failed to read knowns games: " + e.getMessage(), e);
+      LOG.error("Failed to read known games: " + e.getMessage(), e);
     }
     return Collections.emptyList();
-  }
-
-  @Deprecated
-  public List<GameRepresentation> getAllGames() {
-    try {
-      this.allGames = new ArrayList<>(Arrays.asList(getRestClient().get(API + "games", GameRepresentation[].class)));
-      return this.allGames;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to get games: " + e.getMessage(), e);
-      throw e;
-    }
   }
 
   @Nullable
@@ -198,7 +186,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
-    List<GameRepresentation> gamesCached = getGamesCached();
+    List<GameRepresentation> gamesCached = getGamesCached(-1);
     GameRepresentation hit = null;
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
@@ -273,27 +261,64 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<GameRepresentation> getGamesCached() {
-    if (this.allGames == null || this.allGames.isEmpty()) {
-      this.allGames = this.getKnownGames();
+  //--------------- avoid multiple loading in //
+  /**
+   * one blocking thread by emulatorId
+   */
+  private Map<Integer, Object> locks = new HashMap<>();
+
+  private Object getLock(int emulatorId) {
+    Object lock = null;
+    synchronized (locks) {
+      lock = locks.get(emulatorId);
+      if (lock == null) {
+        lock = new Object();
+        locks.put(emulatorId, lock);
+      }
     }
-    return this.allGames;
+    return lock;
+  }
+
+  public List<GameRepresentation> getGamesCached(int emulatorId) {
+    if (!allGames.containsKey(emulatorId)) {
+      Object lock = getLock(emulatorId);
+      synchronized (lock) {
+        // If a thread is already fetching data, do not start again, just wait for it
+        if (loadingFlags.get(emulatorId) == null) {
+          loadingFlags.put(emulatorId, Boolean.TRUE);
+          // load games in a separate thread not to block the UI
+          new Thread(() -> {
+            LOG.info("Start the loading of known games for emulator " + emulatorId);
+            List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
+            Object lockInThread = getLock(emulatorId);
+            synchronized (lockInThread) {
+              // add games in cache and notify waiting thread
+              this.allGames.put(emulatorId, emulatorGames);
+              this.loadingFlags.remove(emulatorId);
+              lockInThread.notifyAll();
+            }
+          }, "LoadingThreadFor_" + emulatorId).start();
+        }
+        try {
+          lock.wait();
+        }
+        catch (InterruptedException ie) {
+          LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
+              + "games may be in an inconsistant state, consider reloading the games", ie);
+        }
+      }
+    }
+    return this.allGames.get(emulatorId);
   }
 
   public List<GameRepresentation> getVpxGamesCached() {
-    return getGamesCached().stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
+    return getGamesCached(-1).stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
   }
 
   public GameRepresentation getGameCached(int gameId) {
-    if (this.allGames == null || this.allGames.isEmpty()) {
-      this.allGames = this.getKnownGames();
-    }
-
-    Optional<GameRepresentation> first = this.allGames.stream().filter(g -> g.getId() == gameId).findFirst();
-    if (first.isPresent()) {
-      return first.get();
-    }
-    return null;
+    List<GameRepresentation> games = this.getGamesCached(-1);
+    Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    return first.orElse(null);
   }
 
   public ScoreSummaryRepresentation getRecentScores(int count) {

@@ -196,7 +196,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     try {
       client.getPinUPPopperService().addBlank(game.getId(), screen);
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Adding blank media failed: " + e.getMessage());
     }
     refreshTableMediaView();
@@ -232,7 +233,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (selectedItem != null) {
       try {
         client.getPinUPPopperService().toFullScreen(game.getId(), screen);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Fullscreen switch failed: " + e.getMessage());
       }
       refreshTableMediaView();
@@ -246,7 +248,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI(loadingHelp));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open help link: " + e.getMessage(), e);
       }
     }
@@ -308,7 +311,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
         Desktop.getDesktop().browse(new URI("https://www.nailbuster.com/wikipinup/doku.php?id=loading_video"));
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
     }
@@ -341,7 +345,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           client.getPinUPPopperService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
           EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
           onReload();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Renaming table asset failed: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
         }
@@ -412,7 +417,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String assetUrl = null;
       try {
         assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw new RuntimeException(e);
       }
 
@@ -435,7 +441,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         else if (baseType.equals("video")) {
           new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Preview failed for " + tableAsset);
       }
     });
@@ -468,7 +475,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Asset Exists", "An asset with the same name already exists.",
-        "Overwrite existing asset or append new asset?", "Overwrite", "Append");
+          "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
 
       }
@@ -490,6 +497,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onCancel(ActionEvent e) {
     EventManager.getInstance().removeListener(this);
+    EventManager.getInstance().notifyTableChange(game.getId(), null);
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -506,11 +514,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     try {
       encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
-    } catch (NoSuchPaddingException e) {
+    }
+    catch (NoSuchPaddingException e) {
       throw new RuntimeException(e);
-    } catch (NoSuchAlgorithmException e) {
+    }
+    catch (NoSuchAlgorithmException e) {
       throw new RuntimeException(e);
     }
 
@@ -549,16 +560,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
 
-    if (!isEmbeddedMode()) {
-      List<GameRepresentation> games = client.getGameService().getGamesCached();
-      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-      tablesCombo.getItems().addAll(gameRepresentations);
-      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
-      });
-    }
-
-
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
         onSearch();
@@ -582,7 +583,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
       TableAssetsAdapter adapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
       tableAssetsService.registerAdapter(adapter);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
     }
 
@@ -737,6 +739,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+      List<GameRepresentation> games = client.getGameService().getGamesCached(this.game.getEmulatorId());
+      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+      tablesCombo.getItems().addAll(gameRepresentations);
+      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
+      });
     }
 
     if (game == null) {
@@ -769,7 +777,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
               Integer.parseInt(value);
               continue;
             }
-          } catch (NumberFormatException e) {
+          }
+          catch (NumberFormatException e) {
           }
 
           sanitizedTerms.add(s.trim());

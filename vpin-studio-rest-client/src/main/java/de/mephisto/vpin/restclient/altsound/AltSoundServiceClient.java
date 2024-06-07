@@ -4,10 +4,10 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -48,10 +48,12 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "altsound/" + gameId);
   }
 
-  public UploadDescriptor uploadAltSound(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
-      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.ALT_SOUND, listener), UploadDescriptor.class);
+      HttpEntity upload = createUpload(file, emulatorId, null, AssetType.ALT_SOUND, listener);
+      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     } catch (Exception e) {
       LOG.error("ALT sound upload failed: " + e.getMessage(), e);

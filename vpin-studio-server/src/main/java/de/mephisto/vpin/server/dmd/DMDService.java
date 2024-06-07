@@ -108,9 +108,9 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public void installDMDPackage(File archive) {
-    File tablesFolder = pinUPConnector.getDefaultGameEmulator().getTablesFolder();
-    DMDInstallationUtil.unzip(archive, tablesFolder);
+  public void installDMDPackage(File archive, String dmdPath, int emulatorId) {
+    File tablesFolder = pinUPConnector.getGameEmulator(emulatorId).getTablesFolder();
+    DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
   }
 
   public ComponentSummary getFreezySummary(int emulatorId) {

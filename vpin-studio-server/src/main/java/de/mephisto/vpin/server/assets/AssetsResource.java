@@ -109,7 +109,8 @@ public class AssetsResource {
                                   @RequestParam("objectId") Integer gameId) {
     try {
       return assetService.backgroundUpload(file, gameId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Background image upload failed: " + e.getMessage());
     }
   }
@@ -133,7 +134,8 @@ public class AssetsResource {
           .contentLength(file.length())
           .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
           .body(IOUtils.toByteArray(new FileInputStream(file)));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Faild to serialize file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return null;

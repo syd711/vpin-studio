@@ -16,19 +16,18 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class B2STableSettingsParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsParser.class);
   private final File xmlFile;
 
+  private Map<String, DirectB2STableSettings> cacheDirectB2STableSettings = new ConcurrentHashMap<>(); 
+
   public B2STableSettingsParser(@NonNull File xmlFile) {
     this.xmlFile = xmlFile;
-  }
 
-  @Nullable
-  public DirectB2STableSettings getEntry(@NonNull String rom) {
-    DirectB2STableSettings settings = new DirectB2STableSettings();
-    settings.setRom(rom);
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -36,18 +35,19 @@ public class B2STableSettingsParser extends DefaultHandler {
       DocumentBuilder db = dbf.newDocumentBuilder();
       Document doc = db.parse(xmlFile);
 
-      doc.getDocumentElement().normalize();
-      NodeList list = doc.getElementsByTagName(rom);
-      if (list == null || list.getLength() == 0) {
-        return null;
-      }
+      Element root = doc.getDocumentElement();
+      root.normalize();
 
+      NodeList list = root.getChildNodes();
       for (int temp = 0; temp < list.getLength(); temp++) {
         Node romElement = list.item(temp);
-        if (romElement.getNodeType() == Node.ELEMENT_NODE) {
+        if (romElement.getNodeType() == Node.ELEMENT_NODE && romElement.hasChildNodes()) {
           Element element = (Element) romElement;
-          NodeList childNodes = element.getChildNodes();
 
+          DirectB2STableSettings settings = new DirectB2STableSettings();
+          settings.setRom(element.getTagName());
+
+          NodeList childNodes = element.getChildNodes();
           for (int i = 0; i < childNodes.getLength(); i++) {
             Node settingsNode = childNodes.item(i);
             if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -55,15 +55,21 @@ public class B2STableSettingsParser extends DefaultHandler {
               readNode(settings, name, settingsNode);
             }
           }
+
+          cacheDirectB2STableSettings.put(element.getTagName(), settings);
         }
       }
-
+      
       LOG.info("Finished parsing of " + xmlFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse B2STableSettings file '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
     }
-    return settings;
+  }
+
+  @Nullable
+  public DirectB2STableSettings getEntry(String rom) {
+    return rom!=null? cacheDirectB2STableSettings.get(rom): null;
   }
 
   private static void readNode(DirectB2STableSettings settings, String qName, Node node) {

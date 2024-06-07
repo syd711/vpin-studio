@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class VPSAssetsDialogController implements DialogController, AutoCompleteTextFieldChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPSAssetsDialogController.class);
 
@@ -79,12 +81,12 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
   public void setGame(GameRepresentation game) {
     this.game = game;
 
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());
+      VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
       if (tableById != null) {
         refreshTableView(tableById);
         return;
@@ -92,7 +94,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     }
 
     String term = game.getGameDisplayName();
-    List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
+    List<VpsTable> vpsTables = client.getVpsService().find(term, game.getRom());
     if (!vpsTables.isEmpty()) {
       VpsTable vpsTable = vpsTables.get(0);
       refreshTableView(vpsTable);
@@ -123,7 +125,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
 
   @Override
   public void onChange(String value) {
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();

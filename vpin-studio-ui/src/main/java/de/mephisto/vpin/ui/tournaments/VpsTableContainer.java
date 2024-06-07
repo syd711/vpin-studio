@@ -1,19 +1,14 @@
 package de.mephisto.vpin.ui.tournaments;
 
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.net.URI;
 
 public class VpsTableContainer extends VBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTableContainer.class);
@@ -23,7 +18,7 @@ public class VpsTableContainer extends VBox {
     this(item, "");
   }
 
-  public VpsTableContainer(VpsTable item, String customStyle) {
+  public VpsTableContainer(@NonNull VpsTable item, String customStyle) {
     super(3);
 
     String name = item.getName();

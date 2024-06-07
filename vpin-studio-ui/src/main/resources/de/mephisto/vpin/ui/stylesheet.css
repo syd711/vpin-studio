@@ -1012,6 +1012,10 @@
     -fx-base : #338800;
 }
 
+.split-menu-button .arrow {
+    -fx-background-color: white;
+}
+
 .text-button {
     -fx-font-color: #FFFFFF;
     -fx-text-fill: #FFFFFF;
@@ -1230,3 +1234,8 @@
     -fx-padding: 15 15 -30 15;
 }
  */
+
+ .tooltip {
+    -fx-show-delay: 250ms;
+    -fx-show-duration: 10s;
+ }

@@ -29,10 +29,10 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Label versionLabel;
 
   @FXML
-  private CheckBox serviceStartupCheckbox;
+  private CheckBox useOriginalVbsFilesCheckbox;
 
   @FXML
-  private CheckBox useOriginalVbsFilesCheckbox;
+  private CheckBox vpxMonitoringCheckbox;
 
   @FXML
   private Spinner<Integer> idleSpinner;
@@ -94,16 +94,6 @@ public class ServerSettingsPreferencesController implements Initializable {
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 
-    serviceStartupCheckbox.setSelected(client.getSystemService().autostartInstalled());
-    serviceStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        client.getSystemService().autostartInstall();
-      }
-      else {
-        client.getSystemService().autostartUninstall();
-      }
-    });
-
     PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.IDLE_TIMEOUT);
     int timeout = idle.getIntValue();
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, timeout);
@@ -152,6 +142,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
     useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepVbsFiles(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
+    vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setUseVPXTableMonitor(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }

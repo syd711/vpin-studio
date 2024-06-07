@@ -27,6 +27,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,15 +127,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_NOT_ALL_WITH_NVOFFSET)) {
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<Game> otherGamesWithSameRom = pinUPConnector.getGames().stream().filter(g -> g.getRom() != null && g.getId() != game.getId() && g.getRom().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (Game rawGame : otherGamesWithSameRom) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(rawGame.getId());
-          if (byPupId.getNvOffset() == 0) {
-            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NOT_ALL_WITH_NVOFFSET));
-            if (findFirst) {
-              return result;
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(otherGameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+              if (findFirst) {
+                return result;
+              }
             }
           }
         }
@@ -156,7 +160,68 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    //screen assets are validated for all emulators
+    List<ValidationState> screenValidationResult = validateScreenAssets(game, findFirst, result);
+    if (screenValidationResult != null) {
+      return screenValidationResult;
+    }
 
+    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX) {
+      List<ValidationState> validationStates = validateAltSound(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateRecordings(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateAltColor(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateForceStereo(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private @Nullable List<ValidationState> validateScreenAssets(@NotNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (!validScreenAssets(game, PopperScreen.Audio)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
@@ -264,59 +329,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
-
-
-    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
-      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    List<ValidationState> validationStates = validateAltSound(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateRecordings(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateAltColor(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    validationStates = validateForceStereo(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
-    return result;
+    return null;
   }
 
   private boolean validScreenAssets(Game game, PopperScreen popperScreen) {
@@ -452,7 +465,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         break;
       }
       case serum: {
-        String name = game.getRom() + UploaderAnalysis.SERUM_SUFFIX;
+        String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
@@ -520,6 +533,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
     List<Integer> ignoredValidations = game.getIgnoredValidations();
+    if (ignoredValidations == null) {
+      return false;
+    }
+
     if (ignoredValidations.contains(code)) {
       return false;
     }
@@ -532,14 +549,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     return true;
-  }
-
-  public boolean hasNoVpsTableMapping(List<ValidationState> states) {
-    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
-    if (codes.contains(CODE_VPS_MAPPING_MISSING)) {
-      return true;
-    }
-    return false;
   }
 
   public boolean hasMissingAssets(List<ValidationState> states) {

@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -206,8 +207,12 @@ public class WidgetCompetitionController extends WidgetController implements Ini
                 turnoverTile.setText(currentScore.getPlayer().getName());
                 String avatarUrl = currentScore.getPlayer().getAvatarUrl();
                 if (!StringUtils.isEmpty(avatarUrl)) {
-                  Image image = new Image(ServerFX.client.getCachedUrlImage(avatarUrl));
-                  turnoverTile.setImage(new Image(avatarUrl));
+                  InputStream cachedUrlImage = ServerFX.client.getCachedUrlImage(avatarUrl);
+                  if(cachedUrlImage == null) {
+                    cachedUrlImage = ServerFX.class.getResourceAsStream("avatar-blank.png");
+                  }
+                  Image image = new Image(cachedUrlImage);
+                  turnoverTile.setImage(image);
                 } else if (currentScore.getPlayer().getAvatar() != null) {
                   AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
                   turnoverTile.setImage(new Image(ServerFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));

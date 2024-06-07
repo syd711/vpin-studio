@@ -82,6 +82,12 @@ public class PupPackUtil {
         }
 
         String name = zipEntry.getName();
+        if (name.toLowerCase().contains("macosx")) {
+          zis.closeEntry();
+          zipEntry = zis.getNextEntry();
+          continue;
+        }
+
         File newFile = toTargetFile(destinationDir, rom, name);
         if (newFile != null) {
           newFile.getParentFile().mkdirs();

@@ -14,6 +14,50 @@ public class DeleteDescriptor {
   private boolean deleteAltSound;
   private boolean deleteAltColor;
   private boolean deleteCfg;
+  private boolean deletePov;
+  private boolean deleteRes;
+  private boolean deleteIni;
+  private boolean deleteVbs;
+
+  public boolean isDeleteCfg() {
+    return deleteCfg;
+  }
+
+  public void setDeleteCfg(boolean deleteCfg) {
+    this.deleteCfg = deleteCfg;
+  }
+
+  public boolean isDeletePov() {
+    return deletePov;
+  }
+
+  public void setDeletePov(boolean deletePov) {
+    this.deletePov = deletePov;
+  }
+
+  public boolean isDeleteRes() {
+    return deleteRes;
+  }
+
+  public void setDeleteRes(boolean deleteRes) {
+    this.deleteRes = deleteRes;
+  }
+
+  public boolean isDeleteIni() {
+    return deleteIni;
+  }
+
+  public void setDeleteIni(boolean deleteIni) {
+    this.deleteIni = deleteIni;
+  }
+
+  public boolean isDeleteVbs() {
+    return deleteVbs;
+  }
+
+  public void setDeleteVbs(boolean deleteVbs) {
+    this.deleteVbs = deleteVbs;
+  }
 
   private List<Integer> gameIds = new ArrayList<>();
 
@@ -31,14 +75,6 @@ public class DeleteDescriptor {
 
   public void setDeleteAltColor(boolean deleteAltColor) {
     this.deleteAltColor = deleteAltColor;
-  }
-
-  public boolean isDeleteCfg() {
-    return deleteCfg;
-  }
-
-  public void setDeleteCfg(boolean deleteCfg) {
-    this.deleteCfg = deleteCfg;
   }
 
   public boolean isDeleteTable() {

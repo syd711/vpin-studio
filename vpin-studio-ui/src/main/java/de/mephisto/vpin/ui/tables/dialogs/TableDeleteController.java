@@ -4,6 +4,9 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,6 +41,18 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @FXML
   private CheckBox directb2sCheckbox;
+
+  @FXML
+  private CheckBox vbsCheckbox;
+
+  @FXML
+  private CheckBox iniCheckbox;
+
+  @FXML
+  private CheckBox resCheckbox;
+
+  @FXML
+  private CheckBox povCheckbox;
 
   @FXML
   private CheckBox popperCheckbox;
@@ -75,7 +90,6 @@ public class TableDeleteController implements Initializable, DialogController {
   @FXML
   private Label validationDescription;
 
-  private boolean result = false;
   private List<GameRepresentation> games;
 
   @FXML
@@ -93,23 +107,27 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteAltSound(altSoundCheckbox.isSelected());
     descriptor.setDeleteAltColor(altColorCheckbox.isSelected());
     descriptor.setDeleteCfg(mameConfigCheckbox.isSelected());
+    descriptor.setDeletePov(povCheckbox.isSelected());
+    descriptor.setDeleteIni(iniCheckbox.isSelected());
+    descriptor.setDeleteRes(resCheckbox.isSelected());
+    descriptor.setDeleteVbs(vbsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
-    Studio.client.getGameService().deleteGame(descriptor);
-    result = true;
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new TableDeleteProgressModel(descriptor));
+    });
+
     stage.close();
   }
 
   @FXML
   private void onCancelClick(ActionEvent e) {
-    result = false;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
     this.deleteBtn.setDisable(true);
     confirmationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteBtn.setDisable(!newValue));
 
@@ -124,16 +142,16 @@ public class TableDeleteController implements Initializable, DialogController {
       highscoreCheckbox.setSelected(newValue);
       altSoundCheckbox.setSelected(newValue);
       altColorCheckbox.setSelected(newValue);
+      vbsCheckbox.setSelected(newValue);
+      iniCheckbox.setSelected(newValue);
+      resCheckbox.setSelected(newValue);
+      povCheckbox.setSelected(newValue);
     });
   }
 
   @Override
   public void onDialogCancel() {
-    result = false;
-  }
 
-  public boolean tableDeleted() {
-    return result;
   }
 
   public void setGames(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
@@ -193,5 +211,9 @@ public class TableDeleteController implements Initializable, DialogController {
     highscoreCheckbox.setDisable(hasNonSelectedVariant);
     altSoundCheckbox.setDisable(hasNonSelectedVariant);
     altColorCheckbox.setDisable(hasNonSelectedVariant);
+    vbsCheckbox.setDisable(hasNonSelectedVariant);
+    iniCheckbox.setDisable(hasNonSelectedVariant);
+    resCheckbox.setDisable(hasNonSelectedVariant);
+    povCheckbox.setDisable(hasNonSelectedVariant);
   }
 }

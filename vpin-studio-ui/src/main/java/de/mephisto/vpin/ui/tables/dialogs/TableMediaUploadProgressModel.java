@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -53,6 +54,12 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public String nextToString(File file) {
     return "Uploading " + file.getName();
+  }
+
+  @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    FileUtils.deleteIfTempFile(this.files);
+    super.finalizeModel(progressResultModel);
   }
 
   @Override

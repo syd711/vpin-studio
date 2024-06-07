@@ -53,7 +53,8 @@ public class PINemHiService implements InitializingBean {
       this.enabled = !enabled;
       preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled);
       return enabled;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set PINemHi autostart flag: " + e.getMessage(), e);
     }
     return false;
@@ -106,7 +107,8 @@ public class PINemHiService implements InitializingBean {
       }
 
       saveIni();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save pinemhi.ini: " + e.getMessage(), e);
     }
     return settings;
@@ -150,7 +152,8 @@ public class PINemHiService implements InitializingBean {
         }
       }
       return entries;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load pinemhi.ini: " + e.getMessage(), e);
     }
     return Collections.emptyMap();
@@ -159,6 +162,11 @@ public class PINemHiService implements InitializingBean {
 
   private void checkForUpdates() {
     try {
+      if (!new File("resources/pinemhi").exists()) {
+        LOG.info("Skipped PINemHi update check, wrong folder.");
+        return;
+      }
+
       List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-v");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(new File("resources/pinemhi"));
@@ -185,14 +193,19 @@ public class PINemHiService implements InitializingBean {
         }
       }
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to check for pinemhi updates: " + e.getMessage(), e);
     }
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    checkForUpdates();
+    new Thread(() -> {
+      Thread.currentThread().setName("PinemHi Updater");
+      checkForUpdates();
+    }).start();
+
     loadSettings();
     this.enabled = getAutoStart();
     if (enabled) {
@@ -209,7 +222,8 @@ public class PINemHiService implements InitializingBean {
         saveIni();
         LOG.info("Changed VP path to " + vp.getAbsolutePath());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
     }
   }

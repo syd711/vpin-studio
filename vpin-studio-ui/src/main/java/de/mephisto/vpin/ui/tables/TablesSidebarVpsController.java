@@ -1,5 +1,4 @@
 package de.mephisto.vpin.ui.tables;
-
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -247,8 +247,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onUpdate() {
-    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(VPS.getInstance().getVpsDbFile())));
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+    List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
   }
 
@@ -269,7 +269,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   public void onChange(String value) {
     try {
       this.tableVersionsCombo.valueProperty().removeListener(this);
-      List<VpsTable> tables = VPS.getInstance().getTables();
+      List<VpsTable> tables = client.getVpsService().getTables();
       Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
@@ -336,14 +336,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       copyTableBtn.setDisable(StringUtils.isEmpty(vpsTableId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
-      if (!StringUtils.isEmpty(vpsTableId)) {
-        VpsTable tableById = VPS.getInstance().getTableById(vpsTableId);
-        if (tableById != null) {
-          refreshTableView(tableById);
-          if (!StringUtils.isEmpty(vpsTableVersionId)) {
-            VpsTableVersion version = tableById.getVersion(vpsTableVersionId);
-            tableVersionsCombo.setValue(version);
-          }
+      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
+      if (tableById != null) {
+        refreshTableView(tableById);
+        if (!StringUtils.isEmpty(vpsTableVersionId)) {
+          VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
+          tableVersionsCombo.setValue(version);
         }
       }
     }
@@ -451,7 +449,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             List<VPSChange> changes = game.getVpsUpdates().getChanges();
             for (VPSChange change : changes) {
               if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-                updateText = change.toString(game.getExtTableId());
+                VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+                updateText = change.toString(gameTable);
                 break;
               }
             }
@@ -492,7 +491,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         List<VPSChange> changes = game.getVpsUpdates().getChanges();
         for (VPSChange change : changes) {
           if (change.getId() != null && vpsTableVersion.getId() != null && change.getId().equals(vpsTableVersion.getId())) {
-            updateText = change.toString(game.getExtTableId());
+            VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+            updateText = change.toString(gameTable);
             break;
           }
         }
@@ -501,11 +501,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, url, updatedAt, updateText));
+          entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, url, vpsTableVersion.getTableFormat(), updatedAt, updateText));
         }
       }
       else {
-        entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, null, updatedAt, updateText));
+        entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, null, vpsTableVersion.getTableFormat(), updatedAt, updateText));
       }
     }
 
@@ -535,7 +535,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           List<VPSChange> changes = game.getVpsUpdates().getChanges();
           for (VPSChange change : changes) {
             if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-              updateText = change.toString(game.getExtTableId());
+              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+              updateText = change.toString(gameTable);
               break;
             }
           }
@@ -569,7 +570,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   private void refreshSheetData(List<VpsTable> tables) {
     entriesLabel.setText(String.valueOf(tables.size()));
-    Date changeDate = VPS.getInstance().getChangeDate();
+    Date changeDate = client.getVpsService().getChangeDate();
     updateDateLabel.setText(DateFormat.getDateTimeInstance().format(changeDate));
   }
 
@@ -630,7 +631,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       this.tableVersionsCombo.valueProperty().addListener(this);
     });
 
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);

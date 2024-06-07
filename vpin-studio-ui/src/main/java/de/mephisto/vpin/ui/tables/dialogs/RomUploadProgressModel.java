@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
 import net.dv8tion.jda.api.utils.WidgetUtil;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class RomUploadProgressModel extends ProgressModel<File> {
+public class RomUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(RomUploadProgressModel.class);
 
   private final Iterator<File> iterator;
@@ -23,7 +24,7 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   private double percentage = 0;
 
   public RomUploadProgressModel(String title, List<File> files, int emuId) {
-    super(title);
+    super(files, title);
     this.files = files;
     this.iterator = files.iterator();
     this.emuId = emuId;
@@ -52,7 +53,7 @@ public class RomUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getGameService().uploadRom(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getMameService().uploadRom(emuId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

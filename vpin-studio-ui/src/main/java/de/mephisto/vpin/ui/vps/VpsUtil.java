@@ -1,4 +1,4 @@
-package de.mephisto.vpin.connectors.vps.model;
+package de.mephisto.vpin.ui.vps;
 
 public class VpsUtil {
 
@@ -141,6 +141,14 @@ public class VpsUtil {
 
     if (abb.equals("Mega")) {
       return "#e53e3e";
+    }
+
+    if (abb.equals("FP")) {
+      return "#718096";
+    }
+
+    if (abb.equals("VPX")) {
+      return "#718096";
     }
 
     if (abb.equals("YT")) {

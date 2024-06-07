@@ -4,17 +4,22 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -22,10 +27,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MediaUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MediaUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -40,9 +49,40 @@ public class MediaUploadController implements Initializable, DialogController {
   private Button fileBtn;
 
   @FXML
-  private Label titleLabel;
+  private Label audioLabel;
+
+  @FXML
+  private Label audioLaunchLabel;
+
+  @FXML
+  private Label backglassLabel;
+
+  @FXML
+  private Label apronLabel;
+
+  @FXML
+  private Label dmdLabel;
+
+  @FXML
+  private Label helpLabel;
+
+  @FXML
+  private Label infoLabel;
+
+  @FXML
+  private Label loadingLabel;
+
+  @FXML
+  private Label playfieldLabel;
+
+  @FXML
+  private Label topperLabel;
+
+  @FXML
+  private Label wheelLabel;
 
   private File selection;
+  private Stage stage;
 
   private boolean result = false;
   private GameRepresentation game;
@@ -84,14 +124,23 @@ public class MediaUploadController implements Initializable, DialogController {
   }
 
   private void refreshSelection(Stage stage) {
-    this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
-    this.fileNameField.setDisable(true);
-    this.fileBtn.setDisable(true);
-    this.cancelBtn.setDisable(true);
+    this.fileNameField.setText(this.selection.getAbsolutePath());
+
+    audioLabel.setText("-");
+    audioLaunchLabel.setText("-");
+    backglassLabel.setText("-");
+    apronLabel.setText("-");
+    dmdLabel.setText("-");
+    helpLabel.setText("-");
+    infoLabel.setText("-");
+    loadingLabel.setText("-");
+    playfieldLabel.setText("-");
+    topperLabel.setText("-");
+    wheelLabel.setText("-");
 
 
-    String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.POPPER_MEDIA);
-
+    UploaderAnalysis analysis = UploadAnalysisDispatcher.analyzeArchive(selection);
+    String analyze = analysis.validateAssetType(AssetType.POPPER_MEDIA);
     if (analyze != null) {
       result = false;
       WidgetFactory.showAlert(stage, analyze);
@@ -107,7 +156,32 @@ public class MediaUploadController implements Initializable, DialogController {
       this.cancelBtn.setDisable(false);
       this.uploadBtn.setDisable(false);
       this.cancelBtn.setDisable(false);
+
+      audioLabel.setText(formatReadable(audioLabel, analysis.getPopperMediaFiles(PopperScreen.Audio)));
+      audioLaunchLabel.setText(formatReadable(audioLaunchLabel, analysis.getPopperMediaFiles(PopperScreen.AudioLaunch)));
+      backglassLabel.setText(formatReadable(backglassLabel, analysis.getPopperMediaFiles(PopperScreen.BackGlass)));
+      apronLabel.setText(formatReadable(apronLabel, analysis.getPopperMediaFiles(PopperScreen.Menu)));
+      dmdLabel.setText(formatReadable(dmdLabel, analysis.getPopperMediaFiles(PopperScreen.DMD)));
+      helpLabel.setText(formatReadable(helpLabel, analysis.getPopperMediaFiles(PopperScreen.GameHelp)));
+      infoLabel.setText(formatReadable(infoLabel, analysis.getPopperMediaFiles(PopperScreen.GameInfo)));
+      loadingLabel.setText(formatReadable(loadingLabel, analysis.getPopperMediaFiles(PopperScreen.Loading)));
+      playfieldLabel.setText(formatReadable(playfieldLabel, analysis.getPopperMediaFiles(PopperScreen.PlayField)));
+      topperLabel.setText(formatReadable(topperLabel, analysis.getPopperMediaFiles(PopperScreen.Topper)));
+      wheelLabel.setText(formatReadable(wheelLabel, analysis.getPopperMediaFiles(PopperScreen.Wheel)));
     }
+  }
+
+  private String formatReadable(Label label, List<String> popperMediaFiles) {
+    if (popperMediaFiles.isEmpty()) {
+      return "-";
+    }
+
+    String result = popperMediaFiles.get(0);
+    if (popperMediaFiles.size() > 1) {
+      result = result + " (" + (popperMediaFiles.size() - 1) + " more)";
+      label.setTooltip(new Tooltip(String.join("\n",popperMediaFiles)));
+    }
+    return result;
   }
 
   @Override
@@ -115,6 +189,12 @@ public class MediaUploadController implements Initializable, DialogController {
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection(stage);
+    }));
   }
 
   @Override
@@ -129,19 +209,9 @@ public class MediaUploadController implements Initializable, DialogController {
   public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
     this.game = game;
     this.selection = file;
-    this.titleLabel.setText("Media Pack Upload for \"" + game.getGameDisplayName() + "\"");
+    this.stage = stage;
     if (selection != null) {
-      if (analysis != null) {
-        this.fileNameField.setText(this.selection.getAbsolutePath());
-        this.fileNameField.setDisable(false);
-        this.fileBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
-        this.uploadBtn.setDisable(false);
-        this.cancelBtn.setDisable(false);
-      }
-      else {
-        refreshSelection(stage);
-      }
+      refreshSelection(stage);
     }
   }
 }

@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,6 +64,34 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
+    PupPack pupPack = getCachedPupPack(game);
+    if (pupPack == null) {
+      List<String> acceptedNames = new ArrayList<>();
+      if (!StringUtils.isEmpty(game.getPupPackName())) {
+        acceptedNames.add(game.getPupPackName());
+      }
+      if (!StringUtils.isEmpty(game.getRom())) {
+        acceptedNames.add(game.getRom());
+      }
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        acceptedNames.add(game.getRomAlias());
+      }
+      if (!StringUtils.isEmpty(game.getTableName())) {
+        acceptedNames.add(game.getTableName());
+      }
+
+      for (String acceptedName : acceptedNames) {
+        pupPack = loadPupPack(acceptedName);
+        if (pupPack != null) {
+          return pupPack;
+        }
+      }
+    }
+    return pupPack;
+  }
+
+  @Nullable
+  private PupPack getCachedPupPack(@NotNull Game game) {
     if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackFolders.containsKey(game.getPupPackName().toLowerCase())) {
       return pupPackFolders.get(game.getPupPackName().toLowerCase());
     }
@@ -101,9 +132,7 @@ public class PupPacksService implements InitializingBean {
       pupPack.setScriptOnly(true);
     }
 
-    pupPack.load();
-
-    if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || !FileUtils.listFiles(packFolder, new String[]{"mp4", "png"}, true).isEmpty())) {
+    if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || pupPack.containsFileWithSuffixes("mp4", "png"))) {
 //      LOG.info("Loaded PUP Pack " + packFolder.getName());
       pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
     }
@@ -163,13 +192,8 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public void installPupPack(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws IOException {
+  public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    if (analysis == null) {
-      analysis = new UploaderAnalysis(tempFile);
-      analysis.analyze();
-    }
-
     File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
@@ -192,14 +216,19 @@ public class PupPacksService implements InitializingBean {
 
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, rom);
-    JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
+    if (!async) {
+      job.execute();
+    }
+    else {
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
-    jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
-    jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
-    jobDescriptor.setJob(job);
-    jobDescriptor.setStatus(job.getStatus());
+      jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
+      jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
+      jobDescriptor.setJob(job);
+      jobDescriptor.setStatus(job.getStatus());
 
-    jobQueue.offer(jobDescriptor);
+      jobQueue.offer(jobDescriptor);
+    }
   }
 
   public void exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
@@ -233,6 +262,19 @@ public class PupPacksService implements InitializingBean {
         }
       }
     }
+  }
+
+  public PupPack loadPupPack(String rom) {
+    if (!StringUtils.isEmpty(rom)) {
+      File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+      if (pupVideosFolder.exists()) {
+        File pupPackFolder = new File(pupVideosFolder, rom);
+        if (pupPackFolder.exists()) {
+          loadPupPack(pupPackFolder);
+        }
+      }
+    }
+    return null;
   }
 
   public boolean clearCache() {

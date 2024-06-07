@@ -44,6 +44,13 @@ abstract public class AssetMediaPlayer extends BorderPane {
     return label;
   }
 
+  protected Label getEncodingNotSupportedLabel(@Nullable GameMediaItemRepresentation mediaItem) {
+    Label label = new Label("        Media available\n(encoding not supported)");
+    label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+    label.setUserData(mediaItem);
+    return label;
+  }
+
   public void disposeMedia() {
     if (getMediaPlayer() != null) {
       try {
@@ -68,5 +75,9 @@ abstract public class AssetMediaPlayer extends BorderPane {
     else {
       LOG.warn("No mediaplayer found for " + url);
     }
+  }
+
+  public void setSize(double fitWidth, double fitHeight) {
+
   }
 }

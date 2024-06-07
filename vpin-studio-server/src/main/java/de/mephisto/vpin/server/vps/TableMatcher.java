@@ -8,14 +8,13 @@ import de.mephisto.vpin.server.games.Game;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TableMatcher {
 
-	static double THRESHOLD_NOTFOUND = 2.55;
+	private double THRESHOLD_NOTFOUND = 3;
 
 	/** displayName pattern : Table (Manufacturer Year) */
 	static Pattern filePatter = Pattern.compile("(.*)\\((.*) (\\d\\d\\d\\d)\\).*");
@@ -145,9 +144,16 @@ public class TableMatcher {
 		return dist;
 	}
 
-	public double distance(String cleanName, String refName) {
+	public double distance(String str1, String str2) {
 
-		int ratio = FuzzySearch.weightedRatio(cleanName, refName);
+		if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
+			return 0;
+		} 		
+		else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
+			return 5;
+		}
+
+		int ratio = FuzzySearch.weightedRatio(str1, str2);
 		return ratio > 0 ? 10 * (100.0 / ratio - 1) : 10000;
 
 		// Score 100 => distance = 0
@@ -158,7 +164,23 @@ public class TableMatcher {
 
 	VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
 
-		long lastmodif = game.getGameFile().lastModified();
+		if (tableInfo==null) {
+			return null;
+		}
+
+		String tableInfoName = tableInfo.getTableName();
+		String tableInfoVersion = tableInfo.getTableVersion();
+		String tableInfoAuthor = tableInfo.getAuthorName();
+
+		if (StringUtils.isEmpty(tableInfoVersion) || StringUtils.isEmpty(tableInfoAuthor)) {
+			return null;
+		}
+		// clean tableInfo author field and parse it
+		String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
+		for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
+			tableInfoAuthors[i] = tableInfoAuthors[i].trim();
+		}
+		tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
 
 		double distance = 10000;
 		VpsTableVersion foundVersion = null;
@@ -169,34 +191,67 @@ public class TableMatcher {
 				continue;
 			}
 
-			// The version cannot have a greater date than the last modification of the game file
-			if (lastmodif < tableVersion.getUpdatedAt()) {
-				continue;
-			}
+			String name = tableVersion.getComment();
+			String v = tableVersion.getVersion();
+			String authors = null;
 
+			// if match via name, rare but happens.., disconnect version match 
+			double dName = (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName))
+				? distance(name, tableInfoName): 5;
+			double dVersion = dName<0.5 ? 0: TableVersionMatcher.versionDistance(v, tableInfoVersion);
+
+			// The version cannot have a greater date than the last modification of the game file
+			// controversial, could be used as a criteria to bifurcate between to possible solutions
+			//long lastmodif = game.getGameFile().lastModified();
+			//if (lastmodif < tableVersion.getUpdatedAt()) {
+			//	continue;
+			//}
+
+			/* Not really useful as it compares releaseDate with last update date
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(tableVersion.getUpdatedAt());
 			int year = c.get(Calendar.YEAR);
-
 			double dYear = tableInfo != null && StringUtils.isNotEmpty(tableInfo.getReleaseDate())
 					? (tableInfo.getReleaseDate().contains(Integer.toString(year)) ? 1 : 2)
-					: 1.2;
+					: 1.2;*/
 
-			double dAuthor = 1;
-			if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getAuthorName()) && tableVersion.getAuthors() != null) {
-				for (String author : tableVersion.getAuthors()) {
-					dAuthor *= StringUtils.containsIgnoreCase(tableInfo.getAuthorName(), author) ? 1 : 1.2;
+			List<String> tableVersionAuthors = tableVersion.getAuthors();
+			int nbFirstAuthorsFoundInFirst = 0;
+			double dAuthor = 0.0d;
+			if (StringUtils.isNotEmpty(tableInfoAuthor) && tableVersionAuthors!=null && tableVersionAuthors.size()>0) {
+
+				authors = StringUtils.join(tableVersionAuthors, " ").toLowerCase();
+
+				// check if first authors of the table are also the first authors of the version
+				for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
+					for (int j = 0, n = tableVersionAuthors.size(); j<n && j<m; j++) {
+						int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersionAuthors.get(j).toLowerCase());
+						if (r>90) {
+							nbFirstAuthorsFoundInFirst++;
+							break;
+						}
+					}
+				}
+			
+				if (nbFirstAuthorsFoundInFirst==tableInfoAuthors.length) {
+					// reduce weight of version when all authors of the tables are also the first authors of the version
+					dVersion /= 3;
+				
+				} else {
+
+					int r = FuzzySearch.weightedRatio(authors, tableInfoAuthor);
+					dAuthor = r>0? 100.0 / r - 1: 100;
 				}
 			}
 
-			double d = dYear * dAuthor;
+			double d = (1 + dVersion / 2) * (1 + dAuthor);
 			if (d < distance) {
 				distance = d;
 				foundVersion = tableVersion;
 			}
 		}
 
-		return distance < 1.5 ? foundVersion : null;
+		return distance <= 1.5 ? foundVersion : null;
 	}
 
 	/**
@@ -211,14 +266,17 @@ public class TableMatcher {
 			return romFiles == null || romFiles.size() == 0;
 		}
 		// else rom should be within the romFiles of the table if present
-		if (romFiles != null) {
+		if (romFiles != null &&  romFiles.size()>0) {
 			boolean found = false;
 			for (VpsAuthoredUrls romFile : romFiles) {
-				found |= romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom);
+				found |= romFile.getVersion() != null 
+					// do not check equals, cf afm_113 && afm_113b 
+					&& (StringUtils.startsWithIgnoreCase(romFile.getVersion(), rom)
+						|| StringUtils.startsWithIgnoreCase(rom, romFile.getVersion()));
 			}
 			return found;
 		}
-		// else
+		// else, conservative approach, check on name
 		return true;
 	}
 

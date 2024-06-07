@@ -17,7 +17,6 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -93,9 +92,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
+        //otherwise check if the card rendering is enabled
+        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        if (cardSettings == null) {
+          cardSettings = new CardSettings();
+        }
+
         //sample card are always generated
         if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
@@ -103,14 +108,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
           return false;
         }
 
-        //otherwise check if the card rendering is enabled
-        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-        if (cardSettings == null) {
-          cardSettings = new CardSettings();
-        }
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, template, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
           if (bufferedImage != null) {
             File highscoreCard = getCardFile(game, screenName);
             ImageUtil.write(bufferedImage, highscoreCard);
@@ -144,7 +144,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   }
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     //not used for card generation
   }
 

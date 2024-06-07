@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.vps.model.VpsUtil;
+import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -30,7 +30,7 @@ public class VpsEntry extends HBox {
     this.setStyle("-fx-padding: 3px 0 0 0;");
     Label versionLabel = WidgetFactory.createDefaultLabel(version);
     versionLabel.setStyle("-fx-padding: 0 0 0 3px;-fx-font-size: 14px;");
-    versionLabel.setPrefWidth(80);
+    versionLabel.setPrefWidth(100);
     if (!StringUtils.isEmpty(version)) {
       versionLabel.setTooltip(new Tooltip(version));
     }
@@ -43,7 +43,7 @@ public class VpsEntry extends HBox {
     }
 
 
-    authorLabel.setPrefWidth(286);
+    authorLabel.setPrefWidth(266);
     this.getChildren().add(authorLabel);
 
     String abb = VpsUtil.abbreviate(link);

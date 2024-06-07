@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -34,7 +35,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
@@ -98,7 +102,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableOverviewController.setRootController(this);
       tablesSideBarController.setTablesController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -107,7 +112,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       tablesStatisticsTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -117,7 +123,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       repositoryController = loader.getController();
       repositoryController.setRootController(this);
       tableRepositoryTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -128,7 +135,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -231,10 +239,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
         }
       });
     }
+    else if (jobType.equals(JobType.TABLE_IMPORT)) {
+      Platform.runLater(() -> {
+        tableOverviewController.refreshFilterId();
+        tableOverviewController.onReload();
+      });
+    }
     else if (jobType.equals(JobType.POV_INSTALL)
-      || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-      || jobType.equals(JobType.DIRECTB2S_INSTALL)
-      || jobType.equals(JobType.TABLE_IMPORT)) {
+        || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
+        || jobType.equals(JobType.DIRECTB2S_INSTALL)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
@@ -253,10 +266,20 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     if (!StringUtils.isEmpty(rom)) {
-      this.tableOverviewController.reloadByRom(rom);
-    }
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
+    }  
     if (!StringUtils.isEmpty(gameName)) {
-      this.tableOverviewController.reloadByGameName(rom);
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
     }
   }
 

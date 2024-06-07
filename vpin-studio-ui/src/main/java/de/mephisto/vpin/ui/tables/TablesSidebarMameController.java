@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -171,15 +172,7 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onReload() {
-    saveDisabled = true;
-    this.reloadBtn.setDisable(true);
-    client.getMameService().clearCache();
-
-    Platform.runLater(() -> {
-      new Thread(() -> {
-        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-      }).start();
-    });
+    ProgressDialog.createProgressDialog(new MAMERefreshProgressModel(this.game.get()));
   }
 
   @FXML

@@ -1,8 +1,6 @@
 package de.mephisto.vpin.vps;
-
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
-import de.mephisto.vpin.connectors.vps.VpsSheetChangedListener;
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -27,7 +25,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class VPSBot implements VpsSheetChangedListener {
+public class VPSBot {
   private final static Logger LOG = LoggerFactory.getLogger(VPSBot.class);
   public static final int MAX_VPS_ENTRIES = 15;
 
@@ -37,25 +35,36 @@ public class VPSBot implements VpsSheetChangedListener {
   private int totalDiffCount = 0;
   private boolean postSummary = false;
 
+  private VPS vpsDatabase; 
+
   public VPSBot() throws InterruptedException {
     this.listenerAdapter = new VPSDiscordListenerAdapter(this);
 
-    String token = System.getenv("VPS_BOT_TOKEN");
-    jda = JDABuilder.createDefault(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
-        GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-      .setEventPassthrough(true)
-      .setStatus(OnlineStatus.ONLINE)
-      .setMemberCachePolicy(MemberCachePolicy.ALL)
-      .addEventListeners(this.listenerAdapter)
-      .build();
-    jda.awaitReady();
+    this.vpsDatabase = new VPS();
+    // initial load of database from existing file if any
+    this.vpsDatabase.reload();
 
-    VPS.getInstance().addChangeListener(this);
+    String token = System.getenv("VPS_BOT_TOKEN");
+    if (token!=null) {
+      jda = JDABuilder.createDefault(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
+          GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
+        .setEventPassthrough(true)
+        .setStatus(OnlineStatus.ONLINE)
+        .setMemberCachePolicy(MemberCachePolicy.ALL)
+        .addEventListeners(this.listenerAdapter)
+        .build();
+      jda.awaitReady();
+    } else {
+      jda = null;
+    }
 
     new Thread(() -> {
       Thread.currentThread().setName("VPS Sync Thread");
       while (true) {
-        VPS.getInstance().update();
+        List<VpsDiffer> tableDiffs = vpsDatabase.update();
+        if (tableDiffs.size()>0) {
+          notifyChanges(tableDiffs);
+        }
         try {
           LOG.info("Waiting 15 minutes");
           TimeUnit.MINUTES.sleep(15);
@@ -66,9 +75,7 @@ public class VPSBot implements VpsSheetChangedListener {
     }).start();
   }
 
-  @Override
-  public void vpsSheetChanged(List<VpsDiffer> tableDiffs) {
-    VPS.getInstance().reload();
+  public void notifyChanges(List<VpsDiffer> tableDiffs) {
 
     LOG.info("VPS Bot emitting " + tableDiffs.size() + " updates");
     new Thread(() -> {
@@ -86,7 +93,7 @@ public class VPSBot implements VpsSheetChangedListener {
               entries.clear();
             }
 
-            VpsTable table = VPS.getInstance().getTableById(tableDiff.getId());
+            VpsTable table = vpsDatabase.getTableById(tableDiff.getId());
             VPSChanges changes = tableDiff.getChanges();
             if (changes.isEmpty()) {
               LOG.info("Skipped updated for \"" + tableDiff.getDisplayName() + "\", no updates found.");
@@ -95,13 +102,13 @@ public class VPSBot implements VpsSheetChangedListener {
 
             StringBuilder builder = new StringBuilder();
             for (VPSChange change : changes.getChanges()) {
-              builder.append(change.toString(tableDiff.getId()));
+              builder.append(change.toString(table));
               builder.append("\n");
             }
 
             if (!postSummary) {
               for (VPSChange change : changes.getChanges()) {
-                String string = change.toString(tableDiff.getId());
+                String string = change.toString(table);
                 string = string.substring(change.getDiffType().toString().length());
                 if(string.trim().startsWith(":")) {
                   string = string.trim().substring(1).trim();
@@ -140,6 +147,10 @@ public class VPSBot implements VpsSheetChangedListener {
   }
 
   private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
+    if (jda==null) {
+      return;
+    }
+
     long serverId = Long.parseLong(System.getenv("VPS_BOT_SERVER"));
     long vpsChannelId = Long.parseLong(System.getenv("VPS_BOT_CHANNEL"));
 
@@ -184,6 +195,9 @@ public class VPSBot implements VpsSheetChangedListener {
 
   public long sendVpsUpdateSummary(String title, Map<String, String> values) {
     totalDiffCount += values.size();
+    if (jda==null) {
+      return -1;
+    }
 
     long serverId = Long.parseLong(System.getenv("VPS_BOT_SERVER"));
     long vpsChannelId = Long.parseLong(System.getenv("VPS_BOT_CHANNEL"));
@@ -226,6 +240,10 @@ public class VPSBot implements VpsSheetChangedListener {
     return -1;
   }
 
+  public List<VpsDiffer> update() {
+    return vpsDatabase.update();
+  }
+
   private Guild getGuild(long serverId) {
     return jda.getGuildById(serverId);
   }
@@ -238,4 +256,6 @@ public class VPSBot implements VpsSheetChangedListener {
   public String getStatus() {
     return "Last Update: " + DateFormat.getDateTimeInstance().format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
   }
+
+
 }

@@ -52,8 +52,10 @@ public class DMDResource {
   }
 
   @PostMapping("/upload")
-  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam("objectId") Integer emulatorId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    descriptor.setEmulatorId(emulatorId);
     try {
       descriptor.getAssetsToImport().add(AssetType.DMD_PACK);
       descriptor.upload();

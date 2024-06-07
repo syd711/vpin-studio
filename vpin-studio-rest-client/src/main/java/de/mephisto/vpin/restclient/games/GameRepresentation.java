@@ -1,11 +1,14 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {

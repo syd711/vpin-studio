@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.validation;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -46,9 +45,9 @@ public class GameValidationTexts {
         text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM in the \"Script Details\" section.";
         break;
       }
-      case CODE_NOT_ALL_WITH_NVOFFSET: {
-        label = "Not all \"NVOffset\" are set.";
-        text = "This table has an \"NVOffset\" set, but other tables with the same ROM don't. You must set it for all tables based on this ROM.";
+      case CODE_NVOFFSET_MISMATCH: {
+        label = "\"NVOffset\" mismatch found.";
+        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" set, but table \"" + state.getOptions().get(0) + "\" has the NVOffset value \"" + state.getOptions().get(2) + "\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {

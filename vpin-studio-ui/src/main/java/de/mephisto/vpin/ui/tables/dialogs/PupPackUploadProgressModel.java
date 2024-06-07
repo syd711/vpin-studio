@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class PupPackUploadProgressModel extends ProgressModel<File> {
+public class PupPackUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadProgressModel.class);
 
   private final Iterator<File> iterator;
@@ -27,7 +28,7 @@ public class PupPackUploadProgressModel extends ProgressModel<File> {
   private final File file;
 
   public PupPackUploadProgressModel(String rom, String title, File file) {
-    super(title);
+    super(file, title);
     this.rom = rom;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

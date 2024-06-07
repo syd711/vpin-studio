@@ -2,11 +2,11 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.popper.ScreenMode;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -14,14 +14,15 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -189,20 +190,14 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onReload() {
-    this.reloadBtn.setDisable(true);
-
-    Platform.runLater(() -> {
-      new Thread(() -> {
-        Studio.client.getPupPackService().clearCache();
-
-        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-
-        Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
-          this.refreshView(this.game);
-        });
-      }).start();
-    });
+    if (game.isPresent()) {
+      this.reloadBtn.setDisable(true);
+      Platform.runLater(() -> {
+        ProgressDialog.createProgressDialog(new PupPackRefreshProgressModel(this.game.get()));
+        this.reloadBtn.setDisable(false);
+        this.refreshView(this.game);
+      });
+    }
   }
 
   @FXML
@@ -249,7 +244,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      TableDialogs.openPupPackUploadDialog(tablesSidebarController, game.get(), null, null);
+      TableDialogs.openPupPackUploadDialog(game.get(), null, null);
     }
   }
 

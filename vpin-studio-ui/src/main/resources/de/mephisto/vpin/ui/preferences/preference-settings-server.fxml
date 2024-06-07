@@ -44,30 +44,14 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="Start service when computer is started:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Auto-shutdown Windows after being idle for" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="startupTimeLabel1" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <CheckBox fx:id="serviceStartupCheckbox" mnemonicParsing="false" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Auto-shutdown Windows after being idle for" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <Spinner fx:id="idleSpinner" />
                               <Label text="minutes" textFill="WHITE">
@@ -80,17 +64,17 @@
                               </Label>
                            </children>
                         </HBox>
-                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Label text="(set to '0' to disable)" />
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="System Shutdown:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="System Shutdown:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                            </GridPane.margin>
@@ -263,6 +247,17 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="If checked, the exported .vbs files will be kept, matching with the table name so that VPX uses these." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="Otherwise the .vbs files will be removed after import/export." textFill="WHITE" />
+                  <CheckBox fx:id="vpxMonitoringCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="Use VPX Table Monitor for Table Launch/Exit Events." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="1110.0" styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="1132.0" styleClass="checkbox-description" text="This way, tables must not be launched through PinUP Popper to use VPin-Studio services." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

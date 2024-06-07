@@ -44,6 +44,9 @@ public class TablesSidebarAltColorController implements Initializable {
   private Label lastModifiedLabel;
 
   @FXML
+  private Label backupsLabel;
+
+  @FXML
   private Label typeLabel;
 
   @FXML
@@ -72,8 +75,6 @@ public class TablesSidebarAltColorController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TablesSidebarController tablesSidebarController;
-
   // Add a public no-args constructor
   public TablesSidebarAltColorController() {
   }
@@ -81,7 +82,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openAltColorUploadDialog(tablesSidebarController, game.get(), null);
+      TableDialogs.openAltColorUploadDialog(game.get(), null);
     }
   }
 
@@ -145,6 +146,7 @@ public class TablesSidebarAltColorController implements Initializable {
     deleteBtn.setDisable(true);
 
     lastModifiedLabel.setText("-");
+    backupsLabel.setText("-");
     typeLabel.setText("-");
     filesLabel.setText("-");
 
@@ -164,6 +166,7 @@ public class TablesSidebarAltColorController implements Initializable {
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
+        backupsLabel.setText(String.valueOf(altColor.getBackedUpFiles()));
 
         List<String> files = altColor.getFiles();
         filesLabel.setText(String.join(", ", files));
@@ -179,9 +182,5 @@ public class TablesSidebarAltColorController implements Initializable {
         }
       }
     }
-  }
-
-  public void setSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 }
