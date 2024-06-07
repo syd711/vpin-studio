@@ -3,8 +3,10 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -12,21 +14,27 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class ClientSettingsPreferencesController implements Initializable {
+public class ClientSettingsPreferencesController implements Initializable, ChangeListener<Boolean> {
   private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
+
+  @FXML
+  private VBox emulatorList;
 
   @FXML
   private TextField winNetworkShare;
@@ -69,6 +77,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   public static Debouncer debouncer = new Debouncer();
   private String networkShareTestPath;
+  private UISettings uiSettings;
 
 
   @FXML
@@ -96,7 +105,7 @@ public class ClientSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     networkShareTestPath = client.getPinUPPopperService().getDefaultGameEmulator().getInstallationDirectory();
 
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     uiShowVersion.setSelected(!uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -222,6 +231,33 @@ public class ClientSettingsPreferencesController implements Initializable {
     });
     winNetworkShareTestBtn.setDisable(!SystemUtil.isWindows());
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
+
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getGameEmulators();
+    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      CheckBox checkBox = new CheckBox(gameEmulator.getName());
+      checkBox.setUserData(gameEmulator);
+      checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
+      checkBox.setSelected(checkBox.isDisabled() || !uiSettings.getIgnoredEmulatorIds().contains(gameEmulator.getId()));
+      checkBox.getStyleClass().add("preference-checkbox");
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (newValue) {
+            uiSettings.getIgnoredEmulatorIds().remove(Integer.valueOf(gameEmulator.getId()));
+          }
+          else {
+            if (!uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(gameEmulator.getId()))) {
+              uiSettings.getIgnoredEmulatorIds().add(Integer.valueOf(gameEmulator.getId()));
+            }
+          }
+          PreferencesController.markDirty(PreferenceType.serverSettings);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        }
+      });
+
+      emulatorList.getChildren().add(checkBox);
+    }
   }
 
   private void refreshNetworkStatusLabel(String newValue) {
@@ -244,5 +280,20 @@ public class ClientSettingsPreferencesController implements Initializable {
         winNetworkShareTestBtn.setDisable(false);
       }
     });
+  }
+
+  @Override
+  public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//    Node checkBox = (Node) observable;
+//    GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) checkBox.getUserData();
+
+//    if (newValue) {
+//      uiSettings.getIgnoredEmulatorIds().remove(emulatorRepresentation.getId());
+//    }
+//    else {
+//      uiSettings.getIgnoredEmulatorIds().add(emulatorRepresentation.getId());
+//    }
+//    PreferencesController.markDirty(PreferenceType.serverSettings);
+//    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
   }
 }

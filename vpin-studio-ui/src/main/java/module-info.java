@@ -1,5 +1,5 @@
 module de.mephisto.vpin.ui {
-  requires transitive javafx.controls;
+  requires javafx.controls;
   requires javafx.fxml;
   requires javafx.web;
 

@@ -141,6 +141,13 @@
                         </VBox>
                      </children>
                   </HBox>
+                  <Label styleClass="preference-subtitle" text="Emulators">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="This section configures which game emulators to use in the VPin Studio." textFill="WHITE" />
+                  <VBox fx:id="emulatorList" />
                   <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">
                      <VBox.margin>
                         <Insets top="24.0" />
