@@ -133,7 +133,7 @@ public class UploadAnalysisDispatcher {
 
   private static boolean isArchive(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
-    return PackageUtil.isArchive(extension) || extension.equalsIgnoreCase("rar");
+    return PackageUtil.isSupportedArchive(extension);
   }
 
   public static UploaderAnalysis analyzeArchive(File file) {

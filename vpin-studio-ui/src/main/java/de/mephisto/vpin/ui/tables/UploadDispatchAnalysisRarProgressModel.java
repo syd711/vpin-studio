@@ -24,6 +24,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   private final RandomAccessFile randomAccessFile;
   private final RandomAccessFileInStream randomAccessFileStream;
   private final ISimpleInArchiveItem[] archiveItems;
+  private final IInArchive inArchive;
   private int size = 0;
   private Iterator<ISimpleInArchiveItem> iterator;
 
@@ -35,7 +36,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
 
     randomAccessFile = new RandomAccessFile(file, "r");
     randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
-    IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+    inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
 
     archiveItems = inArchive.getSimpleInterface().getArchiveItems();
     size = archiveItems.length;
@@ -91,7 +92,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   @Override
   public void processNext(ProgressResultModel progressResultModel, ISimpleInArchiveItem next) {
     try {
-      uploaderAnalysis.analyze(next, next.getPath(), next.isFolder());
+      uploaderAnalysis.analyze(inArchive, next, next.getPath(), next.isFolder());
     }
     catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);
