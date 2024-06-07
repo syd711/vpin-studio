@@ -517,7 +517,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     cardPreview.setFitWidth(width - 700);
     cardPreview.setFitHeight(height - 200);
     previewPanel.setPrefWidth(width - 700);
-    cardPreview.getStyleClass().add("debug");
   }
 
   @Override
