@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.cards.dialogs;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -39,15 +41,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TemplateManagerDialogController implements Initializable, DialogController, BindingChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateManagerDialogController.class);
-
-  private final Debouncer debouncer = new Debouncer();
-  public static final int DEBOUNCE_MS = 100;
 
   @FXML
   private ComboBox<CardTemplate> templateCombo;
@@ -81,6 +81,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private CheckBox transparentBackgroundCheckbox;
+
+  @FXML
+  private CheckBox overlayModeCheckbox;
 
   @FXML
   private ColorPicker fontColorSelector;
@@ -182,13 +185,23 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private Pane previewPanel;
 
   @FXML
+  private BorderPane previewOverlayPanel;
+
+  @FXML
+  private ComboBox<String> screensComboBox;
+
+  @FXML
   private ImageView cardPreview;
+
+  @FXML
+  private Pane mediaPlayerControl;
 
   private BeanBinder templateBeanBinder;
   private ObservableList<String> imageList;
 
   private Parent waitOverlay;
   private HighscoreCardsController highscoreCardsController;
+  private AssetMediaPlayer assetMediaPlayer;
 
 
   @FXML
@@ -210,7 +223,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
             this.templateCombo.setItems(FXCollections.observableList(templates));
             this.templateCombo.setValue(newTemplate);
           });
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
           LOG.error("Failed to create new template: " + ex.getMessage(), ex);
           WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
         }
@@ -224,6 +238,20 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, this.templateCombo.getSelectionModel().getSelectedItem().getId()));
     stage.close();
+  }
+
+  @FXML
+  private void onStart() {
+    if(assetMediaPlayer != null) {
+      assetMediaPlayer.getMediaPlayer().play();
+    }
+  }
+
+  @FXML
+  private void onStop() {
+    if(assetMediaPlayer != null) {
+      assetMediaPlayer.getMediaPlayer().pause();
+    }
   }
 
   @FXML
@@ -241,7 +269,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           this.templateCombo.setItems(FXCollections.observableList(templates));
           this.templateCombo.setValue(card);
         });
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to rename template: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
       }
@@ -265,7 +294,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           this.templateCombo.setItems(FXCollections.observableList(templates));
           this.templateCombo.setValue(card);
         });
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to create new template: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Template Duplication Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
       }
@@ -285,7 +315,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           this.templateCombo.setItems(FXCollections.observableList(templates));
           this.templateCombo.setValue(templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get());
         });
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to delete template: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
       }
@@ -297,9 +328,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
-      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-      new FileChooser.ExtensionFilter("PNG", "*.png"));
+        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
+        new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+        new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
@@ -310,7 +341,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
             imageList.add(baseName);
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
@@ -380,8 +412,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
 
-    updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
-
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
@@ -435,6 +465,20 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
+
+      List<PopperScreen> popperScreens = new ArrayList<>(Arrays.asList(PopperScreen.values()));
+      popperScreens.remove(PopperScreen.Audio);
+      popperScreens.remove(PopperScreen.AudioLaunch);
+      popperScreens.remove(PopperScreen.GameInfo);
+      popperScreens.remove(PopperScreen.GameHelp);
+      popperScreens.remove(PopperScreen.DMD);
+      popperScreens.remove(PopperScreen.Wheel);
+      popperScreens.remove(PopperScreen.Other2);
+      popperScreens.remove(PopperScreen.PlayField);
+      popperScreens.remove(PopperScreen.Loading);
+      screensComboBox.setItems(FXCollections.observableList(popperScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
+      screensComboBox.setDisable(!getCardTemplate().isOverlayMode());
+
       templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
       templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
       templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
@@ -442,6 +486,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
       templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
       templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
+      templateBeanBinder.bindCheckbox(overlayModeCheckbox, getCardTemplate(), "overlayMode");
+
+      overlayModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          screensComboBox.setDisable(!newValue);
+        }
+      });
 
       imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
       backgroundImageCombo.setItems(imageList);
@@ -453,6 +505,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       if (StringUtils.isEmpty(backgroundName)) {
         backgroundImageCombo.setValue(imageList.get(0));
       }
+
+      templateBeanBinder.bindComboBox(screensComboBox, getCardTemplate(), "overlayScreen");
 
       templateBeanBinder.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
       templateBeanBinder.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
@@ -494,10 +548,11 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          updateTransparencySettings(newValue);
+          overlayModeCheckbox.setDisable(!getCardTemplate().isTransparentBackground());
+          overlayModeCheckbox.setSelected(getCardTemplate().isOverlayMode());
+          screensComboBox.setDisable(!getCardTemplate().isOverlayMode() || !getCardTemplate().isTransparentBackground());
         }
       });
-      updateTransparencySettings(transparentBackgroundCheckbox.isSelected());
 
       templateBeanBinder.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -522,32 +577,38 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
       maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
       rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
     }
   }
 
-  private void updateTransparencySettings(Boolean newValue) {
-    Platform.runLater(() -> {
-      grayScaleCheckbox.setDisable(newValue);
-      useDirectB2SCheckbox.setDisable(newValue);
-      blurSlider.setDisable(newValue);
-      brightenSlider.setDisable(newValue);
-      darkenSlider.setDisable(newValue);
-      backgroundImageCombo.setDisable(newValue || getCardTemplate().isUseDirectB2S());
-      alphaPercentageSpinner.setDisable(!newValue);
+  private void refreshTransparency() {
+    boolean enabled = getCardTemplate().isTransparentBackground();
+    grayScaleCheckbox.setDisable(enabled);
+    useDirectB2SCheckbox.setDisable(enabled);
+    blurSlider.setDisable(enabled);
+    brightenSlider.setDisable(enabled);
+    darkenSlider.setDisable(enabled);
+    backgroundImageCombo.setDisable(enabled || getCardTemplate().isUseDirectB2S());
+    alphaPercentageSpinner.setDisable(!enabled);
 
-      if (newValue) {
+    if (enabled) {
+      if (!getCardTemplate().isOverlayMode()) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
-          BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-          BackgroundSize.DEFAULT);
+            BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+            BackgroundSize.DEFAULT);
         previewPanel.setBackground(new Background(myBI));
       }
       else {
-        previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+        //the existing CSS class will hide the video else
+        previewPanel.setBackground(Background.EMPTY);
       }
-    });
+    }
+    else {
+      previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+    }
   }
 
   @FXML
@@ -557,7 +618,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
         refreshPreview(Optional.ofNullable(value), true);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
         WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
       }
@@ -565,6 +627,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
+    mediaPlayerControl.setVisible(false);
+
     if (!game.isPresent()) {
       return;
     }
@@ -572,6 +636,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     Platform.runLater(() -> {
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
+      refreshTransparency();
+      refreshOverlayBackgroundPreview();
 
       try {
         new Thread(() -> {
@@ -587,17 +653,43 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           });
 
         }).start();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
     });
+  }
+
+
+  private void refreshOverlayBackgroundPreview() {
+    if (assetMediaPlayer != null) {
+      assetMediaPlayer.disposeMedia();
+      assetMediaPlayer.setMediaViewSize(0, 0);
+    }
+    mediaPlayerControl.setVisible(false);
+    previewOverlayPanel.setVisible(false);
+
+    GameRepresentation selectedItem = highscoreCardsController.getSelectedTable();
+    if (selectedItem != null && getCardTemplate().getOverlayScreen() != null) {
+      PopperScreen overlayScreen = PopperScreen.valueOf(getCardTemplate().getOverlayScreen());
+      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
+      if (defaultMediaItem != null) {
+        assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
+        assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
+        mediaPlayerControl.setVisible(true);
+        previewOverlayPanel.setVisible(true);
+      }
+    }
   }
 
   @Override
   public void onDialogCancel() {
   }
 
-  public void setHighscoreCardsController(HighscoreCardsController highscoreCardsController) {
+  public void setData(Stage stage, HighscoreCardsController highscoreCardsController) {
+    cardPreview.setFitWidth(stage.getWidth() - 500);
+    cardPreview.setFitHeight(stage.getHeight() - 200);
+
     this.highscoreCardsController = highscoreCardsController;
     templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
     this.applyBtn.setText("Close and apply to \"" + highscoreCardsController.getSelectedTable().getGameDisplayName() + "\"");
@@ -645,7 +737,8 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
   }

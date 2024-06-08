@@ -332,19 +332,20 @@ public class TableDataController implements Initializable, DialogController, Aut
       copyTableBtn.setDisable(false);
 
       VpsTable vpsTable = client.getVpsService().getTableById(mappedTableId);
-      VpsTableVersion version = vpsTable.getTableVersionById(mappedVersion);
       if (vpsTable != null) {
         propperRenamingController.setVpsTable(vpsTable);
+        autoCompleteNameField.setText(vpsTable.getDisplayName());
 
+        VpsTableVersion version = vpsTable.getTableVersionById(mappedVersion);
         if (version != null) {
           setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
           tableDetails.setMappedValue(vpsTableVersionMappingField, mappedVersion);
           propperRenamingController.setVpsTableVersion(version);
         }
-        autoCompleteNameField.setText(vpsTable.getDisplayName());
+        refreshVersionsCombo(vpsTable);
+        tableVersionsCombo.setValue(version);
       }
-      refreshVersionsCombo(vpsTable);
-      tableVersionsCombo.setValue(version);
+
 
       openVpsTableVersionBtn.setDisable(false);
       copyTableVersionBtn.setDisable(false);

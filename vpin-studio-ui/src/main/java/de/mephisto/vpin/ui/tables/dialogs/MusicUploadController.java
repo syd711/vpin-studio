@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -88,7 +89,7 @@ public class MusicUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Music Archive");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Music Bundle", "*.zip"));
+        new FileChooser.ExtensionFilter("Music Bundle", "*.zip", "*.rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
 
@@ -112,7 +113,7 @@ public class MusicUploadController implements Initializable, DialogController {
       refreshSelection();
     });
 
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       refreshSelection();
@@ -127,6 +128,7 @@ public class MusicUploadController implements Initializable, DialogController {
   public void setFile(Stage stage, File file, UploaderAnalysis analysis) {
     this.stage = stage;
     this.analysis = analysis;
+    this.selection = file;
     if (file != null) {
       if(analysis == null) {
         analysis = UploadAnalysisDispatcher.analyzeArchive(file);

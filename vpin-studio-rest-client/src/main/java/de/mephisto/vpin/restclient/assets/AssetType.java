@@ -24,6 +24,7 @@ public enum AssetType {
   POV,
   VPX,
   ZIP,
+  RAR,
   ARCHIVE,
   DEFAULT_BACKGROUND,
   CARD_BACKGROUND,

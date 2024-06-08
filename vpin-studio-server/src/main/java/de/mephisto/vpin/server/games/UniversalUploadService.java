@@ -131,7 +131,7 @@ public class UniversalUploadService {
       }
       case ALT_COLOR: {
         String suffix = FilenameUtils.getExtension(tempFile.getName());
-        if (PackageUtil.isArchive(suffix)) {
+        if (PackageUtil.isSupportedArchive(suffix)) {
           altColorService.installAltColorFromArchive(analysis, game, tempFile);
           break;
         }

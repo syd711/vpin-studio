@@ -133,7 +133,7 @@ public class UploadAnalysisDispatcher {
 
   private static boolean isArchive(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
-    return PackageUtil.isArchive(extension);
+    return PackageUtil.isSupportedArchive(extension);
   }
 
   public static UploaderAnalysis analyzeArchive(File file) {
@@ -191,6 +191,9 @@ public class UploadAnalysisDispatcher {
 
   private static ProgressModel createProgressModel(File file) throws IOException {
     String suffix = FilenameUtils.getExtension(file.getName());
+    if (suffix.equalsIgnoreCase("rar")) {
+      return new UploadDispatchAnalysisRarProgressModel(file);
+    }
     if (suffix.equalsIgnoreCase("zip")) {
       return new UploadDispatchAnalysisZipProgressModel(file);
     }

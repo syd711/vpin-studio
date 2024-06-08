@@ -12,13 +12,19 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -32,10 +38,16 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private Button updateBtn;
 
   @FXML
+  private Button popperMenuBtn;
+
+  @FXML
   private MenuButton jobBtn;
 
   @FXML
   private MenuItem dofSyncEntry;
+
+  @FXML
+  private MenuItem popperEntry;
 
   @FXML
   private ToggleButton maintenanceBtn;
@@ -94,11 +106,38 @@ public class ToolbarController implements Initializable, StudioEventListener {
     }
   }
 
+
+  @FXML
+  private void onPopper() {
+    client.getPinUPPopperService().restartPopper();
+  }
+
+  @FXML
+  private void onPopperMenu() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        String pinupSystemDirectory = client.getSystemService().getSystemSummary().getPinupSystemDirectory();
+        File file = new File(pinupSystemDirectory, "PinUpMenuSetup.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          desktop.open(file);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open PinUpMenuSetup.exe: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @FXML
   private void onDisconnect() {
     try {
       client.getSystemService().setMaintenanceMode(false);
-    } catch(Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Exception ignored, Cannot set maintenance mode, system may be done", e);
     }
     Studio.stage.close();
@@ -150,7 +189,8 @@ public class ToolbarController implements Initializable, StudioEventListener {
           });
         }
       }).start();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
     }
   }
@@ -169,10 +209,25 @@ public class ToolbarController implements Initializable, StudioEventListener {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
+    popperMenuBtn.managedProperty().bindBidirectional(popperMenuBtn.visibleProperty());
+
+    popperMenuBtn.setVisible(client.getSystemService().isLocal());
 
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
+
+    Image image1 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    ImageView view1 = new ImageView(image1);
+    view1.setPreserveRatio(true);
+    view1.setFitHeight(18);
+    popperEntry.setGraphic(view1);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setPreserveRatio(true);
+    view2.setFitHeight(18);
+    popperMenuBtn.setGraphic(view2);
 
     this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());

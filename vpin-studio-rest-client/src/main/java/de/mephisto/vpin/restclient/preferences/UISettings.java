@@ -2,6 +2,9 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UISettings extends JsonSettings {
   private boolean hideVersions;
   private boolean hideVPSUpdates;
@@ -31,6 +34,16 @@ public class UISettings extends JsonSettings {
   private boolean propperModField = true;
   private boolean propperVersionField = true;
   private boolean propperVRField = true;
+
+  private List<Integer> ignoredEmulatorIds = new ArrayList<>();
+
+  public List<Integer> getIgnoredEmulatorIds() {
+    return ignoredEmulatorIds;
+  }
+
+  public void setIgnoredEmulatorIds(List<Integer> ignoredEmulatorIds) {
+    this.ignoredEmulatorIds = ignoredEmulatorIds;
+  }
 
   private String winNetworkShare;
 

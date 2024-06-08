@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -285,12 +286,13 @@ public class WidgetFactory {
         stage.setWidth(position.getWidth());
         stage.setHeight(position.getHeight());
       }
-      dialogHeaderController.enableStateListener(stage, controller, stateId);
 
       stage.setOnShowing(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
-          controller.onResized((int) stage.getX(), (int) stage.getY(), (int) stage.getWidth(), (int) stage.getHeight());
+          Platform.runLater(() -> {
+            dialogHeaderController.enableStateListener(stage, controller, stateId);
+          });
         }
       });
     }

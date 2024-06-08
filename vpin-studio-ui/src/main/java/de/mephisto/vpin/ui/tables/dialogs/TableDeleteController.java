@@ -129,6 +129,12 @@ public class TableDeleteController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.deleteBtn.setDisable(true);
+    vpxFileCheckbox.setSelected(true);
+    iniCheckbox.setSelected(true);
+    directb2sCheckbox.setSelected(true);
+    vbsCheckbox.setSelected(true);
+    povCheckbox.setSelected(true);
+    resCheckbox.setSelected(true);
     confirmationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteBtn.setDisable(!newValue));
 
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -211,9 +217,5 @@ public class TableDeleteController implements Initializable, DialogController {
     highscoreCheckbox.setDisable(hasNonSelectedVariant);
     altSoundCheckbox.setDisable(hasNonSelectedVariant);
     altColorCheckbox.setDisable(hasNonSelectedVariant);
-    vbsCheckbox.setDisable(hasNonSelectedVariant);
-    iniCheckbox.setDisable(hasNonSelectedVariant);
-    resCheckbox.setDisable(hasNonSelectedVariant);
-    povCheckbox.setDisable(hasNonSelectedVariant);
   }
 }

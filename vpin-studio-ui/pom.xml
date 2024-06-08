@@ -39,16 +39,16 @@
             <artifactId>commonmark</artifactId>
             <version>0.20.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>net.sf.sevenzipjbinding</groupId>-->
-<!--            <artifactId>sevenzipjbinding</artifactId>-->
-<!--            <version>16.02-2.01</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>net.sf.sevenzipjbinding</groupId>-->
-<!--            <artifactId>sevenzipjbinding-all-windows</artifactId>-->
-<!--            <version>16.02-2.01</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding</artifactId>
+            <version>16.02-2.01</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding-all-platforms</artifactId>
+            <version>16.02-2.01</version>
+        </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>

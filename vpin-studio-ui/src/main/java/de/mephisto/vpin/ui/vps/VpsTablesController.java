@@ -11,7 +11,9 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.util.Keys;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -154,9 +157,9 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     VpsTable selection = tableView.getSelectionModel().getSelectedItem();
 
-    new Thread(() -> {
+    Platform.runLater(() -> {
       if(forceReload) {
-        client.getVpsService().reload();
+        ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
       }
 
       // get all tables
@@ -201,7 +204,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
         tableView.requestFocus();
       });
-    }).start();
+    });
   }
 
   @Override

@@ -65,7 +65,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -598,7 +597,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (match.isPresent()) {
           setSelection(match.get());
           if (uiSettings.isAutoEditTableData()) {
-            TableDialogs.openTableDataDialog(this, match.get());
+            Platform.runLater(() -> {
+              TableDialogs.openTableDataDialog(this, match.get());
+            });
           }
         }
       };
@@ -870,7 +871,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
 
     refreshPlaylists();
-    refreshEmulators();
+    refreshEmulators(uiSettings);
 
     this.textfieldSearch.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -998,12 +999,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
 
-  private void refreshEmulators() {
+  private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulatorsUncached());
-    emulators.add(0, null);
-    this.emulatorCombo.setItems(FXCollections.observableList(emulators));
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+
+    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }

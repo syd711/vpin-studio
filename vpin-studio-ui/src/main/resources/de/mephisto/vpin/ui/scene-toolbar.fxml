@@ -80,6 +80,14 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
+                        <Button fx:id="popperMenuBtn" mnemonicParsing="false" onAction="#onPopperMenu" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open PinUP Popper Config" />
+                           </tooltip>
+                        </Button>
                         <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache">
@@ -88,6 +96,11 @@
                                  </graphic>
                               </MenuItem>
                               <MenuItem fx:id="dofSyncEntry" mnemonicParsing="false" onAction="#onDOFSyn" text="Synchronize DOF">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="popperEntry" mnemonicParsing="false" onAction="#onPopper" text="Restart Popper">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>

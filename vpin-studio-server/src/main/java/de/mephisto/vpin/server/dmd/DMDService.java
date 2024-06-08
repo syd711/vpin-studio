@@ -3,12 +3,9 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -110,7 +107,15 @@ public class DMDService implements InitializingBean {
 
   public void installDMDPackage(File archive, String dmdPath, int emulatorId) {
     File tablesFolder = pinUPConnector.getGameEmulator(emulatorId).getTablesFolder();
-    DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
+    if (archive.getName().toLowerCase().endsWith(".zip")) {
+      DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
+    }
+    else if (archive.getName().toLowerCase().endsWith(".rar")) {
+      DMDInstallationUtil.unrar(archive, tablesFolder, dmdPath);
+    }
+    else {
+      throw new UnsupportedOperationException("Unsupported archive format for DMD pack " + archive.getName());
+    }
   }
 
   public ComponentSummary getFreezySummary(int emulatorId) {

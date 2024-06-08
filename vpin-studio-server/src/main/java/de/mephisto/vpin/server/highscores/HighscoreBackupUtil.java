@@ -152,7 +152,7 @@ public class HighscoreBackupUtil {
   }
 
   public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) {
-    Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
+    Optional<Highscore> hs = highscoreService.getHighscore(game, true);
     if (hs.isPresent()) {
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;

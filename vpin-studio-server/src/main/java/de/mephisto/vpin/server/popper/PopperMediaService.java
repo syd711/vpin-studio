@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -45,8 +46,13 @@ public class PopperMediaService {
 
         String suffix = FilenameUtils.getExtension(popperMediaFile);
         File out = uniquePopperAsset(game, value, suffix);
-        ZipUtil.unzipTargetFile(tempFile, out, popperMediaFile);
-        LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
+
+        if (PackageUtil.unpackTargetFile(tempFile, out, popperMediaFile)) {
+          LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
+        }
+        else {
+          LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());
+        }
 
         maxAssets--;
         if (maxAssets == 0 && limit) {

@@ -2,6 +2,11 @@ package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
+import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -95,7 +100,7 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public String getRomFromZip() {
+  public String getRomFromArchive() {
     String contains = containsWithPath(".zip");
     if (contains != null) {
       String rom = contains;
@@ -148,6 +153,16 @@ public class UploaderAnalysis<T> {
   }
 
   public void analyze() throws IOException {
+    String suffix = FilenameUtils.getExtension(file.getName());
+    if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
+      analyzeZip();
+    }
+    else if (suffix.equalsIgnoreCase(AssetType.RAR.name())) {
+      analyzeRar();
+    }
+  }
+
+  private void analyzeZip() throws IOException {
     long analysisStart = System.currentTimeMillis();
     FileInputStream fileInputStream = null;
     ZipInputStream zis = null;
@@ -162,10 +177,12 @@ public class UploaderAnalysis<T> {
       }
       zis.close();
       fileInputStream.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open " + file.getAbsolutePath());
       throw e;
-    } finally {
+    }
+    finally {
       if (fileInputStream != null) {
         fileInputStream.close();
       }
@@ -173,9 +190,48 @@ public class UploaderAnalysis<T> {
     }
   }
 
+  private void analyzeRar() throws IOException {
+    long analysisStart = System.currentTimeMillis();
+    RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+    RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
+    try {
+      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+        analyze(inArchive, (T) item, item.getPath(), item.isFolder());
+      }
+      inArchive.close();
+      randomAccessFileStream.close();
+      randomAccessFile.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open " + file.getAbsolutePath());
+    }
+    finally {
+      randomAccessFileStream.close();
+      randomAccessFile.close();
+      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
+    }
+  }
+
+  public void analyze(IInArchive in, T archiveEntry, String name, boolean directory) {
+    String formattedName = name.replaceAll("\\\\", "/");
+    boolean checkReadme = analyze(archiveEntry, formattedName, directory);
+    if (checkReadme) {
+      readReadme((ISimpleInArchiveItem) archiveEntry, formattedName);
+    }
+  }
+
   public void analyze(InputStream in, T archiveEntry, String name, boolean directory) {
+    String formattedName = name.replaceAll("\\\\", "/");
+    boolean checkReadme = analyze(archiveEntry, formattedName, directory);
+    if (checkReadme) {
+      readReadme(in, formattedName);
+    }
+  }
+
+  public boolean analyze(T archiveEntry, String formattedName, boolean directory) {
     if (directory) {
-      String[] split = name.replaceAll("\\\\", "/").split("/");
+      String[] split = formattedName.split("/");
       for (String s : split) {
         if (!StringUtils.isEmpty(s) && !directories.contains(s)) {
           directories.add(s);
@@ -183,7 +239,7 @@ public class UploaderAnalysis<T> {
       }
     }
     else {
-      String fileName = name.replaceAll("\\\\", "/");
+      String fileName = formattedName;
       fileNamesWithPath.add(fileName);
       if (fileName.contains("/")) {
         String dir = fileName.substring(0, fileName.lastIndexOf("/"));
@@ -191,8 +247,9 @@ public class UploaderAnalysis<T> {
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
       }
       fileNames.add(fileName);
-      readReadme(in, fileName);
+      return true;
     }
+    return false;
   }
 
   private void readReadme(InputStream in, String fileName) {
@@ -207,7 +264,22 @@ public class UploaderAnalysis<T> {
         fos.close();
         this.readme = new String(fos.toByteArray());
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
+      LOG.error("Failed to extract README: " + e.getMessage(), e);
+    }
+  }
+
+  private void readReadme(ISimpleInArchiveItem item, String fileName) {
+    try {
+      if (fileName.toLowerCase().endsWith(".txt") && fileName.toLowerCase().contains("read")) {
+        ByteArrayStream fos = new ByteArrayStream(Integer.MAX_VALUE);
+        item.extractSlow(fos);
+        fos.close();
+        this.readme = new String(fos.getBytes());
+      }
+    }
+    catch (IOException e) {
       LOG.error("Failed to extract README: " + e.getMessage(), e);
     }
   }
@@ -423,13 +495,17 @@ public class UploaderAnalysis<T> {
   private boolean isMusic(boolean forceMusicFolder) {
     for (String name : fileNamesWithPath) {
       String suffix = FilenameUtils.getExtension(name);
-      if (musicSuffixes.contains(suffix)) {
-        if (forceMusicFolder && name.toLowerCase().contains("music/")) {
-          return true;
-        }
-        else {
-          return true;
-        }
+      if (!musicSuffixes.contains(suffix)) {
+        continue;
+      }
+      if (getPupPackRootDirectory() != null && name.startsWith(getPupPackRootDirectory())) {
+        continue;
+      }
+      if (forceMusicFolder && name.toLowerCase().contains("music/")) {
+        return true;
+      }
+      else {
+        return true;
       }
     }
     return false;
@@ -530,7 +606,8 @@ public class UploaderAnalysis<T> {
         try {
           Integer.parseInt(suffix);
           return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           //
         }
       }
@@ -547,7 +624,7 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  private String getPupPackRootDirectory() {
+  public String getPupPackRootDirectory() {
     String match = null;
     for (String name : fileNamesWithPath) {
       if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
@@ -566,6 +643,10 @@ public class UploaderAnalysis<T> {
 
   private static boolean isPopperMediaFile(PopperScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
     if (screen.equals(PopperScreen.GameInfo)) {
+      return false;
+    }
+
+    if (!screen.equals(PopperScreen.Menu) && !screen.equals(PopperScreen.DMD) && fileNameWithPath.contains("DMD/")) {
       return false;
     }
 
@@ -599,8 +680,14 @@ public class UploaderAnalysis<T> {
     }
 
     //ignore DMD files from DMD bundles
-    if (screen.equals(PopperScreen.DMD) && fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
-      return false;
+    if (screen.equals(PopperScreen.DMD)) {
+      if (fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
+        return false;
+      }
+
+      if (fileNameWithPath.contains("UltraDMD")) {
+        return false;
+      }
     }
 
     return true;

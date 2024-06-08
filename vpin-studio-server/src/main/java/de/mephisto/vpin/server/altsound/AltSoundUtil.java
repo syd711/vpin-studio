@@ -50,7 +50,7 @@ public class AltSoundUtil {
             RandomAccessFile rafOut = new RandomAccessFile(target, "rw");
             RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
             ExtractOperationResult result = item.extractSlow(fos);
-            LOG.info("Unrar \"" + name + "\":" + result.name());
+            LOG.info("Unrar \"" + target.getAbsolutePath() + "\":" + result.name());
             fos.close();
             rafOut.close();
           }

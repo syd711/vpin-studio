@@ -136,7 +136,8 @@ public class HighscoreService implements InitializingBean {
 
       deleteScores(game.getId(), true);
       return result;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset highscore: " + e.getMessage(), e);
     }
     return false;
@@ -342,21 +343,23 @@ public class HighscoreService implements InitializingBean {
 
 
   @NonNull
-  public Optional<Highscore> getOrCreateHighscore(@NonNull Game game) {
+  public Optional<Highscore> getHighscore(@NonNull Game game, boolean forceScan) {
     Optional<Highscore> highscore = Optional.empty();
     try {
       highscore = highscoreRepository.findByGameId(game.getId());
-      if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
-        HighscoreMetadata metadata = scanScore(game);
-        return updateHighscore(game, metadata);
+      if (forceScan) {
+        if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
+          HighscoreMetadata metadata = scanScore(game);
+          return updateHighscore(game, metadata);
+        }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error updating highscores for \"" + game.getGameDisplayName() + "\"/" + game.getId() + ": " + e.getMessage(), e);
     }
     return highscore;
   }
 
-  //TODO rename
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game) {
     if (!game.isVpxGame()) {
@@ -550,7 +553,8 @@ public class HighscoreService implements InitializingBean {
           LOG.info(gameDisplayName + ": Calculated changed score [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Failed to calculate score change: " + e.getMessage(), e);
     }
     return changes;
@@ -622,7 +626,8 @@ public class HighscoreService implements InitializingBean {
         }
       }
       LOG.info("Highscore Service read " + vpRegEntries.size() + " VPReg.stg entries");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to refresh VPReg entries: " + e.getMessage(), e);
     }
   }
@@ -643,7 +648,8 @@ public class HighscoreService implements InitializingBean {
         }
       }
       LOG.info("Highscore Service read " + highscoreFiles.size() + " highscore text files");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to refresh highscore filenames: " + e.getMessage(), e);
     }
   }

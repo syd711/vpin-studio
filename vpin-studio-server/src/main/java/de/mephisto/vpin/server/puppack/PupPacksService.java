@@ -24,8 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,30 +62,7 @@ public class PupPacksService implements InitializingBean {
 
   @Nullable
   public PupPack getPupPack(@NonNull Game game) {
-    PupPack pupPack = getCachedPupPack(game);
-    if (pupPack == null) {
-      List<String> acceptedNames = new ArrayList<>();
-      if (!StringUtils.isEmpty(game.getPupPackName())) {
-        acceptedNames.add(game.getPupPackName());
-      }
-      if (!StringUtils.isEmpty(game.getRom())) {
-        acceptedNames.add(game.getRom());
-      }
-      if (!StringUtils.isEmpty(game.getRomAlias())) {
-        acceptedNames.add(game.getRomAlias());
-      }
-      if (!StringUtils.isEmpty(game.getTableName())) {
-        acceptedNames.add(game.getTableName());
-      }
-
-      for (String acceptedName : acceptedNames) {
-        pupPack = loadPupPack(acceptedName);
-        if (pupPack != null) {
-          return pupPack;
-        }
-      }
-    }
-    return pupPack;
+    return getCachedPupPack(game);
   }
 
   @Nullable
@@ -215,7 +190,7 @@ public class PupPacksService implements InitializingBean {
     }
 
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
-    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, rom);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom);
     if (!async) {
       job.execute();
     }

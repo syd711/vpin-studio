@@ -286,15 +286,17 @@ public class Game {
   @Nullable
   public File getHighscoreFile() {
     HighscoreType highscoreType = getHighscoreType();
-    switch (highscoreType) {
-      case EM: {
-        return getHighscoreTextFile();
-      }
-      case VPReg: {
-        return getEmulator().getVPRegFile();
-      }
-      case NVRam: {
-        return getNvRamFile();
+    if(highscoreType != null) {
+      switch (highscoreType) {
+        case EM: {
+          return getHighscoreTextFile();
+        }
+        case VPReg: {
+          return getEmulator().getVPRegFile();
+        }
+        case NVRam: {
+          return getNvRamFile();
+        }
       }
     }
     return null;

@@ -2,6 +2,7 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -37,7 +38,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -58,6 +58,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, StudioFXController, PreferenceChangeListener, BindingChangedListener, ListChangeListener<GameRepresentation>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
@@ -65,20 +66,16 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private final Debouncer debouncer = new Debouncer();
 
   @FXML
-  private ComboBox<CardTemplate> templateCombo;
+  private SplitPane splitPane;
 
   @FXML
-  private ComboBox<PopperScreen> screensComboBox;
+  private ComboBox<CardTemplate> templateCombo;
 
   @FXML
   private Label resolutionLabel;
 
   @FXML
   private Button openDefaultPictureBtn;
-
-  @FXML
-  private BorderPane popperPreviewPanel;
-
   @FXML
   private ImageView cardPreview;
 
@@ -129,6 +126,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private Button editTemplateBtn;
 
+  @FXML
+  private BorderPane previewOverlayPanel;
+
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
 
@@ -143,6 +143,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private String lastKeyInput = "";
   private List<CardTemplate> cardTemplates;
   private TemplateComboChangeListener templateComboChangeListener;
+  private AssetMediaPlayer assetMediaPlayer;
+  private boolean windowResizing;
 
   public HighscoreCardsController() {
   }
@@ -167,28 +169,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     onReload();
-  }
-
-  @FXML
-  private void onResize() {
-    System.out.println("resize");
-  }
-
-  @FXML
-  private void onResizeEnd() {
-    System.out.println("resize end");
-  }
-
-  @FXML
-  private void onRename(ActionEvent e) {
-  }
-
-  @FXML
-  private void onDuplicate(ActionEvent e) {
-  }
-
-  @FXML
-  private void onDelete(ActionEvent e) {
   }
 
   @FXML
@@ -273,7 +253,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
     String targetScreen = cardSettings.getPopperScreen();
     if (StringUtils.isEmpty(targetScreen)) {
-      WidgetFactory.showAlert(Studio.stage, "Not target screen selected.", "Select a target screen in the preferences.");
+      WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
     }
     else {
       ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
@@ -297,19 +277,24 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     });
   }
 
-  private void updateTransparencySettings(Boolean newValue) {
-    Platform.runLater(() -> {
-      if (newValue) {
+  private void refreshTransparency() {
+    CardTemplate cardTemplate = this.templateCombo.getSelectionModel().getSelectedItem();
+    boolean enabled = cardTemplate.isTransparentBackground();
+    if (enabled) {
+
+      if (!cardTemplate.isOverlayMode()) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
-          BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-          BackgroundSize.DEFAULT);
+            BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+            BackgroundSize.DEFAULT);
         previewPanel.setBackground(new Background(myBI));
       }
-      else {
-        previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
-      }
-    });
+      //the existing CSS class will hide the video else
+      previewPanel.setBackground(Background.EMPTY);
+    }
+    else {
+      previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+    }
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {
@@ -330,23 +315,26 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
     }
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
     int offset = 36;
+    if (game.isEmpty()) {
+      return;
+    }
+
     Platform.runLater(() -> {
       this.generateBtn.setDisable(game.isEmpty());
       this.openImageBtn.setDisable(game.isEmpty());
-
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
 
-      if (game.isEmpty()) {
-        return;
-      }
+      refreshTransparency();
+      refreshOverlayBackgroundPreview();
 
       try {
         new Thread(() -> {
@@ -360,20 +348,34 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           cardPreview.setVisible(true);
 
           Platform.runLater(() -> {
-            refreshPopperPreview();
             refreshRawPreview(game);
             previewStack.getChildren().remove(waitOverlay);
-            updateTransparencySettings(this.templateCombo.getSelectionModel().getSelectedItem().isTransparentBackground());
           });
-
         }).start();
-        cardPreview.setFitHeight(previewPanel.getHeight() - offset);
-        cardPreview.setFitWidth(previewPanel.getWidth() - offset);
-
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
     });
+  }
+
+  private void refreshOverlayBackgroundPreview() {
+    if (assetMediaPlayer != null) {
+      assetMediaPlayer.disposeMedia();
+    }
+    previewOverlayPanel.setVisible(false);
+
+    GameRepresentation selectedItem = getSelectedTable();
+    CardTemplate cardTemplate = this.templateCombo.getSelectionModel().getSelectedItem();
+    if (selectedItem != null && cardTemplate.getOverlayScreen() != null) {
+      PopperScreen overlayScreen = PopperScreen.valueOf(cardTemplate.getOverlayScreen());
+      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
+      if (defaultMediaItem != null) {
+        assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
+        assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
+        previewOverlayPanel.setVisible(true);
+      }
+    }
   }
 
   @Override
@@ -500,9 +502,31 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
   }
 
+  public void onDragDone() {
+    debouncer.debounce("position", () -> {
+      Platform.runLater(() -> {
+        refreshPreviewSize();
+        refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
+      });
+    }, 500);
+  }
+
+  private void refreshPreviewSize() {
+    int width = (int) stage.getWidth();
+    int height = (int) stage.getHeight();
+    cardPreview.setFitWidth(width - 700);
+    cardPreview.setFitHeight(height - 200);
+    previewPanel.setPrefWidth(width - 700);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
+    refreshPreviewSize();
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+
+    stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
 
     try {
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
@@ -520,15 +544,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       ctrl.setLoadingMessage("Generating Card...");
 
       cardPreview.setPreserveRatio(true);
-      previewPanel.widthProperty().addListener((obs, oldVal, newVal) -> {
-        debouncer.debounce("refresh", () -> {
-          Platform.runLater(() -> {
-            cardPreview.setFitWidth(newVal.intValue() / 2);
-            refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
-          });
-        }, 300);
-      });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
 
@@ -538,7 +555,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -675,48 +693,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       filterButton.getItems().add(item);
     }
 
-    List<PopperScreen> popperScreens = new ArrayList<>(Arrays.asList(PopperScreen.values()));
-    popperScreens.remove(PopperScreen.Audio);
-    popperScreens.remove(PopperScreen.AudioLaunch);
-    popperScreens.remove(PopperScreen.PlayField);
-    popperScreens.remove(PopperScreen.Loading);
-
-    screensComboBox.setItems(FXCollections.observableList(popperScreens));
-    PopperScreen previewPopperScreen = cardSettings.getPreviewPopperScreen();
-    if (previewPopperScreen != null) {
-      screensComboBox.setValue(previewPopperScreen);
-    }
-    screensComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-      cardSettings.setPreviewPopperScreen(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
-      refreshPopperPreview();
-    });
-
     EventManager.getInstance().addListener(this);
     onReload();
-  }
-
-  private void refreshPopperPreview() {
-    Node center = popperPreviewPanel.getCenter();
-    if (center instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer) center).disposeMedia();
-    }
-
-    GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(screensComboBox.getValue());
-      if (defaultMediaItem != null) {
-        WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, popperPreviewPanel);
-      }
-      else {
-        InputStream in = Studio.class.getResourceAsStream("empty-preview.png");
-        ImageView noPreview = new ImageView();
-        noPreview.setPreserveRatio(true);
-        noPreview.setFitHeight(250);
-        noPreview.setImage(new Image(in));
-        popperPreviewPanel.setCenter(noPreview);
-      }
-    }
   }
 
   @Override

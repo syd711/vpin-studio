@@ -25,8 +25,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -34,7 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class VpsService implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, InitializingBean, VpsSheetChangedListener, PreferenceChangedListener {
+public class VpsService implements ApplicationContextAware, InitializingBean, VpsSheetChangedListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
 
   private ApplicationContext applicationContext;
@@ -163,11 +161,6 @@ public class VpsService implements ApplicationContextAware, ApplicationListener<
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
-  }
-
-  @Override
-  public void onApplicationEvent(ContextRefreshedEvent event) {
-    new VpsUpdateThread(preferencesService, vpsDatabase).start();
   }
 
   @Override
