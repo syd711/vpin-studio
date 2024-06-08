@@ -721,6 +721,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void reload(int id) {
+    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
     tableView.getSelectionModel().getSelectedItems().removeListener(this);
     tableView.getSelectionModel().clearSelection();
@@ -737,9 +739,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     tableView.getSelectionModel().getSelectedItems().addListener(this);
-    // select the reloaded game
-    tableView.getSelectionModel().select(model);
-    tableView.refresh();
+    tableView.getSelectionModel().select(selectedItem);
   }
 
   public void showScriptEditor(GameRepresentation game) {
