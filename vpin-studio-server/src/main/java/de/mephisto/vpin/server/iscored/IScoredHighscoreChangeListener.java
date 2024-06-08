@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.iscored;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.*;
-import de.mephisto.vpin.server.players.PlayerService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +49,9 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
             }
           }
         }
-      } catch (Exception e) {
-        LOG.error("Failed to submit iScored highscore: " + e.getMessage(), e);
+      }
+      catch (Exception e) {
+        LOG.error("Failed emitting iScored highscore: " + e.getMessage(), e);
       }
     }).start();
   }
@@ -63,6 +64,8 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    highscoreService.addHighscoreChangeListener(this);
+    if (Features.ISCORED_ENABLED) {
+      highscoreService.addHighscoreChangeListener(this);
+    }
   }
 }

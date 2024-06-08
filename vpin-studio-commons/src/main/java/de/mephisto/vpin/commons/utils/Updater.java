@@ -27,11 +27,11 @@ public class Updater {
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
   public final static String SERVER_EXE = "VPin-Studio-Server.exe";
-  public final static long SERVER_ZIP_SIZE = 122 * 1000 * 1000;
+  public final static long SERVER_ZIP_SIZE = 130 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
-  public final static long UI_ZIP_SIZE = 86 * 1000 * 1000;
+  public final static long UI_ZIP_SIZE = 90 * 1000 * 1000;
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 

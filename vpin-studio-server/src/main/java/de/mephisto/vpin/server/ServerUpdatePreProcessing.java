@@ -22,7 +22,9 @@ public class ServerUpdatePreProcessing {
 
   public static void execute() {
     try {
-      SevenZip.initSevenZipFromPlatformJAR();
+      File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
+      sevenZipTempFolder.mkdirs();
+      SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
       LOG.info("7z initalized.");
     }
     catch (SevenZipNativeInitializationException e) {

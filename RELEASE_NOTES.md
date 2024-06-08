@@ -21,3 +21,4 @@
 - **Universal Uploader:** Fixed various extraction issues for some PUP packs in combination with Popper assets and DMD bundles.
 - **Performance Optimization**: Added caching for ALTSounds.
 - **Performance Optimization**: Highscores are not re-scanned on table overview reload. This should save same time and since the data is fetch when the highscore section is opened, it should make no difference.
+- **Table Overview**: Fixed keeping the selection on reload and other actions.
